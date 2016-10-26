@@ -415,7 +415,7 @@ double triangleMesh::rsl(double x1, double x2, double y1, double y2, double x)
 
 
 // generate edge list and face to edge list from faceNext matrix
-void triangleMesh::genEdge(BOOL isvolume)
+void triangleMesh::genEdge(int isvolume)
 {
 	//isvolume=1, if input a volumn grid;
 	//isvolumn=0, if input a planar grid
@@ -734,8 +734,8 @@ void triangleMesh::findContourInOneTriangle(long triangleIndex, float v, float *
 
 	float *pointV;
 
-	pointV=pointValueInterp;
-	//pointV=pointValue;
+	//pointV=pointValueInterp;
+	pointV=pointValue;
 
 	e1=pointV[p[1]]-v;
 	e2=pointV[p[2]]-v;
@@ -1071,19 +1071,19 @@ void triangleMesh::genFaceCentroid(void)
 // interpolate point value 
 void triangleMesh::interpPointV(void)
 {
-	////pointValueInterp=vector<float>(1,npoint);
+	////pointValueInterp=vector<double>(1,npoint);
 	//long i;
 	//long j,k;
 	//long nneighbor;
-	//float **pointAround;
-	//float *pointVAround;
+	//double **pointAround;
+	//double *pointVAround;
 
-		//for(i=1;i<=npoint;i++){
+	//for(i=1;i<=npoint;i++){
 
 	//	nneighbor=point2face[i].size();
 	//	nneighbor-=1;
-	//	pointAround=matrix<float>(1,nneighbor,1,dim);
-	//	pointVAround=vector<float>(1,nneighbor);
+	//	pointAround=matrix<double>(1,nneighbor,1,dim);
+	//	pointVAround=vector<double>(1,nneighbor);
 
 	//	for(j=1;j<=nneighbor;j++){
 	//		for(k=1;k<=dim;k++){
@@ -1101,7 +1101,154 @@ void triangleMesh::interpPointV(void)
 
 
 
-	bhsint(faceCentroid,nface,2,faceValue,point,npoint,pointValueInterp);
-	maxPointValueInterp=findmax(pointValueInterp,npoint);
-	minPointValueInterp=findmin(pointValueInterp,npoint);
+	//bhsint(faceCentroid,nface,2,faceValue,point,npoint,pointValueInterp);
+	//maxPointValueInterp=findmax(pointValueInterp,npoint);
+	//minPointValueInterp=findmin(pointValueInterp,npoint);
+	////////////////////////////////v4 interpolate/////////////////////////////
+	//bhsint(faceCentroid,nface,2,faceValue,point,npoint,pointValue);
+	//////////////////////////////////avg/////////////////////////////////////////
+	//long i,j;
+	//double sum;
+	//for(i=1;i<=npoint;i++){
+	//	sum=0;
+	//	for(j=1;j<point2face[i].size();j++){
+	//		sum+=faceValue[point2face[i][j]];
+	//	}
+	//	pointValue[i]=sum/(j-1);
+	//}
+	///////////////////////////////////////weight avg////////////////////////////////////////////////
+	//	long i,j,k,facei;
+	//double sum;
+	//double w,wsum;
+	//for(i=1;i<=npoint;i++){
+	//	sum=0;
+	//	wsum=0;
+	//	for(j=1;j<point2face[i].size();j++){
+	//		facei=point2face[i][j];
+	//		w=0;
+	//		for(k=1;k<=3;k++){
+	//		w+=pow((point[i][k]-faceCentroid[facei][k]),2);
+	//		}
+	//		w=pow(w,-1.5f);
+	//		sum+=w*faceValue[facei];
+	//		wsum+=w;
+	//	}
+	//	pointValue[i]=sum/wsum;
+	//}
+
+	///////////////////////////////////////plane fit////////////////////////////////////
+	long i,j,k,facei,nnb;
+
+	//std::vector<double> nbfv;
+	//std::vector< std::vector<double> > nbp;
+	//std::vector<double> line;
+
+	double *nbfv;
+	double **nbpm;
+	double a[7];
+	for(i=1;i<=npoint;i++){	
+		nnb=point2face[i].size()-1;
+		//nbfv.push_back(i);
+		//nbp.push_back(line);
+
+
+		nbfv=vector<double>(1,nnb);
+
+		//if(nnb>=6){
+		//	nbpm=matrix<double>(1,nnb,1,6);
+		//	for(j=1;j<=nnb;j++){
+		//		facei=point2face[i][j];
+		//		nbfv[j]=faceValue[facei];
+		//		
+		//		nbpm[j][1]=faceCentroid[facei][1]*faceCentroid[facei][1];
+		//		nbpm[j][2]=faceCentroid[facei][1]*faceCentroid[facei][2];
+		//		nbpm[j][3]=faceCentroid[facei][2]*faceCentroid[facei][2];
+		//		nbpm[j][4]=faceCentroid[facei][1];
+		//		nbpm[j][5]=faceCentroid[facei][2];
+		//		nbpm[j][6]=1;
+		//	
+		//	}
+		//	if(nnb==6){
+		//		slvmat(nbpm,6,nbfv);
+		//		copyvt(nbfv,6,a);
+		//	}
+		//	else{
+		//		slvlsq(nbpm,nnb,6,nbfv,a);
+		//	}
+
+
+		//	free_matrix(nbpm,1,nnb,1,6);
+		//	pointValue[i]=point[i][1]*point[i][1]*a[1]+point[i][1]*point[i][2]*a[2]+point[i][2]*point[i][2]*a[3]+point[i][1]*a[4]+point[i][2]*a[5]+a[6];
+
+		//}
+		//else{
+			if(nnb>=3){
+				nbpm=matrix<double>(1,nnb,1,3);
+				for(j=1;j<=nnb;j++){
+					facei=point2face[i][j];
+					nbfv[j]=faceValue[facei];
+					nbpm[j][1]=faceCentroid[facei][1];
+					nbpm[j][2]=faceCentroid[facei][2];
+					nbpm[j][3]=1;
+				}
+				if(nnb==3){
+					slvmat(nbpm,3,nbfv);
+					copyvt(nbfv,3,a);
+				}
+				else{
+					slvlsq(nbpm,nnb,3,nbfv,a);
+				}
+
+				free_matrix(nbpm,1,nnb,1,3);
+				pointValue[i]=point[i][1]*a[1]+point[i][2]*a[2]+a[3];
+			}
+			else{
+				if(nnb==2){
+					pointValue[i]=0.5*(faceValue[point2face[i][1]]+faceValue[point2face[i][2]]);
+				}
+				else{
+					pointValue[i]=faceValue[point2face[i][1]];
+				}
+			}
+		//}
+		free_vector(nbfv,1,nnb);
+	}
+	
+
+	////nbfv.push_back(faceValue[facei]);
+
+
+
+	///////////////////////////get min and max////////////////////////////////////////
+	maxPointValue=findmax(pointValue,npoint);
+	minPointValue=findmin(pointValue,npoint);
+
+}
+
+
+void triangleMesh::genContourMapInterp(long contourNumber)
+{
+
+		contourv.clear();
+	contourValue.clear();
+
+	float cvalue;
+	float vstep=(maxPointValueInterp-minPointValueInterp)/(float)(contourNumber+1);
+
+	for(cvalue=minPointValueInterp;cvalue<=maxPointValueInterp;cvalue+=vstep){
+		findContour(cvalue);
+	}
+
+}
+
+
+void triangleMesh::loadPointAndFace(float ** pt, long np, long ** fc, long nf, int isvolume)
+{
+	loadPoint(pt,np);
+	loadFace(fc,nf);
+	getFaceNext();
+	genEdge(isvolume);
+	genPointToFaceMap();
+	genFaceCentroid();
+
 }

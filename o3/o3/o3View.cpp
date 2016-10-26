@@ -12,11 +12,11 @@
 #include "o3Doc.h"
 #include "o3View.h"
 
-#include "funT\nrutilT.h"
-#include "glm.h"
+#include "../../funT\nrutilT.h"
+//#include "glm.h"
 #include "ro.h"
-#include "funT\findmT.h"
-#include "funT\matmulT.h"
+//#include "../../funT\findmT.h"
+//#include "../../funT\matmulT.h"
 //#include "tm\triangleMesh.h"
 
 
@@ -61,6 +61,8 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 		ON_UPDATE_COMMAND_UI(ID_VIEW_SMOOTHSURFACE, &Co3View::OnUpdateViewSmoothsurface)
 		ON_COMMAND(ID_VIEW_CONTOUR, &Co3View::OnViewContour)
 		ON_UPDATE_COMMAND_UI(ID_VIEW_CONTOUR, &Co3View::OnUpdateViewContour)
+		ON_COMMAND(ID_VIEW_PLANE, &Co3View::OnViewPlane)
+		ON_UPDATE_COMMAND_UI(ID_VIEW_PLANE, &Co3View::OnUpdateViewPlane)
 	END_MESSAGE_MAP()
 
 	// Co3View construction/destruction
@@ -88,6 +90,8 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 		, m_unityCube(0)
 		, checkContour(true)
 		, m_contourList(0)
+		, m_surfaceList3(0)
+		, isplane(0)
 	{
 		// TODO: add construction code here
 
@@ -293,7 +297,7 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 
 		//glLoadIdentity();
 
-		glTranslatef(xPos,yPos,-5);
+		glTranslatef(xPos,yPos,-3);
 		glScalef(zoomFactor,zoomFactor,1);
 		glRotatef(xRot,1,0,0);
 		glRotatef(yRot,0,1,0);
@@ -442,6 +446,7 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 		glDeleteLists(m_meshList,1);
 		glDeleteLists(m_surfaceList,1);
 		glDeleteLists(m_surfaceList2,1);
+		glDeleteLists(m_surfaceList3,1);
 	}
 
 	void Co3View::InitGL(void)
@@ -674,6 +679,7 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 			long nf,np;
 
 			dt=readf2<float>(m_filePath.GetBuffer(),&nf,10);
+
 			float *facecolor=vector<float>(1,nf);
 			long **face=matrix<long>(1,nf,1,3);
 			float **point;
@@ -690,28 +696,38 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 			//float **point=readf2<float>(L"C:\\Users\\r8anw2x\\Dropbox\\OpenGL\\data\\05021013\\gridSurface05022013_2.point.txt",&np,3);
 			//float *pv=readf1<float>(L"C:\\Users\\r8anw2x\\Dropbox\\OpenGL\\data\\05021013\\gridSurface05022013_2.pointvaluei.txt",&np);
 			
+			////////////////////////////////////////////////////////////////////////////////
+			//triangleMesh trm1;
+			//trm1.loadFace(face,nf);
+			////trm1.loadFaceV(facecolor,nf);
+			//trm1.loadPoint(point,np);
+			//trm1.loadPointV(pv,np);
+
+
+
+			//trm1.getFaceNext();
+			//trm1.genEdge(0);
+			//trm1.genPointToFaceMap();
+			//trm1.genFaceCentroid();
+			//trm1.interpPointV();
+			//trm1.genContourMap(50);
+			//trm1.genContourMapInterp(50);
+
+
 
 			triangleMesh trm1;
-			trm1.loadFace(face,nf);
+
+			trm1.loadPointAndFace(point,np,face,nf,isplane);
+			//for(long i=1;i<=nf;i++){
+			//	facecolor[i]=trm1.faceCentroid[i][1]*trm1.faceCentroid[i][1]+trm1.faceCentroid[i][2]*trm1.faceCentroid[i][2];
+			//}
 			trm1.loadFaceV(facecolor,nf);
-			trm1.loadPoint(point,np);
-			trm1.loadPointV(pv,np);
-
-			free_matrix(face,1,nf,1,3);
-			free_matrix(point,1,np,1,4);
-			free_vector(facecolor,1,nf);
-			free_vector(pv,1,np);
-
-			trm1.getFaceNext();
-			trm1.genEdge(0);
-			trm1.genPointToFaceMap();
-			trm1.genFaceCentroid();
+			//trm1.loadPointV(pv,np);
 			trm1.interpPointV();
-			trm1.genContourMap(51);
-
+			trm1.genContourMap(50);
 
 			
-
+			////////////////////////create display list //////////////////////////////////
 			//createMeshList(face,nf,point,np);
 			//createSurfaceList(face,facecolor,nf,point,np);
 			//createSurfaceList2(face,facecolor,nf,point,np);
@@ -721,10 +737,17 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 			createMeshList(trm1);
 			createSurfaceList(trm1);
 			createSurfaceList2(trm1);
+			//createSurfaceList3(trm1);
 			createContourList(trm1);
 			createUnityCubeList();
-
+			///////////////////////////draw window////////////////////////////////////
 			//InvalidateRect(NULL,FALSE);
+
+			free_matrix(face,1,nf,1,3);
+			free_matrix(point,1,np,1,4);
+			free_vector(facecolor,1,nf);
+			free_vector(pv,1,np);
+
 			OnViewReset();
 
 		}
@@ -732,206 +755,206 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 	}
 
 
-	void Co3View::createSceneList(float ***dt, float *colorv, long r, long c, long h)
-	{//创建显示列表
+	//void Co3View::createSceneList(float ***dt, float *colorv, long r, long c, long h)
+	//{//创建显示列表
 
-		////////////////////////////////////////////////////////////////////
-		//m_DPList = glGenLists(1);
-		//glNewList(m_DPList, GL_COMPILE);
+	//	////////////////////////////////////////////////////////////////////
+	//	//m_DPList = glGenLists(1);
+	//	//glNewList(m_DPList, GL_COMPILE);
 
-		//long i,j,k;
+	//	//long i,j,k;
 
-		//float v1[3];
-		//float v2[3];
-		//float nor[3];
-		//float innerp[3]={0,0,0};
+	//	//float v1[3];
+	//	//float v2[3];
+	//	//float nor[3];
+	//	//float innerp[3]={0,0,0};
 
-		//for(i=1;i<=r;i++){
-		//	glEnable(GL_NORMALIZE);
-		//	glColor3f(0.0f, 0.0f, 1.0f); 
-		//	glBegin(GL_TRIANGLES);
-
-
-		//	for(k=1;k<=h;k++){
-		//		v1[k-1]=dt[i][1][k]-dt[i][3][k];
-		//		v2[k-1]=dt[i][2][k]-dt[i][3][k];
-		//	}
-		//	nor[0]=v1[1]*v2[2]-v1[2]*v2[1];
-		//	nor[1]=v1[2]*v2[0]-v1[0]*v2[2];
-		//	nor[2]=v1[0]*v2[1]-v1[1]*v2[0];
+	//	//for(i=1;i<=r;i++){
+	//	//	glEnable(GL_NORMALIZE);
+	//	//	glColor3f(0.0f, 0.0f, 1.0f); 
+	//	//	glBegin(GL_TRIANGLES);
 
 
-		//	for(j=1;j<=c;j++){
-		//		selectNormal(nor,&dt[i][j][1],innerp,true);
-		//		glNormal3fv(nor);
-		//		glVertex3f(dt[i][j][1],dt[i][j][2],dt[i][j][3]);
-		//	}
-		//	glEnd();
-		//	glDisable(GL_NORMALIZE);
-
-		//	glLineWidth(2);
-		//	glColor3f(1.0f, 0.0f, 0.0f); 
-		//	glBegin (GL_LINE_LOOP);
-		//	for(j=1;j<=c;j++){
-		//		glVertex3f(dt[i][j][1],dt[i][j][2],dt[i][j][3]);
-		//	}
-		//	glEnd();
-		//	glLineWidth(1);
-		//}
-
-		//glEndList();
-
-		/////////////////////////////////////////////////////////////
+	//	//	for(k=1;k<=h;k++){
+	//	//		v1[k-1]=dt[i][1][k]-dt[i][3][k];
+	//	//		v2[k-1]=dt[i][2][k]-dt[i][3][k];
+	//	//	}
+	//	//	nor[0]=v1[1]*v2[2]-v1[2]*v2[1];
+	//	//	nor[1]=v1[2]*v2[0]-v1[0]*v2[2];
+	//	//	nor[2]=v1[0]*v2[1]-v1[1]*v2[0];
 
 
-		//m_surfaceList = glGenLists(1);
-		//glNewList(m_surfaceList, GL_COMPILE);
+	//	//	for(j=1;j<=c;j++){
+	//	//		selectNormal(nor,&dt[i][j][1],innerp,true);
+	//	//		glNormal3fv(nor);
+	//	//		glVertex3f(dt[i][j][1],dt[i][j][2],dt[i][j][3]);
+	//	//	}
+	//	//	glEnd();
+	//	//	glDisable(GL_NORMALIZE);
 
-		//long i,j,k;
+	//	//	glLineWidth(2);
+	//	//	glColor3f(1.0f, 0.0f, 0.0f); 
+	//	//	glBegin (GL_LINE_LOOP);
+	//	//	for(j=1;j<=c;j++){
+	//	//		glVertex3f(dt[i][j][1],dt[i][j][2],dt[i][j][3]);
+	//	//	}
+	//	//	glEnd();
+	//	//	glLineWidth(1);
+	//	//}
 
-		//float v1[3];
-		//float v2[3];
-		//float nor[3];
-		//float innerp[3]={0,0,0};
+	//	//glEndList();
 
-		//float rgba[4];
-
-		//float mxcv=findmax(colorv,r);
-		//float mncv=findmin(colorv,r);
-
-		//for(i=1;i<=r;i++){
-		//	glEnable(GL_NORMALIZE);
-		//	genColor(rgba,(colorv[i]-mncv)/(mxcv-mncv)*0.8);
-
-		//	glColor4fv(rgba);
-
-		//	glBegin(GL_TRIANGLES);
-
-
-		//	for(k=1;k<=h;k++){
-		//		v1[k-1]=dt[i][1][k]-dt[i][3][k];
-		//		v2[k-1]=dt[i][2][k]-dt[i][3][k];
-		//	}
-		//	nor[0]=v1[1]*v2[2]-v1[2]*v2[1];
-		//	nor[1]=v1[2]*v2[0]-v1[0]*v2[2];
-		//	nor[2]=v1[0]*v2[1]-v1[1]*v2[0];
+	//	/////////////////////////////////////////////////////////////
 
 
-		//	for(j=1;j<=c;j++){
-		//		selectNormal(nor,&dt[i][j][1],innerp,true);
-		//		glNormal3fv(nor);
-		//		glVertex3f(dt[i][j][1],dt[i][j][2],dt[i][j][3]);
-		//	}
-		//	glEnd();
+	//	//m_surfaceList = glGenLists(1);
+	//	//glNewList(m_surfaceList, GL_COMPILE);
+
+	//	//long i,j,k;
+
+	//	//float v1[3];
+	//	//float v2[3];
+	//	//float nor[3];
+	//	//float innerp[3]={0,0,0};
+
+	//	//float rgba[4];
+
+	//	//float mxcv=findmax(colorv,r);
+	//	//float mncv=findmin(colorv,r);
+
+	//	//for(i=1;i<=r;i++){
+	//	//	glEnable(GL_NORMALIZE);
+	//	//	genColor(rgba,(colorv[i]-mncv)/(mxcv-mncv)*0.8);
+
+	//	//	glColor4fv(rgba);
+
+	//	//	glBegin(GL_TRIANGLES);
 
 
-		//	glDisable(GL_NORMALIZE);
+	//	//	for(k=1;k<=h;k++){
+	//	//		v1[k-1]=dt[i][1][k]-dt[i][3][k];
+	//	//		v2[k-1]=dt[i][2][k]-dt[i][3][k];
+	//	//	}
+	//	//	nor[0]=v1[1]*v2[2]-v1[2]*v2[1];
+	//	//	nor[1]=v1[2]*v2[0]-v1[0]*v2[2];
+	//	//	nor[2]=v1[0]*v2[1]-v1[1]*v2[0];
 
 
-		//}
-		//glEndList();
-
-		//
-		//GLfloat linewidth=2;
-
-		//m_meshList = glGenLists(1);
-		//glNewList(m_meshList, GL_COMPILE);
-		//glLineWidth(linewidth);
-		//for(i=1;i<=r;i++){
-
-		//	glColor3f(1.0f, 1.0f, 1.0f); 
-		//	glBegin (GL_LINE_LOOP);
-		//	for(j=1;j<=c;j++){
-		//		glVertex3f(dt[i][j][1],dt[i][j][2],dt[i][j][3]);
-		//	}
-		//	glEnd();
-		//	//glLineWidth(1);
-		//}
-		//glEndList();
+	//	//	for(j=1;j<=c;j++){
+	//	//		selectNormal(nor,&dt[i][j][1],innerp,true);
+	//	//		glNormal3fv(nor);
+	//	//		glVertex3f(dt[i][j][1],dt[i][j][2],dt[i][j][3]);
+	//	//	}
+	//	//	glEnd();
 
 
-
-		///////////////////////////////////////////////////////////////////////////////
-
-		m_surfaceList = glGenLists(1);
-		glNewList(m_surfaceList, GL_COMPILE);
-
-		long i,j,k;
-
-		float v1[3];
-		float v2[3];
-		float nor[3];
-		float innerp[3]={0,0,0};
-
-		float rgba[4];
-
-		float mxcv=findmax(colorv,r);
-		float mncv=findmin(colorv,r);
-		//float mxcv=0.5;
-		//float mncv=0.2;
-
-		for(i=1;i<=r;i++){
-			glEnable(GL_NORMALIZE);
-
-			genColor(rgba,(colorv[i]-mncv)/(mxcv-mncv)*0.8);
-			glColor4fv(rgba);
-
-			glBegin(GL_TRIANGLES);
+	//	//	glDisable(GL_NORMALIZE);
 
 
-			for(k=1;k<=3;k++){
-				v1[k-1]=dt[i][1][k]-dt[i][3][k];
-				v2[k-1]=dt[i][2][k]-dt[i][3][k];
-			}
-			nor[0]=v1[1]*v2[2]-v1[2]*v2[1];
-			nor[1]=v1[2]*v2[0]-v1[0]*v2[2];
-			nor[2]=v1[0]*v2[1]-v1[1]*v2[0];
+	//	//}
+	//	//glEndList();
+
+	//	//
+	//	//GLfloat linewidth=2;
+
+	//	//m_meshList = glGenLists(1);
+	//	//glNewList(m_meshList, GL_COMPILE);
+	//	//glLineWidth(linewidth);
+	//	//for(i=1;i<=r;i++){
+
+	//	//	glColor3f(1.0f, 1.0f, 1.0f); 
+	//	//	glBegin (GL_LINE_LOOP);
+	//	//	for(j=1;j<=c;j++){
+	//	//		glVertex3f(dt[i][j][1],dt[i][j][2],dt[i][j][3]);
+	//	//	}
+	//	//	glEnd();
+	//	//	//glLineWidth(1);
+	//	//}
+	//	//glEndList();
 
 
-			for(j=1;j<=c;j++){
-				//genColor(rgba,(dt[i][j][4]-mncv)/(mxcv-mncv)*0.8);
-				//glColor4fv(rgba);
 
-				selectNormal(nor,&dt[i][j][1],innerp,true);
-				glNormal3fv(nor);
-				glVertex3f(dt[i][j][1],dt[i][j][2],dt[i][j][3]);
-			}
-			glEnd();
+	//	///////////////////////////////////////////////////////////////////////////////
 
+	//	m_surfaceList = glGenLists(1);
+	//	glNewList(m_surfaceList, GL_COMPILE);
 
-			glDisable(GL_NORMALIZE);
+	//	long i,j,k;
 
+	//	float v1[3];
+	//	float v2[3];
+	//	float nor[3];
+	//	float innerp[3]={0,0,0};
 
-		}
-		glEndList();
+	//	float rgba[4];
 
+	//	float mxcv=findmax(colorv,r);
+	//	float mncv=findmin(colorv,r);
+	//	//float mxcv=0.5;
+	//	//float mncv=0.2;
 
-		GLfloat linewidth=2;
+	//	for(i=1;i<=r;i++){
+	//		glEnable(GL_NORMALIZE);
 
-		m_meshList = glGenLists(1);
-		glNewList(m_meshList, GL_COMPILE);
-		glLineWidth(linewidth);
-		for(i=1;i<=r;i++){
+	//		genColor(rgba,(colorv[i]-mncv)/(mxcv-mncv)*0.8);
+	//		glColor4fv(rgba);
 
-			glColor3f(1.0f, 1.0f, 1.0f); 
-			glBegin (GL_LINE_LOOP);
-			for(j=1;j<=c;j++){
-				glVertex3f(dt[i][j][1],dt[i][j][2],dt[i][j][3]);
-			}
-			glEnd();
-			//glLineWidth(1);
-		}
-		glEndList();
+	//		glBegin(GL_TRIANGLES);
 
 
-		//////////////////////////////////////////////////////////////////////////
+	//		for(k=1;k<=3;k++){
+	//			v1[k-1]=dt[i][1][k]-dt[i][3][k];
+	//			v2[k-1]=dt[i][2][k]-dt[i][3][k];
+	//		}
+	//		nor[0]=v1[1]*v2[2]-v1[2]*v2[1];
+	//		nor[1]=v1[2]*v2[0]-v1[0]*v2[2];
+	//		nor[2]=v1[0]*v2[1]-v1[1]*v2[0];
 
 
+	//		for(j=1;j<=c;j++){
+	//			//genColor(rgba,(dt[i][j][4]-mncv)/(mxcv-mncv)*0.8);
+	//			//glColor4fv(rgba);
+
+	//			selectNormal(nor,&dt[i][j][1],innerp,true);
+	//			glNormal3fv(nor);
+	//			glVertex3f(dt[i][j][1],dt[i][j][2],dt[i][j][3]);
+	//		}
+	//		glEnd();
+
+
+	//		glDisable(GL_NORMALIZE);
+
+
+	//	}
+	//	glEndList();
+
+
+	//	GLfloat linewidth=2;
+
+	//	m_meshList = glGenLists(1);
+	//	glNewList(m_meshList, GL_COMPILE);
+	//	glLineWidth(linewidth);
+	//	for(i=1;i<=r;i++){
+
+	//		glColor3f(1.0f, 1.0f, 1.0f); 
+	//		glBegin (GL_LINE_LOOP);
+	//		for(j=1;j<=c;j++){
+	//			glVertex3f(dt[i][j][1],dt[i][j][2],dt[i][j][3]);
+	//		}
+	//		glEnd();
+	//		//glLineWidth(1);
+	//	}
+	//	glEndList();
+
+
+	//	//////////////////////////////////////////////////////////////////////////
 
 
 
 
-	}
+
+
+	//}
 
 
 	void Co3View::OnViewOrtho()
@@ -1072,60 +1095,60 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 	}
 
 
-	void Co3View::createSurfaceList(long ** face, float *facecolor, long nf, float ** point, long np){
+	//void Co3View::createSurfaceList(long ** face, float *facecolor, long nf, float ** point, long np){
 
-		m_surfaceList = glGenLists(1);
-		glNewList(m_surfaceList, GL_COMPILE);
+	//	m_surfaceList = glGenLists(1);
+	//	glNewList(m_surfaceList, GL_COMPILE);
 
-		long i,j,k;
+	//	long i,j,k;
 
-		float v1[3];
-		float v2[3];
-		float nor[3];
-		float innerp[3]={0,0,0};
+	//	float v1[3];
+	//	float v2[3];
+	//	float nor[3];
+	//	float innerp[3]={0,0,0};
 
-		float rgba[4];
+	//	float rgba[4];
 
-		float mxcv=findmax(facecolor,nf);
-		float mncv=findmin(facecolor,nf);
-		//float mxcv=0.5;
-		//float mncv=0.2;
+	//	float mxcv=findmax(facecolor,nf);
+	//	float mncv=findmin(facecolor,nf);
+	//	//float mxcv=0.5;
+	//	//float mncv=0.2;
 
-		for(i=1;i<=nf;i++){
-			glEnable(GL_NORMALIZE);
+	//	for(i=1;i<=nf;i++){
+	//		glEnable(GL_NORMALIZE);
 
-			genColor(rgba,(facecolor[i]-mncv)/(mxcv-mncv)*0.8);
-			glColor4fv(rgba);
+	//		genColor(rgba,(facecolor[i]-mncv)/(mxcv-mncv)*0.8);
+	//		glColor4fv(rgba);
 
-			glBegin(GL_TRIANGLES);
-
-
-			for(k=1;k<=3;k++){
-				v1[k-1]=point[face[i][1]][k]-point[face[i][3]][k];
-				v2[k-1]=point[face[i][2]][k]-point[face[i][3]][k];
-			}
-			nor[0]=v1[1]*v2[2]-v1[2]*v2[1];
-			nor[1]=v1[2]*v2[0]-v1[0]*v2[2];
-			nor[2]=v1[0]*v2[1]-v1[1]*v2[0];
+	//		glBegin(GL_TRIANGLES);
 
 
-			for(j=1;j<=3;j++){
-				//genColor(rgba,(dt[i][j][4]-mncv)/(mxcv-mncv)*0.8);
-				//glColor4fv(rgba);
-
-				selectNormal(nor,&point[face[i][j]][1],innerp,true);
-				glNormal3fv(nor);
-				glVertex3fv(&point[face[i][j]][1]);
-			}
-			glEnd();
+	//		for(k=1;k<=3;k++){
+	//			v1[k-1]=point[face[i][1]][k]-point[face[i][3]][k];
+	//			v2[k-1]=point[face[i][2]][k]-point[face[i][3]][k];
+	//		}
+	//		nor[0]=v1[1]*v2[2]-v1[2]*v2[1];
+	//		nor[1]=v1[2]*v2[0]-v1[0]*v2[2];
+	//		nor[2]=v1[0]*v2[1]-v1[1]*v2[0];
 
 
-			glDisable(GL_NORMALIZE);
+	//		for(j=1;j<=3;j++){
+	//			//genColor(rgba,(dt[i][j][4]-mncv)/(mxcv-mncv)*0.8);
+	//			//glColor4fv(rgba);
+
+	//			selectNormal(nor,&point[face[i][j]][1],innerp,true);
+	//			glNormal3fv(nor);
+	//			glVertex3fv(&point[face[i][j]][1]);
+	//		}
+	//		glEnd();
 
 
-		}
-		glEndList();
-	}
+	//		glDisable(GL_NORMALIZE);
+
+
+	//	}
+	//	glEndList();
+	//}
 
 
 	void Co3View::createSurfaceList(const triangleMesh& trm)
@@ -1186,60 +1209,60 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 	}
 
 
-	void Co3View::createSurfaceList2(long ** face, float *facecolor, long nf, float ** point, long np){
+	//void Co3View::createSurfaceList2(long ** face, float *facecolor, long nf, float ** point, long np){
 
-		m_surfaceList2 = glGenLists(1);
-		glNewList(m_surfaceList2, GL_COMPILE);
+	//	m_surfaceList2 = glGenLists(1);
+	//	glNewList(m_surfaceList2, GL_COMPILE);
 
-		long i,j,k;
+	//	long i,j,k;
 
-		float v1[3];
-		float v2[3];
-		float nor[3];
-		float innerp[3]={0,0,0};
+	//	float v1[3];
+	//	float v2[3];
+	//	float nor[3];
+	//	float innerp[3]={0,0,0};
 
-		float rgba[4];
+	//	float rgba[4];
 
-		float mxcv=findmax(facecolor,nf);
-		float mncv=findmin(facecolor,nf);
-		//float mxcv=0.5;
-		//float mncv=0.2;
+	//	float mxcv=findmax(facecolor,nf);
+	//	float mncv=findmin(facecolor,nf);
+	//	//float mxcv=0.5;
+	//	//float mncv=0.2;
 
-		for(i=1;i<=nf;i++){
-			glEnable(GL_NORMALIZE);
+	//	for(i=1;i<=nf;i++){
+	//		glEnable(GL_NORMALIZE);
 
-			//genColor(rgba,(facecolor[i]-mncv)/(mxcv-mncv)*0.8);
-			//glColor4fv(rgba);
+	//		//genColor(rgba,(facecolor[i]-mncv)/(mxcv-mncv)*0.8);
+	//		//glColor4fv(rgba);
 
-			glBegin(GL_TRIANGLES);
-
-
-			for(k=1;k<=3;k++){
-				v1[k-1]=point[face[i][1]][k]-point[face[i][3]][k];
-				v2[k-1]=point[face[i][2]][k]-point[face[i][3]][k];
-			}
-			nor[0]=v1[1]*v2[2]-v1[2]*v2[1];
-			nor[1]=v1[2]*v2[0]-v1[0]*v2[2];
-			nor[2]=v1[0]*v2[1]-v1[1]*v2[0];
+	//		glBegin(GL_TRIANGLES);
 
 
-			for(j=1;j<=3;j++){
-				genColor(rgba,(point[face[i][j]][4]-mncv)/(mxcv-mncv)*0.8);
-				glColor4fv(rgba);
-
-				selectNormal(nor,&point[face[i][j]][1],innerp,true);
-				glNormal3fv(nor);
-				glVertex3fv(&point[face[i][j]][1]);
-			}
-			glEnd();
+	//		for(k=1;k<=3;k++){
+	//			v1[k-1]=point[face[i][1]][k]-point[face[i][3]][k];
+	//			v2[k-1]=point[face[i][2]][k]-point[face[i][3]][k];
+	//		}
+	//		nor[0]=v1[1]*v2[2]-v1[2]*v2[1];
+	//		nor[1]=v1[2]*v2[0]-v1[0]*v2[2];
+	//		nor[2]=v1[0]*v2[1]-v1[1]*v2[0];
 
 
-			glDisable(GL_NORMALIZE);
+	//		for(j=1;j<=3;j++){
+	//			genColor(rgba,(point[face[i][j]][4]-mncv)/(mxcv-mncv)*0.8);
+	//			glColor4fv(rgba);
+
+	//			selectNormal(nor,&point[face[i][j]][1],innerp,true);
+	//			glNormal3fv(nor);
+	//			glVertex3fv(&point[face[i][j]][1]);
+	//		}
+	//		glEnd();
 
 
-		}
-		glEndList();
-	}
+	//		glDisable(GL_NORMALIZE);
+
+
+	//	}
+	//	glEndList();
+	//}
 
 	void Co3View::createSurfaceList2(const triangleMesh& trm)
 	{
@@ -1256,11 +1279,11 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 
 		float rgba[4];
 
-		//float mxcv=trm.maxPointValue;
-		//float mncv=trm.minPointValue;
+		float mxcv=trm.maxPointValue;
+		float mncv=trm.minPointValue;
 
-		float mxcv=trm.maxPointValueInterp;
-		float mncv=trm.minPointValueInterp;
+		//float mxcv=trm.maxPointValueInterp;
+		//float mncv=trm.minPointValueInterp;
 
 		//float mxcv=0.5;
 		//float mncv=0.2;
@@ -1284,8 +1307,8 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 
 
 			for(j=1;j<=3;j++){
-				//genColor(rgba,(trm.pointValue[trm.face[i][j]]-mncv)/(mxcv-mncv)*0.8);
-				genColor(rgba,(trm.pointValueInterp[trm.face[i][j]]-mncv)/(mxcv-mncv)*0.8);
+				genColor(rgba,(trm.pointValue[trm.face[i][j]]-mncv)/(mxcv-mncv)*0.8);
+				//genColor(rgba,(trm.pointValueInterp[trm.face[i][j]]-mncv)/(mxcv-mncv)*0.8);
 				glColor4fv(rgba);
 
 				//selectNormal(nor,&trm.point[trm.face[i][j]][1],innerp,true);
@@ -1448,3 +1471,85 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 		glEndList();
 
 	}
+
+
+
+		void Co3View::createSurfaceList3(const triangleMesh& trm)
+	{
+
+		m_surfaceList3 = glGenLists(1);
+		glNewList(m_surfaceList3, GL_COMPILE);
+
+		long i,j,k;
+
+		float v1[3];
+		float v2[3];
+		float nor[3];
+		float innerp[3]={0,0,0};
+
+		float rgba[4];
+
+		//float mxcv=trm.maxPointValue;
+		//float mncv=trm.minPointValue;
+
+		float mxcv=trm.maxPointValueInterp;
+		float mncv=trm.minPointValueInterp;
+
+		//float mxcv=0.5;
+		//float mncv=0.2;
+
+		for(i=1;i<=trm.nface;i++){
+			glEnable(GL_NORMALIZE);
+
+			//genColor(rgba,(facecolor[i]-mncv)/(mxcv-mncv)*0.8);
+			//glColor4fv(rgba);
+
+			glBegin(GL_TRIANGLES);
+
+
+			//for(k=1;k<=3;k++){
+			//	v1[k-1]=trm.point[trm.face[i][1]][k]-trm.point[trm.face[i][3]][k];
+			//	v2[k-1]=trm.point[trm.face[i][2]][k]-trm.point[trm.face[i][3]][k];
+			//}
+			//nor[0]=v1[1]*v2[2]-v1[2]*v2[1];
+			//nor[1]=v1[2]*v2[0]-v1[0]*v2[2];
+			//nor[2]=v1[0]*v2[1]-v1[1]*v2[0];
+
+
+			for(j=1;j<=3;j++){
+				//genColor(rgba,(trm.pointValue[trm.face[i][j]]-mncv)/(mxcv-mncv)*0.8);
+				genColor(rgba,(trm.pointValueInterp[trm.face[i][j]]-mncv)/(mxcv-mncv)*0.8);
+				glColor4fv(rgba);
+
+				//selectNormal(nor,&trm.point[trm.face[i][j]][1],innerp,true);
+				//glNormal3fv(nor);
+				glVertex3fv(&trm.point[trm.face[i][j]][1]);
+			}
+			glEnd();
+
+
+			glDisable(GL_NORMALIZE);
+
+
+		}
+		glEndList();
+		}
+
+		void Co3View::OnViewPlane()
+		{
+			isplane=!isplane;
+			// TODO: Add your command handler code here
+		}
+
+
+		void Co3View::OnUpdateViewPlane(CCmdUI *pCmdUI)
+		{
+			// TODO: Add your command update UI handler code here
+
+					if(isplane==0){
+			pCmdUI->SetText(L"plane");
+		}
+		else{
+			pCmdUI->SetText(L"volume");
+		}
+		}

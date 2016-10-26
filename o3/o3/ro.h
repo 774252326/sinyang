@@ -3,8 +3,8 @@
 #include <fstream>
 //#include <vector>
 #include <iostream>
-#include "funT\nrutilT.h"
-#include "funT\paddingT.h"
+#include "../../funT\nrutilT.h"
+#include "../../funT\paddingT.h"
 //using namespace std;
 
 //void readf2(char *fn, float **dt, long r, long c){

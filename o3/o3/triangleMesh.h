@@ -37,7 +37,7 @@ public:
 	//edge[][1..2] is two vertex
 	long **edge;
 	// generate edge list from faceNext matrix
-	void genEdge(BOOL isvolume);
+	void genEdge(int isvolume);
 	long nedge;
 	// nface*3 matrix from face to edge
 	long **faceEdge;
@@ -78,5 +78,7 @@ public:
 	long dim;
 	float maxPointValueInterp;
 	float minPointValueInterp;
+	void genContourMapInterp(long contourNumber);
+	void loadPointAndFace(float ** pt, long np, long ** fc, long nf, int isvolume);
 };
 

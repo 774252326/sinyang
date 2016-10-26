@@ -125,6 +125,14 @@ public:
 	//triangleMesh tm;
 	void createContourList(const triangleMesh& trm);
 	GLuint m_contourList;
+
+	void createSurfaceList3(const triangleMesh& trm);
+	
+
+	GLuint m_surfaceList3;
+	int isplane;
+	afx_msg void OnViewPlane();
+	afx_msg void OnUpdateViewPlane(CCmdUI *pCmdUI);
 };
 
 #ifndef _DEBUG  // debug version in o3View.cpp
