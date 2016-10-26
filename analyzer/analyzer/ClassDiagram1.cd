@@ -1,239 +1,246 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="CMFCCaptionBarA" Collapsed="true">
-    <Position X="0.75" Y="3.5" Width="1.75" />
+  <Class Name="ListCtrlB" Collapsed="true">
+    <Position X="2.75" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAUAQAwAJAEAAAAAAJAAAiUCAGCAACAoAAFACACEACA=</HashCode>
-      <FileName>MFCCaptionBarA.h</FileName>
+      <HashCode>AAABQAAACAAAgAAEAQAABAAAAiAQAAAAEAIQgAAAAAA=</HashCode>
+      <FileName>list\ListCtrlB.h</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="m_itemEdit" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="ListCtrlA" Collapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAQAAAAAgAAAAAAABAAAAAAAAAAAAAEAAAAAAAA=</HashCode>
+      <FileName>list\listctrla.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ListCtrlC" Collapsed="true">
+    <Position X="6.25" Y="0.5" Width="1.5" />
+    <NestedTypes>
+      <Enum Name="ListCtrlC::eType" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>list\ListCtrlC.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <AssociationLine Name="m_itemEditInt" Type="EditC&lt;T&gt;">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.1" Y="0.425" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="m_itemEditReal" Type="EditC&lt;T&gt;">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-1.273" Y="0.516" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>CwABYAABAAgAAAAAABAABAAgAgAAAAAAMAQAAAAgJQg=</HashCode>
+      <FileName>list\ListCtrlC.h</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="m_itemEditInt" />
+      <Field Name="m_itemEditReal" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="ListCtrlAA" Collapsed="true">
+    <Position X="9" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAgIAAAAAAAAAChAAAAAABAAAAABAAAAAAA=</HashCode>
+      <FileName>list\ListCtrlAA.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EditB" Collapsed="true">
+    <Position X="2.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIQAAAAAABAAAAAAAIAAAAABAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>list\EditB.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EditC&lt;T&gt;" Collapsed="true">
+    <Position X="6.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAAQBAAAABAAQAAAAAAAAAAAAABAAAAgAAA=</HashCode>
+      <FileName>list\editc.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PlotWnd" Collapsed="true">
+    <Position X="6.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>iCSAAAgiBCEAIEiAAAAAAgDEiDAgIQAEQAQBAAKRQBA=</HashCode>
+      <FileName>plot\PlotWnd.h</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="blankPS" />
+      <Field Name="pdex" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="PlotSpec" Collapsed="true">
+    <Position X="6.75" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAHACAIIAIIAApADAAAAAUAAADRgFACAABQoAAABAAA=</HashCode>
+      <FileName>struct1\plotspec.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PlotDataEx" Collapsed="true">
+    <Position X="9.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>MAAKAAAAgAAAAhgAAAAAAAAAQCAAAAAAAAAgAEABERQ=</HashCode>
+      <FileName>struct1\plotdataex.hpp</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="lgc" />
+      <Field Name="lgs" />
+      <Field Name="pd" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="LegendCondition" Collapsed="true">
+    <Position X="11.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAgAAAAAAAAACACAAAgCAAAECAAAAgAAAAAAE=</HashCode>
+      <FileName>struct1\legendcondition.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LegendSpec" Collapsed="true">
+    <Position X="11.75" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAABIAAAAQAgICACQgIAAAASAAAAAAAAAkEBAAAAA=</HashCode>
+      <FileName>struct1\legendspec.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PlotData" Collapsed="true">
+    <Position X="9.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EEgAAAQIAkAQAoAEEAAAAIAAEGAAAAAiAAIiAAFAAAA=</HashCode>
+      <FileName>struct1\plotdata.hpp</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="ps" />
+      <Field Name="raw" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="RawData" Collapsed="true">
+    <Position X="9.5" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EIAAAAgIAEACAIAkAAASAABgACAAQAAAAADgAABkAAA=</HashCode>
+      <FileName>struct1\rawdata.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="COutputListA" Collapsed="true">
+    <Position X="0.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAABAAACAAIAAIgAAQACAAAAAAAAAACAAAAAA=</HashCode>
+      <FileName>list\OutputListA.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CanalyzerView" Collapsed="true">
+    <Position X="2.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABBAAQAIBlAAAEACEBAgQBAkCBAgAEQhE4NAEIMCQY=</HashCode>
+      <FileName>analyzerView.h</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="pw" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="CanalyzerDoc" Collapsed="true">
+    <Position X="2.25" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAEAQAAQAAAAACAAAgAwgASokAAAAFEAABAAAAIA=</HashCode>
+      <FileName>analyzerDoc.h</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="da" />
+      <Field Name="p3todo" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="DocDataEx" Collapsed="true">
+    <Position X="4.75" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QEQQAMIBAIACQgEQSABYQMIkCgQAACEAAEQkDEBCEAA=</HashCode>
+      <FileName>struct\docdataex.hpp</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="p3done" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="SAPara" Collapsed="true">
+    <Position X="4.75" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAkAAAAKAAAACAAAAAAAAAgAAAAAgA=</HashCode>
+      <FileName>struct\sapara.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DocData" Collapsed="true">
+    <Position X="7" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAAAAAAIAAAhAAAAAAAAAAAAACEAAAAAgAAgAABAAAA=</HashCode>
+      <FileName>struct\docdata.hpp</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="p1" />
+      <Field Name="p2" />
+      <Field Name="p3" />
+      <Field Name="raw" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="ANParaEx" Collapsed="true">
+    <Position X="9.5" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAABAAAACAACAAAAAAAAAgACAAACA=</HashCode>
+      <FileName>struct\anparaex.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CVPara" Collapsed="true">
+    <Position X="7" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAgEAAAAAAAQAQQAAAAECAAEADAAAAgAAAAAAQ=</HashCode>
+      <FileName>struct\vpara.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ANPara" Collapsed="true">
+    <Position X="12" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAgggAAABAQAASAgAAAAAAAhAAAAAgA=</HashCode>
+      <FileName>struct\anpara.hpp</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="CMainFrame" Collapsed="true">
-    <Position X="0.75" Y="2.25" Width="1.5" />
+    <Position X="1.25" Y="14" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>BIBBCBBIAAlAIASAOACCiBAAoCEgEgAgAQBYKgAQMhA=</HashCode>
+      <HashCode>BACRCBlJAAFAYwSDuBC6iYDEoyFmEgAgASBQMBSQshE=</HashCode>
       <FileName>MainFrm.h</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Field Name="m_wndOutput" />
-      <Field Name="m_wndCaptionBar" />
+      <Field Name="psheetml" />
       <Field Name="pst" />
+      <Field Name="m_wndOutput" />
     </ShowAsAssociation>
   </Class>
-  <Class Name="COutputWnd" Collapsed="true">
-    <Position X="3.75" Y="2.25" Width="1.5" />
+  <Class Name="PropertySheetA1ML" Collapsed="true">
+    <Position X="4.75" Y="14" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AFAAAAAAAAECAAAAAAAABAAAACQAAAAABAAAIAAAAAA=</HashCode>
+      <HashCode>AAAAAAEAAAAAACAAAQAAAAAAAAAAAACAAAADgAAAAAA=</HashCode>
+      <FileName>property\propertysheeta1ml.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="COutputWnd" Collapsed="true">
+    <Position X="1.25" Y="13" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAAAAAECAAAAAAAABAAAACQAAAAABAAAIAAAAAA=</HashCode>
       <FileName>OutputWnd.h</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Field Name="m_listCtrlMonitor" />
     </ShowAsAssociation>
   </Class>
-  <Class Name="COutputList" Collapsed="true">
-    <Position X="7" Y="2.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AABAAAAAAEAAgAABAAAAgAAAAAAAAAAAIAABQAAIAAA=</HashCode>
-      <FileName>OutputWnd.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="CanalyzerView" Collapsed="true">
-    <Position X="10" Y="2.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>IGCJAAAAABkAAACIGBAAgABAgLAAAAEAgAgFAEAYUAA=</HashCode>
-      <FileName>analyzerView.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="CanalyzerViewR" Collapsed="true">
-    <Position X="12" Y="2.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>IGDIAAAAABkAAACIGBAAgABAgLAAAAEAgAgFAEAYUAA=</HashCode>
-      <FileName>analyzerViewR.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="CanalyzerDoc" Collapsed="true">
-    <Position X="0.5" Y="8" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>CAIAAEAAAAAAAAAACAAYgAggASkgAAAAgAAEAAEAAAA=</HashCode>
-      <FileName>analyzerDoc.h</FileName>
-    </TypeIdentifier>
-    <ShowAsAssociation>
-      <Field Name="p1" />
-      <Field Name="p2" />
-      <Field Name="p3" />
-    </ShowAsAssociation>
-  </Class>
-  <Class Name="ANPara" Collapsed="true">
-    <Position X="4.25" Y="10" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>EAAAAAAAAAAAAAgggAAABAQAASAgAAAAAAAhAAAAAAA=</HashCode>
-      <FileName>ANPara.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="CVPara" Collapsed="true">
-    <Position X="4.25" Y="9" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAABAAAgEAAAAAAAQAQQAAAAECAAEACAAAAgAAAAAAQ=</HashCode>
-      <FileName>VPara.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="SAPara" Collapsed="true">
-    <Position X="4.25" Y="8" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAKAAAACAAAAAAAAAgAAAAAgA=</HashCode>
-      <FileName>SAPara.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="pcctB" Collapsed="true">
-    <Position X="9.25" Y="0.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>aEAIBAAAAAAIAAIBAAAAAAAAAAACCJBAAAAAgAAAQAA=</HashCode>
-      <FileName>pcctB.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="CanalyzerApp" Collapsed="true">
-    <Position X="5.75" Y="0.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAEAAAAAAAABQAAAAAQCAAAZAAACAAA=</HashCode>
-      <FileName>analyzer.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="AnalysisParametersPage" Collapsed="true">
-    <Position X="6.75" Y="10" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AQQAAAGEAAAAAAAAABMACCAAACAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>AnalysisParametersPage.h</FileName>
-    </TypeIdentifier>
-    <ShowAsAssociation>
-      <Field Name="para" />
-    </ShowAsAssociation>
-  </Class>
-  <Class Name="CVParametersPage" Collapsed="true">
-    <Position X="6.75" Y="9" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AQQAAAEAAAAAAAAAABEACCAAgCAAAAAAAAAAAAAACAA=</HashCode>
-      <FileName>CVParametersPage.h</FileName>
-    </TypeIdentifier>
-    <ShowAsAssociation>
-      <Field Name="para" />
-    </ShowAsAssociation>
-  </Class>
-  <Class Name="PlotData" Collapsed="true">
-    <Position X="8.75" Y="6.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AEAAAAQQAEAAQAAEAAACAEAAACAgAAAgBADiAAAkAAA=</HashCode>
-      <FileName>PlotData.h</FileName>
-    </TypeIdentifier>
-    <ShowAsAssociation>
-      <Field Name="psp" />
-    </ShowAsAssociation>
-  </Class>
-  <Class Name="PlotSettingPage" Collapsed="true">
-    <Position X="11.5" Y="6.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>IwQAAAEAAAAAAAAAIBAACEAIACAgAEAgAIAAAACAAAI=</HashCode>
-      <FileName>PlotSettingPage.h</FileName>
-    </TypeIdentifier>
-    <ShowAsAssociation>
-      <Field Name="fs" />
-      <Field Name="pslist" />
-    </ShowAsAssociation>
-  </Class>
-  <Class Name="CEditList" Collapsed="true">
-    <Position X="11.5" Y="8" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>CgAAAAAEAAAAAAAAEAcAAAASgDKAAAAAIAEAAAAAAQA=</HashCode>
-      <FileName>EditList.h</FileName>
-    </TypeIdentifier>
-    <ShowAsAssociation>
-      <Field Name="m_fGetType" />
-    </ShowAsAssociation>
-  </Class>
-  <Class Name="pcct" Collapsed="true">
-    <Position X="12.5" Y="4.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>BEABBABAAAAYABABAABAAAAAiAIABgJEAABIAAJAQAA=</HashCode>
-      <FileName>pcct.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="SARCalibCurve" Collapsed="true">
-    <Position X="6.75" Y="6.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>ABAAAAAACAAAACIAAAAAAAAAACAAAAAAAAAAAAAVAQA=</HashCode>
-      <FileName>SARCalibCurve.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="LineSpec" Collapsed="true">
-    <Position X="5.5" Y="3.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>EAAgAAAACAAAAAAEAAAAAAAABCAEAAAAAAAgAIAAAAE=</HashCode>
-      <FileName>linespec.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="CObject" Collapsed="true">
-    <Position X="5.5" Y="4.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AACAAAAAQAQAAAAACAAAgQAAADAAAAAAEUAgAEAAAAA=</HashCode>
-      <FileName>c:\program files (x86)\microsoft visual studio 10.0\vc\atlmfc\include\afx.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="CComboItem" Collapsed="true">
-    <Position X="13.5" Y="8" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAACAAAEAAAgAAAAABAAQFCACAACAAAOAAAAAAAA=</HashCode>
-      <FileName>ComboItem.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="DataOut" Collapsed="true">
-    <Position X="2.5" Y="6.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAKCAEAAAABIAgAAAhAgA=</HashCode>
-      <FileName>DataOut.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="PlotSpec" Collapsed="true">
-    <Position X="9.75" Y="4.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAACAAIAIAAABAAAAAAAAAAACQAFACAABAgAAABAAA=</HashCode>
-      <FileName>PlotSpec.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="CEditItem" Collapsed="true">
-    <Position X="13.5" Y="9" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAEAAAAgAAAQABAAQFSACAAAAAAIACAAAAAA=</HashCode>
-      <FileName>EditItem.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="CColorButton" Collapsed="true">
-    <Position X="8.75" Y="1.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AACIAAAAAAAAAAAAAAAAAAAAAAgAAACAAAAAAAABAAA=</HashCode>
-      <FileName>ColorButton.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="SolutionAdditionParametersPage" Collapsed="true">
-    <Position X="6.75" Y="8" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>IQAAAAEAAAAAAAAgIBEACCAAACAAACAAAAAAAAIAAAI=</HashCode>
-      <FileName>solutionadditionparameterspage.h</FileName>
-    </TypeIdentifier>
-    <ShowAsAssociation>
-      <Field Name="m_SAPlist" />
-      <Field Name="para" />
-    </ShowAsAssociation>
-  </Class>
-  <Typedef Name="fGetType" Collapsed="true">
-    <Position X="10" Y="10" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>EditList.h</FileName>
-    </TypeIdentifier>
-  </Typedef>
   <Enum Name="ProcessState" Collapsed="true">
-    <Position X="1" Y="1" Width="1.5" />
+    <Position X="1.25" Y="15.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAggAAAAAAAAAAAAIAA=</HashCode>
-      <FileName>typedefine.h</FileName>
+      <FileName>MainFrm.h</FileName>
     </TypeIdentifier>
   </Enum>
   <Font Name="Microsoft JhengHei" Size="9" />

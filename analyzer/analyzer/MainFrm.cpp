@@ -197,7 +197,15 @@ UINT CMainFrame::PROCESS(LPVOID pParam)
 							// unlock the resource for others.
 							singleLock.Unlock();
 						}
-						mf->SendMessage(MESSAGE_UPDATE_DOL,NULL,NULL);						
+						
+
+							pDoc->UpdateState();
+
+
+::SendMessage(mf->GetSafeHwnd(),MESSAGE_UPDATE_DOL,PW_INIT,PW_INIT);
+
+	::SendMessage(mf->GetSafeHwnd(),MESSAGE_CLOSE_SAP_SHEET,NULL,NULL);
+
 					}
 					break;
 
@@ -230,7 +238,12 @@ UINT CMainFrame::PROCESS(LPVOID pParam)
 							// unlock the resource for others.
 							singleLock.Unlock();
 						}
-						mf->SendMessage(MESSAGE_UPDATE_DOL,NULL,NULL);
+													
+						pDoc->UpdateState();
+
+	::SendMessage(mf->GetSafeHwnd(),MESSAGE_UPDATE_DOL,PW_INIT,PW_INIT);
+
+	::SendMessage(mf->GetSafeHwnd(),MESSAGE_CLOSE_SAP_SHEET,NULL,NULL);
 
 					}
 					break;
@@ -648,7 +661,7 @@ void CMainFrame::OnApplicationLook(UINT id)
 		CDockingManager::SetDockingMode(DT_SMART);
 	}
 
-	
+
 
 	RedrawWindow(NULL, NULL, RDW_ALLCHILDREN | RDW_INVALIDATE | RDW_UPDATENOW | RDW_FRAME | RDW_ERASE);
 
@@ -909,7 +922,7 @@ void CMainFrame::OnAnalysisMethodsetup()
 				//cppage->dwStyle|=WS_DISABLED;
 				appage->para=pDoc->da.p1;
 				cppage->para=pDoc->da.p2;
-				
+
 
 				psheetml->AddPage(appage);
 				psheetml->AddPage(cppage);
@@ -966,17 +979,17 @@ void CMainFrame::ViewAll(WPARAM lwp, WPARAM rwp)
 
 afx_msg LRESULT CMainFrame::OnMessageUpdateDol(WPARAM wParam, LPARAM lParam)
 {
-	CanalyzerDoc *pDoc=(CanalyzerDoc*)GetActiveDocument();
+	//CanalyzerDoc *pDoc=(CanalyzerDoc*)GetActiveDocument();
 
-	pDoc->UpdateState();
+	//pDoc->UpdateState();
 
 	//TRACE("\n%d",pDoc->da.runstate);
 
 	//::PostMessage(this->GetSafeHwnd(),MESSAGE_CLOSE_SAP_SHEET,NULL,NULL);
 
-	ViewAll(PW_INIT,PW_INIT);
+	ViewAll(wParam,lParam);
 
-	::SendMessage(this->GetSafeHwnd(),MESSAGE_CLOSE_SAP_SHEET,NULL,NULL);
+	//::SendMessage(this->GetSafeHwnd(),MESSAGE_CLOSE_SAP_SHEET,NULL,NULL);
 
 	return 0;
 }
@@ -984,14 +997,6 @@ afx_msg LRESULT CMainFrame::OnMessageUpdateDol(WPARAM wParam, LPARAM lParam)
 
 afx_msg LRESULT CMainFrame::OnMessageCloseSapSheet(WPARAM wParam, LPARAM lParam)
 {
-
-	//CanalyzerViewL *lv=(CanalyzerViewL*)LeftPane();
-	//CanalyzerViewR *rv=(CanalyzerViewR*)RightPane();
-	//::PostMessage(lv->GetSafeHwnd(),MESSAGE_UPDATE_RAW,PW_INIT,NULL);
-	//::PostMessage(rv->GetSafeHwnd(),MESSAGE_UPDATE_TEST,PW_INIT,NULL);
-	//::PostMessage(GetOutputWnd()->GetListCtrl()->GetSafeHwnd(),MESSAGE_SHOW_DOL,NULL,NULL);
-
-
 
 	CanalyzerDoc *pDoc=(CanalyzerDoc*)GetActiveDocument();
 
@@ -1108,8 +1113,6 @@ void CMainFrame::OnAnalysisAbortanalysis()
 	//	}
 	//}
 
-
-	//if(::TerminateThread(pWriteA->m_hThread,0)!=FALSE)
 	{
 		pst=stop;
 		HideWaitDlg();
@@ -1122,20 +1125,20 @@ void CMainFrame::OnAnalysisStartanalysis()
 	// TODO: Add your command handler code here
 
 	mypara * pa1=new mypara;
-	//pa1->leftp=(CanalyzerViewL*)LeftPane();
-	//pa1->rightp=(CanalyzerViewR*)RightPane();
-	//pa1->outw=this->GetOutputWnd();
-	//pa1->cba=this->GetCaptionBar();
-	//pa1->ol=this->GetOutputWnd()->GetListCtrl();
-	//pa1->psta=&pst;
-	//pa1->wd=wd;
 	pa1->adoc=(CanalyzerDoc*)(GetActiveDocument());
 	pa1->mf=this;
 
 	pa1->adoc->ClearExpData();
-	OnMessageUpdateDol(NULL,NULL);
-	((CanalyzerView*)LeftPane())->pw.bMouseCursor=((CanalyzerView*)RightPane())->pw.bMouseCursor=false;
+	//OnMessageUpdateDol(NULL,NULL);
 
+	pa1->adoc->UpdateState();
+
+	//ViewAll(PW_INIT,PW_INIT);
+	::SendMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_DOL,PW_INIT,PW_INIT);
+
+	::SendMessage(this->GetSafeHwnd(),MESSAGE_CLOSE_SAP_SHEET,NULL,NULL);
+
+	((CanalyzerView*)LeftPane())->pw.bMouseCursor=((CanalyzerView*)RightPane())->pw.bMouseCursor=false;
 
 	pWriteA=AfxBeginThread(PROCESS,
 		(LPVOID)(pa1),
@@ -1143,10 +1146,7 @@ void CMainFrame::OnAnalysisStartanalysis()
 		0,
 		CREATE_SUSPENDED);	
 
-	//pst=running;
-
 	pWriteA->ResumeThread();
-
 }
 
 
@@ -1154,8 +1154,7 @@ void CMainFrame::OnAnalysisStartanalysis()
 void CMainFrame::OnAnalysisPause()
 {
 	// TODO: Add your command handler code here
-
-
+	
 	switch(pst){
 	case running:
 		//if(SuspendThread(pWriteA->m_hThread)!=(DWORD)(-1))
@@ -1387,13 +1386,7 @@ void CMainFrame::ChangeLang(void)
 
 	this->GetOutputWnd()->SetWindowTextW(strOutputWnd);
 
-	//CanalyzerViewL *lv=(CanalyzerViewL*)LeftPane();
-	//CanalyzerViewR *rv=(CanalyzerViewR*)RightPane();
-	//::PostMessage(lv->GetSafeHwnd(),MESSAGE_UPDATE_RAW,NULL,NULL);
-	//::PostMessage(rv->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
-	//::PostMessage(GetOutputWnd()->GetListCtrl()->GetSafeHwnd(),MESSAGE_SHOW_DOL,NULL,NULL);
-
-	ViewAll();
+	::SendMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_DOL,NULL,NULL);
 
 	this->GetOutputWnd()->GetListCtrl()->ResetHeader();
 

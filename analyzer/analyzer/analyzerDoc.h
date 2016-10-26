@@ -24,9 +24,10 @@ public:
 	CCriticalSection m_CritSectionSAP;
 
 // Operations
-public:
+protected:
 	void Show(void);
-	public:
+public:
+	void ClearExpData(void);
 	UINT UpdateState(void);
 	void SetSAPtodo(const SAPara & ptd);
 // Overrides
@@ -59,6 +60,5 @@ protected:
 	void SetSearchContent(const CString& value);
 #endif // SHARED_HANDLERS
 
-public:
-	void ClearExpData(void);
+
 };

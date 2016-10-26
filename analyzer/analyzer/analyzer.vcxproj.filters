@@ -436,6 +436,7 @@
     <None Include="hlp\permission.htm">
       <Filter>HTML Help Topics</Filter>
     </None>
+    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="analyzer.h">
@@ -459,9 +460,6 @@
     <ClInclude Include="OutputWnd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="list\EditB.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="list\ListCtrlAA.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -475,6 +473,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="list\ListCtrlC.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="list\EditB.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -497,9 +498,6 @@
     <ClCompile Include="OutputWnd.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="list\EditB.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="list\ListCtrlAA.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -513,6 +511,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="list\ListCtrlC.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="list\EditB.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

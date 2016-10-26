@@ -17,6 +17,7 @@ COutputListA::COutputListA(void)
 COutputListA::~COutputListA(void)
 {
 }
+
 BEGIN_MESSAGE_MAP(COutputListA, ListCtrlA)
 	ON_WM_CREATE()
 	ON_MESSAGE(MESSAGE_SHOW_DOL, &COutputListA::OnMessageShowDol)
