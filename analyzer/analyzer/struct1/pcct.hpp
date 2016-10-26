@@ -21,10 +21,10 @@ public:
 
 	static CString folderpath()
 	{
-		CString  strdir,tmpdir; 
+		CString  strdir,tmpdir;
 		TCHAR szPath[MAX_PATH] = {0};
 		::GetModuleFileName(NULL, szPath, MAX_PATH);
-		tmpdir=szPath; 
+		tmpdir=szPath;
 		strdir=tmpdir.Left(tmpdir.ReverseFind('\\'));
 		return strdir;
 	};

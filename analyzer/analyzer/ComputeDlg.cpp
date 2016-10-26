@@ -91,7 +91,7 @@ BOOL ComputeDlg::OnInitDialog()
 	CSize gap2(20,20);
 
 	int editH=50;
-
+	int btnH=22;
 	int offset=30;
 
 	CPoint pt(gap1);
@@ -100,14 +100,14 @@ BOOL ComputeDlg::OnInitDialog()
 
 	CString str;
 
-	CButton *pBtn;
+	//CButton *pBtn;
 
 	str.LoadStringW(IDS_STRING_RESULT);
 	this->SetWindowTextW(str);
 
 
 
-	CEdit *pEdit;
+	//CEdit *pEdit;
 
 	//pEdit=new CEdit;
 	EditEDRS_ID.CreateEx(
@@ -152,8 +152,9 @@ BOOL ComputeDlg::OnInitDialog()
 
 				imgrc=CRect(pt,CSize(w,imgH));
 
-				int btnH=22;
-				int listH=(m_list.rowH+2)*m_list.vl.size()+24;
+				int listgapH=2;
+				int listheaderH=24;
+				int listH=(m_list.rowH+listgapH)*m_list.vl.size()+listheaderH;
 
 				winSize.cy+=imgH+gap2.cy*2+listH+btnH;
 
@@ -198,6 +199,9 @@ BOOL ComputeDlg::OnInitDialog()
 					this,
 					IDS_BTN_COMPUTE);
 
+				pt.y+=btnH;
+				
+
 				break;
 
 
@@ -207,6 +211,13 @@ BOOL ComputeDlg::OnInitDialog()
 			break;
 	}
 
+	pt.y+=gap2.cy;
+	winSize.cy+=gap2.cy;
+	GetDlgItem(IDCANCEL)->MoveWindow( CRect(pt,CSize(w,btnH)) );
+	GetDlgItem(IDCANCEL)->ShowWindow(SW_SHOW);
+	str.LoadStringW(IDS_STRING_CLOSE1);
+	GetDlgItem(IDCANCEL)->SetWindowTextW(str);
+	winSize.cy+=btnH;
 
 	::SetWindowPos(this->GetSafeHwnd(),
 		HWND_TOP,

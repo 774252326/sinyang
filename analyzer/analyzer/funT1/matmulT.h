@@ -6,7 +6,7 @@ bool matmul(T **mat1, long rs1, long re1, long cs1, long ce1,
 	T **mat2, long rs2, long re2, long cs2, long ce2, 
 	T **mat3){
 		//matrix multiply
-			//mat3=mat1 x mat2
+		//mat3=mat1 x mat2
 		if(ce1-cs1!=re2-rs2)
 			return false;
 		else{
@@ -44,7 +44,7 @@ void mrmmtp(T **A, long r, long c, T **AAt){
 //matrix left multiply matrix transpose
 template <typename T>
 void mlmmtp(T **A, long r, long c, T **AtA){
-	
+
 	T **At=matrix<T>(1,c,1,r);
 	mattp(A,1,r,1,c,At);
 	mrmmtp(At,c,r,AtA);
@@ -56,7 +56,7 @@ void mlmmtp(T **A, long r, long c, T **AtA){
 
 template <typename T, typename TT>
 void mattp(T **mat1, long rs1, long re1, long cs1, long ce1, TT **mat2){
-//matrix transpose
+	//matrix transpose
 	long r3,c3;
 
 	for( r3=cs1; r3<=ce1; r3++ ){
@@ -71,8 +71,8 @@ void mattp(T **mat1, long rs1, long re1, long cs1, long ce1, TT **mat2){
 template <typename T>
 bool mtXvt(T **mat1, long rs1, long re1, long cs1, long ce1, 
 	T *vt2, long rs2, long re2, T *vt3){
-//matrix multiply column vector
-			//vt3=mat1 x vt2
+		//matrix multiply column vector
+		//vt3=mat1 x vt2
 		if(ce1-cs1!=re2-rs2)
 			return false;
 		else{
@@ -81,12 +81,12 @@ bool mtXvt(T **mat1, long rs1, long re1, long cs1, long ce1,
 			T sum;
 			for( r3=rs1; r3<=re1; r3++ ){
 				//for( c3=cs2; c3<=ce2; c3++ ){
-					sum=0;
-					for( t3=cs1; t3<=ce1; t3++ ){
-						//sum+=mat1[r3][t3]*mat2[t3-cs1+rs2][c3];
-						sum+=mat1[r3][t3]*vt2[t3-cs1+rs2];
-					}
-					vt3[r3]=sum;
+				sum=0;
+				for( t3=cs1; t3<=ce1; t3++ ){
+					//sum+=mat1[r3][t3]*mat2[t3-cs1+rs2][c3];
+					sum+=mat1[r3][t3]*vt2[t3-cs1+rs2];
+				}
+				vt3[r3]=sum;
 				//}
 			}
 			return true;
@@ -107,19 +107,19 @@ template <typename T>
 void addv(T *x, long l, T ax){
 	T * tmp;
 	long j;
-				tmp=vector<T>(1,l+1);
-			for(j=1;j<=l;j++){
-				tmp[j]=x[j];
-			}
-			tmp[l+1]=ax;
+	tmp=vector<T>(1,l+1);
+	for(j=1;j<=l;j++){
+		tmp[j]=x[j];
+	}
+	tmp[l+1]=ax;
 
-			free_vector(x,1,l);
-			x=vector<T>(1,l+1);
-			for(j=1;j<=l+1;j++){
-				x[j]=tmp[j];
-			}
-			free_vector(tmp,1,l+1);
-			//lmn++;
+	free_vector(x,1,l);
+	x=vector<T>(1,l+1);
+	for(j=1;j<=l+1;j++){
+		x[j]=tmp[j];
+	}
+	free_vector(tmp,1,l+1);
+	//lmn++;
 }
 
 

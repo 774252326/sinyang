@@ -100,27 +100,8 @@ int WaitDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	this->SetWindowTextW(str);
 	this->ModifyStyle(WS_SYSMENU,NULL);
 
-
-
-	//pEdit=new CEdit;
-	EditIDS_EDIT_TIPS.CreateEx(
-		//WS_EX_CLIENTEDGE,
-		NULL,
-		L"Edit", 
-		m_tips,
-		//ES_LEFT
-		ES_CENTER
-		//|ES_AUTOHSCROLL 
-		|ES_READONLY
-		|WS_DISABLED
-		|WS_CHILD
-		|WS_VISIBLE,
-		CRect(pt,CSize(winSize.cx-2*gap1.cx,btnH)),
-		this,
-		IDS_EDIT_TIPS);
-
 	//CFont * pFont = new CFont; 
-	editfont.CreateFont(26, // nHeight
+	EditIDS_EDIT_TIPS.editfont.CreateFont(btnH, // nHeight
 		0, // nWidth 
 		0, // nEscapement 
 		0, // nOrientation 
@@ -134,7 +115,24 @@ int WaitDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		DEFAULT_QUALITY, // nQuality 
 		DEFAULT_PITCH | FF_SWISS, // nPitchAndFamily 
 		_T("Arial")); // lpszFac 
-	EditIDS_EDIT_TIPS.SetFont(&editfont,TRUE);
+
+	//pEdit=new CEdit;
+	EditIDS_EDIT_TIPS.CreateEx(
+		//WS_EX_CLIENTEDGE,
+		NULL,
+		L"Edit", 
+		L"",
+		//ES_LEFT
+		ES_CENTER
+		//|ES_AUTOHSCROLL 
+		//|ES_MULTILINE
+		|ES_READONLY
+		//|WS_DISABLED
+		|WS_CHILD
+		|WS_VISIBLE,
+		CRect(pt,CSize(winSize.cx-2*gap1.cx,btnH)),
+		this,
+		IDS_EDIT_TIPS);
 
 	pt.y+=btnH+gap1.cy;
 	pt.x+=(winSize.cx-btnW)/2-gap1.cx;

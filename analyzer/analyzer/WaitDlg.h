@@ -1,5 +1,5 @@
 #pragma once
-
+#include "StaticEdit.h"
 
 // WaitDlg dialog
 
@@ -28,9 +28,8 @@ public:
 	CString m_tips;
 	virtual BOOL OnInitDialog();
 
-	CFont  editfont;
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 
-	CEdit EditIDS_EDIT_TIPS;
+	StaticEdit EditIDS_EDIT_TIPS;
 	CButton btnIDOK;
 };

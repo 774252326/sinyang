@@ -53,9 +53,16 @@ void lspfit(T x[], T y[], long ndat, T a[], long ma, T **covar, T *chisq)
 	xtx=matrix<T>(1,ma,1,ma);
 	matmul(xmt,1,ma,1,ndat,xm,1,ndat,1,ma,xtx);
 
+	free_matrix(xm,1,ndat,1,ma);
+
+
 	T **xty;
 	xty=matrix<T>(1,ma,1,1);
 	matmul(xmt,1,ma,1,ndat,ym,1,ndat,1,1,xty);
+
+	free_matrix(ym,1,ndat,1,1);
+	free_matrix(xmt,1,ma,1,ndat);
+
 
 	T *aa;
 	aa=vector<T>(1,ma);
@@ -63,6 +70,7 @@ void lspfit(T x[], T y[], long ndat, T a[], long ma, T **covar, T *chisq)
 		aa[i]=xty[i][1];
 	}
 
+	free_matrix(xty,1,ma,1,1);
 
 	int* id;
 	id=vector<int>(1,ma);
@@ -71,11 +79,14 @@ void lspfit(T x[], T y[], long ndat, T a[], long ma, T **covar, T *chisq)
 	ludcmp(xtx,ma,id,&dd);
 	lubksb(xtx,ma,id,aa);
 
-		for(i=1;i<=ma;i++){
+	free_matrix(xtx,1,ma,1,ma);
+
+	for(i=1;i<=ma;i++){
 		a[i]=aa[i];
 	}
 
-
+	free_vector(aa,1,ma);
+	free_vector(id,1,ma);
 }
 
 
@@ -124,9 +135,18 @@ void lspfit(const std::vector<T> &x, const std::vector<T> &y, long ma, std::vect
 	xtx=matrix<T>(1,ma,1,ma);
 	matmul(xmt,1,ma,1,ndat,xm,1,ndat,1,ma,xtx);
 
+
+	free_matrix(xm,1,ndat,1,ma);
+
+
 	T **xty;
 	xty=matrix<T>(1,ma,1,1);
 	matmul(xmt,1,ma,1,ndat,ym,1,ndat,1,1,xty);
+
+
+	free_matrix(ym,1,ndat,1,1);
+	free_matrix(xmt,1,ma,1,ndat);
+
 
 	T *aa;
 	aa=vector<T>(1,ma);
@@ -134,6 +154,7 @@ void lspfit(const std::vector<T> &x, const std::vector<T> &y, long ma, std::vect
 		aa[i]=xty[i][1];
 	}
 
+	free_matrix(xty,1,ma,1,1);
 
 	int* id;
 	id=vector<int>(1,ma);
@@ -142,12 +163,16 @@ void lspfit(const std::vector<T> &x, const std::vector<T> &y, long ma, std::vect
 	ludcmp(xtx,ma,id,&dd);
 	lubksb(xtx,ma,id,aa);
 
+
+	free_matrix(xtx,1,ma,1,ma);
+
 	for(i=1;i<=ma;i++){
 		//a[i]=aa[i];
 		a.push_back(aa[i]);
 	}
 
-
+	free_vector(aa,1,ma);
+	free_vector(id,1,ma);
 
 }
 

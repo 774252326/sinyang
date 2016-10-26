@@ -9,8 +9,8 @@
 
 #include "../funT1/InterpXT.h"
 #include "../funT1/FitLineT.h"
+
 #include "../funT1/CSplineT.h"
-//#include "Point2d.hpp"
 #include "../funT1/piksr2T.h"
 #include "LineSeg.hpp"
 
@@ -40,7 +40,7 @@ public:
 			return str;
 	};
 
-	
+
 public:
 	std::vector<double> xll;
 	std::vector<double> yll;

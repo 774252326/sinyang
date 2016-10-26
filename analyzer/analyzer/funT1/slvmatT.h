@@ -30,6 +30,9 @@ void slvbmat(T **A, long n, long m1, long m2, T *b){
 	T ddd;
 	bandec(A,n,m1,m2,al,indx,&ddd);
 	banbks(A,n,m1,m2,al,indx,b);
+
+	free_matrix(al,1,n,1,m1);
+	free_vector(indx,1,n);
 }
 
 //solve X for least square linear fitting Y=AX
@@ -49,6 +52,8 @@ void slvlsq(T **A, long ny, long nx, T *Y, T *X){
 
 	slvmat(AtA,nx,X);
 
+	free_matrix(At,1,nx,1,ny);
+	free_matrix(AtA,1,nx,1,nx);
 }
 
 

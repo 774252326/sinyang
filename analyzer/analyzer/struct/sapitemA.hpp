@@ -1,5 +1,7 @@
 #pragma once
 #include "../ObjectF.hpp"
+#include "../resource.h"
+
 // sapitemA command target
 
 class sapitemA : public ObjectF
@@ -106,6 +108,43 @@ public:
 		}
 		return sia;
 	};
+
+	CString SolutionDescription(){
+		CString str=L"";
+		if(addType==4){
+			str.LoadStringW(IDS_STRING_VIRGIN_MAKEUP);
+		}
+		else{
+			if(isUnknownComposition()){
+				str.LoadStringW(IDS_STRING_SAMPLE);
+			}
+			else{
+				CString strt=L"";
+				if(Sconc>0){
+					strt.LoadStringW(IDS_STRING_S);
+					str+=strt;
+				}
+				
+								if(Aconc>0){
+					strt.LoadStringW(IDS_STRING_A);
+					str+=strt;
+				}
+				
+								if(Lconc>0){
+					strt.LoadStringW(IDS_STRING_L);
+					str+=strt;
+				}
+				
+				if(isMixedComposition()){
+					strt.LoadStringW(IDS_STRING_MIX);
+					str+=strt;
+				}
+				
+			}
+		}
+		return str;
+	};
+
 };
 
 

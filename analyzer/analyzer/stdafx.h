@@ -42,6 +42,15 @@
 
 
 
+//第一种  
+
+//1. 在APP开头处包含以下代码 
+
+ #define CRTDBG_MAP_ALLOC 
+
+ #include <stdlib.h> 
+
+ #include <crtdbg.h> 
 
 
 

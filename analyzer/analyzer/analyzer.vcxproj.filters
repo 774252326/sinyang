@@ -286,6 +286,9 @@
     <ClInclude Include="ParaList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="StaticEdit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="analyzer.cpp">
@@ -394,6 +397,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ParaList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StaticEdit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -195,17 +195,27 @@ bool ListCtrlSAP::GetItemSAP(int i, sapitemA & si)
 	strTemp=GetItemText(i,2);
 	si.Sconc=_wtof(strTemp.GetBuffer());
 
+	//strTemp.ReleaseBuffer(strTemp.GetAllocLength());
+
 	strTemp=GetItemText(i,3);
 	si.Aconc=_wtof(strTemp.GetBuffer());
+
+	//strTemp.ReleaseBuffer(strTemp.GetAllocLength());
 
 	strTemp=GetItemText(i,4);
 	si.Lconc=_wtof(strTemp.GetBuffer());
 
+	//strTemp.ReleaseBuffer(strTemp.GetAllocLength());
+
 	strTemp=GetItemText(i,5);
 	si.volconc=_wtof(strTemp.GetBuffer());
 
+	//strTemp.ReleaseBuffer(strTemp.GetAllocLength());
+
 	strTemp=GetItemText(i,6);
 	si.endRatio=_wtof(strTemp.GetBuffer());
+
+	//strTemp.ReleaseBuffer(strTemp.GetAllocLength());
 
 	return true;
 }

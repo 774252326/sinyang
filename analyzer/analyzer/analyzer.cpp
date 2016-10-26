@@ -6,6 +6,12 @@
 #include "afxwinappex.h"
 #include "afxdialogex.h"
 #include "analyzer.h"
+
+
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#endif
+
 #include "MainFrm.h"
 
 #include "analyzerDoc.h"
@@ -17,9 +23,13 @@
 
 #include "windowsversion.hpp"
 
-#ifdef _DEBUG
-#define new DEBUG_NEW
-#endif
+//#ifdef _DEBUG   
+//#ifndef DBG_NEW      
+//#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )      
+//#define new DBG_NEW   
+//#endif
+//#endif  // _DEBUG
+
 
 
 // CanalyzerApp
@@ -66,6 +76,11 @@ CanalyzerApp theApp;
 
 BOOL CanalyzerApp::InitInstance()
 {
+
+
+	//_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
+	 //_CrtDumpMemoryLeaks(); 
+
 	// InitCommonControlsEx() is required on Windows XP if an application
 	// manifest specifies use of ComCtl32.dll version 6 or later to enable
 	// visual styles.  Otherwise, any window creation will fail.
@@ -76,7 +91,13 @@ BOOL CanalyzerApp::InitInstance()
 	InitCtrls.dwICC = ICC_WIN95_CLASSES;
 	InitCommonControlsEx(&InitCtrls);
 
+
+
+
 	CWinAppEx::InitInstance();
+
+		//_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
+	 //_CrtDumpMemoryLeaks(); 
 
 	LANGID LangID=MAKELANGID(LANG_CHINESE_SIMPLIFIED,SUBLANG_CHINESE_SIMPLIFIED);
 	setLg(LangID);
@@ -183,6 +204,11 @@ BOOL CanalyzerApp::InitInstance()
 		return TRUE;
 	}
 	else{
+
+		sd->ShowWindow(SW_HIDE);
+		delete sd;
+		sd=NULL;
+
 		return FALSE;
 	}
 }
@@ -192,7 +218,11 @@ int CanalyzerApp::ExitInstance()
 	//TODO: handle additional resources you may have added
 	AfxOleTerm(FALSE);
 
+
+
 	return CWinAppEx::ExitInstance();
+
+	_CrtDumpMemoryLeaks(); 
 }
 
 // CanalyzerApp message handlers

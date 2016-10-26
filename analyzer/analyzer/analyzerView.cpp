@@ -12,14 +12,16 @@
 #include "analyzerDoc.h"
 #include "analyzerView.h"
 
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#endif
+
 #include "property\PlotSettingPageB.h"
 #include "property\PlotSettingPageC.h"
 #include "property\PropertySheetA.h"
 #include "ExportDataDlg.h"
 
-#ifdef _DEBUG
-#define new DEBUG_NEW
-#endif
+
 
 
 // CanalyzerView

@@ -13,6 +13,10 @@
 
 #include <propkey.h>
 
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#endif
+
 #include "MainFrm.h"
 #include "ComputeDlg.h"
 
@@ -21,9 +25,7 @@
 #include "analyzerView.h"
 
 
-#ifdef _DEBUG
-#define new DEBUG_NEW
-#endif
+
 
 // CanalyzerDoc
 

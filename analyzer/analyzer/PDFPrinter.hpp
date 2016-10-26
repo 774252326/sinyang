@@ -18,6 +18,17 @@
 class PDFPrinter
 {
 public:
+
+		static CString folderpath()
+	{
+		CString  strdir,tmpdir;
+		TCHAR szPath[MAX_PATH] = {0};
+		::GetModuleFileName(NULL, szPath, MAX_PATH);
+		tmpdir=szPath;
+		strdir=tmpdir.Left(tmpdir.ReverseFind('\\'));
+		return strdir;
+	};
+
 	static CString TimeString(bool bSeg=false)
 	{
 		const int l=20;
@@ -40,10 +51,14 @@ public:
 
 
 
-	static int AddPageNumber(const std::wstring fin, const std::wstring fout)
+	static int AddPageNumber(
+		const std::wstring fin, 
+		const std::wstring fout,
+		const std::wstring searchpath = L"C:\\Documents and Settings\\cvs\\Desktop\\analyzer\\analyzer\\analyzer"
+		)
 	{
 		/* This is where the data files are. Adjust as necessary. */
-		const std::wstring searchpath = L"../data";
+		
 
 		pdflib::PDFlib p;
 
@@ -1550,13 +1565,18 @@ public:
 		bool b4,
 		bool b5,
 		bool b6,
-		bool b7
+		bool b7,
+		const std::wstring temppdf = L"temp.pdf",
+		const std::wstring templogobmp = L"templogo.bmp",
+		const std::wstring searchpath = L""
 		)
 	{
 
-		const std::wstring searchpath = L"";
+		
 
-		const std::wstring temppdf = L"temp.pdf";
+		//const std::wstring temppdf = L"temp.pdf";
+		//const std::wstring templogobmp=L"templogo.bmp";
+
 
 		pdflib::PDFlib p;
 
@@ -1577,7 +1597,7 @@ public:
 		p.set_info(L"Title", L"starter_table");
 
 
-		CString templogobmp=L"templogo.bmp";
+
 
 
 
@@ -1586,14 +1606,12 @@ public:
 		CImage img;
 		//img.LoadFromResource(NULL,IDB_BITMAP_SINYANG);
 		img.Attach(HBITMAP(bmp));
-		HRESULT hResult = img.Save((LPCTSTR)templogobmp);
+		HRESULT hResult = img.Save(templogobmp.c_str());
 		bmp.DeleteObject();
 
 
 
 		int a;
-
-
 
 		std::vector<CString> res;
 		if(b2){
@@ -1601,11 +1619,12 @@ public:
 		}
 
 
-		a=pdfout6(p,ddex.p1,res,ddex.p2,ddex.p3,b1,b2,b3,b4,templogobmp.GetBuffer());
+		a=pdfout6(p,ddex.p1,res,ddex.p2,ddex.p3,b1,b2,b3,b4,templogobmp);
 
 		if(b5){
-			a=pdfout(p,ddex.dol,templogobmp.GetBuffer());
+			a=pdfout(p,ddex.dol,templogobmp);
 		}
+
 
 
 		std::vector<PlotDataEx> pdl;
@@ -1643,14 +1662,14 @@ public:
 		a=imgout2(p,
 			//&dc,
 			::AfxGetMainWnd()->GetDC(),
-			pdl,nl,CSize(1000,690),templogobmp.GetBuffer());
+			pdl,nl,CSize(1000,690),templogobmp);
 
 		p.end_document(optlist.str());
 
-		AddPageNumber(temppdf,(LPCWSTR)outfile);
+		AddPageNumber(temppdf,(LPCWSTR)outfile,searchpath);
 
 		CFile::Remove(temppdf.c_str());
-		CFile::Remove(templogobmp);
+		CFile::Remove(templogobmp.c_str());
 
 		return 0;
 	};
@@ -1696,6 +1715,8 @@ public:
 
 			CString fp = se.GetPathName();
 
+			CString strdir=fp.Left(fp.ReverseFind('\\'));
+
 
 			se.GetCheckButtonState(IDS_STRING_ANALYSIS_PARA,chk1);
 			se.GetCheckButtonState(IDS_STRING_CV_PARA,chk2);
@@ -1708,7 +1729,7 @@ public:
 			str.LoadString(IDS_STRING_REPORTING);
 			str+=fp;
 
-			if(pdfd(fp,chk1,chk2,chk3,chk4,chk5,chk6,chk7)==0){
+			if(pdfd(fp,chk1,chk2,chk3,chk4,chk5,chk6,chk7,(LPCWSTR)(strdir+L"\\tmp.pdf"),(LPCWSTR)(strdir+L"\\tmpbmp.bmp"),(LPCWSTR)folderpath())==0){
 
 				str.LoadStringW(IDS_STRING_REPORT);
 				CString tmps;

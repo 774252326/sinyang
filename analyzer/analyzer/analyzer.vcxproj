@@ -182,6 +182,7 @@
     <ClInclude Include="property\SolutionAdditionParametersPageB.h" />
     <ClInclude Include="property\UserAccountPage.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="StaticEdit.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="user\AccountComboBox.h" />
@@ -221,6 +222,7 @@
     <ClCompile Include="property\SolutionAdditionParametersPageA.cpp" />
     <ClCompile Include="property\SolutionAdditionParametersPageB.cpp" />
     <ClCompile Include="property\UserAccountPage.cpp" />
+    <ClCompile Include="StaticEdit.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

@@ -983,7 +983,11 @@ afx_msg LRESULT CMainFrame::OnMessageCloseSapSheet(WPARAM wParam, LPARAM lParam)
 	case 5:
 		{		
 			CString str,strt;
-			str.LoadStringW(IDS_STRING_ADD_SOLUTION);
+
+			strt.LoadStringW(IDS_STRING_ADD_SOLUTION);
+
+			str.Format(strt,pDoc->da.p3.saplist[pDoc->da.nextSAPIndex].SolutionDescription());
+
 			strt.Format(L" %g ",pDoc->da.VtoAdd);
 			str+=strt;
 			strt.LoadStringW(IDS_STRING_ML);

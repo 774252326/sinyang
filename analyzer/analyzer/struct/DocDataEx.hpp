@@ -844,7 +844,11 @@ public:
 		{
 			return true;
 		}
-		::AfxMessageBox(IDS_STRING_READ_ERROR);
+
+		CString strt,str;
+		strt.LoadString(IDS_STRING_READ_ERROR);
+		str.Format(strt,fp);
+		::AfxMessageBox(str);
 		return false;
 	};
 
