@@ -83,6 +83,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_COMMAND(ID_ANALYSIS_PAUSE, &CMainFrame::OnAnalysisPause)
 	ON_UPDATE_COMMAND_UI(ID_ANALYSIS_PAUSE, &CMainFrame::OnUpdateAnalysisPause)
 	ON_UPDATE_COMMAND_UI(ID_ANALYSIS_METHODSETUP, &CMainFrame::OnUpdateAnalysisMethodsetup)
+	ON_MESSAGE(MESSAGE_SWITCH_FIGURE, &CMainFrame::OnMessageSwitchFigure)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -583,10 +584,7 @@ void CMainFrame::OnFileOpen()
 		//////////////////////////////////////////////////////////////////////
 		CString m_filePath=fileDlg.GetPathName();
 
-		CString lppath=m_filePath;
-		lppath.Replace(L".stp.txt",L"l.fig.txt");
-		CString rppath=m_filePath;
-		rppath.Replace(L".stp.txt",L"r.fig.txt");
+
 
 		ANPara p1t;
 		CVPara p2t;
@@ -595,50 +593,62 @@ void CMainFrame::OnFileOpen()
 		readini(p1t,p2t,p3t,m_filePath);
 		writeini(p1t,p2t,p3t);
 
-		this->LeftPlotPointer()->pd.ReadFile(lppath);
-		this->LeftPlotPointer()->updatePlotRange();
-		this->LeftPlotPointer()->Invalidate();
 
-		double totalV=0;
-		double q0=1;
+		CString lppath=m_filePath;
+		lppath.Replace(L".stp.txt",L"l.fig.txt");
+		CString rppath=m_filePath;
+		rppath.Replace(L".stp.txt",L"r.fig.txt");
 
-		this->GetOutputWnd()->clear();
-		{
-			std::vector<double> x;
-			std::vector<double> y;
-			LeftPlotPointer()->pd.GetDatai(0,x,y);
-			double q=intgQ(x,y,p2t.lowelimit,p2t.highelimit,p2t.endintegratione)/p2t.scanrate;
-			totalV+=p3t.vmsvol;
-			q0=q;
-			this->GetOutputWnd()->InsertListCtrl(0,
-				LeftPlotPointer()->pd.ps[0].name,
-				p3t.vmsvol,
-				totalV,
-				q,
-				q/q0,
-				true);
+		if(this->LeftPlotPointer()->pd.ReadFile(lppath)){
+			this->LeftPlotPointer()->updatePlotRange();
+			this->LeftPlotPointer()->Invalidate();
+
+
+			//double totalV=0;
+			//double q0=1;
+
+			//this->GetOutputWnd()->clear();
+			//{
+			//	std::vector<double> x;
+			//	std::vector<double> y;
+			//	LeftPlotPointer()->pd.GetDatai(0,x,y);
+			//	double q=intgQ(x,y,p2t.lowelimit,p2t.highelimit,p2t.endintegratione)/p2t.scanrate;
+			//	totalV+=p3t.vmsvol;
+			//	q0=q;
+			//	this->GetOutputWnd()->InsertListCtrl(0,
+			//		LeftPlotPointer()->pd.ps[0].name,
+			//		p3t.vmsvol,
+			//		totalV,
+			//		q,
+			//		q/q0,
+			//		true);
+			//}
+
+
+			//for(size_t i=1;i<LeftPlotPointer()->pd.ll.size();i++){
+			//	std::vector<double> x;
+			//	std::vector<double> y;
+			//	LeftPlotPointer()->pd.GetDatai(i,x,y);
+			//	double q=intgQ(x,y,p2t.lowelimit,p2t.highelimit,p2t.endintegratione)/p2t.scanrate;
+			//	//totalV+=p3t.saplist[i-1].volconc;
+
+			//	this->GetOutputWnd()->InsertListCtrl(i,
+			//		LeftPlotPointer()->pd.ps[i].name,
+			//		//p3t.saplist[i-1].volconc,
+			//		//totalV,
+			//		1,1,
+			//		q,
+			//		q/q0,
+			//		true);
+			//}
 		}
 
 
-		for(size_t i=1;i<LeftPlotPointer()->pd.ll.size();i++){
-			std::vector<double> x;
-			std::vector<double> y;
-			LeftPlotPointer()->pd.GetDatai(i,x,y);
-			double q=intgQ(x,y,p2t.lowelimit,p2t.highelimit,p2t.endintegratione)/p2t.scanrate;
-			totalV+=p3t.saplist[i-1].volconc;
-
-			this->GetOutputWnd()->InsertListCtrl(i,
-				LeftPlotPointer()->pd.ps[i].name,
-				p3t.saplist[i-1].volconc,
-				totalV,
-				q,
-				q/q0,
-				true);
+		if(this->RightPlotPointer()->pd.ReadFile(rppath)){
+			this->RightPlotPointer()->updatePlotRange();
+			this->RightPlotPointer()->Invalidate();
 		}
 
-		this->RightPlotPointer()->pd.ReadFile(rppath);
-		this->RightPlotPointer()->updatePlotRange();
-		this->RightPlotPointer()->Invalidate();
 
 		CString strTemp;
 		strTemp=L"setup file "+m_filePath+L" loaded";
@@ -1269,7 +1279,7 @@ void CMainFrame::OnAnalysisAbortanalysis()
 void CMainFrame::OnOptionsPlotsettings()
 {
 	// TODO: Add your command handler code here
-		// 创建属性表对象   
+	// 创建属性表对象   
 	CString str;
 	str.LoadStringW(IDS_STRING_POLT_SETTINGS);
 	PlotSettingSheet sheet(str);
@@ -1305,7 +1315,7 @@ void CMainFrame::OnOptionsPlotsettings()
 void CMainFrame::OnAnalysisPause()
 {
 	// TODO: Add your command handler code here
-	
+
 	if(waiting){
 		ResumeThread(hThread);
 		waiting=false;
@@ -1358,4 +1368,18 @@ void CMainFrame::OnUpdateAnalysisMethodsetup(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
 	pCmdUI->Enable(pst==stop);
+}
+
+
+afx_msg LRESULT CMainFrame::OnMessageSwitchFigure(WPARAM wParam, LPARAM lParam)
+{
+	
+	CString str((wchar_t*)wParam);
+
+	this->RightPlotPointer()->clear();
+	this->RightPlotPointer()->pd.ReadFile(str);
+	this->RightPlotPointer()->updatePlotRange();
+	this->RightPlotPointer()->Invalidate();
+	
+	return 0;
 }

@@ -42,9 +42,10 @@ int pcctB::addXY(std::vector<double> & x, std::vector<double> & y)
 
 			if( xx.back().size()>2 && xx.back().back()==xx.back()[1] /*&& xx.back()[xx.back().size()-2]!=xx.back().front()*/ ){
 				Ar.push_back(intg());
-							if(stepCount==0){
-				Ar0=Ar.back();
-			}
+
+				if(stepCount==0){
+					Ar0=Ar.back();
+				}
 
 				if( xx.size() >= nCycle ){
 					flag=2;
@@ -57,7 +58,7 @@ int pcctB::addXY(std::vector<double> & x, std::vector<double> & y)
 
 			}
 
-			
+
 		}
 
 		x.erase(x.begin(), x.begin()+index);	
@@ -110,42 +111,6 @@ int pcctB::addXY(std::vector<double> & x, std::vector<double> & y)
 
 double pcctB::intg(double xUpLim)
 {
-	//std::vector<double>::iterator itx;
-	//itx=find(xx.back().begin(), xx.back().end(), xmin);
-	//size_t index=itx-xx.back().begin();
-
-	//std::vector<double> xintg( xx.back().begin()+index, xx.back().end() );
-	//std::vector<double> yintg( yy.back().begin()+index, yy.back().end() );
-
-	//double ar=0;
-	//for(size_t i=0;i<xintg.size()-1;i++){
-
-	//	if(xintg[i+1]<xUpLim){
-	//		if( (yintg[i]>0) || (yintg[i+1]>0) ){
-	//			if(yintg[i]<0){
-	//				ar+=(xintg[i+1]-xintg[i])*yintg[i+1]*yintg[i+1]/(yintg[i+1]-yintg[i]);
-	//			}
-	//			else{
-	//				if(yintg[i+1]<0){
-	//					ar+=(xintg[i+1]-xintg[i])*yintg[i]*yintg[i]/(yintg[i]-yintg[i+1]);
-	//				}
-	//				else{
-	//					ar+=(xintg[i+1]-xintg[i])*(yintg[i]+yintg[i+1]);
-	//				}
-	//			}
-	//		}
-	//	}
-	//	else{
-	//		ar+=(xUpLim-xintg[i])*(2*yintg[i]+(yintg[i+1]-yintg[i])*(xUpLim-xintg[i])/(xintg[i+1]-xintg[i]));
-	//		break;
-	//	}
-
-	//}
-
-
-
-	//return ar*spv;
-
 	return spv*intgQ(xx.back(),yy.back(),xmin,xmax,xUpLim);
 }
 

@@ -236,27 +236,33 @@ void PlotData::clear(void)
 }
 
 
-void PlotData::SaveFile(CString fp)
+BOOL PlotData::SaveFile(CString fp)
 {
 	CFile theFile;
-	theFile.Open(fp, CFile::modeCreate | CFile::modeWrite);
-	CArchive archive(&theFile, CArchive::store);
+	if( theFile.Open(fp, CFile::modeCreate | CFile::modeWrite) ){
+		CArchive archive(&theFile, CArchive::store);
 
-	Serialize(archive);
+		Serialize(archive);
 
-	archive.Close();
-	theFile.Close();
+		archive.Close();
+		theFile.Close();
+		return TRUE;
+	}
+	return FALSE;
 }
 
 
-void PlotData::ReadFile(CString fp)
+BOOL PlotData::ReadFile(CString fp)
 {
 	CFile theFile;
-	theFile.Open(fp, /*CFile::modeCreate |*/ CFile::modeRead);
-	CArchive archive(&theFile, CArchive::load);
-	Serialize(archive);
-	archive.Close();
-	theFile.Close();
+	if( theFile.Open(fp, /*CFile::modeCreate |*/ CFile::modeRead) ){
+		CArchive archive(&theFile, CArchive::load);
+		Serialize(archive);
+		archive.Close();
+		theFile.Close();
+		return TRUE;
+	}
+	return FALSE;
 }
 
 void PlotData::AppendData(const PlotData & pda)

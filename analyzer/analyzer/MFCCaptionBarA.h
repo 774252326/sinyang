@@ -3,9 +3,7 @@
 
 
 
-#define MESSAGE_BUSY WM_USER+1
-#define MESSAGE_WAIT_RESPONSE WM_USER+2
-#define MESSAGE_OVER WM_USER+3
+
 
 // CMFCCaptionBarA
 
@@ -19,17 +17,17 @@ public:
 
 protected:
 	virtual void OnDrawButton(
-   CDC* pDC,
-   CRect rect,
-   const CString& strButton,
-   BOOL bEnabled 
-);
+		CDC* pDC,
+		CRect rect,
+		const CString& strButton,
+		BOOL bEnabled 
+		);
 
 	virtual void OnDrawText(
-   CDC* pDC,
-   CRect rect,
-   const CString& strText 
-);
+		CDC* pDC,
+		CRect rect,
+		const CString& strText 
+		);
 
 
 
@@ -57,6 +55,11 @@ protected:
 	afx_msg LRESULT OnMessageBusy(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnMessageWaitResponse(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnMessageOver(WPARAM wParam, LPARAM lParam);
+public:
+	void BtnClicked(void);
+protected:
+	afx_msg LRESULT OnMessageReady(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnMessageOverH(WPARAM wParam, LPARAM lParam);
 };
 
 

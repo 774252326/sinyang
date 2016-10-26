@@ -1391,6 +1391,8 @@ void dlg1::OnInitialUpdate()
 void dlg1::GetPlotRect(CRect & plotRect)
 {
 	this->GetClientRect(&plotRect);
+	//plotRect.bottom=plotRect.CenterPoint().y;
+
 	int gap0=10;
 	int gap=gap0;
 	if(fs.labelSize>=0){

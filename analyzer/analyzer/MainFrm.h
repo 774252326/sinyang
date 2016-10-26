@@ -18,7 +18,7 @@
 
 //#define MESSAGE_BUSY WM_USER+1
 //#define MESSAGE_WAIT_RESPONSE WM_USER+2
-//#define MESSAGE_OVER WM_USER+3
+
 
 class CMainFrame : public CFrameWndEx
 {
@@ -146,6 +146,8 @@ public:
 //	int processState;
 	afx_msg void OnUpdateAnalysisMethodsetup(CCmdUI *pCmdUI);
 	ProcessState pst;
+protected:
+	afx_msg LRESULT OnMessageSwitchFigure(WPARAM wParam, LPARAM lParam);
 };
 
 

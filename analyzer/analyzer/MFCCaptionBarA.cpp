@@ -31,6 +31,10 @@ BEGIN_MESSAGE_MAP(CMFCCaptionBarA, CMFCCaptionBar)
 	ON_MESSAGE(MESSAGE_BUSY, &CMFCCaptionBarA::OnMessageBusy)
 	ON_MESSAGE(MESSAGE_WAIT_RESPONSE, &CMFCCaptionBarA::OnMessageWaitResponse)
 	ON_MESSAGE(MESSAGE_OVER, &CMFCCaptionBarA::OnMessageOver)
+
+	ON_BN_CLICKED(IDS_BUTTON_CAPTION_CHECKBOX, &CMFCCaptionBarA::BtnClicked)
+	ON_MESSAGE(MESSAGE_READY, &CMFCCaptionBarA::OnMessageReady)
+	ON_MESSAGE(MESSAGE_OVER_H, &CMFCCaptionBarA::OnMessageOverH)
 END_MESSAGE_MAP()
 
 
@@ -52,14 +56,15 @@ int CMFCCaptionBarA::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	//this->GetWindowRect(&rect1);
 
 
-	if( ec.Create( WS_CHILD | WS_TABSTOP | WS_BORDER /*|WS_VISIBLE*/, CRect( 0,0,0,0 ), this, IDS_EDIT_CAPTION_EDIT)==0 )
+	if( ec.Create( WS_CHILD | WS_TABSTOP | WS_BORDER /*|WS_VISIBLE*/, CRect(), this, IDS_EDIT_CAPTION_EDIT)==0 )
 		return -1;
 	//if(st.Create( _T("Volume(ml):"), WS_CHILD|SS_CENTER/*|WS_VISIBLE*/, CRect(0, 9, 60, 32), this)==FALSE)
 	//return -1;
 
 
 
-	//bn.Create(_T("My button"), WS_CHILD|WS_VISIBLE|BS_PUSHBUTTON, CRect(310,10,400,30), this, 1);
+	if( bn.Create(_T(""), WS_CHILD|/*WS_VISIBLE|*/BS_AUTOCHECKBOX, CRect(0,0,12,12), this, IDS_BUTTON_CAPTION_CHECKBOX) ==FALSE)
+		return -1;
 
 	return 0;
 }
@@ -112,6 +117,13 @@ int CMFCCaptionBarA::SetEdit(void)
 	//pt.x-=strect.Width();
 	//strect.MoveToXY(pt);
 	//st.MoveWindow(&strect);
+
+
+	CRect bnrect;
+	bn.GetWindowRect(&bnrect);
+	bnrect.MoveToXY(bRect.left,bRect.CenterPoint().y-bnrect.Height()/2);
+	bn.MoveWindow(&bnrect);
+
 
 	return 0;
 }
@@ -225,6 +237,7 @@ void CMFCCaptionBarA::ShowMessage(CString str)
 	EnableButton(FALSE);
 	SetEdit();
 	ec.ShowWindow(SW_HIDE);
+	bn.ShowWindow(SW_HIDE);
 	SetTextA(str);
 	this->ShowWindow(SW_SHOW);
 	this->GetParentFrame()->RecalcLayout(FALSE);
@@ -295,5 +308,54 @@ afx_msg LRESULT CMFCCaptionBarA::OnMessageOver(WPARAM wParam, LPARAM lParam)
 
 	ShowMessage(strTemp);
 
+	return 0;
+}
+
+
+void CMFCCaptionBarA::BtnClicked(void)
+{
+	bool bCheck=bn.GetCheck();
+
+	CString str;
+
+	if(bCheck){
+		str=L"tempr1.fig.txt";
+	}
+	else{
+		str=L"tempr0.fig.txt";
+	}
+
+	::SendMessageW(this->GetParentFrame()->GetSafeHwnd(), MESSAGE_SWITCH_FIGURE, (WPARAM)str.GetBuffer(), NULL);
+
+}
+
+
+afx_msg LRESULT CMFCCaptionBarA::OnMessageReady(WPARAM wParam, LPARAM lParam)
+{
+
+	
+	CString strTemp;
+	(strTemp.LoadString(IDS_STRING_READY));
+	ShowMessage(strTemp);
+	return 0;
+}
+
+
+afx_msg LRESULT CMFCCaptionBarA::OnMessageOverH(WPARAM wParam, LPARAM lParam)
+{
+
+	CString strTemp;
+	(strTemp.LoadString(IDS_STRING_OVER));
+
+	CString str((wchar_t*)wParam);
+	strTemp+=str;
+
+	str.LoadStringW(IDS_STRING_OVER_SWITCH);
+
+	strTemp+=str;
+
+	ShowMessage(strTemp);
+	SetEdit();
+	bn.ShowWindow(SW_SHOW);
 	return 0;
 }

@@ -8,12 +8,31 @@
 //#include "MainFrm.h"
 #include "pcct.h"
 #include "pcctB.h"
+#include <algorithm>
 
 int intv=20;
 size_t n1=800;
 
 
+bool compless (double c1, double c2) {
+	return (c1>c2);
+}
+
+void SortInsert( std::vector<double> &xs, std::vector<double> &ys, double x, double y )
+{
+	std::vector<double>::iterator it;
+	it = std::find_first_of (xs.begin(), xs.end(),&x, (&x)+1, compless);
+	size_t idx=it-xs.begin();
+	xs.insert(it,x);
+	ys.insert(ys.begin()+idx,y);
+}
+
+
+
+
+
 void WaitSecond(ProcessState &waitflg
+	//,int second=-1
 	,int second=0
 	)
 {
@@ -60,8 +79,8 @@ void RefreshData(const CString &currentFile, const std::vector<sapitem> &saplist
 	dt1.addVolume=saplist[dataB.stepCount].volconc;
 	dataB.addVolume=saplist[dataB.stepCount].volconc;
 
-	dataB.stepCount++;
-	dt1.stepName.Format(L"Solution Addition %d",dataB.stepCount);
+	//dataB.stepCount++;
+	dt1.stepName.Format(L"Solution Addition %d",dataB.stepCount+1);
 }
 
 void InitialData(const CString &currentFile
@@ -83,8 +102,8 @@ void InitialData(const CString &currentFile
 	dataB.spv=1/p2.scanrate;
 	dataB.intgUpLim=p2.endintegratione;
 	dataB.nCycle=p2.noofcycles;
-	dataB.rowCount=0;
-	dataB.stepCount=0;
+	//dataB.rowCount=0;
+	//dataB.stepCount=0;
 	dataB.totalVolume=0;
 	dataB.Ar0=0;
 	dataB.addVolume=vmsvol;
@@ -277,7 +296,7 @@ CString Output2(PlotData & pdat
 			ANPara p1t;
 			CVPara p2t;
 			SAPara p3t;
-			readini(p1t,p2t,p3t,L"data/setupB.stp.txt");
+			readini(p1t,p2t,p3t,L"data\\B.stp.txt");
 			Sconc=p3t.saplist.back().Sconc;
 			vmsvol=p3t.vmsvol;
 			evor=p1t.evaluationratio;
@@ -453,7 +472,7 @@ CString Output6(PlotData & pdat
 		std::vector<double> nx(3,LConc);
 		std::vector<double> ny(3,Q);
 		nx[0]=0;
-		ny[2]=0;
+		ny[2]=pdat.yll.back();
 
 		plotspec ps1;
 		ps1.colour=genColor( genColorvFromIndex<float>( p1->pd.ps.size() ) ) ;
@@ -478,7 +497,50 @@ CString Output6(PlotData & pdat
 }
 
 
+CString Output7(PlotData & pdat
+	, double evoR
+	)
+{
+	std::vector<double> x;
+	std::vector<double> y;
 
+	pdat.GetDatai(pdat.ps.size()-1,x,y);
+
+	//double y0=y.front();
+	//x.erase(x.begin());
+	//y.erase(y.begin());
+
+	//for(size_t i=0;i<y.size();i++){
+	//	y[i]-=y0;
+	//}
+
+	std::vector<double> c;
+	lspfit(x,y,2,c);
+
+	std::vector<double> nx(2,x.back());
+	std::vector<double> ny(2,0);
+	nx[0]=x.front();
+	ny[0]=c[1]*nx[0]+c[0];
+	ny[1]=c[1]*nx[1]+c[0];
+
+	plotspec ps1;
+	ps1.colour=genColor( genColorvFromIndex<float>( pdat.ps.size() ) ) ;
+	ps1.dotSize=0;  
+	ps1.name=L"fit line";
+	//ps1.showLine=true;
+	ps1.lineType=0;
+	ps1.smoothLine=0;
+	ps1.traceLast=false;
+	pdat.AddNew(nx,ny,ps1);
+
+	//p1->updatePlotRange();
+	//p1->Invalidate();
+
+	CString str;
+	str.Format(L" Aconc.=%g*Sconc.%+g @ Ar/Ar0=%g, ", c[1], c[0], evoR);
+
+	return str;
+}
 
 
 UINT DTR(dlg1 *leftp,
@@ -488,7 +550,8 @@ UINT DTR(dlg1 *leftp,
 	ProcessState &pst,
 	const ANPara &p1,
 	const CVPara &p2,
-	const SAPara &p3)
+	const SAPara &p3
+	)
 {
 
 	//////////////////////////////load data//////////////////////////////////////
@@ -498,21 +561,26 @@ UINT DTR(dlg1 *leftp,
 
 	pcct dt1;
 	pcctB dataB;
-	InitialData(filelist.front(),p3.vmsvol,p2,dt1,dataB);
 	pcct *data=&dt1;
 	//////////////////////////clear window/////////////////////////////////
 
 	outw->clear();
 	leftp->clear();
 	rightp->clear();
-
-
+	//////////////////////////////////////////////////////////////////////////////
+	std::vector<double> x;
+	std::vector<double> y;
 	//////////////////////////////first step////////////////////////////////////////////
 	//waiting=false;
 
+	InitialData(filelist.front(),p3.vmsvol,p2,dt1,dataB);
+	dataB.rowCount=0;
+	dataB.stepCount=0;
 
-	std::vector<double> x;
-	std::vector<double> y;
+	::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
+
+	pst=pause;
+	WaitSecond(pst);
 
 	::SendMessage(cba->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
 
@@ -534,55 +602,36 @@ UINT DTR(dlg1 *leftp,
 	rightp->Invalidate();
 
 	filelist.erase(filelist.begin());
-	RefreshData(filelist.front(),p3.saplist,dt1,dataB);
-
-	::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
-
-	pst=pause;
-	WaitSecond(pst);
 
 	/////////////////////////////////////second step////////////////////////////////////////////////////////////////
 
-	while(dataB.stepCount<(p3.saplist.size())){
+	while( dataB.stepCount<(p3.saplist.size())
+		//&& !filelist.empty()
+		){
 
-		::SendMessage(cba->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
+			RefreshData(filelist.front(),p3.saplist,dt1,dataB);
+			dataB.stepCount++;
+			::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
 
-		OneStep(outw,leftp,data,dataB);
+			pst=pause;
+			WaitSecond(pst);
 
-		x.assign( 1, dataB.totalVolume-p3.vmsvol );
-		y.assign( 1, (dataB.Ar.back()/dataB.Ar0) );
+			::SendMessage(cba->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
 
-		rightp->pd.AddFollow(x,y);
-		rightp->updatePlotRange();
-		rightp->Invalidate();
+			OneStep(outw,leftp,data,dataB);
 
-		filelist.erase(filelist.begin());
+			x.assign( 1, dataB.totalVolume-p3.vmsvol );
+			y.assign( 1, (dataB.Ar.back()/dataB.Ar0) );
 
-		RefreshData(filelist.front(),p3.saplist,dt1,dataB);
+			rightp->pd.AddFollow(x,y);
+			rightp->updatePlotRange();
+			rightp->Invalidate();
 
-		::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
-
-		pst=pause;
-		WaitSecond(pst);
-
+			filelist.erase(filelist.begin());
 	}
 
 
 	////////////////////////////////////final step/////////////////////////////////////////////
-
-
-	::SendMessage(cba->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
-
-	OneStep(outw,leftp,data,dataB);
-
-	x.assign( 1, dataB.totalVolume-p3.vmsvol );
-	y.assign( 1, (dataB.Ar.back()/dataB.Ar0) );
-
-	rightp->pd.AddFollow(x,y);
-	rightp->updatePlotRange();
-	rightp->Invalidate();
-
-	filelist.erase(filelist.begin());
 
 	CString strTemp;
 	strTemp=Output1(rightp->pd,
@@ -622,7 +671,7 @@ UINT DTA(dlg1 *leftp,
 	pcct dt1;
 	pcct *data=&dt1;
 	pcctB dataB;
-	InitialData(filelist.front(),p3.vmsvol,p2,dt1,dataB);
+
 	//////////////////////////clear window/////////////////////////////////
 	outw->clear();
 	leftp->clear();
@@ -637,11 +686,21 @@ UINT DTA(dlg1 *leftp,
 		rightp->Invalidate();
 	}
 	///////////////////////////////////////end/////////////////////////////////////////////////
-	//////////////////////////////first step////////////////////////////////////////////
+
 	//waiting=false;
 
 	std::vector<double> x;
 	std::vector<double> y;
+	plotspec ps1;
+	//////////////////////////////first step////////////////////////////////////////////
+
+	InitialData(filelist.front(),p3.vmsvol,p2,dt1,dataB);
+	dataB.rowCount=0;
+	dataB.stepCount=0;
+
+	::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
+	pst=pause;
+	WaitSecond(pst);
 
 	::SendMessage(cba->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
 
@@ -650,7 +709,7 @@ UINT DTA(dlg1 *leftp,
 	x.assign( 1, dataB.totalVolume-p3.vmsvol );
 	y.assign( 1, (dataB.Ar.back()/dataB.Ar0) );
 
-	plotspec ps1;
+
 	ps1.colour=genColor( genColorvFromIndex<float>( rightp->pd.ps.size() ) ) ;
 	ps1.dotSize=3;
 	ps1.name=L"Ar/Ar0";
@@ -663,17 +722,19 @@ UINT DTA(dlg1 *leftp,
 	rightp->Invalidate();
 
 	filelist.erase(filelist.begin());
-	RefreshData(filelist.front(),p3.saplist,dt1,dataB);
 
-	::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
-	Sleep(intv);
 
-	pst=pause;
-	WaitSecond(pst);
+
 
 	/////////////////////////////////////second step////////////////////////////////////////////////////////////////
 
 	while(dataB.stepCount<(p3.saplist.size())){
+
+		RefreshData(filelist.front(),p3.saplist,dt1,dataB);
+		dataB.stepCount++;
+		::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
+		pst=pause;
+		WaitSecond(pst);
 
 		::SendMessage(cba->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
 
@@ -688,31 +749,10 @@ UINT DTA(dlg1 *leftp,
 
 		filelist.erase(filelist.begin());
 
-		RefreshData(filelist.front(),p3.saplist,dt1,dataB);
-
-		::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
-		Sleep(intv);
-
-		pst=pause;
-		WaitSecond(pst);
-
 	}
 
 
 	////////////////////////////////////final step/////////////////////////////////////////////
-
-	::SendMessage(cba->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
-
-	OneStep(outw,leftp,data,dataB);
-
-	x.assign( 1, dataB.totalVolume-p3.vmsvol );
-	y.assign( 1, (dataB.Ar.back()/dataB.Ar0) );
-
-	rightp->pd.AddFollow(x,y);
-	rightp->updatePlotRange();
-	rightp->Invalidate();
-
-	filelist.erase(filelist.begin());
 
 	CString strTemp;
 
@@ -755,18 +795,30 @@ UINT LATR(dlg1 *leftp,
 	pcct *data=&dt1;
 	pcctB dataB;
 
-	InitialData(filelist.front(),p3.vmsvol,p2,dt1,dataB);
+
+
+
 	//////////////////////////clear window/////////////////////////////////
 	outw->clear();
 	leftp->clear();
 	rightp->clear();
-	//////////////////////////////first step////////////////////////////////////////////
 
 
+	//////////////////////////////////////////////////////////////////////////////
 	double Aml=0;
 
 	std::vector<double> x;
 	std::vector<double> y;
+	plotspec ps1;
+	//////////////////////////////first step////////////////////////////////////////////
+
+	InitialData(filelist.front(),p3.vmsvol,p2,dt1,dataB);
+	dataB.rowCount=0;
+	dataB.stepCount=0;
+	::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
+
+	pst=pause;
+	WaitSecond(pst);
 
 	::SendMessage(cba->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
 
@@ -775,7 +827,7 @@ UINT LATR(dlg1 *leftp,
 	x.assign( 1, Aml/dataB.totalVolume );	
 	y.assign( 1, dataB.Ar.back() );
 
-	plotspec ps1;
+
 	ps1.colour=genColor( genColorvFromIndex<float>( rightp->pd.ps.size() ) ) ;
 	ps1.dotSize=3;
 	ps1.name=L"Ar";
@@ -789,18 +841,20 @@ UINT LATR(dlg1 *leftp,
 
 	filelist.erase(filelist.begin());
 
-	RefreshData(filelist.front(),p3.saplist,dt1,dataB);
 
-	Aml+=p3.saplist[dataB.stepCount-1].Sconc*data->addVolume;
-
-	::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
-
-	pst=pause;
-	WaitSecond(pst);
 
 	/////////////////////////////////////second step////////////////////////////////////////////////////////////////
 
 	while(dataB.stepCount<(p3.saplist.size())){
+
+		RefreshData(filelist.front(),p3.saplist,dt1,dataB);
+		dataB.stepCount++;
+		Aml+=p3.saplist[dataB.stepCount-1].Sconc*data->addVolume;
+
+		::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
+
+		pst=pause;
+		WaitSecond(pst);
 
 		::SendMessage(cba->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
 		OneStep(outw,leftp,data,dataB);
@@ -813,34 +867,10 @@ UINT LATR(dlg1 *leftp,
 		rightp->Invalidate();
 
 		filelist.erase(filelist.begin());
-
-		RefreshData(filelist.front(),p3.saplist,dt1,dataB);
-
-		Aml+=p3.saplist[dataB.stepCount-1].Sconc*data->addVolume;
-
-		::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
-
-		pst=pause;
-		WaitSecond(pst);
-
 	}
 
 
 	////////////////////////////////////final step/////////////////////////////////////////////
-
-	::SendMessage(cba->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
-
-	OneStep(outw,leftp,data,dataB);
-
-	x.assign( 1, Aml/dataB.totalVolume );	
-	y.assign( 1, dataB.Ar.back() );
-
-	rightp->pd.AddFollow(x,y);
-	rightp->updatePlotRange();
-	rightp->Invalidate();
-
-
-	filelist.erase(filelist.begin());
 
 	CString str;
 	//str.Format(L" intercept value %g ml/L", Aml/dataB.totalVolume);
@@ -875,29 +905,40 @@ UINT LATA(dlg1 *leftp,
 	pcct dt1;
 	pcct *data=&dt1;
 	pcctB dataB;
-	InitialData(filelist.front(),p3.vmsvol,p2,dt1,dataB);
 
 	//////////////////////////clear window/////////////////////////////////
 	outw->clear();
 	leftp->clear();
 	rightp->clear();
-	//////////////////////////////first step////////////////////////////////////////////
 
+	//////////////////////////////////////////////////////////////////////////
 	std::vector<double> x;
 	std::vector<double> y;
+
+	//////////////////////////////first step////////////////////////////////////////////
+
+	InitialData(filelist.front(),p3.vmsvol,p2,dt1,dataB);
+	dataB.rowCount=0;
+	dataB.stepCount=0;
+
+	::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
+
+	pst=pause;
+	WaitSecond(pst);
 
 	::SendMessage(cba->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
 	OneStep(outw,leftp,data,dataB,false);
 
 	filelist.erase(filelist.begin());
 
+	/////////////////////////////////////second step////////////////////////////////////////////////////////////////
 	RefreshData(filelist.front(),p3.saplist,dt1,dataB);
+	dataB.stepCount++;
 	::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
 
 	pst=pause;
 	WaitSecond(pst);
 
-	/////////////////////////////////////second step////////////////////////////////////////////////////////////////
 	double Aml=0;
 	double Qintercept=0;
 	::SendMessage(cba->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
@@ -921,15 +962,24 @@ UINT LATA(dlg1 *leftp,
 	rightp->Invalidate();
 
 	filelist.erase(filelist.begin());
-
-	RefreshData(filelist.front(),p3.saplist,dt1,dataB);
-	::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
-
-	pst=pause;
-	WaitSecond(pst);
-
 	////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
 	while(dataB.stepCount<(p3.saplist.size())){
+
+		RefreshData(filelist.front(),p3.saplist,dt1,dataB);
+
+
+		::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
+
+		pst=pause;
+		WaitSecond(pst);
+
+
+		Aml+=p3.saplist[dataB.stepCount].Aconc*data->addVolume;
+		dataB.stepCount++;
+
 
 		::SendMessage(cba->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
 		OneStep(outw,leftp,data,dataB);
@@ -942,28 +992,11 @@ UINT LATA(dlg1 *leftp,
 		rightp->Invalidate();
 
 		filelist.erase(filelist.begin());
-		RefreshData(filelist.front(),p3.saplist,dt1,dataB);
 
-		Aml+=p3.saplist[dataB.stepCount-1].Aconc*data->addVolume;
-		::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
-
-		pst=pause;
-		WaitSecond(pst);
 
 	}
 	////////////////////////////////////final step/////////////////////////////////////////////
 
-	::SendMessage(cba->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
-	OneStep(outw,leftp,data,dataB);
-
-	x.assign( 1, Aml/dataB.totalVolume );	
-	y.assign( 1, dataB.Ar.back() );
-
-	rightp->pd.AddFollow(x,y);
-	rightp->updatePlotRange();
-	rightp->Invalidate();
-
-	filelist.erase(filelist.begin());
 
 	CString strTemp;
 	strTemp=Output4(rightp->pd,rightp,p3.vmsvol,p3.saplist[1].volconc);
@@ -994,47 +1027,59 @@ UINT RCR(dlg1 *leftp,
 
 	pcct dt1;
 	pcctB dataB;
-	InitialData(filelist.front(),p3.vmsvol,p2,dt1,dataB);
 	pcct *data=&dt1;
 	//////////////////////////clear window/////////////////////////////////
 	outw->clear();
 	leftp->clear();
 	rightp->clear();
-	//////////////////////////////first step////////////////////////////////////////////
-
+	/////////////////////////////////////////////////////////////////////////////
 	std::vector<double> x;
 	std::vector<double> y;
 
 	double Lml=0;
 
+	//////////////////////////////first step////////////////////////////////////////////
+
+
+	InitialData(filelist.front(),p3.vmsvol,p2,dt1,dataB);
+	dataB.rowCount=0;
+	dataB.stepCount=0;
+
+	::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
+	pst=pause;
+	WaitSecond(pst);
+
 	::SendMessage(cba->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
 
 	OneStep(outw,leftp,data,dataB,false);
 
 	filelist.erase(filelist.begin());
-	RefreshData(filelist.front(),p3.saplist,dt1,dataB);
-
-	::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
-
-	pst=pause;
-	WaitSecond(pst);
 
 	/////////////////////////////////////second step////////////////////////////////////////////////////////////////
+	RefreshData(filelist.front(),p3.saplist,dt1,dataB);
+	dataB.stepCount++;
+	::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
+
+	pst=pause;
+	WaitSecond(pst);
+
+
 
 	::SendMessage(cba->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
 
 	OneStep(outw,leftp,data,dataB,false);
 
 	filelist.erase(filelist.begin());
-	RefreshData(filelist.front(),p3.saplist,dt1,dataB);
-
-	::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
-
-	pst=pause;
-	WaitSecond(pst);
 
 
 	///////////////////////////////////////////////third step////////////////////////////////////////
+	RefreshData(filelist.front(),p3.saplist,dt1,dataB);
+	dataB.stepCount++;
+	::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
+
+	pst=pause;
+	WaitSecond(pst);
+
 
 	::SendMessage(cba->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
 
@@ -1055,19 +1100,26 @@ UINT RCR(dlg1 *leftp,
 	rightp->Invalidate();
 
 	filelist.erase(filelist.begin());
-	RefreshData(filelist.front(),p3.saplist,dt1,dataB);
-	Lml+=p3.saplist[dataB.stepCount-1].Lconc*dataB.addVolume;
-
-	::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
-
-	pst=pause;
-	WaitSecond(pst);
-
 	///////////////////////////////////////////fourth step/////////////////////////////////////////////////////
 
 
 
+
+
+
 	while(dataB.stepCount<(p3.saplist.size())){
+
+		RefreshData(filelist.front(),p3.saplist,dt1,dataB);
+
+
+		::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
+
+		pst=pause;
+		WaitSecond(pst);
+
+		Lml+=p3.saplist[dataB.stepCount].Lconc*dataB.addVolume;
+		dataB.stepCount++;
+
 
 		::SendMessage(cba->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
 
@@ -1081,13 +1133,6 @@ UINT RCR(dlg1 *leftp,
 		rightp->Invalidate();
 
 		filelist.erase(filelist.begin());
-		RefreshData(filelist.front(),p3.saplist,dt1,dataB);
-		Lml+=p3.saplist[dataB.stepCount-1].Lconc*dataB.addVolume;
-
-		::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
-
-		pst=pause;
-		WaitSecond(pst);
 
 	}
 
@@ -1095,18 +1140,7 @@ UINT RCR(dlg1 *leftp,
 	////////////////////////////////////final step/////////////////////////////////////////////
 
 
-	::SendMessage(cba->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
 
-	OneStep(outw,leftp,data,dataB);
-
-	x.assign( 1, Lml/dataB.totalVolume);
-	y.assign( 1, dataB.Ar.back() );
-
-	rightp->pd.AddFollow(x,y);
-	rightp->updatePlotRange();
-	rightp->Invalidate();
-
-	filelist.erase(filelist.begin());
 
 	::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,NULL,NULL);
 
@@ -1139,7 +1173,7 @@ UINT RCA(dlg1 *leftp,
 	pcct dt1;
 	pcct *data=&dt1;
 	pcctB dataB;
-	InitialData(filelist.front(),p3.vmsvol,p2,dt1,dataB);
+
 	//////////////////////////clear window/////////////////////////////////
 	outw->clear();
 	leftp->clear();
@@ -1154,63 +1188,76 @@ UINT RCA(dlg1 *leftp,
 		rightp->Invalidate();
 	}
 	///////////////////////////////////////end/////////////////////////////////////////////////
-	//////////////////////////////first step////////////////////////////////////////////
-
-
 	std::vector<double> x;
 	std::vector<double> y;
 
-
-	::SendMessage(cba->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
-
-	OneStep(outw,leftp,data,dataB,false);
-
-	filelist.erase(filelist.begin());
-	RefreshData(filelist.front(),p3.saplist,dt1,dataB);
+	//////////////////////////////first step////////////////////////////////////////////
+	InitialData(filelist.front(),p3.vmsvol,p2,dt1,dataB);
+	dataB.rowCount=0;
+	dataB.stepCount=0;
 
 	::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
 
 	pst=pause;
 	WaitSecond(pst);
 
+
+	::SendMessage(cba->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
+
+	OneStep(outw,leftp,data,dataB,false);
+
+	filelist.erase(filelist.begin());
 	/////////////////////////////////////second step////////////////////////////////////////////////////////////////
+	RefreshData(filelist.front(),p3.saplist,dt1,dataB);
+	dataB.stepCount++;
+	::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
+
+	pst=pause;
+	WaitSecond(pst);
+
+
 
 	::SendMessage(cba->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
 
 	OneStep(outw,leftp,data,dataB,false);
 
 	filelist.erase(filelist.begin());
-	RefreshData(filelist.front(),p3.saplist,dt1,dataB);
-
-	::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
-
-	pst=pause;
-	WaitSecond(pst);
-
 
 	/////////////////////////////////////third step////////////////////////////////////////////////////////////////
+	RefreshData(filelist.front(),p3.saplist,dt1,dataB);
+	dataB.stepCount++;
+	::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
+
+	pst=pause;
+	WaitSecond(pst);
+
+
+
 
 	::SendMessage(cba->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
 
 	OneStep(outw,leftp,data,dataB,false);
 
 	filelist.erase(filelist.begin());
-	RefreshData(filelist.front(),p3.saplist,dt1,dataB);
-
-	::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
-
-	pst=pause;
-	WaitSecond(pst);
-
 
 
 	/////////////////////////////////////fourth step////////////////////////////////////////////////////////////////
+
+	RefreshData(filelist.front(),p3.saplist,dt1,dataB);
+	dataB.stepCount++;
+	::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
+
+	pst=pause;
+	WaitSecond(pst);
+
 
 	::SendMessage(cba->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
 
 	OneStep(outw,leftp,data,dataB);
 
 	filelist.erase(filelist.begin());
+
+	/////////////////////////////////////last step////////////////////////////////////////////////////////////////
 
 	CString strTemp;
 	strTemp=Output6(rightp->pd,
@@ -1231,7 +1278,437 @@ UINT RCA(dlg1 *leftp,
 
 
 
+UINT SARR(dlg1 *leftp,
+	dlg1 *rightp,
+	CMFCCaptionBarA *cba,
+	COutputWnd *outw,
+	ProcessState &pst,
+	const ANPara &p1,
+	const CVPara &p2,
+	const SAPara &p3)
+{
 
+	//////////////////////////////load data//////////////////////////////////////
+	std::vector<CString> filelist;
+
+	LoadFileList(L"C:\\Users\\r8anw2x\\Dropbox\\W\\4 Mar (2.5S 2.5S3A 2.5S6.5A 2.5S10A 2.5S15A Cali)\\h2.txt",filelist);
+	if(filelist.empty()) return 0;
+
+	pcct dt1;
+	pcct *data=&dt1;
+	pcctB dataB;
+
+
+	//////////////////////////clear window/////////////////////////////////
+	outw->clear();
+	leftp->clear();
+	rightp->clear();
+
+	//////////////////////////////initial parameter/////////////////////////////////////
+
+	double Aml=0;
+	double Sml=0;
+	std::vector<double> x;
+	std::vector<double> y;
+
+	std::vector<double> SC;
+	std::vector<double> AC;
+
+	plotspec ps1;
+
+	double prevSconc=p3.saplist.front().Sconc;
+	double prevAconc=p3.saplist.front().Aconc;
+
+	int currentRow=0;
+	int currentStep=0;
+	dataB.rowCount=0;
+	dataB.stepCount=0;
+
+
+	while(dataB.stepCount<(p3.saplist.size()) /*&& !filelist.empty()*/){
+
+		leftp->clear();
+
+		//////////////////////////////first step////////////////////////////////////////////
+
+		InitialData(filelist.front(),p3.vmsvol,p2,dt1,dataB);
+		dataB.stepCount=0;
+
+		Aml=0;
+		Sml=0;
+
+		::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
+
+		pst=pause;
+		WaitSecond(pst);
+
+		::SendMessage(cba->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
+
+		OneStep(outw,leftp,data,dataB);
+
+		x.assign( 1, Sml/dataB.totalVolume );	
+		y.assign( 1, dataB.Ar.back()/dataB.Ar0 );
+
+
+		ps1.colour=genColor( genColorvFromIndex<float>( rightp->pd.ps.size() ) ) ;
+		ps1.dotSize=3;
+		ps1.name.Format(L"%gS%gA",prevSconc,prevAconc);
+		//ps1.showLine=true;
+		ps1.lineType=0;
+		ps1.smoothLine=1;
+		ps1.traceLast=false;
+		rightp->pd.AddNew(x,y,ps1,L"Suppressor Conc.(ml/L)",L"Ratio of Charge");
+		rightp->updatePlotRange();
+		rightp->Invalidate();
+
+		filelist.erase(filelist.begin());
+
+
+		/////////////////////////////////////second step////////////////////////////////////////////////////////////////
+
+		dataB.stepCount=currentStep;
+
+		while(dataB.stepCount<(p3.saplist.size()) /*&& !filelist.empty()*/){
+
+			RefreshData(filelist.front(),p3.saplist,dt1,dataB);
+
+			if(p3.saplist[dataB.stepCount].Aconc*prevSconc!=p3.saplist[dataB.stepCount].Sconc*prevAconc){
+
+				double sconc;
+				bool flg=calVsupp(rightp->pd,rightp->pd.ll.size()-1,p1.evaluationratio,sconc);
+				if(flg){
+					//SC.push_back(sconc);
+					//AC.push_back(sconc*prevAconc/prevSconc);
+					SortInsert(SC,AC,sconc,sconc*prevAconc/prevSconc);
+				}
+
+				prevSconc=p3.saplist[dataB.stepCount].Sconc;
+				prevAconc=p3.saplist[dataB.stepCount].Aconc;
+				break;
+			}
+
+			Aml+=p3.saplist[dataB.stepCount].Aconc*data->addVolume;
+			Sml+=p3.saplist[dataB.stepCount].Sconc*data->addVolume;
+
+			dataB.stepCount++;
+
+			::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
+
+			pst=pause;
+			WaitSecond(pst);
+
+			::SendMessage(cba->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
+			OneStep(outw,leftp,data,dataB);
+
+			x.assign( 1, Sml/dataB.totalVolume );	
+			y.assign( 1, dataB.Ar.back()/dataB.Ar0 );
+
+			rightp->pd.AddFollow(x,y);
+			rightp->updatePlotRange();
+			rightp->Invalidate();
+
+			filelist.erase(filelist.begin());
+
+		}
+
+		currentStep=dataB.stepCount;
+
+
+
+	}
+	////////////////////////////////////final step/////////////////////////////////////////////
+
+	{
+		double sconc;
+		bool flg=calVsupp(rightp->pd,rightp->pd.ll.size()-1,p1.evaluationratio,sconc);
+		if(flg){
+			//SC.push_back(sconc);
+			//AC.push_back(sconc*prevAconc/prevSconc);
+			SortInsert(SC,AC,sconc,sconc*prevAconc/prevSconc);
+		}
+	}
+
+
+	PlotData pda;
+	//leftp->clear();
+	ps1.colour=genColor( genColorvFromIndex<float>( pda.ps.size() ) ) ;
+	ps1.dotSize=3;
+	ps1.name=L"S-A";
+	//ps1.showLine=true;
+	ps1.lineType=5;
+	ps1.smoothLine=1;
+	ps1.traceLast=false;
+
+	pda.AddNew(SC,AC,ps1,L"Suppressor Conc.(ml/L)",L"Accelerator Conc.(ml/L)");
+
+	CString str;
+	str=Output7(pda,p1.evaluationratio);
+
+	pda.SaveFile(L"tempr1.fig.txt");
+	rightp->pd.SaveFile(L"tempr0.fig.txt");
+
+	//rightp->pd.AddNew(SC,AC,ps1,L"Suppressor Conc.(ml/L)",L"Accelerator Conc.(ml/L)");
+	//rightp->updatePlotRange();
+	//rightp->Invalidate();
+
+
+
+	::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER_H,(WPARAM)str.GetBuffer(),NULL);
+
+	TRACE(L"rivlatm ends\n");
+
+	pst=stop;
+
+	return 0;
+}
+
+
+
+UINT SARA(dlg1 *leftp,
+	dlg1 *rightp,
+	CMFCCaptionBarA *cba,
+	COutputWnd *outw,
+	ProcessState &pst,
+	const ANPara &p1,
+	const CVPara &p2,
+	const SAPara &p3
+	)
+{
+	//////////////////////////////load data//////////////////////////////////////
+	std::vector<CString> filelist;
+
+	LoadFileList(L"C:\\Users\\r8anw2x\\Dropbox\\W\\1 Mar (2.5S 2.5S3A 2.5S6.5A Cali)\\h2.txt",filelist);
+	if(filelist.empty()) return 0;
+
+	pcct dt1;
+	pcct *data=&dt1;
+	pcctB dataB;
+
+	//////////////////////////clear window/////////////////////////////////
+	outw->clear();
+	leftp->clear();
+	rightp->clear();
+
+
+
+	//////////////////////////////initial parameter/////////////////////////////////////
+
+	double Aml=0;
+	double Sml=0;
+	std::vector<double> x;
+	std::vector<double> y;
+
+	std::vector<double> SC;
+	std::vector<double> AC;
+
+	plotspec ps1;
+
+	double prevSconc=p3.saplist.front().Sconc;
+	double prevAconc=p3.saplist.front().Aconc;
+
+	double sampleEndVol;
+
+	int currentRow=0;
+	int currentStep=0;
+	dataB.rowCount=0;
+	dataB.stepCount=0;
+
+
+	//////////////////////////////first step////////////////////////////////////////////
+
+	InitialData(filelist.front(),p3.vmsvol,p2,dt1,dataB);
+	dataB.stepCount=0;
+
+	Aml=0;
+	Sml=0;
+
+	::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
+
+	pst=pause;
+	WaitSecond(pst);
+
+	::SendMessage(cba->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
+
+	OneStep(outw,leftp,data,dataB);
+
+	x.assign( 1, dataB.totalVolume-p3.vmsvol );	
+	y.assign( 1, dataB.Ar.back()/dataB.Ar0 );
+
+
+	ps1.colour=genColor( genColorvFromIndex<float>( rightp->pd.ps.size() ) ) ;
+	ps1.dotSize=3;
+	//ps1.name.Format(L"%gS%gA",prevSconc,prevAconc);
+	ps1.name=L"Ar/Ar0";
+	//ps1.showLine=true;
+	ps1.lineType=0;
+	ps1.smoothLine=1;
+	ps1.traceLast=false;
+	rightp->pd.AddNew(x,y,ps1,L"Vol.(ml)",L"Ratio of Charge");
+	rightp->updatePlotRange();
+	rightp->Invalidate();
+
+	filelist.erase(filelist.begin());
+
+
+	/////////////////////////////////////second step////////////////////////////////////////////////////////////////
+
+	while(dataB.stepCount<(p3.saplist.size()) /*&& !filelist.empty()*/){
+
+		RefreshData(filelist.front(),p3.saplist,dt1,dataB);
+
+		if(p3.saplist[dataB.stepCount].Aconc!=0){
+
+			rightp->pd.SaveFile(L"tempr0.fig.txt");
+
+			sampleEndVol=dataB.totalVolume;
+
+			x.assign(1,0);
+			y.assign(1,rightp->pd.yll.back());
+
+			rightp->clear();
+
+			ps1.colour=genColor( genColorvFromIndex<float>( rightp->pd.ps.size() ) ) ;
+			ps1.dotSize=3;
+			//ps1.name.Format(L"%gS%gA",prevSconc,prevAconc);
+			ps1.name=L"Ar/Ar0";
+			//ps1.showLine=true;
+			ps1.lineType=0;
+			ps1.smoothLine=1;
+			ps1.traceLast=false;
+			rightp->pd.AddNew(x,y,ps1,L"Vol.(ml)",L"Ratio of Charge");
+			rightp->updatePlotRange();
+			rightp->Invalidate();
+
+
+			Aml+=p3.saplist[dataB.stepCount].Aconc*data->addVolume;
+			Sml+=p3.saplist[dataB.stepCount].Sconc*data->addVolume;
+
+			dataB.stepCount++;
+
+			::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
+
+			pst=pause;
+			WaitSecond(pst);
+
+			::SendMessage(cba->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
+			OneStep(outw,leftp,data,dataB);
+
+			x.assign( 1, dataB.totalVolume-sampleEndVol );	
+			y.assign( 1, dataB.Ar.back()/dataB.Ar0 );
+
+			rightp->pd.AddFollow(x,y);
+			rightp->updatePlotRange();
+			rightp->Invalidate();
+
+			filelist.erase(filelist.begin());
+
+
+
+			break;
+		}
+
+		Aml+=p3.saplist[dataB.stepCount].Aconc*data->addVolume;
+		Sml+=p3.saplist[dataB.stepCount].Sconc*data->addVolume;
+
+		dataB.stepCount++;
+
+		::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
+
+		pst=pause;
+		WaitSecond(pst);
+
+		::SendMessage(cba->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
+		OneStep(outw,leftp,data,dataB);
+
+		x.assign( 1, dataB.totalVolume-p3.vmsvol );	
+		y.assign( 1, dataB.Ar.back()/dataB.Ar0 );
+
+		rightp->pd.AddFollow(x,y);
+		rightp->updatePlotRange();
+		rightp->Invalidate();
+
+		filelist.erase(filelist.begin());
+
+	}
+
+	////////////////////////////////////final step/////////////////////////////////////////////
+
+
+
+
+
+
+	while(dataB.stepCount<(p3.saplist.size()) /*&& !filelist.empty()*/){
+
+		RefreshData(filelist.front(),p3.saplist,dt1,dataB);
+
+		Aml+=p3.saplist[dataB.stepCount].Aconc*data->addVolume;
+		Sml+=p3.saplist[dataB.stepCount].Sconc*data->addVolume;
+
+		dataB.stepCount++;
+
+		::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
+
+		pst=pause;
+		WaitSecond(pst);
+
+		::SendMessage(cba->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
+		OneStep(outw,leftp,data,dataB);
+
+		x.assign( 1, dataB.totalVolume-sampleEndVol );	
+		y.assign( 1, dataB.Ar.back()/dataB.Ar0 );
+
+		rightp->pd.AddFollow(x,y);
+		rightp->updatePlotRange();
+		rightp->Invalidate();
+
+		filelist.erase(filelist.begin());
+
+	}
+
+
+	{
+		//double sconc;
+		//bool flg=calVsupp(rightp->pd,rightp->pd.ll.size()-1,p1.evaluationratio,sconc);
+		//if(flg){
+		//	//SC.push_back(sconc);
+		//	//AC.push_back(sconc*prevAconc/prevSconc);
+		//	SortInsert(SC,AC,sconc,sconc*prevAconc/prevSconc);
+		//}
+	}
+
+
+	//PlotData pda;
+	////leftp->clear();
+	//ps1.colour=genColor( genColorvFromIndex<float>( pda.ps.size() ) ) ;
+	//ps1.dotSize=3;
+	//ps1.name=L"S-A";
+	////ps1.showLine=true;
+	//ps1.lineType=5;
+	//ps1.smoothLine=1;
+	//ps1.traceLast=false;
+
+	//pda.AddNew(SC,AC,ps1,L"Suppressor Conc.(ml/L)",L"Accelerator Conc.(ml/L)");
+
+	//CString str;
+	//str=Output7(pda,p1.evaluationratio);
+
+	//pda.SaveFile(L"hr1.fig.txt");
+	rightp->pd.SaveFile(L"tempr1.fig.txt");
+
+	//rightp->pd.AddNew(SC,AC,ps1,L"Suppressor Conc.(ml/L)",L"Accelerator Conc.(ml/L)");
+	//rightp->updatePlotRange();
+	//rightp->Invalidate();
+
+	::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER_H,NULL,NULL);
+
+	TRACE(L"rivlatm ends\n");
+
+	pst=stop;
+
+	return 0;
+
+}
 
 
 
@@ -1248,7 +1725,7 @@ UINT PROCESS(LPVOID pParam)
 
 	delete pParam;
 	/////////////////////////////////////////////////////////////////////
-	
+
 	ANPara p1;
 	CVPara p2;
 	SAPara p3;
@@ -1272,42 +1749,54 @@ UINT PROCESS(LPVOID pParam)
 	case 2:
 		DTA(leftp,rightp,cba,outw,*pst,p1,p2,p3);
 
-				leftp->pd.ExtractLastCycle(p2.highelimit,L"data\\cl.fig.txt");
+		leftp->pd.ExtractLastCycle(p2.highelimit,L"data\\cl.fig.txt");
 		rightp->pd.SaveFile(L"data\\cr.fig.txt");
 
 		return 0;
 	case 3:
 		LATR(leftp,rightp,cba,outw,*pst,p1,p2,p3);
 
-				leftp->pd.ExtractLastCycle(p2.highelimit,L"data\\dl.fig.txt");
+		leftp->pd.ExtractLastCycle(p2.highelimit,L"data\\dl.fig.txt");
 		rightp->pd.SaveFile(L"data\\dr.fig.txt");
 
 		return 0;
 	case 4:
 		LATA(leftp,rightp,cba,outw,*pst,p1,p2,p3);
 
-				leftp->pd.ExtractLastCycle(p2.highelimit,L"data\\el.fig.txt");
+		leftp->pd.ExtractLastCycle(p2.highelimit,L"data\\el.fig.txt");
 		rightp->pd.SaveFile(L"data\\er.fig.txt");
 
 		return 0;
 	case 5:
 		RCR(leftp,rightp,cba,outw,*pst,p1,p2,p3);
 
-				leftp->pd.ExtractLastCycle(p2.highelimit,L"data\\fl.fig.txt");
+		leftp->pd.ExtractLastCycle(p2.highelimit,L"data\\fl.fig.txt");
 		rightp->pd.SaveFile(L"data\\fr.fig.txt");
 
 		return 0;
 	case 6:
 		RCA(leftp,rightp,cba,outw,*pst,p1,p2,p3);
 
-				leftp->pd.ExtractLastCycle(p2.highelimit,L"data\\gl.fig.txt");
+		leftp->pd.ExtractLastCycle(p2.highelimit,L"data\\gl.fig.txt");
 		rightp->pd.SaveFile(L"data\\gr.fig.txt");
 
 		return 0;
 	case 7:
+		SARR(leftp,rightp,cba,outw,*pst,p1,p2,p3);
+
+		leftp->pd.ExtractLastCycle(p2.highelimit,L"data\\hl.fig.txt");
+		rightp->pd.SaveFile(L"data\\hr.fig.txt");
+
+
+		return 0;
 
 	case 8:
 
+		SARA(leftp,rightp,cba,outw,*pst,p1,p2,p3);
+		leftp->pd.ExtractLastCycle(p2.highelimit,L"data\\il.fig.txt");
+		rightp->pd.SaveFile(L"data\\ir.fig.txt");
+
+		return 0;
 	default:
 		return 0;
 	}

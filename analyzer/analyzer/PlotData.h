@@ -28,8 +28,8 @@ public:
 	void AddNew(const std::vector<double> &x, const std::vector<double> &y, const plotspec &plotsp, const CString &xla=NULL, const CString &yla=NULL);
 	void AddFollow(const std::vector<double> &x, const std::vector<double> &y);
 	void clear(void);
-	void SaveFile(CString fp);
-	void ReadFile(CString fp);
+	BOOL SaveFile(CString fp);
+	BOOL ReadFile(CString fp);
 	void AppendData(const PlotData & pda);
 	void GetDatai(size_t index, std::vector<double> & x, std::vector<double> & y);
 	void ExtractLastCycle(double xmax, CString fp);
