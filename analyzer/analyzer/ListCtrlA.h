@@ -54,17 +54,18 @@ public:
 	std::vector<int> mini;
 	std::vector<int> maxi;
 
-		CComboBox * ComboItem( int nItem,  int nSubItem);
-		int GetChoice(int nItem, int nSubItem);
+	CComboBox * ComboItem( int nItem,  int nSubItem);
+	int GetChoice(int nItem, int nSubItem);
 
-		afx_msg void OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult);
-		virtual void DoDataExchange(CDataExchange* pDX);
+	afx_msg void OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult);
+	virtual void DoDataExchange(CDataExchange* pDX);
 
-		double aa;
-		int bb;
+	double aa;
+	int bb;
 
 
-		BOOL SetHeader(const std::vector<CString> & headerstrl);
+	BOOL SetHeader(const std::vector<CString> & headerstrl);
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 };
 
 

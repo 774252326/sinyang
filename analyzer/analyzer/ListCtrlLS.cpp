@@ -24,20 +24,20 @@ int ListCtrlLS::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// TODO:  Add your specialized creation code here
 
 
-	ModifyStyle(0,LVS_REPORT|LVS_SHOWSELALWAYS);
+	//ModifyStyle(0,LVS_REPORT|LVS_SHOWSELALWAYS);
 
-	LONG IStyle;
-	IStyle=GetWindowLong(GetSafeHwnd(), GWL_STYLE);//获取当前窗口style
-	IStyle&= ~LVS_TYPEMASK; //清除显示方式位
-	IStyle|= LVS_REPORT; //set style
-	SetWindowLong(GetSafeHwnd(), GWL_STYLE, IStyle);//设置style
+	//LONG IStyle;
+	//IStyle=GetWindowLong(GetSafeHwnd(), GWL_STYLE);//获取当前窗口style
+	//IStyle&= ~LVS_TYPEMASK; //清除显示方式位
+	//IStyle|= LVS_REPORT; //set style
+	//SetWindowLong(GetSafeHwnd(), GWL_STYLE, IStyle);//设置style
 
-	DWORD dwStyle1;
-	dwStyle1 = GetExtendedStyle();
-	dwStyle1 |= LVS_EX_FULLROWSELECT;//选中某行使整行高亮（只适用与report风格的listctrl）
-	dwStyle1 |= LVS_EX_GRIDLINES;//网格线（只适用与report风格的listctrl）
-	//dwStyle1 |= LVS_EX_CHECKBOXES;//item前生成checkbox控件
-	SetExtendedStyle(dwStyle1); //设置扩展风格
+	//DWORD dwStyle1;
+	//dwStyle1 = GetExtendedStyle();
+	//dwStyle1 |= LVS_EX_FULLROWSELECT;//选中某行使整行高亮（只适用与report风格的listctrl）
+	//dwStyle1 |= LVS_EX_GRIDLINES;//网格线（只适用与report风格的listctrl）
+	////dwStyle1 |= LVS_EX_CHECKBOXES;//item前生成checkbox控件
+	//SetExtendedStyle(dwStyle1); //设置扩展风格
 
 	CString strTemp;
 	std::vector<CString> strl;

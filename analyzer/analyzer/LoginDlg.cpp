@@ -260,7 +260,7 @@ BOOL LoginDlg::OnInitDialog()
 	//bmp.Load(L"C:\\Users\\r8anw2x\\Pictures\\Sample Album\\Pensive Parakeet.jpg");
 
 	//this->SetBackgroundImage((HBITMAP)(bmp));
-	this->SetBackgroundImage(IDB_BITMAP_SINYANG);
+	this->SetBackgroundImage(IDB_BITMAP_BK);
 	//sbmp.SetBitmap((HBITMAP)(bmp));
 
 	return TRUE;  // return TRUE unless you set the focus to a control

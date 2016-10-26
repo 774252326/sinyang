@@ -77,6 +77,12 @@
     <None Include="..\..\..\..\..\Pictures\ico\ThinkCentre.ico">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="res\bitmap8.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\u50b18c7bcb6853363.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="analyzer.h">
@@ -205,6 +211,18 @@
     <ClInclude Include="UserAccount.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="UserAccountDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ListCtrlAA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ListCtrlUA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UserAccountPage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="analyzer.cpp">
@@ -328,6 +346,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="UserAccount.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UserAccountDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ListCtrlAA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ListCtrlUA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UserAccountPage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

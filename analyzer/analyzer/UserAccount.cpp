@@ -9,10 +9,10 @@
 // UserAccount
 
 UserAccount::UserAccount()
-	: userName(_T(""))
-	, passWord(_T(""))
-	, remark(_T(""))
-	, au(guest)
+	: userName(_T("g"))
+	, passWord(_T("g"))
+	, remark(_T("g"))
+	, au(admin)
 {
 }
 

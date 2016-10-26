@@ -26,6 +26,7 @@ BEGIN_MESSAGE_MAP(ListCtrlA, CListCtrl)
 	ON_NOTIFY_REFLECT(LVN_ENDLABELEDIT, &ListCtrlA::OnLvnEndlabeledit)
 	ON_NOTIFY_REFLECT(NM_DBLCLK, &ListCtrlA::OnNMDblclk)
 	ON_NOTIFY_REFLECT(NM_CUSTOMDRAW, &ListCtrlA::OnNMCustomdraw)
+	ON_WM_CREATE()
 END_MESSAGE_MAP()
 
 
@@ -47,43 +48,51 @@ void ListCtrlA::OnLvnBeginlabeledit(NMHDR *pNMHDR, LRESULT *pResult)
 		HWND hWnd= (HWND)SendMessage(LVM_GETEDITCONTROL);
 		ASSERT(hWnd != NULL);
 
-		CRect  rcSubItem;
-		GetSubItemRect( pDispInfo->item.iItem, m_iSubItem, LVIR_LABEL, rcSubItem);
-		CString str=GetItemText(pDispInfo->item.iItem, m_iSubItem);
+		//CRect  rcSubItem;
+		//GetSubItemRect( pDispInfo->item.iItem, m_iSubItem, LVIR_LABEL, rcSubItem);
+		//CString str=GetItemText(pDispInfo->item.iItem, m_iSubItem);		
 
 		switch(typelist[m_iSubItem]){
 		case eEdit:
 			{
 				VERIFY(m_itemEdit.SubclassWindow(hWnd));
-				m_itemEdit.rect=rcSubItem;				
-				m_itemEdit.SetWindowText(str);
+				GetSubItemRect( pDispInfo->item.iItem, m_iSubItem, LVIR_LABEL, m_itemEdit.rect);
+				//m_itemEdit.rect=rcSubItem;	
+				//CString str=GetItemText(pDispInfo->item.iItem, m_iSubItem);							
+				m_itemEdit.SetWindowText( GetItemText(pDispInfo->item.iItem, m_iSubItem) );
 			}
 			break;
 		case eEditReal:
 			{
 				VERIFY(m_itemEditReal.SubclassWindow(hWnd));
-				m_itemEditReal.rect=rcSubItem;
-				m_itemEditReal.SetWindowText(str);
+				//m_itemEditReal.rect=rcSubItem;
+				//m_itemEditReal.SetWindowText(str);
 				m_itemEditReal.min=mind[m_iSubItem];
 				m_itemEditReal.max=maxd[m_iSubItem];
+				GetSubItemRect( pDispInfo->item.iItem, m_iSubItem, LVIR_LABEL, m_itemEditReal.rect);
+				m_itemEditReal.SetWindowText( GetItemText(pDispInfo->item.iItem, m_iSubItem) );
 			}
 			break;
 		case eEditInt:
 			{
 				VERIFY(m_itemEditInt.SubclassWindow(hWnd));
-				m_itemEditInt.rect=rcSubItem;
-				m_itemEditInt.SetWindowText(str);
+				//m_itemEditInt.rect=rcSubItem;
+				//m_itemEditInt.SetWindowText(str);
 				m_itemEditInt.min=mini[m_iSubItem];
 				m_itemEditInt.max=maxi[m_iSubItem];
+				GetSubItemRect( pDispInfo->item.iItem, m_iSubItem, LVIR_LABEL, m_itemEditInt.rect);
+				m_itemEditInt.SetWindowText( GetItemText(pDispInfo->item.iItem, m_iSubItem) );
 			}
 			break;
 		case eEditNum:
 			{
 				VERIFY(m_itemEditNum.SubclassWindow(hWnd));
-				m_itemEditNum.rect=rcSubItem;
-				m_itemEditNum.SetWindowText(str);
+				//m_itemEditNum.rect=rcSubItem;
+				//m_itemEditNum.SetWindowText(str);
 				m_itemEditNum.min=mini[m_iSubItem];
 				m_itemEditNum.max=maxi[m_iSubItem];
+				GetSubItemRect( pDispInfo->item.iItem, m_iSubItem, LVIR_LABEL, m_itemEditNum.rect);
+				m_itemEditNum.SetWindowText( GetItemText(pDispInfo->item.iItem, m_iSubItem) );
 			}
 			break;
 		default:
@@ -132,7 +141,7 @@ void ListCtrlA::OnLvnEndlabeledit(NMHDR *pNMHDR, LRESULT *pResult)
 						if(flg==TRUE){	
 							CString str;							
 							str.Format(L"%g",aa);		
-				
+
 							//m_itemEditReal.GetWindowTextW(str);
 							SetItemText(pDispInfo->item.iItem, m_iSubItem, str);
 							//SetItemText(pDispInfo->item.iItem, m_iSubItem, pDispInfo->item.pszText);	
@@ -309,11 +318,11 @@ int ListCtrlA::GetChoice(int nItem, int nSubItem)
 
 
 	//if(!cbstr[nSubItem].empty()){
-		for(size_t i=0;i<cbstr[nSubItem].size();i++){
-			if(cbstr[nSubItem][i]==strTemp){
-				return i;
-			}
+	for(size_t i=0;i<cbstr[nSubItem].size();i++){
+		if(cbstr[nSubItem][i]==strTemp){
+			return i;
 		}
+	}
 
 
 
@@ -439,13 +448,13 @@ BOOL ListCtrlA::SetHeader(const std::vector<CString> & headerstrl)
 	//this->DeleteAllItems();
 
 	int nColumnCount = GetHeaderCtrl()->GetItemCount();
-  
-          // Delete all of the columns.
-  
-          for (int i=0; i < nColumnCount; i++)
-          {
-              DeleteColumn(0);
-          }
+
+	// Delete all of the columns.
+
+	for (int i=0; i < nColumnCount; i++)
+	{
+		DeleteColumn(0);
+	}
 
 
 	typelist.assign(totaln,eStatic);
@@ -466,4 +475,32 @@ BOOL ListCtrlA::SetHeader(const std::vector<CString> & headerstrl)
 
 
 	return TRUE;
+}
+
+
+int ListCtrlA::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+	if (CListCtrl::OnCreate(lpCreateStruct) == -1)
+		return -1;
+
+	// TODO:  Add your specialized creation code here
+
+
+	ModifyStyle(0,LVS_REPORT|LVS_SHOWSELALWAYS);
+
+	LONG IStyle;
+	IStyle=GetWindowLong(GetSafeHwnd(), GWL_STYLE);//获取当前窗口style
+	IStyle&= ~LVS_TYPEMASK; //清除显示方式位
+	IStyle|= LVS_REPORT; //set style
+	SetWindowLong(GetSafeHwnd(), GWL_STYLE, IStyle);//设置style
+
+	DWORD dwStyle1;
+	dwStyle1 = GetExtendedStyle();
+	dwStyle1 |= LVS_EX_FULLROWSELECT;//选中某行使整行高亮（只适用与report风格的listctrl）
+	dwStyle1 |= LVS_EX_GRIDLINES;//网格线（只适用与report风格的listctrl）
+	//dwStyle1 |= LVS_EX_CHECKBOXES;//item前生成checkbox控件
+	SetExtendedStyle(dwStyle1); //设置扩展风格
+
+
+	return 0;
 }

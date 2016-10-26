@@ -12,6 +12,8 @@
 #include "func.h"
 
 #include "LoginDlg.h"
+#include "UserAccountDlg.h"
+#include "UserAccountPage.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -735,19 +737,49 @@ void CMainFrame::OnSecurityUseraccounts()
 {
 	// TODO: Add your command handler code here
 
-	switch(au){
-	case admin:
-		AfxMessageBox(L"admin");
-		break;
-	case user:
-		AfxMessageBox(L"user");
-		break;
-	case guest:
-		AfxMessageBox(L"guest");
-		break;
-	default:
-		break;
-	}
+	//switch(au){
+	//case admin:
+	//	AfxMessageBox(L"admin");
+	//	break;
+	//case user:
+	//	AfxMessageBox(L"user");
+	//	break;
+	//case guest:
+	//	AfxMessageBox(L"guest");
+	//	break;
+	//default:
+	//	break;
+	//}
+
+	//UserAccountDlg uadlg;
+	//uadlg.userList.bEditable=true;
+	//uadlg.DoModal();
+
+
+
+		CString str;
+		str.LoadStringW(IDS_STRING_USER_ACCOUNT);
+		CPropertySheet sheet(str);
+
+		//str.LoadStringW(IDS_STRING_FIGURE1);
+		//str=L"";
+		//int selecti=m_spBtn.GetPos32();
+
+		UserAccountPage uap;
+		//uap.userList.bEditable=true;
+		uap.useIndex=0;
+		uap.ual.assign(3,UserAccount());
+
+		sheet.AddPage(&uap);
+
+		sheet.SetWizardMode();
+		//sheet.SetWizardButtons(PSWIZB_FINISH);
+
+		if(sheet.DoModal()==IDOK){
+
+		}
+
+
 }
 
 

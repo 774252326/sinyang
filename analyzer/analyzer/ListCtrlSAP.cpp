@@ -11,9 +11,11 @@ ListCtrlSAP::ListCtrlSAP(void)
 ListCtrlSAP::~ListCtrlSAP(void)
 {
 }
-BEGIN_MESSAGE_MAP(ListCtrlSAP, ListCtrlA)
+BEGIN_MESSAGE_MAP(ListCtrlSAP, ListCtrlAA)
 	ON_WM_CREATE()
 	ON_NOTIFY_REFLECT(LVN_KEYDOWN, &ListCtrlSAP::OnLvnKeydown)
+	ON_COMMAND(ID_POPUP_INSERT, &ListCtrlSAP::OnPopupInsert)
+	ON_COMMAND(ID_POPUP_REMOVE, &ListCtrlSAP::OnPopupRemove)
 END_MESSAGE_MAP()
 
 
@@ -23,21 +25,6 @@ int ListCtrlSAP::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	// TODO:  Add your specialized creation code here
-
-	ModifyStyle(0,LVS_REPORT|LVS_SHOWSELALWAYS);
-
-	LONG IStyle;
-	IStyle=GetWindowLong(GetSafeHwnd(), GWL_STYLE);//获取当前窗口style
-	IStyle&= ~LVS_TYPEMASK; //清除显示方式位
-	IStyle|= LVS_REPORT; //set style
-	SetWindowLong(GetSafeHwnd(), GWL_STYLE, IStyle);//设置style
-
-	DWORD dwStyle1;
-	dwStyle1 = GetExtendedStyle();
-	dwStyle1 |= LVS_EX_FULLROWSELECT;//选中某行使整行高亮（只适用与report风格的listctrl）
-	dwStyle1 |= LVS_EX_GRIDLINES;//网格线（只适用与report风格的listctrl）
-	//dwStyle1 |= LVS_EX_CHECKBOXES;//item前生成checkbox控件
-	SetExtendedStyle(dwStyle1); //设置扩展风格
 
 	CString strTemp;
 	std::vector<CString> strl;
@@ -105,10 +92,12 @@ void ListCtrlSAP::OnLvnKeydown(NMHDR *pNMHDR, LRESULT *pResult)
 
 	switch(pLVKeyDow->wVKey){
 	case VK_DELETE:
-		Deletei(GetSelectionMark());
+		//Deletei(GetSelectionMark());
+		OnPopupRemove();
 		break;
 	case VK_INSERT: 
-		Inserti(GetSelectionMark());
+		//Inserti(GetSelectionMark());
+		OnPopupInsert();
 		break;
 	default:
 		break;
@@ -116,4 +105,38 @@ void ListCtrlSAP::OnLvnKeydown(NMHDR *pNMHDR, LRESULT *pResult)
 
 
 	*pResult = 0;
+}
+
+
+void ListCtrlSAP::OnPopupInsert()
+{
+	// TODO: Add your command handler code here
+
+	ListCtrlAA::OnPopupInsert();
+
+	int iSelect=GetSelectionMark();
+	if(iSelect>0)
+		iSelect--;
+	for(;iSelect<GetItemCount();iSelect++){
+		CString str;
+		str.Format(L"%d",iSelect+1);
+		SetItemText(iSelect,0,str);
+	}
+
+}
+
+
+void ListCtrlSAP::OnPopupRemove()
+{
+	// TODO: Add your command handler code here
+
+	ListCtrlAA::OnPopupRemove();
+
+	int iSelect=GetSelectionMark();
+	for(;iSelect<GetItemCount();iSelect++){
+		CString str;
+		str.Format(L"%d",iSelect+1);
+		SetItemText(iSelect,0,str);
+	}
+
 }

@@ -10,6 +10,8 @@
 //#include "analyzerViewL.h"
 //#include "func.h"
 
+#include "UserAccount.h"
+
 enum ProcessState{
 	stop,
 	running,
@@ -17,11 +19,11 @@ enum ProcessState{
 };
 
 
-enum authority{
-	admin,
-	user,
-	guest
-};
+//enum authority{
+//	admin,
+//	user,
+//	guest
+//};
 
 
 class CMainFrame : public CFrameWndEx

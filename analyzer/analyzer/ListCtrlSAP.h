@@ -1,7 +1,7 @@
 #pragma once
-#include "listctrla.h"
+#include "listctrlaa.h"
 class ListCtrlSAP :
-	public ListCtrlA
+	public ListCtrlAA
 {
 public:
 	ListCtrlSAP(void);
@@ -11,5 +11,7 @@ public:
 	int Inserti(int iSelect);
 	int Deletei(int iSelect);
 	afx_msg void OnLvnKeydown(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnPopupInsert();
+	afx_msg void OnPopupRemove();
 };
 

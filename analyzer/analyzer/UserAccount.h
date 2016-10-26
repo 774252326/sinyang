@@ -1,11 +1,11 @@
 #pragma once
 
 
-	enum authority{
+enum authority{
 	admin,
 	user,
 	guest
-	};
+};
 
 // UserAccount command target
 
