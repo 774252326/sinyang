@@ -854,4 +854,6 @@ public:
 	SAPara p3todo;
 	bool bChangeSAP;
 	UINT UpdateALL(void);
+	afx_msg void OnAnalysisCompute();
+	bool FinalData(RawData & rd, std::vector<DataOutA> & dolast, CString fp=L"");
 };

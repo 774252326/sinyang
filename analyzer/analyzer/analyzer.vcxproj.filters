@@ -98,6 +98,9 @@
     <None Include="res\info.bmp">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="res\dtr.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="analyzer.h">
@@ -223,6 +226,15 @@
     <ClInclude Include="PlotSettingPageC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ComputeDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ParaList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Value.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="analyzer.cpp">
@@ -337,6 +349,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PlotSettingPageC.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ComputeDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ParaList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

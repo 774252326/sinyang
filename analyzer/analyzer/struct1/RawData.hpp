@@ -116,7 +116,7 @@ public:
 
 
 
-	bool InterpX(size_t idx, double yr, double &xr)
+	bool InterpX(size_t idx, double yr, double &xr) const
 	{
 		std::vector<double> x;
 		std::vector<double> y;
@@ -124,7 +124,7 @@ public:
 		return ::InterpX(x,y,yr,xr);
 	};
 
-	bool InterpDerivativeX(size_t idx, double yr, double &xr, bool bNormScale=false)
+	bool InterpDerivativeX(size_t idx, double yr, double &xr, bool bNormScale=false) const
 	{
 		std::vector<double> x;
 		std::vector<double> y;
@@ -137,7 +137,7 @@ public:
 		return ::InterpDerivativeX(x,y,yr,xr);
 	};
 
-	double InterpY(size_t idx, double xr)
+	double InterpY(size_t idx, double xr) const
 	{
 		std::vector<double> x;
 		std::vector<double> y;
@@ -150,7 +150,7 @@ public:
 		return yr;
 	};
 
-	bool FitLine(size_t idx, double &k, double &b, size_t nFront=0, size_t nBack=0)
+	bool FitLine(size_t idx, double &k, double &b, size_t nFront=0, size_t nBack=0) const
 	{
 		std::vector<double> x;
 		std::vector<double> y;

@@ -32,7 +32,7 @@ public:
 	virtual BOOL OnKillActive();
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	PlotSpec fs;
-	void ComboSelectChange(void);
+//	void ComboSelectChange(void);
 	//CEditList pslist;
 	//ListCtrlLS pslist;
 

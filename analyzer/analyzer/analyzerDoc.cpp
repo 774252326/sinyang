@@ -26,7 +26,8 @@
 
 #include "MainFrm.h"
 //#include "plot\LegendDlg.hpp"
-
+#include "ComputeDlg.h"
+#include "filefunc.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -42,6 +43,7 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		ON_COMMAND(ID_CONTROLS_CHANGESAP, &CanalyzerDoc::OnControlsChangesap)
 		ON_COMMAND(ID_ANALYSIS_REPORT, &CanalyzerDoc::OnAnalysisReport)
 		ON_COMMAND(ID_CONTROLS_2, &CanalyzerDoc::OnControls2)
+		ON_COMMAND(ID_ANALYSIS_COMPUTE, &CanalyzerDoc::OnAnalysisCompute)
 	END_MESSAGE_MAP()
 
 
@@ -786,4 +788,50 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 			return 100;
 		}
 
+	}
+
+
+	void CanalyzerDoc::OnAnalysisCompute()
+	{
+		// TODO: Add your command handler code here
+
+		ComputeDlg cpd;
+		cpd.DoModal();
+
+	}
+
+
+	bool CanalyzerDoc::FinalData(RawData & rd, std::vector<DataOutA> & dolast, CString fp)
+	{
+
+		if( (!fp.IsEmpty()) && (ReadFileCustom(this,1,fp)==FALSE) ){
+			return false;
+		}
+
+		UINT f1=ComputeStateData();
+		if(f1==0){
+
+			std::vector<RawData> rdl;
+			std::vector<CString> xlabellist;
+			std::vector<CString> ylabellist;
+			std::vector<size_t> dolastidx;
+			UINT ff=CanalyzerDoc::DataOutAList2RawDataList(dol,p1.analysistype,rdl,xlabellist,ylabellist,dolastidx);
+
+			if(ff==1){
+
+				dolast.resize(dolastidx.size());
+				for(size_t i=0;i<dolast.size();i++){
+					dolast[i]=dol[dolastidx[i]];
+				}
+
+				rd=rdl.front();
+				for(size_t i=1;i<rdl.size();i++){
+					rd.AppendData(rdl[i]);
+				}
+
+				return true;
+			}
+		}
+
+		return false;
 	}

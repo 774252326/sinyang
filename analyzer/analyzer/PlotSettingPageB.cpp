@@ -155,7 +155,7 @@ void PlotSettingPageB::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(PlotSettingPageB, CPropertyPage)
 	ON_WM_CREATE()
-	ON_CBN_SELCHANGE(IDS_COMBO_FIGURE_SPEC, &PlotSettingPageB::ComboSelectChange)
+	//ON_CBN_SELCHANGE(IDS_COMBO_FIGURE_SPEC, &PlotSettingPageB::ComboSelectChange)
 	ON_CBN_SELCHANGE(IDS_COMBO_ADJUST, &PlotSettingPageB::AdjustComboSelectChange)
 	ON_BN_CLICKED(IDS_CHECK_SHOW_LEGEND, &PlotSettingPageB::OnCheck)
 END_MESSAGE_MAP()
@@ -170,6 +170,8 @@ BOOL PlotSettingPageB::OnSetActive()
 	UpdateData(FALSE);
 
 	SetModified();    // Enable Apply Now button.
+
+	AdjustComboSelectChange();
 
 	return CPropertyPage::OnSetActive();
 }
@@ -511,25 +513,25 @@ int PlotSettingPageB::OnCreate(LPCREATESTRUCT lpCreateStruct)
 }
 
 
-void PlotSettingPageB::ComboSelectChange(void)
-{
-	int nSel;     
-	CComboBox * pcb=(CComboBox*)(this->GetDlgItem(IDS_COMBO_FIGURE_SPEC));
-	nSel = pcb->GetCurSel();
-
-	for(int i=0;i<5;i++){
-		if(i==nSel){
-			GetDlgItem(IDS_COLOR_BORDER+i)->ShowWindow(SW_SHOW);
-			GetDlgItem(IDS_COLOR_BKGND+i)->ShowWindow(SW_SHOW);
-		}
-		else{
-			GetDlgItem(IDS_COLOR_BORDER+i)->ShowWindow(SW_HIDE);
-			GetDlgItem(IDS_COLOR_BKGND+i)->ShowWindow(SW_HIDE);
-		}
-	}
-
-
-}
+//void PlotSettingPageB::ComboSelectChange(void)
+//{
+//	int nSel;     
+//	CComboBox * pcb=(CComboBox*)(this->GetDlgItem(IDS_COMBO_FIGURE_SPEC));
+//	nSel = pcb->GetCurSel();
+//
+//	for(int i=0;i<5;i++){
+//		if(i==nSel){
+//			GetDlgItem(IDS_COLOR_BORDER+i)->ShowWindow(SW_SHOW);
+//			GetDlgItem(IDS_COLOR_BKGND+i)->ShowWindow(SW_SHOW);
+//		}
+//		else{
+//			GetDlgItem(IDS_COLOR_BORDER+i)->ShowWindow(SW_HIDE);
+//			GetDlgItem(IDS_COLOR_BKGND+i)->ShowWindow(SW_HIDE);
+//		}
+//	}
+//
+//
+//}
 
 
 void PlotSettingPageB::AdjustComboSelectChange(void)
