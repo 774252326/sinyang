@@ -95,6 +95,17 @@ public:
 		}
 		return false;
 	};
+
+	sapitemA StandardStep(double volume){
+		sapitemA sia(*this);
+		if(sia.addType==1||sia.addType==3){
+			sia.volconc=volume;
+		}
+		if(sia.addType!=4){
+			sia.addType=0;
+		}
+		return sia;
+	};
 };
 
 

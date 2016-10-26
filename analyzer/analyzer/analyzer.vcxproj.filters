@@ -211,6 +211,9 @@
     <ClInclude Include="SolutionAdditionParametersPageB.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="StatePara.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="analyzer.cpp">
@@ -313,6 +316,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SolutionAdditionParametersPageB.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StatePara.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

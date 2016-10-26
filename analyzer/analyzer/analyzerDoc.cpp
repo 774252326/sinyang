@@ -240,7 +240,7 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		sppage.para=p3;
 		sheet.AddPage(&sppage);
 
-		
+
 
 		// 打开模态向导对话框   
 		if(sheet.DoModal()==IDOK){
@@ -281,7 +281,8 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		{
 
 			dol.clear();
-			UINT res=::ComputeStateData(p1.analysistype,p2,p3,raw,dol,currentSAPIndex,nextSAPIndex,outstep,VtoAdd);
+			SAPara p3d;
+			UINT res=::ComputeStateData(p1.analysistype,p2,p3,raw,dol,p3d,currentSAPIndex,nextSAPIndex,outstep,VtoAdd);
 			// Now that we are finished, 
 			// unlock the resource for others.
 			singleLock.Unlock();
@@ -327,19 +328,19 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 
 
 
-			BYTE outstep;
-			double a1;
-			size_t nextidx;
-			size_t nowidx;
-			UINT flg=ComputeStateData(nowidx,nextidx,outstep,a1);
+		BYTE outstep;
+		double a1;
+		size_t nextidx;
+		size_t nowidx;
+		UINT flg=ComputeStateData(nowidx,nextidx,outstep,a1);
 
 
-			if(flg!=5)
-				return;
+		if(flg!=5)
+			return;
 
 
 
-				// 创建属性表对象   
+		// 创建属性表对象   
 		CString str;
 		str.LoadStringW(IDS_STRING_ANALYSIS_SETUP);
 		//CPropertySheet sheet(str);
@@ -354,11 +355,11 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		//sheet.AddPage(&cppage);
 
 		SolutionAdditionParametersPageB sppage;
-		
-		if(!dol.empty()){
-		sppage.para0.saplist.assign(p3.saplist.begin(),p3.saplist.begin()+nowidx+1);
 
-		sppage.para0.saplist.back().SetEndRatio(dol.back().ArUse()/dol.back().Ar0);
+		if(!dol.empty()){
+			sppage.para0.saplist.assign(p3.saplist.begin(),p3.saplist.begin()+nowidx+1);
+
+			sppage.para0.saplist.back().SetEndRatio(dol.back().ArUse()/dol.back().Ar0);
 		}
 
 		sppage.para1.saplist.assign(p3.saplist.begin()+nextidx,p3.saplist.end());
@@ -366,7 +367,7 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		//sppage.para=p3;
 		sheet.AddPage(&sppage);
 
-		
+
 
 		// 打开模态向导对话框   
 		if(sheet.DoModal()==IDOK){

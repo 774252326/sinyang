@@ -9,7 +9,7 @@
 #include "filefunc.h"
 #include "funT1\ComputeQT.h"
 
-
+#include "StatePara.h"
 
 DWORD stp(BYTE step,BYTE stepControl,BYTE plotFilter)
 {
@@ -213,7 +213,7 @@ UINT ComputeStateData(
 			}
 			sl.pop_back();
 			sl.pop_back();
-			sl[0]|=(SC_NEW_RIGHT_PLOT<<8);
+			//sl[0]|=(SC_NEW_RIGHT_PLOT<<8);
 		}
 
 
@@ -253,7 +253,7 @@ UINT ComputeStateData(
 
 			if( d0.Update(p3t.saplist.front(),step) ){
 
-				std::vector<double> x;
+				std::vector<double> x; 
 				std::vector<double> y;
 
 				raw.GetDatai(rawi,x,y);
@@ -302,6 +302,7 @@ UINT ComputeStateData(
 				}else{
 					tmp1=ComputeQListA(x,y,Ql,p2.endintegratione,p2.startintegratione,p2.scanrate);
 				}
+				//tmp1=ComputeQListC(x,y,Ql,p2.scanrate,p2.lowelimit*.9,p2.highelimit*.9);
 
 				if(Ql.empty()){
 					//if(tmp1!=0){//第rawi次加液数据不足，即第rawi次加液未完成第一圈数据时，无法计算积分
@@ -330,7 +331,7 @@ UINT ComputeStateData(
 				}
 
 				dol.push_back(d0);
-
+				currentSAPIndex=p3.saplist.size()-p3t.saplist.size();
 				rawi++;
 
 				if(p3t.saplist.front().isStepEnd(d0.ArUse()/d0.Ar0,!(step&DOA_MORE))){
@@ -339,7 +340,7 @@ UINT ComputeStateData(
 				stepControl|=SC_STEP_COMPLETE;
 				sl.front()=stp(step,stepControl,plotFilter);
 
-				//currentSAPIndex=p3.saplist.size()-p3t.saplist.size();
+
 
 			}
 			else{
@@ -377,7 +378,7 @@ UINT ComputeStateData(
 
 					nextSAPIndex=p3.saplist.size()-p3t.saplist.size();
 					outstep=step;
-	
+
 
 					return 3;//第rawi－1次加液已完成第一圈数据，而第rawi次加液设置出错
 					//p3t.saplist.erase(p3t.saplist.begin());
@@ -399,6 +400,498 @@ UINT ComputeStateData(
 		//return 0;
 
 }
+
+
+
+UINT ComputeStateData(
+	std::vector<DWORD> &sl,
+	const CVPara &p2,
+	const SAPara &p3,
+	const RawData &raw,
+	std::vector<DataOutA> &dol,
+	SAPara &p3done,
+	//sapitemA &outitem,
+	size_t &currentSAPIndex,
+	size_t &nextSAPIndex,
+	BYTE &outstep,
+	double &VtoAdd){
+
+		//if(raw.ll.empty())//无数据
+		//return 4;
+
+		//std::vector<DWORD> sl;
+
+		//bool flg=GetStepList(sl,ANPType);
+
+		SAPara p3t=p3;
+
+
+		//if(ANPType==7){						
+		//	for(size_t i=0;i<p3t.saplist.size();i++){
+		//		if(p3t.saplist[i].addType==4){
+		//			sl.resize(sl.size()+2);
+		//			std::copy_backward(sl.begin(),sl.begin()+2,sl.end());
+		//		}
+		//	}
+		//	sl.pop_back();
+		//	sl.pop_back();
+		//	//sl[0]|=(SC_NEW_RIGHT_PLOT<<8);
+		//}
+
+
+		////////////////////////////////////////////////////////////////////////////////////////
+
+		DataOutA d0;
+
+		size_t rawi=0;
+		//size_t sapi=0;
+		currentSAPIndex=0;
+
+		while( !sl.empty() ){
+
+			BYTE step=nby(sl.front(),0);
+			BYTE stepControl=nby(sl.front(),1);
+			BYTE plotFilter=nby(sl.front(),2);
+
+			if( p3t.saplist.empty() ){//最后一次加液完成
+
+				nextSAPIndex=p3.saplist.size();
+				outstep=step;
+				//VtoAdd=0;
+
+				if(sl.size()>1){//未完成分析方法指定的加液步骤
+					return 4;
+				}
+
+				//完成分析方法指定的全部加液步骤
+				if(!dol.empty()
+					//&& dol.back().Ar.size()<p2.noofcycles)
+					&& !dol.back().EndFlag(p2.noofcycles,p2.variationtolerance) )
+					return 6;//此时最后一次加液的转圈计数未必到达预设值p2.noofcycles
+
+				return 0;//此时最后一次加液的转圈计数到达预设值
+			}
+
+
+			if( d0.Update(p3t.saplist.front(),step) ){
+
+				std::vector<double> x; 
+				std::vector<double> y;
+
+				raw.GetDatai(rawi,x,y);
+
+				if(x.empty() || y.empty()){//第rawi－1次加液已完成第一圈数据，而第rawi次加液无数据
+					//outitem=p3t.saplist.front();
+					nextSAPIndex=p3.saplist.size()-p3t.saplist.size();
+					outstep=step;
+
+
+
+					if( rawi>0 
+						//&& dol[rawi-1].Ar.size()<p2.noofcycles)
+						&& !dol[rawi-1].EndFlag(p2.noofcycles,p2.variationtolerance) )
+						return 1;//第rawi－1次加液的转圈计数未必到达预设值p2.noofcycles
+
+					VtoAdd=d0.addVolume;
+					return 5;//第rawi－1次加液的转圈计数到达预设值
+				}
+
+				//std::vector<double> Ql(p2.noofcycles,0);
+				//int tmp1;
+				//if(p2.combochoice==0)
+				//tmp1=ComputeQList(x,y,Ql.data(),Ql.size(),p2.endintegratione,p2.scanrate,p2.lowelimit*.9,p2.highelimit*.9);
+				//else
+				//tmp1=ComputeQListA(x,y,Ql.data(),Ql.size(),p2.endintegratione,p2.startintegratione,p2.scanrate);
+
+				////if(tmp1!=0 && tmp1!=3){
+				//if(tmp1<=0){//第rawi步数据不足，即第rawi步未完成第一圈数据时，无法计算积分
+				//	d0.Ar.clear();
+				//	d0.UseIndex=-1;
+				//	dol.push_back(d0);
+				//	outitem=p3t.saplist.front();
+				//	outstep=step;
+				//	return 2;
+				//}
+
+
+				//d0.Ar.assign(Ql.begin(),Ql.begin()+tmp1);
+
+
+				std::vector<double> Ql;
+				UINT tmp1;
+				if(p2.combochoice==0){
+					tmp1=ComputeQList(x,y,Ql,p2.endintegratione,p2.scanrate,p2.lowelimit*.9,p2.highelimit*.9);
+				}else{
+					tmp1=ComputeQListA(x,y,Ql,p2.endintegratione,p2.startintegratione,p2.scanrate);
+				}
+				//tmp1=ComputeQListC(x,y,Ql,p2.scanrate,p2.lowelimit*.9,p2.highelimit*.9);
+
+				if(Ql.empty()){
+					//if(tmp1!=0){//第rawi次加液数据不足，即第rawi次加液未完成第一圈数据时，无法计算积分
+					d0.Ar.clear();
+					d0.UseIndex=-1;
+					dol.push_back(d0);
+					//outitem=p3t.saplist.front();
+					nextSAPIndex=p3.saplist.size()-p3t.saplist.size();
+					//currentSAPIndex=p3.saplist.size()-p3t.saplist.size();
+
+					outstep=step;
+
+					return 2;
+				}
+
+				d0.Ar.assign(Ql.begin(),Ql.end());	
+
+				if( (!(stepControl&SC_NO_PLOT))&&
+					(!(stepControl&SC_PLOT_LAST)) ){
+						d0.UseIndex=d0.Ar.size()-1;
+				}
+				else{
+					d0.UseIndex=-1;
+				}
+
+				if( step&DOA_VMS ){	
+					d0.Ar0=d0.ArUse();
+				}
+
+				dol.push_back(d0);
+				currentSAPIndex=p3.saplist.size()-p3t.saplist.size();
+				rawi++;
+
+				p3done.saplist.push_back(p3t.saplist.front().StandardStep(dol.back().addVolume));
+
+
+				if(p3t.saplist.front().isStepEnd(dol.back().ArUse()/dol.back().Ar0,!(step&DOA_MORE))){
+					p3t.saplist.erase(p3t.saplist.begin());
+				}
+				stepControl|=SC_STEP_COMPLETE;
+				sl.front()=stp(step,stepControl,plotFilter);
+
+
+
+			}
+			else{
+				if( stepControl&SC_STEP_COMPLETE ){
+
+					if(step&DOA_RESET_SOLUTION_AT_END){		
+						d0.ResetCompound();
+						dol.back().ResetCompound();
+					}
+
+					if(!(stepControl&SC_NO_PLOT)){
+						if( stepControl&SC_PLOT_LAST ){
+							d0.UseIndex=d0.Ar.size()-1;
+							dol.back().UseIndex=dol.back().Ar.size()-1;
+						}	
+					}
+					else{
+						d0.UseIndex=-1;
+						dol.back().UseIndex=-1;
+					}
+
+					if( step&DOA_VMS ){	
+						d0.Ar0=d0.ArUse();
+						dol.back().Ar0=dol.back().ArUse();
+					}
+
+					sl.erase(sl.begin());
+				}
+				else{				
+					nextSAPIndex=p3.saplist.size()-p3t.saplist.size();
+					outstep=step;
+
+					return 3;//第rawi－1次加液已完成第一圈数据，而第rawi次加液设置出错
+				}
+			}
+		}
+
+		nextSAPIndex=p3.saplist.size()-p3t.saplist.size();
+
+		return 7;//完成分析方法指定的全部加液步骤,但用户设定的加液步骤还有剩余。
+
+}
+
+
+
+UINT ComputeStateData(
+	int analysistype,
+	const CVPara &p2,
+	const SAPara &p3,
+	const RawData &raw,
+	std::vector<DataOutA> &dol,
+	SAPara &p3done,
+	size_t &currentSAPIndex,
+	size_t &nextSAPIndex,
+	BYTE &outstep,
+	double &VtoAdd){
+
+		std::vector<DWORD> sl;
+
+		bool flg=GetStepList(sl,analysistype);
+
+		switch(analysistype){
+
+		case 2:
+		case 6:
+		case 10:
+		case 12:
+			sl[0]|=(SC_NEW_RIGHT_PLOT<<8);
+			return ComputeStateData(sl,p2,p3,raw,dol,p3done,currentSAPIndex,nextSAPIndex,outstep,VtoAdd);
+		case 7:
+			{
+				size_t nextidx=0;
+				UINT res;
+				SAPara p3t=p3;
+				RawData rawt=raw;
+				size_t rawi=dol.size();
+
+				while(!p3t.saplist.empty()){
+
+					sl[0]|=(SC_NEW_RIGHT_PLOT<<8);
+
+					res=ComputeStateData(sl,p2,p3t,rawt,dol,p3done,currentSAPIndex,nextSAPIndex,outstep,VtoAdd);
+					nextidx+=nextSAPIndex;
+
+					if(res!=0 && res!=7){
+						break;
+					}
+					p3t.saplist.erase(p3t.saplist.begin(),p3t.saplist.begin()+nextSAPIndex);			
+
+
+					for(;rawi<dol.size();rawi++){
+						size_t tmpi=rawt.ll.front();
+						rawt.xll.erase(rawt.xll.begin(),rawt.xll.begin()+tmpi);
+						rawt.yll.erase(rawt.yll.begin(),rawt.yll.begin()+tmpi);
+						rawt.ll.erase(rawt.ll.begin());
+					}
+
+					flg=GetStepList(sl,analysistype);
+				}
+
+				nextSAPIndex=nextidx;
+				return res;
+			}
+		default:
+			return ComputeStateData(sl,p2,p3,raw,dol,p3done,currentSAPIndex,nextSAPIndex,outstep,VtoAdd);
+		}	
+
+}
+
+
+
+
+//UINT ComputeStateData(
+//	int ANPType,
+//	const CVPara &p2,
+//	const SAPara &p3,
+//	const RawData &raw,
+//	//std::vector<DataOutA> &dol,
+//	StatePara &po,
+//	SAPara &p3done,
+//	//sapitemA &outitem,
+//	size_t &currentSAPIndex,
+//	size_t &nextSAPIndex,
+//	BYTE &outstep,
+//	double &VtoAdd){
+//
+//		//if(raw.ll.empty())//无数据
+//		//return 4;
+//
+//		std::vector<DWORD> sl;
+//
+//		bool flg=GetStepList(sl,ANPType);
+//
+//		SAPara p3t=p3;
+//
+//
+//		//if(ANPType==7){						
+//		//	for(size_t i=0;i<p3t.saplist.size();i++){
+//		//		if(p3t.saplist[i].addType==4){
+//		//			sl.resize(sl.size()+2);
+//		//			std::copy_backward(sl.begin(),sl.begin()+2,sl.end());
+//		//		}
+//		//	}
+//		//	sl.pop_back();
+//		//	sl.pop_back();
+//		//	sl[0]|=(SC_NEW_RIGHT_PLOT<<8);
+//		//}
+//
+//
+//		////////////////////////////////////////////////////////////////////////////////////////
+//
+//
+//
+//		DataOutA d0;
+//
+//		size_t rawi=0;
+//		//size_t sapi=0;
+//		currentSAPIndex=0;
+//
+//		while( !sl.empty() ){
+//
+//			BYTE step=nby(sl.front(),0);
+//			BYTE stepControl=nby(sl.front(),1);
+//			BYTE plotFilter=nby(sl.front(),2);
+//
+//			if( p3t.saplist.empty() ){//最后一个加液步骤完成
+//
+//				nextSAPIndex=p3.saplist.size();
+//				outstep=step;
+//				//VtoAdd=0;
+//
+//				if(sl.size()>1){//未完成分析方法指定的加液步骤
+//					return 4;
+//				}
+//
+//				//完成分析方法指定的全部加液步骤
+//				if(!dol.empty()
+//					//&& dol.back().Ar.size()<p2.noofcycles)
+//					&& !dol.back().EndFlag(p2.noofcycles,p2.variationtolerance) )
+//					return 6;//此时最后一次加液的转圈计数未必到达预设值p2.noofcycles
+//
+//				return 0;//此时最后一次加液的转圈计数到达预设值
+//			}
+//
+//
+//			if( d0.Update(p3t.saplist.front(),step) ){
+//
+//				std::vector<double> x; 
+//				std::vector<double> y;
+//
+//				raw.GetDatai(rawi,x,y);
+//
+//				if(x.empty() || y.empty()){//第rawi－1次加液已完成第一圈数据，而第rawi次加液无数据
+//					//outitem=p3t.saplist.front();
+//					nextSAPIndex=p3.saplist.size()-p3t.saplist.size();
+//					outstep=step;
+//
+//
+//
+//					if( rawi>0 
+//						//&& dol[rawi-1].Ar.size()<p2.noofcycles)
+//						&& !dol[rawi-1].EndFlag(p2.noofcycles,p2.variationtolerance) )
+//						return 1;//第rawi－1次加液的转圈计数未必到达预设值p2.noofcycles
+//
+//					VtoAdd=d0.addVolume;
+//					return 5;//第rawi－1次加液的转圈计数到达预设值
+//				}
+//
+//				//std::vector<double> Ql(p2.noofcycles,0);
+//				//int tmp1;
+//				//if(p2.combochoice==0)
+//				//tmp1=ComputeQList(x,y,Ql.data(),Ql.size(),p2.endintegratione,p2.scanrate,p2.lowelimit*.9,p2.highelimit*.9);
+//				//else
+//				//tmp1=ComputeQListA(x,y,Ql.data(),Ql.size(),p2.endintegratione,p2.startintegratione,p2.scanrate);
+//
+//				////if(tmp1!=0 && tmp1!=3){
+//				//if(tmp1<=0){//第rawi步数据不足，即第rawi步未完成第一圈数据时，无法计算积分
+//				//	d0.Ar.clear();
+//				//	d0.UseIndex=-1;
+//				//	dol.push_back(d0);
+//				//	outitem=p3t.saplist.front();
+//				//	outstep=step;
+//				//	return 2;
+//				//}
+//
+//
+//				//d0.Ar.assign(Ql.begin(),Ql.begin()+tmp1);
+//
+//
+//				std::vector<double> Ql;
+//				UINT tmp1;
+//				if(p2.combochoice==0){
+//					tmp1=ComputeQList(x,y,Ql,p2.endintegratione,p2.scanrate,p2.lowelimit*.9,p2.highelimit*.9);
+//				}else{
+//					tmp1=ComputeQListA(x,y,Ql,p2.endintegratione,p2.startintegratione,p2.scanrate);
+//				}
+//				//tmp1=ComputeQListC(x,y,Ql,p2.scanrate,p2.lowelimit*.9,p2.highelimit*.9);
+//
+//				if(Ql.empty()){
+//					//if(tmp1!=0){//第rawi次加液数据不足，即第rawi次加液未完成第一圈数据时，无法计算积分
+//					d0.Ar.clear();
+//					d0.UseIndex=-1;
+//					dol.push_back(d0);
+//					//outitem=p3t.saplist.front();
+//					nextSAPIndex=p3.saplist.size()-p3t.saplist.size();
+//					outstep=step;
+//
+//					return 2;
+//				}
+//
+//				d0.Ar.assign(Ql.begin(),Ql.end());	
+//
+//				if( (!(stepControl&SC_NO_PLOT))&&
+//					(!(stepControl&SC_PLOT_LAST)) ){
+//						d0.UseIndex=d0.Ar.size()-1;
+//				}
+//				else{
+//					d0.UseIndex=-1;
+//				}
+//
+//				if( step&DOA_VMS ){	
+//					d0.Ar0=d0.ArUse();
+//				}
+//
+//				dol.push_back(d0);
+//				currentSAPIndex=p3.saplist.size()-p3t.saplist.size();
+//				rawi++;
+//
+//				if(p3t.saplist.front().isStepEnd(d0.ArUse()/d0.Ar0,!(step&DOA_MORE))){
+//					p3t.saplist.erase(p3t.saplist.begin());
+//				}
+//				stepControl|=SC_STEP_COMPLETE;
+//				sl.front()=stp(step,stepControl,plotFilter);
+//
+//				
+//
+//			}
+//			else{
+//				if( stepControl&SC_STEP_COMPLETE ){
+//
+//					if(step&DOA_RESET_SOLUTION_AT_END){		
+//						d0.ResetCompound();
+//						dol.back().ResetCompound();
+//					}
+//
+//					if(!(stepControl&SC_NO_PLOT)){
+//						if( stepControl&SC_PLOT_LAST ){
+//							d0.UseIndex=d0.Ar.size()-1;
+//							dol.back().UseIndex=dol.back().Ar.size()-1;
+//						}	
+//					}
+//					else{
+//						d0.UseIndex=-1;
+//						dol.back().UseIndex=-1;
+//					}
+//
+//					if( step&DOA_VMS ){	
+//						d0.Ar0=d0.ArUse();
+//						dol.back().Ar0=dol.back().ArUse();
+//					}
+//
+//					sl.erase(sl.begin());
+//				}
+//				else{				
+//					nextSAPIndex=p3.saplist.size()-p3t.saplist.size();
+//					outstep=step;
+//					return 3;//第rawi－1次加液已完成第一圈数据，而第rawi次加液设置出错
+//
+//				}
+//			}
+//		}
+//
+//
+//		return 7;//未知错误
+//
+//}
+
+
+
+
+
+
+
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool IsVMSStep(DataOutA d) {
@@ -761,7 +1254,8 @@ bool GetCalibrationCurve(
 		BYTE bytedummy;
 		double doubledummy;
 		size_t nowidx;
-		UINT flg=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol,nowidx,nextidx,bytedummy,doubledummy);
+		SAPara p3d;
+		UINT flg=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol,p3d,nowidx,nextidx,bytedummy,doubledummy);
 
 
 		if(flg==0){
@@ -988,7 +1482,8 @@ bool Compute2(const std::vector<DataOutA> &dol, const ANPara &p1, double &SPv, d
 					BYTE bytedummy;
 					double doubledummy;
 					size_t nowidx;
-					UINT f1=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol1,nowidx,nextidx,bytedummy,doubledummy);
+					SAPara p3d;
+					UINT f1=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol1,p3d,nowidx,nextidx,bytedummy,doubledummy);
 					if(f1==0){
 						if(Compute1(dol1,tmp.p1,Sv,z)){
 							SPc=z*(1+Vv/SPv);
@@ -1129,7 +1624,8 @@ bool Compute6(const std::vector<DataOutA> &dol, const ANPara &p1, double &Lc, do
 		BYTE bytedummy;
 		double doubledummy;
 		size_t nowidx;
-		UINT f1=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol1,nowidx,nextidx,bytedummy,doubledummy);
+		SAPara p3d;
+		UINT f1=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol1,p3d,nowidx,nextidx,bytedummy,doubledummy);
 		if(f1==0){
 
 			tmp.p1.evaluationratio=Q/dol1.back().Ar0;
@@ -1319,7 +1815,8 @@ bool Compute8(
 
 		std::vector<DataOutA> dol1;
 		size_t nowidx;
-		UINT f1=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol1,nowidx,nextidx,bytedummy,doubledummy);
+		SAPara p3d;
+		UINT f1=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol1,p3d,nowidx,nextidx,bytedummy,doubledummy);
 		if(f1==0){
 
 			RawData SA00;
@@ -1415,7 +1912,8 @@ bool Compute10(
 		double doubledummy;
 		size_t nextidx;
 		size_t nowidx;
-		UINT f1=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol1,nowidx,nextidx,bytedummy,doubledummy);
+		SAPara p3d;
+		UINT f1=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol1,p3d,nowidx,nextidx,bytedummy,doubledummy);
 		if(f1==0){
 
 			if(Compute9(dol1,tmp.p1,Lc)){
@@ -1482,7 +1980,8 @@ bool Compute12(
 		double doubledummy;
 		size_t nextidx;
 		size_t nowidx;
-		UINT f1=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol1,nowidx,nextidx,bytedummy,doubledummy);
+		SAPara p3d;
+		UINT f1=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol1,p3d,nowidx,nextidx,bytedummy,doubledummy);
 		if(f1==0){
 
 

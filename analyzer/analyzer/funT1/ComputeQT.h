@@ -4,6 +4,252 @@
 #include "SeperateT.h"
 #include <functional>
 
+
+
+
+template <typename T>
+bool RDPOnce(std::vector<T> x, std::vector<T> y, size_t &newnode, T &dist)
+{
+
+	if(	x.size()!=y.size() || x.size()<3 ){
+		return false;
+	}
+
+	T xf=x.front();
+	T xb=x.back();
+	T yf=y.front();
+	T yb=y.back();
+
+	T D=xf*yb-xb*yf;
+	T A=yf-yb;
+	T B=xb-xf;
+
+	std::vector<T> d(x.size(),0);
+	for(size_t i=0;i<d.size();i++){
+		d[i]=A*x[i]+B*y[i]+D;
+		d[i]=abs(d[i]);
+	}
+	std::vector<T>::iterator it;
+	it=std::max_element(d.begin(),d.end());
+	newnode=it-d.begin();
+
+	dist=d[newnode]/sqrt(A*A+B*B);
+
+	return true;
+
+}
+
+template <typename T>
+bool findUpLim(
+	const std::vector<T> &u, 
+	const std::vector<T> &i,
+	size_t startidx,
+	size_t endidx,
+	size_t &UpLimIdx
+	){
+		std::vector<T> x;
+		x.assign(u.begin()+startidx,u.begin()+endidx+1);
+		std::vector<T> y;
+		y.assign(i.begin()+startidx,i.begin()+endidx+1);
+		T dist=0;
+		size_t idx=0;
+		bool flg=RDPOnce(x,y,idx,dist);
+
+		if(flg){
+
+			TRACE(L"\nu=%g,i=%g",x[idx],y[idx]);
+
+			if(y[idx]<=0){
+				UpLimIdx=idx+startidx;				
+			}
+			else{
+			x.erase(x.begin(),x.begin()+idx);
+			y.erase(y.begin(),y.begin()+idx);
+			startidx+=idx;
+
+			flg=RDPOnce(x,y,idx,dist);
+
+			UpLimIdx=flg? idx+startidx : startidx;
+			}
+
+			TRACE(L";u=%g,i=%g",u[UpLimIdx],i[UpLimIdx]);
+
+			return true;
+		}
+
+		return false;
+
+}
+
+
+
+
+
+template <typename T>
+UINT ComputeQListC(
+	std::vector<T> u, 
+	std::vector<T> i,
+	std::vector<T> &QList, 
+	T scanRate,
+	T umin,
+	T umax
+	){
+
+		if(u.size()!=i.size()
+			//||nCycle==0
+			////||u.size()<nCycle*nPperCycle
+			){
+				return 3;//输入错误
+		}
+
+		std::vector<size_t> mini;
+		std::vector<size_t> maxi;
+
+		UINT re=Seperate(u,mini,maxi);
+
+		if(re!=0){
+			return re;//分段出错
+		}
+
+		if(mini.front()>maxi.front())
+			maxi.erase(maxi.begin());
+
+		QList.clear();
+
+		while( !mini.empty() && !maxi.empty() ){
+
+			if(u[mini.front()]<=umin
+				&& u[maxi.front()]>=umax
+				){//分段区间包含预设搜索范围[umin,umax]
+					std::vector<T>::iterator it;					
+					it=std::max_element(i.begin()+mini.front(),i.begin()+maxi.front()+1);
+					if(it!=i.begin()+maxi.front()+1){
+						size_t maxidx=it-i.begin();
+
+						size_t uplimidx=0;
+
+						if(findUpLim(u,i,maxidx,maxi.front(),uplimidx)){
+							maxi.front()=uplimidx;
+							T ilowlim=0;
+							it=std::find_end(
+								i.begin()+mini.front(),								
+								i.begin()+maxidx+1, 									
+								&ilowlim, 
+								(&ilowlim)+1, 
+								std::less_equal<T>());
+
+
+							if(it!=i.begin()+maxidx+1){//积分下限超出分段区间
+								mini.front()=it-i.begin();
+
+
+								if(mini.front()<maxi.front()){//积分下限<积分上限
+									std::vector<T> x(u.begin()+mini.front(),u.begin()+maxi.front()+1);
+									std::vector<T> y(i.begin()+mini.front(),i.begin()+maxi.front()+1);
+
+									T res=Integral(x,y)/scanRate;
+
+									QList.push_back(res);
+								}
+							}
+						}
+					}
+			}
+
+			mini.erase(mini.begin());
+			maxi.erase(maxi.begin());
+
+		}
+
+		return 0;
+
+}
+
+
+
+
+
+template <typename T>
+UINT ComputeQListB(
+	std::vector<T> u, 
+	std::vector<T> i,
+	std::vector<T> &QList, 
+	T lowLimit,
+	T scanRate,
+	T umin,
+	T umax
+	){
+
+		if(u.size()!=i.size()
+			//||nCycle==0
+			////||u.size()<nCycle*nPperCycle
+			){
+				return 3;//输入错误
+		}
+
+		std::vector<size_t> mini;
+		std::vector<size_t> maxi;
+
+		UINT re=Seperate(u,mini,maxi);
+
+		if(re!=0){
+			return re;//分段出错
+		}
+
+		if(mini.front()>maxi.front())
+			maxi.erase(maxi.begin());
+
+		QList.clear();
+
+		while( !mini.empty() && !maxi.empty() ){
+
+			if(u[mini.front()]<=umin
+				&& u[maxi.front()]>=umax
+				){//分段区间包含预设搜索范围[umin,umax]
+					std::vector<T>::iterator it;
+					it=std::find_first_of(
+						u.begin()+mini.front(), 
+						u.begin()+maxi.front()+1, 
+						&lowLimit, 
+						(&lowLimit)+1, 
+						std::greater_equal<T>());
+
+					if(it!=u.begin()+maxi.front()+1){//积分下限未超出分段区间
+						mini.front()=it-u.begin();
+						it=std::max_element(i.begin()+mini.front(),i.begin()+maxi.front()+1);
+
+						if(it!=i.begin()+maxi.front()+1){
+							size_t maxidx=it-i.begin();
+
+							size_t uplimidx=0;
+
+							if(findUpLim(u,i,maxidx,maxi.front(),uplimidx)){
+								maxi.front()=uplimidx;
+								
+								if(mini.front()<maxi.front()){//积分下限<积分上限
+									std::vector<T> x(u.begin()+mini.front(),u.begin()+maxi.front()+1);
+									std::vector<T> y(i.begin()+mini.front(),i.begin()+maxi.front()+1);
+
+									T res=Integral(x,y)/scanRate;
+
+									QList.push_back(res);
+								}
+							}
+						}
+					}
+			}
+
+			mini.erase(mini.begin());
+			maxi.erase(maxi.begin());
+
+		}
+
+		return 0;
+
+}
+
+
+
 template <typename T>
 UINT ComputeQList(
 	std::vector<T> u, 

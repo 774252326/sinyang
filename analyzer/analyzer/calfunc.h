@@ -61,6 +61,7 @@ UINT ComputeStateData(
 	const RawData &raw,
 	std::vector<DataOutA> &dol,	
 	//sapitemA &outitem,
+	SAPara &p3done,
 	size_t &currentSAPIndex,
 	size_t &nextSAPIndex,
 	BYTE &outstep,

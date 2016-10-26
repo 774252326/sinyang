@@ -1,6 +1,7 @@
 #pragma once
 
 #include "sapitemA.hpp"
+#include "DataOutA.hpp"
 #include <vector>
 // SAPara command target
 
@@ -44,6 +45,51 @@ public:
 			}
 		}
 	};
+
+
+	bool ConvertToStandrad(const std::vector<DataOutA> &dol, SAPara &sapStd)
+	{
+		SAPara stdp;
+
+		size_t j=0;
+		for(size_t i=0;i<dol.size();i++){
+			switch(saplist[j].addType){
+			case 0:
+				stdp.saplist.push_back(saplist[j]);
+				j++;
+				break;
+			case 1:
+				stdp.saplist.push_back(saplist[j]);
+				stdp.saplist.back().addType=0;
+				//if(saplist[j].isStepEnd(dol[i].
+				break;
+			case 2:
+				stdp.saplist.push_back(saplist[j]);
+				stdp.saplist.back().addType=0;
+				stdp.saplist.back().volconc=dol[i].addVolume;
+				j++;
+				break;
+			case 3:
+				stdp.saplist.push_back(saplist[j]);
+				stdp.saplist.back().addType=0;
+				stdp.saplist.back().volconc=dol[i].addVolume;
+				break;
+			case 4:
+				stdp.saplist.push_back(saplist[j]);
+				j++;
+				break;
+			default:
+				return false;
+				//break;
+			}
+		}
+
+		sapStd=stdp;
+
+		return true;
+		
+	};
+
 
 };
 
