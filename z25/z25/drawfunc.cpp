@@ -1,3 +1,5 @@
+//#pragma once
+
 #include "stdafx.h"
 #include "drawfunc.h"
 //#include "funT\\smsp.h"
@@ -8,18 +10,18 @@
 //int metricGridLong=5;
 //int metricGridShort=3;
 
-int lc=25;
-int gap=2;
-int Hmax=15;
-CString fontName=L"Arial";
-
+//int lc=25;
+//int gap=2;
+//int Hmax=15;
+//CString fontName=L"Arial";
+#include "PlotWnd.h"
 
 inline COLORREF inv(const COLORREF &oc){
 	return (oc^0x00ffffff);
 }
 
 
-void AdjustWidth(CListCtrl *ls, int nCol, CString str, int gap)
+void AdjustWidth(CListCtrl *ls, int nCol, CString str, int gap=15)
 {
 	int widthc,widtht;
 	widtht=ls->GetStringWidth(str)+gap;
@@ -28,7 +30,7 @@ void AdjustWidth(CListCtrl *ls, int nCol, CString str, int gap)
 		ls->SetColumnWidth(nCol,widtht);
 }
 
-void AdjustWidth(CListCtrl *ls, int nCol, int nRow, int gap)
+void AdjustWidth(CListCtrl *ls, int nCol, int nRow, int gap=15)
 {
 	CString	str=ls->GetItemText(nRow,nCol);
 	AdjustWidth(ls, nCol, str, gap);
@@ -553,6 +555,141 @@ CSize GetLegendTextExtent(CDC* pDC
 	return rectsz;
 }
 
+CSize GetLegendExtent(CDC* pDC
+	, const std::vector<LineSpec> &ps
+	, CFont* pfont
+	, int lc
+	, int gap
+	, int metricH
+	, CString fontName
+	)
+{
+		pfont->DeleteObject();
+
+		pfont->CreateFont(
+			metricH,                   // nHeight
+			0,                         // nWidth
+			0,                         // nEscapement
+			0,                         // nOrientation
+			FW_NORMAL,                 // nWeight
+			FALSE,                     // bItalic
+			FALSE,                     // bUnderline
+			0,                         // cStrikeOut
+			ANSI_CHARSET,              // nCharSet
+			OUT_DEFAULT_PRECIS,        // nOutPrecision
+			CLIP_DEFAULT_PRECIS,       // nClipPrecision
+			DEFAULT_QUALITY,           // nQuality
+			DEFAULT_PITCH | FF_SWISS,  // nPitchAndFamily
+			fontName);                 // lpszFacename
+
+		CSize LTsz=GetLegendTextExtent(pDC,ps,pfont);
+
+		LTsz.cx+=lc+gap*3;
+
+		return LTsz;
+
+}
+
+
+
+int GetAutoFontSize(CDC* pDC
+	, const std::vector<LineSpec> &ls
+	//, CFont* pfont
+	, int lineLength
+	, int gap
+	, int minSize
+	, int maxSize
+	, CString fontName
+	, CSize borderSize
+	)
+{
+
+	CFont font;
+	int uf=maxSize;
+
+		CSize szu=GetLegendExtent(pDC,ls,&font,lineLength,gap,uf,fontName);
+		if(szu.cx<=borderSize.cx && szu.cy<=borderSize.cy){
+			TRACE("\nmax\n");
+			return maxSize;
+		}
+
+		int lf=minSize;
+		CSize szl=GetLegendExtent(pDC,ls,&font,lineLength,gap,lf,fontName);
+		if(szl.cx>borderSize.cx || szl.cy>borderSize.cy){
+			TRACE("\nmin\n");
+			return minSize;
+		}
+
+		while(uf-lf>1){
+			int tf=(uf+lf)/2;
+			CSize szt=GetLegendExtent(pDC,ls,&font,lineLength,gap,tf,fontName);
+			if(szt.cx<=borderSize.cx && szt.cy<=borderSize.cy){
+				lf=tf;
+				szl=szt;
+			}
+			else{
+				uf=tf;
+			}
+		}
+
+		return lf;
+
+}
+
+
+
+CSize UpdateLegendSpec(LegendSpec &lgs
+	, CDC *pDC
+	, const std::vector<LineSpec> &ls
+	, BYTE legendDpMode
+	, CRect plotrect
+	, CRect lgrect
+	, int minFontSize
+	, int maxFontSize
+	, int axisWidth)
+{
+
+	if( legendDpMode&LEGEND_DP_FIT_RECT ){
+				if( legendDpMode&LEGEND_DP_AUTO_RECT ){
+
+
+					CSize sz=plotrect.Size();
+					lgrect.right=lgrect.left+sz.cx/2;
+					lgrect.bottom=lgrect.top+sz.cy/2;
+
+				}
+
+				int fsz=GetAutoFontSize(pDC,ls,lgs.lineLength,lgs.gap,minFontSize,maxFontSize,lgs.fontName,lgrect.Size());
+
+				lgs.fontSize=fsz;
+			}
+
+				CFont font;
+				CSize sz=GetLegendExtent(pDC,ls,&font,lgs.lineLength,lgs.gap,lgs.fontSize,lgs.fontName);
+
+			if( legendDpMode&LEGEND_DP_ALIGN ){
+				lgs.bDock=true;
+
+				plotrect.DeflateRect(axisWidth,0,0,axisWidth);
+
+				if( legendDpMode&LEGEND_DP_LEFT ){
+					lgs.position.x=plotrect.left;
+				}
+				else{
+					lgs.position.x=plotrect.right-sz.cx;
+				}
+
+				if( legendDpMode&LEGEND_DP_TOP ){
+					lgs.position.y=plotrect.top;
+				}
+				else{
+					lgs.position.y=plotrect.bottom-sz.cy;
+				}
+			}
+
+			return sz;
+}
+
 
 
 CRect GetLegendBorder(CRect rect
@@ -674,6 +811,7 @@ CRect DrawLegend(CRect rect
 	//drawRectangle(borderrect,pDC,bkColor,inv(bkColor));
 
 	//pDC->FillSolidRect(legendrect,bkColor);
+	pDC->FillSolidRect(borderrect,bkColor);
 
 	textLocate=legendrect.TopLeft();
 	pOldFont=pDC->SelectObject(&font);	
@@ -697,7 +835,6 @@ CRect DrawLegend(CRect rect
 				,textLocate.y+sz.cy/2);
 			pDC->SelectObject(pOldPen);
 			pen.DeleteObject();
-
 		}
 
 		if(ps[i].dotSize==1){
@@ -729,6 +866,98 @@ CRect DrawLegend(CRect rect
 
 	return borderrect;
 }
+
+
+void DrawLegend(CDC* pDC
+	, const std::vector<LineSpec> &ps
+	, CFont *pfont
+	, COLORREF bkColor
+	, int lc
+	, int gap)
+{
+
+	//int lineWidth=1;
+	//int lc=25;
+	//int gap=2;
+	//int Hmax=15;
+	//CString fontName=L"Arial";
+
+	//CFont font;
+	//CRect borderrect=GetLegendBorder(rect,pDC,ps,&font,lc,gap,Hmax,fontName,bAlignLeft,bAlignTop);
+
+	//CRect legendrect(borderrect);
+	//legendrect.DeflateRect(gap,0,gap,0);
+
+
+	CFont *pOldFont;
+	CString str;
+	CPen pen;
+	CPen * pOldPen;
+	CSize sz;
+	CPoint textLocate;
+	COLORREF oc;
+
+	////////////////////////////////////////////////////////
+
+	//drawRectangle(borderrect,pDC,bkColor,inv(bkColor));
+
+	//pDC->FillSolidRect(legendrect,bkColor);
+	//pDC->FillSolidRect(borderrect,bkColor);
+
+	textLocate=CPoint(gap,0);
+	pOldFont=pDC->SelectObject(pfont);	
+	oc=pDC->SetTextColor(inv(bkColor));
+
+	pDC->SetBkColor(bkColor);
+	pDC->SetBkMode(TRANSPARENT);
+
+	for(size_t i=0;i<ps.size();i++){
+
+		sz=pDC->GetTextExtent(ps[i].name);
+
+		if(ps[i].lineType>=0){
+			pen.CreatePen(ps[i].lineType
+				, ps[i].lineWidth
+				, ps[i].colour);
+			pOldPen=pDC->SelectObject(&pen);
+			pDC->MoveTo(textLocate.x
+				,textLocate.y+sz.cy/2);
+			pDC->LineTo(textLocate.x+lc
+				,textLocate.y+sz.cy/2);
+			pDC->SelectObject(pOldPen);
+			pen.DeleteObject();
+		}
+
+		if(ps[i].dotSize==1){
+			pDC->SetPixelV(textLocate.x+lc/2
+				,textLocate.y+sz.cy/2
+				,ps[i].colour);
+		}
+
+		if(ps[i].dotSize>1){
+			CRect prect(0,0,1,1);
+			prect.InflateRect(ps[i].dotSize-1,ps[i].dotSize-1);
+			prect.MoveToXY(textLocate.x+lc/2-ps[i].dotSize+1
+				,textLocate.y+sz.cy/2-ps[i].dotSize+1);
+			pDC->FillSolidRect(&prect,ps[i].colour);
+		}
+
+		pDC->TextOutW(textLocate.x+lc+gap
+			,textLocate.y
+			,ps[i].name);
+
+		textLocate.y+=sz.cy;
+
+	}
+
+	pDC->SetBkColor(bkColor);
+	pDC->SetTextColor(oc);
+	pDC->SelectObject(pOldFont);
+	//font.DeleteObject();
+
+	//return borderrect;
+}
+
 
 
 void DrawCurve(CDC* pDC

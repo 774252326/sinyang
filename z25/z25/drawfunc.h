@@ -7,10 +7,10 @@
 #include "funT\\lspfitT.h"
 
 #include "PlotData.hpp"
+#include "LegendSpec.h"
 
-
-void AdjustWidth(CListCtrl *ls, int nCol, CString str, int gap=15);
-void AdjustWidth(CListCtrl *ls, int nCol, int nRow, int gap=15);
+//void AdjustWidth(CListCtrl *ls, int nCol, CString str, int gap=15);
+//void AdjustWidth(CListCtrl *ls, int nCol, int nRow, int gap=15);
 
 
 void DrawData1(CRect &plotrect
@@ -87,6 +87,55 @@ bool WheelUpdate(CRect &plotrect
 
 inline COLORREF inv(const COLORREF &oc);
 
+
+
+void DrawLegend(CDC* pDC
+	, const std::vector<LineSpec> &ps
+	, CFont *pfont
+	, COLORREF bkColor
+	, int lc
+	, int gap);
+
+CSize GetLegendExtent(CDC* pDC
+	, const std::vector<LineSpec> &ps
+	, CFont* pfont
+	, int lc
+	, int gap
+	, int metricH
+	, CString fontName
+	);
+
+
+int GetAutoFontSize(CDC* pDC
+	, const std::vector<LineSpec> &ls
+	//, CFont* pfont
+	, int lineLength
+	, int gap
+	, int minSize
+	, int maxSize
+	, CString fontName
+	, CSize borderSize
+	);
+
+
+void GetPlotRect(CRect & plotRect
+	, int labelSize
+	, int metricSize
+	, int metricGridLong
+	, int gap0
+	);
+
+CSize UpdateLegendSpec(LegendSpec &lgs
+	, CDC *pDC
+	, const std::vector<LineSpec> &ls
+	, BYTE legendDpMode
+	, CRect plotrect
+	, CRect lgrect
+	, int minFontSize
+	, int maxFontSize
+	, int axisWidth);
+
+//////////////////////////////////////////////////////////////////////////
 
 template <typename T>
 UINT Seperate(const std::vector<T> &x, std::vector<size_t> &mini, std::vector<size_t> &maxi)

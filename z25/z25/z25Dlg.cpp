@@ -42,15 +42,24 @@
 
 Cz25Dlg::Cz25Dlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(Cz25Dlg::IDD, pParent)
+	, opt(0)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 	m_fp = _T("");
+	td=NULL;
 }
 
 void Cz25Dlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Text(pDX, IDC_EDIT1, m_fp);
+	DDX_Check(pDX, IDC_CHECK1, m_bcheck);
+	DDX_Check(pDX, IDC_CHECK2, m_align);
+	DDX_Check(pDX, IDC_CHECK3, m_left);
+	DDX_Check(pDX, IDC_CHECK4, m_top);
+	DDX_Check(pDX, IDC_CHECK5, m_fit);
+	//  DDX_Control(pDX, IDC_CHECK6, m_auto);
+	DDX_Check(pDX, IDC_CHECK6, m_auto);
 }
 
 BEGIN_MESSAGE_MAP(Cz25Dlg, CDialogEx)
@@ -60,6 +69,14 @@ BEGIN_MESSAGE_MAP(Cz25Dlg, CDialogEx)
 	ON_WM_CREATE()
 	ON_BN_CLICKED(IDC_BUTTON2, &Cz25Dlg::OnBnClickedButton2)
 	ON_BN_CLICKED(IDC_BUTTON3, &Cz25Dlg::OnBnClickedButton3)
+	ON_WM_MOVE()
+	ON_BN_CLICKED(IDC_CHECK1, &Cz25Dlg::OnBnClickedCheck1)
+	ON_WM_SIZE()
+	ON_BN_CLICKED(IDC_CHECK2, &Cz25Dlg::OnBnClickedCheck2)
+	ON_BN_CLICKED(IDC_CHECK3, &Cz25Dlg::OnBnClickedCheck3)
+	ON_BN_CLICKED(IDC_CHECK4, &Cz25Dlg::OnBnClickedCheck4)
+	ON_BN_CLICKED(IDC_CHECK5, &Cz25Dlg::OnBnClickedCheck5)
+	ON_BN_CLICKED(IDC_CHECK6, &Cz25Dlg::OnBnClickedCheck6)
 END_MESSAGE_MAP()
 
 
@@ -76,12 +93,14 @@ BOOL Cz25Dlg::OnInitDialog()
 
 	// TODO: Add extra initialization here
 
-	CRect rect;
-	this->GetDlgItem(IDC_STATIC)->GetWindowRect(&rect);
-	this->ScreenToClient(&rect);
+	//CRect rect;
+	//this->GetDlgItem(IDC_STATIC)->GetWindowRect(&rect);
+	//this->ScreenToClient(&rect);
 
-	pw.MoveWindow(&rect);
+	////pw.MoveWindow(&rect);
 
+
+	this->ClientToScreen(&opt);
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -128,7 +147,7 @@ void Cz25Dlg::OnBnClickedButton1()
 {
 	// TODO: Add your control notification handler code here
 
-	
+
 	TCHAR szFilters[]= _T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||");
 
 	// Create an Open dialog; the default file name extension is ".my".
@@ -142,25 +161,34 @@ void Cz25Dlg::OnBnClickedButton1()
 
 	if(fileDlg.DoModal() == IDOK)
 	{   
-		
+
 		m_fp=fileDlg.GetPathName();
-		UpdateData(FALSE);
+		
 
 		pcct a;
 		a.readFile(m_fp);
 		a.TomA();
 		a.SetTimeIntv();
-		
+
 		LineSpec ls;
 		ls.colour=RGB(255,0,0);
 		ls.name=L"line";
 
 		PlotData pd;
-		
+
 		pd.AddNew(a.time,a.current,ls,a.label[0],a.label[1]);
+
+		//pd.ps.legendPos=1;
 
 		pw.pd=pd;
 		pw.ResetRange();
+		pw.SetLegend();
+
+		m_bcheck=pw.pd.ps.legendPos;
+
+
+
+		UpdateData(FALSE);
 
 		this->Invalidate();
 	}
@@ -188,29 +216,34 @@ void Cz25Dlg::OnBnClickedButton2()
 {
 	// TODO: Add your control notification handler code here
 
-	if(td==NULL){
-		td=new LegendDlg();
-		td->ls.assign(pw.pd.ls.begin(),pw.pd.ls.end());
-		td->Create(IDD_DIALOG1,this);
-		td->ShowWindow(SW_SHOW);
-		
-		CRect rc;
-		td->GetClientRect(&rc);
+	//if(td==NULL){
+	//	td=new LegendDlg();
+	//	td->ls.assign(pw.pd.ls.begin(),pw.pd.ls.end());
 
-		CSize lsz=rc.Size();
+	//	td->maxSize=CSize(100,100);
 
-		CRect rect;
-	this->GetDlgItem(IDC_STATIC)->GetWindowRect(&rect);
-	this->ScreenToClient(&rect);
+	//	td->Create(IDD_DIALOG1,this);
+	//	td->ShowWindow(SW_SHOW);
 
-	rc=CRect(rect.TopLeft(),lsz);
+	//	CRect rc;
+	//	td->GetClientRect(&rc);
 
-	this->ClientToScreen(&rc);
+	//	CSize lsz=rc.Size();
 
-	td->MoveWindow(&rc);
-		
+	//	CRect rect;
+	//	this->GetDlgItem(IDC_STATIC)->GetWindowRect(&rect);
+	//	//this->ScreenToClient(&rect);
 
-	}
+	//	rc=CRect(rect.TopLeft(),lsz);
+
+	//	//rc=CRect(CPoint(50,50),lsz);
+
+	//	//this->ClientToScreen(&rc);
+
+	//	td->MoveWindow(&rc);
+
+
+	//}
 }
 
 
@@ -218,10 +251,142 @@ void Cz25Dlg::OnBnClickedButton3()
 {
 	// TODO: Add your control notification handler code here
 
-	if(td!=NULL){
-		td->ShowWindow(SW_HIDE);
-		delete td;
-		td=NULL;
-	}
+	//if(td!=NULL){
+	//	td->ShowWindow(SW_HIDE);
+	//	delete td;
+	//	td=NULL;
+	//}
 
+}
+
+
+void Cz25Dlg::OnMove(int x, int y)
+{
+	CDialogEx::OnMove(x, y);
+
+	// TODO: Add your message handler code here
+
+	//TRACE("%d,%d\n",x,y);
+
+	//if(td!=NULL){
+	//	CRect rc;
+	//	td->GetWindowRect(&rc);
+	//	rc.OffsetRect(x-opt.x,y-opt.y);
+	//	td->MoveWindow(&rc);
+	//}
+
+	//opt=CPoint(x,y);
+
+	pw.OnMove(x,y);
+
+	//::SendMessage(pw.GetSafeHwnd(),WM_MOVE,NULL,NULL);
+}
+
+
+void Cz25Dlg::OnBnClickedCheck1()
+{
+	// TODO: Add your control notification handler code here
+
+	UpdateData();
+
+	pw.pd.ps.legendPos=m_bcheck;
+
+	//this->Invalidate();
+
+	pw.SetLegend();
+
+}
+
+
+void Cz25Dlg::OnSize(UINT nType, int cx, int cy)
+{
+	CDialogEx::OnSize(nType, cx, cy);
+
+	// TODO: Add your message handler code here
+
+	CRect rc(0,0,cx,cy);
+
+	rc.DeflateRect(0,50);
+
+	//this->ClientToScreen(&rc);
+
+	pw.MoveWindow(&rc);
+
+	pw.Invalidate();
+	
+}
+
+
+void Cz25Dlg::OnBnClickedCheck2()
+{
+	// TODO: Add your control notification handler code here
+
+	UpdateData();
+
+	if(m_align)
+		pw.legendDpMode|=LEGEND_DP_ALIGN;
+	else
+		pw.legendDpMode&=~LEGEND_DP_ALIGN;
+
+	pw.SetLegend();
+
+}
+
+
+void Cz25Dlg::OnBnClickedCheck3()
+{
+	// TODO: Add your control notification handler code here
+
+	UpdateData();
+
+	if(m_left)
+		pw.legendDpMode|=LEGEND_DP_LEFT;
+	else
+		pw.legendDpMode&=~LEGEND_DP_LEFT;
+
+	pw.SetLegend();
+}
+
+
+void Cz25Dlg::OnBnClickedCheck4()
+{
+	// TODO: Add your control notification handler code here
+
+	UpdateData();
+
+	if(m_top)
+		pw.legendDpMode|=LEGEND_DP_TOP;
+	else
+		pw.legendDpMode&=~LEGEND_DP_TOP;
+
+	pw.SetLegend();
+}
+
+
+void Cz25Dlg::OnBnClickedCheck5()
+{
+	// TODO: Add your control notification handler code here
+	
+	UpdateData();
+
+	if(m_fit)
+		pw.legendDpMode|=LEGEND_DP_FIT_RECT;
+	else
+		pw.legendDpMode&=~LEGEND_DP_FIT_RECT;
+
+	pw.SetLegend();
+}
+
+
+void Cz25Dlg::OnBnClickedCheck6()
+{
+	// TODO: Add your control notification handler code here
+		UpdateData();
+
+	if(m_auto)
+		pw.legendDpMode|=LEGEND_DP_AUTO_RECT;
+	else
+		pw.legendDpMode&=~LEGEND_DP_AUTO_RECT;
+
+	pw.SetLegend();
 }

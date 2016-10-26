@@ -3,6 +3,9 @@
 #include "LineSpec.hpp"
 #include <vector>
 #include "afxwin.h"
+#include "atltypes.h"
+#include "LegendSpec.h"
+
 // LegendDlg dialog
 
 class LegendDlg : public CDialogEx
@@ -14,7 +17,7 @@ public:
 	virtual ~LegendDlg();
 
 // Dialog Data
-	enum { IDD = IDD_DIALOG1 };
+	//enum { IDD = IDD_DIALOG1 };
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
@@ -28,4 +31,19 @@ public:
 	afx_msg LRESULT OnNcHitTest(CPoint point);
 	CFont font;
 	afx_msg void OnPaint();
+	bool bDock;
+	bool bAutoFit;
+	int lineLength;
+	int gap;
+	int fontSize;
+	int maxFontSize;
+	CSize maxSize;
+	
+	CString fontName;
+	COLORREF bkColor;
+	int mx;
+	int my;
+	CPoint opt;
+	
+	CSize GetExtent(void);
 };
