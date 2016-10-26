@@ -12,8 +12,8 @@
 #include "calgridT.h"
 #include "colormapT.h"
 
-#include "../../W/funT/splineT.h"
-#include "../../W/funT/splintT.h"
+//#include "../../W/funT/splineT.h"
+//#include "../../W/funT/splintT.h"
 #include "CSpline.cpp"
 // dlg1
 
@@ -430,6 +430,11 @@ void dlg1::updatePlotRange(const std::vector<double> &x, const std::vector<doubl
 	if(flg||xmax<tmax)
 		xmax=tmax;
 
+	if(xmin==xmax){
+		xmin-=1;
+		xmax+=1;
+	}
+
 
 	auto resulty=std::minmax_element(y.begin(),y.end());
 	tmin=*resulty.first;
@@ -444,6 +449,12 @@ void dlg1::updatePlotRange(const std::vector<double> &x, const std::vector<doubl
 		ymin=tmin;
 	if(flg||ymax<tmax)
 		ymax=tmax;
+
+	if(ymin==ymax){
+		ymin-=1;
+		ymax+=1;
+	}
+
 }
 
 void dlg1::OnPaint()
@@ -625,7 +636,7 @@ void dlg1::OnPaint()
 void dlg1::plot2d(const std::vector<double> &x, const std::vector<double> &y, const plotspec &plotsp, const CString &xla, const CString &yla)
 {
 	if(x.size()!=y.size())
-	return;
+		return;
 
 	//xlist.push_back(x);
 	//ylist.push_back(y);
@@ -954,8 +965,8 @@ CRect dlg1::DrawLegend1(CRect rect, CDC* pDC)
 		sz=pDC->GetTextExtent(ps[i].name);
 
 		if(ps[i].showLine){
-		pDC->MoveTo(textLocate.x,textLocate.y+sz.cy/2);
-		pDC->LineTo(textLocate.x+lc,textLocate.y+sz.cy/2);	
+			pDC->MoveTo(textLocate.x,textLocate.y+sz.cy/2);
+			pDC->LineTo(textLocate.x+lc,textLocate.y+sz.cy/2);	
 		}
 
 		if(ps[i].dotSize==0){
@@ -968,7 +979,7 @@ CRect dlg1::DrawLegend1(CRect rect, CDC* pDC)
 			prect.MoveToXY(textLocate.x+lc/2-ps[i].dotSize,textLocate.y+sz.cy/2-ps[i].dotSize);
 			drawRectangle(prect,pDC,ps[i].colour,ps[i].colour);
 		}
-		
+
 		pDC->TextOutW(textLocate.x+lc+gap,textLocate.y,ps[i].name);
 
 		textLocate.y+=sz.cy;
@@ -1115,16 +1126,26 @@ void dlg1::DrawCurveA(CRect rect, CDC* pDC)
 			pen.CreatePen(PS_SOLID,1,ps[j].colour);
 			pOldPen=pDC->SelectObject(&pen);
 
-			if(ps[j].smoothLine==1){
-				DrawSpline(&pp[si],ll[j],rect,pDC);
+			if(ll[j]>2){
+				if(ps[j].smoothLine==1){
+					DrawSpline(&pp[si],ll[j],rect,pDC);
+				}
+				if(ps[j].smoothLine==2){
+					pDC->PolyBezier(&pp[si],ll[j]);
+				}
+				if(ps[j].smoothLine==0){
+					pDC->Polyline(&pp[si],ll[j]);
+				}
 			}
-			if(ps[j].smoothLine==2){
-				pDC->PolyBezier(&pp[si],ll[j]);
+			else{
+				if(ll[j]==2){
+					pDC->Polyline(&pp[si],ll[j]);
+				}
+
+				//if(ll[j]==1){
+
 			}
-			if(ps[j].smoothLine==0){
-				pDC->Polyline(&pp[si],ll[j]);
-			}
-			
+
 			pDC->SelectObject(pOldPen);
 			pen.DeleteObject();
 
@@ -1151,6 +1172,13 @@ void dlg1::DrawCurveA(CRect rect, CDC* pDC)
 		si+=ll[j];
 
 	}
+
+
+	CRect prect(0,0,1,1);
+	CSize ppoc=CSize(4,4);
+	prect.InflateRect(ppoc);			
+	prect.MoveToXY(pointlist.back()-ppoc);
+	drawRectangle(prect,pDC,ps.back().colour,ps.back().colour);
 
 
 	//////////////////////////////fast///////////////////////////
@@ -1261,4 +1289,38 @@ void dlg1::DrawSpline( CPoint *lpPoints, int np, CRect rect, CDC * pDC)
 	//	pDC->SetPixelV(pr[k],pDC->GetDCPenColor());
 	//}
 
+}
+
+
+void dlg1::plot2dfollow(const std::vector<double> & x, const std::vector<double> & y)
+{
+	if(x.size()!=y.size())
+		return;
+
+	//xlist.push_back(x);
+	//ylist.push_back(y);
+
+	xll.resize(xll.size()+x.size());
+	std::copy_backward(x.begin(),x.end(),xll.end());
+	yll.resize(yll.size()+y.size());
+	std::copy_backward(y.begin(),y.end(),yll.end());
+	ll.back()+=x.size();
+	//ll.push_back(x.size());
+
+	//ps.push_back(plotsp);
+
+	//updatePlotRange(x,y,(ll.size()==1));
+	updatePlotRange(x,y);
+
+	//xlabel=xla;
+	//ylabel=yla;
+
+	Invalidate();
+}
+
+
+void dlg1::smoothLine(void)
+{
+	ps.back().showLine=true;
+	ps.back().smoothLine=1;
 }

@@ -4,6 +4,8 @@
 
 #pragma once
 #include "OutputWnd.h"
+#include "pcct.h"
+#include "pcctA.h"
 
 class CMainFrame : public CFrameWndEx
 {
@@ -72,6 +74,21 @@ public:
 	afx_msg void OnUpdateViewPro(CCmdUI *pCmdUI);
 	afx_msg void OnViewAnalysisProgress();
 	afx_msg void OnUpdateViewAnalysisProgress(CCmdUI *pCmdUI);
+	int timer1;
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
+
+
+	std::vector<pcct> dat;
+	bool finishflag;
+	bool finishflag2;
+	double Ar0;
+	pcctA datt;
+	int stepCount;
+	int rowCount;
+	double totalVolume;
+	std::vector<double> addVolume;
+	afx_msg void OnViewToolbara();
+	afx_msg void OnUpdateViewToolbara(CCmdUI *pCmdUI);
 };
 
 

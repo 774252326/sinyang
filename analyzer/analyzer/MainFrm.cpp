@@ -11,8 +11,10 @@
 #include "analyzerView.h"
 //#include "plotdlg.h"
 #include "dlg1.h"
-#include "pcct.h"
+//#include "pcct.h"
 #include "colormapT.h"
+#include "tipsdlg.h"
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -45,6 +47,9 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_PRO, &CMainFrame::OnUpdateViewPro)
 	ON_COMMAND(ID_VIEW_ANALYSIS_PROGRESS, &CMainFrame::OnViewAnalysisProgress)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_ANALYSIS_PROGRESS, &CMainFrame::OnUpdateViewAnalysisProgress)
+	ON_WM_TIMER()
+	ON_COMMAND(ID_VIEW_TOOLBARA, &CMainFrame::OnViewToolbara)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_TOOLBARA, &CMainFrame::OnUpdateViewToolbara)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -60,6 +65,13 @@ static UINT indicators[] =
 CMainFrame::CMainFrame()
 	: m_bSplitterCreated(FALSE)
 	//, tflg(false)
+	, timer1(0)
+	, finishflag(false)
+	, finishflag2(false)
+	, Ar0(0)
+	, stepCount(0)
+	, rowCount(0)
+	, totalVolume(0)
 {
 	// TODO: add member initialization code here
 	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_VS_2008);
@@ -146,10 +158,10 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndOutput.EnableDocking(CBRS_ALIGN_ANY);
 	DockPane(&m_wndOutput);
 
-	
+
 
 	// Enable toolbar and docking window menu replacement
-	//EnablePaneMenu(TRUE, ID_VIEW_CUSTOMIZE, strCustomize, ID_VIEW_TOOLBAR);
+	EnablePaneMenu(TRUE, ID_VIEW_CUSTOMIZE, strCustomize, ID_VIEW_TOOLBAR);
 
 	// enable quick (Alt+drag) toolbar customization
 	CMFCToolBar::EnableQuickCustomization();
@@ -290,6 +302,9 @@ BOOL CMainFrame::CreateCaptionBar()
 	ASSERT(bNameValid);
 	m_wndCaptionBar.SetImageToolTip(strTemp, strTemp2);
 
+
+	m_wndCaptionBar.EnableButton(FALSE);
+
 	return TRUE;
 }
 
@@ -425,6 +440,10 @@ void CMainFrame::OnUpdateViewCaptionBar(CCmdUI* pCmdUI)
 
 void CMainFrame::OnOptions()
 {
+	m_wndCaptionBar.SetText(L"running...", CMFCCaptionBar::ALIGN_LEFT);
+	m_wndCaptionBar.EnableButton(FALSE);
+
+	timer1=SetTimer(1,10,NULL);
 }
 
 BOOL CMainFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParentWnd, CCreateContext* pContext) 
@@ -515,6 +534,99 @@ void CMainFrame::OnSize(UINT nType, int cx, int cy)
 }
 
 
+//
+//void CMainFrame::OnFileOpen()
+//{
+//	// TODO: Add your command handler code here
+//
+//	CFileDialog fileDlg(true);
+//
+//	fileDlg.m_ofn.lpstrFilter=L"Text File(*.txt)\0*.txt\0\0";
+//
+//	if( fileDlg.DoModal()==IDOK)
+//	{
+//
+//		CString m_filePath=fileDlg.GetPathName();
+//		//CString folderpath=fileDlg.GetFolderPath();
+//		CString folderpath=m_filePath.Left(m_filePath.ReverseFind('\\'));
+//
+//
+//		//CString m_filePath=L"C:\\Users\\r8anw2x\\Dropbox\\W\\data\\a.txt";
+//		//CString folderpath=L"C:\\Users\\r8anw2x\\Dropbox\\W\\data";
+//
+//
+//		std::vector<CString> filelist;
+//		CStdioFile file;
+//		BOOL readflag;
+//		readflag=file.Open(m_filePath, CFile::modeRead);
+//
+//		if(readflag)
+//		{	
+//			CString strRead;
+//
+//			//TRACE("\n--Begin to read file");
+//			while(file.ReadString(strRead)){
+//				strRead=folderpath+"\\"+strRead;
+//				filelist.push_back(strRead);
+//			}
+//			//TRACE("\n--End reading\n");
+//			file.Close();
+//		}
+//
+//		std::vector<double> ar;
+//
+//		plotspec ps1;
+//
+//
+//		for(size_t i=0;i<filelist.size();i++){
+//			pcct dt1;
+//			dt1.readFile(filelist[i]);
+//			dt1.seperate();
+//			dt1.AR=dt1.intg(0.8);			
+//
+//			ar.push_back(dt1.AR);
+//
+//
+//
+//			ps1.colour=genColor( genColorvFromIndex<float>( i ) ) ;
+//			ps1.dotSize=-1;
+//			ps1.name=dt1.FileName;
+//			ps1.showLine=true;
+//			ps1.smoothLine=0;
+//
+//			( (dlg1*)m_wndSplitter.GetPane(0,0) )->plot2d(dt1.potential,dt1.current,ps1,dt1.label[0],dt1.label[1]);
+//
+//			m_wndOutput.InsertListCtrl(i,dt1.FileName,dt1.AR,true);
+//
+//		}
+//
+//
+//		//CString sstr;
+//
+//		std::vector<double> spr;
+//
+//		double ar0=ar[0];
+//		for(size_t i=0;i<ar.size();i++){
+//			ar[i]/=ar0;
+//			spr.push_back(i/8.0);
+//			//sstr.Format(L"%f",i/8.0);
+//			//pppty.nl.push_back(sstr);
+//		}			
+//
+//		ps1.colour=red;
+//		ps1.dotSize=3;
+//		ps1.name=L"Ar/Ar0";
+//		ps1.showLine=true;
+//		ps1.smoothLine=1;
+//
+//		( (dlg1*)m_wndSplitter.GetPane(0,1) )->plot2d(spr,ar,ps1,L"suppressor(ml)",L"Ratio of Charge");
+//
+//
+//	}
+//}
+//
+
+
 void CMainFrame::OnFileOpen()
 {
 	// TODO: Add your command handler code here
@@ -563,40 +675,23 @@ void CMainFrame::OnFileOpen()
 			dt1.readFile(filelist[i]);
 			dt1.seperate();
 			dt1.AR=dt1.intg(0.8);
-			ar.push_back(dt1.AR);
 
-			ps1.colour=genColor( genColorvFromIndex<float>( i ) ) ;
-			ps1.dotSize=-1;
-			ps1.name=dt1.FileName;
-			ps1.showLine=true;
-			ps1.smoothLine=0;
-
-			( (dlg1*)m_wndSplitter.GetPane(0,0) )->plot2d(dt1.potential,dt1.current,ps1,dt1.label[0],dt1.label[1]);
-
-			m_wndOutput.InsertListCtrl(i,dt1.FileName,dt1.AR,true);
-
+			dat.push_back(dt1);
 		}
 
 
-		//CString sstr;
 
-		std::vector<double> spr;
+		finishflag=true;
+		finishflag2=true;
+		//Ar0=dat.front().AR;
+		totalVolume=0;
+		addVolume.assign(dat.size(),0.0125);
+		addVolume.front()=25;
+		datt.xmax=1.57;
+		datt.xmin=-0.23;
+		datt.StartLoad=false;
 
-		double ar0=ar[0];
-		for(size_t i=0;i<ar.size();i++){
-			ar[i]/=ar0;
-			spr.push_back(i/8.0);
-			//sstr.Format(L"%f",i/8.0);
-			//pppty.nl.push_back(sstr);
-		}			
-
-		ps1.colour=red;
-		ps1.dotSize=3;
-		ps1.name=L"Ar/Ar0";
-		ps1.showLine=true;
-		ps1.smoothLine=1;
-
-		( (dlg1*)m_wndSplitter.GetPane(0,1) )->plot2d(spr,ar,ps1,L"suppressor(ml)",L"Ratio of Charge");
+		this->OnOptions();
 
 	}
 }
@@ -651,9 +746,14 @@ void CMainFrame::OnUpdateViewPro(CCmdUI *pCmdUI)
 void CMainFrame::OnViewAnalysisProgress()
 {
 	// TODO: Add your command handler code here
-		//tflg=!tflg;		
-		//tflg=m_wndOutput.IsVisible();
-	this->ShowPane((CBasePane*)&m_wndOutput,!m_wndOutput.IsVisible(),false,false);
+	//tflg=!tflg;		
+	//tflg=m_wndOutput.IsVisible();
+	//this->ShowPane((CBasePane*)&m_wndOutput,!m_wndOutput.IsVisible(),false,false);
+
+
+	m_wndOutput.ShowWindow(m_wndOutput.IsVisible() ? SW_HIDE : SW_SHOW);
+	RecalcLayout(FALSE);
+
 }
 
 
@@ -661,4 +761,237 @@ void CMainFrame::OnUpdateViewAnalysisProgress(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
 	pCmdUI->SetCheck(m_wndOutput.IsVisible());
+}
+
+
+void CMainFrame::OnTimer(UINT_PTR nIDEvent)
+{
+	// TODO: Add your message handler code here and/or call default
+	size_t n1=40;
+	plotspec ps1;
+	std::vector<double> x;
+	std::vector<double> y;
+	size_t rn;
+
+	bool flg;
+	double addvol;
+	
+	INT_PTR nRes;
+
+
+
+	switch(nIDEvent){
+	case 1:
+
+		//if(dat.empty()){
+		//	finishflag2=true;
+		//	( (dlg1*)m_wndSplitter.GetPane(0,1) )->smoothLine();
+		//	( (dlg1*)m_wndSplitter.GetPane(0,1) )->showall();
+		//	KillTimer(timer1);
+		//}
+		//else{
+
+		//	rn=dat.front().popData(x,y,n1);
+
+		//	if(rn==0){
+
+		//		if(finishflag){
+
+		//			ps1.colour=genColor( genColorvFromIndex<float>( dat.size() ) ) ;
+		//			ps1.dotSize=-1;
+		//			ps1.name=dat.front().FileName;
+		//			ps1.showLine=true;
+		//			ps1.smoothLine=0;
+		//			( (dlg1*)m_wndSplitter.GetPane(0,0) )->plot2d(x,y,ps1,dat.front().label[0],dat.front().label[1]);
+		//		}
+		//		else{
+		//			( (dlg1*)m_wndSplitter.GetPane(0,0) )->plot2dfollow(x,y);
+		//			finishflag=true;
+		//		}
+
+		//		if(finishflag2){
+
+		//			ps1.colour=red;
+		//			ps1.dotSize=3;
+		//			ps1.name=L"Ar/Ar0";
+		//			ps1.showLine=false;
+		//			ps1.smoothLine=0;
+
+		//			x.assign( 1,(7-dat.size())/8.0 );
+		//			y.assign( 1,(dat.front().AR/Ar0) );
+
+		//			( (dlg1*)m_wndSplitter.GetPane(0,1) )->plot2d(x,y,ps1,L"suppressor(ml)",L"Ratio of Charge");
+		//			finishflag2=false;
+		//		}
+		//		else{
+		//			x.assign( 1,(7-dat.size())/8.0 );
+		//			y.assign( 1,(dat.front().AR/Ar0) );
+
+		//			( (dlg1*)m_wndSplitter.GetPane(0,1) )->plot2dfollow(x,y);
+
+		//		}
+
+		//		dat.erase(dat.begin());
+
+		//	}
+		//	else{
+		//		if(finishflag){
+
+		//			ps1.colour=genColor( genColorvFromIndex<float>( dat.size() ) ) ;
+		//			ps1.dotSize=-1;
+		//			ps1.name=dat.front().FileName;
+		//			ps1.showLine=true;
+		//			ps1.smoothLine=0;
+		//			( (dlg1*)m_wndSplitter.GetPane(0,0) )->plot2d(x,y,ps1,dat.front().label[0],dat.front().label[1]);
+		//			finishflag=false;
+		//		}
+		//		else{
+		//			( (dlg1*)m_wndSplitter.GetPane(0,0) )->plot2dfollow(x,y);
+		//		}
+
+		//	}
+
+		//}
+		///////////////////////////////////////////////////////////////////////////////
+
+		if(dat.empty()){
+			finishflag2=true;
+			//( (dlg1*)m_wndSplitter.GetPane(0,1) )->smoothLine();
+			//( (dlg1*)m_wndSplitter.GetPane(0,1) )->showall();
+			KillTimer(timer1);
+
+			m_wndCaptionBar.SetText(L"over...", CMFCCaptionBar::ALIGN_LEFT);
+			m_wndCaptionBar.EnableButton(FALSE);
+		}
+		else{
+
+			//load n1 points
+			rn=dat.front().popData(x,y,n1);
+
+			//plot points on plot1
+			if(finishflag){//if to plot a new line
+				ps1.colour=genColor( genColorvFromIndex<float>( dat.size() ) ) ;
+				ps1.dotSize=-1;
+				ps1.name=dat.front().FileName;
+				ps1.showLine=true;
+				ps1.smoothLine=0;
+				( (dlg1*)m_wndSplitter.GetPane(0,0) )->plot2d(x,y,ps1,dat.front().label[0],dat.front().label[1]);
+			}
+			else{
+				( (dlg1*)m_wndSplitter.GetPane(0,0) )->plot2dfollow(x,y);
+			}
+			//if line finish
+			finishflag=(rn==0);
+
+
+			flg=datt.addXY(x,y);
+			if(flg){
+				if(datt.Ar.size()==1){
+					addvol=addVolume[stepCount];
+				}
+				else{
+					addvol=0;
+				}
+				totalVolume+=addvol;
+
+				m_wndOutput.InsertListCtrl(rowCount,stepCount,datt.Ar.size(),addvol,totalVolume,datt.Ar.back(),false);
+
+				rowCount++;
+			}
+
+			if(finishflag){
+				datt.Ar.push_back(datt.intg(0.8));
+
+				if(datt.Ar.size()==1){
+					addvol=addVolume[stepCount];
+				}
+				else{
+					addvol=0;
+				}
+				totalVolume+=addvol;
+
+				m_wndOutput.InsertListCtrl(rowCount,stepCount,datt.Ar.size(),addvol,totalVolume,datt.Ar.back(),true);
+
+
+				if(finishflag2){
+
+					ps1.colour=red;
+					ps1.dotSize=3;
+					ps1.name=L"Ar/Ar0";
+					ps1.showLine=false;
+					ps1.smoothLine=0;
+					Ar0=datt.Ar.back();
+
+					x.assign( 1,totalVolume-addVolume[0] );
+					y.assign( 1,(datt.Ar.back()/Ar0) );
+
+					( (dlg1*)m_wndSplitter.GetPane(0,1) )->plot2d(x,y,ps1,L"suppressor(ml)",L"Ratio of Charge");
+					finishflag2=false;
+				}
+				else{
+					x.assign( 1,totalVolume-addVolume[0] );
+					y.assign( 1,(datt.Ar.back()/Ar0) );
+
+					( (dlg1*)m_wndSplitter.GetPane(0,1) )->plot2dfollow(x,y);
+
+				}
+
+
+				rowCount++;
+				stepCount++;
+				datt.clear();
+				dat.erase(dat.begin());
+
+				KillTimer(timer1);
+				( (dlg1*)m_wndSplitter.GetPane(0,1) )->smoothLine();
+				( (dlg1*)m_wndSplitter.GetPane(0,1) )->showall();
+
+				//tipsdlg cttip;
+				//nRes = cttip.DoModal();  // 弹出对话框   
+				//if (IDCANCEL == nRes){     // 判断对话框退出后返回值是否为IDCANCEL，如果是则return，否则继续向下执行   
+    //     			finishflag2=true;
+				//	dat.clear();
+				//}
+
+				//if(IDOK == nRes){  
+				//	timer1=SetTimer(1,10,NULL);
+				//}
+
+				m_wndCaptionBar.SetText(L"please add suppressor solution, click button to continue->", CMFCCaptionBar::ALIGN_LEFT);
+				m_wndCaptionBar.EnableButton();
+
+			}
+
+
+
+
+
+		}
+
+
+
+		/////////////////////////////////////////////////////////////////////////////////////////////
+		break;
+	default:
+		break;
+	}
+
+
+	CFrameWndEx::OnTimer(nIDEvent);
+}
+
+
+void CMainFrame::OnViewToolbara()
+{
+	// TODO: Add your command handler code here
+
+	this->ShowPane((CBasePane*)&m_wndToolBar,!m_wndToolBar.IsVisible(),false,false);
+}
+
+
+void CMainFrame::OnUpdateViewToolbara(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+
+	pCmdUI->SetCheck(m_wndToolBar.IsVisible());
 }

@@ -193,7 +193,7 @@ double pcct::intg(double xtop)
 	//std::vector<double> xintg( time.begin()+(*(xBreakIndex.end()-2)),time.begin()+(*(xBreakIndex.end()-1)) );
 	//std::vector<double> yintg( current.begin()+(*(xBreakIndex.end()-2)),current.begin()+(*(xBreakIndex.end()-1)) );
 
-		std::vector<double> xintg(potential.begin()+((xBreakIndex[2])),potential.begin()+((xBreakIndex[3])) );
+	std::vector<double> xintg(potential.begin()+((xBreakIndex[2])),potential.begin()+((xBreakIndex[3])) );
 	//std::vector<double> xintg( time.begin()+(*(xBreakIndex.end()-2)),time.begin()+(*(xBreakIndex.end()-1)) );
 	std::vector<double> yintg( current.begin()+((xBreakIndex[2])),current.begin()+((xBreakIndex[3])) );
 
@@ -256,4 +256,23 @@ void pcct::copyData(pcct a)
 	current=a.current;
 	charge=a.charge;
 	time=a.time;
+}
+
+
+size_t pcct::popData(std::vector<double> & x, std::vector<double> & y, size_t nd)
+{
+	if(potential.size()<nd){
+		x.assign(potential.begin(),potential.end());
+		potential.erase(potential.begin(),potential.end());
+		y.assign(current.begin(),current.end());
+		current.erase(current.begin(),current.end());
+	}
+	else{
+		x.assign(potential.begin(),potential.begin()+nd);
+		potential.erase(potential.begin(),potential.begin()+nd);
+		y.assign(current.begin(),current.begin()+nd);
+		current.erase(current.begin(),current.begin()+nd);
+	}
+
+	return potential.size();
 }

@@ -78,6 +78,12 @@
     <ClInclude Include="CSpline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="pcctA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tipsdlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="analyzer.cpp">
@@ -105,6 +111,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CSpline.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="pcctA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tipsdlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -80,10 +80,10 @@ int COutputWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	std::vector<CString> strl(6);
 
 	strl[0]=_T("No.");
-	strl[1]=_T("Step No.");
-	strl[2]=_T("Step name");
-	strl[3]=_T("Cycle No.");
-	strl[4]=_T("Ar value(mc)");
+	strl[1]=_T("Step Name");
+	strl[2]=_T("Add Vol.(mL)");
+	strl[3]=_T("Total Vol.(mL)");
+	strl[4]=_T("Charge Q(mC)");
 	strl[5]=_T("Use");
 
 	for(size_t i=0;i<strl.size();i++){
@@ -156,7 +156,7 @@ void COutputWnd::OnSize(UINT nType, int cx, int cy)
 	//nColInterval[2]=rt2.Width()-(nCol-1)*(rt2.Width()/10);
 
 	std::vector<int> nColInterval(nCol,cx/10);
-	nColInterval[2]=cx/*-nCol*/-(nCol-1)*(cx/10);
+	nColInterval[1]=cx/*-nCol*/-(nCol-1)*(cx/10);
 
 	for(int i=0;i<nCol;i++){
 		m_listCtrlMonitor.SetColumnWidth(i,nColInterval[i]);
@@ -267,6 +267,45 @@ BOOL COutputWnd::InsertListCtrl(int StepNo, LPCTSTR StepName, double ArValue, bo
 
 	
 }
+
+
+BOOL COutputWnd::InsertListCtrl(int StepNo, int No2, int CycleNo, double addVol, double totalVol, double Q, bool Use)
+{
+
+	//insert the data from the list control head(记录改成从最上面插入)
+	CString str, StepName;
+
+	
+	str.Format(L"%d",StepNo);
+	m_listCtrlMonitor.InsertItem(StepNo,str);
+
+	if(No2>0){
+		StepName.Format(L"Suppressor Addition %d",No2);
+	}
+	else{
+		StepName=L"VMS";
+	}
+	str.Format(L"%s(Cycle %d)",StepName,CycleNo);
+	m_listCtrlMonitor.SetItemText(StepNo,1,str);
+
+	str.Format(L"%f",addVol);
+	m_listCtrlMonitor.SetItemText(StepNo,2,str);
+
+	str.Format(L"%f",totalVol);
+	m_listCtrlMonitor.SetItemText(StepNo,3,str);
+
+	str.Format(L"%f",Q);
+	m_listCtrlMonitor.SetItemText(StepNo,4,str);
+
+	str=( Use? (L"yes"):(L"no") );
+	m_listCtrlMonitor.SetItemText(StepNo,5,str);
+
+	return TRUE;
+
+	
+}
+
+
 #pragma pack()
 
 

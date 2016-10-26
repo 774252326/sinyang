@@ -55,6 +55,7 @@ public:
 	CListCtrl* GetListCtrl(){return &m_listCtrlMonitor;}
 	BOOL InsertListCtrl(LPCTSTR StepNo,LPCTSTR StepName,LPCTSTR ArValue,LPCTSTR Use);
 	BOOL InsertListCtrl(int StepNo, LPCTSTR StepName, double ArValue, bool Use);
+	BOOL InsertListCtrl(int StepNo, int No2, int CycleNo, double addVol, double totalVol, double Q, bool Use);
 
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);

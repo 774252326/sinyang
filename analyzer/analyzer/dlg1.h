@@ -85,6 +85,8 @@ private:
 public:
 	void showall(void);
 	void DrawSpline( CPoint * lpPoints, int np, CRect rect, CDC * pDC);
+	void plot2dfollow(const std::vector<double> & x, const std::vector<double> & y);
+	void smoothLine(void);
 };
 
 
