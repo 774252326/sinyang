@@ -6,6 +6,7 @@
 
 #include "resource.h"
 #include "pcct.h"
+#include "atltypes.h"
 
 
 class Cz8View : public CFormView
@@ -75,6 +76,20 @@ public:
 	double xmouse;
 	double ymouse;
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	CRect plotrect;
+	void drawRectangle(CRect rect, CDC * pdc);
+	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
+	CPoint findNearestPoint(CPoint pt);
+	long selectPointIndex;
+	CPoint pnt;
+	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
+
+	COLORREF currentColor;
+	pcct dt2;
+	BOOL m_isplay;
+	afx_msg void OnPlay();
+	afx_msg void OnUpdatePlay(CCmdUI *pCmdUI);
+	int timer1;
 };
 
 #ifndef _DEBUG  // debug version in z8View.cpp

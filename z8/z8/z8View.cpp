@@ -46,6 +46,10 @@ IMPLEMENT_DYNCREATE(Cz8View, CFormView)
 		ON_WM_TIMER()
 		ON_WM_ERASEBKGND()
 		ON_WM_MOUSEMOVE()
+		ON_WM_SETCURSOR()
+		ON_WM_KEYDOWN()
+		ON_COMMAND(ID_PLAY, &Cz8View::OnPlay)
+		ON_UPDATE_COMMAND_UI(ID_PLAY, &Cz8View::OnUpdatePlay)
 	END_MESSAGE_MAP()
 
 	// Cz8View construction/destruction
@@ -64,6 +68,9 @@ IMPLEMENT_DYNCREATE(Cz8View, CFormView)
 		, windowTitle(_T("z8"))
 		, xmouse(0)
 		, ymouse(0)
+		, selectPointIndex(0)
+		, pnt(0)
+		, timer1(0)
 	{
 		// TODO: add construction code here
 
@@ -76,6 +83,7 @@ IMPLEMENT_DYNCREATE(Cz8View, CFormView)
 	void Cz8View::DoDataExchange(CDataExchange* pDX)
 	{
 		CFormView::DoDataExchange(pDX);
+		DDX_Check(pDX, IDC_CHECK1, m_isplay);
 	}
 
 	BOOL Cz8View::PreCreateWindow(CREATESTRUCT& cs)
@@ -148,37 +156,47 @@ IMPLEMENT_DYNCREATE(Cz8View, CFormView)
 			//pcct dt1;
 			dt1.clear();
 			dt1.readFile(m_filePath);
-			dt1.seperate();
-			dt1.AR=dt1.intg(0.8);
-
-			//pcct dt2;
-			//for(long i=1;i<dt1.xBreakIndex.size();i++){
-			//	dt2.copy(dt1);
-			//	dt2.potential.assign(dt1.potential.begin()+dt1.xBreakIndex[i-1],dt1.potential.begin()+dt1.xBreakIndex[i]);
-			//	dt2.current.assign(dt1.current.begin()+dt1.xBreakIndex[i-1],dt1.current.begin()+dt1.xBreakIndex[i]);
-			//	cllist.push_back(genColor(genColorvFromIndex(dtlist.size())));
-			//	dtlist.push_back(dt2);
-			//}
-
-			cllist.push_back(genColor(genColorvFromIndex(dtlist.size())));
-			dtlist.push_back(dt1);
-
-			//isLoad=true;
-
-			CString str;
-			//this->GetParent()->GetWindowTextW(str);
-			str=dt1.FilePath+L" - "+windowTitle;
-			this->GetParent()->SetWindowTextW(str);
-
-			updatePlotRange(dt1.potential,dt1.current);
-
-			//::AfxMessageBox(dt1.segmentinfo);
-
-			Invalidate();
 
 
-			//SetTimer(1,1,NULL); 
-			//SetTimer(2,20,NULL); 
+
+			currentColor=genColor(genColorvFromIndex(dtlist.size()));
+			////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+			////isLoad=true;
+			////CString str;
+			////this->GetParent()->GetWindowTextW(str);
+			////str=dt1.FilePath+L" - "+windowTitle;
+			////this->GetParent()->SetWindowTextW(str);
+			/////////////////////////////////////////////////////////////////////////////
+			//UpdateData();
+
+			if(!m_isplay){
+				dt1.seperate();
+				dt1.AR=dt1.intg(0.8);
+				cllist.push_back(currentColor);
+				dtlist.push_back(dt1);
+				updatePlotRange(dt1.potential,dt1.current);
+				////::AfxMessageBox(dt1.segmentinfo);
+				Invalidate();
+			}
+			////////////////////////////////////////////////////////////////////////////
+			else{
+				dt2.clear();
+				dt2.segmentList=dt1.segmentList;
+				dt2.segmentinfo=dt1.segmentinfo;
+				dt2.label=dt1.label;
+				dt2.FilePath=dt1.FilePath;
+				dt2.FileName=dt1.FileName;
+				dt2.seginfo=dt1.seginfo;
+
+				////////////////////////////////////////////////timer////////////////////////////////////////////////
+
+				timer1=SetTimer(1,10,NULL); 
+				ci=0;
+				//SetTimer(2,20,NULL);
+			}
 
 		}
 
@@ -372,13 +390,13 @@ IMPLEMENT_DYNCREATE(Cz8View, CFormView)
 
 		//先用背景色将位图清除干净，这里我用的是白色作为背景
 		//你也可以用自己应该用的颜色
-		MemDC.FillSolidRect(0,0,nWidth,nHeight,RGB(255,255,255));
+		MemDC.FillSolidRect(0,0,nWidth,nHeight,white);
 
 		//绘图
 		//MemDC.MoveTo(100,100);
 		//MemDC.LineTo(100,200);
 
-		CRect plotrect;
+		//CRect plotrect;
 		CSize sz;
 		this->GetWindowRect(&plotrect);
 		COLORREF oc;
@@ -387,22 +405,30 @@ IMPLEMENT_DYNCREATE(Cz8View, CFormView)
 		plotrect.DeflateRect(60,60,310,60);
 
 		CPen pen;
-		
+
 		CString str;
 		long i,j;
 		long ll=1000;
 		//double *x;
 		//double *y;
-		
 
+		//CBrush brush(cyan);
+		//CBrush *pOldBrush;
 
 
 		//if(isLoad){
-		if(!dtlist.empty()){
+		if( !dtlist.empty() || !dt2.potential.empty() ){
 			if(!plotrect.IsRectEmpty()){
 				std::vector<CPoint> pointlist;
 
-				str.Format(L"x=%f,y=%f",xmouse,ymouse);
+				DrawXYAxis(plotrect,&MemDC);
+
+				drawRectangle(plotrect,&MemDC);
+
+
+
+				//str.Format(L"x=%f,y=%f",xmouse,ymouse);
+				str.Format(L"Potential=%gV,Current=%gA,t=%gs",xmouse,ymouse,(double)ci/100);
 				MemDC.TextOutW(0,0,str);
 
 				for(j=0;j<dtlist.size();j++){
@@ -424,7 +450,24 @@ IMPLEMENT_DYNCREATE(Cz8View, CFormView)
 					MemDC.SetTextColor(oc);
 
 				}
-				DrawXYAxis(plotrect,&MemDC);
+
+				pointlist=genPointToPlot(dt2.potential,dt2.current,plotrect);
+
+				for(i=0;i<pointlist.size();i++){
+					//for(i=(0>ci-ll)?0:ci-ll;i<ci;i++){
+					MemDC.SetPixel(pointlist[i],currentColor);					
+				}
+
+
+
+				MemDC.SetPixel(pnt,white);
+				for(int e=1;e<=10;e++){
+					MemDC.SetPixel(pnt.x-e,pnt.y,white);
+					MemDC.SetPixel(pnt.x+e,pnt.y,white);
+					MemDC.SetPixel(pnt.x,pnt.y-e,white);
+					MemDC.SetPixel(pnt.x,pnt.y+e,white);
+				}
+
 
 				//for(j=0;j<dt1.seginfo.size();j++){
 				//	//str=dt1.label[0];
@@ -437,7 +480,7 @@ IMPLEMENT_DYNCREATE(Cz8View, CFormView)
 
 			}
 		}
-		
+
 
 
 		//将内存中的图拷贝到屏幕上进行显示
@@ -488,6 +531,8 @@ IMPLEMENT_DYNCREATE(Cz8View, CFormView)
 		YMIN=ymin;
 
 		CString fontName=L"Arial";
+
+
 
 		////////////////////////////////////////////////////////////////////
 
@@ -682,6 +727,13 @@ IMPLEMENT_DYNCREATE(Cz8View, CFormView)
 		pdc->SetTextColor(oc);
 		newrect.left-=sz.cy;
 
+
+
+		///////////////////////////////////////////////////////////////////////
+
+
+
+
 		//return true;
 		return newrect;
 		//}
@@ -696,14 +748,27 @@ IMPLEMENT_DYNCREATE(Cz8View, CFormView)
 		case 1:
 			ci+=1;
 			if(ci>=dt1.potential.size()){
-				KillTimer(1);
+				dt2.seperate();
+				dt2.intg(0.8);
+				cllist.push_back(currentColor);
+				dtlist.push_back(dt2);
+				dt1.clear();
+				dt2.clear();
+
+				KillTimer(timer1);
 			}
 			else{
-				updatePlotRange(dt1.potential,dt1.current);
 
-				Invalidate();
+				dt2.potential.push_back(dt1.potential[ci]);
+				dt2.current.push_back(dt1.current[ci]);
+				dt2.charge.push_back(dt1.charge[ci]);
+				dt2.time.push_back(dt1.time[ci]);
+				updatePlotRange(dt2.potential,dt2.current);
+
+
 				//InvalidateRect(NULL,0);
 			}
+			Invalidate();
 			break;
 		case 2:
 			ci+=80;
@@ -796,15 +861,171 @@ IMPLEMENT_DYNCREATE(Cz8View, CFormView)
 	{
 		// TODO: Add your message handler code here and/or call default
 
-		CRect plotrect;
-		this->GetWindowRect(&plotrect);
-		ScreenToClient(&plotrect);
-		plotrect.DeflateRect(60,60,310,60);
+		////CRect plotrect;
+		//this->GetWindowRect(&plotrect);
+		//ScreenToClient(&plotrect);
+		//plotrect.DeflateRect(60,60,310,60);
 
-		xmouse=xRescale(point.x,plotrect.left,plotrect.right,xmin,xmax);
-		ymouse=xRescale(point.y,plotrect.top,plotrect.bottom,ymin,ymax);
+		//xmouse=xRescale(point.x,plotrect.left,plotrect.right,xmin,xmax);
+		//ymouse=xRescale(point.y,plotrect.top,plotrect.bottom,ymin,ymax);
 
-		Invalidate();
+		if(	!dtlist.empty() && plotrect.PtInRect(point) ){
+			pnt=findNearestPoint(point);
+			xmouse=dtlist.back().potential[selectPointIndex];
+			ymouse=dtlist.back().current[selectPointIndex];
+			Invalidate();
+		}
+
+
 
 		CFormView::OnMouseMove(nFlags, point);
+	}
+
+
+	void Cz8View::drawRectangle(CRect rect, CDC * pDC)
+	{
+		// create and select a solid blue brush
+
+		CBrush brushBlue(black);
+		CBrush* pOldBrush = pDC->SelectObject(&brushBlue);
+
+		// create and select a thick, black pen
+
+		CPen penBlack;
+		penBlack.CreatePen(PS_SOLID, 0, red);
+		CPen* pOldPen = pDC->SelectObject(&penBlack);
+
+		// get our client rectangle
+
+		//CRect rect;
+		//GetClientRect(rect);
+
+		// shrink our rect 20 pixels in each direction
+
+		//rect.DeflateRect(20, 20);
+
+		// draw a thick black rectangle filled with blue
+
+		pDC->Rectangle(rect);
+
+		// put back the old objects
+
+		pDC->SelectObject(pOldBrush);
+		pDC->SelectObject(pOldPen);
+
+	}
+
+
+	BOOL Cz8View::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
+	{
+		// TODO: Add your message handler code here and/or call default
+
+		//CPoint pt;
+
+		//if(::GetCursorPos(&pt)){
+		//	ScreenToClient(&pt);
+		//	if(plotrect.PtInRect(pt)){
+		//		::SetCursor(AfxGetApp()->LoadStandardCursor(IDC_CROSS));
+		//		return true;
+		//	}
+		//}
+
+		return CFormView::OnSetCursor(pWnd, nHitTest, message);
+	}
+
+
+	CPoint Cz8View::findNearestPoint(CPoint pt)
+	{
+		long i;
+		double ptx,pty;
+		ptx=xRescale(pt.x,plotrect.left,plotrect.right,xmin,xmax);
+		pty=xRescale(pt.y,plotrect.bottom,plotrect.top,ymin,ymax);
+
+		double biy=(double)plotrect.Height()/(ymax-ymin);
+		double bix=(double)plotrect.Width()/(xmax-xmin);
+		double dst,temp;
+		dst=fabs(ptx-dtlist.back().potential[0])*bix+fabs(pty-dtlist.back().current[0])*biy;
+		selectPointIndex=0;
+		for(i=1;i<dtlist.back().potential.size();i++){
+			temp=fabs(ptx-dtlist.back().potential[i])*bix+fabs(pty-dtlist.back().current[i])*biy;
+			if(temp<dst){
+				dst=temp;
+				selectPointIndex=i;
+			}
+		}
+
+		return CPoint(xRescale(dtlist.back().potential[selectPointIndex],xmin,xmax,plotrect.left,plotrect.right),
+			xRescale(dtlist.back().current[selectPointIndex],ymin,ymax,plotrect.bottom,plotrect.top));
+	}
+
+
+	void Cz8View::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+	{
+		// TODO: Add your message handler code here and/or call default
+		if(!dtlist.empty())
+			switch(nChar){
+
+			case VK_LEFT:
+				if(selectPointIndex>0){
+					selectPointIndex--;			
+					pnt=CPoint(xRescale(dtlist.back().potential[selectPointIndex],xmin,xmax,plotrect.left,plotrect.right),
+						xRescale(dtlist.back().current[selectPointIndex],ymin,ymax,plotrect.bottom,plotrect.top));
+					xmouse=dtlist.back().potential[selectPointIndex];
+					ymouse=dtlist.back().current[selectPointIndex];
+					Invalidate();
+				}
+				break;
+			case VK_RIGHT:
+				if(selectPointIndex<dtlist.back().potential.size()-1){
+					selectPointIndex++;
+					pnt=CPoint(xRescale(dtlist.back().potential[selectPointIndex],xmin,xmax,plotrect.left,plotrect.right),
+						xRescale(dtlist.back().current[selectPointIndex],ymin,ymax,plotrect.bottom,plotrect.top));
+					xmouse=dtlist.back().potential[selectPointIndex];
+					ymouse=dtlist.back().current[selectPointIndex];
+					Invalidate();
+				}
+				break;
+
+			case VK_UP:
+				if(selectPointIndex>10){
+					selectPointIndex-=10;			
+					pnt=CPoint(xRescale(dtlist.back().potential[selectPointIndex],xmin,xmax,plotrect.left,plotrect.right),
+						xRescale(dtlist.back().current[selectPointIndex],ymin,ymax,plotrect.bottom,plotrect.top));
+					xmouse=dtlist.back().potential[selectPointIndex];
+					ymouse=dtlist.back().current[selectPointIndex];
+					Invalidate();
+				}
+				break;
+			case VK_DOWN:
+				if(selectPointIndex<dtlist.back().potential.size()-10){
+					selectPointIndex+=10;
+					pnt=CPoint(xRescale(dtlist.back().potential[selectPointIndex],xmin,xmax,plotrect.left,plotrect.right),
+						xRescale(dtlist.back().current[selectPointIndex],ymin,ymax,plotrect.bottom,plotrect.top));
+					xmouse=dtlist.back().potential[selectPointIndex];
+					ymouse=dtlist.back().current[selectPointIndex];
+					Invalidate();
+				}
+				break;
+
+			default:
+				break;
+
+		}
+
+
+		CFormView::OnKeyDown(nChar, nRepCnt, nFlags);
+	}
+
+
+	void Cz8View::OnPlay()
+	{
+		// TODO: Add your command handler code here
+		m_isplay=!m_isplay;
+	}
+
+
+	void Cz8View::OnUpdatePlay(CCmdUI *pCmdUI)
+	{
+		// TODO: Add your command update UI handler code here
+		pCmdUI->SetCheck(m_isplay==1);
 	}

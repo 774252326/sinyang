@@ -48,25 +48,25 @@ int pcct::readFile(LPCTSTR lpszFileName)
 
 		while(file.ReadString(strRead))
 		{	
-			
+
 			if(wcscoll(strRead.GetBuffer(),sps7)==0){
 
 				token = wcstok( strRead.GetBuffer(), sps1 );
 
-			if(token!=NULL)
-				label.push_back(token);
+				if(token!=NULL)
+					label.push_back(token);
 
-			token = wcstok( NULL, sps1 );
-			if(token!=NULL)
-				label.push_back(token);
+				token = wcstok( NULL, sps1 );
+				if(token!=NULL)
+					label.push_back(token);
 
-			token = wcstok( NULL, sps1);
-			if(token!=NULL)
-				label.push_back(token);
+				token = wcstok( NULL, sps1);
+				if(token!=NULL)
+					label.push_back(token);
 
-			token = wcstok( NULL, sps1 );
-			if(token!=NULL)
-				label.push_back(token);
+				token = wcstok( NULL, sps1 );
+				if(token!=NULL)
+					label.push_back(token);
 
 				break;
 			}
@@ -234,7 +234,7 @@ void pcct::copy(pcct a)
 	AR=a.AR;
 	segmentinfo=a.segmentinfo;
 	label=a.label;
-		FilePath=a.FilePath;
-		FileName=a.FileName;
-		seginfo=a.seginfo;
+	FilePath=a.FilePath;
+	FileName=a.FileName;
+	seginfo=a.seginfo;
 }
