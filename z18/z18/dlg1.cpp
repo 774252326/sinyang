@@ -74,8 +74,8 @@ void dlg1::OnSize(UINT nType, int cx, int cy)
 	int gap=50;
 	CRect dlgRect(gap,gap,cx-gap,cy-gap);
 
-	if( GetDlgItem(IDC_STATIC)->GetSafeHwnd()){
-		GetDlgItem(IDC_STATIC)->SetWindowPos(NULL, dlgRect.left, dlgRect.top, dlgRect.Width(), dlgRect.Height(),
+	if( GetDlgItem(IDC_PLOT)->GetSafeHwnd()){
+		GetDlgItem(IDC_PLOT)->SetWindowPos(NULL, dlgRect.left, dlgRect.top, dlgRect.Width(), dlgRect.Height(),
 			SWP_HIDEWINDOW);
 		//SWP_SHOWWINDOW);
 	}
@@ -463,13 +463,13 @@ void dlg1::OnPaint()
 
 
 
-	CPaintDC dcplot(this->GetDlgItem(IDC_STATIC));
+	//CPaintDC dcplot(this->GetDlgItem(IDC_PLOT));
 
 	CRect plotrect;
 	CSize sz;
 	//this->GetWindowRect(&plotrect);
 	COLORREF oc;
-	GetDlgItem(IDC_STATIC)->GetWindowRect(&plotrect);
+	GetDlgItem(IDC_PLOT)->GetWindowRect(&plotrect);
 	ScreenToClient(&plotrect);
 	//plotrect.DeflateRect(60,60,310,60);
 
@@ -602,7 +602,7 @@ void dlg1::OnMouseMove(UINT nFlags, CPoint point)
 	if (GetCapture()==this && !xlist.empty())
 	{
 		CRect plotrect;
-		GetDlgItem(IDC_STATIC)->GetWindowRect(&plotrect);
+		GetDlgItem(IDC_PLOT)->GetWindowRect(&plotrect);
 		double kx=(double)(point.x-m_mouseDownPoint.x)*(xmax-xmin)/(double)plotrect.Width();
 		double ky=(double)(point.y-m_mouseDownPoint.y)*(ymax-ymin)/(double)plotrect.Height();
 
@@ -650,7 +650,7 @@ BOOL dlg1::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 {
 	// TODO: Add your message handler code here and/or call default
 	CRect plotrect;
-	GetDlgItem(IDC_STATIC)->GetWindowRect(&plotrect);
+	GetDlgItem(IDC_PLOT)->GetWindowRect(&plotrect);
 	ScreenToClient(&plotrect);
 
 	ScreenToClient(&pt);
@@ -795,4 +795,38 @@ CRect dlg1::DrawLegend(CRect rect, CDC* pDC)
 
 
 	return CRect(0,0,0,0);
+}
+
+
+BOOL dlg1::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext)
+{
+	// TODO: Add your specialized code here and/or call the base class
+
+
+
+
+	return CFormView::Create(lpszClassName, lpszWindowName, dwStyle, rect, pParentWnd, nID, pContext);
+}
+
+
+void dlg1::OnInitialUpdate()
+{
+	CFormView::OnInitialUpdate();
+
+	// TODO: Add your specialized code here and/or call the base class
+
+	//CEdit *pThres;
+	//pThres=new CEdit;
+	//CRect threct(0,0,100,100);
+	////threct.MoveToXY(winrect.Width()-towinedge.cx-btnrect.Width(),towinedge.cy);
+	//pThres->Create(ES_LEFT|WS_CHILD|WS_VISIBLE,threct,this,IDC_PLOT);
+
+		//plot region
+	CButton * pPlot=new CButton;
+	CRect plotrect(0,0,10,10);
+	//plotrect.DeflateRect(towinedge);
+	//plotrect.DeflateRect(towinedge.cx,0,btnrect.Width()+tobtnedge.cx,btnrect.Height()+tobtnedge.cy*2);
+	CString str;
+	str.LoadStringW(IDC_PLOT);
+	pPlot->Create( str, WS_CHILD|BS_GROUPBOX/*|WS_VISIBLE*/, plotrect, this, IDC_PLOT); 
 }

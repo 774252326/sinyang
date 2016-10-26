@@ -53,6 +53,8 @@ public:
 
 
 	CRect DrawLegend(CRect rect, CDC* pDC);
+	virtual BOOL Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = NULL);
+	virtual void OnInitialUpdate();
 };
 
 
