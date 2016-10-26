@@ -13,6 +13,7 @@ IMPLEMENT_DYNAMIC(CMFCCaptionBarA, CMFCCaptionBar)
 	CMFCCaptionBarA::CMFCCaptionBarA()
 	: timer(0)
 	, x(0)
+	, ecWidth(50)
 {
 
 }
@@ -92,9 +93,9 @@ int CMFCCaptionBarA::SetEdit(void)
 	CPoint pt=bRect.TopLeft();
 	pt.x-=this->GetMargin();
 
-	int ecw=50;
-	pt.x-=ecw;
-	CRect ecrect(0,0,ecw,bRect.Height());
+	//int ecw=50;
+	pt.x-=ecWidth;
+	CRect ecrect(0,0,ecWidth,bRect.Height());
 	//ec.GetWindowRect(&ecrect);
 	//ecrect.bottom=ecrect.top+bRect.Height();
 	ecrect.MoveToXY(pt);
@@ -122,21 +123,21 @@ int CMFCCaptionBarA::HideEdit(void)
 
 int CMFCCaptionBarA::ShowButton(bool bShow)
 {
-	if(bShow){
-		CString strTemp;
-		//ASSERT
-		(strTemp.LoadString(IDS_CAPTION_BUTTON));
-		//SetButton(strTemp, ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_RIGHT, FALSE);
-		SetButton(strTemp, ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_LEFT, FALSE);
-		EnableButton();
-	}
-	else{
+	//if(bShow){
+	//	CString strTemp;
+	//	//ASSERT
+	//	(strTemp.LoadString(IDS_CAPTION_BUTTON));
+	//	//SetButton(strTemp, ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_RIGHT, FALSE);
+	//	SetButton(strTemp, ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_LEFT, FALSE);
+	//	EnableButton();
+	//}
+	//else{
 
-		//SetButton(L" ", ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_RIGHT, FALSE);
-		SetButton(L" ", ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_LEFT, FALSE);
-		EnableButton(FALSE);
-		Invalidate();
-	}
+	//	//SetButton(L" ", ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_RIGHT, FALSE);
+	//	SetButton(L" ", ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_LEFT, FALSE);
+	//	EnableButton(FALSE);
+	//	Invalidate();
+	//}
 
 
 	return 0;
@@ -153,6 +154,8 @@ int CMFCCaptionBarA::SetTextA(CString str, bool bFlash)
 	SetText(str, CMFCCaptionBar::ALIGN_LEFT);
 	if(bFlash){
 		timer=SetTimer(1,500,NULL);
+
+		//FlashWindowEx(FLASHW_ALL,1000,500);
 	}
 
 	return 0;
@@ -167,10 +170,10 @@ void CMFCCaptionBarA::OnTimer(UINT_PTR nIDEvent)
 	switch(nIDEvent){
 	case 1:
 		{
-			bool aa=(m_clrBarText==black);
-			m_clrBarText=aa ? red : black;
-			UpdateData(FALSE);
+			m_clrBarText=(m_clrBarText==black)? red : black;
+			//UpdateData(FALSE);
 			Invalidate();
+			//this->FlashWindow(TRUE);
 		}
 		break;
 	default:
@@ -186,9 +189,9 @@ void CMFCCaptionBarA::DoDataExchange(CDataExchange* pDX)
 	// TODO: Add your specialized code here and/or call the base class
 
 
-
-	CMFCCaptionBar::DoDataExchange(pDX);
 	DDX_Text(pDX, IDS_EDIT_CAPTION_EDIT, x);
+	CMFCCaptionBar::DoDataExchange(pDX);
+
 
 }
 
@@ -215,25 +218,27 @@ void CMFCCaptionBarA::ShowMessageRunning(void)
 
 void CMFCCaptionBarA::ShowMessage(CString str)
 {
-	SetTextA(str);
+
 	EnableButton(FALSE);
 	SetEdit();
 	ec.ShowWindow(SW_HIDE);
+	SetTextA(str);
 	this->ShowWindow(SW_SHOW);
-	//this->GetParentFrame()->RecalcLayout(FALSE);
+	this->GetParentFrame()->RecalcLayout(FALSE);
 }
 
 
 void CMFCCaptionBarA::ShowMessageWithButton(CString str, double xv, bool bFlash)
 {
-	for(int i=0;i<17;i++) str+=" ";
+	for(int i=0;i<21;i++) str+=" ";
 	x=xv;
-	//UpdateData(FALSE);
+	UpdateData(FALSE);
 	SetTextA(str,bFlash);
 	EnableButton();
 	SetEdit();
 	ec.ShowWindow(SW_SHOW);
 	this->ShowWindow(SW_SHOW);
+	this->GetParentFrame()->RecalcLayout(FALSE);
 }
 
 
@@ -243,8 +248,11 @@ void CMFCCaptionBarA::OnDrawText(
 	const CString& strText 
 	)
 {
-	//rect.right-=50;
-
+	if(ec.IsWindowVisible()){
+		rect.right-=ecWidth;
+		rect.right-=this->GetMargin();
+		//for(int i=0;i<21;i++) strText-=" ";
+	}
 
 	CMFCCaptionBar::OnDrawText(pDC, rect, strText);
 

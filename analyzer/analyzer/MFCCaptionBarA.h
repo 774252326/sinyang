@@ -47,6 +47,7 @@ public:
 	void ShowMessageRunning(void);
 	void ShowMessage(CString str);
 	void ShowMessageWithButton(CString str, double xv, bool bFlash);
+	int ecWidth;
 };
 
 

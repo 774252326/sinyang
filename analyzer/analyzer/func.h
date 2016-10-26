@@ -21,8 +21,14 @@ typedef struct MYPARA{
 
 BOOL writeini(CString fp, ANPara &p1t, CVPara &p2t, SAPara &p3t);
 BOOL readini(CString fp, ANPara &p1t, CVPara &p2t, SAPara &p3t);
+
 UINT RCCS(LPVOID pParam);
 UINT ASDTM(LPVOID pParam);
-
 UINT RIVLATM(LPVOID pParam);
 UINT AALATM(LPVOID pParam);
+
+
+DWORD WINAPI RCCS2(LPVOID pParam);
+DWORD WINAPI ASDTM2(LPVOID pParam);
+DWORD WINAPI RIVLATM2(LPVOID pParam);
+DWORD WINAPI AALATM2(LPVOID pParam);

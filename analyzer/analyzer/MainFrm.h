@@ -16,6 +16,10 @@
 #include "dlg1.h"
 #include "afxmt.h"
 
+#define MESSAGE_BUSY WM_USER+1
+#define MESSAGE_WAIT_RESPONSE WM_USER+2
+#define MESSAGE_OVER WM_USER+3
+
 class CMainFrame : public CFrameWndEx
 {
 	
@@ -122,6 +126,12 @@ public:
 	dlg1 * LeftPlotPointer(void);
 	dlg1 * RightPlotPointer(void);
 	bool waiting;
+	afx_msg void OnAnalysisAbortanalysis();
+protected:
+	afx_msg LRESULT OnMessagebusy(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnMessageWaitResponse(WPARAM wParam, LPARAM lParam);
+//	afx_msg LRESULT OnCaptionbarMessage(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnMessageOver(WPARAM wParam, LPARAM lParam);
 };
 
 

@@ -458,38 +458,38 @@
 
 
 
-UINT freshp(LPVOID pParam)
-{
-	dlg1 *leftp=((dlg1*)pParam);
-	//dlg1 *rightp=((mypara*)pParam)->rightp;
-	//COutputWnd *ow=((mypara*)pParam)->ow;
-	//CMFCCaptionBarA *cba=((mypara*)pParam)->cba;
-	//pcct *data=((mypara*)pParam)->data;
-	//pcctB *dataB=((mypara*)pParam)->dataB;
+//UINT freshp(LPVOID pParam)
+//{
+//dlg1 *leftp=((dlg1*)pParam);
+//dlg1 *rightp=((mypara*)pParam)->rightp;
+//COutputWnd *ow=((mypara*)pParam)->ow;
+//CMFCCaptionBarA *cba=((mypara*)pParam)->cba;
+//pcct *data=((mypara*)pParam)->data;
+//pcctB *dataB=((mypara*)pParam)->dataB;
 
-	leftp->Invalidate();
+//leftp->Invalidate();
 
-	//WaitForSingleObject(semaphoreWrite.m_hObject,INFINITE);
+//WaitForSingleObject(semaphoreWrite.m_hObject,INFINITE);
 
-	//while(true){
+//while(true){
 
-	Sleep(50);
+//Sleep(50);
 
-	//while(isend){
+//while(isend){
 
-	//	TRACE(L"freshp running\n");
+//	TRACE(L"freshp running\n");
 
-	//	leftp->Invalidate();
-	//	Sleep(40);
-	//}
+//	leftp->Invalidate();
+//	Sleep(40);
+//}
 
-	//leftp->Invalidate();
-	//}
+//leftp->Invalidate();
+//}
 
-	//ReleaseSemaphore(semaphoreWrite.m_hObject,1,NULL);
-	return 0;
+//ReleaseSemaphore(semaphoreWrite.m_hObject,1,NULL);
+//return 0;
 
-}
+//}
 
 //UINT RCCS(LPVOID pParam);
 
@@ -523,7 +523,7 @@ UINT freshp(LPVOID pParam)
 //	}
 //}
 
-bool calVsupp(PlotData & pdat, int idx, double evoR, double &Vsupp);
+//bool calVsupp(PlotData & pdat, int idx, double evoR, double &Vsupp);
 //{
 //	//for(size_t i
 //	std::vector<double> x;
@@ -573,6 +573,11 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_COMMAND(ID_ANALYSIS_METHODSETUP, &CMainFrame::OnAnalysisMethodsetup)
 	ON_COMMAND(ID_FILE_SAVE, &CMainFrame::OnFileSave)
 	ON_COMMAND(ID_ANALYSIS_STARTANALYSIS, &CMainFrame::OnAnalysisStartanalysis)
+	ON_COMMAND(ID_ANALYSIS_ABORTANALYSIS, &CMainFrame::OnAnalysisAbortanalysis)
+	ON_MESSAGE(MESSAGE_BUSY, &CMainFrame::OnMessagebusy)
+	ON_MESSAGE(MESSAGE_WAIT_RESPONSE, &CMainFrame::OnMessageWaitResponse)
+	//ON_MESSAGE(CAPTIONBAR_MESSAGE, &CMainFrame::OnCaptionbarMessage)
+	ON_MESSAGE(MESSAGE_OVER, &CMainFrame::OnMessageOver)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -824,7 +829,8 @@ BOOL CMainFrame::CreateCaptionBar()
 	//SetButton(strTemp, ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_RIGHT, FALSE);
 	m_wndCaptionBar.SetButton(strTemp, ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_LEFT, FALSE);
 
-	m_wndCaptionBar.EnableButton(FALSE);
+	m_wndCaptionBar.EnableButton(/*FALSE*/);
+	//m_wndCaptionBar.ec.ShowWindow(SW_SHOW);
 
 	//m_wndCaptionBar.SetButtonToolTip(strTemp2);
 
@@ -1155,8 +1161,8 @@ void CMainFrame::OnFileOpen()
 		strTemp=L"setup file "+m_filePath+L" loaded";
 
 		m_wndCaptionBar.ShowMessage(strTemp);
-		m_wndCaptionBar.ShowWindow(SW_SHOW);
-		RecalcLayout(FALSE);
+		//m_wndCaptionBar.ShowWindow(SW_SHOW);
+		//RecalcLayout(FALSE);
 
 		////////////////////////////////////////////////////////////////////////////
 
@@ -1821,51 +1827,51 @@ void CMainFrame::OnAnalysisStartanalysis()
 	pa1->rightp=( (dlg1*)m_wndSplitter.GetPane(0,1) );
 	pa1->mf=this;
 	CWinThread *pWriteA;
-
+	HANDLE hThread;
 	switch(p1.analysistype){
 	case 1:
 
-		pWriteA=AfxBeginThread(RCCS,
-			(LPVOID)pa1,
-			THREAD_PRIORITY_NORMAL,
-			0,
-			CREATE_SUSPENDED);
-
+		//pWriteA=AfxBeginThread(RCCS,
+		//(LPVOID)pa1,
+		//THREAD_PRIORITY_NORMAL,
+		//0,
+		//CREATE_SUSPENDED);
+		hThread=CreateThread(NULL,0,RCCS2,(LPVOID)pa1,0,NULL);
 		break;
 
 	case 2:
 
-		pWriteA=AfxBeginThread(ASDTM,
-			(LPVOID)pa1,
-			THREAD_PRIORITY_NORMAL,
-			0,
-			CREATE_SUSPENDED);
-
+		//pWriteA=AfxBeginThread(ASDTM,
+		//(LPVOID)pa1,
+		//THREAD_PRIORITY_NORMAL,
+		//0,
+		//CREATE_SUSPENDED);
+		hThread=CreateThread(NULL,0,ASDTM2,(LPVOID)pa1,0,NULL);
 		break;
 	case 3:
 
-		pWriteA=AfxBeginThread(RIVLATM,
-			(LPVOID)pa1,
-			THREAD_PRIORITY_NORMAL,
-			0,
-			CREATE_SUSPENDED);
-
+		//pWriteA=AfxBeginThread(RIVLATM,
+		//(LPVOID)pa1,
+		//THREAD_PRIORITY_NORMAL,
+		//0,
+		//CREATE_SUSPENDED);
+		hThread=CreateThread(NULL,0,RIVLATM2,(LPVOID)pa1,0,NULL);
 		break;
 	case 4:
 
-		pWriteA=AfxBeginThread(AALATM,
-			(LPVOID)pa1,
-			THREAD_PRIORITY_NORMAL,
-			0,
-			CREATE_SUSPENDED);
-
+		//pWriteA=AfxBeginThread(AALATM,
+		//	(LPVOID)pa1,
+		//	THREAD_PRIORITY_NORMAL,
+		//	0,
+		//	CREATE_SUSPENDED);
+		hThread=CreateThread(NULL,0,AALATM2,(LPVOID)pa1,0,NULL);
 		break;
 	default:
 		return;
 	}
 
-
-	pWriteA->ResumeThread();
+	CloseHandle(hThread);
+	//pWriteA->ResumeThread();
 
 
 
@@ -1884,4 +1890,58 @@ dlg1 * CMainFrame::LeftPlotPointer(void)
 dlg1 * CMainFrame::RightPlotPointer(void)
 {
 	return ( (dlg1*)m_wndSplitter.GetPane(0,1) );
+}
+
+
+void CMainFrame::OnAnalysisAbortanalysis()
+{
+	// TODO: Add your command handler code here
+
+}
+
+
+afx_msg LRESULT CMainFrame::OnMessagebusy(WPARAM wParam, LPARAM lParam)
+{
+
+
+	m_wndCaptionBar.ShowMessageRunning();
+
+	return 0;
+}
+
+
+afx_msg LRESULT CMainFrame::OnMessageWaitResponse(WPARAM wParam, LPARAM lParam)
+{
+	CString strTemp;
+
+	(strTemp.LoadString(IDS_STRING_WAIT_RESPONSE));
+
+
+	double *px=(double*)wParam;
+
+	m_wndCaptionBar.ShowMessageWithButton(strTemp,*px,true);
+	return 0;
+}
+
+
+//afx_msg LRESULT CMainFrame::OnCaptionbarMessage(WPARAM wParam, LPARAM lParam)
+//{
+//
+//	return 0;
+//}
+
+
+afx_msg LRESULT CMainFrame::OnMessageOver(WPARAM wParam, LPARAM lParam)
+{
+	CString strTemp;
+	(strTemp.LoadString(IDS_STRING_OVER));
+
+	CString str((wchar_t*)wParam);
+
+	strTemp+=str;
+
+	m_wndCaptionBar.ShowMessage(strTemp);
+
+
+	return 0;
 }

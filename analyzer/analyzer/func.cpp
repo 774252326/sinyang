@@ -9,7 +9,7 @@
 #include "pcct.h"
 #include "pcctB.h"
 
-int intv=40;
+int intv=20;
 size_t n1=800;
 
 void LoadFileList(const CString &m_filePath, std::vector<CString> &filelist)
@@ -133,6 +133,86 @@ bool calVsupp(PlotData & pdat, int idx, double evoR, double &Vsupp)
 }
 
 
+
+void OneStep( CMainFrame * mf, dlg1 * leftp, pcct * data, pcctB &dataB, bool bShowRight=true )
+{
+	int nflg;
+
+	std::vector<double> x;
+	std::vector<double> y;
+	size_t rn;
+
+	//load n1 points
+	rn=data->popData(x,y,n1);
+	//plot points on plot1
+
+
+	plotspec ps1;
+	CString strTemp;
+	ps1.colour=genColor( genColorvFromIndex<float>( leftp->pd.ps.size() ) ) ;
+	//ps1.colour=genColorGray( genColorvFromIndex<float>( stepCount ) ) ;
+	ps1.dotSize=-1;
+	ps1.name=data->stepName;
+	ps1.showLine=true;
+	ps1.smoothLine=0;
+	ps1.traceLast=true;
+	leftp->pd.AddNew(x,y,ps1,data->label[0],data->label[1]);
+	leftp->updatePlotRange();
+	leftp->Invalidate();
+
+	nflg=dataB.addXY(x,y);
+
+	if(nflg>=1){//if one cycle complete
+
+		mf->GetOutputWnd()->InsertListCtrl(dataB.rowCount,
+			leftp->pd.ps.back().name,
+			dataB.Ar.size(),
+			//addvol,
+			dataB.addVolume,
+			dataB.totalVolume,
+			dataB.Ar.back(),
+			(dataB.Ar.back()/dataB.Ar0),
+			(nflg==2)&bShowRight
+			);
+
+		dataB.rowCount++;
+	}
+
+
+
+	Sleep(intv);
+
+	while(nflg<2){
+
+		//TRACE(L"rccs running\n");
+		rn=data->popData(x,y,n1);
+		leftp->pd.AddFollow(x,y);
+		leftp->updatePlotRange(x,y);
+		leftp->Invalidate();
+
+		nflg=dataB.addXY(x,y);
+
+		if(nflg>=1){//if one cycle complete
+
+			mf->GetOutputWnd()->InsertListCtrl(dataB.rowCount,
+				leftp->pd.ps.back().name,
+				dataB.Ar.size(),
+				//addvol,
+				dataB.addVolume,
+				dataB.totalVolume,
+				dataB.Ar.back(),
+				(dataB.Ar.back()/dataB.Ar0),
+				(nflg==2)&bShowRight
+				);
+			dataB.rowCount++;
+		}
+
+
+		Sleep(intv);
+	}
+}
+
+
 CString Output1(PlotData & pdat, double evalR, double Sconc, double vmsvol)
 {
 	//dlg1 *plotr=( (dlg1*)m_wndSplitter.GetPane(0,1) );
@@ -151,7 +231,6 @@ CString Output1(PlotData & pdat, double evalR, double Sconc, double vmsvol)
 	}
 }
 
-
 CString Output2(PlotData & pdat, double evaluationratio, int calibrationfactortype, double calibrationfactor, double vmsvol)
 {
 	CString strTemp;
@@ -160,6 +239,7 @@ CString Output2(PlotData & pdat, double evaluationratio, int calibrationfactorty
 	if(calVsupp(pdat,pdat.ps.size()-1,evaluationratio,Vsuppbath)){						
 		{
 			CString str;
+
 			str.Format(L" Vsuppbath=%g ml @ Ar/Ar0=%g",Vsuppbath, evaluationratio);
 			strTemp+=str;
 		}
@@ -269,7 +349,7 @@ CString Output4(PlotData & pdat, dlg1 *p1, double vmsvol, double Avol)
 
 	ps1.colour=genColor( genColorvFromIndex<float>( p1->pd.ps.size() ) ) ;
 	ps1.dotSize=-1;  
-	ps1.name=L"h line";
+	ps1.name=L"Q intercept";
 	ps1.showLine=true;
 	ps1.smoothLine=0;
 	ps1.traceLast=false;
@@ -290,9 +370,9 @@ UINT RCCS(LPVOID pParam)
 	dlg1 *leftp=((mypara*)pParam)->leftp;
 	dlg1 *rightp=((mypara*)pParam)->rightp;
 	CMainFrame *mf=((mypara*)pParam)->mf;
+	delete pParam;
 	//////////////////////////////load data//////////////////////////////////////
 	std::vector<CString> filelist;
-
 	LoadFileList(L"data\\b.txt",filelist);
 	if(filelist.empty()) return 0;
 
@@ -310,90 +390,17 @@ UINT RCCS(LPVOID pParam)
 	//////////////////////////////first step////////////////////////////////////////////
 	mf->waiting=false;
 
-
-	int nflg;
-
 	std::vector<double> x;
 	std::vector<double> y;
-	size_t rn;
 
-	mf->GetCaptionBar()->ShowMessageRunning();
-	//load n1 points
-	rn=data->popData(x,y,n1);
-	//plot points on plot1
+	::SendMessage(mf->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
 
-
-	plotspec ps1;
-	CString strTemp;
-	ps1.colour=genColor( genColorvFromIndex<float>( leftp->pd.ps.size() ) ) ;
-	//ps1.colour=genColorGray( genColorvFromIndex<float>( stepCount ) ) ;
-	ps1.dotSize=-1;
-	ps1.name=data->stepName;
-	ps1.showLine=true;
-	ps1.smoothLine=0;
-	ps1.traceLast=true;
-	leftp->pd.AddNew(x,y,ps1,data->label[0],data->label[1]);
-	leftp->updatePlotRange();
-	leftp->Invalidate();
-
-	nflg=dataB.addXY(x,y);
-
-	if(nflg>=1){//if one cycle complete
-
-		mf->GetOutputWnd()->InsertListCtrl(dataB.rowCount,
-			leftp->pd.ps.back().name,
-			dataB.Ar.size(),
-			//addvol,
-			dataB.addVolume,
-			dataB.totalVolume,
-			dataB.Ar.back(),
-			(dataB.Ar.back()/dataB.Ar0),
-			(nflg==2)
-			);
-
-		dataB.rowCount++;
-	}
-
-
-
-
-	Sleep(intv);
-
-	while(nflg<2){
-
-		TRACE(L"rccs running\n");
-		rn=data->popData(x,y,n1);
-		leftp->pd.AddFollow(x,y);
-		leftp->updatePlotRange(x,y);
-		leftp->Invalidate();
-
-		nflg=dataB.addXY(x,y);
-
-		if(nflg>=1){//if one cycle complete
-
-			mf->GetOutputWnd()->InsertListCtrl(dataB.rowCount,
-				leftp->pd.ps.back().name,
-				dataB.Ar.size(),
-				//addvol,
-				dataB.addVolume,
-				dataB.totalVolume,
-				dataB.Ar.back(),
-				(dataB.Ar.back()/dataB.Ar0),
-				(nflg==2)
-				);
-			dataB.rowCount++;
-		}
-
-
-		Sleep(intv);
-	}
-
-
+	OneStep(mf,leftp,data,dataB);
 
 	x.assign( 1, dataB.totalVolume-mf->p3.vmsvol );
 	y.assign( 1, (dataB.Ar.back()/dataB.Ar0) );
 
-	//plotspec ps1;
+	plotspec ps1;
 	ps1.colour=genColor( genColorvFromIndex<float>( rightp->pd.ps.size() ) ) ;
 	ps1.dotSize=3;
 	ps1.name=L"Ar/Ar0";
@@ -401,33 +408,15 @@ UINT RCCS(LPVOID pParam)
 	ps1.smoothLine=1;
 	ps1.traceLast=false;
 	rightp->pd.AddNew(x,y,ps1,L"Suppressor(ml)",L"Ratio of Charge");
-
-
 	rightp->updatePlotRange();
 	rightp->Invalidate();
 
-
-	//dataB.stepCount++;
-	//dataB.clear();
-
 	filelist.erase(filelist.begin());
-	//dt1.clear();
-	//dt1.readFile(filelist.front());
-	//dt1.TomA();
-	//dt1.addVolume=mf->p3.saplist[dataB.stepCount-1].volconc;
-	//dt1.stepName.Format(L"Solution Addition %d",dataB.stepCount);
-	//dataB.addVolume=data->addVolume;
-
 	RefreshData(filelist.front(),mf->p3.saplist,dt1,dataB);
 
-	//ASSERT
-	(strTemp.LoadString(IDS_STRING_WAIT_RESPONSE));
+	::SendMessage(mf->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
 
-	mf->GetCaptionBar()->ShowMessageWithButton(strTemp,dt1.addVolume,true);
-	//mf->GetCaptionBar()->ShowWindow(SW_SHOW);
-	//mf->RecalcLayout(FALSE);
 	mf->waiting=true;
-
 	while(mf->waiting){
 		Sleep(intv);
 	}
@@ -436,65 +425,9 @@ UINT RCCS(LPVOID pParam)
 
 	while(dataB.stepCount<(mf->p3.saplist.size())){
 
-		mf->GetCaptionBar()->ShowMessageRunning();
+		::SendMessage(mf->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
 
-		rn=data->popData(x,y,n1);
-		//plot points on plot1
-
-		ps1.colour=genColor( genColorvFromIndex<float>( leftp->pd.ps.size() ) ) ;
-		//ps1.colour=genColorGray( genColorvFromIndex<float>( stepCount ) ) ;
-		ps1.dotSize=-1;
-		ps1.name=data->stepName;
-		ps1.showLine=true;
-		ps1.smoothLine=0;
-		ps1.traceLast=true;
-		leftp->pd.AddNew(x,y,ps1,data->label[0],data->label[1]);
-		leftp->updatePlotRange();
-		leftp->Invalidate();
-
-		nflg=dataB.addXY(x,y);
-
-		if(nflg>=1){//if one cycle complete
-			mf->GetOutputWnd()->InsertListCtrl(dataB.rowCount,
-				leftp->pd.ps.back().name,
-				dataB.Ar.size(),
-				//addvol,
-				dataB.addVolume,
-				dataB.totalVolume,
-				dataB.Ar.back(),
-				(dataB.Ar.back()/dataB.Ar0),
-				(nflg==2)
-				);
-			dataB.rowCount++;
-		}
-		Sleep(intv);
-
-		while(nflg<2){
-
-			TRACE(L"rccs running\n");
-			rn=data->popData(x,y,n1);
-			leftp->pd.AddFollow(x,y);
-			leftp->updatePlotRange(x,y);
-			leftp->Invalidate();
-			nflg=dataB.addXY(x,y);
-
-			if(nflg>=1){//if one cycle complete
-
-				mf->GetOutputWnd()->InsertListCtrl(dataB.rowCount,
-					leftp->pd.ps.back().name,
-					dataB.Ar.size(),
-					//addvol,
-					dataB.addVolume,
-					dataB.totalVolume,
-					dataB.Ar.back(),
-					(dataB.Ar.back()/dataB.Ar0),
-					(nflg==2)
-					);
-				dataB.rowCount++;
-			}
-
-			Sleep(intv);
-		}
+		OneStep(mf,leftp,data,dataB);
 
 		x.assign( 1, dataB.totalVolume-mf->p3.vmsvol );
 		y.assign( 1, (dataB.Ar.back()/dataB.Ar0) );
@@ -503,25 +436,11 @@ UINT RCCS(LPVOID pParam)
 		rightp->updatePlotRange();
 		rightp->Invalidate();
 
-		//dataB.stepCount++;
-		//dataB.clear();
-
 		filelist.erase(filelist.begin());
-
-		//dt1.clear();
-		//dt1.readFile(filelist.front());
-		//dt1.TomA();
-		//dt1.addVolume=mf->p3.saplist[dataB.stepCount-1].volconc;
-		//dt1.stepName.Format(L"Solution Addition %d",dataB.stepCount);
-		//dataB.addVolume=data->addVolume;
 
 		RefreshData(filelist.front(),mf->p3.saplist,dt1,dataB);
 
-		(strTemp.LoadString(IDS_STRING_WAIT_RESPONSE));
-		mf->GetCaptionBar()->ShowMessageWithButton(strTemp,dt1.addVolume,true);
-			//mf->GetCaptionBar()->ShowWindow(SW_SHOW);
-	//mf->RecalcLayout(FALSE);
-		Sleep(intv);
+		::SendMessage(mf->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
 
 		mf->waiting=true;
 		while(mf->waiting){
@@ -534,81 +453,9 @@ UINT RCCS(LPVOID pParam)
 	////////////////////////////////////final step/////////////////////////////////////////////
 
 
+	::SendMessage(mf->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
 
-	mf->GetCaptionBar()->ShowMessageRunning();
-
-
-
-	rn=data->popData(x,y,n1);
-	//plot points on plot1
-
-	ps1.colour=genColor( genColorvFromIndex<float>( leftp->pd.ps.size() ) ) ;
-	//ps1.colour=genColorGray( genColorvFromIndex<float>( stepCount ) ) ;
-	ps1.dotSize=-1;
-	ps1.name=data->stepName;
-	ps1.showLine=true;
-	ps1.smoothLine=0;
-	ps1.traceLast=true;
-	leftp->pd.AddNew(x,y,ps1,data->label[0],data->label[1]);
-	leftp->updatePlotRange();
-	leftp->Invalidate();
-
-	nflg=dataB.addXY(x,y);
-
-
-	if(nflg>=1){//if one cycle complete
-
-		mf->GetOutputWnd()->InsertListCtrl(dataB.rowCount,
-			leftp->pd.ps.back().name,
-			dataB.Ar.size(),
-			//addvol,
-			dataB.addVolume,
-			dataB.totalVolume,
-			dataB.Ar.back(),
-			(dataB.Ar.back()/dataB.Ar0),
-			(nflg==2)
-			);
-
-		dataB.rowCount++;
-	}
-
-
-
-	Sleep(intv);
-
-
-
-	while(nflg<2){
-
-		TRACE(L"rccs running\n");
-		rn=data->popData(x,y,n1);
-		leftp->pd.AddFollow(x,y);
-		leftp->updatePlotRange(x,y);
-		leftp->Invalidate();
-
-
-		nflg=dataB.addXY(x,y);
-
-		if(nflg>=1){//if one cycle complete
-
-			mf->GetOutputWnd()->InsertListCtrl(dataB.rowCount,
-				leftp->pd.ps.back().name,
-				dataB.Ar.size(),
-				//addvol,
-				dataB.addVolume,
-				dataB.totalVolume,
-				dataB.Ar.back(),
-				(dataB.Ar.back()/dataB.Ar0),
-				(nflg==2)
-				);
-
-			dataB.rowCount++;
-		}
-
-		Sleep(intv);
-	}
-
-
+	OneStep(mf,leftp,data,dataB);
 
 	x.assign( 1, dataB.totalVolume-mf->p3.vmsvol );
 	y.assign( 1, (dataB.Ar.back()/dataB.Ar0) );
@@ -619,16 +466,14 @@ UINT RCCS(LPVOID pParam)
 
 	filelist.erase(filelist.begin());
 
-	(strTemp.LoadString(IDS_STRING_OVER));
-
-	strTemp+=Output1(rightp->pd,
+	CString strTemp;
+	strTemp=Output1(rightp->pd,
 		mf->p1.evaluationratio,
 		mf->p3.saplist.front().Sconc,
 		mf->p3.vmsvol);
 
-	mf->GetCaptionBar()->ShowMessage(strTemp);
-		//mf->GetCaptionBar()->ShowWindow(SW_SHOW);
-	//mf->RecalcLayout(FALSE);
+	::SendMessage(mf->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)strTemp.GetBuffer(),NULL);
+
 	//ReleaseSemaphore(semaphoreWrite.m_hObject,1,NULL);
 
 	TRACE(L"rccs ends\n");
@@ -639,12 +484,20 @@ UINT RCCS(LPVOID pParam)
 
 UINT ASDTM(LPVOID pParam)
 {
-
-
 	dlg1 *leftp=((mypara*)pParam)->leftp;
 	dlg1 *rightp=((mypara*)pParam)->rightp;
 	CMainFrame *mf=((mypara*)pParam)->mf;
+	delete pParam;
 
+	//////////////////////////////load data//////////////////////////////////////
+	std::vector<CString> filelist;
+	LoadFileList(L"data\\c.txt",filelist);
+	if(filelist.empty()) return 0;
+
+	pcct dt1;
+	pcct *data=&dt1;
+	pcctB dataB;
+	InitialData(filelist.front(),mf->p3.vmsvol,mf->p2,dt1,dataB);
 	//////////////////////////clear window/////////////////////////////////
 	mf->GetOutputWnd()->clear();
 	leftp->clear();
@@ -659,152 +512,20 @@ UINT ASDTM(LPVOID pParam)
 		rightp->Invalidate();
 	}
 	///////////////////////////////////////end/////////////////////////////////////////////////
-
-	//////////////////////////////load data//////////////////////////////////////
-	//CString m_filePath;
-
-	//m_filePath=L"data\\c.txt";
-
-	//CString folderpath=m_filePath.Left(m_filePath.ReverseFind('\\'));
-
-	std::vector<CString> filelist;
-	//CStdioFile file;
-	//BOOL readflag;
-	//readflag=file.Open(m_filePath, CFile::modeRead);
-
-	//if(readflag)
-	//{	
-	//	CString strRead;
-	//	//TRACE("\n--Begin to read file");
-	//	while(file.ReadString(strRead)){
-	//		strRead=folderpath+"\\"+strRead;
-	//		filelist.push_back(strRead);
-	//	}
-	//	//TRACE("\n--End reading\n");
-	//	file.Close();
-	//}
-
-	LoadFileList(L"data\\c.txt",filelist);
-	if(filelist.empty()) return 0;
-
-	pcct dt1;
-
-	//dt1.readFile(filelist.front());
-	//dt1.TomA();
-	//dt1.addVolume=mf->p3.vmsvol;
-	////dt1.stepName=L"VMS";
-
-	pcct *data=&dt1;
-	pcctB dataB;
-
-	//dataB.clear();
-	//dataB.xmax=mf->p2.highelimit;
-	//dataB.xmin=mf->p2.lowelimit;
-	//dataB.spv=1/mf->p2.scanrate;
-	//dataB.intgUpLim=mf->p2.endintegratione;
-	//dataB.nCycle=mf->p2.noofcycles;
-	//dataB.rowCount=0;
-	//dataB.stepCount=0;
-	//dataB.totalVolume=0;
-	//dataB.Ar0=0;
-	//dataB.addVolume=data->addVolume;
-
-
-	InitialData(filelist.front(),mf->p3.vmsvol,mf->p2,dt1,dataB);
-
-
 	//////////////////////////////first step////////////////////////////////////////////
 	mf->waiting=false;
 
-
-	int nflg;
-
 	std::vector<double> x;
 	std::vector<double> y;
-	size_t rn;
 
+	::SendMessage(mf->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
 
-	mf->GetCaptionBar()->ShowMessageRunning();
-
-	//load n1 points
-	rn=data->popData(x,y,n1);
-	//plot points on plot1
-
-
-	plotspec ps1;
-	CString strTemp;
-	ps1.colour=genColor( genColorvFromIndex<float>( leftp->pd.ps.size() ) ) ;
-	//ps1.colour=genColorGray( genColorvFromIndex<float>( stepCount ) ) ;
-	ps1.dotSize=-1;
-	ps1.name=data->stepName;
-	ps1.showLine=true;
-	ps1.smoothLine=0;
-	ps1.traceLast=true;
-	leftp->pd.AddNew(x,y,ps1,data->label[0],data->label[1]);
-	leftp->updatePlotRange();
-	leftp->Invalidate();
-
-	nflg=dataB.addXY(x,y);
-
-
-	if(nflg>=1){//if one cycle complete
-
-		mf->GetOutputWnd()->InsertListCtrl(dataB.rowCount,
-			leftp->pd.ps.back().name,
-			dataB.Ar.size(),
-			//addvol,
-			dataB.addVolume,
-			dataB.totalVolume,
-			dataB.Ar.back(),
-			(dataB.Ar.back()/dataB.Ar0),
-			(nflg==2)
-			);
-
-		dataB.rowCount++;
-	}
-
-
-
-
-	Sleep(intv);
-
-	while(nflg<2){
-
-		TRACE(L"asdtm running\n");
-		rn=data->popData(x,y,n1);
-		leftp->pd.AddFollow(x,y);
-		leftp->updatePlotRange(x,y);
-		leftp->Invalidate();
-
-
-		nflg=dataB.addXY(x,y);
-
-		if(nflg>=1){//if one cycle complete
-
-			mf->GetOutputWnd()->InsertListCtrl(dataB.rowCount,
-				leftp->pd.ps.back().name,
-				dataB.Ar.size(),
-				//addvol,
-				dataB.addVolume,
-				dataB.totalVolume,
-				dataB.Ar.back(),
-				(dataB.Ar.back()/dataB.Ar0),
-				(nflg==2)
-				);
-			dataB.rowCount++;
-		}
-
-
-		Sleep(intv);
-	}
-
-
+	OneStep(mf,leftp,data,dataB);
 
 	x.assign( 1, dataB.totalVolume-mf->p3.vmsvol );
 	y.assign( 1, (dataB.Ar.back()/dataB.Ar0) );
-	//plot2(x,y,L"Suppressor(ml)",L"Ratio of Charge",L"Ar/Ar0");
 
-	//plotspec ps1;
+	plotspec ps1;
 	ps1.colour=genColor( genColorvFromIndex<float>( rightp->pd.ps.size() ) ) ;
 	ps1.dotSize=3;
 	ps1.name=L"Ar/Ar0";
@@ -812,37 +533,16 @@ UINT ASDTM(LPVOID pParam)
 	ps1.smoothLine=1;
 	ps1.traceLast=false;
 	rightp->pd.AddNew(x,y,ps1,L"Suppressor(ml)",L"Ratio of Charge");
-
-
 	rightp->updatePlotRange();
 	rightp->Invalidate();
 
-
-	//dataB.stepCount++;
-	//dataB.clear();
-	//dat.erase(dat.begin());
-
 	filelist.erase(filelist.begin());
-	//dt1.clear();
-	//dt1.readFile(filelist.front());
-	//dt1.TomA();
-	//dt1.addVolume=mf->p3.saplist[dataB.stepCount-1].volconc;
-	//dt1.stepName.Format(L"Solution Addition %d",dataB.stepCount);
-	//dataB.addVolume=data->addVolume;
 	RefreshData(filelist.front(),mf->p3.saplist,dt1,dataB);
 
-	//CString strTemp;
-	//ASSERT
-	(strTemp.LoadString(IDS_STRING_WAIT_RESPONSE));
-
-	mf->GetCaptionBar()->ShowMessageWithButton(strTemp,dt1.addVolume,true);
-		//mf->GetCaptionBar()->ShowWindow(SW_SHOW);
-	//mf->RecalcLayout(FALSE);
-
+	::SendMessage(mf->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
 	Sleep(intv);
 
 	mf->waiting=true;
-
 	while(mf->waiting){
 		Sleep(intv);
 	}
@@ -850,81 +550,10 @@ UINT ASDTM(LPVOID pParam)
 	/////////////////////////////////////second step////////////////////////////////////////////////////////////////
 
 	while(dataB.stepCount<(mf->p3.saplist.size())){
-		mf->GetCaptionBar()->ShowMessageRunning();
 
+		::SendMessage(mf->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
 
-
-
-		rn=data->popData(x,y,n1);
-		//plot points on plot1
-
-		ps1.colour=genColor( genColorvFromIndex<float>( leftp->pd.ps.size() ) ) ;
-		//ps1.colour=genColorGray( genColorvFromIndex<float>( stepCount ) ) ;
-		ps1.dotSize=-1;
-		ps1.name=data->stepName;
-		ps1.showLine=true;
-		ps1.smoothLine=0;
-		ps1.traceLast=true;
-		leftp->pd.AddNew(x,y,ps1,data->label[0],data->label[1]);
-		leftp->updatePlotRange();
-		leftp->Invalidate();
-
-		nflg=dataB.addXY(x,y);
-
-
-		if(nflg>=1){//if one cycle complete
-
-			mf->GetOutputWnd()->InsertListCtrl(dataB.rowCount,
-				leftp->pd.ps.back().name,
-				dataB.Ar.size(),
-				//addvol,
-				dataB.addVolume,
-				dataB.totalVolume,
-				dataB.Ar.back(),
-				(dataB.Ar.back()/dataB.Ar0),
-				(nflg==2)
-				);
-
-			dataB.rowCount++;
-		}
-
-
-
-		Sleep(intv);
-
-
-
-		while(nflg<2){
-
-			TRACE(L"asdtm running\n");
-			rn=data->popData(x,y,n1);
-			leftp->pd.AddFollow(x,y);
-			leftp->updatePlotRange(x,y);
-			leftp->Invalidate();
-
-
-			nflg=dataB.addXY(x,y);
-
-			if(nflg>=1){//if one cycle complete
-
-				mf->GetOutputWnd()->InsertListCtrl(dataB.rowCount,
-					leftp->pd.ps.back().name,
-					dataB.Ar.size(),
-					//addvol,
-					dataB.addVolume,
-					dataB.totalVolume,
-					dataB.Ar.back(),
-					(dataB.Ar.back()/dataB.Ar0),
-					(nflg==2)
-					);
-
-				dataB.rowCount++;
-			}
-
-			Sleep(intv);
-		}
-
-
+		OneStep(mf,leftp,data,dataB);
 
 		x.assign( 1, dataB.totalVolume-mf->p3.vmsvol );
 		y.assign( 1, (dataB.Ar.back()/dataB.Ar0) );
@@ -933,25 +562,11 @@ UINT ASDTM(LPVOID pParam)
 		rightp->updatePlotRange();
 		rightp->Invalidate();
 
-		//dataB.stepCount++;
-		//dataB.clear();
-
-
 		filelist.erase(filelist.begin());
-
-		//dt1.clear();
-		//dt1.readFile(filelist.front());
-		//dt1.TomA();
-		//dt1.addVolume=mf->p3.saplist[dataB.stepCount-1].volconc;
-		//dt1.stepName.Format(L"Solution Addition %d",dataB.stepCount);
-		//dataB.addVolume=data->addVolume;
 
 		RefreshData(filelist.front(),mf->p3.saplist,dt1,dataB);
 
-		(strTemp.LoadString(IDS_STRING_WAIT_RESPONSE));
-		mf->GetCaptionBar()->ShowMessageWithButton(strTemp,dt1.addVolume,true);
-			//mf->GetCaptionBar()->ShowWindow(SW_SHOW);
-	//mf->RecalcLayout(FALSE);
+		::SendMessage(mf->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
 		Sleep(intv);
 
 		mf->waiting=true;
@@ -964,82 +579,9 @@ UINT ASDTM(LPVOID pParam)
 
 	////////////////////////////////////final step/////////////////////////////////////////////
 
+	::SendMessage(mf->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
 
-	mf->GetCaptionBar()->ShowMessageRunning();
-
-
-
-
-	rn=data->popData(x,y,n1);
-	//plot points on plot1
-
-	ps1.colour=genColor( genColorvFromIndex<float>( leftp->pd.ps.size() ) ) ;
-	//ps1.colour=genColorGray( genColorvFromIndex<float>( stepCount ) ) ;
-	ps1.dotSize=-1;
-	ps1.name=data->stepName;
-	ps1.showLine=true;
-	ps1.smoothLine=0;
-	ps1.traceLast=true;
-	leftp->pd.AddNew(x,y,ps1,data->label[0],data->label[1]);
-	leftp->updatePlotRange();
-	leftp->Invalidate();
-
-	nflg=dataB.addXY(x,y);
-
-
-	if(nflg>=1){//if one cycle complete
-
-		mf->GetOutputWnd()->InsertListCtrl(dataB.rowCount,
-			leftp->pd.ps.back().name,
-			dataB.Ar.size(),
-			//addvol,
-			dataB.addVolume,
-			dataB.totalVolume,
-			dataB.Ar.back(),
-			(dataB.Ar.back()/dataB.Ar0),
-			(nflg==2)
-			);
-
-		dataB.rowCount++;
-	}
-
-
-
-	Sleep(intv);
-
-
-
-	while(nflg<2){
-
-		TRACE(L"asdtm running\n");
-		rn=data->popData(x,y,n1);
-		leftp->pd.AddFollow(x,y);
-		leftp->updatePlotRange(x,y);
-		leftp->Invalidate();
-
-
-		nflg=dataB.addXY(x,y);
-
-		if(nflg>=1){//if one cycle complete
-
-			mf->GetOutputWnd()->InsertListCtrl(dataB.rowCount,
-				leftp->pd.ps.back().name,
-				dataB.Ar.size(),
-				//addvol,
-				dataB.addVolume,
-				dataB.totalVolume,
-				dataB.Ar.back(),
-				(dataB.Ar.back()/dataB.Ar0),
-				(nflg==2)
-				);
-
-			dataB.rowCount++;
-		}
-
-		Sleep(intv);
-	}
-
-
+	OneStep(mf,leftp,data,dataB);
 
 	x.assign( 1, dataB.totalVolume-mf->p3.vmsvol );
 	y.assign( 1, (dataB.Ar.back()/dataB.Ar0) );
@@ -1048,25 +590,17 @@ UINT ASDTM(LPVOID pParam)
 	rightp->updatePlotRange();
 	rightp->Invalidate();
 
-	//dataB.stepCount++;
-	//dataB.clear();
-
 	filelist.erase(filelist.begin());
 
-	(strTemp.LoadString(IDS_STRING_OVER));
+	CString strTemp;
 
-	strTemp+=Output2(rightp->pd,
+	strTemp=Output2(rightp->pd,
 		mf->p1.evaluationratio,
 		mf->p1.calibrationfactortype,
 		mf->p1.calibrationfactor,
 		mf->p3.vmsvol);
 
-	//mf->m_wndCaptionBar.SetTextA(strTemp);
-	//mf->m_wndCaptionBar.EnableButton(FALSE);
-	mf->GetCaptionBar()->ShowMessage(strTemp);
-		//mf->GetCaptionBar()->ShowWindow(SW_SHOW);
-	//mf->RecalcLayout(FALSE);
-	//ReleaseSemaphore(semaphoreWrite.m_hObject,1,NULL);
+	::SendMessage(mf->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)strTemp.GetBuffer(),NULL);
 
 	TRACE(L"asdtm ends\n");
 
@@ -1082,157 +616,38 @@ UINT RIVLATM(LPVOID pParam)
 	dlg1 *leftp=((mypara*)pParam)->leftp;
 	dlg1 *rightp=((mypara*)pParam)->rightp;
 	CMainFrame *mf=((mypara*)pParam)->mf;
+	delete pParam;
 	//////////////////////////////load data//////////////////////////////////////
-	//CString m_filePath;
-
-	//m_filePath=L"data\\d.txt";
-
-	//CString folderpath=m_filePath.Left(m_filePath.ReverseFind('\\'));
-
 	std::vector<CString> filelist;
-	//CStdioFile file;
-	//BOOL readflag;
-	//readflag=file.Open(m_filePath, CFile::modeRead);
 
-	//if(readflag)
-	//{	
-	//	CString strRead;
-	//	//TRACE("\n--Begin to read file");
-	//	while(file.ReadString(strRead)){
-	//		strRead=folderpath+"\\"+strRead;
-	//		filelist.push_back(strRead);
-	//	}
-	//	//TRACE("\n--End reading\n");
-	//	file.Close();
-	//}
 	LoadFileList(L"data\\d.txt",filelist);
 	if(filelist.empty()) return 0;
 
 	pcct dt1;
-
-	//dt1.readFile(filelist.front());
-	//dt1.TomA();
-	//dt1.addVolume=mf->p3.vmsvol;
-	//dt1.stepName=L"VMS";
-
 	pcct *data=&dt1;
 	pcctB dataB;
 
-	//dataB.clear();
-	//dataB.xmax=mf->p2.highelimit;
-	//dataB.xmin=mf->p2.lowelimit;
-	//dataB.spv=1/mf->p2.scanrate;
-	//dataB.intgUpLim=mf->p2.endintegratione;
-	//dataB.nCycle=mf->p2.noofcycles;
-	//dataB.rowCount=0;
-	//dataB.stepCount=0;
-	//dataB.totalVolume=0;
-	//dataB.Ar0=0;
-	//dataB.addVolume=data->addVolume;
-
 	InitialData(filelist.front(),mf->p3.vmsvol,mf->p2,dt1,dataB);
-
 	//////////////////////////clear window/////////////////////////////////
 	mf->GetOutputWnd()->clear();
-
 	leftp->clear();
 	rightp->clear();
-
-
 	//////////////////////////////first step////////////////////////////////////////////
 	mf->waiting=false;
 
 	double Aml=0;
 
-	int nflg;
-
 	std::vector<double> x;
 	std::vector<double> y;
-	size_t rn;
 
+	::SendMessage(mf->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
 
-	mf->GetCaptionBar()->ShowMessageRunning();
-	//load n1 points
-	rn=data->popData(x,y,n1);
-	//plot points on plot1
-
-
-	plotspec ps1;
-	CString strTemp;
-	ps1.colour=genColor( genColorvFromIndex<float>( leftp->pd.ps.size() ) ) ;
-	//ps1.colour=genColorGray( genColorvFromIndex<float>( stepCount ) ) ;
-	ps1.dotSize=-1;
-	ps1.name=data->stepName;
-	ps1.showLine=true;
-	ps1.smoothLine=0;
-	ps1.traceLast=true;
-	leftp->pd.AddNew(x,y,ps1,data->label[0],data->label[1]);
-	leftp->updatePlotRange();
-	leftp->Invalidate();
-
-	nflg=dataB.addXY(x,y);
-
-
-	if(nflg>=1){//if one cycle complete
-
-		mf->GetOutputWnd()->InsertListCtrl(dataB.rowCount,
-			leftp->pd.ps.back().name,
-			dataB.Ar.size(),
-			//addvol,
-			dataB.addVolume,
-			dataB.totalVolume,
-			dataB.Ar.back(),
-			(dataB.Ar.back()/dataB.Ar0),
-			(nflg==2)
-			);
-
-		dataB.rowCount++;
-	}
-
-
-
-
-	Sleep(intv);
-
-	while(nflg<2){
-
-		TRACE(L"rccs running\n");
-		rn=data->popData(x,y,n1);
-		leftp->pd.AddFollow(x,y);
-		leftp->updatePlotRange(x,y);
-		leftp->Invalidate();
-
-
-		nflg=dataB.addXY(x,y);
-
-		if(nflg>=1){//if one cycle complete
-
-			mf->GetOutputWnd()->InsertListCtrl(dataB.rowCount,
-				leftp->pd.ps.back().name,
-				dataB.Ar.size(),
-				//addvol,
-				dataB.addVolume,
-				dataB.totalVolume,
-				dataB.Ar.back(),
-				(dataB.Ar.back()/dataB.Ar0),
-				(nflg==2)
-				);
-			dataB.rowCount++;
-		}
-
-
-		Sleep(intv);
-	}
-
+	OneStep(mf,leftp,data,dataB);
 
 	x.assign( 1, Aml/dataB.totalVolume );	
 	y.assign( 1, dataB.Ar.back() );
 
-	//x.assign( 1, dataB.totalVolume-mf->p3.vmsvol );
-	//y.assign( 1, (dataB.Ar.back()/dataB.Ar0) );
-	//plot2(x,y,L"Suppressor(ml)",L"Ratio of Charge",L"Ar/Ar0");
-
-	//plotspec ps1;
+	plotspec ps1;
 	ps1.colour=genColor( genColorvFromIndex<float>( rightp->pd.ps.size() ) ) ;
 	ps1.dotSize=3;
 	ps1.name=L"Ar";
@@ -1240,36 +655,16 @@ UINT RIVLATM(LPVOID pParam)
 	ps1.smoothLine=1;
 	ps1.traceLast=false;
 	rightp->pd.AddNew(x,y,ps1,L"Suppressor Conc.(ml/L)",L"Charge(mC)");
-
-
 	rightp->updatePlotRange();
 	rightp->Invalidate();
 
-
-	//dataB.stepCount++;
-	//dataB.clear();
-	//dat.erase(dat.begin());
-
 	filelist.erase(filelist.begin());
-	//dt1.clear();
-	//dt1.readFile(filelist.front());
-	//dt1.TomA();
-	//dt1.addVolume=mf->p3.saplist[dataB.stepCount-1].volconc;
-	//dt1.stepName.Format(L"Solution Addition %d",dataB.stepCount);
-	//dataB.addVolume=data->addVolume;
 
 	RefreshData(filelist.front(),mf->p3.saplist,dt1,dataB);
 
 	Aml+=mf->p3.saplist[dataB.stepCount-1].Sconc*data->addVolume;
 
-	//CString strTemp;
-	//ASSERT
-	(strTemp.LoadString(IDS_STRING_WAIT_RESPONSE));
-
-	mf->GetCaptionBar()->ShowMessageWithButton(strTemp,dt1.addVolume,true);
-		//mf->GetCaptionBar()->ShowWindow(SW_SHOW);
-	//mf->RecalcLayout(FALSE);
-
+	::SendMessage(mf->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
 	Sleep(intv);
 
 	mf->waiting=true;
@@ -1282,81 +677,9 @@ UINT RIVLATM(LPVOID pParam)
 
 	while(dataB.stepCount<(mf->p3.saplist.size())){
 
-		mf->GetCaptionBar()->ShowMessageRunning();
+		::SendMessage(mf->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
+		OneStep(mf,leftp,data,dataB);
 
-		rn=data->popData(x,y,n1);
-		//plot points on plot1
-
-		ps1.colour=genColor( genColorvFromIndex<float>( leftp->pd.ps.size() ) ) ;
-		//ps1.colour=genColorGray( genColorvFromIndex<float>( stepCount ) ) ;
-		ps1.dotSize=-1;
-		ps1.name=data->stepName;
-		ps1.showLine=true;
-		ps1.smoothLine=0;
-		ps1.traceLast=true;
-		leftp->pd.AddNew(x,y,ps1,data->label[0],data->label[1]);
-		leftp->updatePlotRange();
-		leftp->Invalidate();
-
-		nflg=dataB.addXY(x,y);
-
-
-		if(nflg>=1){//if one cycle complete
-
-			mf->GetOutputWnd()->InsertListCtrl(dataB.rowCount,
-				leftp->pd.ps.back().name,
-				dataB.Ar.size(),
-				//addvol,
-				dataB.addVolume,
-				dataB.totalVolume,
-				dataB.Ar.back(),
-				(dataB.Ar.back()/dataB.Ar0),
-				(nflg==2)
-				);
-
-			dataB.rowCount++;
-		}
-
-
-
-		Sleep(intv);
-
-
-
-		while(nflg<2){
-
-			TRACE(L"rccs running\n");
-			rn=data->popData(x,y,n1);
-			leftp->pd.AddFollow(x,y);
-			leftp->updatePlotRange(x,y);
-			leftp->Invalidate();
-
-
-			nflg=dataB.addXY(x,y);
-
-			if(nflg>=1){//if one cycle complete
-
-				mf->GetOutputWnd()->InsertListCtrl(dataB.rowCount,
-					leftp->pd.ps.back().name,
-					dataB.Ar.size(),
-					//addvol,
-					dataB.addVolume,
-					dataB.totalVolume,
-					dataB.Ar.back(),
-					(dataB.Ar.back()/dataB.Ar0),
-					(nflg==2)
-					);
-
-				dataB.rowCount++;
-			}
-
-			Sleep(intv);
-		}
-
-
-
-		//x.assign( 1, dataB.totalVolume-mf->p3.vmsvol );
-		//y.assign( 1, (dataB.Ar.back()/dataB.Ar0) );
 		x.assign( 1, Aml/dataB.totalVolume );	
 		y.assign( 1, dataB.Ar.back() );
 
@@ -1364,28 +687,13 @@ UINT RIVLATM(LPVOID pParam)
 		rightp->updatePlotRange();
 		rightp->Invalidate();
 
-		//dataB.stepCount++;
-		//dataB.clear();
-
-
 		filelist.erase(filelist.begin());
-
-		//dt1.clear();
-		//dt1.readFile(filelist.front());
-		//dt1.TomA();
-		//dt1.addVolume=mf->p3.saplist[dataB.stepCount-1].volconc;
-		//dt1.stepName.Format(L"Solution Addition %d",dataB.stepCount);
 
 		RefreshData(filelist.front(),mf->p3.saplist,dt1,dataB);
 
 		Aml+=mf->p3.saplist[dataB.stepCount-1].Sconc*data->addVolume;
 
-
-		(strTemp.LoadString(IDS_STRING_WAIT_RESPONSE));
-		mf->GetCaptionBar()->ShowMessageWithButton(strTemp,dt1.addVolume,true);
-			//mf->GetCaptionBar()->ShowWindow(SW_SHOW);
-	//mf->RecalcLayout(FALSE);
-		Sleep(intv);
+		::SendMessage(mf->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
 
 		mf->waiting=true;
 		while(mf->waiting){
@@ -1397,81 +705,9 @@ UINT RIVLATM(LPVOID pParam)
 
 	////////////////////////////////////final step/////////////////////////////////////////////
 
-	mf->GetCaptionBar()->ShowMessageRunning();
+	::SendMessage(mf->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
 
-	rn=data->popData(x,y,n1);
-	//plot points on plot1
-
-	ps1.colour=genColor( genColorvFromIndex<float>( leftp->pd.ps.size() ) ) ;
-	//ps1.colour=genColorGray( genColorvFromIndex<float>( stepCount ) ) ;
-	ps1.dotSize=-1;
-	ps1.name=data->stepName;
-	ps1.showLine=true;
-	ps1.smoothLine=0;
-	ps1.traceLast=true;
-	leftp->pd.AddNew(x,y,ps1,data->label[0],data->label[1]);
-	leftp->updatePlotRange();
-	leftp->Invalidate();
-
-	nflg=dataB.addXY(x,y);
-
-
-	if(nflg>=1){//if one cycle complete
-
-		mf->GetOutputWnd()->InsertListCtrl(dataB.rowCount,
-			leftp->pd.ps.back().name,
-			dataB.Ar.size(),
-			//addvol,
-			dataB.addVolume,
-			dataB.totalVolume,
-			dataB.Ar.back(),
-			(dataB.Ar.back()/dataB.Ar0),
-			(nflg==2)
-			);
-
-		dataB.rowCount++;
-	}
-
-
-
-	Sleep(intv);
-
-
-
-	while(nflg<2){
-
-		TRACE(L"rccs running\n");
-		rn=data->popData(x,y,n1);
-		leftp->pd.AddFollow(x,y);
-		leftp->updatePlotRange(x,y);
-		leftp->Invalidate();
-
-
-		nflg=dataB.addXY(x,y);
-
-		if(nflg>=1){//if one cycle complete
-
-			mf->GetOutputWnd()->InsertListCtrl(dataB.rowCount,
-				leftp->pd.ps.back().name,
-				dataB.Ar.size(),
-				//addvol,
-				dataB.addVolume,
-				dataB.totalVolume,
-				dataB.Ar.back(),
-				(dataB.Ar.back()/dataB.Ar0),
-				(nflg==2)
-				);
-
-			dataB.rowCount++;
-		}
-
-		Sleep(intv);
-	}
-
-
-
-	//x.assign( 1, dataB.totalVolume-mf->p3.vmsvol );
-	//y.assign( 1, (dataB.Ar.back()/dataB.Ar0) );
+	OneStep(mf,leftp,data,dataB);
 
 	x.assign( 1, Aml/dataB.totalVolume );	
 	y.assign( 1, dataB.Ar.back() );
@@ -1480,27 +716,14 @@ UINT RIVLATM(LPVOID pParam)
 	rightp->updatePlotRange();
 	rightp->Invalidate();
 
-	////dataB.stepCount++;
-	//dataB.clear();
 
 	filelist.erase(filelist.begin());
 
-	(strTemp.LoadString(IDS_STRING_OVER));
-
 	CString str;
-
 	str.Format(L" intercept value %g ml/L", Aml/dataB.totalVolume);
 
-	strTemp+=str;
-
-	//mf->m_wndCaptionBar.SetTextA(strTemp);
-	//mf->m_wndCaptionBar.EnableButton(FALSE);
-	mf->GetCaptionBar()->ShowMessage(strTemp);
-		//mf->GetCaptionBar()->ShowWindow(SW_SHOW);
-	//mf->RecalcLayout(FALSE);
-	//ReleaseSemaphore(semaphoreWrite.m_hObject,1,NULL);
-
-	TRACE(L"rccs ends\n");
+	::SendMessage(mf->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)str.GetBuffer(),NULL);
+	TRACE(L"rivlatm ends\n");
 	return 0;
 }
 
@@ -1510,177 +733,37 @@ UINT AALATM(LPVOID pParam)
 	dlg1 *leftp=((mypara*)pParam)->leftp;
 	dlg1 *rightp=((mypara*)pParam)->rightp;
 	CMainFrame *mf=((mypara*)pParam)->mf;
+	delete pParam;
+
 	//////////////////////////////load data//////////////////////////////////////
 
 	std::vector<CString> filelist;
 	LoadFileList(L"data\\e.txt",filelist);
-
 	if(filelist.empty()) return 0;
-
 	pcct dt1;
-
-	//dt1.readFile(filelist.front());
-	//dt1.TomA();
-	//dt1.addVolume=mf->p3.vmsvol;
-	//dt1.stepName=L"VMS";
-
 	pcct *data=&dt1;
 	pcctB dataB;
-
-	//dataB.clear();
-	//dataB.xmax=mf->p2.highelimit;
-	//dataB.xmin=mf->p2.lowelimit;
-	//dataB.spv=1/mf->p2.scanrate;
-	//dataB.intgUpLim=mf->p2.endintegratione;
-	////dataB.nCycle=mf->p2.noofcycles;
-	//dataB.rowCount=0;
-	//dataB.stepCount=0;
-	//dataB.totalVolume=0;
-	//dataB.Ar0=0;
-	//dataB.addVolume=data->addVolume;
-
-
 	InitialData(filelist.front(),mf->p3.vmsvol,mf->p2,dt1,dataB);
 
 	//////////////////////////clear window/////////////////////////////////
 	mf->GetOutputWnd()->clear();
 	leftp->clear();
 	rightp->clear();
-
-
 	//////////////////////////////first step////////////////////////////////////////////
 	mf->waiting=false;
 
-
-
-	int nflg;
-
 	std::vector<double> x;
 	std::vector<double> y;
-	size_t rn;
 
-
-	mf->GetCaptionBar()->ShowMessageRunning();
-	//load n1 points
-	rn=data->popData(x,y,n1);
-	//plot points on plot1
-
-
-	plotspec ps1;
-	CString strTemp;
-	ps1.colour=genColor( genColorvFromIndex<float>( leftp->pd.ps.size() ) ) ;
-	//ps1.colour=genColorGray( genColorvFromIndex<float>( stepCount ) ) ;
-	ps1.dotSize=-1;
-	ps1.name=data->stepName;
-	ps1.showLine=true;
-	ps1.smoothLine=0;
-	ps1.traceLast=true;
-	leftp->pd.AddNew(x,y,ps1,data->label[0],data->label[1]);
-	leftp->updatePlotRange();
-	leftp->Invalidate();
-
-	nflg=dataB.addXY(x,y);
-
-
-	if(nflg>=1){//if one cycle complete
-
-		mf->GetOutputWnd()->InsertListCtrl(dataB.rowCount,
-			leftp->pd.ps.back().name,
-			dataB.Ar.size(),
-			//addvol,
-			dataB.addVolume,
-			dataB.totalVolume,
-			dataB.Ar.back(),
-			(dataB.Ar.back()/dataB.Ar0),
-			(nflg==2)
-			);
-
-		dataB.rowCount++;
-	}
-
-
-
-
-	Sleep(intv);
-
-	while(nflg<2){
-
-		TRACE(L"rccs running\n");
-		rn=data->popData(x,y,n1);
-		leftp->pd.AddFollow(x,y);
-		leftp->updatePlotRange(x,y);
-		leftp->Invalidate();
-
-
-		nflg=dataB.addXY(x,y);
-
-		if(nflg>=1){//if one cycle complete
-
-			mf->GetOutputWnd()->InsertListCtrl(dataB.rowCount,
-				leftp->pd.ps.back().name,
-				dataB.Ar.size(),
-				//addvol,
-				dataB.addVolume,
-				dataB.totalVolume,
-				dataB.Ar.back(),
-				(dataB.Ar.back()/dataB.Ar0),
-				false
-				);
-			dataB.rowCount++;
-		}
-
-
-		Sleep(intv);
-	}
-
-
-	//x.assign( 1, Aml/dataB.totalVolume );	
-	//y.assign( 1, dataB.Ar.back() );
-
-	//x.assign( 1, dataB.totalVolume-mf->p3.vmsvol );
-	//y.assign( 1, (dataB.Ar.back()/dataB.Ar0) );
-	//plot2(x,y,L"Suppressor(ml)",L"Ratio of Charge",L"Ar/Ar0");
-
-	//plotspec ps1;
-	//ps1.colour=genColor( genColorvFromIndex<float>( rightp->pd.ps.size() ) ) ;
-	//ps1.dotSize=3;
-	//ps1.name=L"Ar";
-	//ps1.showLine=true;
-	//ps1.smoothLine=1;
-	//ps1.traceLast=false;
-	//rightp->pd.AddNew(x,y,ps1,L"Suppressor Conc.(ml/L)",L"Charge(mC)");
-
-
-	//rightp->updatePlotRange();
-	//rightp->Invalidate();
-
-
-	//dataB.stepCount++;
-	//dataB.clear();
-	//dat.erase(dat.begin());
+	::SendMessage(mf->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
+	OneStep(mf,leftp,data,dataB,false);
 
 	filelist.erase(filelist.begin());
-	//dt1.clear();
-	//dt1.readFile(filelist.front());
-	//dt1.TomA();
-	//dt1.addVolume=mf->p3.saplist[dataB.stepCount-1].volconc;
-	//dt1.stepName.Format(L"Solution Addition %d",dataB.stepCount);
-	//dataB.addVolume=data->addVolume;
-	//Aml+=mf->p3.saplist[dataB.stepCount-1].Sconc*data->addVolume;
 
 	RefreshData(filelist.front(),mf->p3.saplist,dt1,dataB);
-
-	//CString strTemp;
-	//ASSERT
-	(strTemp.LoadString(IDS_STRING_WAIT_RESPONSE));
-	mf->GetCaptionBar()->ShowMessageWithButton(strTemp,dt1.addVolume,true);
-		//mf->GetCaptionBar()->ShowWindow(SW_SHOW);
-	//mf->RecalcLayout(FALSE);
-
-	Sleep(intv);
+	::SendMessage(mf->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
 
 	mf->waiting=true;
-
 	while(mf->waiting){
 		Sleep(intv);
 	}
@@ -1688,89 +771,15 @@ UINT AALATM(LPVOID pParam)
 	/////////////////////////////////////second step////////////////////////////////////////////////////////////////
 	double Aml=0;
 	double Qintercept=0;
-	mf->GetCaptionBar()->ShowMessageRunning();
-
-
-
-
-	rn=data->popData(x,y,n1);
-	//plot points on plot1
-
-	ps1.colour=genColor( genColorvFromIndex<float>( leftp->pd.ps.size() ) ) ;
-	//ps1.colour=genColorGray( genColorvFromIndex<float>( stepCount ) ) ;
-	ps1.dotSize=-1;
-	ps1.name=data->stepName;
-	ps1.showLine=true;
-	ps1.smoothLine=0;
-	ps1.traceLast=true;
-	leftp->pd.AddNew(x,y,ps1,data->label[0],data->label[1]);
-	leftp->updatePlotRange();
-	leftp->Invalidate();
-
-	nflg=dataB.addXY(x,y);
-
-
-	if(nflg>=1){//if one cycle complete
-
-		mf->GetOutputWnd()->InsertListCtrl(dataB.rowCount,
-			leftp->pd.ps.back().name,
-			dataB.Ar.size(),
-			//addvol,
-			dataB.addVolume,
-			dataB.totalVolume,
-			dataB.Ar.back(),
-			(dataB.Ar.back()/dataB.Ar0),
-			(nflg==2)
-			);
-
-		dataB.rowCount++;
-	}
-
-
-
-	Sleep(intv);
-
-
-
-	while(nflg<2){
-
-		TRACE(L"rccs running\n");
-		rn=data->popData(x,y,n1);
-		leftp->pd.AddFollow(x,y);
-		leftp->updatePlotRange(x,y);
-		leftp->Invalidate();
-
-
-		nflg=dataB.addXY(x,y);
-
-		if(nflg>=1){//if one cycle complete
-
-			mf->GetOutputWnd()->InsertListCtrl(dataB.rowCount,
-				leftp->pd.ps.back().name,
-				dataB.Ar.size(),
-				//addvol,
-				dataB.addVolume,
-				dataB.totalVolume,
-				dataB.Ar.back(),
-				(dataB.Ar.back()/dataB.Ar0),
-				(nflg==2)
-				);
-
-			dataB.rowCount++;
-		}
-
-		Sleep(intv);
-	}
-
+	::SendMessage(mf->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
+	OneStep(mf,leftp,data,dataB);
 
 	Qintercept=dataB.Ar.back();
 
-	//x.assign( 1, dataB.totalVolume-mf->p3.vmsvol );
-	//y.assign( 1, (dataB.Ar.back()/dataB.Ar0) );
 	x.assign( 1, 0 );	
 	y.assign( 1, Qintercept );
 
-	//plotspec ps1;
+	plotspec ps1;
 	ps1.colour=genColor( genColorvFromIndex<float>( rightp->pd.ps.size() ) ) ;
 	ps1.dotSize=3;
 	ps1.name=L"Q";
@@ -1778,118 +787,24 @@ UINT AALATM(LPVOID pParam)
 	ps1.smoothLine=0;
 	ps1.traceLast=false;
 	rightp->pd.AddNew(x,y,ps1,L"Conc.(ml/L)",L"Q(mC)");
-
 	rightp->updatePlotRange();
 	rightp->Invalidate();
 
-	//dataB.stepCount++;
-	//dataB.clear();
-
-
 	filelist.erase(filelist.begin());
 
-	//dt1.clear();
-	//dt1.readFile(filelist.front());
-	//dt1.TomA();
-	//dt1.addVolume=mf->p3.saplist[dataB.stepCount-1].volconc;
-	//dt1.stepName.Format(L"Solution Addition %d",dataB.stepCount);
-	//Aml+=mf->p3.saplist[dataB.stepCount-1].Sconc*data->addVolume;
-	//dataB.addVolume=data->addVolume;
-
 	RefreshData(filelist.front(),mf->p3.saplist,dt1,dataB);
-
-	(strTemp.LoadString(IDS_STRING_WAIT_RESPONSE));
-	mf->GetCaptionBar()->ShowMessageWithButton(strTemp,dt1.addVolume,true);
-		//mf->GetCaptionBar()->ShowWindow(SW_SHOW);
-	//mf->RecalcLayout(FALSE);
-	Sleep(intv);
+	::SendMessage(mf->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
 
 	mf->waiting=true;
 	while(mf->waiting){
 		Sleep(intv);
 	}
 
-	///////////////////////////////////////////////////////////////////////////////////
-
-
-
 	////////////////////////////////////////////////////////////////////////////////////////////
 	while(dataB.stepCount<(mf->p3.saplist.size())){
 
-		mf->GetCaptionBar()->ShowMessageRunning();
-
-
-
-
-		rn=data->popData(x,y,n1);
-		//plot points on plot1
-
-		ps1.colour=genColor( genColorvFromIndex<float>( leftp->pd.ps.size() ) ) ;
-		//ps1.colour=genColorGray( genColorvFromIndex<float>( stepCount ) ) ;
-		ps1.dotSize=-1;
-		ps1.name=data->stepName;
-		ps1.showLine=true;
-		ps1.smoothLine=0;
-		ps1.traceLast=true;
-		leftp->pd.AddNew(x,y,ps1,data->label[0],data->label[1]);
-		leftp->updatePlotRange();
-		leftp->Invalidate();
-
-		nflg=dataB.addXY(x,y);
-
-
-		if(nflg>=1){//if one cycle complete
-
-			mf->GetOutputWnd()->InsertListCtrl(dataB.rowCount,
-				leftp->pd.ps.back().name,
-				dataB.Ar.size(),
-				//addvol,
-				dataB.addVolume,
-				dataB.totalVolume,
-				dataB.Ar.back(),
-				(dataB.Ar.back()/dataB.Ar0),
-				(nflg==2)
-				);
-
-			dataB.rowCount++;
-		}
-
-
-
-		Sleep(intv);
-
-
-
-		while(nflg<2){
-
-			TRACE(L"rccs running\n");
-			rn=data->popData(x,y,n1);
-			leftp->pd.AddFollow(x,y);
-			leftp->updatePlotRange(x,y);
-			leftp->Invalidate();
-
-
-			nflg=dataB.addXY(x,y);
-
-			if(nflg>=1){//if one cycle complete
-
-				mf->GetOutputWnd()->InsertListCtrl(dataB.rowCount,
-					leftp->pd.ps.back().name,
-					dataB.Ar.size(),
-					//addvol,
-					dataB.addVolume,
-					dataB.totalVolume,
-					dataB.Ar.back(),
-					(dataB.Ar.back()/dataB.Ar0),
-					(nflg==2)
-					);
-
-				dataB.rowCount++;
-			}
-
-			Sleep(intv);
-		}
-
+		::SendMessage(mf->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
+		OneStep(mf,leftp,data,dataB);
 
 		x.assign( 1, Aml/dataB.totalVolume );	
 		y.assign( 1, dataB.Ar.back() );
@@ -1898,28 +813,11 @@ UINT AALATM(LPVOID pParam)
 		rightp->updatePlotRange();
 		rightp->Invalidate();
 
-		//dataB.stepCount++;
-		//dataB.clear();
-
-
 		filelist.erase(filelist.begin());
 		RefreshData(filelist.front(),mf->p3.saplist,dt1,dataB);
 
-		//dt1.clear();
-		//dt1.readFile(filelist.front());
-		//dt1.TomA();
-		//dt1.addVolume=mf->p3.saplist[dataB.stepCount-1].volconc;
-		//dt1.stepName.Format(L"Solution Addition %d",dataB.stepCount);
 		Aml+=mf->p3.saplist[dataB.stepCount-1].Aconc*data->addVolume;
-		//dataB.addVolume=data->addVolume;
-
-
-
-		(strTemp.LoadString(IDS_STRING_WAIT_RESPONSE));
-		mf->GetCaptionBar()->ShowMessageWithButton(strTemp,dt1.addVolume,true);
-			//mf->GetCaptionBar()->ShowWindow(SW_SHOW);
-	//mf->RecalcLayout(FALSE);
-		Sleep(intv);
+		::SendMessage(mf->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
 
 		mf->waiting=true;
 		while(mf->waiting){
@@ -1927,83 +825,10 @@ UINT AALATM(LPVOID pParam)
 		}
 
 	}
-
-
 	////////////////////////////////////final step/////////////////////////////////////////////
 
-	mf->GetCaptionBar()->ShowMessageRunning();
-
-
-	rn=data->popData(x,y,n1);
-	//plot points on plot1
-
-	ps1.colour=genColor( genColorvFromIndex<float>( leftp->pd.ps.size() ) ) ;
-	//ps1.colour=genColorGray( genColorvFromIndex<float>( stepCount ) ) ;
-	ps1.dotSize=-1;
-	ps1.name=data->stepName;
-	ps1.showLine=true;
-	ps1.smoothLine=0;
-	ps1.traceLast=true;
-	leftp->pd.AddNew(x,y,ps1,data->label[0],data->label[1]);
-	leftp->updatePlotRange();
-	leftp->Invalidate();
-
-	nflg=dataB.addXY(x,y);
-
-
-	if(nflg>=1){//if one cycle complete
-
-		mf->GetOutputWnd()->InsertListCtrl(dataB.rowCount,
-			leftp->pd.ps.back().name,
-			dataB.Ar.size(),
-			//addvol,
-			dataB.addVolume,
-			dataB.totalVolume,
-			dataB.Ar.back(),
-			(dataB.Ar.back()/dataB.Ar0),
-			(nflg==2)
-			);
-
-		dataB.rowCount++;
-	}
-
-
-
-	Sleep(intv);
-
-
-
-	while(nflg<2){
-
-		TRACE(L"rccs running\n");
-		rn=data->popData(x,y,n1);
-		leftp->pd.AddFollow(x,y);
-		leftp->updatePlotRange(x,y);
-		leftp->Invalidate();
-
-
-		nflg=dataB.addXY(x,y);
-
-		if(nflg>=1){//if one cycle complete
-
-			mf->GetOutputWnd()->InsertListCtrl(dataB.rowCount,
-				leftp->pd.ps.back().name,
-				dataB.Ar.size(),
-				//addvol,
-				dataB.addVolume,
-				dataB.totalVolume,
-				dataB.Ar.back(),
-				(dataB.Ar.back()/dataB.Ar0),
-				(nflg==2)
-				);
-
-			dataB.rowCount++;
-		}
-
-		Sleep(intv);
-	}
-
-
+	::SendMessage(mf->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
+	OneStep(mf,leftp,data,dataB);
 
 	x.assign( 1, Aml/dataB.totalVolume );	
 	y.assign( 1, dataB.Ar.back() );
@@ -2012,20 +837,31 @@ UINT AALATM(LPVOID pParam)
 	rightp->updatePlotRange();
 	rightp->Invalidate();
 
-	//dataB.stepCount++;
-	//dataB.clear();
-
 	filelist.erase(filelist.begin());
 
-	(strTemp.LoadString(IDS_STRING_OVER));
+	CString strTemp;
+	strTemp=Output4(rightp->pd,rightp,mf->p3.vmsvol,mf->p3.saplist[1].volconc);
+	::SendMessage(mf->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)strTemp.GetBuffer(),NULL);
 
-	strTemp+=Output4(rightp->pd,rightp,mf->p3.vmsvol,mf->p3.saplist[1].volconc);
-
-	mf->GetCaptionBar()->ShowMessage(strTemp);
-		//mf->GetCaptionBar()->ShowWindow(SW_SHOW);
-	//mf->RecalcLayout(FALSE);
-	//ReleaseSemaphore(semaphoreWrite.m_hObject,1,NULL);
-
-	TRACE(L"rccs ends\n");
+	TRACE(L"aalatm ends\n");
 	return 0;
+}
+
+
+
+DWORD WINAPI RCCS2(LPVOID pParam)
+{
+	return RCCS(pParam);
+}
+DWORD WINAPI ASDTM2(LPVOID pParam)
+{
+	return ASDTM(pParam);
+}
+DWORD WINAPI RIVLATM2(LPVOID pParam)
+{
+	return RIVLATM(pParam);
+}
+DWORD WINAPI AALATM2(LPVOID pParam)
+{
+	return AALATM(pParam);
 }
