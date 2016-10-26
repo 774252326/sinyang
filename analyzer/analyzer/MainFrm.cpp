@@ -8,8 +8,9 @@
 #include "MainFrm.h"
 
 #include "analyzerDoc.h"
-#include "analyzerView.h"
-#include "analyzerViewR.h"
+
+
+#include "func.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -34,6 +35,19 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_COMMAND(ID_TOOLS_OPTIONS, &CMainFrame::OnOptions)
 	ON_WM_SETTINGCHANGE()
 	ON_WM_SIZE()
+	ON_COMMAND(ID_VIEW_ANALYSIS_PROGRESS, &CMainFrame::OnViewAnalysisProgress)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_ANALYSIS_PROGRESS, &CMainFrame::OnUpdateViewAnalysisProgress)
+	ON_COMMAND(ID_VIEW_TOOLBARA, &CMainFrame::OnViewToolbara)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_TOOLBARA, &CMainFrame::OnUpdateViewToolbara)
+	ON_UPDATE_COMMAND_UI(ID_OPTIONS_PLOTSETTINGS, &CMainFrame::OnUpdateOptionsPlotsettings)
+	ON_UPDATE_COMMAND_UI(ID_ANALYSIS_STARTANALYSIS, &CMainFrame::OnUpdateAnalysisStartanalysis)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_FITWINDOW, &CMainFrame::OnUpdateViewFitwindow)
+	ON_UPDATE_COMMAND_UI(ID_ANALYSIS_ABORTANALYSIS, &CMainFrame::OnUpdateAnalysisAbortanalysis)
+	ON_UPDATE_COMMAND_UI(ID_ANALYSIS_PAUSE, &CMainFrame::OnUpdateAnalysisPause)
+	ON_UPDATE_COMMAND_UI(ID_ANALYSIS_METHODSETUP, &CMainFrame::OnUpdateAnalysisMethodsetup)
+	ON_COMMAND(ID_ANALYSIS_STARTANALYSIS, &CMainFrame::OnAnalysisStartanalysis)
+	ON_COMMAND(ID_ANALYSIS_ABORTANALYSIS, &CMainFrame::OnAnalysisAbortanalysis)
+	ON_COMMAND(ID_ANALYSIS_PAUSE, &CMainFrame::OnAnalysisPause)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -48,6 +62,9 @@ static UINT indicators[] =
 
 CMainFrame::CMainFrame()
 	: m_bSplitterCreated(FALSE)
+	, bWaiting(false)
+	, pWriteA(NULL)
+	, pst(stop)
 {
 	// TODO: add member initialization code here
 	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_VS_2008);
@@ -185,9 +202,9 @@ BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT /*lpcs*/,
 	m_bSplitterCreated = m_wndSplitter.CreateStatic(this, 1, 2);
 	// CMyView and CMyOtherView are user-defined views derived from CView
 	if(m_bSplitterCreated){
-		m_bSplitterCreated = m_wndSplitter.CreateView(0, 0, RUNTIME_CLASS(CanalyzerView), CSize(), pContext);
+		m_bSplitterCreated = m_wndSplitter.CreateView(0, 0, RUNTIME_CLASS(CanalyzerView), CSize(500,500), pContext);
 		if(m_bSplitterCreated){
-			m_bSplitterCreated = m_wndSplitter.CreateView(0, 1, RUNTIME_CLASS(CanalyzerViewR), CSize(), pContext);
+			m_bSplitterCreated = m_wndSplitter.CreateView(0, 1, RUNTIME_CLASS(CanalyzerViewR), CSize(500,500), pContext);
 		}
 	}
 
@@ -253,9 +270,13 @@ BOOL CMainFrame::CreateCaptionBar()
 	ASSERT(bNameValid);
 	m_wndCaptionBar.SetButtonToolTip(strTemp);
 
+	m_wndCaptionBar.EnableButton(FALSE);
+
+
 	bNameValid = strTemp.LoadString(IDS_CAPTION_TEXT);
 	ASSERT(bNameValid);
-	m_wndCaptionBar.SetText(strTemp, CMFCCaptionBar::ALIGN_LEFT);
+	//m_wndCaptionBar.SetText(strTemp, CMFCCaptionBar::ALIGN_LEFT);
+	m_wndCaptionBar.SetTextA(strTemp);
 
 	m_wndCaptionBar.SetBitmap(IDB_INFO, RGB(255, 255, 255), FALSE, CMFCCaptionBar::ALIGN_LEFT);
 	bNameValid = strTemp.LoadString(IDS_CAPTION_IMAGE_TIP);
@@ -399,6 +420,8 @@ void CMainFrame::OnUpdateViewCaptionBar(CCmdUI* pCmdUI)
 
 void CMainFrame::OnOptions()
 {
+	bWaiting=false;
+	pst=running;
 }
 
 BOOL CMainFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParentWnd, CCreateContext* pContext) 
@@ -451,4 +474,140 @@ void CMainFrame::OnSize(UINT nType, int cx, int cy)
 		m_wndSplitter.RecalcLayout();
 	}
 
+}
+
+
+void CMainFrame::OnViewAnalysisProgress()
+{
+	// TODO: Add your command handler code here
+	m_wndOutput.ShowWindow(m_wndOutput.IsVisible() ? SW_HIDE : SW_SHOW);
+	RecalcLayout(FALSE);
+}
+
+
+void CMainFrame::OnUpdateViewAnalysisProgress(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->SetCheck(m_wndOutput.IsVisible());
+}
+
+
+void CMainFrame::OnViewToolbara()
+{
+	// TODO: Add your command handler code here
+	this->ShowPane((CBasePane*)&m_wndToolBar,!m_wndToolBar.IsVisible(),false,false);
+}
+
+
+void CMainFrame::OnUpdateViewToolbara(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->SetCheck(m_wndToolBar.IsVisible());
+}
+
+
+void CMainFrame::OnUpdateOptionsPlotsettings(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->Enable(pst!=running);
+}
+
+
+void CMainFrame::OnUpdateAnalysisStartanalysis(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->Enable(pst==stop);
+}
+
+
+void CMainFrame::OnUpdateViewFitwindow(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->Enable(pst!=running);
+}
+
+
+void CMainFrame::OnUpdateAnalysisAbortanalysis(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->Enable(pst!=stop);
+}
+
+
+void CMainFrame::OnUpdateAnalysisPause(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->Enable(pst==running);
+}
+
+
+void CMainFrame::OnUpdateAnalysisMethodsetup(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->Enable(pst==stop);
+}
+
+
+void CMainFrame::OnAnalysisStartanalysis()
+{
+	// TODO: Add your command handler code here
+	mypara * pa1=new mypara;
+	pa1->leftp=this->LeftPlotPointer();
+	pa1->rightp=this->RightPlotPointer();
+	pa1->outw=this->GetOutputWnd();
+	pa1->cba=this->GetCaptionBar();
+	pa1->psta=&pst;
+
+	//CWinThread *pWriteA;
+
+	//HANDLE hThread;
+
+	pWriteA=AfxBeginThread(PROCESS,
+		(LPVOID)pa1,
+		THREAD_PRIORITY_NORMAL,
+		0,
+		CREATE_SUSPENDED);
+
+	//hThread=pWriteA->m_hThread;
+
+	//CloseHandle(hThread);
+	pWriteA->ResumeThread();
+
+	pst=running;
+}
+
+CanalyzerView * CMainFrame::LeftPlotPointer(void)
+{
+	return ( (CanalyzerView*)m_wndSplitter.GetPane(0,0) );
+}
+
+
+CanalyzerViewR * CMainFrame::RightPlotPointer(void)
+{
+	return ( (CanalyzerViewR*)m_wndSplitter.GetPane(0,1) );
+}
+
+void CMainFrame::OnAnalysisAbortanalysis()
+{
+	// TODO: Add your command handler code here
+	TerminateThread(pWriteA->m_hThread,0);
+
+	pst=stop;
+	CString strTemp;
+	(strTemp.LoadString(IDS_STRING_OVER));
+	m_wndCaptionBar.ShowMessage(strTemp);
+}
+
+
+void CMainFrame::OnAnalysisPause()
+{
+	// TODO: Add your command handler code here
+	if(bWaiting){
+		ResumeThread(pWriteA->m_hThread);
+		bWaiting=false;
+	}
+	else{
+		SuspendThread(pWriteA->m_hThread);	
+		bWaiting=true;
+	}
 }

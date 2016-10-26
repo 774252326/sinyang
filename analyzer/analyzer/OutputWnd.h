@@ -1,6 +1,8 @@
 
 #pragma once
 
+#include "DataOut.h"
+
 /////////////////////////////////////////////////////////////////////////////
 // COutputList window
 
@@ -14,7 +16,7 @@ public:
 public:
 	virtual ~COutputList();
 
-	BOOL clear(void);
+
 	BOOL InsertListCtrl(int StepNo, CString StepName, double addVol, double totalVol, double Q, double nQ, bool Use, int CycleNo=-1);
 	//BOOL InsertListCtrl(int StepNo, CString StepName, double addVol, double totalVol, double Q, double nQ, bool Use);
 
@@ -28,6 +30,7 @@ protected:
 public:
 	int gap;
 	void AdjustWidth(int nRow, int nCol);
+	BOOL InsertListCtrl(int StepNo, DataOut dout);
 };
 
 class COutputWnd : public CDockablePane
@@ -60,7 +63,7 @@ public:
 	virtual ~COutputWnd();
 
 	COutputList* GetListCtrl(){return &m_listCtrlMonitor;}
-
+	BOOL clear(void);
 
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);

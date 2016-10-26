@@ -83,8 +83,8 @@ IMPLEMENT_DYNCREATE(CanalyzerViewR, CFormView)
 	void CanalyzerViewR::OnInitialUpdate()
 	{
 		CFormView::OnInitialUpdate();
-		GetParentFrame()->RecalcLayout();
-		ResizeParentToFit();
+		//GetParentFrame()->RecalcLayout();
+		//ResizeParentToFit();
 
 		LONG style0=GetWindowLongW(m_hWnd, GWL_EXSTYLE);
 		SetWindowLongW(GetSafeHwnd(), GWL_EXSTYLE, style0|WS_CLIPCHILDREN);
@@ -215,6 +215,8 @@ IMPLEMENT_DYNCREATE(CanalyzerViewR, CFormView)
 		m_spBtn.SetRange32(0,0);
 		m_spBtn.SetPos32(0);
 		m_spBtn.ShowWindow(SW_HIDE);
+		CanalyzerDoc* pDoc=GetDocument();
+		pDoc->rp.clear();
 	}
 
 
@@ -233,7 +235,7 @@ IMPLEMENT_DYNCREATE(CanalyzerViewR, CFormView)
 	{
 		// TODO: Add your command handler code here
 
-		AfxMessageBox(L"right");
+		//AfxMessageBox(L"right");
 
 
 		// 创建属性表对象   
@@ -353,9 +355,7 @@ IMPLEMENT_DYNCREATE(CanalyzerViewR, CFormView)
 		CanalyzerDoc* pDoc=GetDocument();
 		pDoc->rp.push_back(pda);
 		int newi=pDoc->rp.size()-1;
-		m_spBtn.SetRange32(0,newi);
-		m_spBtn.SetPos32(newi);
-		m_spBtn.ShowWindow( (newi>0 ? SW_SHOW : SW_HIDE) );
+		SetSpin(newi);
 		return newi;
 	}
 
@@ -391,3 +391,13 @@ IMPLEMENT_DYNCREATE(CanalyzerViewR, CFormView)
 	
 	*pResult = 0;
 }
+
+
+
+	
+	void CanalyzerViewR::SetSpin(int newi)
+	{
+		m_spBtn.SetRange32(0,newi);
+		m_spBtn.SetPos32(newi);
+		m_spBtn.ShowWindow( (newi>0 ? SW_SHOW : SW_HIDE) );
+	}

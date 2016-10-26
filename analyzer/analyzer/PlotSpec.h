@@ -10,6 +10,8 @@ public:
 
 	PlotSpec(const PlotSpec &src);
 	void operator=(const PlotSpec &src);
+	PlotSpec(int i);
+
 
 	COLORREF bkgndC;
 	COLORREF borderC;

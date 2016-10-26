@@ -167,3 +167,18 @@ void UpdateRange( const std::vector<T> &x, T &xmin, T &xmax, T gapPercent=0, boo
 	}
 
 }
+
+template <typename T>
+bool compless (T c1, T c2) {
+	return (c1>c2);
+}
+
+template <typename T>
+void SortInsert( std::vector<T> &xs, std::vector<T> &ys, T x, T y )
+{
+	std::vector<T>::iterator it;
+	it = std::find_first_of (xs.begin(), xs.end(),	&x, (&x)+1, compless<T>);
+	size_t idx=it-xs.begin();
+	xs.insert(it,x);
+	ys.insert(ys.begin()+idx,y);
+}

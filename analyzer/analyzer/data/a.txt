@@ -1,7 +1,0 @@
-2110 base 25ml (third trial).txt
-2110 base 25ml (third trial) + 10ds0-0125ml.txt
-2110 base 25ml (third trial) + 10ds0-025ml.txt
-2110 base 25ml (third trial) + 10ds0-0375ml.txt
-2110 base 25ml (third trial) + 10ds0-05ml.txt
-2110 base 25ml (third trial) + 10ds0-0625ml.txt
-2110 base 25ml (third trial) + 10ds0-075ml.txt

@@ -77,6 +77,7 @@ public:
 
 
 	void OnDeltaposSpin(NMHDR* pNMHDR, LRESULT* pResult);
+	void SetSpin(int i);
 };
 
 #ifndef _DEBUG  // debug version in analyzerView.cpp

@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include "analyzer.h"
 #include "PlotSpec.h"
-
+#include "colormapT.h"
 
 // PlotSpec
 
@@ -35,7 +35,18 @@ PlotSpec::PlotSpec(const PlotSpec &src)
 	labelSize=src.labelSize;
 	metricC=src.metricC;
 	metricSize=src.metricSize;
+}
 
+PlotSpec::PlotSpec(int i)
+{
+	bkgndC=black;
+	borderC=white;
+	gridC=white;
+	gridType=3;
+	labelC=green;
+	labelSize=20;
+	metricC=white;
+	metricSize=15;
 }
 
 void PlotSpec::operator=(const PlotSpec &src)

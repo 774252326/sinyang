@@ -18,9 +18,12 @@
 #include "CVParametersPage.h"
 #include "SolutionAdditionParametersPage.h"
 
-#include "pcct.h"
-#include "colormapT.h"
+//#include "pcct.h"
+//#include "colormapT.h"
 #include "analyzerView.h"
+#include "analyzerViewR.h"
+//#include "func.h"
+#include "MainFrm.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -32,12 +35,15 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 
 	BEGIN_MESSAGE_MAP(CanalyzerDoc, CDocument)
 		ON_COMMAND(ID_ANALYSIS_METHODSETUP, &CanalyzerDoc::OnAnalysisMethodsetup)
+		//		ON_COMMAND(ID_ANALYSIS_STARTANALYSIS, &CanalyzerDoc::OnAnalysisStartanalysis)
 	END_MESSAGE_MAP()
 
 
 	// CanalyzerDoc construction/destruction
 
 	CanalyzerDoc::CanalyzerDoc()
+		//: ppa(NULL)
+		: resultStr(_T(""))
 	{
 		// TODO: add one-time construction code here
 
@@ -55,6 +61,22 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		// TODO: add reinitialization code here
 		// (SDI documents will reuse this document)
 
+		p1=ANPara();
+		p2=CVPara();
+		p3=SAPara();
+		dol.clear();
+		lp.clear();
+		rp.clear();	
+		resultStr.Empty();
+		
+		POSITION pos = GetFirstViewPosition();
+		CanalyzerView* lv=((CanalyzerView*)GetNextView(pos));
+		lv->SetSpin(0);
+		CMainFrame *mf=(CMainFrame*)(lv->GetParentFrame());
+		mf->GetOutputWnd()->clear();
+		CanalyzerViewR* rv=((CanalyzerViewR*)GetNextView(pos));
+		rv->SetSpin(0);
+
 		return TRUE;
 	}
 
@@ -71,6 +93,7 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 			p1.Serialize(ar);
 			p2.Serialize(ar);
 			p3.Serialize(ar);
+			ar<<resultStr;
 			ar<<dol.size();
 			for(size_t i=0;i<dol.size();i++){
 				dol[i].Serialize(ar);
@@ -87,68 +110,88 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		else
 		{
 			// TODO: add loading code here
-			//p1.Serialize(ar);
-			//p2.Serialize(ar);
-			//p3.Serialize(ar);
-			//size_t n;
-			//ar>>n;
-			//dol.assign(n,DataOut());
-			//for(size_t i=0;i<dol.size();i++){
-			//	dol[i].Serialize(ar);
-			//}
-			//ar>>n;
-			//lp.assign(n,PlotData());
-			//for(size_t i=0;i<lp.size();i++){
-			//	lp[i].Serialize(ar);
-			//}
-			//ar>>n;
-			//rp.assign(n,PlotData());
-			//for(size_t i=0;i<rp.size();i++){
-			//	rp[i].Serialize(ar);
-			//}
+			p1.Serialize(ar);
+			p2.Serialize(ar);
+			p3.Serialize(ar);
+			ar>>resultStr;
+			size_t n;
+			ar>>n;
+			dol.assign(n,DataOut());
+			for(size_t i=0;i<dol.size();i++){
+				dol[i].Serialize(ar);
+			}
+			ar>>n;
+			lp.assign(n,PlotData());
+			for(size_t i=0;i<lp.size();i++){
+				lp[i].Serialize(ar);
+			}
+			ar>>n;
+			rp.assign(n,PlotData());
+			for(size_t i=0;i<rp.size();i++){
+				rp[i].Serialize(ar);
+			}
+			///////////////////////////////////////////////
+
+			POSITION pos = GetFirstViewPosition();
+			CanalyzerView* lv=((CanalyzerView*)GetNextView(pos));
+					lv->SetSpin(lp.size()-1);
+			lv->updatePlotRange();
+
+			CMainFrame *mf=(CMainFrame*)(lv->GetParentFrame());
+			COutputList* ol=mf->GetOutputWnd()->GetListCtrl();
+			mf->GetCaptionBar()->ShowMessage(resultStr);
+
+			CanalyzerViewR* rv=((CanalyzerViewR*)GetNextView(pos));
+							rv->SetSpin(rp.size()-1);
+			rv->updatePlotRange();
+
+			for(size_t i=0;i<dol.size();i++){
+				ol->InsertListCtrl(i,dol[i]);
+			}
+
 			//////////////////////////////////////////////
 
-			//CString str=this->GetPathName();
-			POSITION pos = GetFirstViewPosition();
-		CView* pFirstView = GetNextView(pos);
-		{
-			CString str=L"C:\\Users\\r8anw2x\\Desktop\\ss\\analyzer\\analyzer\\data\\DTR\\3360 base 25ml + 8mlcali8-5.txt";
-			pcct dt1;
-			dt1.readFile(str);
-			dt1.TomA();
-			PlotData p1;			
-			LineSpec ps1;
-		ps1.colour=genColor( genColorvFromIndex<float>( 0 ) ) ;
-		ps1.dotSize=-1;
-		ps1.name=str;
-		ps1.lineType=0;
-		ps1.smoothLine=0;
-		ps1.traceLast=false;
-		p1.AddNew(dt1.potential,dt1.current,ps1,dt1.label[0],dt1.label[1]);
-		((CanalyzerView*)pFirstView)->AddPlot(p1);
-		}
+			////CString str=this->GetPathName();
+			//POSITION pos = GetFirstViewPosition();
+			//CView* pFirstView = GetNextView(pos);
+			//{
+			//	CString str=L"C:\\Users\\r8anw2x\\Desktop\\ss\\analyzer\\analyzer\\data\\DTR\\3360 base 25ml + 8mlcali8-5.txt";
+			//	pcct dt1;
+			//	dt1.readFile(str);
+			//	dt1.TomA();
+			//	PlotData p1;			
+			//	LineSpec ps1;
+			//	ps1.colour=genColor( genColorvFromIndex<float>( 0 ) ) ;
+			//	ps1.dotSize=-1;
+			//	ps1.name=str;
+			//	ps1.lineType=0;
+			//	ps1.smoothLine=0;
+			//	ps1.traceLast=false;
+			//	p1.AddNew(dt1.potential,dt1.current,ps1,dt1.label[0],dt1.label[1]);
+			//	((CanalyzerView*)pFirstView)->AddPlot(p1);
+			//}
 
 
-				{
-			CString str=L"C:\\Users\\r8anw2x\\Desktop\\ss\\analyzer\\analyzer\\data\\DTR\\3360 base 25ml + 2mlcali8-5.txt";
-			pcct dt1;
-			dt1.readFile(str);
-			dt1.TomA();
-			PlotData p1;			
-			LineSpec ps1;
-		ps1.colour=genColor( genColorvFromIndex<float>( 0 ) ) ;
-		ps1.dotSize=-1;
-		ps1.name=str;
-		ps1.lineType=0;
-		ps1.smoothLine=0;
-		ps1.traceLast=false;
-		p1.AddNew(dt1.potential,dt1.current,ps1,dt1.label[0],dt1.label[1]);
-		((CanalyzerView*)pFirstView)->AddPlot(p1);
-		}
+			//{
+			//	CString str=L"C:\\Users\\r8anw2x\\Desktop\\ss\\analyzer\\analyzer\\data\\DTR\\3360 base 25ml + 2mlcali8-5.txt";
+			//	pcct dt1;
+			//	dt1.readFile(str);
+			//	dt1.TomA();
+			//	PlotData p1;			
+			//	LineSpec ps1;
+			//	ps1.colour=genColor( genColorvFromIndex<float>( 0 ) ) ;
+			//	ps1.dotSize=-1;
+			//	ps1.name=str;
+			//	ps1.lineType=0;
+			//	ps1.smoothLine=0;
+			//	ps1.traceLast=false;
+			//	p1.AddNew(dt1.potential,dt1.current,ps1,dt1.label[0],dt1.label[1]);
+			//	((CanalyzerView*)pFirstView)->AddPlot(p1);
+			//}
 
-		if(((CanalyzerView*)pFirstView)->updatePlotRange())
-			;
-			//((CanalyzerView*)pFirstView)->Invalidate(FALSE);
+			//if(((CanalyzerView*)pFirstView)->updatePlotRange())
+			//	;
+			////((CanalyzerView*)pFirstView)->Invalidate(FALSE);
 
 		}
 	}
@@ -257,3 +300,5 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 			p3=sppage.para;
 		}
 	}
+
+

@@ -5,6 +5,10 @@
 #pragma once
 #include "OutputWnd.h"
 #include "MFCCaptionBarA.h"
+#include "typedefine.h"
+
+#include "analyzerView.h"
+#include "analyzerViewR.h"
 
 class CMainFrame : public CFrameWndEx
 {
@@ -41,7 +45,7 @@ protected:  // control bar embedded members
 	CMFCStatusBar     m_wndStatusBar;
 	CMFCToolBarImages m_UserImages;
 	COutputWnd        m_wndOutput;
-	CMFCCaptionBarA    m_wndCaptionBar;
+	CMFCCaptionBarA   m_wndCaptionBar;
 
 // Generated message map functions
 protected:
@@ -59,9 +63,31 @@ protected:
 	BOOL CreateDockingWindows();
 	void SetDockingWindowIcons(BOOL bHiColorIcons);
 	BOOL CreateCaptionBar();
-public:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
+public:
 	BOOL m_bSplitterCreated;
+	COutputWnd* GetOutputWnd(){return &m_wndOutput;}
+	CMFCCaptionBarA* GetCaptionBar(){ return &m_wndCaptionBar;};
+	bool bWaiting;
+	ProcessState pst;
+	afx_msg void OnViewAnalysisProgress();
+	afx_msg void OnUpdateViewAnalysisProgress(CCmdUI *pCmdUI);
+	afx_msg void OnViewToolbara();
+	afx_msg void OnUpdateViewToolbara(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateOptionsPlotsettings(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateAnalysisStartanalysis(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateViewFitwindow(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateAnalysisAbortanalysis(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateAnalysisPause(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateAnalysisMethodsetup(CCmdUI *pCmdUI);
+	afx_msg void OnAnalysisStartanalysis();
+
+	CanalyzerView * LeftPlotPointer(void);
+	CanalyzerViewR * RightPlotPointer(void);
+
+	CWinThread *pWriteA;
+	afx_msg void OnAnalysisAbortanalysis();
+	afx_msg void OnAnalysisPause();
 };
 
 

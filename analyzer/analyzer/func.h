@@ -1,6 +1,9 @@
 
 #include "stdafx.h"
-#include "dlg1.h"
+//#include "dlg1.h"
+#include "analyzerDoc.h"
+#include "analyzerView.h"
+#include "analyzerViewR.h"
 #include "OutputWnd.h"
 #include "MFCCaptionBarA.h"
 #include "ANPara.h"
@@ -14,8 +17,9 @@
 //bool waiting=false;
 
 typedef struct MYPARA{
-	dlg1 *leftp;
-	dlg1 *rightp;
+	CanalyzerView *leftp;
+	CanalyzerViewR *rightp;
+	CanalyzerDoc *adoc;
 	COutputWnd *outw;
 	CMFCCaptionBarA *cba;
 	//CMainFrame *mf;
@@ -35,7 +39,7 @@ UINT PROCESS(LPVOID pParam);
 BOOL ReadFileCustom(CObject * co, size_t n, CString fp);
 BOOL SaveFileCustom(CObject * co, size_t n, CString fp);
 
-void SortInsert( std::vector<double> &xs, std::vector<double> &ys, double x, double y );
+//void SortInsert( std::vector<double> &xs, std::vector<double> &ys, double x, double y );
 
 //UINT RCCS(LPVOID pParam);
 //UINT ASDTM(LPVOID pParam);

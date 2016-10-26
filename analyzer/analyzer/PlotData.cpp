@@ -169,7 +169,7 @@ BOOL PlotData::SaveFile(CString fp)
 	if( theFile.Open(fp, CFile::modeCreate | CFile::modeWrite) ){
 		CArchive archive(&theFile, CArchive::store);
 
-		archive<<(size_t)1;
+		//archive<<(size_t)1;
 		Serialize(archive);
 
 		archive.Close();
@@ -185,8 +185,8 @@ BOOL PlotData::ReadFile(CString fp)
 	CFile theFile;
 	if( theFile.Open(fp, /*CFile::modeCreate |*/ CFile::modeRead) ){
 		CArchive archive(&theFile, CArchive::load);
-		size_t n;
-		archive >> n; 
+		//size_t n;
+		//archive >> n; 
 		Serialize(archive);
 		archive.Close();
 		theFile.Close();

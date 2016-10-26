@@ -59,4 +59,7 @@ protected:
 #endif // SHARED_HANDLERS
 public:
 	afx_msg void OnAnalysisMethodsetup();
+//	afx_msg void OnAnalysisStartanalysis();
+//	CWinThread *ppa;
+	CString resultStr;
 };

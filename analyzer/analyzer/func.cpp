@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "func.h"
 
-#include "CSpline.cpp"
+#include "CSpline.h"
 #include "colormapT.h"
 #include "funT\\smsp.h"
 #include "funT\\lspfitT.h"
@@ -13,7 +13,7 @@
 
 int intv=10;
 size_t n1=800;
-
+//PlotSpec psp0;
 
 CString DTRsetup=L"data\\dtr\\b.stp.txt";
 CString DTRflist=L"data\\dtr\\b.txt";
@@ -40,19 +40,19 @@ CString SARAsetup=L"data\\sara\\i.stp.txt";
 CString SARAflist=L"data\\sara\\i.txt";
 
 
-bool compless (double c1, double c2) {
-	return (c1>c2);
-}
 
-void SortInsert( std::vector<double> &xs, std::vector<double> &ys, double x, double y )
+void WaitSecond(ProcessState &waitflg
+	//,int second=-1
+	//,int second=5
+	,int second=0
+	)
 {
-	std::vector<double>::iterator it;
-	it = std::find_first_of (xs.begin(), xs.end(),&x, (&x)+1, compless);
-	size_t idx=it-xs.begin();
-	xs.insert(it,x);
-	ys.insert(ys.begin()+idx,y);
+	int interval=1000;
+	while( waitflg!=running && second--!=0 ){
+		Sleep(interval);
+	}
+	waitflg=running;
 }
-
 
 BOOL SaveFileCustom(CObject * co, size_t n, CString fp)
 {
@@ -90,17 +90,7 @@ BOOL ReadFileCustom(CObject * co, size_t n, CString fp)
 }
 
 
-void WaitSecond(ProcessState &waitflg
-	//,int second=-1
-	,int second=0
-	)
-{
-	int interval=1000;
-	while( waitflg!=running && second--!=0 ){
-		Sleep(interval);
-	}
-	waitflg=running;
-}
+
 
 void LoadFileList(const CString &m_filePath, std::vector<CString> &filelist)
 {
@@ -225,7 +215,7 @@ bool calVsupp(PlotData & pdat, int idx, double evoR, double &Vsupp)
 
 
 void OneStep( COutputWnd * ow
-	, dlg1 * leftp
+	, CanalyzerView * leftp
 	, pcct * data
 	, pcctB &dataB
 	, bool bShowRight=true
@@ -238,16 +228,18 @@ void OneStep( COutputWnd * ow
 	size_t rn;
 
 	//int ci=leftp->m_spBtn.GetPos32();
-	int ci=leftp->pdl.size()-1;
+
+	CanalyzerDoc *pDoc=leftp->GetDocument();
+	int ci=pDoc->lp.size()-1;
 
 	//load n1 points
 	rn=data->popData(x,y,n1);
 	//plot points on plot1
 
 
-	plotspec ps1;
+	LineSpec ps1;
 	CString strTemp;
-	ps1.colour=genColor( genColorvFromIndex<float>( leftp->pdl[ci].ps.size() ) ) ;
+	ps1.colour=genColor( genColorvFromIndex<float>( pDoc->lp[ci].ps.size() ) ) ;
 	//ps1.colour=genColorGray( genColorvFromIndex<float>( stepCount ) ) ;
 	ps1.dotSize=0;
 	ps1.name=data->stepName;
@@ -255,25 +247,26 @@ void OneStep( COutputWnd * ow
 	ps1.lineType=0;
 	ps1.smoothLine=0;
 	ps1.traceLast=true;
-	leftp->pdl[ci].AddNew(x,y,ps1,data->label[0],data->label[1]);
-	if(leftp->updatePlotRange(ci))
+	pDoc->lp[ci].AddNew(x,y,ps1,data->label[0],data->label[1]);
+	if(leftp->updatePlotRange(ci)){
 		leftp->Invalidate();
-
+	}
 	nflg=dataB.addXY(x,y);
 
 	if(nflg>=1){//if one cycle complete
 
-		ow->InsertListCtrl(dataB.rowCount,
-			leftp->pdl[ci].ps.back().name,
-			dataB.Ar.size(),
-			//addvol,
-			dataB.addVolume,
-			dataB.totalVolume,
-			dataB.Ar.back(),
-			(dataB.Ar.back()/dataB.Ar0),
-			(nflg==2)&bShowRight
-			);
+		CString sname;
+		(sname.LoadString(IDS_STRING_CYCLE));
+		DataOut dout;
+		dout.addVol=( (dataB.Ar.size()==1)?dataB.addVolume:0 );
+		dout.nQ=(dataB.Ar.back()/dataB.Ar0);
+		dout.Q=dataB.Ar.back();
+		dout.stepName.Format(L"%s(%s%d)",pDoc->lp[ci].ps.back().name,sname,dataB.Ar.size());
+		dout.totalVol=dataB.totalVolume;
+		dout.Use=(nflg==2)&bShowRight;
+		pDoc->dol.push_back(dout);
 
+		ow->GetListCtrl()->InsertListCtrl(dataB.rowCount,dout);
 		dataB.rowCount++;
 	}
 
@@ -285,24 +278,27 @@ void OneStep( COutputWnd * ow
 
 		//TRACE(L"rccs running\n");
 		rn=data->popData(x,y,n1);
-		leftp->pdl[ci].AddFollow(x,y);
-		if(leftp->updatePlotRange(ci,x,y))
+		pDoc->lp[ci].AddFollow(x,y);
+		if(leftp->updatePlotRange(ci,x,y)){
 			leftp->Invalidate();
-
+		}
 		nflg=dataB.addXY(x,y);
 
 		if(nflg>=1){//if one cycle complete
 
-			ow->InsertListCtrl(dataB.rowCount,
-				leftp->pdl[ci].ps.back().name,
-				dataB.Ar.size(),
-				//addvol,
-				dataB.addVolume,
-				dataB.totalVolume,
-				dataB.Ar.back(),
-				(dataB.Ar.back()/dataB.Ar0),
-				(nflg==2)&bShowRight
-				);
+					CString sname;
+		(sname.LoadString(IDS_STRING_CYCLE));
+		DataOut dout;
+		dout.addVol=( (dataB.Ar.size()==1)?dataB.addVolume:0 );
+		dout.nQ=(dataB.Ar.back()/dataB.Ar0);
+		dout.Q=dataB.Ar.back();
+		dout.stepName.Format(L"%s(%s%d)",pDoc->lp[ci].ps.back().name,sname,dataB.Ar.size());
+		dout.totalVol=dataB.totalVolume;
+		dout.Use=(nflg==2)&bShowRight;
+		pDoc->dol.push_back(dout);
+
+		ow->GetListCtrl()->InsertListCtrl(dataB.rowCount, dout);
+
 			dataB.rowCount++;
 		}
 
@@ -487,7 +483,7 @@ CString Output4(PlotData & pdat
 	nx[0]=(ny[0]-c[0])/c[1];
 
 
-	plotspec ps1;
+	LineSpec ps1;
 	ps1.colour=genColor( genColorvFromIndex<float>( pdat.ps.size() ) ) ;
 	ps1.dotSize=0;  
 	ps1.name=L"fit line";
@@ -535,7 +531,7 @@ CString Output6(PlotData & pdat
 		nx[0]=0;
 		ny[2]=pdat.yll.back();
 
-		plotspec ps1;
+		LineSpec ps1;
 		ps1.colour=genColor( genColorvFromIndex<float>( pdat.ps.size() ) ) ;
 		ps1.dotSize=0;  
 		ps1.name=L"test point";
@@ -584,7 +580,7 @@ CString Output7(PlotData & pdat
 	ny[0]=c[1]*nx[0]+c[0];
 	ny[1]=c[1]*nx[1]+c[0];
 
-	plotspec ps1;
+	LineSpec ps1;
 	ps1.colour=genColor( genColorvFromIndex<float>( pdat.ps.size() ) ) ;
 	ps1.dotSize=0;  
 	ps1.name=L"fit line";
@@ -665,7 +661,7 @@ CString Output8(PlotData & pdat0
 						ny[0]=c[1]*nx[0]+c[0];
 						ny[1]=c[1]*nx[1]+c[0];
 
-						plotspec ps1;
+						LineSpec ps1;
 						ps1.colour=genColor( genColorvFromIndex<float>( pdat1.ps.size() ) ) ;
 						ps1.dotSize=0;  
 						ps1.name=L"fit line";
@@ -740,8 +736,8 @@ CString Output8(PlotData & pdat0
 
 
 
-UINT DTR(dlg1 *leftp,
-	dlg1 *rightp,
+UINT DTR(CanalyzerView *leftp,
+	CanalyzerViewR *rightp,
 	CMFCCaptionBarA *cba,
 	COutputWnd *outw,
 	ProcessState &pst,
@@ -768,11 +764,16 @@ UINT DTR(dlg1 *leftp,
 	std::vector<double> x;
 	std::vector<double> y;
 
+	CanalyzerDoc *pDoc=leftp->GetDocument();
+	pDoc->dol.clear();
 
 	leftp->AddPlot(PlotData());
+	pDoc->lp.back().psp=PlotSpec(0);
 	rightp->AddPlot(PlotData());
+	pDoc->rp.back().psp=PlotSpec(0);
 	//////////////////////////////first step////////////////////////////////////////////
 	//waiting=false;
+
 
 	InitialData(filelist.front(),p3.vmsvol,p2,dt1,dataB);
 	dataB.rowCount=0;
@@ -790,15 +791,14 @@ UINT DTR(dlg1 *leftp,
 	x.assign( 1, dataB.totalVolume-p3.vmsvol );
 	y.assign( 1, (dataB.Ar.back()/dataB.Ar0) );
 
-	plotspec ps1;
-	ps1.colour=genColor( genColorvFromIndex<float>( rightp->pdl[0].ps.size() ) ) ;
+	LineSpec ps1;
+	ps1.colour=genColor( genColorvFromIndex<float>( pDoc->rp[0].ps.size() ) ) ;
 	ps1.dotSize=3;
 	ps1.name=L"Ar/Ar0";
-	//ps1.showLine=true;
 	ps1.lineType=0;
 	ps1.smoothLine=1;
 	ps1.traceLast=false;
-	rightp->pdl[0].AddNew(x,y,ps1,L"Suppressor(ml)",L"Ratio of Charge");
+	pDoc->rp[0].AddNew(x,y,ps1,L"Suppressor(ml)",L"Ratio of Charge");
 	if(rightp->updatePlotRange(0))
 		rightp->Invalidate();
 
@@ -824,7 +824,7 @@ UINT DTR(dlg1 *leftp,
 			x.assign( 1, dataB.totalVolume-p3.vmsvol );
 			y.assign( 1, (dataB.Ar.back()/dataB.Ar0) );
 
-			rightp->pdl[0].AddFollow(x,y);
+			pDoc->rp[0].AddFollow(x,y);
 			if(rightp->updatePlotRange())
 				rightp->Invalidate();
 
@@ -834,16 +834,17 @@ UINT DTR(dlg1 *leftp,
 
 	////////////////////////////////////final step/////////////////////////////////////////////
 
-	CString strTemp;
-	strTemp=Output1(rightp->pdl[0],
+
+	pDoc->resultStr=Output1(pDoc->rp[0],
 		p1.evaluationratio,
 		p3.saplist.front().Sconc,
 		p3.vmsvol);
 
-	::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)strTemp.GetBuffer(),NULL);
+	::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(pDoc->resultStr.GetBuffer()),NULL);
 
 	//ReleaseSemaphore(semaphoreWrite.m_hObject,1,NULL);
 
+	//pDoc->rp[0].SaveFile(L"br.fig.txt");
 
 	TRACE(L"rccs ends\n");
 
@@ -854,8 +855,8 @@ UINT DTR(dlg1 *leftp,
 }
 
 
-UINT DTA(dlg1 *leftp,
-	dlg1 *rightp,
+UINT DTA(CanalyzerView *leftp,
+	CanalyzerViewR *rightp,
 	CMFCCaptionBarA *cba,
 	COutputWnd *outw,
 	ProcessState &pst,
@@ -877,6 +878,9 @@ UINT DTA(dlg1 *leftp,
 	outw->clear();
 	leftp->clear();
 	rightp->clear();
+
+	CanalyzerDoc *pDoc=leftp->GetDocument();
+	pDoc->dol.clear();
 	/////////////////////////plot standrad curve////////////////////////
 
 	if(p1.calibrationfactortype==1){
@@ -897,15 +901,16 @@ UINT DTA(dlg1 *leftp,
 		rightp->AddPlot(PlotData());
 	}
 
+	pDoc->rp.back().psp=PlotSpec(0);
 	leftp->AddPlot(PlotData());
-
+	pDoc->lp.back().psp=PlotSpec(0);
 	///////////////////////////////////////end/////////////////////////////////////////////////
 
 	//waiting=false;
 
 	std::vector<double> x;
 	std::vector<double> y;
-	plotspec ps1;
+	LineSpec ps1;
 	//////////////////////////////first step////////////////////////////////////////////
 
 	InitialData(filelist.front(),p3.vmsvol,p2,dt1,dataB);
@@ -924,14 +929,14 @@ UINT DTA(dlg1 *leftp,
 	y.assign( 1, (dataB.Ar.back()/dataB.Ar0) );
 
 
-	ps1.colour=genColor( genColorvFromIndex<float>( rightp->pdl[0].ps.size() ) ) ;
+	ps1.colour=genColor( genColorvFromIndex<float>( pDoc->rp[0].ps.size() ) ) ;
 	ps1.dotSize=3;
 	ps1.name=L"Ar/Ar0";
 	//ps1.showLine=true;
 	ps1.lineType=0;
 	ps1.smoothLine=1;
 	ps1.traceLast=false;
-	rightp->pdl[0].AddNew(x,y,ps1,L"Suppressor(ml)",L"Ratio of Charge");
+	pDoc->rp[0].AddNew(x,y,ps1,L"Suppressor(ml)",L"Ratio of Charge");
 	if(rightp->updatePlotRange(0))
 		rightp->Invalidate();
 
@@ -957,7 +962,7 @@ UINT DTA(dlg1 *leftp,
 		x.assign( 1, dataB.totalVolume-p3.vmsvol );
 		y.assign( 1, (dataB.Ar.back()/dataB.Ar0) );
 
-		rightp->pdl[0].AddFollow(x,y);
+		pDoc->rp[0].AddFollow(x,y);
 		if(rightp->updatePlotRange(0))
 			rightp->Invalidate();
 
@@ -968,15 +973,14 @@ UINT DTA(dlg1 *leftp,
 
 	////////////////////////////////////final step/////////////////////////////////////////////
 
-	CString strTemp;
 
-	strTemp=Output2(rightp->pdl[0],
+	pDoc->resultStr=Output2(pDoc->rp[0],
 		p1.evaluationratio,
 		p1.calibrationfactortype,
 		p1.calibrationfactor,
 		p3.vmsvol);
 
-	::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)strTemp.GetBuffer(),NULL);
+	::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(pDoc->resultStr.GetBuffer()),NULL);
 
 
 	TRACE(L"asdtm ends\n");
@@ -989,8 +993,8 @@ UINT DTA(dlg1 *leftp,
 
 
 
-UINT LATR(dlg1 *leftp,
-	dlg1 *rightp,
+UINT LATR(CanalyzerView *leftp,
+	CanalyzerViewR *rightp,
 	CMFCCaptionBarA *cba,
 	COutputWnd *outw,
 	ProcessState &pst,
@@ -1017,15 +1021,21 @@ UINT LATR(dlg1 *leftp,
 	leftp->clear();
 	rightp->clear();
 
+	CanalyzerDoc *pDoc=leftp->GetDocument();
+	pDoc->dol.clear();
+
+
 	leftp->AddPlot(PlotData());
 	rightp->AddPlot(PlotData());
 
+	pDoc->lp.back().psp=PlotSpec(0);
+	pDoc->rp.back().psp=PlotSpec(0);
 	//////////////////////////////////////////////////////////////////////////////
 	double Aml=0;
 
 	std::vector<double> x;
 	std::vector<double> y;
-	plotspec ps1;
+	LineSpec ps1;
 
 
 	//////////////////////////////first step////////////////////////////////////////////
@@ -1046,14 +1056,14 @@ UINT LATR(dlg1 *leftp,
 	y.assign( 1, dataB.Ar.back() );
 
 
-	ps1.colour=genColor( genColorvFromIndex<float>( rightp->pdl[0].ps.size() ) ) ;
+	ps1.colour=genColor( genColorvFromIndex<float>( pDoc->rp[0].ps.size() ) ) ;
 	ps1.dotSize=3;
 	ps1.name=L"Ar";
 	//ps1.showLine=true;
 	ps1.lineType=0;
 	ps1.smoothLine=1;
 	ps1.traceLast=false;
-	rightp->pdl[0].AddNew(x,y,ps1,L"Suppressor Conc.(ml/L)",L"Charge(mC)");
+	pDoc->rp[0].AddNew(x,y,ps1,L"Suppressor Conc.(ml/L)",L"Charge(mC)");
 	if(rightp->updatePlotRange(0))
 		rightp->Invalidate();
 
@@ -1080,7 +1090,7 @@ UINT LATR(dlg1 *leftp,
 		x.assign( 1, Aml/dataB.totalVolume );	
 		y.assign( 1, dataB.Ar.back() );
 
-		rightp->pdl[0].AddFollow(x,y);
+		pDoc->rp[0].AddFollow(x,y);
 		if(rightp->updatePlotRange(0))
 			rightp->Invalidate();
 
@@ -1090,12 +1100,10 @@ UINT LATR(dlg1 *leftp,
 
 	////////////////////////////////////final step/////////////////////////////////////////////
 
-	CString str;
-	//str.Format(L" intercept value %g ml/L", Aml/dataB.totalVolume);
 
-	str=Output3(rightp->pdl[0]);
+	pDoc->resultStr=Output3(pDoc->rp[0]);
 
-	::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)str.GetBuffer(),NULL);
+	::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(pDoc->resultStr.GetBuffer()),NULL);
 
 	TRACE(L"rivlatm ends\n");
 
@@ -1104,8 +1112,8 @@ UINT LATR(dlg1 *leftp,
 	return 0;
 }
 
-UINT LATA(dlg1 *leftp,
-	dlg1 *rightp,
+UINT LATA(CanalyzerView *leftp,
+	CanalyzerViewR *rightp,
 	CMFCCaptionBarA *cba,
 	COutputWnd *outw,
 	ProcessState &pst,
@@ -1128,14 +1136,18 @@ UINT LATA(dlg1 *leftp,
 	outw->clear();
 	leftp->clear();
 	rightp->clear();
-
+		CanalyzerDoc *pDoc=leftp->GetDocument();
+	pDoc->dol.clear();
 
 	leftp->AddPlot(PlotData());
 	rightp->AddPlot(PlotData());
+
+	pDoc->lp.back().psp=PlotSpec(0);
+	pDoc->rp.back().psp=PlotSpec(0);
 	//////////////////////////////////////////////////////////////////////////
 	std::vector<double> x;
 	std::vector<double> y;
-
+	LineSpec ps1;
 	//////////////////////////////first step////////////////////////////////////////////
 
 	InitialData(filelist.front(),p3.vmsvol,p2,dt1,dataB);
@@ -1170,15 +1182,15 @@ UINT LATA(dlg1 *leftp,
 	x.assign( 1, 0 );	
 	y.assign( 1, Qintercept );
 
-	plotspec ps1;
-	ps1.colour=genColor( genColorvFromIndex<float>( rightp->pdl[0].ps.size() ) ) ;
+
+	ps1.colour=genColor( genColorvFromIndex<float>( pDoc->rp[0].ps.size() ) ) ;
 	ps1.dotSize=3;
 	ps1.name=L"Q";
 	//ps1.showLine=false;
 	ps1.lineType=-1;
 	ps1.smoothLine=0;
 	ps1.traceLast=false;
-	rightp->pdl[0].AddNew(x,y,ps1,L"Conc.(ml/L)",L"Q(mC)");
+	pDoc->rp[0].AddNew(x,y,ps1,L"Conc.(ml/L)",L"Q(mC)");
 	if(rightp->updatePlotRange(0))
 		rightp->Invalidate();
 
@@ -1208,7 +1220,7 @@ UINT LATA(dlg1 *leftp,
 		x.assign( 1, Aml/dataB.totalVolume );	
 		y.assign( 1, dataB.Ar.back() );
 
-		rightp->pdl[0].AddFollow(x,y);
+		pDoc->rp[0].AddFollow(x,y);
 		if(rightp->updatePlotRange(0))
 			rightp->Invalidate();
 
@@ -1219,16 +1231,14 @@ UINT LATA(dlg1 *leftp,
 	////////////////////////////////////final step/////////////////////////////////////////////
 
 
-	CString strTemp;
-	strTemp=Output4(rightp->pdl[0]
-	//,rightp
-	,p3.vmsvol
+	pDoc->resultStr=Output4(pDoc->rp[0]
+		,p3.vmsvol
 		,p3.saplist[1].volconc);
 
 	if(rightp->updatePlotRange(0))
 		rightp->Invalidate();
 
-	::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)strTemp.GetBuffer(),NULL);
+	::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(pDoc->resultStr.GetBuffer()),NULL);
 
 
 	TRACE(L"aalatm ends\n");
@@ -1238,8 +1248,8 @@ UINT LATA(dlg1 *leftp,
 	return 0;
 }
 
-UINT RCR(dlg1 *leftp,
-	dlg1 *rightp,
+UINT RCR(CanalyzerView *leftp,
+	CanalyzerViewR *rightp,
 	CMFCCaptionBarA *cba,
 	COutputWnd *outw,
 	ProcessState &pst,
@@ -1258,6 +1268,9 @@ UINT RCR(dlg1 *leftp,
 	pcct *data=&dt1;
 	//////////////////////////clear window/////////////////////////////////
 	outw->clear();
+	CanalyzerDoc *pDoc=leftp->GetDocument();
+	pDoc->dol.clear();
+
 	leftp->clear();
 	rightp->clear();
 	/////////////////////////////////////////////////////////////////////////////
@@ -1266,8 +1279,13 @@ UINT RCR(dlg1 *leftp,
 
 	double Lml=0;
 
+
+
 	leftp->AddPlot(PlotData());
 	rightp->AddPlot(PlotData());
+
+	pDoc->lp.back().psp=PlotSpec(0);
+	pDoc->rp.back().psp=PlotSpec(0);
 
 
 	//////////////////////////////first step////////////////////////////////////////////
@@ -1320,24 +1338,19 @@ UINT RCR(dlg1 *leftp,
 	x.assign( 1, Lml/dataB.totalVolume);
 	y.assign( 1, dataB.Ar.back() );
 
-	plotspec ps1;
-	ps1.colour=genColor( genColorvFromIndex<float>( rightp->pdl[0].ps.size() ) ) ;
+	LineSpec ps1;
+	ps1.colour=genColor( genColorvFromIndex<float>( pDoc->rp[0].ps.size() ) ) ;
 	ps1.dotSize=3;
 	ps1.name=L"Ar";
 	ps1.lineType=0;
 	ps1.smoothLine=1;
 	ps1.traceLast=false;
-	rightp->pdl[0].AddNew(x,y,ps1,L"Leveler Conc.(ml/L)",L"Charge(mC)");
+	pDoc->rp[0].AddNew(x,y,ps1,L"Leveler Conc.(ml/L)",L"Charge(mC)");
 	if(rightp->updatePlotRange(0))
 		rightp->Invalidate();
 
 	filelist.erase(filelist.begin());
 	///////////////////////////////////////////fourth step/////////////////////////////////////////////////////
-
-
-
-
-
 
 	while(dataB.stepCount<(p3.saplist.size())){
 
@@ -1360,7 +1373,7 @@ UINT RCR(dlg1 *leftp,
 		x.assign( 1, Lml/dataB.totalVolume);
 		y.assign( 1, dataB.Ar.back() );
 
-		rightp->pdl[0].AddFollow(x,y);
+		pDoc->rp[0].AddFollow(x,y);
 		if(rightp->updatePlotRange(0))
 			rightp->Invalidate();
 
@@ -1370,15 +1383,12 @@ UINT RCR(dlg1 *leftp,
 
 
 	////////////////////////////////////final step/////////////////////////////////////////////
-
-
-
+	
+	pDoc->resultStr=L"";
 
 	::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,NULL,NULL);
 
-	//ReleaseSemaphore(semaphoreWrite.m_hObject,1,NULL);
-
-
+	pDoc->rp[0].SaveFile(L"fr.fig.txt");
 
 	TRACE(L"crcl ends\n");
 
@@ -1387,8 +1397,8 @@ UINT RCR(dlg1 *leftp,
 	return 0;
 }
 
-UINT RCA(dlg1 *leftp,
-	dlg1 *rightp,
+UINT RCA(CanalyzerView *leftp,
+	CanalyzerViewR *rightp,
 	CMFCCaptionBarA *cba,
 	COutputWnd *outw,
 	ProcessState &pst,
@@ -1408,6 +1418,9 @@ UINT RCA(dlg1 *leftp,
 
 	//////////////////////////clear window/////////////////////////////////
 	outw->clear();
+		CanalyzerDoc *pDoc=leftp->GetDocument();
+	pDoc->dol.clear();
+
 	leftp->clear();
 	rightp->clear();
 	/////////////////////////plot standrad curve////////////////////////
@@ -1430,6 +1443,9 @@ UINT RCA(dlg1 *leftp,
 	else{
 		rightp->AddPlot(PlotData());
 	}
+
+	pDoc->lp.back().psp=PlotSpec(0);
+	pDoc->rp.back().psp=PlotSpec(0);
 
 	///////////////////////////////////////end/////////////////////////////////////////////////
 	std::vector<double> x;
@@ -1503,9 +1519,8 @@ UINT RCA(dlg1 *leftp,
 
 	/////////////////////////////////////last step////////////////////////////////////////////////////////////////
 
-	CString strTemp;
-	strTemp=Output6(rightp->pdl[0],
-		//rightp,
+
+	pDoc->resultStr=Output6(pDoc->rp[0],
 		dataB.Ar.back(),
 		dataB.totalVolume,
 		p3.saplist.back().volconc);
@@ -1513,7 +1528,7 @@ UINT RCA(dlg1 *leftp,
 	if(rightp->updatePlotRange(0))
 		rightp->Invalidate();
 
-	::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)strTemp.GetBuffer(),NULL);
+	::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(pDoc->resultStr.GetBuffer()),NULL);
 
 
 
@@ -1525,8 +1540,8 @@ UINT RCA(dlg1 *leftp,
 
 
 
-UINT SARR(dlg1 *leftp,
-	dlg1 *rightp,
+UINT SARR(CanalyzerView *leftp,
+	CanalyzerViewR *rightp,
 	CMFCCaptionBarA *cba,
 	COutputWnd *outw,
 	ProcessState &pst,
@@ -1551,6 +1566,10 @@ UINT SARR(dlg1 *leftp,
 
 	//////////////////////////clear window/////////////////////////////////
 	outw->clear();
+
+	CanalyzerDoc *pDoc=leftp->GetDocument();
+	pDoc->dol.clear();
+
 	leftp->clear();
 	rightp->clear();
 
@@ -1564,7 +1583,7 @@ UINT SARR(dlg1 *leftp,
 	std::vector<double> SC;
 	std::vector<double> AC;
 
-	plotspec ps1;
+	LineSpec ps1;
 
 	double prevSconc=p3.saplist.front().Sconc;
 	double prevAconc=p3.saplist.front().Aconc;
@@ -1598,14 +1617,14 @@ UINT SARR(dlg1 *leftp,
 
 
 	rightp->AddPlot(PlotData());
-
+	pDoc->rp.back().psp=PlotSpec(0);
 
 	while(dataB.stepCount<(p3.saplist.size()) /*&& !filelist.empty()*/){
 
 		//leftp->clear();
 
 		leftp->AddPlot(PlotData());
-
+		pDoc->lp.back().psp=PlotSpec(0);
 		//////////////////////////////first step////////////////////////////////////////////
 
 		InitialData(filelist.front(),p3.vmsvol,p2,dt1,dataB);
@@ -1627,14 +1646,14 @@ UINT SARR(dlg1 *leftp,
 		y.assign( 1, dataB.Ar.back()/dataB.Ar0 );
 
 
-		ps1.colour=genColor( genColorvFromIndex<float>( rightp->pdl[0].ps.size() ) ) ;
+		ps1.colour=genColor( genColorvFromIndex<float>( pDoc->rp[0].ps.size() ) ) ;
 		ps1.dotSize=3;
 		ps1.name.Format(L"%gS%gA",prevSconc,prevAconc);
 		//ps1.showLine=true;
 		ps1.lineType=0;
 		ps1.smoothLine=1;
 		ps1.traceLast=false;
-		rightp->pdl[0].AddNew(x,y,ps1,xla,yla);
+		pDoc->rp[0].AddNew(x,y,ps1,xla,yla);
 		if(rightp->updatePlotRange(0))
 			rightp->Invalidate();
 
@@ -1652,7 +1671,7 @@ UINT SARR(dlg1 *leftp,
 			if(p3.saplist[dataB.stepCount].Aconc*prevSconc!=p3.saplist[dataB.stepCount].Sconc*prevAconc){
 
 				double sconc;
-				bool flg=calVsupp(rightp->pdl[0],rightp->pdl[0].ll.size()-1,p1.evaluationratio,sconc);
+				bool flg=calVsupp(pDoc->rp[0],pDoc->rp[0].ll.size()-1,p1.evaluationratio,sconc);
 				if(flg){
 					//SC.push_back(sconc);
 					//AC.push_back(sconc*prevAconc/prevSconc);
@@ -1687,7 +1706,7 @@ UINT SARR(dlg1 *leftp,
 			x.assign( 1, Sml/dataB.totalVolume );	
 			y.assign( 1, dataB.Ar.back()/dataB.Ar0 );
 
-			rightp->pdl[0].AddFollow(x,y);
+			pDoc->rp[0].AddFollow(x,y);
 			if(rightp->updatePlotRange(0))
 				rightp->Invalidate();
 
@@ -1704,7 +1723,7 @@ UINT SARR(dlg1 *leftp,
 
 	{
 		double sconc;
-		bool flg=calVsupp(rightp->pdl[0],rightp->pdl[0].ll.size()-1,p1.evaluationratio,sconc);
+		bool flg=calVsupp(pDoc->rp[0],pDoc->rp[0].ll.size()-1,p1.evaluationratio,sconc);
 		if(flg){
 			//SC.push_back(sconc);
 			//AC.push_back(sconc*prevAconc/prevSconc);
@@ -1740,19 +1759,21 @@ UINT SARR(dlg1 *leftp,
 
 	pda.AddNew(AC,SC,ps1,xla,yla);
 
-	CString str;
-	str=Output7(pda,p1.evaluationratio);
+
+	pDoc->resultStr=Output7(pda,p1.evaluationratio);
 
 	rightp->AddPlot(pda);
+	pDoc->rp.back().psp=PlotSpec(0);
+
 	if(rightp->updatePlotRange(1))
 		rightp->Invalidate();
 
 	//pda.SaveFile(rightPlotFile1);
 	//rightp->pd.SaveFile(rightPlotFile0);
 
-	scc.ll.assign(rightp->pdl[0].ll.begin(), rightp->pdl[0].ll.end());
-	scc.normq.assign(rightp->pdl[0].yll.begin(), rightp->pdl[0].yll.end());
-	scc.sconc.assign(rightp->pdl[0].xll.begin(), rightp->pdl[0].xll.end());
+	scc.ll.assign(pDoc->rp[0].ll.begin(), pDoc->rp[0].ll.end());
+	scc.normq.assign(pDoc->rp[0].yll.begin(), pDoc->rp[0].yll.end());
+	scc.sconc.assign(pDoc->rp[0].xll.begin(), pDoc->rp[0].xll.end());
 
 
 
@@ -1767,15 +1788,7 @@ UINT SARR(dlg1 *leftp,
 	}
 
 
-
-
-	//rightp->pd.AddNew(SC,AC,ps1,L"Suppressor Conc.(ml/L)",L"Accelerator Conc.(ml/L)");
-	//rightp->updatePlotRange();
-	//rightp->Invalidate();
-
-
-
-	::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)str.GetBuffer(),NULL);
+	::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(pDoc->resultStr.GetBuffer()),NULL);
 
 	TRACE(L"rivlatm ends\n");
 
@@ -1786,8 +1799,8 @@ UINT SARR(dlg1 *leftp,
 
 
 
-UINT SARA(dlg1 *leftp,
-	dlg1 *rightp,
+UINT SARA(CanalyzerView *leftp,
+	CanalyzerViewR *rightp,
 	CMFCCaptionBarA *cba,
 	COutputWnd *outw,
 	ProcessState &pst,
@@ -1808,6 +1821,10 @@ UINT SARA(dlg1 *leftp,
 
 	//////////////////////////clear window/////////////////////////////////
 	outw->clear();
+
+	CanalyzerDoc *pDoc=leftp->GetDocument();
+	pDoc->dol.clear();
+
 	leftp->clear();
 	rightp->clear();
 
@@ -1823,7 +1840,7 @@ UINT SARA(dlg1 *leftp,
 	std::vector<double> SC;
 	std::vector<double> AC;
 
-	plotspec ps1;
+	LineSpec ps1;
 
 	double prevSconc=p3.saplist.front().Sconc;
 	double prevAconc=p3.saplist.front().Aconc;
@@ -1851,6 +1868,9 @@ UINT SARA(dlg1 *leftp,
 	leftp->AddPlot(PlotData());
 	rightp->AddPlot(PlotData());
 
+	pDoc->lp.back().psp=PlotSpec(0);
+	pDoc->rp.back().psp=PlotSpec(0);
+
 	//////////////////////////////first step////////////////////////////////////////////
 
 	InitialData(filelist.front(),p3.vmsvol,p2,dt1,dataB);
@@ -1872,7 +1892,7 @@ UINT SARA(dlg1 *leftp,
 	y.assign( 1, dataB.Ar.back()/dataB.Ar0 );
 
 
-	ps1.colour=genColor( genColorvFromIndex<float>( rightp->pdl[0].ps.size() ) ) ;
+	ps1.colour=genColor( genColorvFromIndex<float>( pDoc->rp[0].ps.size() ) ) ;
 	ps1.dotSize=3;
 	//ps1.name.Format(L"%gS%gA",prevSconc,prevAconc);
 	ps1.name=L"Ar/Ar0";
@@ -1880,7 +1900,7 @@ UINT SARA(dlg1 *leftp,
 	ps1.lineType=0;
 	ps1.smoothLine=1;
 	ps1.traceLast=false;
-	rightp->pdl[0].AddNew(x,y,ps1,xla,yla);
+	pDoc->rp[0].AddNew(x,y,ps1,xla,yla);
 	if(rightp->updatePlotRange(0))
 		rightp->Invalidate();
 
@@ -1898,13 +1918,12 @@ UINT SARA(dlg1 *leftp,
 			//rightp->pd.SaveFile(rightPlotFile0);
 
 			rightp->AddPlot(PlotData());
+			pDoc->rp.back().psp=PlotSpec(0);
 
 			sampleEndVol=dataB.totalVolume;
 
 			x.assign(1,0);
-			y.assign(1,rightp->pdl[0].yll.back());
-
-			//rightp->clear();
+			y.assign(1,pDoc->rp[0].yll.back());
 
 			{
 				CString str;
@@ -1918,7 +1937,7 @@ UINT SARA(dlg1 *leftp,
 				yla=str;
 			}
 
-			ps1.colour=genColor( genColorvFromIndex<float>( rightp->pdl[1].ps.size() ) ) ;
+			ps1.colour=genColor( genColorvFromIndex<float>( pDoc->rp[1].ps.size() ) ) ;
 			ps1.dotSize=3;
 			//ps1.name.Format(L"%gS%gA",prevSconc,prevAconc);
 			ps1.name=L"Ar/Ar0";
@@ -1926,7 +1945,7 @@ UINT SARA(dlg1 *leftp,
 			ps1.lineType=0;
 			ps1.smoothLine=1;
 			ps1.traceLast=false;
-			rightp->pdl[1].AddNew(x,y,ps1,xla,yla);
+			pDoc->rp[1].AddNew(x,y,ps1,xla,yla);
 			if(rightp->updatePlotRange(1))
 				rightp->Invalidate();
 
@@ -1947,7 +1966,7 @@ UINT SARA(dlg1 *leftp,
 			x.assign( 1, Aml/(dataB.totalVolume/*-sampleEndVol*/) );	
 			y.assign( 1, dataB.Ar.back()/dataB.Ar0 );
 
-			rightp->pdl[1].AddFollow(x,y);
+			pDoc->rp[1].AddFollow(x,y);
 			if(rightp->updatePlotRange(1))
 				rightp->Invalidate();
 
@@ -1974,7 +1993,7 @@ UINT SARA(dlg1 *leftp,
 		x.assign( 1, dataB.totalVolume-p3.vmsvol );	
 		y.assign( 1, dataB.Ar.back()/dataB.Ar0 );
 
-		rightp->pdl[0].AddFollow(x,y);
+		pDoc->rp[0].AddFollow(x,y);
 		if(rightp->updatePlotRange(0))
 			rightp->Invalidate();
 
@@ -2009,7 +2028,7 @@ UINT SARA(dlg1 *leftp,
 		x.assign( 1, Aml/(dataB.totalVolume/*-sampleEndVol*/) );	
 		y.assign( 1, dataB.Ar.back()/dataB.Ar0 );
 
-		rightp->pdl[1].AddFollow(x,y);
+		pDoc->rp[1].AddFollow(x,y);
 		if(rightp->updatePlotRange(1))
 			rightp->Invalidate();
 
@@ -2019,14 +2038,14 @@ UINT SARA(dlg1 *leftp,
 
 
 
-	CString str;
-	str=Output8(rightp->pdl[0],rightp->pdl[1], p1.evaluationratio, p3.vmsvol, p1.calibrationfilepath);
+
+	pDoc->resultStr=Output8(pDoc->rp[0],pDoc->rp[1], p1.evaluationratio, p3.vmsvol, p1.calibrationfilepath);
 
 	if(rightp->updatePlotRange(1))
 		rightp->Invalidate();
 
 
-	::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)str.GetBuffer(),NULL);
+	::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(pDoc->resultStr.GetBuffer()),NULL);
 
 
 
@@ -2044,9 +2063,10 @@ UINT SARA(dlg1 *leftp,
 UINT PROCESS(LPVOID pParam)
 {
 
-	dlg1 *leftp=((mypara*)pParam)->leftp;
-	dlg1 *rightp=((mypara*)pParam)->rightp;
-	//CMainFrame *mf=((mypara*)pParam)->mf;
+	CanalyzerView *leftp=((mypara*)pParam)->leftp;
+	CanalyzerViewR *rightp=((mypara*)pParam)->rightp;
+	//CanalyzerDoc *adoc=((mypara*)pParam)->adoc;
+
 	CMFCCaptionBarA *cba=((mypara*)pParam)->cba;
 	COutputWnd *outw=((mypara*)pParam)->outw;
 	ProcessState *pst=((mypara*)pParam)->psta;
@@ -2058,13 +2078,20 @@ UINT PROCESS(LPVOID pParam)
 	CVPara p2;
 	SAPara p3;
 
-	if(readini(p1,p2,p3)==FALSE){
-		CString strTemp;
-		strTemp.LoadStringW(IDS_STRING_SETUP_FILE_ERROR);
-		::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)strTemp.GetBuffer(),NULL);
-		*pst=stop;
-		return 0;
-	}
+	//if(readini(p1,p2,p3)==FALSE){
+	//	CString strTemp;
+	//	strTemp.LoadStringW(IDS_STRING_SETUP_FILE_ERROR);
+	//	::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)strTemp.GetBuffer(),NULL);
+	//	*pst=stop;
+	//	return 0;
+	//}
+
+	CanalyzerDoc *adoc=leftp->GetDocument();
+
+	p1=adoc->p1;
+	p2=adoc->p2;
+	p3=adoc->p3;
+
 
 	switch(p1.analysistype){
 	case 1:
@@ -2115,8 +2142,8 @@ UINT PROCESS(LPVOID pParam)
 		//leftp->pd.ExtractLastCycle(p2.highelimit,L"data\\hl.fig.txt");
 		//rightp->pd.SaveFile(L"data\\hr.fig.txt");
 
-		leftp->SaveFile(L"left.fig.txt");
-		rightp->SaveFile(L"right.fig.txt");
+		//leftp->SaveFile(L"left.fig.txt");
+		//rightp->SaveFile(L"right.fig.txt");
 
 		return 0;
 
@@ -2126,12 +2153,12 @@ UINT PROCESS(LPVOID pParam)
 		//leftp->pd.ExtractLastCycle(p2.highelimit,L"data\\il.fig.txt");
 		//rightp->pd.SaveFile(L"data\\ir.fig.txt");
 
-		leftp->SaveFile(L"left.fig.txt");
-		rightp->SaveFile(L"right.fig.txt");
+		//leftp->SaveFile(L"left.fig.txt");
+		//rightp->SaveFile(L"right.fig.txt");
 
 		return 0;
 	default:
-		return 0;
+		return 1;
 	}
 
 

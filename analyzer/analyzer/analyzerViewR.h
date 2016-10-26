@@ -74,7 +74,7 @@ public:
 	bool updatePlotRange(bool flg=true);
 
 	int AddPlot(const PlotData & pda);
-
+	void SetSpin(int i);
 
 
 };
