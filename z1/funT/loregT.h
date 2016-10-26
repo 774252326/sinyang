@@ -238,8 +238,38 @@ void loreg(T *x, long lx, long h, long d, T *xs){
 		loregf(x,i,h-1,lx-i,h,d,a);
 		xs[i]=a[1];
 	}
-
+	free_vector(a,1,d+1);
 }
+
+
+template <typename T>
+void loregWithK(T *x, long lx, long h, long d, T *xs,T *k){
+	if(d<2)
+		nrerror("degree>=2!");
+
+	long i;
+	T *a;
+	a=vector<T>(1,d+1);
+
+	for(i=1;i<h;i++){
+		loregf(x,i,i-1,h-1,h,d,a);
+		xs[i]=a[1];
+		k[i]=2*a[3]/pow((1+a[2]*a[2]),1.5);
+	}
+	for(i=h;i<=lx-h+1;i++){
+		loregf(x,i,h-1,h-1,h,d,a);
+		xs[i]=a[1];
+		k[i]=2*a[3]/pow((1+a[2]*a[2]),1.5);
+	}
+	for(i=lx-h+2;i<=lx;i++){
+		loregf(x,i,h-1,lx-i,h,d,a);
+		xs[i]=a[1];
+		k[i]=2*a[3]/pow((1+a[2]*a[2]),1.5);
+	}
+	free_vector(a,1,d+1);
+}
+
+
 
 template <typename T>
 T median(const T rsort[], long lx){
@@ -260,8 +290,6 @@ T median(const T rsort[], long lx){
 template <typename T>
 void loregR(T *x, long lx, long h, long d, T *xs){
 
-
-	
 	loreg(x,lx,h,d,xs);
 
 	T *r=vector<T>(1,lx);
@@ -288,14 +316,17 @@ void loregR(T *x, long lx, long h, long d, T *xs){
 		for(i=1;i<h;i++){
 			loregfR(x,i,i-1,h-1,h,d,a,r,madr);
 			xs[i]=a[1];
+			
 		}
 		for(i=h;i<=lx-h;i++){
 			loregfR(x,i,h-1,h-1,h,d,a,r,madr);
 			xs[i]=a[1];
+			
 		}
 		for(i=lx-h+2;i<=lx;i++){
 			loregfR(x,i,h-1,lx-i,h,d,a,r,madr);
 			xs[i]=a[1];
+			
 		}
 	}
 
@@ -308,7 +339,46 @@ void loregR(T *x, long lx, long h, long d, T *xs){
 
 
 
+template <typename T>
+void loregRWithK(T *x, long lx, long h, long d, T *xs, T *k){
+	if(d<2)
+		nrerror("degree>=2!");	
+	loreg(x,lx,h,d,xs);
 
+	T *r=vector<T>(1,lx);
+	T *rsort=vector<T>(1,lx);
+	long i,j;
+	T *a;
+	a=vector<T>(1,d+1);
+
+	for(j=0;j<5;j++){
+
+		//compute residual and find median
+		for( i=1; i<=lx; i++){
+			r[i]=xs[i]-x[i];
+			rsort[i]=fabs(r[i]);
+		}		
+		piksrt(lx,rsort);
+		T madr=median<T>(rsort,lx);
+
+		for(i=1;i<h;i++){
+			loregfR(x,i,i-1,h-1,h,d,a,r,madr);
+			xs[i]=a[1];
+			k[i]=2*a[3]/pow((1+a[2]*a[2]),1.5);
+		}
+		for(i=h;i<=lx-h;i++){
+			loregfR(x,i,h-1,h-1,h,d,a,r,madr);
+			xs[i]=a[1];
+			k[i]=2*a[3]/pow((1+a[2]*a[2]),1.5);
+		}
+		for(i=lx-h+2;i<=lx;i++){
+			loregfR(x,i,h-1,lx-i,h,d,a,r,madr);
+			xs[i]=a[1];
+			k[i]=2*a[3]/pow((1+a[2]*a[2]),1.5);
+		}
+	}
+	free_vector(rsort,1,lx);
+}
 
 
 

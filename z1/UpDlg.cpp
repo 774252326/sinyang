@@ -73,6 +73,7 @@ IMPLEMENT_DYNAMIC(CUpDlg, CDialog)
 	, nys(NULL)
 	, lmn(NULL)
 	, lmx(NULL)
+	, curv(NULL)
 {
 
 	m_xbottom = 0.1;
@@ -85,7 +86,7 @@ IMPLEMENT_DYNAMIC(CUpDlg, CDialog)
 	m_ymax = 0.0;
 	m_m = 0.1;
 	m_span = 30;
-	m_degree = 1;
+	m_degree = 2;
 }
 
 CUpDlg::~CUpDlg()
@@ -166,29 +167,40 @@ void CUpDlg::OnPaint()
 		if( DrawAxis2(plotrect,&dc) ){
 			DrawCursor(plotrect,&dc);
 			DrawCurve(plotrect, &dc);
+
+				//pen.CreatePen(PS_SOLID,1,black);
+				//DrawDiff(plotrect,&dc,&pen,m_xbottom,m_xtop);
+				//pen.DeleteObject();
+
 			if(isSmooth){
 				DrawSmoothCurve(plotrect,&dc);
 
-				
 
-				pen.CreatePen(PS_DASH,1,green);			
-				for(i=1;i<=nlmx;i++){
-					DrawVLine(plotrect,&dc,&pen,kk*nxlmx[i]);
-					//DrawVLine(plotrect,&dc,&pen,lmx[i][1]);
-				}
-				pen.DeleteObject();
-				pen.CreatePen(PS_DASH,1,cyan);			
-				for(i=1;i<=nlmn;i++){
-					DrawVLine(plotrect,&dc,&pen,kk*nxlmn[i]);
-					//DrawVLine(plotrect,&dc,&pen,lmn[i][1]);
-				}
-				pen.DeleteObject();
+
+				//pen.CreatePen(PS_DASH,1,green);			
+				//for(i=1;i<=nlmx;i++){
+				//	DrawVLine(plotrect,&dc,&pen,kk*nxlmx[i]);
+				//	//DrawVLine(plotrect,&dc,&pen,lmx[i][1]);
+				//}
+				//pen.DeleteObject();
+				//pen.CreatePen(PS_DASH,1,cyan);			
+				//for(i=1;i<=nlmn;i++){
+				//	DrawVLine(plotrect,&dc,&pen,kk*nxlmn[i]);
+				//	//DrawVLine(plotrect,&dc,&pen,lmn[i][1]);
+				//}
+				//pen.DeleteObject();
 
 				//pen.CreatePen(PS_DASH,1,magenta);			
 				//for(i=1;i<=nknee;i++){
 				//	DrawVLine(plotrect,&dc,&pen,xknee[i]);
 				//}
 				//pen.DeleteObject();
+
+				pen.CreatePen(PS_SOLID,1,black);
+				DrawDiff(plotrect,&dc,&pen,xknee[1],xelbow[1]);
+				DrawVLine(plotrect,&dc,&pen,xknee[1]);
+				DrawVLine(plotrect,&dc,&pen,xelbow[1]);
+				pen.DeleteObject();
 
 
 			}
@@ -209,6 +221,8 @@ void CUpDlg::OnPaint()
 					DrawVLine(plotrect,&dc,&pen,kk*xknee[i]);
 				}
 
+
+
 				//}
 				//else{
 				//for(i=1;i<=nelbow;i++){
@@ -217,6 +231,10 @@ void CUpDlg::OnPaint()
 				//}
 				pen.DeleteObject();
 
+
+				pen.CreatePen(PS_SOLID,1,black);
+				DrawDiff(plotrect,&dc,&pen,m_xbottom,xknee[1]);
+				pen.DeleteObject();
 
 			}
 
@@ -306,8 +324,8 @@ void CUpDlg::OnBnClickedButton2()
 			///////////////////////////////////////////////////
 			xknee=getkneep(nc,nx,nd,&nknee,xp,nlcm,nlmx,nlmn);
 			//if(IsDlgButtonChecked(IDC_CHECK2) ){
-				//restorenx(xkm,nknee,-m_xtop,-m_xbottom,xknee);
-				//scalevt(xknee,nknee,xknee,-1.0);
+			//restorenx(xkm,nknee,-m_xtop,-m_xbottom,xknee);
+			//scalevt(xknee,nknee,xknee,-1.0);
 			//}
 
 			//xknee=getkpD(lmx,nlmx,lmn,nlmn,&nknee,nx[nd],nys[nd],xp);
@@ -363,6 +381,8 @@ void CUpDlg::OnBnClickedButton2()
 	//xp=tmp[1];
 	//chisq=tmp[3];
 
+	chisq=xknee[1];
+
 	UpdateData(false);
 
 	isFit=true;
@@ -393,28 +413,33 @@ void CUpDlg::OnBnClickedButton3()
 
 
 		/////////////////////////////////local regression///////////////////////////////////////
-		//ys=vector<double>(1,nd);
-		//if(IsDlgButtonChecked(IDC_CHECK1)){
-		//	//loregR(y,m_n,m_span,m_degree,ys);
-		//	loregR(&y[startind-1],nd,m_span,m_degree,ys);
-		//}
-		//else{
-		//	//loreg(y,m_n,m_span,m_degree,ys);
-		//	loreg(&y[startind-1],nd,m_span,m_degree,ys);
-		//}
+		ys=vector<double>(1,nd);
+		curv=vector<double>(1,nd);
+
+		if(IsDlgButtonChecked(IDC_CHECK1)){
+			//loregR(y,m_n,m_span,m_degree,ys);
+			//loregR(&y[startind-1],nd,m_span,m_degree,ys);
+			loregRWithK(&y[startind-1],nd,m_span,m_degree,ys,curv);
+		}
+		else{
+			//loreg(y,m_n,m_span,m_degree,ys);
+			//loreg(&y[startind-1],nd,m_span,m_degree,ys);
+			loregWithK(&y[startind-1],nd,m_span,m_degree,ys,curv);
+		}
 		///////////////////////////////////end////////////////////////////////////
 
 
 		//smoothspline(y,m_n,m_m,ys);
 
 		/////////////////////smoothing spline///////////////////////////
-		coefs=matrix<double>(1,nd-1,1,4);
-		xbreak=vector<double>(1,nd);
 
-		double pa1=1,pa0=0;
+		//coefs=matrix<double>(1,nd-1,1,4);
+		//xbreak=vector<double>(1,nd);
+
+		//double pa1=1,pa0=0;
 
 
-		smspl2(&x[startind-1],&y[startind-1],nd,m_m,coefs,xbreak);
+		//smspl2(&x[startind-1],&y[startind-1],nd,m_m,coefs,xbreak);
 
 
 
@@ -509,20 +534,20 @@ void CUpDlg::OnBnClickedButton3()
 		/////////////////////////////////////////////////////////////////////////
 
 		//////////////////////////////////////////for smoothing spline///////////////////////////////////////////
-				long i,j;
-		bool flgx,flgy;
-		double za,zb;
+		//long i,j;
+		//bool flgx,flgy;
+		//double za,zb;
 		//m_m=0.999;
 		//double *nlcm;
-		double *lcm;
-		long lmx,lmn;
+		//double *lcm;
+		//long lmx,lmn;
 		//double **nc;
-		nc=matrix<double>(1,nd-1,1,4);
-		nx=vector<double>(1,nd);
-		
-		flipFunc(coefs,xbreak,nd,nc,nx,IsDlgButtonChecked(IDC_CHECK2),IsDlgButtonChecked(IDC_CHECK3));
+		//nc=matrix<double>(1,nd-1,1,4);
+		//nx=vector<double>(1,nd);
 
-		lcm=getlcm(nc,nx,nd,&lmx,&lmn);
+		//flipFunc(coefs,xbreak,nd,nc,nx,IsDlgButtonChecked(IDC_CHECK2),IsDlgButtonChecked(IDC_CHECK3));
+
+		//lcm=getlcm(nc,nx,nd,&lmx,&lmn);
 
 		//AfxMessageBox(L"no elbow point! reduce threshold and try again");
 
@@ -530,14 +555,14 @@ void CUpDlg::OnBnClickedButton3()
 		//	TRACE("%f,",lcm[i]);
 		//TRACE("\n");
 
-		normalizecoef(nc,nx,nd,lcm,lmx,lmn,nc);
-		nlcm=getlcm(nc,nx,nd,&nlmx,&nlmn);
+		//normalizecoef(nc,nx,nd,lcm,lmx,lmn,nc);
+		//nlcm=getlcm(nc,nx,nd,&nlmx,&nlmn);
 
 
-		nxlmx=vector<double>(1,nlmx);
-		copyvt(nlcm,nlmx,nxlmx);
-		nxlmn=vector<double>(1,nlmn);
-		copyvt(&nlcm[nlmx],nlmn,nxlmn);
+		//nxlmx=vector<double>(1,nlmx);
+		//copyvt(nlcm,nlmx,nxlmx);
+		//nxlmn=vector<double>(1,nlmn);
+		//copyvt(&nlcm[nlmx],nlmn,nxlmn);
 
 		//for(i=1;i<=nlmx;i++)
 		//	TRACE("%f,",nxlmx[i]);
@@ -549,8 +574,16 @@ void CUpDlg::OnBnClickedButton3()
 		//xknee=getkneep(nc,xbreak,nd,&nknee,xp,nlcm,nlmx,nlmn);
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+		xknee=vector<double>(1,1);
+		xelbow=vector<double>(1,1);
+		xknee[1]=x[minind(curv,nd)];
+		xelbow[1]=x[maxind(curv,nd)];
+
 
 		isSmooth=true;
+
+		chisqpp=nlmx;
+		UpdateData(false);
 		Invalidate();
 	}
 
@@ -987,6 +1020,7 @@ bool CUpDlg::DrawAxis2(CRect rect, CPaintDC * dc)
 		}
 
 
+
 		float resoy=pow(10.0,calgrid(m_ymax-m_ymin));
 
 		for(gridi=resoy*ceil(m_ymin/resoy);gridi<=m_ymax;gridi+=resoy){
@@ -1002,6 +1036,18 @@ bool CUpDlg::DrawAxis2(CRect rect, CPaintDC * dc)
 
 			dc->TextOutW(rect.left-lc-sz.cx,tmp-sz.cy/2,str);
 		}
+
+		font.DeleteObject();
+		font.CreatePointFont(200,L"MS Gothic",NULL);
+
+		str.Format(L"time(s)");
+		dc->SelectObject(&font);
+		sz=dc->GetTextExtent(str);
+		dc->TextOutW(rect.right-sz.cx,rect.bottom-sz.cy,str);
+		str.Format(L"current(A)");
+		dc->SelectObject(&font);
+		sz=dc->GetTextExtent(str);
+		dc->TextOutW(rect.left,rect.top,str);
 
 		dc->SelectObject(pOldPen);
 		pen.DeleteObject();
@@ -1075,9 +1121,9 @@ bool CUpDlg::DrawSmoothCurve(CRect rect, CPaintDC * dc)
 		CPen pen(PS_SOLID, 1, yellow);
 
 		long startind=findbottomidx(x,m_n,m_xbottom);
-		//DrawPolyline(rect,dc,&pen,&x[startind-1],ys,nd);
+		DrawPolyline(rect,dc,&pen,&x[startind-1],ys,nd);
 
-		DrawFunc(rect,dc,&pen);
+		//DrawFunc(rect,dc,&pen);
 		//DrawFunc2(rect,dc,&pen);
 		pen.DeleteObject();
 
@@ -1181,4 +1227,48 @@ void CUpDlg::DrawFunc2(CRect rect, CPaintDC * dc, CPen * pPen)
 
 
 	dc->SelectObject(pOldPen);
+}
+
+void CUpDlg::DrawDiff(CRect rect, CPaintDC * dc, CPen * pPen, double x1, double x2)
+{
+	CPen* pOldPen=dc->SelectObject(pPen);
+
+	CPoint cp=rect.CenterPoint();
+
+	long xp1=ptRsl(MIN(x1,x2),0,rect).x;
+	long xp2=ptRsl(MAX(x1,x2),0,rect).x;
+	long leg=4;
+
+	long lp=7;
+
+	dc->MoveTo(xp1+leg,cp.y-leg);
+	dc->LineTo(xp1,cp.y);
+	dc->LineTo(xp1+leg,cp.y+leg);
+
+	dc->MoveTo(xp2-leg,cp.y-leg);
+	dc->LineTo(xp2,cp.y);
+	dc->LineTo(xp2-leg,cp.y+leg);
+
+	CFont font;
+	font.CreatePointFont(300,L"MS Gothic",NULL);
+
+	CString str;
+	CSize sz;
+	str.Format(L"%.1fs",fabs(x2-x1));
+	dc->SelectObject(&font);
+	sz=dc->GetTextExtent(str);
+
+
+	long xl=xp2-xp1-sz.cx;
+	if(xl>=2*lp){
+		dc->MoveTo(xp1,cp.y);
+		dc->LineTo(xp1+xl/2,cp.y);
+		dc->TextOutW(xp1+xl/2,cp.y-sz.cy/2,str);
+		dc->MoveTo(xp2,cp.y);
+		dc->LineTo(xp2-xl/2,cp.y);
+	}
+
+
+	dc->SelectObject(pOldPen);
+
 }

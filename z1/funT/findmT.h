@@ -20,7 +20,6 @@ T findmin(T * x, long n)
 	T xmin=x[1];
 	long i;
 	for(i=2; i<=n; i++){
-
 		if(x[i]<xmin)
 			xmin=x[i];
 	}
@@ -32,7 +31,7 @@ long maxind( T x[], long ndat){
 	long i;
 	long mi=1;
 	T tmp=x[1];
-	for (i=1; i<=ndat; i++){
+	for (i=2; i<=ndat; i++){
 		if (tmp<x[i]) {
 			mi=i;
 			tmp=x[i];
@@ -47,7 +46,7 @@ long minind( T x[], long ndat){
 	long i;
 	long mi=1;
 	T tmp=x[1];
-	for (i=1; i<=ndat; i++){
+	for (i=2; i<=ndat; i++){
 		if (tmp>x[i]) {
 			mi=i;
 			tmp=x[i];
