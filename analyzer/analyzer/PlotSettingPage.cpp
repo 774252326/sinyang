@@ -5,7 +5,7 @@
 #include "analyzer.h"
 #include "PlotSettingPage.h"
 #include "afxdialogex.h"
-
+#include "ColorButton.h"
 
 // PlotSettingPage dialog
 
@@ -75,6 +75,19 @@ int PlotSettingPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	// TODO:  Add your specialized creation code here
+
+	CSize gap1(20,20);
+	CSize gap2(20,20);
+
+	CRect winrect;
+	this->GetWindowRect(&winrect);
+	winrect.DeflateRect(gap1);
+	CPoint pt(gap1);
+
+	CSize comboSize((winrect.Width()-gap2.cx-gap2.cx)/3, 22);
+	CComboBox *pCombo;
+
+	CString str;
 
 
 

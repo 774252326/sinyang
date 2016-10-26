@@ -2,7 +2,7 @@
 #define CALGRIDT_H
 
 #include <math.h>
-
+#include <vector>
 
 
 //compute axis grid interval 1E(x) for given length d. return integer x.
@@ -48,6 +48,20 @@ double calreso(const T d){
 	calgrid(d,r);
 	return r[0]*pow(10.0,r[1]);
 }
+
+
+template <typename T>
+void calgridVT(T xmax, T xmin, std::vector<T> &gridx){	
+	if(xmax>xmin){
+		double resox=calreso(xmax-xmin);
+		for(double gridi=resox*ceil(xmin/resox);gridi<=xmax;gridi+=resox){
+			if(gridi<resox && -gridi<resox)
+				gridi=0;
+			gridx.push_back((T)gridi);
+		}
+	}
+}
+
 
 
 

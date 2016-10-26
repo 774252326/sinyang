@@ -33,8 +33,17 @@ IMPLEMENT_DYNCREATE(dlg1, CFormView)
 	//, xlabel(_T(""))
 	//, ylabel(_T(""))
 	, m_mouseDownPoint(0)
+	, metricGridLong(5)
+	, metricGridShort(3)
 {
-
+	fs.bkgndC=white;
+	fs.borderC=black;
+	fs.gridC=blue;
+	fs.gridType=0;
+	fs.labelC=green;
+	fs.labelSize=20;
+	fs.metricC=black;
+	fs.metricSize=15;
 }
 
 dlg1::~dlg1()
@@ -172,8 +181,8 @@ CRect dlg1::DrawXYAxis(CRect rect, CDC* pdc)
 	CRect newrect=rect;
 	CPoint textLocate;
 	CPen pen;
-	int metricH=15;
-	int labelH=20;
+	int metricH=fs.metricSize;
+	int labelH=fs.labelSize;
 	int lc=5;
 	int lcs=lc-2;
 	double gridi,XMAX,XMIN,YMAX,YMIN;
@@ -188,11 +197,11 @@ CRect dlg1::DrawXYAxis(CRect rect, CDC* pdc)
 
 	CString fontName=L"Arial";
 
-	COLORREF bkgndC=white;
-	COLORREF axisC=black;
-	COLORREF labelC=green;
+	COLORREF bkgndC=fs.bkgndC;
+	COLORREF axisC=fs.gridC;
+	COLORREF labelC=fs.labelC;
 
-	drawRectangle(rect,pdc,bkgndC,axisC);
+	drawRectangle(rect,pdc,fs.bkgndC,fs.borderC);
 
 	////////////////////////////////////////////////////////////////////
 
@@ -226,79 +235,85 @@ CRect dlg1::DrawXYAxis(CRect rect, CDC* pdc)
 	pOldFont=pdc->SelectObject(&font);
 
 	//double resox=pow(10.0,calgrid(XMAX-XMIN));
+	oc=pdc->SetTextColor(fs.metricC);
 
 	double resox=calreso(XMAX-XMIN);
 
 	for(gridi=resox*ceil(XMIN/resox);gridi<=XMAX;gridi+=resox){
 
 		tmp=xRescale(gridi,XMIN,XMAX,rect.left,rect.right);
-		pdc->MoveTo(tmp,rect.bottom);
-		pdc->LineTo(tmp,rect.bottom+lcs);
 
 		pdc->MoveTo(tmp,rect.bottom);
 		pdc->LineTo(tmp,rect.top);
 
-		if(gridi<resox && -gridi<resox)
-			gridi=0;
 
-		str.Format(L"%g",gridi);
-		sz=pdc->GetTextExtent(str);
+		if(fs.metricSize>=0){
+			if(gridi<resox && -gridi<resox)
+				gridi=0;
+
+			str.Format(L"%g",gridi);
+			sz=pdc->GetTextExtent(str);
 
 
-		textLocate.x=tmp-sz.cx/2;
-		textLocate.y=rect.bottom+lc;
-		if(xmrect.right<textLocate.x){
-			if(textLocate.x+sz.cx<rect.right){
-				pdc->TextOutW(textLocate.x,textLocate.y,str);
-				xmrect.right=textLocate.x+sz.cx;
-				xmrect.bottom=textLocate.y+sz.cy;
+			textLocate.x=tmp-sz.cx/2;
+			textLocate.y=rect.bottom+lc;
+			if(xmrect.right<textLocate.x){
+				if(textLocate.x+sz.cx<rect.right){
+					pdc->TextOutW(textLocate.x,textLocate.y,str);
+					xmrect.right=textLocate.x+sz.cx;
+					xmrect.bottom=textLocate.y+sz.cy;
 
+					pdc->MoveTo(tmp,rect.bottom);
+					pdc->LineTo(tmp,rect.bottom+lc);
+
+				}
+			}
+			else{
 				pdc->MoveTo(tmp,rect.bottom);
-				pdc->LineTo(tmp,rect.bottom+lc);
-
-
-
+				pdc->LineTo(tmp,rect.bottom+lcs);
 			}
 		}
+
 	}
 	newrect.bottom+=lc+sz.cy;
 	pdc->SelectObject(pOldFont);
 	font.DeleteObject();
+	pdc->SetTextColor(oc);
 	pdc->SelectObject(pOldPen);
 	pen.DeleteObject();
 
-
-	//draw x axis label
-	font.CreateFont(
-		labelH,                        // nHeight
-		0,                         // nWidth
-		0,                         // nEscapement
-		0,                         // nOrientation
-		FW_NORMAL,                 // nWeight
-		FALSE,                     // bItalic
-		FALSE,                     // bUnderline
-		0,                         // cStrikeOut
-		ANSI_CHARSET,              // nCharSet
-		OUT_DEFAULT_PRECIS,        // nOutPrecision
-		CLIP_DEFAULT_PRECIS,       // nClipPrecision
-		DEFAULT_QUALITY,           // nQuality
-		DEFAULT_PITCH | FF_SWISS,  // nPitchAndFamily
-		fontName);                 // lpszFacename
-	oc=pdc->SetTextColor(labelC);
-	//font.CreatePointFont(200,L"MS Gothic",NULL);
-	//str.Format(L"time(s)");
-	str.Format(pd.xlabel);
-	//str=dtlist.back().label[0];
-	pOldFont=pdc->SelectObject(&font);
-	sz=pdc->GetTextExtent(str);
-	//pdc->SetTextAlign(TA_UPDATECP);
-	pdc->TextOutW(rect.CenterPoint().x-(sz.cx/2),newrect.bottom,str);
-	pdc->SelectObject(pOldFont);
-	font.DeleteObject();
-	pdc->SetTextColor(oc);
-	//TRACE("%d,",sz.cy);
-	newrect.bottom+=sz.cy;
-
+	if(labelH>=0){
+		//draw x axis label
+		font.CreateFont(
+			labelH,                        // nHeight
+			0,                         // nWidth
+			0,                         // nEscapement
+			0,                         // nOrientation
+			FW_NORMAL,                 // nWeight
+			FALSE,                     // bItalic
+			FALSE,                     // bUnderline
+			0,                         // cStrikeOut
+			ANSI_CHARSET,              // nCharSet
+			OUT_DEFAULT_PRECIS,        // nOutPrecision
+			CLIP_DEFAULT_PRECIS,       // nClipPrecision
+			DEFAULT_QUALITY,           // nQuality
+			DEFAULT_PITCH | FF_SWISS,  // nPitchAndFamily
+			fontName);                 // lpszFacename
+		oc=pdc->SetTextColor(labelC);
+		//font.CreatePointFont(200,L"MS Gothic",NULL);
+		//str.Format(L"time(s)");
+		str.Format(pd.xlabel);
+		//str=dtlist.back().label[0];
+		pOldFont=pdc->SelectObject(&font);
+		sz=pdc->GetTextExtent(str);
+		//pdc->SetTextAlign(TA_UPDATECP);
+		pdc->TextOutW(rect.CenterPoint().x-(sz.cx/2),newrect.bottom,str);
+		pdc->SelectObject(pOldFont);
+		font.DeleteObject();
+		pdc->SetTextColor(oc);
+		//TRACE("%d,",sz.cy);
+		newrect.bottom+=sz.cy;
+	}
 	///////////////////////////////////////////////////////
 
 
@@ -328,7 +343,7 @@ CRect dlg1::DrawXYAxis(CRect rect, CDC* pdc)
 		DEFAULT_QUALITY,           // nQuality
 		DEFAULT_PITCH | FF_SWISS,  // nPitchAndFamily
 		fontName);                 // lpszFacename
-
+	oc=pdc->SetTextColor(fs.metricC);
 
 	//draw y metric
 	double resoy=calreso(YMAX-YMIN);
@@ -368,43 +383,44 @@ CRect dlg1::DrawXYAxis(CRect rect, CDC* pdc)
 	newrect.left-=lc+sz.cy;
 	pdc->SelectObject(pOldFont);
 	font.DeleteObject();
+	pdc->SetTextColor(oc);
 	pdc->SelectObject(pOldPen);
 	pen.DeleteObject();
 
 
+	if(labelH>=0){
+		//draw y axis label
+		font.CreateFont(
+			labelH,                        // nHeight
+			0,                         // nWidth
+			900,                         // nEscapement
+			0,                         // nOrientation
+			FW_NORMAL,                 // nWeight
+			FALSE,                     // bItalic
+			FALSE,                     // bUnderline
+			0,                         // cStrikeOut
+			ANSI_CHARSET,              // nCharSet
+			OUT_DEFAULT_PRECIS,        // nOutPrecision
+			CLIP_DEFAULT_PRECIS,       // nClipPrecision
+			DEFAULT_QUALITY,           // nQuality
+			DEFAULT_PITCH | FF_SWISS,  // nPitchAndFamily
+			fontName);                 // lpszFacename
 
-	//draw y axis label
-	font.CreateFont(
-		labelH,                        // nHeight
-		0,                         // nWidth
-		900,                         // nEscapement
-		0,                         // nOrientation
-		FW_NORMAL,                 // nWeight
-		FALSE,                     // bItalic
-		FALSE,                     // bUnderline
-		0,                         // cStrikeOut
-		ANSI_CHARSET,              // nCharSet
-		OUT_DEFAULT_PRECIS,        // nOutPrecision
-		CLIP_DEFAULT_PRECIS,       // nClipPrecision
-		DEFAULT_QUALITY,           // nQuality
-		DEFAULT_PITCH | FF_SWISS,  // nPitchAndFamily
-		fontName);                 // lpszFacename
+		oc=pdc->SetTextColor(labelC);
 
-	oc=pdc->SetTextColor(labelC);
+		//str.Format(L"current(A)");
+		str.Format(pd.ylabel);
+		//str=dtlist.back().label[1];
+		pOldFont=pdc->SelectObject(&font);
+		sz=pdc->GetTextExtent(str);
+		pdc->TextOutW(newrect.left-sz.cy,rect.CenterPoint().y+(sz.cx/2),str);
+		pdc->SelectObject(pOldFont);
+		font.DeleteObject();
+		//TRACE("%d,",sz.cy);
+		pdc->SetTextColor(oc);
+		newrect.left-=sz.cy;
 
-	//str.Format(L"current(A)");
-	str.Format(pd.ylabel);
-	//str=dtlist.back().label[1];
-	pOldFont=pdc->SelectObject(&font);
-	sz=pdc->GetTextExtent(str);
-	pdc->TextOutW(newrect.left-sz.cy,rect.CenterPoint().y+(sz.cx/2),str);
-	pdc->SelectObject(pOldFont);
-	font.DeleteObject();
-	//TRACE("%d,",sz.cy);
-	pdc->SetTextColor(oc);
-	newrect.left-=sz.cy;
-
-
+	}
 
 	///////////////////////////////////////////////////////////////////////
 
@@ -565,7 +581,8 @@ void dlg1::OnPaint()
 	//if( !xlist.empty() && !ylist.empty() ){
 	if(!plotrect.IsRectEmpty() && !pd.ps.empty()){
 
-		DrawXYAxis(plotrect,&dcMem);
+		//DrawXYAxis(plotrect,&dcMem);
+		DrawXYAxis1(plotrect,&dcMem);
 
 		CRect mainrt;
 		CRgn rgn;
@@ -920,6 +937,11 @@ CRect dlg1::DrawLegend1(CRect rect, CDC* pDC)
 {
 
 
+	int lc=25;
+	int gap=2;
+	int Hmax=15;
+	CString fontName=L"Arial";
+
 	CFont font;
 	CFont *pOldFont;
 	CString str;
@@ -932,20 +954,19 @@ CRect dlg1::DrawLegend1(CRect rect, CDC* pDC)
 	int metricH;
 	if(rect.Height()>pd.ps.size()){
 		metricH=rect.Height()/pd.ps.size();
-		if(metricH>15)
-			metricH=15;
+		if(metricH>Hmax)
+			metricH=Hmax;
 	}
 	else{
 		metricH=1;
 	}
+	
 
-	int lc=25;
-	int gap=2;
 	CPoint textLocate;
 	CPoint topright(rect.right,rect.top);
 	int tmp;
 	COLORREF oc;
-	CString fontName=L"Arial";
+
 
 
 	font.CreateFont(
@@ -1354,7 +1375,14 @@ void dlg1::OnInitialUpdate()
 void dlg1::GetPlotRect(CRect & plotRect)
 {
 	this->GetClientRect(&plotRect);
-	int gap=50;
+
+	int gap=10;
+	if(fs.labelSize>=0){
+		gap+=fs.labelSize;
+	}
+	if(fs.metricSize>=0){
+		gap+=metricGridLong+fs.metricSize;
+	}
 	plotRect.DeflateRect(gap,gap,gap,gap);
 }
 
@@ -1446,17 +1474,304 @@ void dlg1::smoothLine(void)
 
 void dlg1::clear(void)
 {
-	//xll.clear();
-	//yll.clear();
-	//ll.clear();
-	//ps.clear();
 	xmin=xmax=ymin=ymax=0;
-	//xlabel.Empty();
-	//ylabel.Empty();
-
 	pd.clear();
-
 }
 
 
 
+
+
+CRect dlg1::DrawXYAxis1(CRect rect, CDC * pdc)
+{
+	CRect newrect=rect;
+	double XMAX,XMIN,YMAX,YMIN;
+	XMAX=xmax;
+	XMIN=xmin;
+	YMAX=ymax;
+	YMIN=ymin;
+
+	drawRectangle(rect,pdc,fs.bkgndC,fs.borderC);
+
+	std::vector<double> gridx;
+	calgridVT(XMAX,XMIN,gridx);
+	std::vector<long> gridV(gridx.size());
+	xRescaleVT(gridx.data(),gridx.size(),XMIN,XMAX,gridV.data(),rect.left,rect.right);
+	std::vector<double> gridy;
+	calgridVT(YMAX,YMIN,gridy);
+	std::vector<long> gridH(gridy.size());
+	xRescaleVT(gridy.data(),gridy.size(),YMIN,YMAX,gridH.data(),rect.bottom,rect.top);
+
+	DrawGridLine(rect,pdc,fs.gridType,fs.gridC,gridH,gridV);
+
+	newrect=DrawMetric(rect,pdc,fs.metricSize,fs.metricC,fs.gridC,gridH,gridV,gridx,gridy);
+
+	newrect=DrawLabel(newrect,pdc,rect.CenterPoint(),fs.labelSize,fs.labelC);
+
+	return newrect;
+
+}
+
+
+void dlg1::DrawGridLine(const CRect & rect, CDC * pdc, int gridType, COLORREF gridC, const std::vector<long> & gridH, const std::vector<long> & gridV)
+{
+	int lineWidth=1;
+	//draw xy grid line
+	if(gridType>=0){
+
+		CPen pen;
+		CPen * pOldPen;
+
+		pen.CreatePen(gridType, lineWidth, gridC);
+		pOldPen=pdc->SelectObject(&pen);
+
+		std::vector<DWORD> npo(gridV.size()+gridH.size(),2);
+		std::vector<CPoint> gridline(npo.size()*2);
+		for(size_t i=0;i<gridV.size();i++){
+			gridline[i*2].x=gridV[i];
+			gridline[i*2].y=rect.top;
+			gridline[i*2+1].x=gridV[i];
+			gridline[i*2+1].y=rect.bottom;
+		}
+		for(size_t i=0;i<gridH.size();i++){
+			gridline[(i+gridV.size())*2].x=rect.left;
+			gridline[(i+gridV.size())*2].y=gridH[i];
+			gridline[(i+gridV.size())*2+1].x=rect.right;
+			gridline[(i+gridV.size())*2+1].y=gridH[i];
+		}	
+		pdc->PolyPolyline(gridline.data(),npo.data(),npo.size());
+		pdc->SelectObject(pOldPen);
+		pen.DeleteObject();
+	}
+
+
+}
+
+
+CRect dlg1::DrawMetric(const CRect & rect,
+	CDC * pdc,
+	int metricSize,
+	COLORREF metricC,
+	COLORREF gridC,
+	const std::vector<long> & gridH,
+	const std::vector<long> & gridV,
+	const std::vector<double> & gridx,
+	const std::vector<double> & gridy)
+{
+	int lineWidth=1;
+	CRect newrect=rect;
+	int metricH=metricSize;
+	int lc=metricGridLong;
+	int lcs=metricGridShort;
+
+	if(fs.metricSize>=0){
+
+		CFont font;
+		CFont *pOldFont;
+		CString str;
+		CPen pen;
+		CPen * pOldPen;
+		CSize sz;
+
+		CPoint textLocate;
+		COLORREF oc;
+		CString fontName=L"Arial";
+
+
+
+		pen.CreatePen(PS_SOLID, lineWidth, gridC);
+		pOldPen=pdc->SelectObject(&pen);
+		oc=pdc->SetTextColor(fs.metricC);
+
+
+		//draw x metric
+		CRect xmrect(rect.left,rect.bottom+lc,rect.left,rect.bottom+lc);
+
+		font.CreateFont(
+			metricH,                        // nHeight
+			0,                         // nWidth
+			0,                         // nEscapement
+			0,                         // nOrientation
+			FW_NORMAL,                 // nWeight
+			FALSE,                     // bItalic
+			FALSE,                     // bUnderline
+			0,                         // cStrikeOut
+			ANSI_CHARSET,              // nCharSet
+			OUT_DEFAULT_PRECIS,        // nOutPrecision
+			CLIP_DEFAULT_PRECIS,       // nClipPrecision
+			DEFAULT_QUALITY,           // nQuality
+			DEFAULT_PITCH | FF_SWISS,  // nPitchAndFamily
+			fontName);                 // lpszFacename
+		pOldFont=pdc->SelectObject(&font);
+
+		textLocate.y=rect.bottom+lc;
+		for(size_t i=0;i<gridV.size();i++){
+
+			pdc->MoveTo(gridV[i],rect.bottom);
+			pdc->LineTo(gridV[i],rect.bottom+lcs);
+
+			str.Format(L"%g",gridx[i]);
+			sz=pdc->GetTextExtent(str);
+			textLocate.x=gridV[i]-sz.cx/2;
+
+			if(xmrect.right<textLocate.x &&
+				textLocate.x+sz.cx<rect.right){
+					pdc->TextOutW(textLocate.x,textLocate.y,str);
+					xmrect.right=textLocate.x+sz.cx;
+					if(sz.cy>xmrect.Height()){
+						xmrect.bottom=textLocate.y+sz.cy;
+					}
+					pdc->MoveTo(gridV[i],rect.bottom);
+					pdc->LineTo(gridV[i],rect.bottom+lc);
+			}					
+
+		}
+		newrect.bottom=xmrect.bottom;
+
+		pdc->SelectObject(pOldFont);
+		font.DeleteObject();
+		////////////////////////////////////////////////////////////////////////////
+		//draw y metric
+		CRect ymrect(rect.left-lc,rect.bottom,rect.left-lc,rect.bottom);
+
+		font.CreateFont(
+			metricH,                        // nHeight
+			0,                         // nWidth
+			900,                         // nEscapement
+			0,                         // nOrientation
+			FW_NORMAL,                 // nWeight
+			FALSE,                     // bItalic
+			FALSE,                     // bUnderline
+			0,                         // cStrikeOut
+			ANSI_CHARSET,              // nCharSet
+			OUT_DEFAULT_PRECIS,        // nOutPrecision
+			CLIP_DEFAULT_PRECIS,       // nClipPrecision
+			DEFAULT_QUALITY,           // nQuality
+			DEFAULT_PITCH | FF_SWISS,  // nPitchAndFamily
+			fontName);                 // lpszFacename
+		pOldFont=pdc->SelectObject(&font);
+
+
+		for(size_t i=0;i<gridH.size();i++){
+			pdc->MoveTo(rect.left,gridH[i]);
+			pdc->LineTo(rect.left-lcs,gridH[i]);
+
+			str.Format(L"%g",gridy[i]);
+			sz=pdc->GetTextExtent(str);
+
+			textLocate.x=rect.left-lc-sz.cy;
+			textLocate.y=gridH[i]+sz.cx/2;
+			if(ymrect.top>textLocate.y &&
+				textLocate.y-sz.cx>rect.top){
+					pdc->TextOutW(textLocate.x,textLocate.y,str);
+					if(ymrect.left>textLocate.x){
+						ymrect.left=textLocate.x;
+					}
+					ymrect.top=textLocate.y-sz.cx;
+
+					pdc->MoveTo(rect.left,gridH[i]);
+					pdc->LineTo(rect.left-lc,gridH[i]);
+
+			}
+
+
+		}
+		newrect.left=ymrect.left;
+		pdc->SelectObject(pOldFont);
+		font.DeleteObject();
+		//////////////////////////////////////////////
+
+
+
+		pdc->SetTextColor(oc);
+		pdc->SelectObject(pOldPen);
+		pen.DeleteObject();
+
+
+	}
+
+
+	return newrect;
+
+}
+
+
+CRect dlg1::DrawLabel(const CRect & rect, CDC * pdc, CPoint centerP, int labelSize, COLORREF labelC)
+{
+
+
+	int labelH=labelSize;
+	CRect newrect=rect;
+
+	if(labelSize>=0){
+
+		CFont font;
+		CFont *pOldFont;
+		CString str;
+
+		COLORREF oc;
+		CSize sz;
+		CString fontName=L"Arial";
+
+
+		oc=pdc->SetTextColor(labelC);
+
+		//draw x axis label
+		font.CreateFont(
+			labelH,                        // nHeight
+			0,                         // nWidth
+			0,                         // nEscapement
+			0,                         // nOrientation
+			FW_NORMAL,                 // nWeight
+			FALSE,                     // bItalic
+			FALSE,                     // bUnderline
+			0,                         // cStrikeOut
+			ANSI_CHARSET,              // nCharSet
+			OUT_DEFAULT_PRECIS,        // nOutPrecision
+			CLIP_DEFAULT_PRECIS,       // nClipPrecision
+			DEFAULT_QUALITY,           // nQuality
+			DEFAULT_PITCH | FF_SWISS,  // nPitchAndFamily
+			fontName);                 // lpszFacename
+		//font.CreatePointFont(200,L"MS Gothic",NULL);
+		pOldFont=pdc->SelectObject(&font);
+
+		str.Format(pd.xlabel);
+		sz=pdc->GetTextExtent(str);
+		pdc->TextOutW(centerP.x-(sz.cx/2),newrect.bottom,str);
+		newrect.bottom+=sz.cy;
+
+		pdc->SelectObject(pOldFont);
+		font.DeleteObject();
+
+
+		//draw y axis label
+		font.CreateFont(
+			labelH,                        // nHeight
+			0,                         // nWidth
+			900,                         // nEscapement
+			0,                         // nOrientation
+			FW_NORMAL,                 // nWeight
+			FALSE,                     // bItalic
+			FALSE,                     // bUnderline
+			0,                         // cStrikeOut
+			ANSI_CHARSET,              // nCharSet
+			OUT_DEFAULT_PRECIS,        // nOutPrecision
+			CLIP_DEFAULT_PRECIS,       // nClipPrecision
+			DEFAULT_QUALITY,           // nQuality
+			DEFAULT_PITCH | FF_SWISS,  // nPitchAndFamily
+			fontName);                 // lpszFacename
+		pOldFont=pdc->SelectObject(&font);
+
+		str.Format(pd.ylabel);
+		sz=pdc->GetTextExtent(str);
+		pdc->TextOutW(newrect.left-sz.cy-1,centerP.y+(sz.cx/2),str);
+		newrect.left-=sz.cy+1;
+
+		pdc->SelectObject(pOldFont);
+		font.DeleteObject();
+
+		pdc->SetTextColor(oc);
+	}
+
+	return newrect;
+}

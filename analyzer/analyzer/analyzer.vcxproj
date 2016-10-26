@@ -112,6 +112,7 @@
     <ClInclude Include="analyzerDoc.h" />
     <ClInclude Include="analyzerView.h" />
     <ClInclude Include="ANPara.h" />
+    <ClInclude Include="ColorButton.h" />
     <ClInclude Include="CSpline.h" />
     <ClInclude Include="dlg1.h" />
     <ClInclude Include="func.h" />
@@ -146,6 +147,7 @@
     <ClCompile Include="analyzerDoc.cpp" />
     <ClCompile Include="analyzerView.cpp" />
     <ClCompile Include="ANPara.cpp" />
+    <ClCompile Include="ColorButton.cpp" />
     <ClCompile Include="CSpline.cpp" />
     <ClCompile Include="dlg1.cpp" />
     <ClCompile Include="func.cpp" />

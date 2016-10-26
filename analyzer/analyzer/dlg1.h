@@ -86,6 +86,13 @@ public:
 	void clear(void);
 	void updatePlotRange(const std::vector<double> &x, const std::vector<double> &y, bool flg=false);
 	void updatePlotRange(bool flg=true);
+	figspec fs;
+	CRect DrawXYAxis1(CRect rect, CDC * pdc);
+	void DrawGridLine(const CRect & rect, CDC * pdc, int gridType, COLORREF gridC, const std::vector<long> & gridH, const std::vector<long> & gridV);
+	CRect DrawMetric(const CRect & rect, CDC * pdc, int metricSize, COLORREF metricC, COLORREF gridC, const std::vector<long> & gridH, const std::vector<long> & gridV, const std::vector<double> & gridx, const std::vector<double> & gridy);
+	CRect DrawLabel(const CRect & rect, CDC * pdc, CPoint centerP, int labelSize, COLORREF labelC);
+	int metricGridLong;
+	int metricGridShort;
 };
 
 

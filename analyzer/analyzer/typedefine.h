@@ -72,6 +72,21 @@ typedef struct PLOTSPEC{
 //} mypara;
 
 
+typedef struct FIGSPEC{
+	COLORREF bkgndC;
+	COLORREF borderC;
+
+	COLORREF gridC;
+	int gridType;
+
+	COLORREF labelC;
+	int labelSize;
+
+	COLORREF metricC;
+	int metricSize;
+
+} figspec;
+
 void mreadini(wchar_t *fn, anp &p1, cvp &p2, sap &p3 );
 
 void mwriteini(wchar_t *fn, const anp &p1, const cvp &p2, const sap &p3 );

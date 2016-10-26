@@ -20,9 +20,11 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 public:
+
 	std::vector<plotspec> ps;
 	virtual BOOL OnSetActive();
 	virtual BOOL OnKillActive();
 	virtual BOOL Create(LPCTSTR lpszTemplateName, CWnd* pParentWnd = NULL);
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	figspec fs;
 };
