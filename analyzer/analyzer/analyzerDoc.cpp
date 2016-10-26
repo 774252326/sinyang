@@ -82,6 +82,9 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 
 		//this->SetModifiedFlag();
 
+		UpdateState();
+		Show();
+
 		return TRUE;
 	}
 

@@ -664,7 +664,7 @@ void CMainFrame::OnApplicationLook(UINT id)
 
 void CMainFrame::OnUpdateApplicationLook(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(GetWinVer()==6);
+	//pCmdUI->Enable(GetWinVer()==6);
 	pCmdUI->SetRadio(theApp.m_nAppLook == pCmdUI->m_nID);
 }
 
@@ -1216,28 +1216,34 @@ void CMainFrame::OnUpdateViewToolbarA(CCmdUI *pCmdUI)
 void CMainFrame::OnUpdateAnalysisMethodsetup(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(/*pst==stop &&*/ GetCurAuth()!=UserAccount::authority::guest);
+	//pCmdUI->Enable(/*pst==stop &&*/ GetCurAuth()!=UserAccount::authority::guest);
 }
 
 
 void CMainFrame::OnUpdateAnalysisStartanalysis(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst==stop && GetCurAuth()!=UserAccount::authority::guest);
+	pCmdUI->Enable(pst==stop 
+		//&& GetCurAuth()!=UserAccount::authority::guest
+		);
 }
 
 
 void CMainFrame::OnUpdateAnalysisPause(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst!=stop && GetCurAuth()!=UserAccount::authority::guest);
+	pCmdUI->Enable(pst!=stop 
+		//&& GetCurAuth()!=UserAccount::authority::guest
+		);
 }
 
 
 void CMainFrame::OnUpdateAnalysisAbortanalysis(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst!=stop && GetCurAuth()!=UserAccount::authority::guest);
+	pCmdUI->Enable(pst!=stop 
+		//&& GetCurAuth()!=UserAccount::authority::guest
+		);
 }
 
 
@@ -1262,7 +1268,7 @@ void CMainFrame::OnUpdateAnalysisExportdata(CCmdUI *pCmdUI)
 	// TODO: Add your command update UI handler code here
 
 	pCmdUI->Enable( (pst!=running) 
-		& (GetCurAuth()!=UserAccount::authority::guest)
+		&& (GetCurAuth()!=UserAccount::authority::guest)
 		);
 }
 
@@ -1272,35 +1278,45 @@ void CMainFrame::OnUpdateAnalysisExportdata(CCmdUI *pCmdUI)
 void CMainFrame::OnUpdateFilePrint(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst==stop && GetCurAuth()!=UserAccount::authority::guest);
+	pCmdUI->Enable(pst==stop 
+		//&& GetCurAuth()!=UserAccount::authority::guest
+		);
 }
 
 
 void CMainFrame::OnUpdateFilePrintPreview(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst==stop && GetCurAuth()!=UserAccount::authority::guest);
+	pCmdUI->Enable(pst==stop 
+		//&& GetCurAuth()!=UserAccount::authority::guest
+		);
 }
 
 
 void CMainFrame::OnUpdateFilePrintSetup(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst==stop && GetCurAuth()!=UserAccount::authority::guest);
+	pCmdUI->Enable(pst==stop 
+		//&& GetCurAuth()!=UserAccount::authority::guest
+		);
 }
 
 
 void CMainFrame::OnUpdateFileSave(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst==stop && GetCurAuth()!=UserAccount::authority::guest);
+	pCmdUI->Enable(pst==stop 
+		//&& GetCurAuth()!=UserAccount::authority::guest
+		);
 }
 
 
 void CMainFrame::OnUpdateFileNew(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst==stop && GetCurAuth()!=UserAccount::authority::guest);
+	pCmdUI->Enable(pst==stop 
+		//&& GetCurAuth()!=UserAccount::authority::guest
+		);
 }
 
 void CMainFrame::OnUpdateFileOpen(CCmdUI *pCmdUI)
@@ -1313,7 +1329,9 @@ void CMainFrame::OnUpdateFileOpen(CCmdUI *pCmdUI)
 void CMainFrame::OnUpdateViewFitwindow(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst!=running && GetCurAuth()!=UserAccount::authority::guest);
+	pCmdUI->Enable(pst!=running 
+		//&& GetCurAuth()!=UserAccount::authority::guest
+		);
 }
 
 
@@ -1330,7 +1348,9 @@ void CMainFrame::OnUpdateOptionsPlotsettings(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
 
-	pCmdUI->Enable(pst==stop && GetCurAuth()!=UserAccount::authority::guest);
+	pCmdUI->Enable(pst==stop 
+		//&& GetCurAuth()!=UserAccount::authority::guest
+		);
 }
 
 

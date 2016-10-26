@@ -19,7 +19,7 @@ class PDFPrinter
 {
 public:
 
-		static CString folderpath()
+	static CString folderpath()
 	{
 		CString  strdir,tmpdir;
 		TCHAR szPath[MAX_PATH] = {0};
@@ -58,7 +58,7 @@ public:
 		)
 	{
 		/* This is where the data files are. Adjust as necessary. */
-		
+
 
 		pdflib::PDFlib p;
 
@@ -1570,7 +1570,7 @@ public:
 		)
 	{
 
-		
+
 
 		//const std::wstring temppdf = L"temp.pdf";
 		//const std::wstring templogobmp=L"templogo.bmp";

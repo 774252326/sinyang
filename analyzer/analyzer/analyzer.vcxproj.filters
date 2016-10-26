@@ -433,6 +433,9 @@
     <None Include="hlp\example.htm">
       <Filter>HTML Help Topics</Filter>
     </None>
+    <None Include="hlp\permission.htm">
+      <Filter>HTML Help Topics</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="analyzer.h">

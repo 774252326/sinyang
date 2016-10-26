@@ -394,6 +394,9 @@ echo.
     <None Include="hlp\menu_window.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
+    <None Include="hlp\permission.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
     <None Include="hlp\run_test.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
