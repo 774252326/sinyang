@@ -16,6 +16,11 @@
 #include "MainFrm.h"
 #include "ComputeDlg.h"
 
+#include "PDFPrinter.hpp"
+
+#include "analyzerView.h"
+
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -26,12 +31,14 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 
 	BEGIN_MESSAGE_MAP(CanalyzerDoc, CDocument)
 		ON_COMMAND(ID_ANALYSIS_COMPUTE, &CanalyzerDoc::OnAnalysisCompute)
+		ON_COMMAND(ID_ANALYSIS_REPORT, &CanalyzerDoc::OnAnalysisReport)
 	END_MESSAGE_MAP()
 
 
 	// CanalyzerDoc construction/destruction
 
 	CanalyzerDoc::CanalyzerDoc()
+		: bChangeSAP(false)
 	{
 		// TODO: add one-time construction code here
 
@@ -49,14 +56,24 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		// TODO: add reinitialization code here
 		// (SDI documents will reuse this document)
 
-		CSingleLock singleLock(&m_CritSection);
-		singleLock.Lock();
-		if (singleLock.IsLocked())  // Resource has been locked
+		CSingleLock singleLock(&m_CritSection);		
+		if (singleLock.Lock())  // Resource has been locked
 		{
 			da.Clear();
+
 			// Now that we are finished, 
 			// unlock the resource for others.
 			singleLock.Unlock();
+		}
+
+		CSingleLock singleLockSAP(&m_CritSectionSAP);		
+		if (singleLockSAP.Lock())  // Resource has been locked
+		{
+			p3todo.saplist.clear();
+			bChangeSAP=false;
+			// Now that we are finished, 
+			// unlock the resource for others.
+			singleLockSAP.Unlock();
 		}
 
 		return TRUE;
@@ -70,8 +87,7 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 	void CanalyzerDoc::Serialize(CArchive& ar)
 	{
 		CSingleLock singleLock(&m_CritSection);
-		singleLock.Lock();
-		if (singleLock.IsLocked())  // Resource has been locked
+		if (singleLock.Lock())  // Resource has been locked
 		{
 			da.Serialize(ar);
 			// Now that we are finished, 
@@ -87,7 +103,7 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		{
 			// TODO: add loading code here
 
-			UINT flg=da.ComputeStateData();
+			UpdateState();
 			Show();
 
 		}
@@ -171,15 +187,15 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		if(pos!=NULL){
 			CMainFrame *mf=(CMainFrame*)(GetNextView(pos)->GetParentFrame());
 
-			CSingleLock singleLock(&m_CritSection);
-			singleLock.Lock();
-			if (singleLock.IsLocked())  // Resource has been locked
-			{
-				mf->GetOutputWnd()->GetListCtrl()->dol.assign(da.dol.begin(),da.dol.end());
-				// Now that we are finished, 
-				// unlock the resource for others.
-				singleLock.Unlock();
-			}
+			//	CSingleLock singleLock(&m_CritSection);
+			//	singleLock.Lock();
+			//	if (singleLock.IsLocked())  // Resource has been locked
+			//	{
+			//		mf->GetOutputWnd()->GetListCtrl()->dol.assign(da.dol.begin(),da.dol.end());
+			//		// Now that we are finished, 
+			//		// unlock the resource for others.
+			//		singleLock.Unlock();
+			//	}
 
 			::PostMessage(mf->GetOutputWnd()->GetListCtrl()->GetSafeHwnd(),
 				MESSAGE_SHOW_DOL,
@@ -196,5 +212,90 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 
 		ComputeDlg cpd;
 		cpd.DoModal();
+
+	}
+
+	UINT CanalyzerDoc::UpdateState(void)
+	{
+		UINT rs;
+		CSingleLock singleLock(&m_CritSection);
+		if (singleLock.Lock())  // Resource has been locked
+		{
+			rs=da.ComputeStateData();
+			switch(da.runstate){
+			case 0:
+			case 5:
+			case 7:
+				{
+					if(bChangeSAP){
+						CSingleLock singleLockSAP(&m_CritSectionSAP);
+						if (singleLockSAP.Lock())  // Resource has been locked
+						{
+							da.p3=da.p3done;
+							da.p3.AppendData(p3todo);
+							rs=da.ComputeStateData();
+							bChangeSAP=false;
+							// Now that we are finished, 
+							// unlock the resource for others.
+							singleLockSAP.Unlock();
+						}
+					}
+				}
+				break;
+			default:
+				break;
+			}
+			// Now that we are finished, 
+			// unlock the resource for others.
+			singleLock.Unlock();
+		}
+
+		return rs;
+	}
+
+
+	void CanalyzerDoc::SetSAPtodo(const SAPara & ptd)
+	{
+		CSingleLock singleLockSAP(&m_CritSectionSAP);
+		if (singleLockSAP.Lock())  // Resource has been locked
+		{
+
+
+			POSITION pos = GetFirstViewPosition();
+			if(pos!=NULL){
+				CMainFrame *mf=(CMainFrame*)(GetNextView(pos)->GetParentFrame());
+				if(mf->pst==pause){
+					da.ChangeSAP(ptd);
+					bChangeSAP=false;
+				}
+				else{
+					p3todo=ptd;
+					bChangeSAP=true;
+				}
+			}
+
+			// Now that we are finished, 
+			// unlock the resource for others.
+			singleLockSAP.Unlock();
+		}
+	}
+
+	void CanalyzerDoc::OnAnalysisReport()
+	{
+		// TODO: Add your command handler code here
+		PDFPrinter pp;
+		pp.ddex=da;
+
+		POSITION pos = GetFirstViewPosition();
+		if(pos!=NULL){
+			CanalyzerView *lv=(CanalyzerView*)GetNextView(pos);
+			pp.va.assign(lv->pdl.begin(),lv->pdl.end());
+		}
+		if(pos!=NULL){
+			CanalyzerView *lv=(CanalyzerView*)GetNextView(pos);
+			pp.tc.assign(lv->pdl.begin(),lv->pdl.end());
+		}
+
+		pp.work();
 
 	}

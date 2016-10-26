@@ -81,6 +81,10 @@ public:
 
 		pdl.resize(pi0);
 
+		if(!pdl.empty()){
+			pdl.back().pd.ShowLastLast();
+		}
+
 		return 0;
 
 

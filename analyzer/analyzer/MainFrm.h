@@ -26,7 +26,8 @@ public:
 public:
 	CWnd * LeftPane(void) const { return m_wndSplitter.GetPane(0,0);};
 	CWnd * RightPane(void) const { return m_wndSplitter.GetPane(0,1);};
-	
+	void ShowWaitDlg(CString tips);
+	void HideWaitDlg(void);
 // Overrides
 public:
 	virtual BOOL OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext);
@@ -66,6 +67,7 @@ public:
 	BOOL m_bSplitterCreated;
 	PropertySheetA1ML *psheetml;
 	WaitDlg *wd;
+	CWinThread *pWriteA;
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnSecurityLogin();
 	afx_msg void OnSecurityUseraccounts();
@@ -73,7 +75,9 @@ public:
 	COutputWnd * GetOutputWnd(void){ return &m_wndOutput; };
 	afx_msg LRESULT OnMessageUpdateDol(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnMessageCloseSapSheet(WPARAM wParam, LPARAM lParam);
-	
+	afx_msg void OnAnalysisAbortanalysis();
+	afx_msg void OnAnalysisPause();
+	afx_msg void OnAnalysisStartanalysis();
 };
 
 

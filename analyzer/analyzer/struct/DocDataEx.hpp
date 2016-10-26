@@ -26,10 +26,6 @@ public:
 		return step|(stepControl<<8)|(plotFilter<<16);
 	};
 
-
-	////////BYTE step=nby(sl.front(),0);
-	////////BYTE stepControl=nby(sl.front(),1);
-	////////BYTE plotFilter=nby(sl.front(),2);
 	static BYTE nby(DWORD w, unsigned int i)
 	{
 		i=i%4;
@@ -793,6 +789,33 @@ public:
 		return runstate;
 	};
 
+	UINT ChangeSAP(const SAPara &p3todo)
+	{
+		p3=p3done;
+		p3.AppendData(p3todo);
+		return ComputeStateData();
+	};
+
+	UINT UpdateState(const SAPara & p3todo, bool &bChangeSAP)
+	{
+		ComputeStateData();
+		switch(runstate){
+		case 0:
+		case 5:
+		case 7:
+			{
+				if(bChangeSAP){
+					ChangeSAP(p3todo);
+					bChangeSAP=false;					
+				}
+			}
+			break;
+		default:
+			break;
+		}
+		return runstate;
+	};
+
 	bool Read(CString fp)
 	{
 		if(ReadFileCustom(this,1,fp)==TRUE){
@@ -1502,7 +1525,7 @@ public:
 				break;
 			return false;
 		default:
-			return false;
+			break;
 		}
 
 		vl.assign(p1.CorrectionNumber(),Value());
@@ -1808,6 +1831,41 @@ public:
 
 	};
 
+
+
+	bool GetResultString(std::vector<CString> &name, std::vector<CString> &value)
+	{
+		RawData rd0;
+		std::vector<DataOutA> dolast0;
+
+		if(this->FinalData(rd0,dolast0)){
+			std::vector<Value> vl;
+			if(GetVL(vl,dolast0,rd0,p1)){
+				if(GetResultString(this,vl,name,value)){
+					return true;
+				}
+			}
+		}
+		return false;
+
+	};
+
+	bool GetResultString(std::vector<CString> &res)
+	{
+		std::vector<CString> name;
+		std::vector<CString> value;
+
+		bool flg=GetResultString(name,value);
+		res.clear();
+		if(flg){
+		for(size_t i=0;i<name.size();i++){
+			res.push_back(name[i]);
+			res.push_back(value[i]);
+		}
+		}
+		return flg;
+
+	};
 
 
 	//1:success;0:not success

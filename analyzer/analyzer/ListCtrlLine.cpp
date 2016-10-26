@@ -69,9 +69,11 @@ void ListCtrlLine::OnNMDblclk(NMHDR *pNMHDR, LRESULT *pResult)
 	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
 	// TODO: Add your control notification handler code here
 
-	CString str;
-	str.Format(L"n=%d",pNMItemActivate->iItem);
-	AfxMessageBox(str);
+	//CString str;
+	//str.Format(L"n=%d",pNMItemActivate->iItem);
+	//AfxMessageBox(str);
+
+	this->EditLabel(pNMItemActivate->iItem);
 
 	*pResult = 0;
 }

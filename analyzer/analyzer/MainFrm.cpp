@@ -44,7 +44,7 @@ typedef struct MYPARA{
 
 const DWORD sleepms=100;
 
-const size_t nd=1000;
+const size_t nd=100;
 //const size_t nd=sleepms/10;
 
 
@@ -99,13 +99,11 @@ void WaitSecond(ProcessState &waitflg
 	,int interval=1000
 	)
 {
-	;
 	while( waitflg!=running
 		&& ( second<0 || second--!=0 )
 		){
 			Sleep(interval);
-	}
-	//waitflg=running;
+	}	
 }
 
 
@@ -154,32 +152,24 @@ UINT CMainFrame::PROCESS(LPVOID pParam)
 	}
 
 	mf->SendMessage(MESSAGE_UPDATE_DOL,NULL,NULL);
-	//mf->OnMessageUpdateDol(NULL,NULL);
+	mf->pst=pause;
 
 	while(mf->pst!=stop){
 
-		//if(mf->pst!=running){
-		//Sleep(sleepms);
-		//}
-
 		WaitSecond(mf->pst,-1,50);
 
-		//if(singleLock1.Lock())
 		{
 			if(pDoc->da.runstate==0){
-				//singleLock1.Unlock();
 				mf->pst=stop;
 				return 0;
 			}
 
 
 			if(pDoc->da.runstate==5){
-				//singleLock1.Unlock();
 
 				if(filelist.empty()){
 					CString strerr;
 					strerr.LoadStringW(IDS_STRING_STEP_ERROR);
-					//::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(strerr.GetBuffer()),NULL);
 					mf->pst=stop;
 					return 1;
 				}
@@ -193,7 +183,7 @@ UINT CMainFrame::PROCESS(LPVOID pParam)
 				rnd=data.popData(x,y,nd);
 
 				if(x.empty()||y.empty()){
-					TRACE("input empty");
+					TRACE("\ninput empty\n");
 					mf->pst=stop;
 					return 8;
 				}
@@ -206,12 +196,10 @@ UINT CMainFrame::PROCESS(LPVOID pParam)
 				}
 			}
 			else{
-				//singleLock1.Unlock();
-
 				rnd=data.popData(x,y,nd);
 
 				if(x.empty()||y.empty()){
-					TRACE("input empty");
+					TRACE("\ninput empty\n");
 					mf->pst=stop;
 					return 8;
 				}
@@ -226,9 +214,8 @@ UINT CMainFrame::PROCESS(LPVOID pParam)
 			}
 
 			mf->SendMessage(MESSAGE_UPDATE_DOL,NULL,NULL);
-			//mf->OnMessageUpdateDol(NULL,NULL);
 
-			//Sleep(sleepms);
+			Sleep(sleepms);
 		}
 
 	}
@@ -285,6 +272,11 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_COMMAND(ID_SECURITY_LOGIN, &CMainFrame::OnSecurityLogin)
 	ON_COMMAND(ID_SECURITY_USERACCOUNTS, &CMainFrame::OnSecurityUseraccounts)
 	ON_COMMAND(ID_ANALYSIS_METHODSETUP, &CMainFrame::OnAnalysisMethodsetup)
+	ON_COMMAND(ID_ANALYSIS_ABORTANALYSIS, &CMainFrame::OnAnalysisAbortanalysis)
+	ON_COMMAND(ID_ANALYSIS_STARTANALYSIS, &CMainFrame::OnAnalysisStartanalysis)
+	ON_COMMAND(ID_ANALYSIS_PAUSE, &CMainFrame::OnAnalysisPause)
+	ON_MESSAGE(MESSAGE_UPDATE_DOL, &CMainFrame::OnMessageUpdateDol)
+	ON_MESSAGE(MESSAGE_CLOSE_SAP_SHEET, &CMainFrame::OnMessageCloseSapSheet)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -303,6 +295,7 @@ CMainFrame::CMainFrame()
 	, pst(stop)
 	, wd(NULL)
 	, psheetml(NULL)
+	, pWriteA(NULL)
 {
 	// TODO: add member initialization code here
 	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_OFF_2007_BLUE);
@@ -886,22 +879,9 @@ afx_msg LRESULT CMainFrame::OnMessageUpdateDol(WPARAM wParam, LPARAM lParam)
 {
 	CanalyzerDoc *pDoc=(CanalyzerDoc*)GetActiveDocument();
 
-	CSingleLock singleLock(&m_CritSection);
-	singleLock.Lock();
-	if (singleLock.IsLocked())  // Resource has been locked
-	{
-		//...use the shared resource...
-		pDoc->ComputeStateData();
-		// Now that we are finished, 
-		// unlock the resource for others.
-		singleLock.Unlock();
-	}
+	pDoc->UpdateState();
 
-	//TRACE(L"rs=%d,ci=%d,ni=%d\n",pDoc->runstate,pDoc->currentSAPIndex,pDoc->nextSAPIndex);
-
-
-	OnMessageCloseSapSheet(NULL,NULL);
-
+	::PostMessage(this->GetSafeHwnd(),MESSAGE_CLOSE_SAP_SHEET,NULL,NULL);
 
 	return 0;
 }
@@ -910,11 +890,15 @@ afx_msg LRESULT CMainFrame::OnMessageUpdateDol(WPARAM wParam, LPARAM lParam)
 afx_msg LRESULT CMainFrame::OnMessageCloseSapSheet(WPARAM wParam, LPARAM lParam)
 {
 
+	CanalyzerViewL *lv=(CanalyzerViewL*)LeftPane();
+	CanalyzerViewR *rv=(CanalyzerViewR*)RightPane();
+	::PostMessage(lv->GetSafeHwnd(),MESSAGE_UPDATE_RAW,NULL,NULL);
+	::PostMessage(rv->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
+	::PostMessage(GetOutputWnd()->GetListCtrl()->GetSafeHwnd(),MESSAGE_SHOW_DOL,NULL,NULL);
+
 	CanalyzerDoc *pDoc=(CanalyzerDoc*)GetActiveDocument();
 
-	pDoc->UpdateALL();
-
-	switch(pDoc->runstate){
+	switch(pDoc->da.runstate){
 	case 0:
 		{
 			CString str;
@@ -942,14 +926,13 @@ afx_msg LRESULT CMainFrame::OnMessageCloseSapSheet(WPARAM wParam, LPARAM lParam)
 	case 5:
 		{		
 			CString str;
-			str.Format(L"add solution %g ml",pDoc->VtoAdd);
+			str.Format(L"add solution %g ml",pDoc->da.VtoAdd);
 			pst=pause;
 			ShowWaitDlg(str);
 		}
 		break;
 	case 6:
 		break;
-
 	case 7:
 		{
 			CString str;
@@ -963,4 +946,102 @@ afx_msg LRESULT CMainFrame::OnMessageCloseSapSheet(WPARAM wParam, LPARAM lParam)
 	}
 
 	return 0;
+}
+
+
+void CMainFrame::ShowWaitDlg(CString tips)
+{
+	if(wd==NULL){
+		wd=new WaitDlg();
+		wd->Create(IDD_DIALOG_WAIT);
+	}
+
+	wd->ShowWindow(SW_SHOW);
+	::SetWindowPos(wd->GetSafeHwnd(),
+		//HWND_TOPMOST,
+		HWND_TOP,
+		0,0,0,0,
+		SWP_NOMOVE|SWP_NOSIZE);
+
+	if(tips.IsEmpty())
+		tips.LoadStringW(IDS_STRING_PAUSE);
+
+	wd->m_tips=tips;
+	wd->UpdateData(FALSE);
+}
+
+
+void CMainFrame::HideWaitDlg(void)
+{
+	if(wd!=NULL){
+		//wd->ShowWindow(SW_HIDE);
+		wd->DestroyWindow();
+		delete wd;
+		wd=NULL;
+	}
+}
+
+
+
+
+void CMainFrame::OnAnalysisAbortanalysis()
+{
+	// TODO: Add your command handler code here
+	if(::TerminateThread(pWriteA->m_hThread,0)!=FALSE){
+		pst=stop;
+		HideWaitDlg();
+	}
+}
+
+
+void CMainFrame::OnAnalysisStartanalysis()
+{
+	// TODO: Add your command handler code here
+
+	mypara * pa1=new mypara;
+	pa1->leftp=(CanalyzerViewL*)LeftPane();
+	pa1->rightp=(CanalyzerViewR*)RightPane();
+	//pa1->outw=this->GetOutputWnd();
+	//pa1->cba=this->GetCaptionBar();
+	pa1->ol=this->GetOutputWnd()->GetListCtrl();
+	//pa1->psta=&pst;
+	//pa1->wd=wd;
+	pa1->mf=this;
+
+	pWriteA=AfxBeginThread(PROCESS,
+		(LPVOID)(pa1),
+		THREAD_PRIORITY_NORMAL,
+		0,
+		CREATE_SUSPENDED);
+
+	pWriteA->ResumeThread();
+
+	pst=running;
+
+}
+
+
+
+void CMainFrame::OnAnalysisPause()
+{
+	// TODO: Add your command handler code here
+
+
+	switch(pst){
+	case running:
+		if(SuspendThread(pWriteA->m_hThread)!=(DWORD)(-1)){
+			pst=pause;
+			ShowWaitDlg(L"");
+		}
+		break;
+	case pause:
+		if(ResumeThread(pWriteA->m_hThread)!=(DWORD)(-1)){
+			pst=running;
+			HideWaitDlg();
+		}
+		break;
+	default:
+		break;
+	}
+
 }

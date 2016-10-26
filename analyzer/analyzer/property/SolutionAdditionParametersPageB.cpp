@@ -216,8 +216,9 @@ BOOL SolutionAdditionParametersPageB::OnApply()
 {
 	// TODO: Add your specialized code here and/or call the base class
 
-	pDoc->bChangeSAP=true;
-	pDoc->p3todo=para;
+	//pDoc->bChangeSAP=true;
+	//pDoc->p3todo=para;
+	pDoc->SetSAPtodo(para);
 
 	::PostMessage(mf->GetSafeHwnd(),MESSAGE_CLOSE_SAP_SHEET,NULL,NULL);
 

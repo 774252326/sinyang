@@ -15,7 +15,7 @@
 #include "property\PlotSettingPageB.h"
 #include "property\PlotSettingPageC.h"
 #include "property\PropertySheetA.h"
-
+#include "ExportDataDlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -42,6 +42,7 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		ON_COMMAND(ID_EDIT_COPY, &CanalyzerView::OnEditCopy)
 		ON_COMMAND(ID_VIEW_DATACURSOR, &CanalyzerView::OnViewDatacursor)
 		ON_COMMAND(ID_OPTIONS_PLOTSETTINGS, &CanalyzerView::OnOptionsPlotsettings)
+		ON_COMMAND(ID_ANALYSIS_EXPORTDATA, &CanalyzerView::OnAnalysisExportdata)
 	END_MESSAGE_MAP()
 
 	// CanalyzerView construction/destruction
@@ -310,4 +311,24 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		sheet.AddPage(&fig2setting);
 		sheet.DoModal();
 
+	}
+
+
+
+	
+	void CanalyzerView::OnAnalysisExportdata()
+	{
+		// TODO: Add your command handler code here
+
+		ExportDataDlg edd;
+
+		for(size_t i=0;i<pdl.size();i++){
+			RawDataEx rdex(pdl[i].pd.raw,L"c",pdl[i].pd.ps.xlabel,pdl[i].pd.ps.ylabel);
+			for(size_t j=0;j<pdl[i].pd.ls.size();j++){
+				rdex.title[j]=pdl[i].pd.ls[j].name;
+			}
+			edd.lcl.rde.AppendData(rdex);
+		}
+
+		edd.DoModal();
 	}

@@ -7,54 +7,7 @@ class CanalyzerViewR :
 	public CanalyzerView
 {
 public:
-
-	//
-	//	static bool GetCalibrationCurve(
-	//	CString calibrationfilepath, 
-	//	std::vector<PlotDataEx> &pdl, 
-	//	COLORREF bkc=RGB(255,255,255))
-	//{
-	//	CanalyzerDoc tmp;
-	//	if(ReadFileCustom(&tmp,1,calibrationfilepath)){
-	//
-	//		//std::vector<DataOutA> dol;
-	//		//sapitemA sapitemdummy;
-	//		//size_t nextidx;
-	//		//BYTE bytedummy;
-	//		//double doubledummy;
-	//		//size_t nowidx;
-	//		//SAPara p3d;
-	//		//UINT flg=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol,p3d,nowidx,nextidx,bytedummy,doubledummy);
-	//
-	//		UINT flg=tmp.ComputeStateData();
-	//
-	//		if(flg==0){
-	//			UINT ff=DataOutAList2PlotDataExList(tmp.dol,tmp.p1,bkc,pdl);
-	//
-	//			if(ff==0){
-	//
-	//				for(size_t i=0;i<pdl.size();i++){
-	//					for(size_t j=0;j<pdl[i].pd.ls.size();j++){
-	//						pdl[i].pd.ls[j].name.LoadStringW(IDS_STRING_CALIBRATION_CURVE);
-	//					}
-	//				}
-	//
-	//				Compute(tmp.dol,tmp.p1,pdl,true);
-	//
-	//				return true;
-	//			}
-	//		}
-	//	}
-	//
-	//
-	//	return false;
-	//
-	//
-	//
-	//
-	//};
-
-
+	
 	static UINT DataOutAList2PlotDataExList(
 		const std::vector<DataOutA> &dol, 
 		const ANParaEx &p1, 
@@ -148,7 +101,8 @@ public:
 
 
 
-		if(ff==1){
+		//if(ff==1)
+		{
 			for(size_t i=0;i<rdl.size();i++){
 				if(i>=pdl.size()){
 					pdl.push_back(PlotDataEx(ps));
@@ -164,18 +118,28 @@ public:
 					//pdl[i].pd.raw=cbrdl[i];
 					//pdl[i].pd.ls.assign(cbpdl.back().pd.ls.begin(),cbpdl.back().pd.ls.end());
 					int insertN0=pdl[i].pd.SetLineData(cbrdl[i],cbnlist[i]);
+					pdl[i].pd.SetLineColor(insertN0,3,1);
 					int insertN=pdl[i].pd.AddLineData(rdl[i],nlist[i]);
-					pdl[i].pd.SetLineColor(insertN+insertN0,3,1);
+					pdl[i].pd.SetLineColor(insertN,3,1);
+
+					pdl[i].pd.ResetLineType();
 				}			
 				else{
 					//int insertN=pdl[i].pd.SetLineData(rdl[i],namelist);
 					int insertN=pdl[i].pd.SetLineData(rdl[i],nlist[i]);
 					pdl[i].pd.SetLineColor(insertN,3,1);
+
+					if(bShowRs){
+						pdl[i].pd.ResetLineType();
+					}
+
 				}
 
 			}
 
 			pdl.resize(rdl.size());
+
+
 
 			return 1;
 		}

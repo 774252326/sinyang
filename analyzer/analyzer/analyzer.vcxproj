@@ -112,7 +112,9 @@
     <ClInclude Include="analyzerViewL.h" />
     <ClInclude Include="analyzerViewR.h" />
     <ClInclude Include="ComputeDlg.h" />
+    <ClInclude Include="ExportDataDlg.h" />
     <ClInclude Include="filefunc.h" />
+    <ClInclude Include="ListCtrlLine.h" />
     <ClInclude Include="list\ComboItem.h" />
     <ClInclude Include="list\EditB.h" />
     <ClInclude Include="list\EditInt.h" />
@@ -151,7 +153,9 @@
     <ClCompile Include="analyzerViewL.cpp" />
     <ClCompile Include="analyzerViewR.cpp" />
     <ClCompile Include="ComputeDlg.cpp" />
+    <ClCompile Include="ExportDataDlg.cpp" />
     <ClCompile Include="filefunc.cpp" />
+    <ClCompile Include="ListCtrlLine.cpp" />
     <ClCompile Include="list\ComboItem.cpp" />
     <ClCompile Include="list\EditB.cpp" />
     <ClCompile Include="list\EditInt.cpp" />

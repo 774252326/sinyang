@@ -9,6 +9,7 @@
 #include "LineSeg.hpp"
 #include <algorithm>
 //#include "RawDataEx.hpp"
+#include "../Resource.h"
 
 class PlotData : public CObject
 {
@@ -422,6 +423,48 @@ public:
 		return newraw.ll.size();
 	};
 
+
+	void ResetLineType()
+	{
+		CString ptstr;
+		ptstr.LoadStringW(IDS_STRING_TEST_POINT);
+		CString listr;
+		listr.LoadStringW(IDS_STRING_FITTING_LINE);
+		CString iqstr;
+		iqstr.LoadStringW(IDS_STRING_INTERCEPT_Q);
+		for(size_t i=0;i<ls.size();i++){
+			if(ls[i].name==ptstr || ls[i].name==iqstr){
+				ls[i].dotSize=0;
+				ls[i].lineType=2;
+				ls[i].smoothLine=0;
+				ls[i].traceLast=false;
+				continue;
+			}
+
+			if(ls[i].name==listr){
+				ls[i].dotSize=0;
+				ls[i].lineType=0;
+				ls[i].smoothLine=0;
+				ls[i].traceLast=false;
+				if(i>0){
+					if(!(ls[i-1].name==listr || ls[i-1].name==ptstr)){
+						ls[i-1].lineType=5;
+					}
+				}
+				continue;
+			}
+
+			ls[i].dotSize=3;
+			ls[i].lineType=0;
+			ls[i].smoothLine=1;
+			ls[i].traceLast=false;
+
+		}			
+
+
+	};
+
+
 	void SetLineColor(int lastN, int dotSize=0, int smoothType=0, int lineType=0)
 	{	
 		size_t i=0;
@@ -544,6 +587,15 @@ public:
 		AddLine(lis, name, lineType);
 	};
 
+	void ShowLastLast(bool flg=true)
+	{
+		for(size_t i=0;i<ls.size();i++){
+			ls[i].traceLast=false;
+		}
+		if( flg && !ls.empty() ){
+			ls.back().traceLast=true;
+		}
+	};
 
 };
 

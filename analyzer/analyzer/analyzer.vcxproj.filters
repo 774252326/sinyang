@@ -154,6 +154,12 @@
     <ClInclude Include="ParaList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ExportDataDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ListCtrlLine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="analyzer.cpp">
@@ -259,6 +265,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ParaList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ExportDataDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ListCtrlLine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

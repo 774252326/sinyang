@@ -21,6 +21,7 @@ public:
 	SAPara p3todo;
 	bool bChangeSAP;
 	CCriticalSection m_CritSection;
+	CCriticalSection m_CritSectionSAP;
 
 // Operations
 public:
@@ -47,11 +48,14 @@ protected:
 // Generated message map functions
 protected:
 	afx_msg void OnAnalysisCompute();
-
+	afx_msg void OnAnalysisReport();
 	DECLARE_MESSAGE_MAP()
 
 #ifdef SHARED_HANDLERS
 	// Helper function that sets search content for a Search Handler
 	void SetSearchContent(const CString& value);
 #endif // SHARED_HANDLERS
+public:
+	UINT UpdateState(void);
+	void SetSAPtodo(const SAPara & ptd);
 };

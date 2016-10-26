@@ -62,6 +62,8 @@ IMPLEMENT_DYNCREATE(CanalyzerViewL, CanalyzerView)
 
 		if(wParam&PW_INIT)
 			wParam=(PW_LAST|PW_SHOW_ALL);
+		else
+			wParam=(PW_SHOW_ALL);
 
 		::PostMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_VIEW,wParam,NULL);
 
