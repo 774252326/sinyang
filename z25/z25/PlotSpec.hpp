@@ -38,7 +38,7 @@ public:
 		, labelSize(20)
 		, metricC(0)
 		, metricSize(20)
-		, legendPos(2)
+		, legendPos(0)
 		, winbkC(RGB(255,255,255))
 		, gap(10)
 		, metricGridLong(5)

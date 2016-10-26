@@ -15,7 +15,7 @@ LegendSpec::LegendSpec()
 	, fontSize(15)
 	, fontName(_T("Arial"))
 	, bkColor(RGB(255,255,255))
-	, position(0)
+	, position(CPoint(0,0))
 {
 }
 

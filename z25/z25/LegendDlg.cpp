@@ -5,73 +5,23 @@
 #include "z25.h"
 #include "LegendDlg.h"
 #include "afxdialogex.h"
-
 #include "drawfunc.h"
-
-
-//CSize GetLegendTextExtent(CDC* pDC
-//	, const std::vector<LineSpec> &ps
-//	, CFont* pfont);
-
-//CRect GetLegendBorder(CRect rect
-//	, CDC* pDC
-//	, const std::vector<LineSpec> &ps
-//	, CFont *pfont
-//	, int lc=25
-//	, int gap=2
-//	, int Hmax=15
-//	, CString fontName=L"Arial"
-//	, bool bAlignLeft=true
-//	, bool bAlignTop=true
-//	);
-//
-//CRect DrawLegend(CRect rect
-//	, CDC* pDC
-//	, const std::vector<LineSpec> &ps
-//	, COLORREF bkColor
-//	, int lc=25
-//	, int gap=2
-//	, int Hmax=15
-//	, CString fontName=L"Arial"
-//	, bool bAlignLeft=true
-//	, bool bAlignTop=true);
-//
-//
-//CSize GetLegendExtent(CDC* pDC
-//	, const std::vector<LineSpec> &ps
-//	, CFont* pfont
-//	, int lc
-//	, int gap
-//	, int metricH
-//	, CString fontName=L"Arial"
-//	);
-//
-//
-//void DrawLegend(CDC* pDC
-//	, const std::vector<LineSpec> &ps
-//	, CFont *pfont
-//	, COLORREF bkColor
-//	, int lc=25
-//	, int gap=2);
-
+#include "LineSpec.hpp"
+#include "LegendSpec.h"
+#include <vector>
 
 // LegendDlg dialog
 
 IMPLEMENT_DYNAMIC(LegendDlg, CDialogEx)
 
-	LegendDlg::LegendDlg(CWnd* pParent /*=NULL*/)
+LegendDlg::LegendDlg(PlotWnd* pParent /*=NULL*/)
 	//: CDialogEx(LegendDlg::IDD, pParent)
-	: bDock(false)
-	, bAutoFit(false)
-	, lineLength(25)
-	, gap(2)
-	, fontSize(25)
-	, maxFontSize(15)
-	, fontName(_T("Arial"))
-	, bkColor(RGB(255,255,255))
-	, mx(0)
-	, my(0)
-	, opt(0)
+	: ppw(pParent)
+	, maxFsz(20)
+	, minFsz(1)
+	, axisW(2)
+	, ratio(0.5)
+	, bInitComplete(false)
 {
 
 }
@@ -89,38 +39,18 @@ void LegendDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(LegendDlg, CDialogEx)
 	ON_WM_NCHITTEST()
 	ON_WM_PAINT()
+	ON_WM_MOVE()
 END_MESSAGE_MAP()
 
 
 // LegendDlg message handlers
 
 
-BOOL LegendDlg::OnInitDialog()
-{
-	CDialogEx::OnInitDialog();
-
-	// TODO:  Add extra initialization here
-
-
-
-
-	//CRect rc=GetLegendBorder(CRect(200,200,300,300),this->GetDC(),ls,&font);
-
-	CSize sz=GetExtent();
-
-	this->MoveWindow(CRect(0,0,sz.cx,sz.cy));
-
-
-	return TRUE;  // return TRUE unless you set the focus to a control
-	// EXCEPTION: OCX Property Pages should return FALSE
-}
-
-
 LRESULT LegendDlg::OnNcHitTest(CPoint point)
 {
 	// TODO: Add your message handler code here and/or call default
 
-	return bDock ? CDialogEx::OnNcHitTest(point) : HTCAPTION;
+	return ppw->lgs.bDock ? CDialogEx::OnNcHitTest(point) : HTCAPTION;
 }
 
 
@@ -130,56 +60,116 @@ void LegendDlg::OnPaint()
 	// TODO: Add your message handler code here
 	// Do not call CDialogEx::OnPaint() for painting messages
 
-	CRect rc;
-	this->GetClientRect(&rc);
-	dc.FillSolidRect(&rc,bkColor);
 
-	DrawLegend(&dc,ls,&font,bkColor,lineLength,gap);
+	CRect rc;
+	this->GetClientRect(&rc);	
+
+	std::vector<LineSpec> ls(ppw->pd.ls);
+	LegendSpec lgs=ppw->lgs;
+
+	dc.FillSolidRect(&rc,lgs.bkColor);
+	DrawLegend(&dc,ls,lgs.lineLength,lgs.gap,lgs.fontSize,lgs.fontName,lgs.bkColor);
+}
+
+CSize LegendDlg::GetExtent(void)
+{
+	CFont fnt;
+
+	return GetLegendExtent(this->GetDC(),ppw->pd.ls,&fnt,ppw->lgs.lineLength,ppw->lgs.gap,ppw->lgs.fontSize,ppw->lgs.fontName);;
+}
+
+
+int LegendDlg::GetAutoFontSize(CSize limitsz, int maxFontSize, int minFontSize)
+{
+	int newfsz=::GetAutoFontSize(this->GetDC(),ppw->pd.ls,ppw->lgs.lineLength,ppw->lgs.gap,minFontSize,maxFontSize,ppw->lgs.fontName,limitsz);
+
+	ppw->lgs.fontSize=newfsz;
+
+	return newfsz;
+}
+
+CPoint LegendDlg::GetPos(void)
+{
+	CRect rc;
+	GetWindowRect(&rc);
+	ppw->ScreenToClient(&rc);
+	ppw->lgs.position=rc.TopLeft();
+
+	return rc.TopLeft();
+}
+
+
+void LegendDlg::OnMove(int x, int y)
+{
+	CDialogEx::OnMove(x, y);
+
+	// TODO: Add your message handler code here
+
+	if(bInitComplete)
+		CPoint pt=GetPos();
+}
+
+
+void LegendDlg::PositionWnd(void)
+{
+
+	CRect plotrect=ppw->GetWindowPlotRect();
+	CSize plotsz=plotrect.Size();
+
+	if( ppw->legendDpMode&LEGEND_DP_FIT_RECT ){
+		if( ppw->legendDpMode&LEGEND_DP_AUTO_RECT ){
+
+			ppw->lgs.fontSize=GetAutoFontSize(CSize(plotsz.cx*ratio,plotsz.cy*ratio),maxFsz,minFsz);
+		}
+		else{
+			ppw->lgs.fontSize=GetAutoFontSize(ppw->lgrect.Size(),maxFsz,minFsz);
+		}
+
+
+	}
+
+	CSize sz=GetExtent();
+
+	if( ppw->legendDpMode&LEGEND_DP_ALIGN ){
+		ppw->lgs.bDock=true;
+		
+		plotrect.DeflateRect(axisW,0,0,axisW);
+
+		if( ppw->legendDpMode&LEGEND_DP_LEFT ){
+			ppw->lgs.position.x=plotrect.left;
+		}
+		else{
+			ppw->lgs.position.x=plotrect.right-sz.cx;
+		}
+
+		if( ppw->legendDpMode&LEGEND_DP_TOP ){
+			ppw->lgs.position.y=plotrect.top;
+		}
+		else{
+			ppw->lgs.position.y=plotrect.bottom-sz.cy;
+		}
+	}
+
+
+	CRect legendrect(ppw->lgs.position,sz);
+
+	ppw->ClientToScreen(&legendrect);
+
+	this->MoveWindow(&legendrect);
 
 }
 
 
-CSize LegendDlg::GetExtent(void)
+BOOL LegendDlg::OnInitDialog()
 {
+	CDialogEx::OnInitDialog();
 
+	// TODO:  Add extra initialization here
 
-	if(bAutoFit){
+	PositionWnd();
 
-		int uf=maxFontSize;
+	bInitComplete=true;
 
-		CSize szu=GetLegendExtent(this->GetDC(),ls,&font,lineLength,gap,uf,fontName);
-		if(szu.cx<=maxSize.cx && szu.cy<=maxSize.cy){
-			TRACE("\nmax\n");
-			return szu;
-		}
-
-		int lf=1;
-		CSize szl=GetLegendExtent(this->GetDC(),ls,&font,lineLength,gap,lf,fontName);
-		if(szl.cx>maxSize.cx || szl.cy>maxSize.cy){
-			TRACE("\nmin\n");
-			return szl;
-		}
-
-		while(uf-lf>1){
-			int tf=(uf+lf)/2;
-			CSize szt=GetLegendExtent(this->GetDC(),ls,&font,lineLength,gap,tf,fontName);
-			if(szt.cx<=maxSize.cx && szt.cy<=maxSize.cy){
-				lf=tf;
-				szl=szt;
-			}
-			else{
-				uf=tf;
-			}
-		}
-
-		fontSize=lf;
-
-		return szl;
-
-	}
-	else{
-		return GetLegendExtent(this->GetDC(),ls,&font,lineLength,gap,fontSize,fontName);
-	}
-
-	return CSize();
+	return TRUE;  // return TRUE unless you set the focus to a control
+	// EXCEPTION: OCX Property Pages should return FALSE
 }

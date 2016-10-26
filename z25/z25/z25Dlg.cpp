@@ -60,6 +60,7 @@ void Cz25Dlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_CHECK5, m_fit);
 	//  DDX_Control(pDX, IDC_CHECK6, m_auto);
 	DDX_Check(pDX, IDC_CHECK6, m_auto);
+	DDX_Check(pDX, IDC_CHECK7, m_dock);
 }
 
 BEGIN_MESSAGE_MAP(Cz25Dlg, CDialogEx)
@@ -77,6 +78,7 @@ BEGIN_MESSAGE_MAP(Cz25Dlg, CDialogEx)
 	ON_BN_CLICKED(IDC_CHECK4, &Cz25Dlg::OnBnClickedCheck4)
 	ON_BN_CLICKED(IDC_CHECK5, &Cz25Dlg::OnBnClickedCheck5)
 	ON_BN_CLICKED(IDC_CHECK6, &Cz25Dlg::OnBnClickedCheck6)
+	ON_BN_CLICKED(IDC_CHECK7, &Cz25Dlg::OnBnClickedCheck7)
 END_MESSAGE_MAP()
 
 
@@ -153,7 +155,7 @@ void Cz25Dlg::OnBnClickedButton1()
 	// Create an Open dialog; the default file name extension is ".my".
 
 	CFileDialog fileDlg(TRUE, _T("txt"), _T("*.txt"),
-		OFN_FILEMUSTEXIST | OFN_HIDEREADONLY /*| OFN_ALLOWMULTISELECT*/ , szFilters);
+		OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_ALLOWMULTISELECT , szFilters);
 
 	// Display the file dialog. When user clicks OK, fileDlg.DoModal() 
 
@@ -162,23 +164,28 @@ void Cz25Dlg::OnBnClickedButton1()
 	if(fileDlg.DoModal() == IDOK)
 	{   
 
-		m_fp=fileDlg.GetPathName();
-		
-
-		pcct a;
-		a.readFile(m_fp);
-		a.TomA();
-		a.SetTimeIntv();
-
-		LineSpec ls;
-		ls.colour=RGB(255,0,0);
-		ls.name=L"line";
-
+		POSITION pos=fileDlg.GetStartPosition();
 		PlotData pd;
+		while(pos!=NULL){
+			CString fp=fileDlg.GetNextPathName(pos);
 
-		pd.AddNew(a.time,a.current,ls,a.label[0],a.label[1]);
+			//m_fp=fileDlg.GetPathName();
 
-		//pd.ps.legendPos=1;
+
+			pcct a;
+			a.readFile(fp);
+			a.TomA();
+			a.SetTimeIntv();
+
+			LineSpec ls;
+			ls.colour=RGB(255,0,0);
+			ls.name=L"line";
+
+
+
+			pd.AddNew(a.time,a.current,ls,a.label[0],a.label[1]);
+		}
+		pd.ps.legendPos=0;
 
 		pw.pd=pd;
 		pw.ResetRange();
@@ -306,14 +313,14 @@ void Cz25Dlg::OnSize(UINT nType, int cx, int cy)
 
 	CRect rc(0,0,cx,cy);
 
-	rc.DeflateRect(0,50);
+	rc.DeflateRect(100,100);
 
 	//this->ClientToScreen(&rc);
 
 	pw.MoveWindow(&rc);
 
 	pw.Invalidate();
-	
+
 }
 
 
@@ -366,7 +373,7 @@ void Cz25Dlg::OnBnClickedCheck4()
 void Cz25Dlg::OnBnClickedCheck5()
 {
 	// TODO: Add your control notification handler code here
-	
+
 	UpdateData();
 
 	if(m_fit)
@@ -381,7 +388,7 @@ void Cz25Dlg::OnBnClickedCheck5()
 void Cz25Dlg::OnBnClickedCheck6()
 {
 	// TODO: Add your control notification handler code here
-		UpdateData();
+	UpdateData();
 
 	if(m_auto)
 		pw.legendDpMode|=LEGEND_DP_AUTO_RECT;
@@ -389,4 +396,20 @@ void Cz25Dlg::OnBnClickedCheck6()
 		pw.legendDpMode&=~LEGEND_DP_AUTO_RECT;
 
 	pw.SetLegend();
+}
+
+
+void Cz25Dlg::OnBnClickedCheck7()
+{
+	// TODO: Add your control notification handler code here
+
+	UpdateData();
+
+	if(m_dock)
+		pw.lgs.bDock=true;
+	else
+		pw.lgs.bDock=false;
+
+	pw.SetLegend();
+
 }

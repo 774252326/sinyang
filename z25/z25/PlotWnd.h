@@ -1,9 +1,10 @@
 #pragma once
 #include "plotdata.hpp"
 
-#include "LegendDlgA.h"
+//#include "LegendDlg.h"
 #include "atltypes.h"
 #include "legendspec.h"
+//#include "LegendDlgB.h"
 
 // PlotWnd
 
@@ -39,7 +40,7 @@ public:
 
 	void ResetRange(void);
 
-	LegendDlgA *td;
+	CDialogEx *td;
 
 protected:
 	afx_msg void OnPaint();
@@ -64,6 +65,9 @@ public:
 	
 	BYTE legendDpMode;
 	CRect lgrect;
+	//void SetLegendPara(void);
+	//bool UpdateLegendPos(void);
+	CRect GetWindowPlotRect(bool bWnd=false);
 };
 
 

@@ -135,6 +135,16 @@ CSize UpdateLegendSpec(LegendSpec &lgs
 	, int maxFontSize
 	, int axisWidth);
 
+
+void DrawLegend(CDC* pDC
+	, const std::vector<LineSpec> &ls
+	, int lineLength
+	, int gap
+	,int fontSize
+	,CString fontName
+	,COLORREF bkColor);
+
+
 //////////////////////////////////////////////////////////////////////////
 
 template <typename T>

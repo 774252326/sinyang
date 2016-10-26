@@ -1,10 +1,5 @@
 #pragma once
-
-#include "LineSpec.hpp"
-#include <vector>
-#include "afxwin.h"
-#include "atltypes.h"
-#include "LegendSpec.h"
+#include "PlotWnd.h"
 
 // LegendDlg dialog
 
@@ -13,37 +8,35 @@ class LegendDlg : public CDialogEx
 	DECLARE_DYNAMIC(LegendDlg)
 
 public:
-	LegendDlg(CWnd* pParent = NULL);   // standard constructor
+	LegendDlg(PlotWnd * pParent);   // standard constructor
 	virtual ~LegendDlg();
 
 // Dialog Data
-	//enum { IDD = IDD_DIALOG1 };
+	enum { IDD = IDD_LEGENDDLGA };
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
 	DECLARE_MESSAGE_MAP()
-
 public:
-	std::vector<LineSpec> ls;
-	
-	virtual BOOL OnInitDialog();
+	void PositionWnd(void);
+	int maxFsz;
+	int minFsz;
+	int axisW;
+	float ratio;
+
+
+protected:
+
 	afx_msg LRESULT OnNcHitTest(CPoint point);
-	CFont font;
 	afx_msg void OnPaint();
-	bool bDock;
-	bool bAutoFit;
-	int lineLength;
-	int gap;
-	int fontSize;
-	int maxFontSize;
-	CSize maxSize;
-	
-	CString fontName;
-	COLORREF bkColor;
-	int mx;
-	int my;
-	CPoint opt;
-	
 	CSize GetExtent(void);
+	int GetAutoFontSize(CSize limitsz, int maxFontSize=15, int minFontSize=1);
+	CPoint GetPos(void);
+	afx_msg void OnMove(int x, int y);
+	PlotWnd * ppw;
+	virtual BOOL OnInitDialog();
+
+private:
+	bool bInitComplete;
 };

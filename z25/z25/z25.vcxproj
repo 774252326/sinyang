@@ -101,7 +101,6 @@
   <ItemGroup>
     <ClInclude Include="drawfunc.h" />
     <ClInclude Include="LegendDlg.h" />
-    <ClInclude Include="LegendDlgA.h" />
     <ClInclude Include="LegendSpec.h" />
     <ClInclude Include="PlotWnd.h" />
     <ClInclude Include="Resource.h" />
@@ -113,7 +112,6 @@
   <ItemGroup>
     <ClCompile Include="drawfunc.cpp" />
     <ClCompile Include="LegendDlg.cpp" />
-    <ClCompile Include="LegendDlgA.cpp" />
     <ClCompile Include="LegendSpec.cpp" />
     <ClCompile Include="PlotWnd.cpp" />
     <ClCompile Include="stdafx.cpp">

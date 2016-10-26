@@ -959,6 +959,42 @@ void DrawLegend(CDC* pDC
 }
 
 
+void DrawLegend(CDC* pDC
+	, const std::vector<LineSpec> &ls
+	, int lineLength
+	, int gap
+	,int fontSize
+	,CString fontName
+	,COLORREF bkColor)
+{
+	CFont font;
+	font.CreateFont(
+			fontSize,                   // nHeight
+			0,                         // nWidth
+			0,                         // nEscapement
+			0,                         // nOrientation
+			FW_NORMAL,                 // nWeight
+			FALSE,                     // bItalic
+			FALSE,                     // bUnderline
+			0,                         // cStrikeOut
+			ANSI_CHARSET,              // nCharSet
+			OUT_DEFAULT_PRECIS,        // nOutPrecision
+			CLIP_DEFAULT_PRECIS,       // nClipPrecision
+			DEFAULT_QUALITY,           // nQuality
+			DEFAULT_PITCH | FF_SWISS,  // nPitchAndFamily
+			fontName);                 // lpszFacename
+
+
+	DrawLegend(pDC
+	, ls
+	, &font
+	, bkColor
+	,  lineLength
+	,  gap);
+
+}
+
+
 
 void DrawCurve(CDC* pDC
 	, std::vector<CPoint> &pointlist

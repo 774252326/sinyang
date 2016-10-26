@@ -42,16 +42,13 @@
     <ClInclude Include="drawfunc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LegendDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="PlotWnd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LegendSpec.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LegendDlgA.h">
+    <ClInclude Include="LegendDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -65,9 +62,6 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LegendDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="PlotWnd.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -77,7 +71,7 @@
     <ClCompile Include="LegendSpec.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LegendDlgA.cpp">
+    <ClCompile Include="LegendDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

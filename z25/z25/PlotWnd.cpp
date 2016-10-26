@@ -5,7 +5,7 @@
 #include "PlotWnd.h"
 #include "drawfunc.h"
 #include "resource.h"
-
+#include "LegendDlg.h"
 
 // PlotWnd
 
@@ -43,7 +43,7 @@ IMPLEMENT_DYNAMIC(PlotWnd, CWnd)
 
 	//				lgrect.Size()=sz;
 
-	lgrect=CRect(0,0,200,200);
+	lgrect=CRect(0,0,30,30);
 
 }
 
@@ -332,119 +332,61 @@ void PlotWnd::OnSize(UINT nType, int cx, int cy)
 
 	// TODO: Add your message handler code here
 
-	//SetLegend();
+	if(td!=NULL){
+		((LegendDlg*)td)->PositionWnd();
+		((LegendDlg*)td)->Invalidate();
+		//td->Invalidate();
+	}
+
 
 }
 
 
 int PlotWnd::SetLegend(void)
 {
-	//ShowLegend(false);
-	//if(pd.ps.legendPos!=0){
-		//ShowLegend(true);
-	//}
-
-
 	ShowLegend(pd.ps.legendPos!=0);
-
 	return 0;
 }
 
 
 void PlotWnd::ShowLegend(bool bShow)
 {
+
 	if(bShow){
 
-			CRect plotrect;
-			this->GetClientRect(&plotrect);
-			GetPlotRect(plotrect,pd.ps.labelSize,pd.ps.metricSize,pd.ps.metricGridLong,pd.ps.gap);
-
-			CSize lgsz;
-
 		if(td==NULL){
-			td=new LegendDlgA();
-			
-			td->ls.assign(pd.ls.begin(),pd.ls.end());
-
-			lgsz=UpdateLegendSpec(lgs,this->GetDC(),td->ls,legendDpMode,plotrect,lgrect,1,25,2);
-
-
-			//if( legendDpMode&LEGEND_DP_FIT_RECT ){
-			//	if( legendDpMode&LEGEND_DP_AUTO_RECT ){
-
-			//		CRect winrect;
-			//		this->GetClientRect(&winrect);
-			//		CSize sz=winrect.Size();
-			//		lgrect.right=lgrect.left+sz.cx/2;
-			//		lgrect.bottom=lgrect.top+sz.cy/2;
-
-			//	}
-
-			//	int fsz=GetAutoFontSize(this->GetDC(),td->ls,lgs.lineLength,lgs.gap,1,25,lgs.fontName,lgrect.Size());
-
-			//	lgs.fontSize=fsz;
-			//}
-
-			//if( legendDpMode&LEGEND_DP_ALIGN ){
-			//	lgs.bDock=true;
-			//	CFont font;
-			//	CSize sz=GetLegendExtent(this->GetDC(),td->ls,&font,lgs.lineLength,lgs.gap,lgs.fontSize,lgs.fontName);
-
-
-
-			//	plotrect.DeflateRect(2,0,0,2);
-
-			//	if( legendDpMode&LEGEND_DP_LEFT ){
-			//		lgs.position.x=plotrect.left;
-			//	}
-			//	else{
-			//		lgs.position.x=plotrect.right-sz.cx;
-			//	}
-
-			//	if( legendDpMode&LEGEND_DP_TOP ){
-			//		lgs.position.y=plotrect.top;
-			//	}
-			//	else{
-			//		lgs.position.y=plotrect.bottom-sz.cy;
-			//	}
-			//}
-
-
-			td->lgs=lgs;
-
+			td=new LegendDlg(this);
 			td->Create(IDD_DIALOG1,this);
-
 		}
 		else{
-
-			td->ls.assign(pd.ls.begin(),pd.ls.end());
-			lgsz=UpdateLegendSpec(lgs,this->GetDC(),td->ls,legendDpMode,plotrect,lgrect,1,25,2);
-			td->lgs=lgs;
-			td->Invalidate();
+			((LegendDlg*)td)->PositionWnd();
+			((LegendDlg*)td)->Invalidate();
+			//td->Invalidate();
 		}
-		
-		CPoint pt(td->lgs.position);
-			this->ClientToScreen(&pt);
-			CRect rc=CRect(pt,lgsz);
-
-			td->MoveWindow(&rc);
-
 		td->ShowWindow(SW_SHOW);
-		
 	}
 	else{
 
 		if(td!=NULL){
-			CRect rc;
-			td->GetWindowRect(&rc);
-			this->ScreenToClient(&rc);
-
-			lgs=td->lgs;
-			lgs.position=rc.TopLeft();
-
 			td->ShowWindow(SW_HIDE);
 			delete td;
 			td=NULL;
 		}
 	}
+}
+
+
+
+CRect PlotWnd::GetWindowPlotRect(bool bWnd)
+{
+
+	CRect plotrect;
+	if(bWnd)
+		this->GetWindowRect(&plotrect);
+	else
+		this->GetClientRect(&plotrect);
+
+	GetPlotRect(plotrect,pd.ps.labelSize,pd.ps.metricSize,pd.ps.metricGridLong,pd.ps.gap);
+
+	return plotrect;
 }
