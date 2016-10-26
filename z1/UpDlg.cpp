@@ -168,6 +168,7 @@ void CUpDlg::OnPaint()
 			DrawCursor(plotrect,&dc);
 			DrawCurve(plotrect, &dc);
 
+
 				//pen.CreatePen(PS_SOLID,1,black);
 				//DrawDiff(plotrect,&dc,&pen,m_xbottom,m_xtop);
 				//pen.DeleteObject();
@@ -259,17 +260,21 @@ void CUpDlg::OnBnClickedButton1()
 
 		m_fileName=fileDlg.GetPathName();
 
-		UpdateData(false);
+	
 
 		free_vector(x,1,m_n);
 		free_vector(y,1,m_n);
 
-		x=vector<double>(1,m_n);
-		y=vector<double>(1,m_n);
+		//x=vector<double>(1,m_n);
+		//y=vector<double>(1,m_n);
 
 		//ys=vector<double>(1,m_n);
 
-		isLoad=readcsv(m_n,m_fileName,x,y);
+		//isLoad=readcsv(m_n,m_fileName,x,y);
+
+		x=readcsv2<double>(&m_n,m_fileName,&isLoad);
+		y=&x[m_n];
+		UpdateData(false);
 
 		if( isLoad ){
 
@@ -277,7 +282,8 @@ void CUpDlg::OnBnClickedButton1()
 			m_xmax=findmax(x,m_n);
 			m_ymin=findmin(y,m_n);
 			m_ymax=findmax(y,m_n);
-
+			m_xbottom=m_xmin;
+			m_xtop=m_xmax;
 			UpdateData(false);
 
 			//loreg(y,m_n,m_span,m_degree,ys);
@@ -582,7 +588,7 @@ void CUpDlg::OnBnClickedButton3()
 
 		isSmooth=true;
 
-		chisqpp=nlmx;
+		//chisqpp=nlmx;
 		UpdateData(false);
 		Invalidate();
 	}
@@ -1064,6 +1070,7 @@ bool CUpDlg::DrawCurve(CRect rect, CPaintDC * dc)
 	{
 		CPen pen(PS_SOLID, 1, blue);
 		DrawPolyline(rect,dc,&pen,x,y,m_n);
+		
 		pen.DeleteObject();
 
 		return true;
@@ -1122,7 +1129,7 @@ bool CUpDlg::DrawSmoothCurve(CRect rect, CPaintDC * dc)
 
 		long startind=findbottomidx(x,m_n,m_xbottom);
 		DrawPolyline(rect,dc,&pen,&x[startind-1],ys,nd);
-
+DrawPolyline(rect,dc,&pen,&x[startind-1],curv,nd);
 		//DrawFunc(rect,dc,&pen);
 		//DrawFunc2(rect,dc,&pen);
 		pen.DeleteObject();
