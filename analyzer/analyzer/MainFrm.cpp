@@ -568,7 +568,7 @@ LRESULT CMainFrame::OnToolbarCreateNew(WPARAM wp,LPARAM lp)
 
 void CMainFrame::OnApplicationLook(UINT id)
 {
-	COLORREF oc;
+	COLORREF oc,ooc=0;
 
 	CWaitCursor wait;
 
@@ -622,6 +622,7 @@ void CMainFrame::OnApplicationLook(UINT id)
 		case ID_VIEW_APPLOOK_OFF_2007_BLUE:
 			CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_LunaBlue);
 			oc=RGB(191,219,255);
+
 			break;
 
 		case ID_VIEW_APPLOOK_OFF_2007_BLACK:
@@ -643,6 +644,8 @@ void CMainFrame::OnApplicationLook(UINT id)
 		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerOffice2007));
 		CDockingManager::SetDockingMode(DT_SMART);
 	}
+
+	
 
 	RedrawWindow(NULL, NULL, RDW_ALLCHILDREN | RDW_INVALIDATE | RDW_UPDATENOW | RDW_FRAME | RDW_ERASE);
 
@@ -1319,7 +1322,7 @@ void CMainFrame::OnUpdateSecurityLogin(CCmdUI *pCmdUI)
 void CMainFrame::OnUpdateSecurityUseraccounts(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst==stop && GetCurAuth()==UserAccount::authority::admin);
+	pCmdUI->Enable(pst==stop && GetCurAuth()!=UserAccount::authority::guest);
 }
 
 
@@ -1350,6 +1353,19 @@ void CMainFrame::ChangeLang(void)
 
 	strOutputWnd.LoadStringW(AFX_IDS_IDLEMESSAGE);
 	m_wndStatusBar.SetWindowTextW(strOutputWnd);
+
+
+	switch(LangID){
+	case MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US):
+		CopyFile(L"analyzer[en].chm",L"analyzer.chm",FALSE);
+		break;		
+	case MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED):
+		CopyFile(L"analyzer[ch].chm",L"analyzer.chm",FALSE);
+		break;
+	default:
+		break;
+	}
+
 }
 
 

@@ -19,28 +19,25 @@ ListCtrlUA::ListCtrlUA(bool flg)
 ListCtrlUA::~ListCtrlUA(void)
 {
 }
-BEGIN_MESSAGE_MAP(ListCtrlUA, ListCtrlA)
+BEGIN_MESSAGE_MAP(ListCtrlUA, ListCtrlC)
 	ON_WM_CREATE()
-	//	ON_COMMAND(ID_POPUP_INSERT, &ListCtrlUA::OnPopupInsert)
-	//	ON_COMMAND(ID_POPUP_REMOVE, &ListCtrlUA::OnPopupRemove)
-	//	ON_COMMAND(ID_POPUP_REMOVEALL, &ListCtrlUA::OnPopupRemoveall)
 	ON_WM_RBUTTONUP()
 	ON_WM_CONTEXTMENU()
-	ON_COMMAND(ID_POPUP_DELETEUSER, &ListCtrlUA::OnPopupDeleteuser)
-	ON_COMMAND(ID_POPUP_ADDUSER, &ListCtrlUA::OnPopupAdduser)
+	ON_COMMAND(32810, &ListCtrlUA::OnPopupDeleteuser)
+	ON_COMMAND(32809, &ListCtrlUA::OnPopupAdduser)
 END_MESSAGE_MAP()
 
 
 int ListCtrlUA::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (ListCtrlA::OnCreate(lpCreateStruct) == -1)
+	if (ListCtrlC::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
 	// TODO:  Add your specialized creation code here
 
 
 	CString strTemp;
-	std::vector<CString> strl;
+	std::vector<CString> strl(1,CString());
 	for(int i=IDS_STRING_USER_NAME;i<=IDS_STRING_REMARK;i++){
 		strTemp.LoadStringW(i);
 		strl.push_back(strTemp);
@@ -53,21 +50,21 @@ int ListCtrlUA::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	//	typelist[0]=typelist[1]=typelist[4]=eEdit;
 
 	if(bEditable){		
-		typelist[0]=typelist[1]=typelist[4]=eEdit;
-		typelist[2]=eCombo;
+		typelist[1]=typelist[2]=typelist[5]=eEdit;
+		typelist[3]=eCombo;
 	}
 
 	// insert string elements  for the ComboBox : 
 	for ( int j=IDS_STRING_ADMIN ; j <= IDS_STRING_GUEST ; j++){
 		strTemp.LoadStringW(j);
-		cbstr[2].push_back(strTemp);
-		AdjustWidth(2,strTemp);
+		cbstr[3].push_back(strTemp);
+		AdjustWidth(3,strTemp);
 	}
 
 	for ( int j=IDS_STRING_YES ; j <= IDS_STRING_NO ; j++){
 		strTemp.LoadStringW(j);
-		cbstr[3].push_back(strTemp);
-		AdjustWidth(3,strTemp);
+		cbstr[4].push_back(strTemp);
+		AdjustWidth(4,strTemp);
 	}
 	//}
 
@@ -111,7 +108,7 @@ void ListCtrlUA::OnRButtonUp(UINT nFlags, CPoint point)
 	if(bEditable){
 		ClientToScreen(&point);
 		OnContextMenu(this, point);
-		ListCtrlA::OnRButtonUp(nFlags, point);
+		ListCtrlC::OnRButtonUp(nFlags, point);
 	}
 }
 
@@ -134,18 +131,20 @@ void ListCtrlUA::OnContextMenu(CWnd* pWnd, CPoint point)
 int ListCtrlUA::InsertItemUA(int i, const UserAccount & ua, bool bUse)
 {
 
-	int inserti=InsertItem( i, ua.userName );
-	AdjustWidth(0,ua.userName);
+	int inserti=InsertItem( i, L"" );
+
+	SetItemText(i,1,ua.userName);
+	AdjustWidth(1,ua.userName);
 
 	if(bEditable){
-		SetItemText(i,1,ua.passWord);
-		AdjustWidth(1,ua.passWord);
+		SetItemText(i,2,ua.passWord);
+		AdjustWidth(2,ua.passWord);
 	}
 	else{
-		SetItemText(i,1,L"*");
+		SetItemText(i,2,L"*");
 	}
 
-	SetChoice(i,2,ua.au);
+	SetChoice(i,3,ua.au);
 
 	//if(bUse){
 	//	bEditable=(ua.au==admin);	
@@ -158,11 +157,11 @@ int ListCtrlUA::InsertItemUA(int i, const UserAccount & ua, bool bUse)
 
 
 
-	SetChoice(i,3,bUse?0:1);
-	AdjustWidth(3,i);
+	SetChoice(i,4,bUse?0:1);
+	AdjustWidth(4,i);
 
-	SetItemText(i,4,ua.remark);
-	AdjustWidth(4,ua.remark);
+	SetItemText(i,5,ua.remark);
+	AdjustWidth(5,ua.remark);
 
 	return inserti;
 }
@@ -172,10 +171,10 @@ bool ListCtrlUA::GetItemUA(int i, UserAccount & ua, bool & bUse)
 {
 	bUse=false;
 
-	ua.userName=this->GetItemText(i,0);
-	ua.passWord=this->GetItemText(i,1);
+	ua.userName=this->GetItemText(i,1);
+	ua.passWord=this->GetItemText(i,2);
 
-	int ci=this->GetChoice(i,2);
+	int ci=this->GetChoice(i,3);
 
 	switch(ci){
 	case 0:
@@ -191,9 +190,9 @@ bool ListCtrlUA::GetItemUA(int i, UserAccount & ua, bool & bUse)
 		return false;
 	}
 
-	bUse=(this->GetChoice(i,3)==0);
+	bUse=(this->GetChoice(i,4)==0);
 
-	ua.remark=GetItemText(i,4);
+	ua.remark=GetItemText(i,5);
 
 	return true;
 }
@@ -229,7 +228,7 @@ void ListCtrlUA::OnPopupDeleteuser()
 	int iSelect=GetSelectionMark();
 	if(iSelect!=-1) // valid item 	
 	{
-		int ci=GetChoice(iSelect,3);
+		int ci=GetChoice(iSelect,4);
 		if(ci==1){
 			DeleteItem( iSelect );
 			EnsureVisible(iSelect, FALSE);

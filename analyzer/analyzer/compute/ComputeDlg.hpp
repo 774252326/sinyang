@@ -63,13 +63,12 @@ protected:
 		std::vector<CString> namel;
 		std::vector<CString> valuel;
 
-		if(DocDataEx::GetResultString(&(doc->da),m_list.vl,namel,valuel)){
-			CString str=L"";
+		CString str=L"";
+		if(DocDataEx::GetResultString(&(doc->da),m_list.vl,namel,valuel)){			
 			for(size_t i=0;i<namel.size();i++){
 				str+=namel[i]+L" "+valuel[i]+L"\r\n";
 			}
-			//((CEdit*)GetDlgItem(EDRS_ID))->SetWindowTextW(str);
-			EditEDRS_ID.SetWindowTextW(str);
+
 			for(size_t i=0;i<m_list.vl.size() && i<doc->da.p1.correction.size(); i++){
 				doc->da.p1.correction[i]=m_list.vl[i].correction;
 			}
@@ -77,7 +76,12 @@ protected:
 			::PostMessage((((CMainFrame*)pframe)->RightPane())->GetSafeHwnd(),MESSAGE_UPDATE_TEST,PW_INIT,(LPARAM)true);
 
 		}
+		else{
+			str.LoadStringW(IDS_STRING_ERROR);
+		}
 
+						//((CEdit*)GetDlgItem(EDRS_ID))->SetWindowTextW(str);
+			EditEDRS_ID.SetWindowTextW(str);
 	};
 
 
@@ -86,7 +90,7 @@ protected:
 		CDialogEx::OnInitDialog();
 
 		// TODO:  Add extra initialization here
-		
+
 
 		CFrameWndEx* pframe = (CFrameWndEx*) AfxGetMainWnd();
 		//CMDIChildWnd* pchild = pframe->MDIGetActive();
@@ -145,85 +149,83 @@ protected:
 
 		winSize.cy=offset+editH+gap1.cy*2;
 
-		if(!(doc->da.GetVL(m_list.vl))){
-			return FALSE;
-		}
-
-		if( ((CMainFrame*)pframe)->GetCurAuth()==UserAccount::authority::admin )
-			switch(doc->da.p1.analysistype){
-			case 2:
-			case 4:
-			case 6:
-			case 8:
-			case 10:
-			case 12:
-				{
+		if( (doc->da.GetVL(m_list.vl)) && 
+			((CMainFrame*)pframe)->GetCurAuth()==UserAccount::authority::admin ){
+				switch(doc->da.p1.analysistype){
+				case 2:
+				case 4:
+				case 6:
+				case 8:
+				case 10:
+				case 12:
+					{
 
 
-					formulaImg.LoadBitmapW(doc->da.p1.GetFormulaImgID());
-					BITMAP bm;
-					formulaImg.GetBitmap(&bm);
-					int imgH=winSize.cx*bm.bmHeight/bm.bmWidth;
+						formulaImg.LoadBitmapW(doc->da.p1.GetFormulaImgID());
+						BITMAP bm;
+						formulaImg.GetBitmap(&bm);
+						int imgH=winSize.cx*bm.bmHeight/bm.bmWidth;
 
-					imgrc=CRect(pt,CSize(w,imgH));
+						imgrc=CRect(pt,CSize(w,imgH));
 
-					int listgapH=2;
-					int listheaderH=24;
-					int listH=(m_list.rowH+listgapH)*m_list.vl.size()+listheaderH;
+						int listgapH=2;
+						int listheaderH=24;
+						int listH=(m_list.rowH+listgapH)*m_list.vl.size()+listheaderH;
 
-					winSize.cy+=imgH+gap2.cy*2+listH+btnH;
-
-
-					//::SetWindowPos(this->GetSafeHwnd(),
-					//	HWND_TOP,
-					//	rc.CenterPoint().x-winSize.cx/2,
-					//	rc.CenterPoint().y-winSize.cy/2,
-					//	winSize.cx,
-					//	winSize.cy,		
-					//	SWP_SHOWWINDOW);
+						winSize.cy+=imgH+gap2.cy*2+listH+btnH;
 
 
-					pt.y+=gap2.cy+imgH;
+						//::SetWindowPos(this->GetSafeHwnd(),
+						//	HWND_TOP,
+						//	rc.CenterPoint().x-winSize.cx/2,
+						//	rc.CenterPoint().y-winSize.cy/2,
+						//	winSize.cx,
+						//	winSize.cy,		
+						//	SWP_SHOWWINDOW);
 
 
-					const DWORD dwStyle = WS_VISIBLE 
-						| WS_CHILD 
-						| WS_BORDER
-						| WS_HSCROLL 
-						| WS_VSCROLL 
-						| LBS_NOINTEGRALHEIGHT;
+						pt.y+=gap2.cy+imgH;
 
-					if(!m_list.Create(dwStyle, CRect(pt,CSize(w,listH)), this, 1256) ){
-						TRACE0("Failed to create output windows\n");
-						return -1;      // fail to create
+
+						const DWORD dwStyle = WS_VISIBLE 
+							| WS_CHILD 
+							| WS_BORDER
+							| WS_HSCROLL 
+							| WS_VSCROLL 
+							| LBS_NOINTEGRALHEIGHT;
+
+						if(!m_list.Create(dwStyle, CRect(pt,CSize(w,listH)), this, 1256) ){
+							TRACE0("Failed to create output windows\n");
+							return -1;      // fail to create
+						}
+
+						pt.y+=gap2.cy+listH;
+
+
+						m_list.Refresh();
+
+
+						str.LoadStringW(IDS_BTN_COMPUTE);
+						//pBtn=new CButton;
+						BtnIDS_BTN_COMPUTE.Create(str,
+							BS_PUSHBUTTON
+							|WS_CHILD
+							|WS_VISIBLE,
+							CRect(pt,CSize(w,btnH)),
+							this,
+							IDS_BTN_COMPUTE);
+
+						pt.y+=btnH;
+
+
+						break;
+
+
 					}
-
-					pt.y+=gap2.cy+listH;
-
-
-					m_list.Refresh();
-
-
-					str.LoadStringW(IDS_BTN_COMPUTE);
-					//pBtn=new CButton;
-					BtnIDS_BTN_COMPUTE.Create(str,
-						BS_PUSHBUTTON
-						|WS_CHILD
-						|WS_VISIBLE,
-						CRect(pt,CSize(w,btnH)),
-						this,
-						IDS_BTN_COMPUTE);
-
-					pt.y+=btnH;
-
+				default:
 
 					break;
-
-
 				}
-			default:
-
-				break;
 		}
 
 		pt.y+=gap2.cy;

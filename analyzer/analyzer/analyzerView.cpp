@@ -234,6 +234,9 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 	afx_msg LRESULT CanalyzerView::OnMessageChangeApplook(WPARAM wParam, LPARAM lParam)
 	{
 		COLORREF oc=(COLORREF)wParam;
+
+		//COLORREF occ=::GetSysColor(COLOR_MENUBAR);
+
 		pw.blankPS.RefreshWinCr(oc);
 
 		for(size_t i=0;i<pdl.size();i++){

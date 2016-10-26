@@ -1,10 +1,10 @@
 #pragma once
-#include "listctrla.h"
+#include "listctrlc.h"
 //#include "linespec.h"
 #include "../struct1/LineSpec.hpp"
 
 class ListCtrlLS :
-	public ListCtrlA
+	public ListCtrlC
 {
 public:
 	ListCtrlLS(void);

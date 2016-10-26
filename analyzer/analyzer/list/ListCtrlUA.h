@@ -1,11 +1,11 @@
 #pragma once
-#include "listctrla.h"
+#include "listctrlc.h"
 //#include "UserAccount.h"
 //#include "../struct/UserAccount.hpp"
 #include "../user/UserAccount.hpp"
 
 class ListCtrlUA :
-	public ListCtrlA
+	public ListCtrlC
 {
 public:
 	ListCtrlUA(void);

@@ -262,7 +262,7 @@ public:
 						//&& dol.back().Ar.size()<p2.noofcycles)
 						&& !dol.back().EndFlag(p2.noofcycles,p2.variationtolerance) ){
 							TRACE("\n6");
-						return 6;//此时最后一次加液的转圈计数未必到达预设值p2.noofcycles
+							return 6;//此时最后一次加液的转圈计数未必到达预设值p2.noofcycles
 					}
 
 					TRACE("\n0");
@@ -288,7 +288,7 @@ public:
 							//&& dol[rawi-1].Ar.size()<p2.noofcycles)
 							&& !dol[rawi-1].EndFlag(p2.noofcycles,p2.variationtolerance) ){
 								TRACE("\n1");
-							return 1;//第rawi－1次加液的转圈计数未必到达预设值p2.noofcycles
+								return 1;//第rawi－1次加液的转圈计数未必到达预设值p2.noofcycles
 						}
 						VtoAdd=d0.addVolume;
 						TRACE("\n5");
@@ -407,11 +407,11 @@ public:
 			nextSAPIndex=p3.saplist.size()-p3t.saplist.size();
 
 			if( rawi>0 
-							//&& dol[rawi-1].Ar.size()<p2.noofcycles)
-							&& !dol[rawi-1].EndFlag(p2.noofcycles,p2.variationtolerance) ){
-								TRACE("\n1");
-							return 1;//第rawi－1次加液的转圈计数未必到达预设值p2.noofcycles
-						}
+				//&& dol[rawi-1].Ar.size()<p2.noofcycles)
+				&& !dol[rawi-1].EndFlag(p2.noofcycles,p2.variationtolerance) ){
+					TRACE("\n1");
+					return 1;//第rawi－1次加液的转圈计数未必到达预设值p2.noofcycles
+			}
 
 
 			TRACE("\n7");
@@ -879,10 +879,10 @@ public:
 				}
 
 				if(!rdl.empty()){
-				rd=rdl.front();
-				for(size_t i=1;i<rdl.size();i++){
-					rd.AppendData(rdl[i]);
-				}
+					rd=rdl.front();
+					for(size_t i=1;i<rdl.size();i++){
+						rd.AppendData(rdl[i]);
+					}
 				}
 				return true;
 			}
@@ -944,7 +944,6 @@ public:
 		std::vector<DataOutA> dolast0;
 
 		if(ddex.Read(fp)){
-
 			if(ddex.FinalData(rd0,dolast0)){
 				double z;
 				if(RecordDT(z,dolast0,evaR,rd0)){
@@ -1038,10 +1037,7 @@ public:
 		return false;
 	};
 
-
-
-
-
+	
 	static bool RecordRC(
 		const std::vector<DataOutA> & dolast, 
 		double evaR, 
@@ -1554,7 +1550,7 @@ public:
 				UINT il[]={IDB_BITMAP_Vtotal,
 					IDB_BITMAP_Vsp,
 					IDB_BITMAP_mL,
-				IDB_BITMAP_CL};
+					IDB_BITMAP_CL};
 				idl.assign(il,il+ANParaEx::CorrectionNumber(atype));
 			}
 			break;
@@ -1655,7 +1651,7 @@ public:
 		CString str,strt;
 		switch(pDoc->p1.analysistype){
 		case 0:
-			return true;
+			return false;
 		case 1:
 			{	
 				RawData rd0;

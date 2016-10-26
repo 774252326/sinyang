@@ -471,22 +471,7 @@
     <ClInclude Include="property\UserAccountPage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="list\ComboItem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="list\EditB.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="list\EditInt.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="list\EditNum.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="list\EditReal.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="list\ListCtrlA.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="list\ListCtrlAA.h">
@@ -517,6 +502,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="analyzerViewR.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="list\ListCtrlB.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="list\ListCtrlC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -566,22 +557,7 @@
     <ClCompile Include="property\UserAccountPage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="list\ComboItem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="list\EditB.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="list\EditInt.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="list\EditNum.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="list\EditReal.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="list\ListCtrlA.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="list\ListCtrlAA.cpp">
@@ -612,6 +588,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="analyzerViewR.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="list\ListCtrlB.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="list\ListCtrlC.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

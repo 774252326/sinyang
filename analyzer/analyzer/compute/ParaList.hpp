@@ -2,7 +2,7 @@
 #include "afxwin.h"
 #include <vector>
 #include "../struct\Value.hpp"
-#include "../list\EditReal.h"
+#include "../list/EditC.hpp"
 
 // ParaList
 
@@ -41,7 +41,7 @@ protected:
 	CImageList imList;
 
 	int m_iSubItem;
-	EditReal m_edtItemEdit;
+	EditC<double> m_edtItemEdit;
 public:
 	std::vector<Value> vl;
 	double x;

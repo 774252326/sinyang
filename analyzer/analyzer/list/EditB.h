@@ -11,12 +11,13 @@ class EditB : public CEdit
 public:
 	EditB();
 	virtual ~EditB();
-
-protected:
-	DECLARE_MESSAGE_MAP()
 public:
-	afx_msg void OnWindowPosChanging(WINDOWPOS* lpwndpos);
 	CRect rect;
+	CPoint coord;
+protected:
+	afx_msg void OnWindowPosChanging(WINDOWPOS* lpwndpos);
+	DECLARE_MESSAGE_MAP()
+
 };
 
 

@@ -14,12 +14,12 @@ ListCtrlAA::ListCtrlAA(void)
 ListCtrlAA::~ListCtrlAA(void)
 {
 }
-BEGIN_MESSAGE_MAP(ListCtrlAA, ListCtrlA)
+BEGIN_MESSAGE_MAP(ListCtrlAA, ListCtrlC)
 	ON_WM_RBUTTONUP()
 	ON_WM_CONTEXTMENU()
-	ON_COMMAND(ID_POPUP_INSERT, &ListCtrlAA::OnPopupInsert)
-	ON_COMMAND(ID_POPUP_REMOVE, &ListCtrlAA::OnPopupRemove)
-	ON_COMMAND(ID_POPUP_REMOVEALL, &ListCtrlAA::OnPopupRemoveall)
+	ON_COMMAND(32806, &ListCtrlAA::OnPopupInsert)
+	ON_COMMAND(32807, &ListCtrlAA::OnPopupRemove)
+	ON_COMMAND(32808, &ListCtrlAA::OnPopupRemoveall)
 	//	ON_NOTIFY_REFLECT(LVN_KEYDOWN, &ListCtrlAA::OnLvnKeydown)
 END_MESSAGE_MAP()
 

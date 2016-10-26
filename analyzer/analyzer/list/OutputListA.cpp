@@ -32,6 +32,8 @@ int COutputListA::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	// TODO:  Add your specialized creation code here
 
+	SetStyle();
+
 	BuildList();
 
 	return 0;
@@ -49,9 +51,7 @@ size_t COutputListA::GetDOLRow(void)
 
 void COutputListA::ShowDOL()
 {
-	//size_t nr=GetDOLRow();
 
-	//int gapp=30;
 
 	size_t StepNo;
 	size_t starti;
@@ -104,14 +104,16 @@ void COutputListA::ShowDOL()
 				SetItemText(StepNo,5,str);
 				AdjustWidth(5,str);
 				//ASSERT
-				////(str.LoadString(IDS_STRING_YES));
-				SetChoice(StepNo,6,0);
+				(str.LoadString(IDS_STRING_YES));
+				//SetChoice(StepNo,6,0);
+				SetItemText(StepNo,6,str);
 			}
 			else{
 				SetItemText(StepNo,5,L"");
 				//ASSERT				
-				//(str.LoadString(IDS_STRING_NO));
-				SetChoice(StepNo,6,1);
+				(str.LoadString(IDS_STRING_NO));
+				//SetChoice(StepNo,6,1);
+				SetItemText(StepNo,6,str);
 			}
 			AdjustWidth(6,str);
 
@@ -155,11 +157,11 @@ void COutputListA::BuildList(void)
 
 	this->SetHeader(strl);
 
-	cbstr[6].clear();
-	(strTemp.LoadString(IDS_STRING_YES));
-	cbstr[6].push_back(strTemp);
-	(strTemp.LoadString(IDS_STRING_NO));
-	cbstr[6].push_back(strTemp);
+	//cbstr[6].clear();
+	//(strTemp.LoadString(IDS_STRING_YES));
+	//cbstr[6].push_back(strTemp);
+	//(strTemp.LoadString(IDS_STRING_NO));
+	//cbstr[6].push_back(strTemp);
 
 	for(int i=0;i<strl.size();i++){		
 		AdjustWidth(i,strl[i],30);
@@ -168,31 +170,33 @@ void COutputListA::BuildList(void)
 
 void COutputListA::ResetHeader(void)
 {	
-	std::vector<CString> strl;
-	CString strTemp;
-	for(int i=IDS_STRING111;i<=IDS_STRING117;i++){		
-		(strTemp.LoadString(i));
-		strl.push_back(strTemp);
-	}
+	//std::vector<CString> strl;
+	//CString strTemp;
+	//for(int i=IDS_STRING111;i<=IDS_STRING117;i++){		
+	//	(strTemp.LoadString(i));
+	//	strl.push_back(strTemp);
+	//}
 
-	cbstr[6].clear();
-	(strTemp.LoadString(IDS_STRING_YES));
-	cbstr[6].push_back(strTemp);
-	(strTemp.LoadString(IDS_STRING_NO));
-	cbstr[6].push_back(strTemp);
+	////cbstr[6].clear();
+	////(strTemp.LoadString(IDS_STRING_YES));
+	////cbstr[6].push_back(strTemp);
+	////(strTemp.LoadString(IDS_STRING_NO));
+	////cbstr[6].push_back(strTemp);
 
 
-	LVCOLUMN col;
-	col.mask = LVCF_TEXT;
-	col.cchTextMax=256;
-	col.pszText=new TCHAR[col.cchTextMax];
+	//LVCOLUMN col;
+	//col.mask = LVCF_TEXT;
+	//col.cchTextMax=256;
+	//col.pszText=new TCHAR[col.cchTextMax];
 
-	for(int i=0;i<strl.size();i++){
-		GetColumn(i,&col);
-		CString::CopyChars(col.pszText,strl[i].GetBuffer(),strl[i].GetLength()+1);
-		SetColumn(i,&col);
-		AdjustWidth(i,strl[i],30);
-	}
-	delete [] col.pszText;
+	//for(int i=0;i<strl.size();i++){
+	//	GetColumn(i,&col);
+	//	CString::CopyChars(col.pszText,strl[i].GetBuffer(),strl[i].GetLength()+1);
+	//	SetColumn(i,&col);
+	//	AdjustWidth(i,strl[i],30);
+	//}
+	//delete [] col.pszText;
+
+	BuildList();
 
 }
