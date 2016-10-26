@@ -103,6 +103,7 @@ public:
 	PlotData * GetPD(void);
 	PlotData * GetPD(int idx);
 	bool SavePic(CSize sz, CString filename);
+	COLORREF bkcr;
 };
 
 #ifndef _DEBUG  // debug version in analyzerView.cpp

@@ -61,6 +61,7 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		, bMouseCursor(false)
 		, selectIdx(0)
 		, lri(0)
+		, bkcr(0)
 	{
 		// TODO: add construction code here
 		spBtnSize=CSize(23*2,23);
@@ -77,6 +78,7 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		, bMouseCursor(false)
 		, selectIdx(0)
 		, lri(i)
+		, bkcr(0)
 	{
 		// TODO: add construction code here
 		spBtnSize=CSize(23*2,23);
@@ -113,25 +115,25 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 			CRect rect;
 			GetClientRect(&rect);
 			dcMem.CreateCompatibleDC(pDC);               //依附窗口DC创建兼容内存DC
-			bmp.CreateCompatibleBitmap(pDC,rect.Width(),rect.Height());//创建兼容位图
+			CSize winsz=rect.Size();
+			bmp.CreateCompatibleBitmap(pDC,winsz.cx,winsz.cy);//创建兼容位图
 			dcMem.SelectObject(&bmp);  	//将位图选择进内存DC
-			CRect plotrect=rect;
 
-			DrawData(plotrect,&dcMem,*pd,xmin,xmax,ymin,ymax);
+			DrawData(rect,&dcMem,*pd,xmin,xmax,ymin,ymax,bkcr);
 			if(bMouseCursor && !pd->ps.empty()){
 				//CString str;
 				//str.Format(L"%g,%g",pDoc->lp[m_spBtn.GetPos32()].xll[selectIdx],pDoc->lp[m_spBtn.GetPos32()].yll[selectIdx]);
 				//dcMem.TextOutW(m_mouseDownPoint.x,m_mouseDownPoint.y,str);
 
-				DrawData1(plotrect
+				DrawData1(rect
 					,&dcMem
 					,pd->xll[selectIdx]
-				,pd->yll[selectIdx]
-				,xmin,xmax,ymin,ymax
+					,pd->yll[selectIdx]
+					,xmin,xmax,ymin,ymax
 					,inv(pd->psp.bkgndC));
 			}
 
-			pDC->BitBlt(0,0,rect.Width(),rect.Height(),&dcMem,0,0,SRCCOPY);//将内存DC上的图象拷贝到前台
+			pDC->BitBlt(0,0,winsz.cx,winsz.cy,&dcMem,0,0,SRCCOPY);//将内存DC上的图象拷贝到前台
 			dcMem.DeleteDC(); //删除DC
 			bmp.DeleteObject(); //删除位图
 

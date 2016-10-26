@@ -9,14 +9,14 @@
 // CVPara
 
 CVPara::CVPara()
-	: lowelimit(0)
-	, highelimit(0)
-	, scanrate(0)
+	: lowelimit(-0.23)
+	, highelimit(1.57)
+	, scanrate(0.1)
 	, combochoice(0)
-	, noofcycles(0)
-	, variationtolerance(0)
-	, rotationrate(0)
-	, endintegratione(0)
+	, noofcycles(4)
+	, variationtolerance(0.01)
+	, rotationrate(1000)
+	, endintegratione(1)
 {
 }
 

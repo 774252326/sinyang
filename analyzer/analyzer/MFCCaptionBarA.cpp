@@ -174,7 +174,7 @@ int CMFCCaptionBarA::SetTextA(CString str, bool bFlash)
 
 		//FlashWindowEx(FLASHW_ALL,1000,500);
 	}
-
+	Invalidate();
 	return 0;
 }
 

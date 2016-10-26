@@ -818,33 +818,44 @@ int pdfd(CString outfile, CanalyzerDoc *padoc)
 
 		CString str;
 
-		str.LoadStringW(IDS_STRING_AT1+padoc->p1.analysistype);
-		p.fit_textline((LPCWSTR)str, 20, 800, L"");
+		int hi=800;
 
+		str.LoadStringW(IDS_STRING_AT1+padoc->p1.analysistype);
+		p.fit_textline((LPCWSTR)str, 20, hi, L"");
+
+		hi-=12;
 		str.LoadStringW(IDS_STRING_EVALUATION_RATIO);
-		str.Format(L"%s=%g",str,padoc->p1.evaluationratio);
-		p.fit_textline((LPCWSTR)str, 20, 800-12, L"");
+		{
+			CString str1;			
+			str1.Format(L"=%g",padoc->p1.evaluationratio);
+			str=str+str1;
+		}
+		p.fit_textline((LPCWSTR)str, 20, hi, L"");
+		hi-=12;
 
 		switch(padoc->p1.analysistype){
 		case 2:
 		case 6:
 		case 8:
 			str.LoadStringW(IDS_STRING_CALIBRATION_CURVE_FILE);
-			p.fit_textline((LPCWSTR)str, 20, 800, L"");
-			p.fit_textline((LPCWSTR)padoc->p1.calibrationfilepath, 20, 500, L"");
-			p.fit_textline((LPCWSTR)padoc->resultStr, 20, 400, L"");
+			p.fit_textline((LPCWSTR)str, 20, hi, L"");
+			hi-=12;
+			p.fit_textline((LPCWSTR)padoc->p1.calibrationfilepath, 20, hi, L"");
+			hi-=12;
 			break;
 		case 4:
 			str.LoadStringW(IDS_STRING_INTERCEPT_VALUE);
 			str.Format(L"%s=%g",str,padoc->p1.interceptvalue);
-			p.fit_textline((LPCWSTR)str, 20, 600, L"");
-			p.fit_textline((LPCWSTR)padoc->resultStr, 20, 500, L"");
+			p.fit_textline((LPCWSTR)str, 20, hi, L"");
+			hi-=12;
+			p.fit_textline((LPCWSTR)padoc->resultStr, 20, hi, L"");
+			hi-=12;
 			break;
 		default:
-			p.fit_textline((LPCWSTR)padoc->resultStr, 20, 600, L"");
+			
 			break;
 		}
-
+		p.fit_textline((LPCWSTR)padoc->resultStr, 20, hi, L"");
 
 
 		p.end_page_ext(L"");
@@ -857,6 +868,8 @@ int pdfd(CString outfile, CanalyzerDoc *padoc)
 	a=pdfout2(p,padoc->p2);
 
 	CSize szimg(800,600);
+	//CSize szimg(1200,900);
+	//CSize szimg(600,450);
 
 	CString fptmp=L"temp.bmp";
 

@@ -38,7 +38,7 @@ void AnalysisParametersPage::DoDataExchange(CDataExchange* pDX)
 {
 
 	DDX_Text(pDX, IDS_EDIT_EVALUATION_RATIO, para.evaluationratio);
-	DDX_Text(pDX, IDS_EDIT_ENDPOINT_RATIO, para.endpointratio);
+	//DDX_Text(pDX, IDS_EDIT_ENDPOINT_RATIO, para.endpointratio);
 	DDX_Text(pDX, IDS_EDIT_CALIBRATION_FACTOR, para.calibrationfactor);
 	DDX_Text(pDX, IDS_EDIT_CALIBRATION_CURVE_FILE, para.calibrationfilepath);
 	DDX_Text(pDX, IDS_EDIT_INTERCEPT_VALUE, para.interceptvalue);
@@ -236,7 +236,7 @@ BOOL AnalysisParametersPage::OnKillActive()
 	//para.analysistype = pcb->GetCurSel();  
 
 	if(para.analysistype<0){
-		AfxMessageBox(L"error");
+		AfxMessageBox(IDS_STRING_ERROR);
 		CComboBox * pcb=(CComboBox*)(this->GetDlgItem(IDS_COMBO_ANALYSIS_TYPE));
 		pcb->SetFocus();
 		return FALSE;
@@ -247,22 +247,22 @@ BOOL AnalysisParametersPage::OnKillActive()
 	}
 
 	if(para.evaluationratio<=0){
-		AfxMessageBox(L"error");
+		AfxMessageBox(IDS_STRING_ERROR);
 		CEdit *ped=(CEdit*)(this->GetDlgItem(IDS_EDIT_EVALUATION_RATIO));
 		ped->SetFocus();
 		return FALSE;
 	}
 
-	if(para.endpointratio<=0){
-		AfxMessageBox(L"error");
-		CEdit *ped=(CEdit*)(this->GetDlgItem(IDS_EDIT_ENDPOINT_RATIO));
-		ped->SetFocus();
-		return FALSE;
-	}
+	//if(para.endpointratio<=0){
+	//	AfxMessageBox(IDS_STRING_ERROR);
+	//	CEdit *ped=(CEdit*)(this->GetDlgItem(IDS_EDIT_ENDPOINT_RATIO));
+	//	ped->SetFocus();
+	//	return FALSE;
+	//}
 
 	para.calibrationfactortype=((CComboBox*)GetDlgItem(IDS_COMBO_CALIBRATION_TYPE))->GetCurSel();
 	if(para.calibrationfactortype<0){
-		AfxMessageBox(L"error");
+		AfxMessageBox(IDS_STRING_ERROR);
 		CComboBox * pcb=(CComboBox*)(this->GetDlgItem(IDS_COMBO_CALIBRATION_TYPE));
 		pcb->SetFocus();
 		return FALSE;
@@ -270,7 +270,7 @@ BOOL AnalysisParametersPage::OnKillActive()
 
 	if(para.calibrationfactortype==0){
 		if(para.calibrationfactor<=0){
-			AfxMessageBox(L"error");
+			AfxMessageBox(IDS_STRING_ERROR);
 			CEdit *ped=(CEdit*)(this->GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR));
 			ped->SetFocus();
 			return FALSE;
@@ -351,7 +351,7 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	//double x[3]={0,0,0};
 
-	int h=winrect.Height()-4*(gap2.cy+staticSize.cy);
+	int h=winrect.Height()-3*(gap2.cy+staticSize.cy);
 
 	str.LoadStringW( IDS_STRING_EP1+(pCombo->GetCurSel()) );
 	pEdit=new CEdit;
@@ -373,9 +373,9 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	pt.y+=h+gap2.cy;
 
 
-	for(int i=0;i<2;i++){
+	//for(int i=0;i<2;i++){
 
-		str.LoadStringW(IDS_STRING_EVALUATION_RATIO+i);
+		str.LoadStringW(IDS_STRING_EVALUATION_RATIO);
 		pStatic=new CStatic;
 		pStatic->Create(
 			str,
@@ -383,11 +383,11 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 			|WS_VISIBLE, 
 			CRect(pt,staticSize),
 			this,
-			IDS_STRING_EVALUATION_RATIO+i);
+			IDS_STRING_EVALUATION_RATIO);
 
 		pt.x+=gap2.cx+staticSize.cx;
 
-		str.LoadStringW(IDS_EDIT_EVALUATION_RATIO+i);
+		str.LoadStringW(IDS_EDIT_EVALUATION_RATIO);
 		//str.Format(L"%g",x[i]);
 		pEdit=new CEdit;
 		pEdit->CreateEx(
@@ -399,12 +399,12 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 			|WS_VISIBLE,
 			CRect(pt,editSize),
 			this,
-			IDS_EDIT_EVALUATION_RATIO+i);
+			IDS_EDIT_EVALUATION_RATIO);
 
 		pt.y+=staticSize.cy+gap2.cy;
 		pt.x-=gap2.cx+staticSize.cx;
 
-	}
+	//}
 
 
 
@@ -474,6 +474,191 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	//pStatic->ShowWindow(SW_SHOW);
 	//pEdit->ShowWindow(SW_SHOW);
+
+
+	////////////////////////////////////////////////////////////////////
+
+
+	//CSize gap1(20,20);
+	//CSize gap2(20,20);
+	//CSize staticSize(180,22);
+
+	//CRect winrect;
+	//this->GetWindowRect(&winrect);
+	//winrect.DeflateRect(gap1);
+
+	//CPoint pt(gap1);
+	//CSize editSize(winrect.Width()-staticSize.cx-gap2.cx,staticSize.cy);
+	//CStatic *pStatic;
+	//CEdit *pEdit;
+	//CComboBox *pCombo;
+	//CComboBox *pCombo2;
+
+	//CString str;
+
+	//str.LoadStringW(IDS_STRING_ANALYSIS_TYPE);
+	//pStatic=new CStatic;
+	//pStatic->Create(
+	//	str,
+	//	WS_CHILD
+	//	|WS_VISIBLE, 
+	//	CRect(pt,staticSize),
+	//	this,
+	//	IDS_STRING_ANALYSIS_TYPE);
+
+	//pt.x+=staticSize.cx+gap2.cx;
+
+	//str.LoadStringW(IDS_COMBO_ANALYSIS_TYPE);
+
+	//pCombo=new CComboBox;
+	//pCombo->Create(
+	//	CBS_DROPDOWN
+	//	|WS_CHILD
+	//	|WS_VISIBLE, 
+	//	CRect(pt,editSize),
+	//	this,
+	//	IDS_COMBO_ANALYSIS_TYPE);
+
+
+	//for(int i=IDS_STRING_AT1;i<=IDS_STRING_AT11;i++){
+	//	str.LoadStringW(i);
+	//	pCombo->AddString(str);
+	//}
+	//if(para.analysistype<0 || para.analysistype>10){
+	//	pCombo->SetCurSel(-1);
+	//}
+	//else{
+	//	pCombo->SetCurSel(para.analysistype);
+	//}
+
+	//pEdit = (CEdit*)pCombo->GetWindow(GW_CHILD);
+	//pEdit->SetReadOnly();
+
+	//pt.x-=staticSize.cx+gap2.cx;
+	//pt.y+=staticSize.cy+gap2.cy;
+
+	////double x[3]={0,0,0};
+
+	//int h=winrect.Height()-4*(gap2.cy+staticSize.cy);
+
+	//str.LoadStringW( IDS_STRING_EP1+(pCombo->GetCurSel()) );
+	//pEdit=new CEdit;
+	//pEdit->CreateEx(
+	//	WS_EX_CLIENTEDGE,
+	//	L"Edit", 
+	//	str,
+	//	ES_LEFT
+	//	|ES_READONLY
+	//	|ES_MULTILINE
+	//	|ES_WANTRETURN
+	//	|WS_VSCROLL
+	//	|WS_CHILD
+	//	|WS_VISIBLE,
+	//	CRect(pt,CSize(winrect.Width(),h)),
+	//	this,
+	//	IDS_EDIT_REMARK_ON_ANALYSIS_TYPE);
+
+	//pt.y+=h+gap2.cy;
+
+
+	//for(int i=0;i<2;i++){
+
+	//	str.LoadStringW(IDS_STRING_EVALUATION_RATIO+i);
+	//	pStatic=new CStatic;
+	//	pStatic->Create(
+	//		str,
+	//		WS_CHILD
+	//		|WS_VISIBLE, 
+	//		CRect(pt,staticSize),
+	//		this,
+	//		IDS_STRING_EVALUATION_RATIO+i);
+
+	//	pt.x+=gap2.cx+staticSize.cx;
+
+	//	str.LoadStringW(IDS_EDIT_EVALUATION_RATIO+i);
+	//	//str.Format(L"%g",x[i]);
+	//	pEdit=new CEdit;
+	//	pEdit->CreateEx(
+	//		WS_EX_CLIENTEDGE,
+	//		L"Edit", 
+	//		str,
+	//		ES_LEFT
+	//		|WS_CHILD
+	//		|WS_VISIBLE,
+	//		CRect(pt,editSize),
+	//		this,
+	//		IDS_EDIT_EVALUATION_RATIO+i);
+
+	//	pt.y+=staticSize.cy+gap2.cy;
+	//	pt.x-=gap2.cx+staticSize.cx;
+
+	//}
+
+
+
+	//pCombo2=new CComboBox;
+	//pCombo2->Create(
+	//	CBS_DROPDOWN
+	//	|WS_CHILD
+	//	|WS_VISIBLE, 
+	//	CRect(pt,staticSize),
+	//	this,
+	//	IDS_COMBO_CALIBRATION_TYPE);
+
+	//for(int i=IDS_STRING_CALIBRATION_FACTOR;i<=IDS_STRING_INTERCEPT_VALUE;i++){
+	//	str.LoadStringW(i);
+	//	pCombo2->AddString(str);
+	//}
+	//pCombo2->SetCurSel(para.calibrationfactortype);
+
+	//pEdit = (CEdit*)pCombo2->GetWindow(GW_CHILD);
+	//pEdit->SetReadOnly();
+
+	//pt.x+=gap2.cx+staticSize.cx;
+
+	//str.LoadStringW(IDS_EDIT_CALIBRATION_FACTOR);
+	//pEdit=new CEdit;
+	//pEdit->CreateEx(
+	//	WS_EX_CLIENTEDGE,
+	//	L"Edit", 
+	//	str,
+	//	ES_LEFT
+	//	|WS_CHILD
+	//	|WS_VISIBLE,
+	//	CRect(pt,editSize),
+	//	this,
+	//	IDS_EDIT_CALIBRATION_FACTOR);
+
+	//str.LoadStringW(IDS_EDIT_CALIBRATION_CURVE_FILE);
+	//pEdit=new CEdit;
+	//pEdit->CreateEx(
+	//	WS_EX_CLIENTEDGE,
+	//	L"Edit", 
+	//	str,
+	//	ES_LEFT
+	//	|WS_CHILD,
+	//	//|WS_VISIBLE,
+	//	CRect(pt,editSize),
+	//	this,
+	//	IDS_EDIT_CALIBRATION_CURVE_FILE);
+
+
+	//str.LoadStringW(IDS_EDIT_INTERCEPT_VALUE);
+	//pEdit=new CEdit;
+	//pEdit->CreateEx(
+	//	WS_EX_CLIENTEDGE,
+	//	L"Edit", 
+	//	str,
+	//	ES_LEFT
+	//	|WS_CHILD,
+	//	//|WS_VISIBLE,
+	//	CRect(pt,editSize),
+	//	this,
+	//	IDS_EDIT_INTERCEPT_VALUE);
+
+	//
+
+	//CalibrationComboSelectChange();
 
 	return 0;
 }

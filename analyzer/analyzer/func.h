@@ -49,7 +49,8 @@ void DrawData(CRect &plotrect
 	, const double &xmin
 	, const double &xmax
 	, const double &ymin
-	, const double &ymax);
+	, const double &ymax
+	, COLORREF winbkcr=0);
 
 bool WheelUpdate(CRect &plotrect
 	, int mtsz

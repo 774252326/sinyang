@@ -99,14 +99,14 @@ BOOL CVParametersPage::OnKillActive()
 	}
 
 	if(para.highelimit<=para.lowelimit){
-		AfxMessageBox(L"error");
+		AfxMessageBox(IDS_STRING_ERROR);
 		CEdit *ped=(CEdit*)(this->GetDlgItem(IDS_EDIT_HIGH_E_LIMIT));
 		ped->SetFocus();
 		return FALSE;
 	}
 
 	if(para.scanrate<=0){
-		AfxMessageBox(L"error");
+		AfxMessageBox(IDS_STRING_ERROR);
 		CEdit *ped=(CEdit*)(this->GetDlgItem(IDS_EDIT_SCAN_RATE));
 		ped->SetFocus();
 		return FALSE;
@@ -115,7 +115,7 @@ BOOL CVParametersPage::OnKillActive()
 	para.combochoice=((CComboBox*)GetDlgItem(IDS_COMBO_CYCLE_TYPE))->GetCurSel();
 
 	if(para.combochoice<0){
-		AfxMessageBox(L"error");
+		AfxMessageBox(IDS_STRING_ERROR);
 		CComboBox * pcb=(CComboBox*)(this->GetDlgItem(IDS_COMBO_CYCLE_TYPE));
 		pcb->SetFocus();
 		return FALSE;
@@ -123,7 +123,7 @@ BOOL CVParametersPage::OnKillActive()
 
 	if(para.combochoice==0){
 		if(para.noofcycles<=0){
-			AfxMessageBox(L"error");
+			AfxMessageBox(IDS_STRING_ERROR);
 			CEdit *ped=(CEdit*)(this->GetDlgItem(IDS_EDIT_NO_OF_CYCLES));
 			ped->SetFocus();
 			return FALSE;
@@ -132,7 +132,7 @@ BOOL CVParametersPage::OnKillActive()
 
 	if(para.combochoice==1){
 		if(para.variationtolerance<=0 || para.variationtolerance>1){
-			AfxMessageBox(L"error");
+			AfxMessageBox(IDS_STRING_ERROR);
 			CEdit *ped=(CEdit*)(this->GetDlgItem(IDS_EDIT_VARIATION_TOLERANCE));
 			ped->SetFocus();
 			return FALSE;
@@ -140,7 +140,7 @@ BOOL CVParametersPage::OnKillActive()
 	}
 
 	if(para.rotationrate<=0){
-		AfxMessageBox(L"error");
+		AfxMessageBox(IDS_STRING_ERROR);
 		CEdit *ped=(CEdit*)(this->GetDlgItem(IDS_EDIT_ROTATION_RATE));
 		ped->SetFocus();
 		return FALSE;

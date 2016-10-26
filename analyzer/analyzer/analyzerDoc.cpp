@@ -391,7 +391,7 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 			AfxMessageBox(L"report "+fp+L" is saved");
 		}
 		else{
-			AfxMessageBox(L"fail to save report");
+			AfxMessageBox(IDS_STRING_SAVE_ERROR);
 		}
 
 
@@ -418,7 +418,7 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		UpdateRange(pd.yll,ymin,ymax,pct,true);
 
 		CRect plotrect(0,0,sz.cx,sz.cy);
-		DrawData(plotrect,&dcMem,pd,xmin,xmax,ymin,ymax);
+		DrawData(plotrect,&dcMem,pd,xmin,xmax,ymin,ymax,lv->bkcr);
 
 		CImage img;
 		img.Attach(HBITMAP(bmp));

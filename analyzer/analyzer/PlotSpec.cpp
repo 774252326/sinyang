@@ -6,6 +6,14 @@
 #include "PlotSpec.h"
 #include "colormapT.h"
 
+const int ncr=2;
+const int ncritm=5;
+const COLORREF crl[ncritm*ncr]={
+	white,black,black,black,blue,
+	black,white,white,white,blue
+
+};
+
 // PlotSpec
 
 PlotSpec::PlotSpec()
@@ -25,45 +33,23 @@ PlotSpec::~PlotSpec()
 }
 
 
-//PlotSpec::PlotSpec(const PlotSpec &src)
-//{
-//	bkgndC=src.bkgndC;
-//	borderC=src.borderC;
-//	gridC=src.gridC;
-//	gridType=src.gridType;
-//	labelC=src.labelC;
-//	labelSize=src.labelSize;
-//	metricC=src.metricC;
-//	metricSize=src.metricSize;
-//}
 
 PlotSpec::PlotSpec(int i)
 {
-	switch(i){
-	case 0:
-		bkgndC=white;
-		borderC=black;
-		gridC=black;
-		metricC=black;
-		labelC=blue;
-		break;
-	case 1:
-		bkgndC=black;
-		borderC=white;
-		gridC=white;
-		metricC=white;
-		labelC=blue;
-		break;
-	default:
-		bkgndC=white;
-		borderC=black;
-		gridC=black;
-		metricC=black;
-		labelC=blue;
-		break;
-	}
+	if(i<0 || i>=ncr)
+		i=0;
+	i*=ncritm;
+	bkgndC=crl[i++];
+	//i++;
+	borderC=crl[i++];
+	//i++;
+	gridC=crl[i++];
+	//i++;
+	metricC=crl[i++];
+	//i++;
+	labelC=crl[i++];
 
-	gridType=3;
+	gridType=5;
 	labelSize=20;
 	metricSize=15;
 }
@@ -78,7 +64,6 @@ void PlotSpec::operator=(const PlotSpec &src)
 	labelSize=src.labelSize;
 	metricC=src.metricC;
 	metricSize=src.metricSize;
-
 }
 
 // PlotSpec member functions
@@ -114,19 +99,15 @@ void PlotSpec::Serialize(CArchive& ar)
 
 int PlotSpec::GetCrType(void)
 {
-	if(	bkgndC==white
-		&& borderC==black
-		&& gridC==black
-		&& metricC==black
-		&& labelC==blue)
-		return 0;
-
-	if(	bkgndC==black
-		&& borderC==white
-		&& gridC==white
-		&& metricC==white
-		&& labelC==blue)
-		return 1;
+	for(int i=0;i<ncr;i++){
+		int j=i*ncritm;
+		if(	bkgndC==crl[j++]
+		&& borderC==crl[j++]
+		&& gridC==crl[j++]
+		&& metricC==crl[j++]
+		&& labelC==crl[j++])
+			return i;
+	}
 
 	return -1;
 }

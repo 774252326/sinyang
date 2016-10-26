@@ -1017,7 +1017,7 @@ UINT DEMOP(CanalyzerViewL *leftp,
 			rightp->Invalidate(FALSE);
 	}
 	else{
-		CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;		
+		AfxMessageBox(IDS_STRING_STEP_ERROR);pst=stop;return 1;		
 		p3.saplist.erase(p3.saplist.begin());
 	}
 
@@ -1050,7 +1050,7 @@ UINT DEMOP(CanalyzerViewL *leftp,
 
 		}
 		else{
-			CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
+			AfxMessageBox(IDS_STRING_STEP_ERROR);pst=stop;return 1;
 			p3.saplist.erase(p3.saplist.begin());
 		}
 	}
@@ -1158,7 +1158,7 @@ UINT DTR(CanalyzerViewL *leftp,
 			rightp->Invalidate(FALSE);
 	}
 	else{
-		CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;		
+		AfxMessageBox(IDS_STRING_STEP_ERROR);pst=stop;return 1;		
 		p3.saplist.erase(p3.saplist.begin());
 	}
 
@@ -1178,7 +1178,7 @@ UINT DTR(CanalyzerViewL *leftp,
 
 		}
 		else{
-			CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
+			AfxMessageBox(IDS_STRING_STEP_ERROR);pst=stop;return 1;
 			p3.saplist.erase(p3.saplist.begin());
 		}
 	}
@@ -1315,7 +1315,7 @@ UINT DTA(CanalyzerViewL *leftp,
 			rightp->Invalidate(FALSE);
 	}
 	else{
-		CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
+		AfxMessageBox(IDS_STRING_STEP_ERROR);pst=stop;return 1;
 		p3.saplist.erase(p3.saplist.begin());
 	}
 
@@ -1333,7 +1333,7 @@ UINT DTA(CanalyzerViewL *leftp,
 				rightp->Invalidate(FALSE);
 		}
 		else{
-			CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
+			AfxMessageBox(IDS_STRING_STEP_ERROR);pst=stop;return 1;
 			p3.saplist.erase(p3.saplist.begin());
 		}
 	}
@@ -1444,7 +1444,7 @@ UINT LATR(CanalyzerViewL *leftp,
 
 	}
 	else{
-		CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
+		AfxMessageBox(IDS_STRING_STEP_ERROR);pst=stop;return 1;
 		p3.saplist.erase(p3.saplist.begin());
 	}
 
@@ -1463,7 +1463,7 @@ UINT LATR(CanalyzerViewL *leftp,
 				rightp->Invalidate(FALSE);
 		}
 		else{
-			CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
+			AfxMessageBox(IDS_STRING_STEP_ERROR);pst=stop;return 1;
 			p3.saplist.erase(p3.saplist.begin());
 		}
 	}
@@ -1532,7 +1532,7 @@ UINT LATA(CanalyzerViewL *leftp,
 		OneStep(outw,leftp,cba,pst,dt1,dataB,filelist,p3,true,false);
 	}
 	else{
-		CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
+		AfxMessageBox(IDS_STRING_STEP_ERROR);pst=stop;return 1;
 		p3.saplist.erase(p3.saplist.begin());
 	}
 
@@ -1569,7 +1569,7 @@ UINT LATA(CanalyzerViewL *leftp,
 
 	}
 	else{
-		CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
+		AfxMessageBox(IDS_STRING_STEP_ERROR);pst=stop;return 1;
 		p3.saplist.erase(p3.saplist.begin());
 	}
 
@@ -1592,7 +1592,7 @@ UINT LATA(CanalyzerViewL *leftp,
 
 	}
 	else{
-		CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
+		AfxMessageBox(IDS_STRING_STEP_ERROR);pst=stop;return 1;
 		p3.saplist.erase(p3.saplist.begin());
 	}
 
@@ -1613,7 +1613,7 @@ UINT LATA(CanalyzerViewL *leftp,
 				rightp->Invalidate(FALSE);
 		}
 		else{
-			CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
+			AfxMessageBox(IDS_STRING_STEP_ERROR);pst=stop;return 1;
 			p3.saplist.erase(p3.saplist.begin());
 		}
 	}
@@ -1687,7 +1687,7 @@ UINT RCR(CanalyzerViewL *leftp,
 		OneStep(outw,leftp,cba,pst,dt1,dataB,filelist,p3,true,false);
 	}
 	else{
-		CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
+		AfxMessageBox(IDS_STRING_STEP_ERROR);pst=stop;return 1;
 		p3.saplist.erase(p3.saplist.begin());
 	}
 
@@ -1723,7 +1723,7 @@ UINT RCR(CanalyzerViewL *leftp,
 
 	}
 	else{
-		CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
+		AfxMessageBox(IDS_STRING_STEP_ERROR);pst=stop;return 1;
 		p3.saplist.erase(p3.saplist.begin());
 	}
 
@@ -1743,7 +1743,7 @@ UINT RCR(CanalyzerViewL *leftp,
 				rightp->Invalidate(FALSE);
 		}
 		else{
-			CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
+			AfxMessageBox(IDS_STRING_STEP_ERROR);pst=stop;return 1;
 			p3.saplist.erase(p3.saplist.begin());
 		}
 	}
@@ -1836,7 +1836,7 @@ UINT RCA(CanalyzerViewL *leftp,
 		OneStep(outw,leftp,cba,pst,dt1,dataB,filelist,p3,true,false);
 	}
 	else{
-		CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
+		AfxMessageBox(IDS_STRING_STEP_ERROR);pst=stop;return 1;
 		p3.saplist.erase(p3.saplist.begin());
 	}
 	/////////////////////////////////add s and a//////////////////////////////////
@@ -1844,7 +1844,7 @@ UINT RCA(CanalyzerViewL *leftp,
 		OneStep(outw,leftp,cba,pst,dt1,dataB,filelist,p3,true,false);
 	}
 	else{
-		CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
+		AfxMessageBox(IDS_STRING_STEP_ERROR);pst=stop;return 1;
 		p3.saplist.erase(p3.saplist.begin());
 	}
 	////////////////////////////////////////////add sample////////////////////////////
@@ -1853,7 +1853,7 @@ UINT RCA(CanalyzerViewL *leftp,
 		OneStep(outw,leftp,cba,pst,dt1,dataB,filelist,p3,true,false);
 	}
 	else{
-		CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
+		AfxMessageBox(IDS_STRING_STEP_ERROR);pst=stop;return 1;
 		p3.saplist.erase(p3.saplist.begin());
 	}
 	/////////////////////////////////////last step////////////////////////////////////////////////////////////////
@@ -1984,7 +1984,7 @@ UINT SARR(CanalyzerViewL *leftp,
 
 		}
 		else{
-			CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
+			AfxMessageBox(IDS_STRING_STEP_ERROR);pst=stop;return 1;
 			p3.saplist.erase(p3.saplist.begin());
 		}
 
@@ -2184,7 +2184,7 @@ UINT SARA(CanalyzerViewL *leftp,
 			rightp->Invalidate(FALSE);
 	}
 	else{
-		CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
+		AfxMessageBox(IDS_STRING_STEP_ERROR);pst=stop;return 1;
 		p3.saplist.erase(p3.saplist.begin());
 	}
 
@@ -2257,7 +2257,7 @@ UINT SARA(CanalyzerViewL *leftp,
 				rightp->Invalidate(FALSE);
 		}
 		else{
-			CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
+			AfxMessageBox(IDS_STRING_STEP_ERROR);pst=stop;return 1;
 			p3.saplist.erase(p3.saplist.begin());
 		}
 	}
@@ -2368,7 +2368,7 @@ UINT NEWR(CanalyzerViewL *leftp,
 
 	}
 	else{
-		CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
+		AfxMessageBox(IDS_STRING_STEP_ERROR);pst=stop;return 1;
 		p3.saplist.erase(p3.saplist.begin());
 	}
 
@@ -2387,7 +2387,7 @@ UINT NEWR(CanalyzerViewL *leftp,
 				rightp->Invalidate(FALSE);
 		}
 		else{
-			CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
+			AfxMessageBox(IDS_STRING_STEP_ERROR);pst=stop;return 1;
 			p3.saplist.erase(p3.saplist.begin());
 		}
 	}
@@ -2484,7 +2484,7 @@ UINT NEWA(CanalyzerViewL *leftp,
 		OneStep(outw,leftp,cba,pst,dt1,dataB,filelist,p3,true,false);
 	}
 	else{
-		CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
+		AfxMessageBox(IDS_STRING_STEP_ERROR);pst=stop;return 1;
 		p3.saplist.erase(p3.saplist.begin());
 	}
 	/////////////////////////////////add l//////////////////////////////////
@@ -2493,7 +2493,7 @@ UINT NEWA(CanalyzerViewL *leftp,
 		lml=dataB.Lml;
 	}
 	else{
-		CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
+		AfxMessageBox(IDS_STRING_STEP_ERROR);pst=stop;return 1;
 		p3.saplist.erase(p3.saplist.begin());
 	}
 	////////////////////////////////////////////add sample////////////////////////////
@@ -2502,7 +2502,7 @@ UINT NEWA(CanalyzerViewL *leftp,
 		OneStep(outw,leftp,cba,pst,dt1,dataB,filelist,p3,true,false);
 	}
 	else{
-		CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
+		AfxMessageBox(IDS_STRING_STEP_ERROR);pst=stop;return 1;
 		p3.saplist.erase(p3.saplist.begin());
 	}
 	/////////////////////////////////////last step////////////////////////////////////////////////////////////////
@@ -2746,7 +2746,7 @@ CRect DrawMetric(const CRect & rect,
 		CPoint textLocate;
 		COLORREF oc;
 		CString fontName=L"Arial";
-
+		int oldBkMode;
 
 
 		pen.CreatePen(PS_SOLID, lineWidth, gridC);
@@ -2774,6 +2774,7 @@ CRect DrawMetric(const CRect & rect,
 			fontName);                 // lpszFacename
 		pOldFont=pdc->SelectObject(&font);
 
+		oldBkMode=pdc->SetBkMode(TRANSPARENT);
 		textLocate.y=rect.bottom+lc;
 		for(size_t i=0;i<gridV.size();i++){
 
@@ -2797,6 +2798,7 @@ CRect DrawMetric(const CRect & rect,
 
 		}
 		newrect.bottom=xmrect.bottom;
+		pdc->SetBkMode(oldBkMode);
 
 		pdc->SelectObject(pOldFont);
 		font.DeleteObject();
@@ -2821,7 +2823,7 @@ CRect DrawMetric(const CRect & rect,
 			fontName);                 // lpszFacename
 		pOldFont=pdc->SelectObject(&font);
 
-
+		oldBkMode=pdc->SetBkMode(TRANSPARENT);
 		for(size_t i=0;i<gridH.size();i++){
 			pdc->MoveTo(rect.left,gridH[i]);
 			pdc->LineTo(rect.left-lcs,gridH[i]);
@@ -2846,7 +2848,9 @@ CRect DrawMetric(const CRect & rect,
 
 
 		}
+		
 		newrect.left=ymrect.left;
+		pdc->SetBkMode(oldBkMode);
 		pdc->SelectObject(pOldFont);
 		font.DeleteObject();
 		//////////////////////////////////////////////
@@ -2885,7 +2889,7 @@ CRect DrawLabel(const CRect & rect
 		COLORREF oc;
 		CSize sz;
 		CString fontName=L"Arial";
-
+		int oldBkMode;
 
 		oc=pdc->SetTextColor(labelC);
 
@@ -2908,10 +2912,14 @@ CRect DrawLabel(const CRect & rect
 		//font.CreatePointFont(200,L"MS Gothic",NULL);
 		pOldFont=pdc->SelectObject(&font);
 
+		oldBkMode=pdc->SetBkMode(TRANSPARENT);
+
 		str.Format(xlab);
 		sz=pdc->GetTextExtent(str);
 		pdc->TextOutW(centerP.x-(sz.cx/2),newrect.bottom,str);
 		newrect.bottom+=sz.cy;
+
+		pdc->SetBkMode(oldBkMode);
 
 		pdc->SelectObject(pOldFont);
 		font.DeleteObject();
@@ -2935,10 +2943,12 @@ CRect DrawLabel(const CRect & rect
 			fontName);                 // lpszFacename
 		pOldFont=pdc->SelectObject(&font);
 
+		oldBkMode=pdc->SetBkMode(TRANSPARENT);
 		str.Format(ylab);
 		sz=pdc->GetTextExtent(str);
 		pdc->TextOutW(newrect.left-sz.cy-1,centerP.y+(sz.cx/2),str);
 		newrect.left-=sz.cy+1;
+		pdc->SetBkMode(oldBkMode);
 
 		pdc->SelectObject(pOldFont);
 		font.DeleteObject();
@@ -3040,10 +3050,13 @@ CRect DrawXYAxis(CRect rect
 	YMAX=ymax;
 	YMIN=ymin;
 
-	drawRectangle(rect
-		,pdc
-		,psp.bkgndC
-		,psp.borderC);
+	//drawRectangle(rect
+	//	,pdc
+	//	,psp.bkgndC
+	//	,psp.borderC);
+
+	pdc->FillSolidRect(&rect,psp.bkgndC);
+	//pdc->DrawEdge(&rect,EDGE_BUMP,BF_BOTTOMLEFT);
 
 	std::vector<double> gridx;
 	calgridVT(XMAX,XMIN,gridx);
@@ -3353,13 +3366,19 @@ void DrawData(CRect &plotrect
 	, const double &xmin
 	, const double &xmax
 	, const double &ymin
-	, const double &ymax)
+	, const double &ymax
+	, COLORREF winbkcr)
 {
 
 	//WaitForSingleObject(semaphoreWrite.m_hObject,INFINITE);
 
 
-	pDC->FillSolidRect(plotrect,pd.psp.bkgndC);
+	pDC->FillSolidRect(plotrect,winbkcr);
+	//pDC->FillSolidRect(plotrect,RGB(191,219,255));
+	//pDC->FillSolidRect(plotrect,RGB(83,83,83));
+	//pDC->FillSolidRect(plotrect,RGB(208,212,221));
+	//pDC->FillSolidRect(plotrect,RGB(196,202,217));
+
 
 	GetPlotRect(plotrect, pd.psp.labelSize, pd.psp.metricSize);
 
@@ -3410,6 +3429,9 @@ void DrawData(CRect &plotrect
 
 		rgn.SetRectRgn(&mainrt);
 		pDC->SelectClipRgn(&rgn);
+
+		pDC->DrawEdge(&plotrect,EDGE_BUMP,BF_BOTTOMLEFT);
+
 	}
 
 

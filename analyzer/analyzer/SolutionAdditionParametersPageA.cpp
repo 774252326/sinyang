@@ -236,9 +236,9 @@ int SolutionAdditionParametersPageA::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	CEdit *pEdit;
 	CString str;
 
-
+	str.LoadStringW(IDS_STRING_SAP_TIPS);
 	stt.Create(
-		L"press Insert to add step, press Delete to delete selection",
+		str,
 		WS_CHILD
 		|WS_VISIBLE, 
 		CRect(pt,CSize(winrect.Width(),staticSize.cy)),

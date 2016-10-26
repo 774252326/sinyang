@@ -81,11 +81,6 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 
 
-				//CMenu m_menu;
-	////m_menu.LoadMenu(L"IDR_MAINFRAME_CHINESE");
-	//m_wndMenuBar.CreateFromMenu(m_menu.GetSafeHmenu(),true,true);
-	//this->SetMenu(&m_menu);
-
 	BOOL bNameValid;
 	// set the visual manager and style based on persisted value
 	OnApplicationLook(theApp.m_nAppLook);
@@ -108,7 +103,17 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// prevent the menu bar from taking the focus on activation
 	CMFCPopupMenu::SetForceMenuFocus(FALSE);
 
-	if (!m_wndToolBar.CreateEx(this, TBSTYLE_FLAT, WS_CHILD | WS_VISIBLE | CBRS_TOP | CBRS_GRIPPER | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC) ||
+	if (!m_wndToolBar.CreateEx(this
+		, TBSTYLE_FLAT
+		//| TBSTYLE_TRANSPARENT
+		, WS_CHILD 
+		| WS_VISIBLE 
+		| CBRS_TOP 
+		| CBRS_GRIPPER 
+		| CBRS_TOOLTIPS 
+		| CBRS_FLYBY 
+		| CBRS_SIZE_DYNAMIC
+		) ||
 		!m_wndToolBar.LoadToolBar(theApp.m_bHiColorIcons ? IDR_MAINFRAME_256 : IDR_MAINFRAME))
 	{
 		TRACE0("Failed to create toolbar\n");
@@ -125,7 +130,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// m_wndToolBar.GetToolBarCtrl().SetHotImageList(&img); 
  //   img.Detach(); 
 
-
+	m_wndToolBar.EnableTextLabels(TRUE);
 
 
 	CString strToolBarName;
@@ -137,6 +142,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	bNameValid = strCustomize.LoadString(IDS_TOOLBAR_CUSTOMIZE);
 	ASSERT(bNameValid);
 	m_wndToolBar.EnableCustomizeButton(TRUE, ID_VIEW_CUSTOMIZE, strCustomize);
+	//m_wndToolBar.EnableCustomizeButton(FALSE, ID_VIEW_CUSTOMIZE, strCustomize);
 
 	// Allow user-defined toolbars operations:
 	InitUserToolbars(NULL, uiFirstUserToolBarId, uiLastUserToolBarId);
@@ -218,12 +224,6 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	lstBasicCommands.AddTail(ID_VIEW_APPLOOK_WINDOWS_7);
 
 	//CMFCToolBar::SetBasicCommands(lstBasicCommands);
-
-	//CMenu m_menu;
-	//m_menu.LoadMenuW(L"IDR_MAINFRAME_CHINESE");
-	//m_wndMenuBar.CreateFromMenu(m_menu.GetSafeHmenu(),true,true);
-	////::SetMenu(this->GetSafeHwnd(),m_menu.GetSafeHmenu());
-
 
 	return 0;
 }
@@ -413,18 +413,22 @@ void CMainFrame::OnApplicationLook(UINT id)
 		{
 		case ID_VIEW_APPLOOK_OFF_2007_BLUE:
 			CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_LunaBlue);
+			this->LeftPlotPointer()->bkcr=this->RightPlotPointer()->bkcr=RGB(191,219,255);
 			break;
 
 		case ID_VIEW_APPLOOK_OFF_2007_BLACK:
 			CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_ObsidianBlack);
+			this->LeftPlotPointer()->bkcr=this->RightPlotPointer()->bkcr=RGB(83,83,83);
 			break;
 
 		case ID_VIEW_APPLOOK_OFF_2007_SILVER:
 			CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_Silver);
+			this->LeftPlotPointer()->bkcr=this->RightPlotPointer()->bkcr=RGB(208,212,221);
 			break;
 
 		case ID_VIEW_APPLOOK_OFF_2007_AQUA:
 			CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_Aqua);
+			this->LeftPlotPointer()->bkcr=this->RightPlotPointer()->bkcr=RGB(196,202,217);
 			break;
 		}
 
@@ -435,6 +439,10 @@ void CMainFrame::OnApplicationLook(UINT id)
 	RedrawWindow(NULL, NULL, RDW_ALLCHILDREN | RDW_INVALIDATE | RDW_UPDATENOW | RDW_FRAME | RDW_ERASE);
 
 	theApp.WriteInt(_T("ApplicationLook"), theApp.m_nAppLook);
+
+	this->LeftPlotPointer()->Invalidate(FALSE);
+	this->RightPlotPointer()->Invalidate(FALSE);
+
 }
 
 void CMainFrame::OnUpdateApplicationLook(CCmdUI* pCmdUI)

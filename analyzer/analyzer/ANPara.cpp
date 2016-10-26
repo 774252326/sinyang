@@ -10,11 +10,11 @@
 
 ANPara::ANPara()
 	: analysistype(0)
-	, evaluationratio(0)
+	, evaluationratio(0.8)
 	, endpointratio(1)
 	, calibrationfactortype(0)
-	, calibrationfactor(0)
-	, interceptvalue(0)
+	, calibrationfactor(1)
+	, interceptvalue(1)
 	, calibrationfilepath(_T(""))
 {
 }
