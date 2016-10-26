@@ -2,6 +2,7 @@
 #define AFX_EDITLIST_H__834127E6_9297_11D5_8AFA_DAC6E5A1C54B__INCLUDED_
 
 #include <vector>
+#include <afxcoll.h>
 
 #if _MSC_VER > 1000
 #pragma once
@@ -30,8 +31,9 @@ public:
 	fGetType m_fGetType;
 
 	std::vector<int> cols;
-	//CStringList m_strList;
-	std::vector<CStringList> cbStrList;
+	std::vector<int> typelimit;
+	CStringList m_strList;
+	CStringList allComboStr;
 // Operations
 public:
 
@@ -60,6 +62,9 @@ protected:
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()
+public:
+	int GetChoice(int nItem, int nSubItem);
+	afx_msg void OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult);
 };
 
 /////////////////////////////////////////////////////////////////////////////

@@ -40,7 +40,7 @@
 #include <afx.h>
 
 #include "afxmt.h"
-
+#include <afxcoll.h>
 
 
 

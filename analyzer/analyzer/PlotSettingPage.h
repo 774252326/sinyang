@@ -1,6 +1,7 @@
 #pragma once
 
 #include "typedefine.h"
+#include "EditList.h"
 // PlotSettingPage dialog
 
 class PlotSettingPage : public CPropertyPage
@@ -9,11 +10,11 @@ class PlotSettingPage : public CPropertyPage
 
 public:
 	PlotSettingPage();
-	PlotSettingPage(const CString &title, const figspec &fspec);
+	PlotSettingPage(const CString &title, const figspec &fspec, const std::vector<plotspec> &pspec);
 	virtual ~PlotSettingPage();
 
 // Dialog Data
-	enum { IDD = IDD_DIALOG5 };
+	enum { IDD = IDD_DIALOG4 };
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
@@ -28,4 +29,9 @@ public:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	figspec fs;
 	void ComboSelectChange(void);
+	CEditList pslist;
+	void BuildList(int width);
+	void SetList(void);
+	void GetList(void);
+	int GetChoice(int nIterm, int nSubItem);
 };

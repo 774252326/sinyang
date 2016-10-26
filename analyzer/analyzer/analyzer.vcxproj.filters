@@ -96,15 +96,6 @@
     <ClInclude Include="AnalysisSetupPage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="nirs2000_src\ComboItem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="nirs2000_src\EditItem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="nirs2000_src\EditList.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="typedefine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -142,6 +133,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ColorButton.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ComboItem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EditItem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EditList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -191,15 +191,6 @@
     <ClCompile Include="AnalysisSetupPage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="nirs2000_src\ComboItem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="nirs2000_src\EditItem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="nirs2000_src\EditList.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="typedefine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -237,6 +228,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ColorButton.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ComboItem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EditItem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EditList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

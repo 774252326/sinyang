@@ -32,6 +32,7 @@ BEGIN_MESSAGE_MAP(CEditList, CListCtrl)
 	ON_NOTIFY_REFLECT(LVN_KEYDOWN, OnKeydown)
 	ON_WM_CREATE()
 	//}}AFX_MSG_MAP
+	ON_NOTIFY_REFLECT(NM_CUSTOMDRAW, &CEditList::OnNMCustomdraw)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -87,6 +88,10 @@ CEdit *CEditList::EditItem(int nItem, int nSubItem)
 
 	CEdit *pEdit = new CEditItem(nItem, nSubItem, GetItemText(nItem, nSubItem));
 
+	////////////////add//////////////////
+	((CEditItem*)pEdit)->typelimit=typelimit[nSubItem];
+	////////////////add//////////////////
+
 #define IDC_EDITCTRL 0x1234
 	pEdit->Create(dwStyle, rect, this, IDC_EDITCTRL);	
 	//	pEdit->ModifyStyleEx(0,WS_EX_CLIENTEDGE);
@@ -120,6 +125,16 @@ void CEditList::OnEndlabeledit(NMHDR* pNMHDR, LRESULT* pResult)
 }
 
 
+void genstrlist(int i1, int i2, const CStringList &source, CStringList &dst)
+{
+	if(dst.IsEmpty()==FALSE)
+		dst.RemoveAll();
+
+	for(int i=i1;i<i2;i++){
+		dst.AddTail(source.GetAt(source.FindIndex(i)));
+	}
+}
+
 void CEditList::OnClick(NMHDR* pNMHDR, LRESULT* pResult) 
 {
 	// TODO: Add your control notification handler code here
@@ -130,10 +145,31 @@ void CEditList::OnClick(NMHDR* pNMHDR, LRESULT* pResult)
 
 	if(pNMListView->iSubItem > 0)
 	{
-		if ( m_fGetType && m_fGetType( pNMListView->iSubItem ) == eCombo )
+		if ( m_fGetType && m_fGetType( pNMListView->iSubItem ) == eCombo ){
+
+			if(pNMListView->iSubItem==0){
+				genstrlist(0,cols[0],allComboStr,m_strList);
+			}
+			else{
+				genstrlist(cols[pNMListView->iSubItem-1],cols[pNMListView->iSubItem],allComboStr,m_strList);
+			}
 			ComboItem(pNMListView->iItem, pNMListView->iSubItem);
-		else 
-			EditItem (pNMListView->iItem, pNMListView->iSubItem);
+		}
+		else{
+			if ( m_fGetType && m_fGetType( pNMListView->iSubItem ) == eEdit ){
+				EditItem (pNMListView->iItem, pNMListView->iSubItem);
+			}
+			else{
+				COLORREF color=_wtoi(GetItemText(pNMListView->iItem, pNMListView->iSubItem));
+				CColorDialog colorDlg(color);  
+				if(IDOK == colorDlg.DoModal()){   
+					color = colorDlg.GetColor();
+					CString str;
+					str.Format(L"%d",color);
+					SetItemText(pNMListView->iItem, pNMListView->iSubItem,str);
+				}
+			}
+		}
 	}
 
 	*pResult = 0;
@@ -240,23 +276,75 @@ CComboBox * CEditList::ComboItem(int nItem, int nSubItem)
 
 	rect.bottom += 30 * rect.Height();//dropdown area
 
-	DWORD dwStyle =  WS_CHILD | WS_VISIBLE | WS_VSCROLL | /*WS_HSCROLL|*/CBS_DROPDOWNLIST | CBS_DISABLENOSCROLL;
+	DWORD dwStyle =  WS_CHILD | WS_VISIBLE | /*WS_VSCROLL | WS_HSCROLL|*/CBS_DROPDOWNLIST | CBS_DISABLENOSCROLL;
 
 	CComboBox *pList;
 
-	for(size_t i=0;i<cols.size();i++){
-		if(cols[i]==nSubItem){
-			//pList = new CComboItem(nItem, nSubItem, &m_strList);
-			pList = new CComboItem(nItem, nSubItem, &cbStrList[i]);
-			pList->Create(dwStyle, rect, this, IDC_COMBOBOXINLISTVIEW);
-			pList->ModifyStyleEx(0,WS_EX_CLIENTEDGE);//can we tell at all
+	pList = new CComboItem(nItem, nSubItem, &m_strList);
+	pList->Create(dwStyle, rect, this, IDC_COMBOBOXINLISTVIEW);
+	pList->ModifyStyleEx(0,WS_EX_CLIENTEDGE);//can we tell at all
 
-			pList->ShowDropDown();
-			pList->SelectString(-1, strFind.GetBuffer(1));
-			break;
-		}
-	}
+	pList->ShowDropDown();
+	pList->SelectString(-1, strFind.GetBuffer(1));
+
 	// The returned pointer should not be saved
 	return pList;
 }
 
+
+
+int CEditList::GetChoice(int nItem, int nSubItem)
+{
+	CString strTemp, strTemp2;
+	strTemp=GetItemText(nItem,nSubItem);
+
+	int firsti= (nSubItem>0) ? cols[nSubItem-1] : 0;	
+
+	for(int i=firsti;i<cols[nSubItem];i++){
+		strTemp2=allComboStr.GetAt(allComboStr.FindIndex(i));
+		if(strTemp2==strTemp)
+			return i-firsti;
+	}
+	return -1;
+}
+
+
+void CEditList::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMCUSTOMDRAW pNMCD = reinterpret_cast<LPNMCUSTOMDRAW>(pNMHDR);
+	// TODO: Add your control notification handler code here
+	*pResult = 0;
+
+	NMLVCUSTOMDRAW* pLVCD = reinterpret_cast<NMLVCUSTOMDRAW*>(pNMHDR);
+
+	if ( CDDS_PREPAINT ==pLVCD->nmcd.dwDrawStage )
+	{
+		*pResult = CDRF_NOTIFYITEMDRAW;
+	}
+	else if ( CDDS_ITEMPREPAINT == pLVCD->nmcd.dwDrawStage )
+	{
+		// This is the notification message for an item. We'll request
+		// notifications before each subitem's prepaint stage.
+
+		*pResult = CDRF_NOTIFYSUBITEMDRAW;
+	}
+	else if ( (CDDS_ITEMPREPAINT | CDDS_SUBITEM) == pLVCD->nmcd.dwDrawStage )
+	{
+		int nItem=static_cast<int>(pLVCD->nmcd.dwItemSpec );
+
+		if(m_fGetType( pLVCD->iSubItem ) == eLast){
+			//COLORREF clrNewTextColor=_wtoi(GetItemText(nItem, pLVCD->iSubItem));
+			//pLVCD->clrText =clrNewTextColor;
+
+			COLORREF clrNewBkColor=_wtoi(GetItemText(nItem, pLVCD->iSubItem));
+			pLVCD->clrTextBk =clrNewBkColor;
+		}
+		else{
+			pLVCD->clrTextBk=this->GetBkColor();
+		}
+		
+		*pResult = CDRF_DODEFAULT;
+
+	}
+
+}

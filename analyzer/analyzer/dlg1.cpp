@@ -38,8 +38,8 @@ IMPLEMENT_DYNCREATE(dlg1, CFormView)
 {
 	fs.bkgndC=white;
 	fs.borderC=black;
-	fs.gridC=blue;
-	fs.gridType=0;
+	fs.gridC=black;
+	fs.gridType=PS_DASHDOT;
 	fs.labelC=green;
 	fs.labelSize=20;
 	fs.metricC=black;
@@ -1003,13 +1003,13 @@ CRect dlg1::DrawLegend1(CRect rect, CDC* pDC)
 
 	////////////////////////////////////////////////////////
 
-	drawRectangle(borderrect,pDC,white,black);
+	drawRectangle(borderrect,pDC,fs.bkgndC,fs.bkgndC^0x00ffffff);
 
 	textLocate=legendrect.TopLeft();
 	pOldFont=pDC->SelectObject(&font);	
+	oc=pDC->SetTextColor(fs.bkgndC^0x00ffffff);
 
-
-	pDC->SetBkColor(white);
+	pDC->SetBkColor(fs.bkgndC);
 	pDC->SetBkMode(TRANSPARENT);
 
 	for(size_t i=0;i<pd.ps.size();i++){
@@ -1017,7 +1017,7 @@ CRect dlg1::DrawLegend1(CRect rect, CDC* pDC)
 		//pOldPen=pDC->SelectObject(&pen);
 		//oc=pDC->SetTextColor(clist[i]);
 
-		oc=pDC->SetTextColor(black);
+
 		sz=pDC->GetTextExtent(pd.ps[i].name);
 
 		//pDC->TextOutW(textLocate.x+lc+gap,textLocate.y,pd.ps[i].name);
@@ -1034,15 +1034,15 @@ CRect dlg1::DrawLegend1(CRect rect, CDC* pDC)
 
 		}
 
-		if(pd.ps[i].dotSize==0){
+		if(pd.ps[i].dotSize==1){
 			pDC->SetPixelV(textLocate.x+lc/2,textLocate.y+sz.cy/2,pd.ps[i].colour);
 		}
 
-		if(pd.ps[i].dotSize>0){
+		if(pd.ps[i].dotSize>1){
 			CRect prect(0,0,1,1);
-			prect.InflateRect(pd.ps[i].dotSize,pd.ps[i].dotSize);
-			prect.MoveToXY(textLocate.x+lc/2-pd.ps[i].dotSize,textLocate.y+sz.cy/2-pd.ps[i].dotSize);
-			drawRectangle(prect,pDC,pd.ps[i].colour,pd.ps[i].colour);
+			prect.InflateRect(pd.ps[i].dotSize-1,pd.ps[i].dotSize-1);
+			prect.MoveToXY(textLocate.x+lc/2-pd.ps[i].dotSize+1,textLocate.y+sz.cy/2-pd.ps[i].dotSize+1);
+			pDC->FillSolidRect(&prect,pd.ps[i].colour);
 		}
 
 
@@ -1053,9 +1053,10 @@ CRect dlg1::DrawLegend1(CRect rect, CDC* pDC)
 
 		//pDC->SelectObject(pOldPen);
 		//pen.DeleteObject();
-		pDC->SetTextColor(oc);
+		
 	}
 
+	pDC->SetTextColor(oc);
 	pDC->SelectObject(pOldFont);
 	font.DeleteObject();
 
@@ -1221,19 +1222,20 @@ void dlg1::DrawCurveA(CRect rect, CDC* pDC)
 		}
 
 
-		if(pd.ps[j].dotSize==0){
+		if(pd.ps[j].dotSize==1){
 			for(size_t i=0;i<pd.ll[j];i++){
 				pDC->SetPixelV(pointlist[i+si],pd.ps[j].colour);	
 			}
 			//si+=ll[j];
 		}
-		if(pd.ps[j].dotSize>0){
+		if(pd.ps[j].dotSize>1){			
+			CSize ppoc=CSize(pd.ps[j].dotSize-1,pd.ps[j].dotSize-1);
 			CRect prect(0,0,1,1);
-			CSize ppoc=CSize(pd.ps[j].dotSize,pd.ps[j].dotSize);
 			prect.InflateRect(ppoc);
 			for(size_t i=0;i<pd.ll[j];i++){
 				prect.MoveToXY(pointlist[i+si]-ppoc);
-				drawRectangle(prect,pDC,pd.ps[j].colour,pd.ps[j].colour);
+				//drawRectangle(prect,pDC,pd.ps[j].colour,pd.ps[j].colour);
+				pDC->FillSolidRect(&prect,pd.ps[j].colour);
 			}
 			//si+=ll[j];
 		}
@@ -1247,7 +1249,8 @@ void dlg1::DrawCurveA(CRect rect, CDC* pDC)
 		CSize ppoc=CSize(4,4);
 		prect.InflateRect(ppoc);			
 		prect.MoveToXY(pointlist.back()-ppoc);
-		drawRectangle(prect,pDC,pd.ps.back().colour,pd.ps.back().colour);
+		//drawRectangle(prect,pDC,pd.ps.back().colour,pd.ps.back().colour);
+		pDC->FillSolidRect(&prect,pd.ps.back().colour);
 	}
 
 	//////////////////////////////fast///////////////////////////
@@ -1375,15 +1378,15 @@ void dlg1::OnInitialUpdate()
 void dlg1::GetPlotRect(CRect & plotRect)
 {
 	this->GetClientRect(&plotRect);
-
-	int gap=10;
+	int gap0=10;
+	int gap=gap0;
 	if(fs.labelSize>=0){
 		gap+=fs.labelSize;
 	}
 	if(fs.metricSize>=0){
 		gap+=metricGridLong+fs.metricSize;
 	}
-	plotRect.DeflateRect(gap,gap,gap,gap);
+	plotRect.DeflateRect(gap,gap0,gap0,gap);
 }
 
 
@@ -1529,9 +1532,9 @@ void dlg1::DrawGridLine(const CRect & rect, CDC * pdc, int gridType, COLORREF gr
 		std::vector<CPoint> gridline(npo.size()*2);
 		for(size_t i=0;i<gridV.size();i++){
 			gridline[i*2].x=gridV[i];
-			gridline[i*2].y=rect.top;
+			gridline[i*2].y=rect.bottom;
 			gridline[i*2+1].x=gridV[i];
-			gridline[i*2+1].y=rect.bottom;
+			gridline[i*2+1].y=rect.top;
 		}
 		for(size_t i=0;i<gridH.size();i++){
 			gridline[(i+gridV.size())*2].x=rect.left;

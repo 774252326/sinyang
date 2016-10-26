@@ -1,6 +1,6 @@
 #pragma once
 
-#include "nirs2000_src\EditList.h"
+#include "EditList.h"
 //#include "typedefine.h"
 #include <vector>
 #include "SAPara.h"
@@ -40,6 +40,6 @@ public:
 
 	//sap para;
 	SAPara para;
-	int GetChoice(int nItem, int nSubItem);
+//	int GetChoice(int nItem, int nSubItem);
 	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
 };

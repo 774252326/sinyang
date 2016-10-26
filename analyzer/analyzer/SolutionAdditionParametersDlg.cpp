@@ -11,11 +11,11 @@
 
 IMPLEMENT_DYNAMIC(SolutionAdditionParametersDlg, CPropertyPage)
 
-SolutionAdditionParametersDlg::SolutionAdditionParametersDlg()
+	SolutionAdditionParametersDlg::SolutionAdditionParametersDlg()
 	: CPropertyPage(SolutionAdditionParametersDlg::IDD)
 	//, vmsvol(0)
 {
-	
+
 	//sap s1;
 	//s1.Aconc=0;
 	//s1.Lconc=0;
@@ -64,12 +64,12 @@ BOOL SolutionAdditionParametersDlg::OnSetActive()
 	// TODO: Add your specialized code here and/or call the base class
 
 	// 获得父窗口，即属性表CPropertySheet类   
-    CPropertySheet* psheet = (CPropertySheet*) GetParent();   
+	CPropertySheet* psheet = (CPropertySheet*) GetParent();   
 
 	psheet->SetWizardButtons(PSWIZB_BACK|PSWIZB_FINISH);
 
-    //设置属性表只有“完成”按钮   
-    //psheet->SetFinishText(_T("完成"));  
+	//设置属性表只有“完成”按钮   
+	//psheet->SetFinishText(_T("完成"));  
 
 	return CPropertyPage::OnSetActive();
 }
@@ -113,7 +113,7 @@ int SolutionAdditionParametersDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	CEdit *pEdit;
 	CString str;
 
-	
+
 	stt.Create(
 		L"press Insert to add step, press Delete to delete selection",
 		WS_CHILD
@@ -127,33 +127,33 @@ int SolutionAdditionParametersDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 
 	str.LoadStringW(IDS_STRING_VMS_VOLUME);
-		pStatic=new CStatic;
-		pStatic->Create(
-			str,
-			WS_CHILD
-			|WS_VISIBLE, 
-			CRect(pt,staticSize),
-			this,
-			IDS_STRING_VMS_VOLUME);
+	pStatic=new CStatic;
+	pStatic->Create(
+		str,
+		WS_CHILD
+		|WS_VISIBLE, 
+		CRect(pt,staticSize),
+		this,
+		IDS_STRING_VMS_VOLUME);
 
-		pt.x+=gap2.cx+staticSize.cx;
+	pt.x+=gap2.cx+staticSize.cx;
 
-		str.LoadStringW(IDS_EDIT_VMS_VOLUME);
-		//str=L"0";
-		pEdit=new CEdit;
-		pEdit->CreateEx(
-			WS_EX_CLIENTEDGE,
-			L"Edit", 
-			str,
-			ES_LEFT
-			|WS_CHILD
-			|WS_VISIBLE,
-			CRect(pt,CSize(winrect.Width()-gap2.cx-staticSize.cx,staticSize.cy)),
-			this,
-			IDS_EDIT_VMS_VOLUME);
+	str.LoadStringW(IDS_EDIT_VMS_VOLUME);
+	//str=L"0";
+	pEdit=new CEdit;
+	pEdit->CreateEx(
+		WS_EX_CLIENTEDGE,
+		L"Edit", 
+		str,
+		ES_LEFT
+		|WS_CHILD
+		|WS_VISIBLE,
+		CRect(pt,CSize(winrect.Width()-gap2.cx-staticSize.cx,staticSize.cy)),
+		this,
+		IDS_EDIT_VMS_VOLUME);
 
-		pt.y+=staticSize.cy+gap2.cy;
-		pt.x-=gap2.cx+staticSize.cx;
+	pt.y+=staticSize.cy+gap2.cy;
+	pt.x-=gap2.cx+staticSize.cx;
 
 
 
@@ -210,18 +210,34 @@ void SolutionAdditionParametersDlg::BuildList(int width)
 	for(int i=0;i<6;i++){
 		strTemp.LoadStringW(IDS_STRING520+i);
 		m_SAPlist.InsertColumn(i, strTemp, LVCFMT_LEFT,wi[i]);
+
+		if(i==4){
+			// insert string elements  for the ComboBox : 
+			for ( int i=0 ; i < 4 ; i++){
+				strTemp.LoadStringW(IDS_STRING_VOL_ONCE+i);
+				m_SAPlist.allComboStr.AddTail( strTemp );
+			}
+		}
+
+		m_SAPlist.cols.push_back(m_SAPlist.allComboStr.GetCount());
+
 	}
 
+	m_SAPlist.typelimit.assign(6,1);
+	m_SAPlist.typelimit[4]=0;
 
 	// set functionality of list according to column
 	m_SAPlist.SetColumnType ( (fGetType)_List_Type );	
 
+	//m_SAPlist.cols.push_back(4);
+	//CStringList m_strList;
 	// insert string elements  for the ComboBox : 
-	for ( int i=0 ; i < 4 ; i++){
-		strTemp.LoadStringW(IDS_STRING_VOL_ONCE+i);
-		m_SAPlist.m_strList.AddTail( strTemp );
-	}
-
+	//for ( int i=0 ; i < 4 ; i++){
+	//	strTemp.LoadStringW(IDS_STRING_VOL_ONCE+i);
+	//	m_strList.AddTail( strTemp );
+	//	m_SAPlist.m_strList.AddTail( strTemp );
+	//}
+	//m_SAPlist.cbStrList.push_back(m_strList);
 	// insert a dummy row
 	//InsertEmpty();
 
@@ -236,13 +252,13 @@ void SolutionAdditionParametersDlg::OnItemchangedList(NMHDR* pNMHDR, LRESULT* pR
 	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
 	// TODO: Add your control notification handler code here
 	// TODO: Add your control notification handler code here
-    int     iItem = pNMListView->iItem;
-    int     iSubItem = pNMListView->iSubItem;
-	
+	int     iItem = pNMListView->iItem;
+	int     iSubItem = pNMListView->iSubItem;
+
 	// retrieve the ProductName & load corresponding cells with 
 	// ProductPrice and ProductID
 	//CString sProductName = m_SAPlist.GetItemText( iItem, 0 ); 
-	
+
 	//for ( int i = 0 ;  i < 4; i++)
 	//{
 	//	if ( sProductName == Product[i] )
@@ -253,8 +269,8 @@ void SolutionAdditionParametersDlg::OnItemchangedList(NMHDR* pNMHDR, LRESULT* pR
 	//		break;
 	//	}
 	//}
-	
-	
+
+
 	*pResult = 0;
 }
 
@@ -300,7 +316,7 @@ void SolutionAdditionParametersDlg::SetList(void)
 		m_SAPlist.SetItemText(i,2,strTemp);
 		strTemp.Format(L"%g",para.saplist[i].Lconc);
 		m_SAPlist.SetItemText(i,3,strTemp);
-		
+
 		strTemp.LoadStringW(IDS_STRING_VOL_ONCE+para.saplist[i].addtype);
 		m_SAPlist.SetItemText(i,4,strTemp);
 
@@ -329,7 +345,7 @@ void SolutionAdditionParametersDlg::GetList(void)
 		strTemp=m_SAPlist.GetItemText(i,3);
 		para.saplist[i].Lconc=_wtof(strTemp.GetBuffer());
 
-		para.saplist[i].addtype=GetChoice(i,4);
+		para.saplist[i].addtype=m_SAPlist.GetChoice(i,4);
 
 		strTemp=m_SAPlist.GetItemText(i,5);
 		para.saplist[i].volconc=_wtof(strTemp.GetBuffer());
@@ -338,19 +354,19 @@ void SolutionAdditionParametersDlg::GetList(void)
 }
 
 
-int SolutionAdditionParametersDlg::GetChoice(int nItem, int nSubItem)
-{
-	CString strTemp, strTemp2;
-	strTemp=m_SAPlist.GetItemText(nItem,nSubItem);
-	int i=4-1;
-	for ( ; i >= 0 ; i--){
-		strTemp2.LoadStringW(IDS_STRING_VOL_ONCE+i);
-		if(strTemp2==strTemp)
-			break;
-	}
-
-	return i;
-}
+//int SolutionAdditionParametersDlg::GetChoice(int nItem, int nSubItem)
+//{
+//	CString strTemp, strTemp2;
+//	strTemp=m_SAPlist.GetItemText(nItem,nSubItem);
+//	int i=4-1;
+//	for ( ; i >= 0 ; i--){
+//		strTemp2.LoadStringW(IDS_STRING_VOL_ONCE+i);
+//		if(strTemp2==strTemp)
+//			break;
+//	}
+//
+//	return i;
+//}
 
 
 void SolutionAdditionParametersDlg::OnShowWindow(BOOL bShow, UINT nStatus)
@@ -360,14 +376,14 @@ void SolutionAdditionParametersDlg::OnShowWindow(BOOL bShow, UINT nStatus)
 	// TODO: Add your message handler code here
 
 	//	RECT rect;
- //GetParent()->GetWindowRect(&rect);
- //int nWidth =rect.right-rect.left;
- //int nHeight =rect.bottom-rect.top;
- //if(bShow)
- //{
- //GetParent()->ShowWindow(SW_HIDE);
- //GetParent()->SetWindowPos(NULL,0,0,nWidth,nHeight,SWP_NOMOVE|SWP_NOZORDER|SWP_NOACTIVATE);
- //GetParent()->ShowWindow(SW_SHOW);
- //}
+	//GetParent()->GetWindowRect(&rect);
+	//int nWidth =rect.right-rect.left;
+	//int nHeight =rect.bottom-rect.top;
+	//if(bShow)
+	//{
+	//GetParent()->ShowWindow(SW_HIDE);
+	//GetParent()->SetWindowPos(NULL,0,0,nWidth,nHeight,SWP_NOMOVE|SWP_NOZORDER|SWP_NOACTIVATE);
+	//GetParent()->ShowWindow(SW_SHOW);
+	//}
 
 }

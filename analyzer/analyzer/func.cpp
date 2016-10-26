@@ -161,7 +161,7 @@ void OneStep( CMainFrame * mf, dlg1 * leftp, pcct * data, pcctB &dataB, bool bSh
 	CString strTemp;
 	ps1.colour=genColor( genColorvFromIndex<float>( leftp->pd.ps.size() ) ) ;
 	//ps1.colour=genColorGray( genColorvFromIndex<float>( stepCount ) ) ;
-	ps1.dotSize=-1;
+	ps1.dotSize=0;
 	ps1.name=data->stepName;
 	//ps1.showLine=true;
 	ps1.lineType=0;
@@ -348,7 +348,7 @@ CString Output4(PlotData & pdat, dlg1 *p1, double vmsvol, double Avol)
 
 	plotspec ps1;
 	ps1.colour=genColor( genColorvFromIndex<float>( p1->pd.ps.size() ) ) ;
-	ps1.dotSize=-1;  
+	ps1.dotSize=0;  
 	ps1.name=L"fit line";
 	//ps1.showLine=true;
 	ps1.lineType=0;
@@ -360,7 +360,7 @@ CString Output4(PlotData & pdat, dlg1 *p1, double vmsvol, double Avol)
 	ny[1]=ny[0];
 
 	ps1.colour=genColor( genColorvFromIndex<float>( p1->pd.ps.size() ) ) ;
-	ps1.dotSize=-1;  
+	ps1.dotSize=0;  
 	ps1.name=L"Q intercept";
 	//ps1.showLine=true;
 	ps1.lineType=2;
@@ -393,7 +393,7 @@ CString Output6(PlotData & pdat, dlg1 *p1, double Q, double totalVol, double Lvo
 
 	plotspec ps1;
 	ps1.colour=genColor( genColorvFromIndex<float>( p1->pd.ps.size() ) ) ;
-	ps1.dotSize=-1;  
+	ps1.dotSize=0;  
 	ps1.name=L"test point";
 	ps1.lineType=2;
 	ps1.smoothLine=0;

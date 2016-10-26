@@ -813,7 +813,7 @@ BOOL CMainFrame::CreateCaptionBar()
 
 	BOOL bNameValid;
 
-	CString strTemp, strTemp2=L"";
+	CString strTemp/*, strTemp2=L""*/;
 
 	//bNameValid = strTemp.LoadString(IDS_CAPTION_BUTTON);
 	//ASSERT(bNameValid);
@@ -1826,8 +1826,8 @@ void CMainFrame::OnAnalysisStartanalysis()
 	}
 
 	mypara * pa1=new mypara;
-	pa1->leftp=( (dlg1*)m_wndSplitter.GetPane(0,0) );
-	pa1->rightp=( (dlg1*)m_wndSplitter.GetPane(0,1) );
+	pa1->leftp=this->LeftPlotPointer();
+	pa1->rightp=this->RightPlotPointer();
 	pa1->mf=this;
 	CWinThread *pWriteA;
 	HANDLE hThread;
@@ -1984,9 +1984,9 @@ void CMainFrame::OnOptionsPlotsettings()
 	//sheet.SetWindowPos(&CWnd::wndTopMost,10,10,800,600,SWP_SHOWWINDOW);
 
 	str.LoadStringW(IDS_STRING_FIGURE1);
-	PlotSettingPage fig1setting(str,LeftPlotPointer()->fs);
+	PlotSettingPage fig1setting(str,LeftPlotPointer()->fs,LeftPlotPointer()->pd.ps);
 	str.LoadStringW(IDS_STRING_FIGURE2);
-	PlotSettingPage fig2setting(str,RightPlotPointer()->fs);
+	PlotSettingPage fig2setting(str,RightPlotPointer()->fs,RightPlotPointer()->pd.ps);
 
 	sheet.AddPage(&fig1setting);
 	sheet.AddPage(&fig2setting);
@@ -1996,8 +1996,13 @@ void CMainFrame::OnOptionsPlotsettings()
 	if(sheet.DoModal()==IDOK){
 		//writeini(AnalysisSetupINI,sheet.APdlg.para,sheet.CVPdlg.para,sheet.SAPdlg.para);
 		copyfs(fig1setting.fs,LeftPlotPointer()->fs);
+		LeftPlotPointer()->pd.ps.clear();
+		LeftPlotPointer()->pd.ps.assign(fig1setting.ps.begin(),fig1setting.ps.end());
 		LeftPlotPointer()->Invalidate();
+
 		copyfs(fig2setting.fs,RightPlotPointer()->fs);
+		RightPlotPointer()->pd.ps.clear();
+		RightPlotPointer()->pd.ps.assign(fig2setting.ps.begin(),fig2setting.ps.end());
 		RightPlotPointer()->Invalidate();
 	}
 }
