@@ -63,22 +63,61 @@ T VarianceStd(std::vector<T> x, bool bSample=true)
 #define PF_L 0x40
 #define PF_SAMPLE 0x80
 
-
+///
+/// \brief The DataOutA class
+///溶液状态参数
+///
 class DataOutA : public ObjectF
 {
 public:
-
+    ///
+    /// \brief Ar
+    ///电量
 	std::vector<double> Ar;
+    ///
+    /// \brief Ar0
+    ///基准电量
 	double Ar0;
+    ///
+    /// \brief Sml
+    ///抑制剂的量
+    ///
 	double Sml;
+    ///
+    /// \brief Aml
+    ///加速剂的量
 	double Aml;
+    ///
+    /// \brief Lml
+    ///整平剂的量
 	double Lml;
+    ///
+    /// \brief bUnknown
+    ///溶液成分是否未知
 	bool bUnknown;
+    ///
+    /// \brief VMSVolume
+    ///基液体积
 	double VMSVolume;
+    ///
+    /// \brief additiveVolume
+    ///添加剂体积
 	double additiveVolume;
+    ///
+    /// \brief addVolume
+    ///最后一次加液体积
 	double addVolume;
+    ///
+    /// \brief stepName
+    ///步骤名
 	CString stepName;
+    ///
+    /// \brief stepFilter
+    ///此步骤对加液参数的限制条件
 	BYTE stepFilter;
+    ///
+    /// \brief UseIndex
+    ///最后选用的电量值的序号
 	int UseIndex;
 
 public:
@@ -161,24 +200,38 @@ public:
 
 	/////////////////////////////////////get data///////////////////////////////////////////
 
+    ///
+    /// \brief TotalVolume
+    /// \return
+    ///溶液体积
 	double TotalVolume(void) const{
 		return VMSVolume+additiveVolume;
 	};
 
+    ///
+    /// \brief AConc
+    /// \return
+    ///加速剂浓度
 	double AConc(void) const{
 		if(bUnknown)
 			return -1;
 
 		return Aml/TotalVolume();
 	};
-
+    ///
+    /// \brief SConc
+    /// \return
+    ///抑制剂浓度
 	double SConc(void) const{
 		if(bUnknown)
 			return -1;
 
 		return Sml/TotalVolume();
 	};
-
+    ///
+    /// \brief LConc
+    /// \return
+    ///整平剂浓度
 	double LConc(void) const{
 		if(bUnknown)
 			return -1;
@@ -186,6 +239,12 @@ public:
 		return Lml/TotalVolume();
 	};
 
+    ///
+    /// \brief GetStepName
+    /// 步骤名
+    /// \param i
+    /// \return
+    ///
 	CString GetStepName(int i=-1) const{
 		CString str,strt;
 
@@ -225,6 +284,10 @@ public:
 		return str;
 	};
 
+    ///
+    /// \brief ArUse
+    /// \return
+    ///最后采用的电量值
 	double ArUse(void) const{
 		if( Ar.empty())
 			return -100;
@@ -236,7 +299,16 @@ public:
 
 	};
 
-
+    ///
+    /// \brief GetX
+    /// 取用于画图的横坐标数据
+    /// \param plotFilter
+    /// 画图限制条件
+    /// \param xlabel
+    /// 横坐标名
+    /// \return
+    /// 横坐标数值
+    ///
 	double GetX(BYTE plotFilter, CString &xlabel) const{
 		double x=additiveVolume;
 		CString str;
@@ -279,7 +351,16 @@ public:
 
 	};
 
-
+    ///
+    /// \brief GetY
+    /// 取用于画图的纵坐标数据
+    /// \param plotFilter
+    /// 画图限制条件
+    /// \param ylabel
+    /// 纵坐标名
+    /// \return
+    /// 纵坐标数值
+    ///
 	double GetY(BYTE plotFilter, CString &ylabel) const{
 		if( plotFilter&PF_Q_NORMALIZED ){
 			ylabel.LoadStringW(IDS_STRING_NORMALIZED_Q);
@@ -291,6 +372,17 @@ public:
 		//}
 	};
 
+    ///
+    /// \brief EndFlag
+    /// 判断循环次数是否足够
+    /// 是否要停止循环
+    /// \param nCycle
+    /// 设定的目标循环次数
+    /// \param tolarance
+    /// 设定的容限
+    /// \return
+    ///
+    ///
 	bool EndFlag(size_t nCycle, double tolarance) const{
 		//if( Ar.size()>=nCycle || (Ar.size()>1 && VarianceStd(Ar)<tolarance) ){
 		//	
@@ -314,14 +406,23 @@ public:
 	};
 
 	///////////////////////////////////set data /////////////////////////////////////////
-	void ResetCompound(void){
+
+    ///
+    /// \brief ResetCompound
+    ///重设溶液成分
+    void ResetCompound(void){
 		bUnknown=false;
 		Aml=0;
 		Lml=0;
 		Sml=0;
 	};
 
-
+    ///
+    /// \brief VMSOnce
+    /// 加电镀基液
+    /// \param sapi
+    /// 加液参数
+    ///
 	void VMSOnce(sapitemA sapi){
 		Ar0=0;
 
@@ -332,7 +433,13 @@ public:
 		ResetCompound();
 
 	};
-
+    ///
+    /// \brief VolOnce
+    /// 按体积加一次
+    /// \param sapi
+    /// 加液参数
+    /// \return
+    ///
 	bool VolOnce(sapitemA sapi){
 		addVolume=sapi.volconc;
 		additiveVolume+=addVolume;
@@ -347,6 +454,18 @@ public:
 		return true;
 	};
 
+    ///
+    /// \brief ConcOnce
+    /// 按浓度加一次
+    /// \param ml
+    /// 某成分的量
+    /// 可以是抑制剂加速剂整平剂三者取其一
+    /// \param endConc
+    /// 某成分的目标浓度
+    /// \param addConc
+    /// 添加的溶液中某成分的浓度
+    /// \return
+    ///
 	bool ConcOnce(double &ml, double endConc, double addConc){
 		double tmp1=endConc-ml/TotalVolume();
 		double tmp2=addConc-endConc;
@@ -367,7 +486,18 @@ public:
 		return false;
 
 	};
-
+    ///
+    /// \brief ConcIntv
+    /// 按浓度增量加一次
+    /// \param ml
+    /// 某成分的量
+    /// 可以是抑制剂加速剂整平剂三者取其一
+    /// \param intvConc
+    /// 某成分的目标浓度增量
+    /// \param addConc
+    /// 添加的溶液中某成分的浓度
+    /// \return
+    ///
 	bool ConcIntv(double &ml, double intvConc, double addConc){
 		double tmp1=ml/TotalVolume()-addConc;//tmp1>0, dilute, tmp1<0, concertrate
 		tmp1=abs(tmp1)/intvConc-1;
@@ -387,6 +517,17 @@ public:
 		return false;
 	};
 
+    ///
+    /// \brief Update
+    /// 检查加液参数是否合法并加液一次
+    /// \param sapi
+    /// 加液参数
+    /// \param bFlag
+    /// 对加液参数的限制条件
+    /// \return
+    ///加液成功为真
+    /// 否则为假
+    ///
 	bool Update(sapitemA sapi, BYTE bFlag=DOA_VMS){
 		if(sapi.volconc<=0)
 			return false;

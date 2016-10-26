@@ -2,18 +2,41 @@
 #include "../ObjectF.hpp"
 
 // LegendSpec command target
-
+///
+/// \brief inv
+/// 反色
+/// \param oc
+/// \return
+///
 inline COLORREF inv(const COLORREF &oc){
 	return (oc^0x00ffffff);
 };
 
-
+///
+/// \brief The LegendSpec class
+///图例属性
 
 class LegendSpec : public ObjectF
 {
 
 public:
-
+    ///
+    /// \brief DrawLegend
+    /// 画图例
+    /// \param pDC
+    ///
+    /// \param ps
+    /// 线的属性
+    /// \param pfont
+    /// 字体
+    /// \param bkColor
+    /// 背景颜色
+    /// \param lc
+    /// 线长
+    /// \param gap
+    /// 边沿留空
+    /// \param position
+    ///起始位置
 
 	static void DrawLegend(CDC* pDC
 		, const std::vector<LineSpec> &ps
@@ -106,7 +129,25 @@ public:
 		//return borderrect;
 	};
 
-
+    ///
+    /// \brief DrawLegend
+    /// 画图例
+    /// \param pDC
+    /// \param ls
+    /// 线的属性
+    /// \param lineLength
+    /// 线长
+    /// \param gap
+    /// 边沿留空宽度
+    /// \param fontSize
+    /// 字体大小
+    /// \param fontName
+    /// 字体名
+    /// \param bkColor
+    /// 底色
+    /// \param position
+    /// 起始位置
+    ///
 	static void DrawLegend(CDC* pDC
 		, const std::vector<LineSpec> &ls
 		, int lineLength
@@ -145,6 +186,16 @@ public:
 	};
 
 
+    ///
+    /// \brief GetLegendTextExtent
+    /// 计算图例文字部分占用大小
+    /// \param pDC
+    /// \param ps
+    /// 曲线属性
+    /// \param pfont
+    /// 字体
+    /// \return
+    ///
 	static CSize GetLegendTextExtent(CDC* pDC
 		, const std::vector<LineSpec> &ps
 		, CFont* pfont)
@@ -167,6 +218,24 @@ public:
 		return rectsz;
 	};
 
+    ///
+    /// \brief GetLegendExtent
+    /// 计算画图例所需画板大小
+    /// \param pDC
+    /// \param ps
+    /// 曲线属性
+    /// \param pfont
+    /// 字体
+    /// \param lc
+    /// 线长
+    /// \param gap
+    /// 边沿留空宽度
+    /// \param metricH
+    /// 字体高度
+    /// \param fontName
+    /// 字体名
+    /// \return
+    ///
 	static CSize GetLegendExtent(CDC* pDC
 		, const std::vector<LineSpec> &ps
 		, CFont* pfont
@@ -202,7 +271,26 @@ public:
 
 	};
 
-
+    ///
+    /// \brief GetAutoFontSize
+    /// 自动调整字体大小
+    /// \param pDC
+    /// \param ls
+    /// 曲线属性
+    /// \param lineLength
+    /// 线长
+    /// \param gap
+    /// 边沿留空宽度
+    /// \param minSize
+    /// 字体大小下限
+    /// \param maxSize
+    /// 字体大小上限
+    /// \param fontName
+    /// 字体名
+    /// \param borderSize
+    /// 限框
+    /// \return
+    ///字体高度
 	static int GetAutoFontSize(CDC* pDC
 		, const std::vector<LineSpec> &ls
 		//, CFont* pfont
@@ -250,12 +338,36 @@ public:
 
 
 public:
+    ///
+    /// \brief bDock
+    ///为真
+    /// 图例可用鼠标移动
+    /// 否则不能移动
+    ///
 	bool bDock;
+    ///
+    /// \brief lineLength
+    ///线长
 	int lineLength;
+    ///
+    /// \brief gap
+    ///边沿留空宽度
 	int gap;
+    ///
+    /// \brief fontSize
+    ///字体大小
 	int fontSize;
+    ///
+    /// \brief fontName
+    ///字体名
 	CString fontName;
+    ///
+    /// \brief bkColor
+    ///底色
 	COLORREF bkColor;
+    ///
+    /// \brief position
+    ///图例起始位置
 	CPoint position;
 
 public:

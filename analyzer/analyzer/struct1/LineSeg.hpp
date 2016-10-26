@@ -2,7 +2,9 @@
 
 #include "Point2d.hpp"
 // LineSeg command target
-
+///
+/// \brief The LineSeg class
+///线段
 class LineSeg : public ObjectF
 {
 public:

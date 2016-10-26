@@ -7,14 +7,26 @@
 
 #include "../messagemaphpp.h"
 
-
+////
+/// \brief The WaitDlg class
+///提示对话框
 
 class WaitDlg : public CDialogEx
 {
 	//DECLARE_DYNAMIC(WaitDlg)
 public:
+    ///
+    /// \brief m_tips
+    ///提示字符串
 	CString m_tips;
+    ///
+    /// \brief EditIDS_EDIT_TIPS
+    ///编辑框
+    /// 用于显示提示信息
 	StaticEdit EditIDS_EDIT_TIPS;
+    ///
+    /// \brief btnIDOK
+    ///继续按钮
 	CButton btnIDOK;
 	// Dialog Data
 	enum { IDD = IDD_DIALOG_WAIT };	
@@ -22,11 +34,17 @@ public:
 	WaitDlg(CWnd* pParent = NULL)
 		: CDialogEx(WaitDlg::IDD, pParent)
 	{
-
 		m_tips = _T("");
 	};   // standard constructor
 	virtual ~WaitDlg(){};
 
+    ///
+    /// \brief ShowTitleAndButton
+    /// \param bShow
+    ///为真
+    /// 显示窗口标题和继续按钮
+    /// 为假
+    /// 清空窗口标题并隐藏继续按钮
 	void ShowTitleAndButton(BOOL bShow=TRUE)
 	{
 		btnIDOK.ShowWindow(bShow);
@@ -36,12 +54,14 @@ public:
 			str.LoadStringW(IDS_STRING_PAUSE);
 			btnIDOK.SetFocus();
 		}
-		this->SetWindowTextW(str);
-		
+		this->SetWindowTextW(str);		
 	};
 
 protected:
 
+    ///
+    /// \brief OnOK
+    ///相当于按下继续
 	virtual void OnOK()
 	{
 		// TODO: Add your specialized code here and/or call the base class
@@ -51,6 +71,7 @@ protected:
 		//CDialogEx::OnOK();
 	};
 
+//    布局按钮
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct)
 	{
 		if (CDialogEx::OnCreate(lpCreateStruct) == -1)

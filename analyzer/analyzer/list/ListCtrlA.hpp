@@ -3,6 +3,10 @@
 #include <vector>
 // ListCtrlA
 
+///
+/// \brief The ListCtrlA class
+///表格类
+
 class ListCtrlA : public CListCtrl
 {
 	//DECLARE_DYNAMIC(ListCtrlA)
@@ -10,6 +14,46 @@ class ListCtrlA : public CListCtrl
 public:
 	ListCtrlA(){};
 	virtual ~ListCtrlA(){};
+    ///
+    /// \brief AdjustWidth
+    /// 根据文字调整列宽
+    /// \param nCol
+    /// \param str
+    /// \param gap
+    /// \return
+    ///
+    BOOL AdjustWidth(int nCol, CString str, int gap=15)
+    {
+        int widthc,widtht;
+        widtht=GetStringWidth(str)+gap;
+        widthc=GetColumnWidth(nCol);
+        if(widthc<widtht)
+            return SetColumnWidth(nCol,widtht);
+        return FALSE;
+    };
+
+    ///
+    /// \brief AdjustWidth
+    /// 根据指定单元格调整列宽
+    /// \param nCol
+    /// \param nRow
+    /// \param gap
+    /// \return
+    ///
+    BOOL AdjustWidth(int nCol, int nRow, int gap=15)
+    {
+        CString	str=GetItemText(nRow,nCol);
+        return AdjustWidth(nCol, str, gap);
+    };
+
+
+    ///
+    /// \brief SetHeader
+    /// 设置表头
+    /// \param headerstrl
+    /// 表头内容
+    /// \return
+    ///
 	BOOL SetHeader(const std::vector<CString> & headerstrl)
 	{
 		int totaln=headerstrl.size();
@@ -46,22 +90,10 @@ public:
 		return TRUE;
 	};
 
-	BOOL AdjustWidth(int nCol, CString str, int gap=15)
-	{
-		int widthc,widtht;
-		widtht=GetStringWidth(str)+gap;
-		widthc=GetColumnWidth(nCol);
-		if(widthc<widtht)
-			return SetColumnWidth(nCol,widtht);
-		return FALSE;
-	};
 
-	BOOL AdjustWidth(int nCol, int nRow, int gap=15)
-	{
-		CString	str=GetItemText(nRow,nCol);
-		return AdjustWidth(nCol, str, gap);
-	};
-
+    ///
+    /// \brief SetStyle
+    ///设置表格风格
 	void SetStyle()
 	{
 		ModifyStyle(0,LVS_REPORT|LVS_SHOWSELALWAYS);

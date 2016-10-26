@@ -5,6 +5,10 @@
 
 // EditB
 
+///
+/// \brief The EditB class
+///作为编辑框配合可编辑表格类使用
+
 class EditB : public CEdit
 {
 

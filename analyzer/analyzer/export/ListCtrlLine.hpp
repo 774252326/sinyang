@@ -1,18 +1,28 @@
 #pragma once
 //#include "rawdataex.h"
-#include "struct1\RawDataEx.hpp"
+#include "../struct1\RawDataEx.hpp"
 
 #include "../messagemaphpp.h"
 // ListCtrlLine
-
+///
+/// \brief The ListCtrlLine class
+///曲线列表
 class ListCtrlLine : public CListCtrl
 {
 	//DECLARE_DYNAMIC(ListCtrlLine)
 
 public:
+    ///
+    /// \brief rde
+    ///曲线数据
 	RawDataEx rde;
+
 	ListCtrlLine(){};
 	virtual ~ListCtrlLine(){};
+
+    ///
+    /// \brief SetList
+    ///插入数据并显示
 	void SetList(void)
 	{
 		this->DeleteAllItems();
@@ -38,6 +48,7 @@ protected:
 		return 0;
 	};
 
+//    结束编辑
 	afx_msg void OnLvnEndlabeledit(NMHDR *pNMHDR, LRESULT *pResult)
 	{
 		NMLVDISPINFO *pDispInfo = reinterpret_cast<NMLVDISPINFO*>(pNMHDR);
@@ -51,6 +62,7 @@ protected:
 		*pResult = 0;
 	};
 
+//    双击进入编辑框
 	afx_msg void OnNMDblclk(NMHDR *pNMHDR, LRESULT *pResult)
 	{
 		LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);

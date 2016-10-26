@@ -6,20 +6,44 @@
 #include "../messagemaphpp.h"
 
 // LoginDlg dialog
+///
+/// \brief The LoginDlg class
+///登陆对话框
 
 class LoginDlg : public CDialogEx
 {
 	//DECLARE_DYNAMIC(LoginDlg)
 public:
+    ///
+    /// \brief epass
+    ///密码输入框
 	CEdit epass;
+    ///
+    /// \brief suser
+    ///显示用户名
 	CStatic suser;
+    ///
+    /// \brief spass
+    ///显示密码
 	CStatic spass;
+    ///
+    /// \brief sbmp
+    ///显示图片
+    /// 暂时不用
 	CStatic sbmp;
 
+    ///
+    /// \brief m_usr
+    ///用户名输入框
 	AccountComboBox m_usr;
 
+    ///
+    /// \brief m_login
+    ///登录按钮
 	CMFCButton m_login;
+    /// 暂时不用
 	CMFCButton m_cancel;
+    /// 暂时不用
 	CImageList m_ImageList;
 
 	AccountList al;
@@ -42,6 +66,7 @@ protected:
 		CDialogEx::DoDataExchange(pDX);
 	};    // DDX/DDV support
 
+    //布局窗口
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct)
 	{
 		if (CDialogEx::OnCreate(lpCreateStruct) == -1)
@@ -149,6 +174,9 @@ protected:
 
 
 
+    ///
+    /// \brief OnOK
+    ///验证并登录
 	virtual void OnOK()
 	{
 		// TODO: Add your specialized code here and/or call the base class
@@ -239,7 +267,7 @@ protected:
 		if(nCtlColor == CTLCOLOR_STATIC )
 		{
 			pDC->SetBkMode(TRANSPARENT);//设置背景透明
-			pDC->SetTextColor(RGB(0,0,0));//设置字体为黄色
+            pDC->SetTextColor(RGB(0,0,0));//设置字体为黑色
 			return (HBRUSH)::GetStockObject(NULL_BRUSH);
 		}
 		return hbr;

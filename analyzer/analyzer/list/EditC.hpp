@@ -1,6 +1,9 @@
 #pragma once
 #include "editb.hpp"
-
+///
+///表格编辑框类EditB的扩展
+/// 加入对输入数据的验证
+///
 template <typename T>
 class EditC :
 	public EditB

@@ -5,6 +5,10 @@
 #include "../messagemaphpp.h"
 // StaticEdit
 
+///
+/// \brief The StaticEdit class
+///用于显示提示消息的编辑框
+
 class StaticEdit : public CEdit
 {
 	//DECLARE_DYNAMIC(StaticEdit)

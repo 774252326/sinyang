@@ -7,11 +7,22 @@
 
 // AccountComboBox
 
+///
+/// \brief The AccountComboBox class
+///用户名输入框
+
 class AccountComboBox : public CComboBoxEx
 {
 	//DECLARE_DYNAMIC(AccountComboBox)
 public:
+    ///
+    /// \brief m_ImageList
+    ///用户图标
+    /// 可指示不同权限的用户
 	CImageList m_ImageList;
+    ///
+    /// \brief al
+    ///用户列表
 	AccountList al;
 public:
 	AccountComboBox(){};

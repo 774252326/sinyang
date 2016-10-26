@@ -10,7 +10,10 @@
 #include "../messagemaphpp.h"
 
 // AnalysisParametersPage dialog
-
+///
+/// \brief The AnalysisParametersPage class
+///分析参数属性页
+///
 class AnalysisParametersPage : public CPropertyPage
 {
 	//DECLARE_DYNAMIC(AnalysisParametersPage)

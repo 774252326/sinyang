@@ -2,11 +2,27 @@
 #include "rawdata.hpp"
 #include <locale.h>
 
+///
+/// \brief The RawDataEx class
+///数据曲线类扩展
+/// 增加曲线名和坐标名
+
 class RawDataEx :
 	public RawData
 {
 
 public:
+    ///
+    /// \brief SaveString
+    /// 保存字符串为文件
+    /// \param fp
+    /// 文件路径
+    /// \param str
+    /// 字符串
+    /// \return
+    /// 成功保存为真
+    /// 否则为假
+    ///
 	static BOOL SaveString(CString fp, CString str)
 	{
 		CStdioFile file;
@@ -27,13 +43,23 @@ public:
 	};
 
 public:
+    ///
+    /// \brief xlabel
+    ///横坐标名
 	std::vector<CString> xlabel;
+    ///
+    /// \brief ylabel
+    ///纵坐标名
 	std::vector<CString> ylabel;
+    ///
+    /// \brief title
+    ///曲线名
 	std::vector<CString> title;
 public:
 	RawDataEx(void){};
 	virtual ~RawDataEx(void){};
 	virtual void Serialize(CArchive& ar){};
+
 
 	void operator=(const RawDataEx &src)
 	{
@@ -50,6 +76,7 @@ public:
 		ylabel.assign(ll.size(),yla);
 		title.assign(ll.size(),tit);
 	};
+
 
 	bool CheckData(void)
 	{
@@ -134,7 +161,14 @@ public:
 		return true;
 
 	};
-
+    ///
+    /// \brief SaveToText
+    /// 保存曲线数据为txt
+    /// \param index
+    /// 曲线序号
+    /// \return
+    ///成功保存为真
+    /// 否则为假
 	BOOL SaveToText(size_t index)
 	{
 		RawDataEx rdetmp;

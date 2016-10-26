@@ -6,23 +6,30 @@
 
 #include "../messagemaphpp.h"
 
+///
+/// \brief The COutputListA class
+///输出窗口的表格
+/// 用于显示运行状态
 
 class COutputListA :
 	public ListCtrlA
 {
 
 public:
+    ///
+    /// \brief dol
+    ///溶液状态
 	std::vector<DataOutA> dol;
 public:
 	COutputListA(void){};
 	virtual ~COutputListA(void){};	
 
 
-
+    ///
+    /// \brief ShowDOL
+    ///在表格中显示溶液状态
 	void ShowDOL()
 	{
-
-
 		size_t StepNo;
 		size_t starti;
 		StepNo=0;
@@ -87,7 +94,6 @@ public:
 				}
 				AdjustWidth(6,str);
 
-
 				StepNo++;
 			}
 		}
@@ -100,6 +106,11 @@ public:
 
 	};
 
+    ///
+    /// \brief GetDOLRow
+    /// 计算要显示全部溶液状态所要的行数
+    /// \return
+    ///
 	size_t GetDOLRow(void)
 	{
 		size_t s=0;
@@ -110,6 +121,9 @@ public:
 	};
 
 public:
+    ///
+    /// \brief BuildList
+    ///设置表头
 	void BuildList(void)
 	{	
 		std::vector<CString> strl;
@@ -131,12 +145,16 @@ public:
 			AdjustWidth(i,strl[i],30);
 		}
 	};
+    ///
+    /// \brief ResetHeader
+    ///设置表头
 	void ResetHeader(void)
 	{	
 		BuildList();
 	};
 
 protected:
+
 	afx_msg LRESULT OnMessageShowDol(WPARAM wParam, LPARAM lParam)
 	{
 
@@ -152,8 +170,8 @@ protected:
 		ShowDOL();
 		return 0;
 	};
-	//afx_msg LRESULT OnMessageUpdateDol(WPARAM wParam, LPARAM lParam);
-	//afx_msg void OnViewOutput();
+
+
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct)
 	{
 		if (ListCtrlA::OnCreate(lpCreateStruct) == -1)

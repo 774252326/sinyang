@@ -45,7 +45,7 @@ typedef struct MYPARA{
 
 const DWORD sleepms=1;
 
-const size_t nd=1;
+const size_t nd=100;
 //const size_t nd=sleepms/10;
 
 void WaitSecond(ProcessState &waitflg
@@ -63,7 +63,15 @@ void WaitSecond(ProcessState &waitflg
 }
 
 #ifdef QTT
-
+///
+/// \brief CMainFrame::PROCESS
+/// 分析过程
+/// 以子线程创建并执行
+/// \param pParam
+/// 传参
+/// 包含主框架和文档类的指针
+/// \return
+///无特别意义
 UINT CMainFrame::PROCESS(LPVOID pParam)
 {
 	CMainFrame *mf=((mypara*)pParam)->mf;
@@ -218,21 +226,37 @@ UINT CMainFrame::PROCESS(LPVOID pParam)
 		case running:
 			{
 				switch(pDoc->da.runstate){
-				case 9:
+					////////////new////////
+				//case 9:
+				//case 7:	
+				//case 3:
+				//case 4:
+				//case 11:
+					//////////////////////////
+					////////old//////////
+							case 0:
 				case 7:	
 				case 3:
 				case 4:
-				case 11:
+					/////////////////////
 					{
 						mf->pst=stop;
 					}
 					break;
-				case 1:
+					////////new//////////
+				//case 1:
+				//case 2:
+				//case 6:
+				//case 8:
+				//case 5:
+				//case 0:
+
+					//////////////////////
+					////////////old///////
+						case 1:
 				case 2:
 				case 6:
-				case 8:
-				case 5:
-				case 0:
+					////////////////////
 					{
 						rnd=data.popData(x,y,nd);
 
@@ -255,8 +279,14 @@ UINT CMainFrame::PROCESS(LPVOID pParam)
 						::SendMessage(mf->GetSafeHwnd(),MESSAGE_CLOSE_SAP_SHEET,NULL,NULL);
 					}
 					break;
-				case 12:
-				case 10:
+					///////old//////
+					case 5:
+					case 8:
+						/////////////
+						//////new///////
+				//case 12:
+				//case 10:
+						///////////////////
 					{
 						if(filelist.empty()){
 							CString strerr;
@@ -803,7 +833,16 @@ void CMainFrame::OnSize(UINT nType, int cx, int cy)
 		m_wndSplitter.RecalcLayout();
 	}
 }
-
+///
+/// \brief CMainFrame::Login
+/// 用户登录
+/// \param bReadFile
+/// 是否读取用户列表文件
+/// \param fp
+/// 用户列表文件路径
+/// \return
+/// 登陆是否成功
+///
 BOOL CMainFrame::Login(bool bReadFile, CString fp)
 {	
 	LoginDlg ld;
@@ -976,21 +1015,8 @@ void CMainFrame::OnAnalysisMethodsetup()
 			}
 			//else{
 			sppage=(SolutionAdditionParametersPageB*)(psheetml->GetPage(2));
-			//	sppage->para1.saplist.assign(p3.saplist.begin()+nextSAPIndex,p3.saplist.end());
-			//	//sppage->para1=p3todo;
-			//	sppage->para0=p3done;
-			//	sppage->pDoc=this;
-			//}
 
-			if(pDoc->bChangeSAP){
-				sppage->para=pDoc->p3todo;
-			}
-			else{
-				sppage->para.saplist.assign(pDoc->da.p3.saplist.begin()+pDoc->da.nextSAPIndex,pDoc->da.p3.saplist.end());
-			}
-			//sppage->para0=pDoc->p3done;
-			sppage->pDoc=pDoc;
-			//sppage->mf=this;
+			sppage->SetData(pDoc);
 
 			if(psheetml->GetSafeHwnd()){
 				sppage->SetList();			
@@ -1011,7 +1037,13 @@ void CMainFrame::OnAnalysisMethodsetup()
 	}
 }
 
-
+///
+/// \brief CMainFrame::ViewAll
+/// 刷新全部显示
+/// \param lwp
+/// 左视图消息参数
+/// \param rwp
+///右视图消息参数
 void CMainFrame::ViewAll(WPARAM lwp, WPARAM rwp)
 {
 	CanalyzerView *lv=(CanalyzerView*)LeftPane();
@@ -1039,7 +1071,7 @@ afx_msg LRESULT CMainFrame::OnMessageUpdateDol(WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
-
+///根据运行状态更新消息提示窗口
 afx_msg LRESULT CMainFrame::OnMessageCloseSapSheet(WPARAM wParam, LPARAM lParam)
 {
 
@@ -1047,21 +1079,17 @@ afx_msg LRESULT CMainFrame::OnMessageCloseSapSheet(WPARAM wParam, LPARAM lParam)
 
 	switch(pDoc->da.runstate){
 
+#ifdef QTT
+/////new////////
 	case 3:
-		{
-			if(bWaitForStop)
-			{
-				pst=stop;
-				HideWaitDlg();
-			}
-			else
-			{
-				AfxMessageBox(IDS_STRING_STEP_ERROR);
-				OnAnalysisAbortanalysis();
-			}
-		}
-		break;
 	case 4:
+		//////////////////
+#else
+		////////old//////////
+	case 3:
+	case 4:
+		//////////////////
+#endif
 		{
 			if(bWaitForStop)
 			{
@@ -1075,23 +1103,37 @@ afx_msg LRESULT CMainFrame::OnMessageCloseSapSheet(WPARAM wParam, LPARAM lParam)
 			}
 		}
 		break;
-
+	
+#ifdef QTT
+////////new////////
 	case 0:
-		break;
 	case 1:
-		break;
 	case 2:
-		break;
 	case 5:
-		break;
 	case 6:
-		break;
 	case 8:
+		////////////////
+#else
+		////////old////////
+			case 1:
+	case 2:
+	case 6:
+		///////////////
+#endif
 		break;
 
+#ifdef QTT
+		///////new////////
 	case 9:
 	case 7:
 	case 11:
+		////////////
+#else
+		/////old//////
+	case 0:
+	case 7:
+		////////////
+#endif
 		{
 			if(bWaitForStop)
 			{
@@ -1107,9 +1149,17 @@ afx_msg LRESULT CMainFrame::OnMessageCloseSapSheet(WPARAM wParam, LPARAM lParam)
 		}
 		break;
 
-
-	case 10:
-	case 12:
+#ifdef QTT
+		///////////////new/////////
+	//case 10:
+	//case 12:
+		/////////////////////
+#else
+		//////////old////////
+	case 5:
+	case 8:
+		///////////////////
+#endif
 		{		
 			CString str,strt;
 
@@ -1122,8 +1172,7 @@ afx_msg LRESULT CMainFrame::OnMessageCloseSapSheet(WPARAM wParam, LPARAM lParam)
 			strt.LoadStringW(IDS_STRING_ML);
 			str+=strt;
 			pst=pause;
-			ShowWaitDlg(str);
-			//::PostMessage(this->GetSafeHwnd(),WM_COMMAND,ID_ANALYSIS_PAUSE,0);
+			ShowWaitDlg(str);			
 		}
 		break;
 

@@ -1,24 +1,55 @@
 #pragma once
 #include "atltypes.h"
-
+///图例对齐边沿
 #define LEGEND_DP_ALIGN	0x01
+///对齐左边�?
 #define LEGEND_DP_LEFT	0x02
+///对齐上边�?
 #define LEGEND_DP_TOP	0x04
+///图例大小适应限框
 #define LEGEND_DP_FIT_RECT	0x08
+///限框大小自动调整
 #define LEGEND_DP_AUTO_RECT	0x10
+///显示图例
 #define LEGEND_DP_SHOW	0x20
 #include "../ObjectF.hpp"
 // LegendCondition command target
+
+///
+/// \brief The LegendCondition class
+///图例的显示的限制条件
 
 class LegendCondition : public ObjectF
 {
 public:
 
+    ///
+    /// \brief legendDpMode
+    ///图例显示方式标志�?
 	BYTE legendDpMode;
+    ///
+    /// \brief limitSize
+    ///
+    /// 限框
+    ///
+    ///
 	CSize limitSize;
+    ///
+    /// \brief maxFsz
+    /// 字体大小上限
 	int maxFsz;
+    ///
+    /// \brief minFsz
+    ///字体大小下限
 	int minFsz;
+    ///
+    /// \brief axisW
+    ///坐标轴宽�?
+    /// 对齐边沿时用于调整图例位�?
 	int axisW;
+    ///
+    /// \brief ratio
+    ///限框大小自动调整时限框与图纸的比�?
 	float ratio;
 
 public:
@@ -68,8 +99,16 @@ public:
 
 	LegendCondition(const LegendCondition &src){ operator=(src); };
 
-
-	CPoint CalAlignPos(CRect plotrect, CSize lgsz)
+    ///
+    /// \brief CalAlignPos
+    /// 计算图例对齐边沿时左上角的位�?
+    /// \param plotrect
+    /// 画布
+    /// \param lgsz
+    /// 图例限框
+    /// \return
+    ///左上角的位置
+    CPoint CalAlignPos(CRect plotrect, CSize lgsz) const
 	{
 		plotrect.DeflateRect(axisW,0,0,axisW);
 

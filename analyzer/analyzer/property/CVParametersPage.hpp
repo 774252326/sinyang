@@ -12,6 +12,10 @@
 
 // CVParametersPage dialog
 
+///
+/// \brief The CVParametersPage class
+///伏安参数属性页
+
 class CVParametersPage : public CPropertyPage
 {
 	//DECLARE_DYNAMIC(CVParametersPage)

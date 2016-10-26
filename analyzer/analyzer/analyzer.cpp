@@ -106,7 +106,6 @@ BOOL CanalyzerApp::InitInstance()
 	sd.Create(StartDlg::IDD);
 	sd.ShowWindow(SW_SHOW);
 
-
 	// AfxInitRichEdit2() is required to use RichEdit control	
 	// AfxInitRichEdit2();
 

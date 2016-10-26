@@ -219,13 +219,23 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		{
 			rs=da.ComputeStateData();
 			switch(da.runstate){
-				//case 0:
-				//case 5:
-				//case 7:
+
+#ifdef QTT	
+				/////new////////
 			case 9:
 			case 10:
 			case 11:
 			case 12:
+				///////////////
+#else
+
+				///old///////
+				case 0:
+				case 5:
+				case 7:
+				/////////////
+#endif
+
 				{
 					if(bChangeSAP){
 						CSingleLock singleLockSAP(&m_CritSectionSAP);

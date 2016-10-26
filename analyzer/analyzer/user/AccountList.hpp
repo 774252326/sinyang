@@ -3,6 +3,10 @@
 #include "UserAccount.hpp"
 // AccountList command target
 
+///
+/// \brief The AccountList class
+///用户帐户列表
+///
 class AccountList : public ObjectF
 {
 public:
@@ -16,9 +20,6 @@ public:
 		if (ar.IsStoring())
 		{	// storing code
 			ar<<ual.size();
-			//for(size_t i=0;i<ual.size();i++){
-			//	ual[i].Serialize(ar);
-			//}
 		}
 		else
 		{	// loading code
@@ -32,6 +33,21 @@ public:
 		}
 	};
 
+    ///
+    /// \brief CheckUserAccount
+    /// 检查用户名密码是否配对
+    /// \param username
+    /// 用户名
+    /// \param password
+    /// 密码
+    /// \return
+    /// 若用户名密码正确配对
+    /// 返回此用户名在列表中的序号
+    /// 若用户名正确密码错误
+    /// 返回-1
+    /// 若用户名错误
+    /// 返回-2
+    ///
 	int CheckUserAccount(CString username, CString password){
 		bool bHitUser=false;
 		for(size_t i=0;i<ual.size();i++){
@@ -52,6 +68,12 @@ public:
 
 	AccountList(const AccountList &src){ operator=(src); };
 
+    ///
+    /// \brief IsAdmin
+    /// 检查第i个用户是不是管理员
+    /// \param i
+    /// \return
+    ///
 	bool IsAdmin(int i){
 		if(i>=0 && ((size_t)i)<ual.size() && ual[i].au==UserAccount::admin)
 			return true;

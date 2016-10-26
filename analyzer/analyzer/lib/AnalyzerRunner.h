@@ -3,7 +3,7 @@
 #pragma once
 
 
-#ifdef QTT
+
 
 #include "recorder.h"
 #include "exports.h" // for Libec namespace
@@ -201,10 +201,8 @@ public:
 
 	void SetAndStart(const CVPara &p2, int seg)
 	{
-		m_nCnt=0;
 
-		//int const NN=65535;
-		//float fx[NN],fy[NN];
+
 		Q_ASSERT(NN >= runner->singleChannelStorageRequired());
 		// change technique. must do runner before changing any Q_PROPERTYs...
 		bool bResult1 = QMetaObject::invokeMethod(
@@ -230,6 +228,9 @@ public:
 		runner->setProperty("m_qt", p2.quiettime);//quiet time
 		runner->setProperty("m_iSens",2);
 
+
+        m_nCnt=0;
+
 		delete []fx;
 		delete []fy;
 
@@ -252,5 +253,4 @@ public:
 
 
 
-#endif
 

@@ -1,3 +1,4 @@
+
 #pragma once
 
 #include "ParaList.hpp"
@@ -10,16 +11,33 @@
 #include "../messagemaphpp.h"
 
 // ComputeDlg dialog
-
+///
+/// \brief The ComputeDlg class
+///计算结果对话框
 class ComputeDlg : public CDialogEx
 {
 	//DECLARE_DYNAMIC(ComputeDlg)
 
 protected:
+    ///
+    /// \brief m_list
+    /// 输入参数的可编辑表格
 	ParaList m_list;
+    ///
+    /// \brief EditEDRS_ID
+    ///用于显示结果
 	CEdit EditEDRS_ID;
+    ///
+    /// \brief formulaImg
+    ///计算公式的位图
 	CBitmap formulaImg;
+    ///
+    /// \brief BtnIDS_BTN_COMPUTE
+    ///计算按钮
 	CButton BtnIDS_BTN_COMPUTE;
+    ///
+    /// \brief imgrc
+    ///公式位图的位置和大小
 	CRect imgrc;
 
 public:
@@ -48,7 +66,9 @@ protected:
 		return 0;
 	};
 
-
+    ///
+    /// \brief ClickCompute
+    ///计算结果并刷新显示
 
 	void ClickCompute(void)
 	{
@@ -88,7 +108,13 @@ protected:
 			EditEDRS_ID.SetWindowTextW(str);
 	};
 
-
+    ///
+    /// \brief OnInitDialog
+    /// 布局对话框
+    /// 计算并显示结果
+    ///
+    /// \return
+    ///
 	virtual BOOL OnInitDialog()
 	{
 		CDialogEx::OnInitDialog();
@@ -119,20 +145,12 @@ protected:
 
 		CPoint pt(gap1);
 		int w=winSize.cx-2*gap1.cx;
-		//CSize btnSz((w-gap2.cx)/2,btnH);
 
 		CString str;
-
-		//CButton *pBtn;
 
 		str.LoadStringW(IDS_STRING_RESULT);
 		this->SetWindowTextW(str);
 
-
-
-		//CEdit *pEdit;
-
-		//pEdit=new CEdit;
 		EditEDRS_ID.CreateEx(
 			NULL,
 			//WS_EX_CLIENTEDGE,

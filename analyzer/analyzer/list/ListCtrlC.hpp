@@ -5,7 +5,10 @@
 #include "ColorButtonA.hpp"
 
 #include "../messagemaphpp.h"
-
+///
+/// \brief The ListCtrlC class
+///增加下拉选框和颜色选框和不可编辑项的可编辑表格
+///
 class ListCtrlC :
 	public ListCtrlB
 {
@@ -13,29 +16,65 @@ class ListCtrlC :
 
 public:
 	enum eType{
-		eStatic,
-		eEdit,
-		eEditReal,
-		eEditInt,
-		eCombo,
-		eColor	
+        eStatic,//不可编辑项
+        eEdit,//文字编辑框
+        eEditReal,//实数编辑框
+        eEditInt,//整数编辑框
+        eCombo,//下拉选框
+        eColor	//颜色选框
 	};
 
 public:
+    ///
+    /// \brief typelist
+    ///指定各列的单元格类型
 	std::vector<eType> typelist;
+    ///
+    /// \brief cbstr
+    ///各列的下拉选框内容
+    /// 若某列的类型不是下拉选框时则不考虑
 	std::vector< std::vector<CString> > cbstr;
+    ///
+    /// \brief mind
+    ///各列的实数编辑框的输入数据下限
+    /// 若该列的类型不是实数编辑框时则不考虑
 	std::vector<double> mind;
+    ///
+    /// \brief maxd
+    ///各列的实数编辑框的输入数据上限
+    /// 若该列的类型不是实数编辑框时则不考虑
 	std::vector<double> maxd;
+    ///
+    /// \brief mini
+    /// 各列的整数编辑框的输入数据下限
+    ///若该列的类型不是整数编辑框时则不考虑
 	std::vector<int> mini;
+    ///
+    /// \brief maxi
+    ///各列的整数编辑框的输入数据上限
+    /// 若该列的类型不是整数编辑框时则不考虑
 	std::vector<int> maxi;
 
+    ///
+    /// \brief m_itemEditInt
+    ///整数编辑框
 	EditC<int> m_itemEditInt;
+    ///
+    /// \brief m_itemEditReal
+    ///实数编辑框
 	EditC<double> m_itemEditReal;
 
 public:
 	ListCtrlC(void){};
 	virtual ~ListCtrlC(void){};
 
+    ///
+    /// \brief ComboItem
+    /// 由单元格产生下拉选框
+    /// \param coord
+    /// 单元格坐标
+    /// \return
+    ///
 	CComboBox * ComboItem(CPoint coord)
 	{
 #define IDC_COMBOBOXINLISTVIEW 0x1235
@@ -60,7 +99,13 @@ public:
 		return pList;
 	};
 
-
+    ///
+    /// \brief ColorItem
+    /// 有单元格产生颜色选框
+    /// \param coord
+    /// 单元格坐标
+    /// \return
+    ///
 	CMFCColorButton * ColorItem(CPoint coord)
 	{
 #define IDC_COLORINLISTVIEW 0x1236
@@ -80,6 +125,14 @@ public:
 		return pList;
 	};
 
+    ///
+    /// \brief GetBoundRect
+    /// 计算单元格位置和对应下拉选框的大小
+    /// \param nItem
+    ///
+    /// \param nSubItem
+    /// \return
+    ///
 	CRect GetBoundRect(int nItem, int nSubItem)
 	{
 		//basic code start
@@ -113,6 +166,13 @@ public:
 
 	};
 
+    ///
+    /// \brief GetChoice
+    /// 求下拉选框当前选中项
+    /// \param nItem
+    /// \param nSubItem
+    /// \return
+    ///
 	int GetChoice(int nItem, int nSubItem)
 	{
 		CString strTemp, strTemp2;
@@ -125,6 +185,14 @@ public:
 		return -1;
 	};
 
+    ///
+    /// \brief SetChoice
+    /// 设置单元格内容为下拉选框中的指定选项
+    /// \param nItem
+    /// \param nSubItem
+    /// \param choiceIndex
+    /// \return
+    ///
 	BOOL SetChoice(int nItem, int nSubItem, int choiceIndex)
 	{
 		if( nItem<0 || nSubItem<0 
@@ -136,6 +204,12 @@ public:
 		return SetItemText(nItem,nSubItem,cbstr[nSubItem][choiceIndex]);
 	};
 
+    ///
+    /// \brief SetHeader
+    /// 设置表头
+    /// \param headerstrl
+    /// \return
+    ///
 	BOOL SetHeader(const std::vector<CString> & headerstrl)
 	{
 		BOOL flg=ListCtrlB::SetHeader(headerstrl);
@@ -216,6 +290,7 @@ protected:
 
 		case eEditReal:
 			{
+            //实数值以字符形式保存
 				BOOL flg=UpdateData();
 				if(flg==TRUE){						
 					EndEdit(m_itemEditReal,pDispInfo->item.pszText);
@@ -228,6 +303,7 @@ protected:
 
 		case eEditInt:
 			{
+            //整数值以字符形式保存
 				BOOL flg=UpdateData();
 				if(flg==TRUE){	
 					EndEdit(m_itemEditInt,pDispInfo->item.pszText);
@@ -246,6 +322,7 @@ protected:
 			break;
 		case eColor:
 			{
+            //颜色数值以字符形式保存
 				if(pDispInfo->item.pszText!=NULL){
 					SetItemText(pDispInfo->item.iItem, m_itemEdit.coord.y, pDispInfo->item.pszText);		
 				}
@@ -361,6 +438,8 @@ protected:
 			break;
 		case CDDS_SUBITEM|CDDS_ITEMPREPAINT:
 			{
+            ///将单元格字体和背景设为所指定颜色
+            ///
 				int nItem=static_cast<int>(pLVCD->nmcd.dwItemSpec );
 				if(typelist[pLVCD->iSubItem] == eColor){
 					//COLORREF clrNewTextColor=_wtoi(GetItemText(nItem, pLVCD->iSubItem));

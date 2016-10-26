@@ -3,15 +3,30 @@
 
 #include "../messagemaphpp.h"
 // ExportDataDlg dialog
-
+///
+/// \brief The ExportDataDlg class
+///导出数据对话框
+///
 class ExportDataDlg : public CDialogEx
 {
 	//DECLARE_DYNAMIC(ExportDataDlg)
 protected:
+    ///
+    /// \brief m_c
+    ///文件夹编辑框
 	CMFCEditBrowseCtrl m_c;
+    ///
+    /// \brief m_exp
+    ///导出按钮
 	CMFCButton m_exp;
+    ///
+    /// \brief btnSelAll
+    ///全选勾选框
 	CButton btnSelAll;
 public:
+    ///
+    /// \brief lcl
+    ///曲线数据列表
 	ListCtrlLine lcl;
 public:
 	ExportDataDlg(CWnd* pParent = NULL)
@@ -29,6 +44,8 @@ protected:
 	{
 		CDialogEx::DoDataExchange(pDX);
 	};    // DDX/DDV support
+
+//    布局控件
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct)
 	{
 		if (CDialogEx::OnCreate(lpCreateStruct) == -1)
@@ -122,6 +139,7 @@ protected:
 		return 0;
 	};
 
+//    插入数据并显示
 	virtual BOOL OnInitDialog()
 	{
 		CDialogEx::OnInitDialog();
@@ -138,6 +156,12 @@ protected:
 		// EXCEPTION: OCX Property Pages should return FALSE
 	};
 
+    ///
+    /// \brief OnOK
+    ///导出按钮响应
+    /// 导出曲线到txt
+    /// 如果同名txt文件存在
+    /// 程序将中断导出操作并提示修改导出文件名
 	virtual void OnOK()
 	{
 		// TODO: Add your specialized code here and/or call the base class
@@ -167,6 +191,9 @@ protected:
 		CDialogEx::OnOK();
 	};
 
+    ///
+    /// \brief OnCheck
+    ///全选勾选框响应
 	void OnCheck()
 	{
 		int flg=btnSelAll.GetCheck();

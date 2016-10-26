@@ -5,6 +5,10 @@
 
 
 // PropertySheetA
+///
+/// \brief The PropertySheetA1 class
+///模态属性表对话框
+/// 添加上下文帮助
 
 class PropertySheetA1 : public CPropertySheet
 {

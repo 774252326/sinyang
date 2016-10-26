@@ -12,6 +12,10 @@ typedef struct SEGMENT{
 	wchar_t AhUnit;
 } segment;
 
+
+///
+/// \brief The pcct class
+///用于读取解析实验数据文件
 class pcct
 {
 

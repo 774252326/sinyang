@@ -5,6 +5,10 @@
 
 // UserAccount command target
 
+///
+/// \brief The UserAccount class
+///用户账户属性
+
 class UserAccount : public ObjectF
 {
 public:
@@ -15,9 +19,21 @@ public:
 		guest
 	};
 
+    ///
+    /// \brief userName
+    ///用户名
 	CString userName;
+    ///
+    /// \brief passWord
+    ///密码
 	CString passWord;
+    ///
+    /// \brief remark
+    ///备注
 	CString remark;
+    ///
+    /// \brief au
+    ///权限
 	authority au;
 
 

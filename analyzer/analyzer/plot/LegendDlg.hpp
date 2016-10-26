@@ -6,13 +6,23 @@
 
 // LegendDlg dialog
 
+///
+/// \brief The LegendDlg class
+///图例窗口
+
 class LegendDlg : public CDialogEx
 {
 
 
 protected:
+    ///
+    /// \brief ppw
+    ///指针指向图纸
 	PlotWnd * ppw;
 private:
+    ///
+    /// \brief bInitComplete
+    ///初始化标记
 	bool bInitComplete;
 public:
 	LegendDlg(PlotWnd * pParent)// standard constructor

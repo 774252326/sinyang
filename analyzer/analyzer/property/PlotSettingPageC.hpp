@@ -1,24 +1,17 @@
 #pragma once
 
-//#include "typedefine.h"
-//#include "EditList.h"
-//#include "struct1\PlotSpec.hpp"
 #include "../struct1\LineSpec.hpp"
-
-//#include "ListCtrlLS.h"
 #include "../list\ListCtrlLS.hpp"
-//#include "struct1\LegendSpec.hpp"
-//#include "struct1\LegendCondition.hpp"
-
 #include "../Resource.h"
-//#include "PlotSettingPageC.h"
 #include "afxdialogex.h"
 #include "../analyzerView.h"
 
 #include "../messagemaphpp.h"
 
 // PlotSettingPageC dialog
-
+///
+/// \brief The PlotSettingPageC class
+///曲线属性页
 class PlotSettingPageC : public CPropertyPage
 {
 	//DECLARE_DYNAMIC(PlotSettingPageC)
@@ -115,6 +108,7 @@ protected:
 		GetList();
 		return CPropertyPage::OnKillActive();
 	};
+    //控件布局
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct)
 	{
 		if (CPropertyPage::OnCreate(lpCreateStruct) == -1)

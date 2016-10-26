@@ -5,7 +5,10 @@
 #include "../resource.h"
 
 #include "../messagemaphpp.h"
-
+///
+/// \brief The ListCtrlSAP class
+///加液步骤的编辑表
+///
 class ListCtrlSAP :
 	public ListCtrlAA
 {
@@ -13,6 +16,13 @@ public:
 	ListCtrlSAP(void){};
 	virtual ~ListCtrlSAP(void){};
 public:
+    ///
+    /// \brief InsertItemSAP
+    /// 插入行
+    /// \param i
+    /// \param si
+    /// \return
+    ///
 	int InsertItemSAP(int i, const sapitemA & si)
 	{
 		CString strTemp=L"";
@@ -47,6 +57,13 @@ public:
 
 		return ri;
 	};	
+    ///
+    /// \brief GetItemSAP
+    /// 取指定行的内容
+    /// \param i
+    /// \param si
+    /// \return
+    ///
 	bool GetItemSAP(int i, sapitemA & si)
 	{
 
@@ -72,6 +89,8 @@ public:
 		return true;
 	};
 protected:
+
+    //设置表头及各列单元格类型
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct)
 	{
 		if (ListCtrlAA::OnCreate(lpCreateStruct) == -1)
@@ -101,6 +120,12 @@ protected:
 
 		return 0;
 	};
+    ///
+    /// \brief Inserti
+    /// 插入空行
+    /// \param iSelect
+    /// \return
+    ///
 	int Inserti(int iSelect)
 	{
 		iSelect++;
@@ -114,6 +139,12 @@ protected:
 		}
 		return 0;
 	};
+    ///
+    /// \brief Deletei
+    /// 删除行
+    /// \param iSelect
+    /// \return
+    ///
 	int Deletei(int iSelect)
 	{
 		if(iSelect!=-1) // valid item 	
@@ -129,6 +160,7 @@ protected:
 
 		return 0;
 	};
+    //编辑表的按键响应
 	afx_msg void OnLvnKeydown(NMHDR *pNMHDR, LRESULT *pResult)
 	{
 		LPNMLVKEYDOWN pLVKeyDow = reinterpret_cast<LPNMLVKEYDOWN>(pNMHDR);

@@ -7,12 +7,27 @@
 #include "../messagemaphpp.h"
 
 // ParaList
-
+///
+/// \brief The ParaList class
+///公式变量的可编辑表格
+///
 class ParaList : public CListCtrl
 {
 	//DECLARE_DYNAMIC(ParaList)
 
 public:
+    ///
+    /// \brief ScaleBitmap
+    /// 缩放位图
+    /// \param pSrc
+    /// 原图像
+    /// \param pDst
+    /// 输出图像
+    /// \param dstW
+    /// 输出图像宽度
+    /// \param dstH
+    /// 输出图像高度
+    ///
 	static void ScaleBitmap(CBitmap *pSrc, CBitmap *pDst, int dstW, int dstH)
 	{
 		CDC srcDC;
@@ -29,7 +44,18 @@ public:
 		pSrc->GetBitmap(&bm); 
 		dstDC.StretchBlt(0,0,dstW,dstH,&srcDC,0,0,bm.bmWidth,bm.bmHeight,SRCCOPY);
 	};
-
+    ///
+    /// \brief AdjustWidth
+    /// 根据文字调整表格列宽
+    /// \param ls
+    /// 表格
+    /// \param nCol
+    /// 列号
+    /// \param str
+    /// 文字
+    /// \param gap
+    /// 单元格边沿留空宽度
+    ///
 	static void AdjustWidth(CListCtrl *ls, int nCol, CString str, int gap=42)
 	{
 		int widthc,widtht;
@@ -40,14 +66,35 @@ public:
 	};
 
 protected:
+    ///
+    /// \brief imList
+    ///图像列表
 	CImageList imList;
 
+    ///
+    /// \brief m_iSubItem
+    ///列号
 	int m_iSubItem;
+    ///
+    /// \brief m_edtItemEdit
+    ///数值编辑框
 	EditC<double> m_edtItemEdit;
 public:
+    ///
+    /// \brief vl
+    ///参数列表
 	std::vector<Value> vl;
+    ///
+    /// \brief x
+    ///编辑数值时用的临时变量
 	double x;
+    ///
+    /// \brief rowH
+    ///行高
 	int rowH;
+    ///
+    /// \brief firstColW
+    ///第一列列宽
 	int firstColW;
 public:
 	ParaList()
@@ -58,6 +105,9 @@ public:
 	virtual ~ParaList(){};
 
 
+    ///
+    /// \brief Refresh
+    ///根据数据vl自动填充表格
 	void Refresh(void)
 	{
 		this->DeleteAllItems();
@@ -126,6 +176,8 @@ public:
 	};
 
 protected:
+    ///布局控件并显示数据
+
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct)
 	{
 		if (CListCtrl::OnCreate(lpCreateStruct) == -1)
@@ -174,6 +226,7 @@ protected:
 		return 0;
 	};
 
+//    开始编辑
 	afx_msg void OnLvnBeginlabeledit(NMHDR *pNMHDR, LRESULT *pResult)
 	{
 		NMLVDISPINFO *pDispInfo = reinterpret_cast<NMLVDISPINFO*>(pNMHDR);
@@ -202,6 +255,7 @@ protected:
 		*pResult = 0;
 	};
 
+//    单击表格
 	afx_msg void OnNMClick(NMHDR *pNMHDR, LRESULT *pResult)
 	{
 		LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
@@ -217,6 +271,7 @@ protected:
 		*pResult = 0;
 	};
 
+//    结束编辑
 	afx_msg void OnLvnEndlabeledit(NMHDR *pNMHDR, LRESULT *pResult)
 	{
 		NMLVDISPINFO *pDispInfo = reinterpret_cast<NMLVDISPINFO*>(pNMHDR);
@@ -241,6 +296,7 @@ protected:
 		*pResult = 0;
 	};
 
+//    双击单元格
 	afx_msg void OnNMDblclk(NMHDR *pNMHDR, LRESULT *pResult)
 	{
 		LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);

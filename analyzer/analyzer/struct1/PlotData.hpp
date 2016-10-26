@@ -10,11 +10,34 @@
 #include <algorithm>
 //#include "RawDataEx.hpp"
 #include "../Resource.h"
-
+///
+/// \brief The PlotData class
+///画图数据类
+///
 class PlotData : public ObjectF
 {
 public:
 
+    ///
+    /// \brief genPointToPlot
+    /// 计算数据点在画图控件中的坐标
+    /// \param px
+    /// 横坐标数据
+    /// \param py
+    /// 纵坐标数据
+    /// \param rect
+    /// 控件画图区域
+    /// \param pointlist
+    /// 曲线各点在控件上的坐标
+    /// \param xmin
+    /// 横坐标数值下限
+    /// \param xmax
+    /// 横坐标数值上限
+    /// \param ymin
+    /// 纵坐标数值下限
+    /// \param ymax
+    /// 纵坐标数值上限
+    ///
 	static void genPointToPlot(const std::vector<double> &px
 		, const std::vector<double> &py
 		, const CRect &rect
@@ -37,6 +60,19 @@ public:
 
 	};
 
+    ///
+    /// \brief DrawSpline
+    /// 画三次样条曲线
+    /// \param lpPoints
+    /// 数据点指针
+    /// \param np
+    /// 总点数
+    /// \param lowlim
+    /// 画图横坐标起点位置
+    /// \param highlim
+    /// 画图横坐标终点位置
+    /// \param pDC
+    ///
 
 	static void DrawSpline( CPoint *lpPoints
 		, int np
@@ -67,6 +103,22 @@ public:
 
 	};
 
+    ///
+    /// \brief DrawCurve
+    /// 画曲线
+    /// \param pDC
+    ///
+    /// \param pointlist
+    /// 数据点在画图控件中的坐标
+    /// \param ll
+    /// 分段记录
+    /// \param ps
+    /// 画线属性
+    /// \param lborder
+    /// 控件画图区域左边界
+    /// \param rborder
+    /// 控件画图区域右边界
+    ///
 
 
 	static void DrawCurve(CDC* pDC
@@ -174,7 +226,23 @@ public:
 
 	};
 
-
+    ///
+    /// \brief DrawData
+    /// 作图
+    /// \param plotrect
+    /// 控件区域
+    /// \param pDC
+    /// \param ps
+    /// 图纸属性
+    /// \param ls
+    /// 画线属性
+    /// \param raw
+    /// 数据曲线
+    /// \param xmin
+    /// \param xmax
+    /// \param ymin
+    /// \param ymax
+    ///
 
 
 
@@ -251,8 +319,17 @@ public:
 	};
 
 public:
+    ///
+    /// \brief ps
+    ///图纸属性
 	PlotSpec ps;
+    ///
+    /// \brief raw
+    ///数据曲线
 	RawData raw;
+    ///
+    /// \brief ls
+    ///画线属性
 	std::vector<LineSpec> ls;
 
 public:
@@ -403,6 +480,15 @@ public:
 	//};
 
 
+    ///
+    /// \brief SetLineData
+    /// 设置数据曲线和曲线名
+    /// \param newraw
+    /// 数据曲线
+    /// \param namelist
+    /// 曲线名
+    /// \return
+    ///增加的分段数量
 	int SetLineData( const RawData &newraw, const std::vector<CString> &namelist )
 	{
 		int ndiff=(int)newraw.ll.size()-(int)raw.ll.size();
@@ -417,7 +503,16 @@ public:
 
 		return ndiff;
 	};
-
+    ///
+    /// \brief AddLineData
+    /// 增加若干数据曲线和曲线名
+    /// \param newraw
+    /// 数据曲线
+    /// \param namelist
+    /// 曲线名
+    /// \return
+    /// 增加的分段数量
+    ///
 	int AddLineData( const RawData &newraw, const std::vector<CString> &namelist )
 	{	
 
@@ -433,6 +528,9 @@ public:
 		return newraw.ll.size();
 	};
 
+    ///
+    /// \brief ResetLineType
+    ///重设画线属性
 
 	void ResetLineType()
 	{
@@ -475,6 +573,18 @@ public:
 	};
 
 
+    ///
+    /// \brief SetLineColor
+    /// 设置画线属性
+    /// \param lastN
+    /// 更改最后lastN个分段的曲线
+    /// \param dotSize
+    /// 点大小
+    /// \param smoothType
+    /// 连线类型
+    /// \param lineType
+    /// 线型
+    ///
 	void SetLineColor(int lastN, int dotSize=0, int smoothType=0, int lineType=0)
 	{	
 		size_t i=0;
@@ -493,7 +603,19 @@ public:
 
 
 	};
-
+    ///
+    /// \brief SetLineColor
+    /// 设置画线属性
+    /// \param lastN
+    /// 更改最后lastN个分段的曲线
+    /// \param c1
+    /// 最后一个分段的颜色
+    /// \param c0
+    /// 其余分段的颜色
+    /// \param dotSize
+    /// \param smoothType
+    /// \param lineType
+    ///
 	void SetLineColor(int lastN, COLORREF c1, COLORREF c0, int dotSize=0, int smoothType=0, int lineType=0)
 	{
 		size_t lss=ls.size();
@@ -564,6 +686,7 @@ public:
 
 	};
 
+
 	void AddPoint(double x, double y, CString name, int lineType=2)
 	{
 		RawData tmp;
@@ -596,6 +719,14 @@ public:
 		lis.Set(k,b,x1,x2);
 		AddLine(lis, name, lineType);
 	};
+
+    ///
+    /// \brief ShowLastLast
+    ///
+    /// \param flg
+    /// 为真时凸出显示最后一段的最后一点
+    /// 否则不显示
+    ///
 
 	void ShowLastLast(bool flg=true)
 	{

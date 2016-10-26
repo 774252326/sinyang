@@ -5,7 +5,10 @@
 #include "../messagemaphpp.h"
 
 // SolutionAdditionParametersPageA dialog
-
+///
+/// \brief The SolutionAdditionParametersPageA class
+/// 加液参数属性页
+///用于模态属性表对话框
 class SolutionAdditionParametersPageA : public CPropertyPage
 {
 	//DECLARE_DYNAMIC(SolutionAdditionParametersPageA)

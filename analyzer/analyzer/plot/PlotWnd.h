@@ -6,14 +6,42 @@
 
 #include "../messagemaphpp.h"
 // PlotWnd
-
+///
+///
+///图例窗口的前置声明
 class LegendDlg;
-
+///
+/// \brief The PlotWnd class
+///画图控件
+///
 class PlotWnd : public CWnd
 {
 
 public:
 
+    ///
+    /// \brief WheelUpdate
+    /// 鼠标滚轮缩放图形
+    /// 以鼠标所在点为中心成比例缩放坐标轴范围
+    /// \param plotrect
+    /// 画线区域
+    /// \param sencew
+    /// 坐标轴刻度区域的宽度
+    /// \param pt
+    /// 鼠标所在点
+    /// \param k1
+    /// 缩放比例系数
+    /// \param xmin
+    /// 横坐标起点
+    /// \param xmax
+    /// 横坐标终点
+    /// \param ymin
+    /// 纵坐标起点
+    /// \param ymax
+    /// 纵坐标终点
+    /// \return
+    ///坐标轴范围有变时为真，不变时为假
+    ///
 	static bool WheelUpdate(CRect &plotrect
 		, int sencew
 		, CPoint pt
@@ -50,7 +78,25 @@ public:
 		//InvalidateRect(NULL,FALSE);
 		return flg;
 	};
-
+    ///
+    /// \brief MoveUpdateA
+    /// 鼠标拖动以移动图形
+    /// \param plotrect
+    /// 画线区域
+    /// \param point
+    /// 鼠标所在点
+    /// \param mouseDownPoint
+    /// 前一时间鼠标所在点鼠标
+    /// \param xmin
+    /// 横坐标起点
+    /// \param xmax
+    /// 横坐标终点
+    /// \param ymin
+    /// 纵坐标起点
+    /// \param ymax
+    /// 纵坐标终点
+    /// \return
+    ///坐标轴范围有变时为真，不变时为假
 	static bool MoveUpdateA(CRect &plotrect
 		, const CPoint &point
 		, CPoint &mouseDownPoint
@@ -80,6 +126,28 @@ public:
 		return false;
 	};
 
+    ///
+    /// \brief MoveUpdateB
+    /// 鼠标在画线区域内移动时计算并更新鼠标所在点的坐标
+    /// \param plotrect
+    /// 画线区域
+    /// \param point
+    /// 鼠标所在点
+    /// \param mouseDownPoint
+    /// 上一时间鼠标所在点
+    /// \param xmin
+    /// 横坐标起点
+    /// \param xmax
+    /// 横坐标终点
+    /// \param ymin
+    /// 纵坐标起点
+    /// \param ymax
+    /// 纵坐标终点
+    /// \param str
+    /// 鼠标所在点的坐标字符串
+    /// \return
+    ///鼠标所在点的坐标有更新时为真，否则为假
+    ///
 	static bool MoveUpdateB(CRect &plotrect
 		, const CPoint &point
 		, CPoint &mouseDownPoint
@@ -112,7 +180,22 @@ public:
 
 
 	};
-
+    ///
+    /// \brief FindClosest
+    /// 计算曲线所有点到某点的曼哈顿距离
+    /// 找到距离最小的点或者第一个距离小于阈值的点
+    /// \param x
+    /// 某点横坐标
+    /// \param y
+    /// 某点纵坐标
+    /// \param xl
+    /// 曲线点横坐标
+    /// \param yl
+    /// 曲线点纵坐标
+    /// \param thres
+    /// 阈值
+    /// \return
+    ///找到的曲线点的序号
 	static int FindClosest(double x, double y, const std::vector<double> &xl, const std::vector<double> &yl, double thres)
 	{
 		if(xl.size()!=yl.size()
@@ -136,7 +219,31 @@ public:
 		}
 		return j;
 	};
-
+    ///
+    /// \brief DownUpdateA
+    /// 在图上找离鼠标所在点的曼哈顿距离小于2像素的点或距离最小的点
+    /// \param plotrect
+    /// 画线区域
+    /// \param point
+    /// 鼠标所在点
+    /// \param mouseDownPoint
+    /// 上一时间鼠标所在点
+    /// \param xmin
+    /// 横坐标起点
+    /// \param xmax
+    /// 横坐标终点
+    /// \param ymin
+    /// 纵坐标起点
+    /// \param ymax
+    /// 纵坐标终点
+    /// \param xl
+    /// 曲线点横坐标
+    /// \param yl
+    /// 曲线点纵坐标
+    /// \param index
+    /// 找到的曲线点的序号
+    /// \return
+    ///
 	static int DownUpdateA(CRect &plotrect
 		, const CPoint &point
 		, CPoint &mouseDownPoint
@@ -186,7 +293,17 @@ public:
 
 
 	};
-
+    ///
+    /// \brief DownUpdateB
+    /// 更新鼠标箭头形状
+    /// \param plotrect
+    /// 画线区域
+    /// \param point
+    /// 鼠标所在点
+    /// \param mouseDownPoint
+    /// 上一时间鼠标所在点
+    /// \return
+    ///
 
 	static int DownUpdateB(CRect &plotrect
 		, const CPoint &point
@@ -206,21 +323,54 @@ public:
 
 
 protected:
+    ///
+    /// \brief m_tool
+    ///鼠标的气泡提示
+    /// 用于显示鼠标所在点坐标
 	CToolTipCtrl m_tool;
+    ///
+    /// \brief td
+    ///图例窗口指针
 	LegendDlg *td;
+    ///
+    /// \brief wndPosition
+    ///控件位置
 	CPoint wndPosition;
+    ///
+    /// \brief m_mouseDownPoint
+    ///鼠标左键按下后上一时间鼠标的位置
 	CPoint m_mouseDownPoint;
+    ///
+    /// \brief bShowToolTip
+    ///是否显示气泡提示
 	bool bShowToolTip;
 
 public:
 
+    ///
+    /// \brief pdex
+    ///画图数据
 	PlotDataEx *pdex;
 
+    ///
+    /// \brief selectPIdx
+    ///鼠标取出的点的序号
 	size_t selectPIdx;
+    ///
+    /// \brief pct
+    ///自动调整坐标范围时边沿留空的比例系数
 	double pct;
+    ///
+    /// \brief bMouseCursor
+    ///是否用鼠标取点
 	bool bMouseCursor;	
+    ///
+    /// \brief zoomrate
+    ///缩放比例系数
 	double zoomrate;
-
+    ///
+    /// \brief blankPS
+    ///无画图数据时用于画空图纸
 	PlotSpec blankPS;
 
 public:
@@ -329,7 +479,7 @@ protected:
 
 
 	};
-
+//更新鼠标箭头形状
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point)
 	{
 		// TODO: Add your message handler code here and/or call default
@@ -358,7 +508,7 @@ protected:
 
 		CWnd::OnLButtonDown(nFlags, point);
 	};
-
+//更新鼠标箭头形状
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point)
 	{
 		// TODO: Add your message handler code here and/or call default
@@ -370,7 +520,7 @@ protected:
 
 		CWnd::OnLButtonUp(nFlags, point);
 	};
-	
+//	平移图形或更新坐标显示
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point)
 	{
 		// TODO: Add your message handler code here and/or call default
@@ -409,7 +559,7 @@ protected:
 
 		CWnd::OnMouseMove(nFlags, point);
 	};
-
+//双击取点
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point)
 	{
 		// TODO: Add your message handler code here and/or call default
@@ -450,7 +600,7 @@ protected:
 
 		CWnd::OnLButtonDblClk(nFlags, point);
 	};
-
+//滚轮缩放
 	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 	{
 		// TODO: Add your message handler code here and/or call default

@@ -6,12 +6,23 @@
 
 #include "../messagemaphpp.h"
 
+///
+/// \brief The ListCtrlLS class
+///曲线画图属性的编辑表
+
 class ListCtrlLS :
 	public ListCtrlC
 {
 public:
 	ListCtrlLS(void){};
 	virtual ~ListCtrlLS(void){};
+    ///
+    /// \brief InsertItemLS
+    /// 插入行
+    /// \param i
+    /// \param ls
+    /// \return
+    ///
 	int InsertItemLS(int i, const LineSpec & ls)
 	{
 		CString strTemp=L"";
@@ -40,6 +51,13 @@ public:
 
 		return ri;
 	};
+    ///
+    /// \brief GetItemLS
+    /// 返回指定行的内容
+    /// \param i
+    /// \param ls
+    /// \return
+    ///
 	bool GetItemLS(int i, LineSpec & ls)
 	{
 
@@ -60,6 +78,7 @@ public:
 		return true;
 	};
 protected:
+    //设置表头及各列单元格类型
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct)
 	{
 		if (ListCtrlC::OnCreate(lpCreateStruct) == -1)

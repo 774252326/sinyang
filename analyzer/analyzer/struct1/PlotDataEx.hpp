@@ -7,10 +7,30 @@
 
 
 // PlotDataEx command target
-
+////
+/// \brief The PlotDataEx class
+///画图类添加图例和点坐标显示
 class PlotDataEx : public ObjectF
 {
 public:
+    ///
+    /// \brief DrawData1
+    /// 画点坐标
+    ///
+    /// \param plotrect
+    /// 控件画图区域
+    /// \param pDC
+    /// \param x
+    /// 数据点横坐标
+    /// \param y
+    /// 数据点纵坐标
+    /// \param xmin
+    /// \param xmax
+    /// \param ymin
+    /// \param ymax
+    /// \param textColor
+    /// 文字颜色
+    ///
 	static void DrawData1(CRect &plotrect
 		, CDC* pDC
 		, const double &x
@@ -36,10 +56,25 @@ public:
 
 	};
 
+    ///
+    /// \brief SetLegendSpec
+    /// 根据图例的显示限制条件和画线属性计算图例属性
+    /// \param plotrect
+    /// 控件画图区域
+    /// \param pDC
+    /// \param ls
+    /// 画线属性
+    /// \param lgc
+    /// 图例的显示限制条件
+    /// \param lgs
+    /// 图例属性
+    /// \return
+    /// 图例的显示区域
+    ///
 	static CRect SetLegendSpec(CRect plotrect,
 		CDC *pDC, 
 		const std::vector<LineSpec> &ls, 
-		LegendCondition lgc,
+        const LegendCondition &lgc,
 		LegendSpec &lgs)
 	{
 		if(lgc.legendDpMode&LEGEND_DP_FIT_RECT ){
@@ -63,13 +98,23 @@ public:
 	};
 
 public:
+    //显示范围
 	double xmin;
 	double xmax;
 	double ymin;
 	double ymax;
 
+    ///
+    /// \brief pd
+    ///画图数据
 	PlotData pd;
+    ///
+    /// \brief lgs
+    ///图例属性
 	LegendSpec lgs;
+    ///
+    /// \brief lgc
+    ///图例的显示限制条件
 	LegendCondition lgc;
 
 public:
@@ -128,6 +173,12 @@ public:
 
 	};
 
+    ///
+    /// \brief ResetRange
+    /// 根据数据重设坐标范围
+    /// \param pct
+    /// 边沿留空比例
+    ///
 	void ResetRange(double pct=0.02)
 	{	
 		UpdateRange(pd.raw.xll,xmin,xmax,pct,true);
@@ -162,6 +213,17 @@ public:
 		lgs.Draw(pDC, pd.ls, lgs.position);
 	};
 
+    ///
+    /// \brief SaveImage
+    /// 保存标准位图
+    /// \param filepath
+    /// 图像文件保存路径
+    /// \param sz
+    /// 图像尺寸
+    /// \param pDC
+
+    /// \return
+    ///
 	bool SaveImage(CString filepath, CSize sz, CDC* pDC)
 	{
 

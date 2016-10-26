@@ -5,6 +5,10 @@
 
 // ColorButtonA
 
+///
+/// \brief The ColorButtonA class
+///颜色选择按钮
+
 class ColorButtonA : public CMFCColorButton 
 {
 	//DECLARE_DYNAMIC(ColorButtonA)

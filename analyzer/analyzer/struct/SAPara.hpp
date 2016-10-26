@@ -4,12 +4,15 @@
 #include "DataOutA.hpp"
 #include <vector>
 // SAPara command target
-
+///
+/// \brief The SAPara class
+///加液步骤
 class SAPara : public ObjectF
 {
 public:
-	// VMS Volume
-	//double vmsvol;
+    ///
+    /// \brief saplist
+    ///加液步骤列表
 	std::vector<sapitemA> saplist;
 
 
@@ -46,7 +49,15 @@ public:
 		}
 	};
 
-
+    ///
+    /// \brief ConvertToStandrad
+    /// 转换成标准加液步骤
+    /// \param dol
+    /// 溶液状态的记录
+    /// \param sapStd
+    /// 标准加液步骤
+    /// \return
+    ///
 	bool ConvertToStandrad(const std::vector<DataOutA> &dol, SAPara &sapStd)
 	{
 		SAPara stdp;

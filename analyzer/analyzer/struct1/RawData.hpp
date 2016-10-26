@@ -14,11 +14,33 @@
 #include "../funT1/piksr2T.h"
 #include "LineSeg.hpp"
 
+///
+/// \brief The RawData class
+///曲线数据类
 
 class RawData : public ObjectF
 {
 
 public:
+    ///
+    /// \brief SaveText
+    /// 将数据转成字符串
+    /// 用于保存到txt
+    /// \param xll
+    /// 横坐标数据
+    /// \param yll
+    /// 纵坐标数据
+    /// \param xlabel
+    /// 横坐标名
+    /// \param ylabel
+    /// 纵坐标名
+    /// \param seg
+    /// 分割符
+    /// \param endline
+    /// 断行符
+    /// \return
+    ///字符串
+
 	static CString SaveText(
 		std::vector<double> xll,
 		std::vector<double> yll, 
@@ -42,8 +64,17 @@ public:
 
 
 public:
+    ///
+    /// \brief xll
+    ///横坐标数据
 	std::vector<double> xll;
+    ///
+    /// \brief yll
+    ///纵坐标数据
 	std::vector<double> yll;
+    ///
+    /// \brief ll
+    ///数据分段记录
 	std::vector<DWORD> ll;
 
 public:
@@ -97,6 +128,13 @@ public:
 	};
 	RawData(const RawData &src){ operator=(src); };
 
+    ///
+    /// \brief GetDatai
+    /// 取第i段数据
+    /// \param index
+    /// \param x
+    /// \param y
+    ///
 	void GetDatai(size_t index, std::vector<double> & x, std::vector<double> & y) const
 	{
 		if(index>=ll.size()){
@@ -118,7 +156,16 @@ public:
 	};
 
 
-
+    ///
+    /// \brief InterpX
+    /// 取第i段数据曲线
+    /// 已知纵坐标值yr
+    /// 插值求解横坐标值xr
+    /// \param idx
+    /// \param yr
+    /// \param xr
+    /// \return
+    ///
 	bool InterpX(size_t idx, double yr, double &xr) const
 	{
 		std::vector<double> x;
@@ -127,6 +174,17 @@ public:
 		return ::InterpX(x,y,yr,xr);
 	};
 
+    ///
+    /// \brief InterpDerivativeX
+    /// 取第i段数据曲线
+    /// 已知导数值yr
+    /// 求导并插值求解横坐标值xr
+    /// \param idx
+    /// \param yr
+    /// \param xr
+    /// \param bNormScale
+    /// \return
+    ///
 	bool InterpDerivativeX(size_t idx, double yr, double &xr, bool bNormScale=false) const
 	{
 		std::vector<double> x;
@@ -140,6 +198,15 @@ public:
 		return ::InterpDerivativeX(x,y,yr,xr);
 	};
 
+    ///
+    /// \brief InterpY
+    /// 取第i段数据曲线
+    /// 已知横坐标值xr
+    /// 插值求解纵坐标值
+    /// \param idx
+    /// \param xr
+    /// \return
+    ///
 	double InterpY(size_t idx, double xr) const
 	{
 		std::vector<double> x;
@@ -153,6 +220,19 @@ public:
 		return yr;
 	};
 
+    ///
+    /// \brief FitLine
+    /// 取第i段数据曲线拟合直线
+    ///
+    /// \param idx
+    /// \param k
+    /// \param b
+    /// \param nFront
+    /// 忽略前nFront个点
+    /// \param nBack
+    /// 忽略后nBack个点
+    /// \return
+    ///
 	bool FitLine(size_t idx, double &k, double &b, size_t nFront=0, size_t nBack=0) const
 	{
 		std::vector<double> x;
@@ -161,7 +241,17 @@ public:
 
 		return ::FitLine(x,y,k,b,nFront,nBack);
 	};
-
+    ///
+    /// \brief FitLine
+    /// 取第i段数据曲线拟合直线
+    /// \param idx
+    /// \param lis
+    /// \param nFront
+    /// 忽略前nFront个点
+    /// \param nBack
+    /// 忽略后nBack个点
+    /// \return
+    ///
 	bool FitLine(size_t idx, LineSeg &lis, size_t nFront=0, size_t nBack=0) const
 	{
 		std::vector<double> x;
@@ -175,7 +265,11 @@ public:
 		}
 		return false;
 	};
-
+    ///
+    /// \brief ValidPointNumber
+    /// 计算分段记录内的有效数据总数
+    /// \return
+    ///
 	size_t ValidPointNumber(void)
 	{
 		DWORD lltotal=0;
@@ -183,6 +277,11 @@ public:
 		return (size_t)lltotal;
 	};
 
+    ///
+    /// \brief CheckData
+    /// 检查分段记录是否出错
+    /// \return
+    ///
 	bool CheckData(void)
 	{
 		size_t lltotal=ValidPointNumber();
@@ -194,6 +293,13 @@ public:
 
 	};
 
+    ///
+    /// \brief AddNew
+    /// 加入新分段
+    /// \param x
+    /// \param y
+    /// \return
+    ///
 	bool AddNew(const std::vector<double> &x, const std::vector<double> &y)
 	{
 		if(x.size()!=y.size())
@@ -209,6 +315,13 @@ public:
 		return true;
 	};
 
+    ///
+    /// \brief AddNew
+    /// 加入新分段
+    /// \param x
+    /// \param y
+    /// \return
+    ///
 	bool AddNew(double x, double y)
 	{
 		xll.push_back(x);
@@ -218,6 +331,13 @@ public:
 		return true;
 	};
 
+    ///
+    /// \brief AddFollow
+    /// 在最后分段加入数据
+    /// \param x
+    /// \param y
+    /// \return
+    ///
 	bool AddFollow(const std::vector<double> &x, const std::vector<double> &y)
 	{
 		if(x.size()!=y.size() || ll.empty())
@@ -233,6 +353,13 @@ public:
 		return true;
 	};
 
+    ///
+    /// \brief AddFollow
+    /// 在最后分段加入数据
+    /// \param x
+    /// \param y
+    /// \return
+    ///
 	bool AddFollow(double x, double y)
 	{
 		xll.push_back(x);
@@ -242,6 +369,15 @@ public:
 		return true;
 	};
 
+    ///
+    /// \brief AddPointMark
+    /// 加入一条新直角折线
+    /// \param x
+    /// \param y
+    /// \param spanx
+    /// \param spany
+    /// \return
+    ///
 	bool AddPointMark(double x, double y, double spanx, double spany)
 	{
 		AddNew(spanx,y);
@@ -250,6 +386,15 @@ public:
 		return true;
 	};
 
+    ///
+    /// \brief AddPointMark
+    /// 加入一条新直角折线
+    /// 用做点标记
+    /// \param x
+    /// \param y
+    /// \param spanr
+    /// \return
+    ///
 	bool AddPointMark(double x, double y, double spanr=1)
 	{
 		double spanx=x;
@@ -268,6 +413,12 @@ public:
 	};
 
 
+    ///
+    /// \brief AddLineSeg
+    /// 加入一条新线段
+    /// \param lis
+    /// \return
+    ///
 	bool AddLineSeg(LineSeg lis)
 	{
 		AddNew(lis.p1.x,lis.p1.y);
@@ -275,6 +426,12 @@ public:
 		return true;
 	};
 
+    ///
+    /// \brief AppendData
+    /// 添加若干新分段数据
+    /// \param pda
+    /// \return
+    ///
 	bool AppendData(const RawData & pda)
 	{
 		xll.resize(xll.size()+pda.xll.size());
@@ -288,6 +445,11 @@ public:
 
 	};
 
+    ///
+    /// \brief EraseFirst
+    /// 删除第一段数据
+    /// \return
+    ///
 	bool EraseFirst()
 	{
 		if(ll.empty())
@@ -299,6 +461,11 @@ public:
 		return true;
 	};
 
+    ///
+    /// \brief Sort
+    /// 将第i段数据按横坐标值升序排列
+    /// \param index
+    ///
 	void Sort(size_t index)
 	{
 		if(index<ll.size()){

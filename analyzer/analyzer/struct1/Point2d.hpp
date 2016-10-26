@@ -2,7 +2,9 @@
 
 #include "../ObjectF.hpp"
 // Point2d command target
-
+///
+/// \brief The Point2d class
+///点
 class Point2d : public ObjectF
 {
 public:

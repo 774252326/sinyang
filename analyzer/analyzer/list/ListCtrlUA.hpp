@@ -7,11 +7,18 @@
 
 #include "../messagemaphpp.h"
 
+///
+/// \brief The ListCtrlUA class
+///用户属性的编辑表
+
 class ListCtrlUA :
 	public ListCtrlC
 {
 
 protected:
+    ///
+    /// \brief bEditable
+    ///仅当为真时表格可编辑
 	bool bEditable;
 public:
 	void SetEditable(bool b){bEditable=b;};
@@ -24,6 +31,15 @@ public:
 		bEditable=flg;
 	};
 	virtual ~ListCtrlUA(void){};
+    ///
+    /// \brief InsertItemUA
+    /// 插入行
+    /// \param i
+    /// \param ua
+    /// \param bUse
+    /// 是否为当前用户
+    /// \return
+    ///
 		int InsertItemUA(int i, const UserAccount & ua, bool bUse)
 	{
 
@@ -50,6 +66,15 @@ public:
 
 		return inserti;
 	};
+        ///
+        /// \brief GetItemUA
+        /// 取指定行的内容
+        /// \param i
+        /// \param ua
+        /// \param bUse
+        /// 此行内容是否为当前用户
+        /// \return
+        ///
 	bool GetItemUA(int i, UserAccount & ua, bool & bUse)
 	{
 		bUse=false;
@@ -80,6 +105,7 @@ public:
 		return true;
 	};
 protected:
+    //设置表头及各列单元格类型
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct)
 	{
 		if (ListCtrlC::OnCreate(lpCreateStruct) == -1)

@@ -1,23 +1,20 @@
 #pragma once
 
-//#include "typedefine.h"
-//#include "EditList.h"
 #include "../struct1\PlotSpec.hpp"
-//#include "../struct1\LineSpec.hpp"
-
-//#include "ListCtrlLS.h"
-//#include "list\ListCtrlLS.h"
 #include "../struct1\LegendSpec.hpp"
 #include "../struct1\LegendCondition.hpp"
 
 #include "../Resource.h"
-//#include "PlotSettingPageB.h"
+
 #include "afxdialogex.h"
 #include "../analyzerView.h"
 
 #include "../messagemaphpp.h"
 
 // PlotSettingPageB dialog
+///
+/// \brief The PlotSettingPageB class
+///背景+图例属性页
 
 class PlotSettingPageB : public CPropertyPage
 {
@@ -243,6 +240,7 @@ protected:
 			this->GetDlgItem(IDS_EDIT_LINE_LENGTH)->ShowWindow(SW_SHOW);
 		}
 	};
+
 	void OnCheck(void)
 	{
 		UpdateData();
@@ -265,6 +263,7 @@ protected:
 		this->GetDlgItem(IDS_STRING_ALIGNMENT)->EnableWindow(flg);
 		StaticIDS_STRING_ADJUST.EnableWindow(flg);
 	};
+
 	virtual void OnOK()
 	{
 		// TODO: Add your specialized code here and/or call the base class
@@ -291,6 +290,7 @@ protected:
 
 		CPropertyPage::OnOK();
 	};
+
 	virtual BOOL OnSetActive()
 	{
 		// TODO: Add your specialized code here and/or call the base class
@@ -303,12 +303,14 @@ protected:
 
 		return CPropertyPage::OnSetActive();
 	};
+
 	virtual BOOL OnKillActive()
 	{
 		// TODO: Add your specialized code here and/or call the base class
 		return CPropertyPage::OnKillActive();
 	};
 
+//控件布局
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct)
 	{
 		if (CPropertyPage::OnCreate(lpCreateStruct) == -1)

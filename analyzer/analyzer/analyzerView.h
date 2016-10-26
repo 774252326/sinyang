@@ -131,7 +131,25 @@ public:
 	static bool IsVMSStep(DataOutA d) {
 		return d.stepFilter&DOA_VMS;
 	};
-
+    ///
+    /// \brief RawData2PlotDataList
+    /// 从实验数据求画图数据
+    /// \param raw
+    /// 实验数据
+    /// \param dol
+    /// 溶液状态
+    /// \param bkc
+    /// 图纸底色
+    /// \param pdl
+    /// 画图数据
+    /// \param btwo
+    /// 是否双色着色
+    /// \param newClr
+    /// 新曲线颜色
+    /// \param oldClr
+    /// 旧曲线颜色
+    /// \return
+    ///
 	static UINT RawData2PlotDataList(const RawData &raw, 
 		const std::vector<DataOutA> dol, 
 		COLORREF bkc,
@@ -229,7 +247,23 @@ public:
 
 
 public:
-
+    ///
+    /// \brief DataOutAList2PlotDataExList
+    /// 从溶液状态求画图数据
+    /// \param dol
+    /// 溶液状态
+    /// \param p1
+    /// 分析参数
+    /// \param bkc
+    /// 画纸底色
+    /// \param pdl
+    /// 画图数据
+    /// \param bShowRs
+    /// 是否显示计算结果
+    /// \param bReadCb
+    /// 是否读取校准曲线并显示
+    /// \return
+    ///
 	static UINT DataOutAList2PlotDataExList(
 		const std::vector<DataOutA> &dol, 
 		const ANParaEx &p1, 

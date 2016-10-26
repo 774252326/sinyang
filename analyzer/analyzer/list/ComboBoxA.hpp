@@ -13,6 +13,9 @@
 
 /////////////////////////////////////////////////////////////////////////////
 // ComboBoxA window
+///
+/// \brief The ComboBoxA class
+///可编辑表格中的下拉选择框
 
 class ComboBoxA : public CComboBox
 {

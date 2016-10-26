@@ -5,11 +5,30 @@
 #include "../funT1/colormapT.h"
 // PlotSpec command target
 #include "../ObjectF.hpp"
+///
+/// \brief The PlotSpec class
+///图纸属性
+/// 包括坐标轴和底色等
 
 class PlotSpec : public ObjectF
 {
 public:
-
+    ///
+    /// \brief DrawGridLine
+    /// 画网格
+    /// \param rect
+    /// 作图区域
+    /// \param pdc
+    /// \param gridType
+    /// 网格线型
+    /// \param gridC
+    /// 网格颜色
+    /// \param lineWidth
+    /// 网格线宽
+    /// \param gridH
+    /// 网格位置
+    /// \param gridV
+    ///网格位置
 	static void DrawGridLine(const CRect & rect
 		, CDC * pdc
 		, int gridType
@@ -53,7 +72,39 @@ public:
 
 	};
 
-
+    ///
+    /// \brief DrawMetric
+    /// 画坐标轴刻度
+    /// \param rect
+    /// 图纸画线区域
+    /// \param pdc
+    ///
+    /// \param metricSize
+    /// 刻度字体大小
+    /// \param metricC
+    /// 刻度字体颜色
+    /// \param gridC
+    /// 刻度线颜色
+    /// \param lineWidth
+    /// 刻度线宽
+    /// \param metricGridLong
+    /// 长刻度线长度
+    /// 对应有标数字的刻度
+    /// \param metricGridShort
+    /// 短刻度线长度
+    /// 对应无标数字的刻度
+    /// \param fontName
+    /// 刻度字体名
+    /// \param gridH
+    /// 纵坐标轴刻度位置
+    /// \param gridV
+    /// 横坐标轴刻度位置
+    /// \param gridx
+    /// 横坐标轴刻度数值
+    /// \param gridy
+    /// 纵坐标轴刻度数值
+    /// \return
+    ///图纸画线加上画坐标轴的区域
 	static CRect DrawMetric(const CRect & rect,
 		CDC * pdc,
 		int metricSize,
@@ -209,6 +260,29 @@ public:
 
 	};
 
+    ///
+    /// \brief DrawLabel
+    /// 画坐标名
+    /// \param rect
+    /// 图纸画线加上画坐标轴的区域
+    /// \param pdc
+    ///
+    /// \param centerP
+    /// 中心点
+    /// 用于定位坐标名
+    /// \param labelSize
+    /// 坐标名字体高度
+    /// \param labelC
+    /// 坐标名颜色
+    /// \param fontName
+    /// 坐标名字体
+    /// \param xlab
+    /// 横坐标名
+    /// \param ylab
+    /// 纵坐标名
+    /// \return
+    ///图纸画线加上画坐标轴再加上画坐标名的区域
+    ///
 	static CRect DrawLabel(const CRect & rect
 		, CDC * pdc
 		, CPoint centerP
@@ -300,7 +374,21 @@ public:
 		return newrect;
 	};
 
-
+    ///
+    /// \brief GetPlotRect
+    /// 计算控件中可用于画线的区域
+    /// \param plotRect
+    /// 输入控件可用区域
+    /// 输出控件中可用于画线的区域
+    /// \param labelSize
+    /// 坐标名字体高度
+    /// \param metricSize
+    /// 刻度字体高度
+    /// \param metricGridLong
+    /// 长刻度线长度
+    /// \param gap0
+    /// 边沿留空宽度
+    ///
 	static void GetPlotRect(CRect & plotRect
 		, int labelSize
 		, int metricSize
@@ -322,7 +410,54 @@ public:
 		plotRect.DeflateRect(gap,gap0,gap0,gap);
 	};
 
-
+    ///
+    /// \brief DrawXYAxis
+    /// 画坐标
+    /// \param rect
+    /// 控件画线区域
+    /// \param pdc
+    ///
+    /// \param bkgndC
+    /// 画线区域的底色
+    /// \param borderC
+    /// 没用到
+    /// \param gridC
+    /// 网格颜色
+    /// \param gridType
+    /// 网格线型
+    /// \param labelC
+    /// 坐标名颜色
+    /// \param labelSize
+    /// 坐标名字体高度
+    /// \param metricC
+    /// 刻度字体颜色
+    /// \param metricSize
+    /// 刻度字体高度
+    /// \param gap
+    /// 没用到
+    /// \param metricGridLong
+    /// 长刻度线长度
+    /// \param metricGridShort
+    /// 短刻度线长度
+    /// \param fontName
+    /// 字体名
+    /// \param xlabel
+    /// 横坐标名
+    /// \param ylabel
+    /// 纵坐标名
+    /// \param gridWidth
+    /// 网格线宽
+    /// \param xmin
+    /// 横坐标起点
+    /// \param xmax
+    /// 横坐标终点
+    /// \param ymin
+    /// 纵坐标起点
+    /// \param ymax
+    /// 纵坐标终点
+    /// \return
+    /// 图纸画线加上画坐标轴再加上画坐标名的区域
+    ///
 	static CRect DrawXYAxis(CRect rect
 		, CDC * pdc
 		//, const PlotSpec & psp
@@ -420,27 +555,76 @@ public:
 
 public:
 
+    ///
+    /// \brief bkgndC
+    ///画线区域底色
+
 	COLORREF bkgndC;
+    ///
+    /// \brief borderC
+    ///没用到
 	COLORREF borderC;
 
+    ///
+    /// \brief gridC
+    ///网格线颜色
 	COLORREF gridC;
+    ///
+    /// \brief gridType
+    ///网格线型
 	int gridType;//0~5
 
+    ///
+    /// \brief labelC
+    ///坐标名颜色
 	COLORREF labelC;
+    ///
+    /// \brief labelSize
+    ///坐标名字体大小
 	int labelSize;
 
+    ///
+    /// \brief metricC
+    ///刻度线颜色
 	COLORREF metricC;
+    ///
+    /// \brief metricSize
+    ///刻度字体大小
 	int metricSize;
 
 	//BYTE legendPos;//0=rightbottom,1=leftbottom,2=righttop,3=lefttop
-	COLORREF winbkC;	
+    ///
+    /// \brief winbkC
+    ///控件底色
+    COLORREF winbkC;
 
+    ///
+    /// \brief gap
+    ///边沿留空宽度
 	int gap;
+    ///
+    /// \brief metricGridLong
+    ///长刻度线长度
 	int metricGridLong;
+    ///
+    /// \brief metricGridShort
+    ///短刻度线长度
 	int metricGridShort;
+    ///
+    /// \brief fontName
+    ///字体名
 	CString fontName;
+    ///
+    /// \brief xlabel
+    ///横坐标名
 	CString xlabel;
+    ///
+    /// \brief ylabel
+    ///纵坐标名
 	CString ylabel;
+    ///
+    /// \brief gridWidth
+    ///网格线宽
 	int gridWidth;
 
 
@@ -589,7 +773,11 @@ public:
 	//	SetCr(i);
 	//}
 
-
+    ///
+    /// \brief GetPlotBKCrType
+    /// 获得当前配色类型
+    /// \return
+    ///
 	int GetPlotBKCrType(void)
 	{
 
@@ -615,6 +803,11 @@ public:
 		return -1;
 	};
 
+    ///
+    /// \brief SetPlotBKCr
+    /// 设置配色类型
+    /// \param i
+    ///
 	void SetPlotBKCr(int i=0)
 	{
 		const int ncr=3;
@@ -635,6 +828,13 @@ public:
 		gridC=crl[i++];
 	};
 
+    ///
+    /// \brief RefreshWinCr
+    /// 根据配色类型和控件底色刷新配色
+    /// \param bkc
+    /// \param ndiv
+    /// \param bias
+    ///
 	void RefreshWinCr(COLORREF bkc, const int ndiv=10, const float bias=0.35)
 	{
 		winbkC=bkc;
@@ -642,6 +842,9 @@ public:
 		metricC=labelC=ContractCr(winbkC,bias+(float)(i-1)/ndiv);
 	};
 
+    ///
+    /// \brief SetStandradCr
+    ///标准配色
 	void SetStandradCr()
 	{
 		SetPlotBKCr();

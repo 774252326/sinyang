@@ -2,7 +2,10 @@
 #include "propertysheeta.hpp"
 // We need to include this file so we can use CMap
 #include <afxtempl.h>
-
+///
+/// \brief The PropertySheetA1ML class
+///非模态属性表对话框
+/// 添加上下文帮助
 class PropertySheetA1ML :
 	public PropertySheetA1
 {

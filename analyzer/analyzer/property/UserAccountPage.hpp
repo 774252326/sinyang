@@ -14,7 +14,9 @@
 #include "../messagemaphpp.h"
 
 // UserAccountPage dialog
-
+///
+/// \brief The UserAccountPage class
+///用户帐户属性页
 class UserAccountPage : public CPropertyPage
 {
 	//DECLARE_DYNAMIC(UserAccountPage)

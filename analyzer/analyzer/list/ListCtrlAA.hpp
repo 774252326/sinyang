@@ -4,7 +4,10 @@
 #include "../resource.h"
 
 #include "../messagemaphpp.h"
-
+///
+/// \brief The ListCtrlAA class
+///增加右键弹出菜单的可编辑表格
+///
 class ListCtrlAA :
 	public ListCtrlC
 {

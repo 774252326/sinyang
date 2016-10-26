@@ -10,7 +10,13 @@ PlotWnd::~PlotWnd()
 {
 	delete td;
 };
-
+///
+/// \brief PlotWnd::GetLegendRect
+/// 计算图例区域并更新图例属性
+/// \param legendrect
+/// 图例区域
+/// \return
+///
 bool PlotWnd::GetLegendRect(CRect &legendrect)
 {
 	CDC *pDC=td->GetDC();
@@ -28,7 +34,13 @@ bool PlotWnd::GetLegendRect(CRect &legendrect)
 	}
 	return false;
 }
-
+///
+/// \brief PlotWnd::GetLegendPos
+/// 取图例位置
+/// \param pt
+/// 图例位置
+/// \return
+///
 bool PlotWnd::GetLegendPos(CPoint &pt)
 {
 	if(td!=NULL && pdex!=NULL){
@@ -40,7 +52,12 @@ bool PlotWnd::GetLegendPos(CPoint &pt)
 	}
 	return false;
 }
-
+///
+/// \brief PlotWnd::OnMove
+/// 控件移动时绑定图例位置
+/// \param x
+/// \param y
+///
 void PlotWnd::OnMove(int x, int y)
 {
 	CWnd::OnMove(x, y);
@@ -63,7 +80,13 @@ void PlotWnd::OnMove(int x, int y)
 	wndPosition=CPoint(x,y);
 }
 
-
+///
+/// \brief PlotWnd::OnSize
+/// 控件区域变换时相应更新图例
+/// \param nType
+/// \param cx
+/// \param cy
+///
 void PlotWnd::OnSize(UINT nType, int cx, int cy)
 {
 	CWnd::OnSize(nType, cx, cy);
@@ -78,6 +101,9 @@ void PlotWnd::OnSize(UINT nType, int cx, int cy)
 	}
 
 }
+///
+/// \brief PlotWnd::SetLegend
+///刷新图例
 
 void PlotWnd::SetLegend(void)
 {
@@ -121,7 +147,12 @@ void PlotWnd::SetLegend(void)
 #include "../property/PlotSettingPageB.hpp"
 #include "../property/PlotSettingPageC.hpp"
 #include "../property/PropertySheetA.hpp"
-
+///
+/// \brief PlotWnd::PlotSettingSheet
+/// 打开画图属性页
+/// \param bTwo
+/// 指示是否用双色着色
+///
 void PlotWnd::PlotSettingSheet(BOOL bTwo)
 {
 	PropertySheetA1 sheet(IDS_STRING_POLT_SETTINGS);
