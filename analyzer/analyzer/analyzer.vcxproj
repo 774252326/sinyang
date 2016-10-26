@@ -132,7 +132,6 @@
     <ClInclude Include="ComboItem.h" />
     <ClInclude Include="CSpline.h" />
     <ClInclude Include="CVParametersPage.h" />
-    <ClInclude Include="DataOut.h" />
     <ClInclude Include="DataOutA.h" />
     <ClInclude Include="EditItem.h" />
     <ClInclude Include="EditList.h" />
@@ -144,17 +143,15 @@
     <ClInclude Include="MFCCaptionBarA.h" />
     <ClInclude Include="OutputWnd.h" />
     <ClInclude Include="pcct.h" />
-    <ClInclude Include="pcctB.h" />
     <ClInclude Include="pcctC.h" />
     <ClInclude Include="pdfout.h" />
     <ClInclude Include="PlotData.h" />
-    <ClInclude Include="PlotSettingPage.h" />
+    <ClInclude Include="PlotSettingPageA.h" />
     <ClInclude Include="PlotSpec.h" />
     <ClInclude Include="Point2d.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SAPara.h" />
     <ClInclude Include="sapitemA.h" />
-    <ClInclude Include="SARCalibCurve.h" />
     <ClInclude Include="SolutionAdditionParametersPageA.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -173,7 +170,6 @@
     <ClCompile Include="ColorButton.cpp" />
     <ClCompile Include="ComboItem.cpp" />
     <ClCompile Include="CVParametersPage.cpp" />
-    <ClCompile Include="DataOut.cpp" />
     <ClCompile Include="DataOutA.cpp" />
     <ClCompile Include="EditItem.cpp" />
     <ClCompile Include="EditList.cpp" />
@@ -184,7 +180,6 @@
     <ClCompile Include="MFCCaptionBarA.cpp" />
     <ClCompile Include="OutputWnd.cpp" />
     <ClCompile Include="pcct.cpp" />
-    <ClCompile Include="pcctB.cpp" />
     <ClCompile Include="pcctC.cpp" />
     <ClCompile Include="pdfout.cpp" />
     <ClCompile Include="PlotData.cpp" />
@@ -193,7 +188,6 @@
     <ClCompile Include="Point2d.cpp" />
     <ClCompile Include="SAPara.cpp" />
     <ClCompile Include="sapitemA.cpp" />
-    <ClCompile Include="SARCalibCurve.cpp" />
     <ClCompile Include="SolutionAdditionParametersPageA.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

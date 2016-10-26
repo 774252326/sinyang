@@ -2,7 +2,7 @@
 // analyzerDoc.h : interface of the CanalyzerDoc class
 //
 #include "ANPara.h"
-#include "DataOut.h"
+//#include "DataOut.h"
 #include "PlotData.h"
 #include "SAPara.h"
 #include "VPara.h"
@@ -31,7 +31,7 @@ public:
 	std::vector<DataOutA> dol;
 	std::vector<PlotData> lp;
 	std::vector<PlotData> rp;
-	CString resultStr;
+	CString resultStr;//not used
 // Operations
 public:
 

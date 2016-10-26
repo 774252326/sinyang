@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "DataOut.h"
+//#include "DataOut.h"
 #include "DataOutA.h"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -31,8 +31,9 @@ protected:
 public:
 //	int gap;
 //	void AdjustWidth(int nRow, int nCol);
-	BOOL InsertListCtrl(int StepNo, DataOut dout);
+//	BOOL InsertListCtrl(int StepNo, DataOut dout);
 	BOOL InsertListCtrl(int StepNo, DataOutA &dout, int count, int Ari, bool bUse=true);
+	BOOL SetLastUse(const DataOutA & doa);
 };
 
 class COutputWnd : public CDockablePane

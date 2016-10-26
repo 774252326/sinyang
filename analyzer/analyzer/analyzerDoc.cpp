@@ -92,13 +92,13 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		rp.clear();	
 		resultStr.Empty();
 
-		POSITION pos = GetFirstViewPosition();
-		CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));
-		lv->SetSpin(0);
-		CMainFrame *mf=(CMainFrame*)(lv->GetParentFrame());
-		mf->GetOutputWnd()->clear();
-		CanalyzerViewR* rv=((CanalyzerViewR*)GetNextView(pos));
-		rv->SetSpin(0);
+		//POSITION pos = GetFirstViewPosition();
+		//CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));
+		//lv->SetSpin(0);
+		//CMainFrame *mf=(CMainFrame*)(lv->GetParentFrame());
+		//mf->GetOutputWnd()->clear();
+		//CanalyzerViewR* rv=((CanalyzerViewR*)GetNextView(pos));
+		//rv->SetSpin(0);
 
 		return TRUE;
 	}
@@ -155,31 +155,36 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 			}
 			///////////////////////////////////////////////
 
-			if(bUpdateView){
-				POSITION pos = GetFirstViewPosition();
-				CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));
-				lv->selectIdx=0;
-				lv->SetSpin(lp.size()-1);
-				lv->updatePlotRange();
+			//if(bUpdateView){
+				//POSITION pos = GetFirstViewPosition();
+				//CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));
+				//lv->selectIdx=0;
+				//lv->SetSpin(lp.size()-1);
+				//lv->updatePlotRange();
 
-				CMainFrame *mf=(CMainFrame*)(lv->GetParentFrame());
-				COutputList* ol=mf->GetOutputWnd()->GetListCtrl();
-				ol->DeleteAllItems();
-				mf->GetCaptionBar()->ShowMessage(resultStr);
+				//CMainFrame *mf=(CMainFrame*)(GetNextView(pos)->GetParentFrame());
+				//CMainFrame *mf=(CMainFrame*)(lv->GetParentFrame());
+				//COutputList* ol=mf->GetOutputWnd()->GetListCtrl();
+				//ol->DeleteAllItems();
 
-				CanalyzerViewR* rv=((CanalyzerViewR*)GetNextView(pos));
-				rv->selectIdx=0;
-				rv->SetSpin(rp.size()-1);
-				rv->updatePlotRange();
+				//size_t c=0;
+				//for(size_t i=0;i<dol.size();i++){
+				//	for(size_t j=0;j<dol[i].Ar.size();j++){
+				//		ol->InsertListCtrl(c,dol[i],i,j);
+				//		c++;
+				//	}
+				//}
 
-				size_t c=0;
-				for(size_t i=0;i<dol.size();i++){
-					for(size_t j=0;j<dol[i].Ar.size();j++){
-						ol->InsertListCtrl(c,dol[i],i,j);
-						c++;
-					}
-				}
-			}
+				//CString str=Compute(dol,p1);
+				//mf->GetCaptionBar()->ShowMessage(str);
+
+				//CanalyzerViewR* rv=((CanalyzerViewR*)GetNextView(pos));
+				//rv->selectIdx=0;
+				//rv->SetSpin(rp.size()-1);
+				//rv->updatePlotRange();
+
+
+			//}
 			//////////////////////////////////////////////
 
 			////CString str=this->GetPathName();
@@ -330,31 +335,13 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 			p2=cppage.para;
 			p3=sppage.para;
 
-			if(!dol.empty()){
-				switch(p1.analysistype){
-				case 1:
-					{
-						double Sv,z;
-						bool flg=Compute1(dol, p1, Sv, z);
-						resultStr.Format(L"Sv=%g,z=%g",Sv,z);
-					}
-					break;
-				default:
-					break;
-				}
+			if(!dol.empty()){			
 
-
+				str=Compute(dol,p1);
 				POSITION pos = GetFirstViewPosition();
-				CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));
-				//lv->selectIdx=0;
-				//lv->SetSpin(lp.size()-1);
-				//lv->updatePlotRange();
-
-				CMainFrame *mf=(CMainFrame*)(lv->GetParentFrame());
-				//COutputList* ol=mf->GetOutputWnd()->GetListCtrl();
-				//ol->DeleteAllItems();
-				mf->GetCaptionBar()->ShowMessage(resultStr);
-
+				//CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));
+				CMainFrame *mf=(CMainFrame*)(GetNextView(pos)->GetParentFrame());
+				mf->GetCaptionBar()->ShowMessage(str);
 
 			}
 

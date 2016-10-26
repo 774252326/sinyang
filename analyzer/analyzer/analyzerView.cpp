@@ -12,9 +12,10 @@
 #include "analyzerDoc.h"
 #include "analyzerView.h"
 
+#include "MainFrm.h"
 
 #include "func.h"
-#include "PlotSettingPage.h"
+#include "PlotSettingPageA.h"
 #include <math.h>
 
 #ifdef _DEBUG
@@ -128,8 +129,8 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 				DrawData1(rect
 					,&dcMem
 					,pd->xll[selectIdx]
-					,pd->yll[selectIdx]
-					,xmin,xmax,ymin,ymax
+				,pd->yll[selectIdx]
+				,xmin,xmax,ymin,ymax
 					,inv(pd->psp.bkgndC));
 			}
 
@@ -751,6 +752,29 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		CView::OnInitialUpdate();
 
 		// TODO: Add your specialized code here and/or call the base class
+
+		selectIdx=0;
+		SetSpin((this->GetDocument()->GetNPD(lri))-1);
+		updatePlotRange();
+
+		if(lri==0){
+			CMainFrame *mf=(CMainFrame*)(GetParentFrame());
+			COutputList* ol=mf->GetOutputWnd()->GetListCtrl();
+			ol->DeleteAllItems();
+
+			CanalyzerDoc* pDoc=GetDocument();
+
+			size_t c=0;
+			for(size_t i=0;i<pDoc->dol.size();i++){
+				for(size_t j=0;j<pDoc->dol[i].Ar.size();j++){
+					ol->InsertListCtrl(c,pDoc->dol[i],i,j);
+					c++;
+				}
+			}
+
+			CString str=Compute(pDoc->dol,pDoc->p1);
+			mf->GetCaptionBar()->ShowMessage(str);
+		}
 
 	}
 

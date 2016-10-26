@@ -150,19 +150,10 @@
     <ClInclude Include="analyzerViewL.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PlotSettingPage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DataOut.h">
-      <Filter>Header Files\data</Filter>
-    </ClInclude>
     <ClInclude Include="ANPara.h">
       <Filter>Header Files\data</Filter>
     </ClInclude>
     <ClInclude Include="pcct.h">
-      <Filter>Header Files\data</Filter>
-    </ClInclude>
-    <ClInclude Include="pcctB.h">
       <Filter>Header Files\data</Filter>
     </ClInclude>
     <ClInclude Include="PlotData.h">
@@ -181,9 +172,6 @@
       <Filter>Header Files\data</Filter>
     </ClInclude>
     <ClInclude Include="VPara.h">
-      <Filter>Header Files\data</Filter>
-    </ClInclude>
-    <ClInclude Include="SARCalibCurve.h">
       <Filter>Header Files\data</Filter>
     </ClInclude>
     <ClInclude Include="calgridT.h">
@@ -208,18 +196,21 @@
       <Filter>Header Files\global func</Filter>
     </ClInclude>
     <ClInclude Include="DataOutA.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="pcctC.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\data</Filter>
     </ClInclude>
     <ClInclude Include="LineSeg.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\data</Filter>
+    </ClInclude>
+    <ClInclude Include="pcctC.h">
+      <Filter>Header Files\data</Filter>
     </ClInclude>
     <ClInclude Include="Point2d.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\data</Filter>
     </ClInclude>
     <ClInclude Include="pdfout.h">
+      <Filter>Header Files\global func</Filter>
+    </ClInclude>
+    <ClInclude Include="PlotSettingPageA.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -290,41 +281,32 @@
     <ClCompile Include="PlotData.cpp">
       <Filter>Source Files\data</Filter>
     </ClCompile>
-    <ClCompile Include="pcctB.cpp">
-      <Filter>Source Files\data</Filter>
-    </ClCompile>
     <ClCompile Include="pcct.cpp">
       <Filter>Source Files\data</Filter>
     </ClCompile>
     <ClCompile Include="linespec.cpp">
       <Filter>Source Files\data</Filter>
     </ClCompile>
-    <ClCompile Include="DataOut.cpp">
-      <Filter>Source Files\data</Filter>
-    </ClCompile>
     <ClCompile Include="ANPara.cpp">
-      <Filter>Source Files\data</Filter>
-    </ClCompile>
-    <ClCompile Include="SARCalibCurve.cpp">
       <Filter>Source Files\data</Filter>
     </ClCompile>
     <ClCompile Include="func.cpp">
       <Filter>Source Files\global func</Filter>
     </ClCompile>
     <ClCompile Include="DataOutA.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\data</Filter>
     </ClCompile>
     <ClCompile Include="pcctC.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="LineSeg.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\data</Filter>
     </ClCompile>
     <ClCompile Include="Point2d.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\data</Filter>
+    </ClCompile>
+    <ClCompile Include="LineSeg.cpp">
+      <Filter>Source Files\data</Filter>
     </ClCompile>
     <ClCompile Include="pdfout.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\global func</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

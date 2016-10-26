@@ -50,8 +50,8 @@ typedef struct MYPARA{
 
 const CString AnalysisSetupINI=L"as.stp.txt";
 
-bool Compute1(const std::vector<DataOutA> &dol, const ANPara &p1, double &Sv, double &z);
-
+//bool Compute1(const std::vector<DataOutA> &dol, const ANPara &p1, double &Sv, double &z);
+CString Compute(const std::vector<DataOutA> &dol, const ANPara &p1, CanalyzerViewR *rightp=NULL, bool bDraw=false);
 bool Compute(const std::vector<DataOutA> &dol, const ANPara &p1, std::vector<CString> &res);
 
 BOOL writeini( ANPara &p1t, CVPara &p2t, SAPara &p3t, CString fp=AnalysisSetupINI);

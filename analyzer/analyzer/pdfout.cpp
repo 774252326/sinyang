@@ -88,236 +88,236 @@ int AddPageNumber(const std::wstring fin, const std::wstring fout)
 
 
 
-
-
-
-
-int pdfout(pdflib::PDFlib &p, const std::vector<DataOut> &dol){
-
-	//const std::wstring searchpath = L"../data";
-
-	int row, col, font, image, tf=-1, tbl=-1;
-	int rowmax=dol.size()+2, colmax=7;
-	//PDFlib p;
-	double llx=50, lly=50, urx=550, ury=800;
-
-	CString str;
-
-	str.LoadStringW(IDS_OUTPUT_WND);
-
-	const std::wstring headertext = (LPCWSTR)str;
-	//L"Table header (centered across all columns)";
-	std::wstring result;
-	std::wostringstream optlist;
-
-	/* -------------------- Add table cells -------------------- */
-
-	/* ---------- Row 1: table header (spans all columns) */
-	row = 1; col = 1;
-	font = p.load_font(L"Times-Bold", L"winansi", L"");
-	if (font == -1) {
-		std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
-		return(2);
-	}
-
-	optlist.str(L"");
-	optlist << L"fittextline={position=center font=" << font
-		<< L" fontsize=14} colspan=" << colmax;
-
-	tbl = p.add_table_cell(tbl, col, row, headertext, optlist.str());
-
-	row++;
-
-
-
-	for(col = 1;col<=7;col++)
-	{
-		std::wostringstream num;
-
-		//num << L"Col " << col << L"/Row " << row;
-
-		str.LoadStringW(IDS_STRING111+col-1);
-
-		num << (LPCWSTR)str;
-
-		optlist.str(L"");
-		optlist << L"colwidth=20% fittextline={font=" << font
-			<<  L" fontsize=10}";
-
-		tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
-	}
-
-
-	for (row++; row <= rowmax; row++) {
-
-		//for (col = 1; col <= colmax; col++) 
-
-		col = 1;
-		{
-			std::wostringstream num;
-
-			//num << L"Col " << col << L"/Row " << row;
-
-			num << row-3;
-
-			optlist.str(L"");
-			optlist << L"colwidth=20% fittextline={font=" << font
-				<<  L" fontsize=10}";
-
-			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
-		}
-
-
-		col = 2;
-		{
-			std::wostringstream num;
-
-			//num << L"Col " << col << L"/Row " << row;
-
-			num << /*(LPWSTR)_bstr_t*/(LPCWSTR)(dol[row-3].stepName);
-
-			optlist.str(L"");
-			optlist << L"colwidth=20% fittextline={font=" << font
-				<<  L" fontsize=10}";
-
-			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
-
-			//tbl = p.add_table_cell(tbl, col, row, , optlist.str());
-		}
-
-
-		col = 3;
-		if(dol[row-3].addVol!=0)
-		{
-			std::wostringstream num;
-
-			//num << L"Col " << col << L"/Row " << row;
-
-			num << dol[row-3].addVol;
-
-			optlist.str(L"");
-			optlist << L"colwidth=20% fittextline={font=" << font
-				<<  L" fontsize=10}";
-
-			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
-		}
-
-
-		col = 4;
-		{
-			std::wostringstream num;
-
-			//num << L"Col " << col << L"/Row " << row;
-
-			num << dol[row-3].totalVol;
-
-			optlist.str(L"");
-			optlist << L"colwidth=20% fittextline={font=" << font
-				<<  L" fontsize=10}";
-
-			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
-		}
-
-
-		col = 5;
-		{
-			std::wostringstream num;
-
-			//num << L"Col " << col << L"/Row " << row;
-
-			num << dol[row-3].Q;
-
-			optlist.str(L"");
-			optlist << L"colwidth=20% fittextline={font=" << font
-				<<  L" fontsize=10}";
-
-			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
-		}
-
-
-		col = 6;
-		if(dol[row-3].nQ!=0 && dol[row-3].Use)
-		{
-			std::wostringstream num;
-
-			//num << L"Col " << col << L"/Row " << row;
-
-			num << dol[row-3].nQ;
-
-			optlist.str(L"");
-			optlist << L"colwidth=20% fittextline={font=" << font
-				<<  L" fontsize=10}";
-
-			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
-		}
-
-		col = 7;
-		{
-			std::wostringstream num;
-
-			//num << L"Col " << col << L"/Row " << row;
-
-			num << (dol[row-3].Use? L"Yes":L"No");
-
-			optlist.str(L"");
-			optlist << L"colwidth=20% fittextline={font=" << font
-				<<  L" fontsize=10}";
-
-			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
-		}
-
-
-	}
-
-	/* ---------- Place the table on one or more pages ---------- */
-
-	/*
-	* Loop until all of the table is placed; create new pages
-	* as long as more table instances need to be placed.
-	*/
-	do {
-		p.begin_page_ext(0, 0, L"width=a4.width height=a4.height");
-
-		/* Shade every other row; draw lines for all table cells.
-		* Add "showcells showborder" to visualize cell borders 
-		*/
-
-		/* Place the table instance */
-		result = p.fit_table(tbl, llx, lly, urx, ury, 
-			L"header=1 fill={{area=rowodd fillcolor={gray 0.9}}} " 
-			L"stroke={{line=other}}");
-		if (result == L"_error") {
-			std::wcerr << L"Couldn't place table: " << p.get_errmsg() << std::endl;
-			return 2;
-		}
-
-		p.end_page_ext(L"");
-
-	} while (result == L"_boxfull");
-
-	/* Check the result; "_stop" means all is ok. */
-	if (result != L"_stop") {
-		if (result == L"_error") {
-			std::wcerr << L"Error when placing table: " << p.get_errmsg()
-				<< std::endl;
-			return 2;
-		}
-		else {
-			/* Any other return value is a user exit caused by
-			* the "return" option; this requires dedicated code to
-			* deal with.
-			*/
-			std::wcerr << L"User return found in Textflow" << std::endl;
-			return 2;
-		}
-	}
-	/* This will also delete Textflow handles used in the table */
-	p.delete_table(tbl, L"");
-
-	return 0;
-}
-
-
+//
+//
+//
+//
+//int pdfout(pdflib::PDFlib &p, const std::vector<DataOut> &dol){
+//
+//	//const std::wstring searchpath = L"../data";
+//
+//	int row, col, font, image, tf=-1, tbl=-1;
+//	int rowmax=dol.size()+2, colmax=7;
+//	//PDFlib p;
+//	double llx=50, lly=50, urx=550, ury=800;
+//
+//	CString str;
+//
+//	str.LoadStringW(IDS_OUTPUT_WND);
+//
+//	const std::wstring headertext = (LPCWSTR)str;
+//	//L"Table header (centered across all columns)";
+//	std::wstring result;
+//	std::wostringstream optlist;
+//
+//	/* -------------------- Add table cells -------------------- */
+//
+//	/* ---------- Row 1: table header (spans all columns) */
+//	row = 1; col = 1;
+//	font = p.load_font(L"Times-Bold", L"winansi", L"");
+//	if (font == -1) {
+//		std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
+//		return(2);
+//	}
+//
+//	optlist.str(L"");
+//	optlist << L"fittextline={position=center font=" << font
+//		<< L" fontsize=14} colspan=" << colmax;
+//
+//	tbl = p.add_table_cell(tbl, col, row, headertext, optlist.str());
+//
+//	row++;
+//
+//
+//
+//	for(col = 1;col<=7;col++)
+//	{
+//		std::wostringstream num;
+//
+//		//num << L"Col " << col << L"/Row " << row;
+//
+//		str.LoadStringW(IDS_STRING111+col-1);
+//
+//		num << (LPCWSTR)str;
+//
+//		optlist.str(L"");
+//		optlist << L"colwidth=20% fittextline={font=" << font
+//			<<  L" fontsize=10}";
+//
+//		tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
+//	}
+//
+//
+//	for (row++; row <= rowmax; row++) {
+//
+//		//for (col = 1; col <= colmax; col++) 
+//
+//		col = 1;
+//		{
+//			std::wostringstream num;
+//
+//			//num << L"Col " << col << L"/Row " << row;
+//
+//			num << row-3;
+//
+//			optlist.str(L"");
+//			optlist << L"colwidth=20% fittextline={font=" << font
+//				<<  L" fontsize=10}";
+//
+//			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
+//		}
+//
+//
+//		col = 2;
+//		{
+//			std::wostringstream num;
+//
+//			//num << L"Col " << col << L"/Row " << row;
+//
+//			num << /*(LPWSTR)_bstr_t*/(LPCWSTR)(dol[row-3].stepName);
+//
+//			optlist.str(L"");
+//			optlist << L"colwidth=20% fittextline={font=" << font
+//				<<  L" fontsize=10}";
+//
+//			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
+//
+//			//tbl = p.add_table_cell(tbl, col, row, , optlist.str());
+//		}
+//
+//
+//		col = 3;
+//		if(dol[row-3].addVol!=0)
+//		{
+//			std::wostringstream num;
+//
+//			//num << L"Col " << col << L"/Row " << row;
+//
+//			num << dol[row-3].addVol;
+//
+//			optlist.str(L"");
+//			optlist << L"colwidth=20% fittextline={font=" << font
+//				<<  L" fontsize=10}";
+//
+//			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
+//		}
+//
+//
+//		col = 4;
+//		{
+//			std::wostringstream num;
+//
+//			//num << L"Col " << col << L"/Row " << row;
+//
+//			num << dol[row-3].totalVol;
+//
+//			optlist.str(L"");
+//			optlist << L"colwidth=20% fittextline={font=" << font
+//				<<  L" fontsize=10}";
+//
+//			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
+//		}
+//
+//
+//		col = 5;
+//		{
+//			std::wostringstream num;
+//
+//			//num << L"Col " << col << L"/Row " << row;
+//
+//			num << dol[row-3].Q;
+//
+//			optlist.str(L"");
+//			optlist << L"colwidth=20% fittextline={font=" << font
+//				<<  L" fontsize=10}";
+//
+//			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
+//		}
+//
+//
+//		col = 6;
+//		if(dol[row-3].nQ!=0 && dol[row-3].Use)
+//		{
+//			std::wostringstream num;
+//
+//			//num << L"Col " << col << L"/Row " << row;
+//
+//			num << dol[row-3].nQ;
+//
+//			optlist.str(L"");
+//			optlist << L"colwidth=20% fittextline={font=" << font
+//				<<  L" fontsize=10}";
+//
+//			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
+//		}
+//
+//		col = 7;
+//		{
+//			std::wostringstream num;
+//
+//			//num << L"Col " << col << L"/Row " << row;
+//
+//			num << (dol[row-3].Use? L"Yes":L"No");
+//
+//			optlist.str(L"");
+//			optlist << L"colwidth=20% fittextline={font=" << font
+//				<<  L" fontsize=10}";
+//
+//			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
+//		}
+//
+//
+//	}
+//
+//	/* ---------- Place the table on one or more pages ---------- */
+//
+//	/*
+//	* Loop until all of the table is placed; create new pages
+//	* as long as more table instances need to be placed.
+//	*/
+//	do {
+//		p.begin_page_ext(0, 0, L"width=a4.width height=a4.height");
+//
+//		/* Shade every other row; draw lines for all table cells.
+//		* Add "showcells showborder" to visualize cell borders 
+//		*/
+//
+//		/* Place the table instance */
+//		result = p.fit_table(tbl, llx, lly, urx, ury, 
+//			L"header=1 fill={{area=rowodd fillcolor={gray 0.9}}} " 
+//			L"stroke={{line=other}}");
+//		if (result == L"_error") {
+//			std::wcerr << L"Couldn't place table: " << p.get_errmsg() << std::endl;
+//			return 2;
+//		}
+//
+//		p.end_page_ext(L"");
+//
+//	} while (result == L"_boxfull");
+//
+//	/* Check the result; "_stop" means all is ok. */
+//	if (result != L"_stop") {
+//		if (result == L"_error") {
+//			std::wcerr << L"Error when placing table: " << p.get_errmsg()
+//				<< std::endl;
+//			return 2;
+//		}
+//		else {
+//			/* Any other return value is a user exit caused by
+//			* the "return" option; this requires dedicated code to
+//			* deal with.
+//			*/
+//			std::wcerr << L"User return found in Textflow" << std::endl;
+//			return 2;
+//		}
+//	}
+//	/* This will also delete Textflow handles used in the table */
+//	p.delete_table(tbl, L"");
+//
+//	return 0;
+//}
+//
+//
 
 
 int pdfout(pdflib::PDFlib &p, const std::vector<DataOutA> &dol){
@@ -2516,7 +2516,14 @@ int pdfd(CString outfile, CanalyzerDoc *padoc)
 {
 	const std::wstring searchpath = L"../data";
 
-	const std::wstring temppdf = L"tmp.pdf";
+	const std::wstring temppdf = L"temp.pdf";
+
+	CSize szimg(800,600);
+	//CSize szimg(1200,900);
+	//CSize szimg(600,450);
+
+	CString fptmp=L"temp.bmp";
+
 
 	pdflib::PDFlib p;
 
@@ -2554,11 +2561,7 @@ int pdfd(CString outfile, CanalyzerDoc *padoc)
 
 
 
-	CSize szimg(800,600);
-	//CSize szimg(1200,900);
-	//CSize szimg(600,450);
 
-	CString fptmp=L"temp.bmp";
 
 	for(size_t i=0;i<padoc->rp.size();i++){
 		CString str;

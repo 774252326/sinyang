@@ -339,3 +339,11 @@ CString DataOutA::GetStepName(int i)
 
 	return str;
 }
+
+void DataOutA::ResetCompound(void)
+{
+					bUnknown=false;
+					Aml=0;
+					Lml=0;
+					Sml=0;
+}

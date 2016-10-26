@@ -51,6 +51,7 @@ public:
 
 	virtual void Serialize(CArchive& ar);
 	int UseIndex;
+	void ResetCompound(void);
 };
 
 

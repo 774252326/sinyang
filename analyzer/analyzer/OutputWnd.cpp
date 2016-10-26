@@ -278,6 +278,8 @@ BOOL COutputList::InsertListCtrl(int StepNo, CString StepName, double addVol, do
 	str.Format(L"%g",Q);
 	SetItemText(StepNo,4,str);
 
+
+
 	if(Use){
 		if(nQ!=0){
 			str.Format(L"%g",nQ);
@@ -313,17 +315,17 @@ BOOL COutputList::InsertListCtrl(int StepNo, CString StepName, double addVol, do
 //}
 
 
-BOOL COutputList::InsertListCtrl(int StepNo, DataOut dout)
-{
-	return InsertListCtrl(StepNo,dout.stepName,dout.addVol,dout.totalVol,dout.Q,dout.nQ,dout.Use);
-}
+//BOOL COutputList::InsertListCtrl(int StepNo, DataOut dout)
+//{
+//	return InsertListCtrl(StepNo,dout.stepName,dout.addVol,dout.totalVol,dout.Q,dout.nQ,dout.Use);
+//}
 
 BOOL COutputList::InsertListCtrl(int StepNo, DataOutA &dout, int count, int Ari, bool bUse)
 {
 	CString str,strt;
 	strt.LoadStringW(IDS_STRING_CYCLE);
 	str.Format(L"%s(%s%d)",dout.GetStepName(count),strt,Ari+1);
-	
+
 	return InsertListCtrl(
 		StepNo,
 		str,
@@ -331,6 +333,33 @@ BOOL COutputList::InsertListCtrl(int StepNo, DataOutA &dout, int count, int Ari,
 		dout.TotalVolume(),
 		dout.Ar[Ari],
 		dout.Ar[Ari]/dout.Ar0,
-		(Ari+1==dout.Ar.size()&bUse)
+		(Ari==dout.UseIndex&bUse)
 		);
+}
+
+BOOL COutputList::SetLastUse(const DataOutA & doa)
+{
+	int arsz=doa.Ar.size();
+
+	if(doa.UseIndex>0
+		&& doa.UseIndex<arsz){
+
+
+			int nCount = GetItemCount();
+
+			int StepNo=nCount-arsz+doa.UseIndex;
+
+			CString str;
+			str.Format(L"%g",doa.Ar[doa.UseIndex]/doa.Ar0);
+			SetItemText(StepNo,5,str);
+
+			//ASSERT
+			(str.LoadString(IDS_STRING_YES));
+			SetItemText(StepNo,6,str);
+
+
+
+	}
+
+	return TRUE;
 }

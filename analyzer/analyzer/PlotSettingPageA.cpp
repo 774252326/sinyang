@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 #include "analyzer.h"
-#include "PlotSettingPage.h"
+#include "PlotSettingPageA.h"
 #include "afxdialogex.h"
 #include "ColorButton.h"
 
@@ -135,16 +135,20 @@ int PlotSettingPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	pCombo=new CComboBox;
 	pCombo->Create(
 		CBS_DROPDOWN
+		|WS_VSCROLL   
 		|WS_CHILD
 		|WS_VISIBLE, 
 		CRect(pt,buttonSize),
 		this,
 		IDS_COMBO_COLOR_STYLE);
-	for(int i=0;i<=1;i++){
-		str.Format(L"%d",i);
-		//str.LoadStringW(i);
+
+
+	for(int i=IDS_STRING_COLOR_TYPE_0;i<=IDS_STRING940;i++){
+		//str.Format(L"%d",i);
+		str.LoadStringW(i);
 		pCombo->AddString(str);
 	}
+
 	pEdit = (CEdit*)pCombo->GetWindow(GW_CHILD);
 	pEdit->SetReadOnly();
 	pCombo->SetCurSel(0);
