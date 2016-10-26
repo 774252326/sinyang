@@ -1517,7 +1517,7 @@ void dlg1::DrawGridLine(const CRect & rect, CDC * pdc, int gridType, COLORREF gr
 {
 	int lineWidth=1;
 	//draw xy grid line
-	if(gridType>=0){
+	if(gridType>=0 && gridType<5){
 
 		CPen pen;
 		CPen * pOldPen;
@@ -1564,7 +1564,7 @@ CRect dlg1::DrawMetric(const CRect & rect,
 	int lc=metricGridLong;
 	int lcs=metricGridShort;
 
-	if(fs.metricSize>=0){
+	if(fs.metricSize>0){
 
 		CFont font;
 		CFont *pOldFont;
@@ -1703,7 +1703,7 @@ CRect dlg1::DrawLabel(const CRect & rect, CDC * pdc, CPoint centerP, int labelSi
 	int labelH=labelSize;
 	CRect newrect=rect;
 
-	if(labelSize>=0){
+	if(labelSize>0){
 
 		CFont font;
 		CFont *pOldFont;

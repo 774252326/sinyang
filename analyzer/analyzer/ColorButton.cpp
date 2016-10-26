@@ -2,7 +2,6 @@
 //
 
 #include "stdafx.h"
-#include "testmessage.h"
 #include "ColorButton.h"
 
 
@@ -38,12 +37,11 @@ void CColorButton::OnPaint()
 	// TODO: Add your message handler code here
 	// Do not call CButton::OnPaint() for painting messages
 
-	CBrush brush(color);
-	CBrush* pOldBrush = dc.SelectObject(&brush);
 	CRect rect;
 	this->GetClientRect(&rect);
-	dc.Rectangle(rect);
-	dc.SelectObject(pOldBrush);
+	dc.FillSolidRect(&rect,color^0x00ffffff );
+	rect.DeflateRect(1,1);
+	dc.FillSolidRect(&rect,color);
 }
 
 

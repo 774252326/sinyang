@@ -79,3 +79,16 @@ void mwriteini(wchar_t *fn, const anp &p1, const cvp &p2, const sap &p3 )
 		ofs.close();
 	}
 }
+
+
+void copyfs(const figspec &fsi, figspec & fso)
+{
+	fso.bkgndC=fsi.bkgndC;
+	fso.borderC=fsi.borderC;
+	fso.gridC=fsi.gridC;
+	fso.gridType=fsi.gridType;
+	fso.labelC=fsi.labelC;
+	fso.labelSize=fsi.labelSize;
+	fso.metricC=fsi.metricC;
+	fso.metricSize=fsi.metricSize;
+}

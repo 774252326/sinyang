@@ -1984,9 +1984,9 @@ void CMainFrame::OnOptionsPlotsettings()
 	//sheet.SetWindowPos(&CWnd::wndTopMost,10,10,800,600,SWP_SHOWWINDOW);
 
 	str.LoadStringW(IDS_STRING_FIGURE1);
-	PlotSettingPage fig1setting(str);
+	PlotSettingPage fig1setting(str,LeftPlotPointer()->fs);
 	str.LoadStringW(IDS_STRING_FIGURE2);
-	PlotSettingPage fig2setting(str);
+	PlotSettingPage fig2setting(str,RightPlotPointer()->fs);
 
 	sheet.AddPage(&fig1setting);
 	sheet.AddPage(&fig2setting);
@@ -1995,5 +1995,9 @@ void CMainFrame::OnOptionsPlotsettings()
 	// 打开模态向导对话框   
 	if(sheet.DoModal()==IDOK){
 		//writeini(AnalysisSetupINI,sheet.APdlg.para,sheet.CVPdlg.para,sheet.SAPdlg.para);
+		copyfs(fig1setting.fs,LeftPlotPointer()->fs);
+		LeftPlotPointer()->Invalidate();
+		copyfs(fig2setting.fs,RightPlotPointer()->fs);
+		RightPlotPointer()->Invalidate();
 	}
 }

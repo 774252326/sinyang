@@ -13,7 +13,7 @@ int intv=20;
 size_t n1=800;
 
 
-void WaitSecond(bool &waitflg, int second=2)
+void WaitSecond(bool &waitflg, int second=1)
 {
 	int interval=1000;
 	while( waitflg && second--!=0 ){

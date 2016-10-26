@@ -9,7 +9,7 @@ class PlotSettingPage : public CPropertyPage
 
 public:
 	PlotSettingPage();
-	PlotSettingPage(const CString &title);
+	PlotSettingPage(const CString &title, const figspec &fspec);
 	virtual ~PlotSettingPage();
 
 // Dialog Data
@@ -27,4 +27,5 @@ public:
 	virtual BOOL Create(LPCTSTR lpszTemplateName, CWnd* pParentWnd = NULL);
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	figspec fs;
+	void ComboSelectChange(void);
 };
