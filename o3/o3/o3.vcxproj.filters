@@ -64,7 +64,10 @@
     <ClInclude Include="ro.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="triangleMesh.h">
+    <ClInclude Include="surfaceMesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="contourProperty.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -87,7 +90,10 @@
     <ClCompile Include="glm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="triangleMesh.cpp">
+    <ClCompile Include="surfaceMesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="contourProperty.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

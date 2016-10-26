@@ -19,6 +19,11 @@
 //#include "../../funT\matmulT.h"
 //#include "tm\triangleMesh.h"
 
+//#include "surfaceMesh.h"
+//#include "contourProperty.h"
+
+#include <Windows.h>
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -63,6 +68,12 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 		ON_UPDATE_COMMAND_UI(ID_VIEW_CONTOUR, &Co3View::OnUpdateViewContour)
 		ON_COMMAND(ID_VIEW_PLANE, &Co3View::OnViewPlane)
 		ON_UPDATE_COMMAND_UI(ID_VIEW_PLANE, &Co3View::OnUpdateViewPlane)
+		ON_COMMAND(ID_EDIT_, &Co3View::OnEdit)
+		ON_COMMAND(ID_EDIT_LESS, &Co3View::OnEditLess)
+		ON_WM_KEYDOWN()
+		ON_WM_KEYUP()
+		//ON_COMMAND(ID_VIEW_NUMBER, &Co3View::OnViewNumber)
+		ON_COMMAND(ID_VIEW_CONTOUR_PROPERTY, &Co3View::OnViewContourProperty)
 	END_MESSAGE_MAP()
 
 	// Co3View construction/destruction
@@ -84,14 +95,21 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 		, isOrtho(false)
 		, m_surfaceList(0)
 		, m_meshList(0)
-		, checkMesh(true)
-		, checkSurface(true)
-		, checkSmoothSurface(true)
+		, checkMesh(false)
+		, checkSurface(false)
+		, checkSmoothSurface(false)
 		, m_unityCube(0)
 		, checkContour(true)
 		, m_contourList(0)
 		, m_surfaceList3(0)
 		, isplane(0)
+		, Ncontour(20)
+		, windowTitle(_T("o3"))
+		, charlists(0)
+		, m_3DTextList(0)
+		, m_2DTextList(0)
+		, showLabel(false)
+		, m_pCtpDlg(NULL)
 	{
 		// TODO: add construction code here
 
@@ -242,6 +260,18 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 
 		InitGL();
 
+		//		 // 为每一个ASCII字符产生一个显示列表
+		//       //isFirstCall = 0;
+		//const int MAX_CHAR=128;
+
+		//       // 申请MAX_CHAR个连续的显示列表编号
+		//       charlists = glGenLists(MAX_CHAR);
+
+		//       // 把每个字符的绘制命令都装到对应的显示列表中
+		//       //wglUseFontBitmaps(wglGetCurrentDC(), 0, MAX_CHAR, charlists);
+
+		// wglUseFontBitmaps(m_pDC->GetSafeHdc(), 0, MAX_CHAR, charlists);
+
 		return true;
 
 	}
@@ -291,6 +321,21 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 
 		glMatrixMode(GL_PROJECTION);
 
+		glBegin (GL_POLYGON);
+		glColor3f(1,0,0);
+		glVertex3f (0, 0, -10);
+		glColor3f(0,1,0);
+		glVertex3f (-1, 0, -10);
+		glColor3f(0,1,1);
+		glVertex3f (-1, -1, -10);
+		glColor3f(0,0,1);
+		glVertex3f (0, -1, -10);
+		glEnd();
+
+
+
+		//glCallList(m_unityCube);
+
 		//gluLookAt(0,3,3,0,0,0,0,1,0);
 		glPushMatrix();
 
@@ -303,25 +348,46 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 		glRotatef(yRot,0,1,0);
 
 
-		//	glBegin (GL_POLYGON);
-		//glColor3f(1,0,0);
-		//glVertex3f (0, 0, 0);
+		//genCharList();
+		//glColor3f(1.0f, 0.0f, 0.0f);
+		//glRasterPos3i(0, 0, 0.1);
+		//drawString("hello");
 
 
-		//glColor3f(0,1,0);
-		//glVertex3f (-1, 0, 0);
-		//glColor3f(0,1,1);
-		//glVertex3f (-1, -1, 0);
-		//glColor3f(0,0,1);
-		//glVertex3f (0, -1, 0);
-		//glEnd();
+		//glDisable(GL_LIGHTING);
+		//glColor3f(0.0f,1.0f,1.0f);
+		//glRasterPos3dv(sfm0.contourv[0][0].data());
+		//glListBase(m_2DTextList);
+		//glCallLists(6, GL_UNSIGNED_BYTE ,"1258OpenGL");
 
+		//glColor3f(1.0f,1.0f,0.0f);
+		//glRasterPos3f(0,0,0.5);
+		//glListBase(m_2DTextList);
+		//glCallLists(6, GL_UNSIGNED_BYTE ,"OpenGL");
+
+		//glCallList(m_2DTextList+'0');
 
 		glCallList(m_unityCube);
 		//glCallList(m_DPList);
 
-		if(checkContour)
+		if(checkContour){
 			glCallList(m_contourList);
+			if(showLabel){
+				char buf[50];
+				int nn;
+				float mxcv=sfm0.maxPointValue;
+				float mncv=sfm0.minPointValue;
+				float rgba[4];
+				for(long i=0;i<sfm0.contourv.size();i++){	
+					genColor(rgba,(sfm0.contourValue[i]-mncv)/(mxcv-mncv)*0.9);
+					glColor4fv(rgba);	
+					glRasterPos3dv(sfm0.contourv[i][0].data());
+					nn=sprintf(buf,"%.3g",sfm0.contourValue[i]);
+					glListBase(m_2DTextList);
+					glCallLists(nn, GL_UNSIGNED_BYTE ,buf);
+				}
+			}
+		}
 		if(checkMesh)
 			glCallList(m_meshList);
 		if(checkSurface){
@@ -477,6 +543,10 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 
 		//setupLighting();
 
+		//genCharList();
+		wglUseFontBitmaps(m_pDC->GetSafeHdc(), 0, 1, charlists);
+		Create2DTextLists();
+		//Create3DTextLists();
 
 	}
 
@@ -629,7 +699,10 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 		if( fileDlg.DoModal()==IDOK){
 			m_filePath=fileDlg.GetPathName();
 
-
+			CString str;
+			//this->GetParent()->GetWindowTextW(str);
+			str=m_filePath+L" - "+windowTitle;
+			this->GetParent()->SetWindowTextW(str);
 			/////////////////////////////////////////
 
 
@@ -675,27 +748,27 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 
 
 
-			float **dt;
+			double **dt;
 			long nf,np;
 
-			dt=readf2<float>(m_filePath.GetBuffer(),&nf,10);
+			dt=readf2<double>(m_filePath.GetBuffer(),&nf,10);
 
-			float *facecolor=vector<float>(1,nf);
-			long **face=matrix<long>(1,nf,1,3);
-			float **point;
+			//double *facecolor=vector<double>(1,nf);
+			//long **face=matrix<long>(1,nf,1,3);
+			//double **point;
 
-			point=genPFlist(dt,nf,face,facecolor,&np);
+			//point=genPFlist(dt,nf,face,facecolor,&np);
 
-			float *pv=vector<float>(1,np);
-			for(long i=1;i<=np;i++){
-				pv[i]=point[i][4];
-				//pv[i]=point[i][1]*point[i][1]+point[i][2]*point[i][2];
-			}
+			//double *pv=vector<double>(1,np);
+			//for(long i=1;i<=np;i++){
+			//	pv[i]=point[i][4];
+			//	//pv[i]=point[i][1]*point[i][1]+point[i][2]*point[i][2];
+			//}
 
-			//long **face=readf2<long>(L"C:\\Users\\r8anw2x\\Dropbox\\OpenGL\\data\\05021013\\gridSurface05022013_2.triangle.txt",&nf,3);
-			//float **point=readf2<float>(L"C:\\Users\\r8anw2x\\Dropbox\\OpenGL\\data\\05021013\\gridSurface05022013_2.point.txt",&np,3);
-			//float *pv=readf1<float>(L"C:\\Users\\r8anw2x\\Dropbox\\OpenGL\\data\\05021013\\gridSurface05022013_2.pointvaluei.txt",&np);
-			
+			////long **face=readf2<long>(L"C:\\Users\\r8anw2x\\Dropbox\\OpenGL\\data\\05021013\\gridSurface05022013_2.triangle.txt",&nf,3);
+			////float **point=readf2<float>(L"C:\\Users\\r8anw2x\\Dropbox\\OpenGL\\data\\05021013\\gridSurface05022013_2.point.txt",&np,3);
+			////float *pv=readf1<float>(L"C:\\Users\\r8anw2x\\Dropbox\\OpenGL\\data\\05021013\\gridSurface05022013_2.pointvaluei.txt",&np);
+
 			////////////////////////////////////////////////////////////////////////////////
 			//triangleMesh trm1;
 			//trm1.loadFace(face,nf);
@@ -715,18 +788,28 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 
 
 
-			triangleMesh trm1;
+			//triangleMesh trm1;
 
-			trm1.loadPointAndFace(point,np,face,nf,isplane);
+			//trm1.loadPointAndFace(point,np,face,nf,isplane);
 			//for(long i=1;i<=nf;i++){
 			//	facecolor[i]=trm1.faceCentroid[i][1]*trm1.faceCentroid[i][1]+trm1.faceCentroid[i][2]*trm1.faceCentroid[i][2];
 			//}
-			trm1.loadFaceV(facecolor,nf);
+			//trm1.loadFaceV(facecolor,nf);
 			//trm1.loadPointV(pv,np);
-			trm1.interpPointV();
-			trm1.genContourMap(50);
+			//trm1.interpPointV();
+			//trm1.genContourMap(50);
 
-			
+			///////////////////////////////////////////////////////////////////
+
+			//surfaceMesh sfm1;
+			//sfm1.loadPointAndFace(point,np,face,nf);
+			//sfm1.loadFaceV(facecolor,nf);
+			//sfm1.interpPointV();
+			//sfm1.genContourMap(Ncontour);
+
+
+
+
 			////////////////////////create display list //////////////////////////////////
 			//createMeshList(face,nf,point,np);
 			//createSurfaceList(face,facecolor,nf,point,np);
@@ -734,19 +817,69 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 			//createUnityCubeList();
 
 
-			createMeshList(trm1);
-			createSurfaceList(trm1);
-			createSurfaceList2(trm1);
+			//createMeshList(trm1);
+			//createSurfaceList(trm1);
+			//createSurfaceList2(trm1);
 			//createSurfaceList3(trm1);
-			createContourList(trm1);
+			//createContourList(trm1);
+
+			//createMeshList(sfm1);
+			//createSurfaceList(sfm1);
+			//createSurfaceList2(sfm1);
+			////createSurfaceList3(sfm1);
+			//createContourList(sfm1);
+
+			//createUnityCubeList();
+
+			//////////////////////////////////////////////////////////////////
+
+			//genCharList();
+
 			createUnityCubeList();
+			sfm0.clear();
+			//////////////////////////////////////////////////////////////////////////////////
+			//if( sfm0.loadPointAndFace(point,np,face,nf) ){
+			//	createMeshList(sfm0);
+			//	if( sfm0.loadFaceV(facecolor,nf) ){
+			//		createSurfaceList(sfm0);
+
+			//		sfm0.interpPointV();			
+			//		createSurfaceList2(sfm0);
+
+			//		sfm0.genContourMap(Ncontour);
+			//		createContourList(sfm0);
+			//	}
+			//	else{
+			//		AfxMessageBox(L"load face value error");
+			//	}
+			//}
+			//else{
+			//	AfxMessageBox(L"load point or face error");
+			//}
+
+			///////////////////////////////////////////////////////////////
+			sfm0.loadKWaferLevelContourNodeVector( dt, nf );
+			createMeshList(sfm0);
+			createSurfaceList(sfm0);
+
+			sfm0.interpPointV(4);			
+			createSurfaceList2(sfm0);
+
+			sfm0.genContourMap(Ncontour);
+			createContourList(sfm0);
+
+
+
+
 			///////////////////////////draw window////////////////////////////////////
 			//InvalidateRect(NULL,FALSE);
 
-			free_matrix(face,1,nf,1,3);
-			free_matrix(point,1,np,1,4);
-			free_vector(facecolor,1,nf);
-			free_vector(pv,1,np);
+			//free_matrix(face,1,nf,1,3);
+			//free_matrix(point,1,np,1,4);
+			//free_vector(facecolor,1,nf);
+			//free_vector(pv,1,np);
+
+			free_matrix(dt,1,nf,1,10);
 
 			OnViewReset();
 
@@ -1071,7 +1204,7 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 	}
 
 
-	void Co3View::createMeshList(const triangleMesh& trm)
+	void Co3View::createMeshList(const surfaceMesh& sfm)
 	{
 		GLfloat linewidth=2;
 		long i,j;
@@ -1082,11 +1215,10 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 		glColor3f(1.0f, 1.0f, 1.0f); 
 
 
-		for(i=1;i<=trm.nface;i++){			
+		for(i=1;i<sfm.triangle.size();i++){			
 			glBegin (GL_LINE_LOOP);
-			for(j=1;j<=3;j++){
-
-				glVertex3f(trm.point[trm.face[i][j]][1],trm.point[trm.face[i][j]][2],trm.point[trm.face[i][j]][3]);
+			for(j=0;j<sfm.triangle[i].size();j++){
+				glVertex3dv(sfm.point[sfm.triangle[i][j]].data());
 			}
 			glEnd();
 			//glLineWidth(1);
@@ -1094,6 +1226,29 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 		glEndList();
 	}
 
+
+	//	void Co3View::createMeshList(const triangleMesh& trm)
+	//{
+	//	GLfloat linewidth=2;
+	//	long i,j;
+	//	m_meshList = glGenLists(1);
+	//	glNewList(m_meshList, GL_COMPILE);
+
+	//	glLineWidth(linewidth);
+	//	glColor3f(1.0f, 1.0f, 1.0f); 
+
+
+	//	for(i=1;i<=trm.nface;i++){			
+	//		glBegin (GL_LINE_LOOP);
+	//		for(j=1;j<=3;j++){
+
+	//			glVertex3f(trm.point[trm.face[i][j]][1],trm.point[trm.face[i][j]][2],trm.point[trm.face[i][j]][3]);
+	//		}
+	//		glEnd();
+	//		//glLineWidth(1);
+	//	}
+	//	glEndList();
+	//}
 
 	//void Co3View::createSurfaceList(long ** face, float *facecolor, long nf, float ** point, long np){
 
@@ -1151,7 +1306,66 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 	//}
 
 
-	void Co3View::createSurfaceList(const triangleMesh& trm)
+	//void Co3View::createSurfaceList(const triangleMesh& trm)
+	//{
+
+	//	m_surfaceList = glGenLists(1);
+	//	glNewList(m_surfaceList, GL_COMPILE);
+
+	//	long i,j,k;
+
+	//	float v1[3];
+	//	float v2[3];
+	//	float nor[3];
+	//	float innerp[3]={0,0,0};
+
+	//	float rgba[4];
+
+	//	float mxcv=trm.maxFaceValue;
+	//	float mncv=trm.minFaceValue;
+
+
+	//	for(i=1;i<=trm.nface;i++){
+	//		glEnable(GL_NORMALIZE);
+
+	//		genColor(rgba,(trm.faceValue[i]-mncv)/(mxcv-mncv)*0.8);
+	//		glColor4fv(rgba);
+
+	//		glBegin(GL_TRIANGLES);
+
+
+	//		//for(k=1;k<=3;k++){
+	//		//	v1[k-1]=trm.point[trm.face[i][1]][k]-trm.point[trm.face[i][3]][k];
+	//		//	v2[k-1]=trm.point[trm.face[i][2]][k]-trm.point[trm.face[i][3]][k];
+	//		//}
+	//		//nor[0]=v1[1]*v2[2]-v1[2]*v2[1];
+	//		//nor[1]=v1[2]*v2[0]-v1[0]*v2[2];
+	//		//nor[2]=v1[0]*v2[1]-v1[1]*v2[0];
+
+
+	//		for(j=1;j<=3;j++){
+	//			//genColor(rgba,(dt[i][j][4]-mncv)/(mxcv-mncv)*0.8);
+	//			//glColor4fv(rgba);
+
+	//			//selectNormal(nor,&trm.point[trm.face[i][j]][1],innerp,true);
+	//			//glNormal3fv(nor);
+	//			glVertex3f(trm.point[trm.face[i][j]][1],trm.point[trm.face[i][j]][2],trm.point[trm.face[i][j]][3]);
+
+	//			//std::cout << trm.point[trm.face[i][j]][1] << trm.point[trm.face[i][j]][2] << trm.point[trm.face[i][j]][3] << std::endl;
+	//		}
+	//		glEnd();
+
+
+	//		glDisable(GL_NORMALIZE);
+
+
+	//	}
+	//	glEndList();
+	//}
+
+
+
+	void Co3View::createSurfaceList(const surfaceMesh& sfm)
 	{
 
 		m_surfaceList = glGenLists(1);
@@ -1166,47 +1380,26 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 
 		float rgba[4];
 
-		float mxcv=trm.maxFaceValue;
-		float mncv=trm.minFaceValue;
+		float mxcv=sfm.maxTriangleValue;
+		float mncv=sfm.minTriangleValue;
 
-
-		for(i=1;i<=trm.nface;i++){
+		for(i=1;i<sfm.triangle.size();i++){
 			glEnable(GL_NORMALIZE);
 
-			genColor(rgba,(trm.faceValue[i]-mncv)/(mxcv-mncv)*0.8);
+			genColor(rgba,(sfm.triangleValue[i]-mncv)/(mxcv-mncv)*0.8);
 			glColor4fv(rgba);
 
 			glBegin(GL_TRIANGLES);
 
-
-			//for(k=1;k<=3;k++){
-			//	v1[k-1]=trm.point[trm.face[i][1]][k]-trm.point[trm.face[i][3]][k];
-			//	v2[k-1]=trm.point[trm.face[i][2]][k]-trm.point[trm.face[i][3]][k];
-			//}
-			//nor[0]=v1[1]*v2[2]-v1[2]*v2[1];
-			//nor[1]=v1[2]*v2[0]-v1[0]*v2[2];
-			//nor[2]=v1[0]*v2[1]-v1[1]*v2[0];
-
-
-			for(j=1;j<=3;j++){
-				//genColor(rgba,(dt[i][j][4]-mncv)/(mxcv-mncv)*0.8);
-				//glColor4fv(rgba);
-
-				//selectNormal(nor,&trm.point[trm.face[i][j]][1],innerp,true);
-				//glNormal3fv(nor);
-				glVertex3f(trm.point[trm.face[i][j]][1],trm.point[trm.face[i][j]][2],trm.point[trm.face[i][j]][3]);
-
-				//std::cout << trm.point[trm.face[i][j]][1] << trm.point[trm.face[i][j]][2] << trm.point[trm.face[i][j]][3] << std::endl;
+			for(j=0;j<sfm.triangle[i].size();j++){
+				glVertex3dv(sfm.point[sfm.triangle[i][j]].data());
 			}
 			glEnd();
-
-
 			glDisable(GL_NORMALIZE);
-
-
 		}
 		glEndList();
 	}
+
 
 
 	//void Co3View::createSurfaceList2(long ** face, float *facecolor, long nf, float ** point, long np){
@@ -1264,7 +1457,70 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 	//	glEndList();
 	//}
 
-	void Co3View::createSurfaceList2(const triangleMesh& trm)
+	//void Co3View::createSurfaceList2(const triangleMesh& trm)
+	//{
+
+	//	m_surfaceList2 = glGenLists(1);
+	//	glNewList(m_surfaceList2, GL_COMPILE);
+
+	//	long i,j,k;
+
+	//	float v1[3];
+	//	float v2[3];
+	//	float nor[3];
+	//	float innerp[3]={0,0,0};
+
+	//	float rgba[4];
+
+	//	float mxcv=trm.maxPointValue;
+	//	float mncv=trm.minPointValue;
+
+	//	//float mxcv=trm.maxPointValueInterp;
+	//	//float mncv=trm.minPointValueInterp;
+
+	//	//float mxcv=0.5;
+	//	//float mncv=0.2;
+
+	//	for(i=1;i<=trm.nface;i++){
+	//		glEnable(GL_NORMALIZE);
+
+	//		//genColor(rgba,(facecolor[i]-mncv)/(mxcv-mncv)*0.8);
+	//		//glColor4fv(rgba);
+
+	//		glBegin(GL_TRIANGLES);
+
+
+	//		//for(k=1;k<=3;k++){
+	//		//	v1[k-1]=trm.point[trm.face[i][1]][k]-trm.point[trm.face[i][3]][k];
+	//		//	v2[k-1]=trm.point[trm.face[i][2]][k]-trm.point[trm.face[i][3]][k];
+	//		//}
+	//		//nor[0]=v1[1]*v2[2]-v1[2]*v2[1];
+	//		//nor[1]=v1[2]*v2[0]-v1[0]*v2[2];
+	//		//nor[2]=v1[0]*v2[1]-v1[1]*v2[0];
+
+
+	//		for(j=1;j<=3;j++){
+	//			genColor(rgba,(trm.pointValue[trm.face[i][j]]-mncv)/(mxcv-mncv)*0.8);
+	//			//genColor(rgba,(trm.pointValueInterp[trm.face[i][j]]-mncv)/(mxcv-mncv)*0.8);
+	//			glColor4fv(rgba);
+
+	//			//selectNormal(nor,&trm.point[trm.face[i][j]][1],innerp,true);
+	//			//glNormal3fv(nor);
+	//			glVertex3fv(&trm.point[trm.face[i][j]][1]);
+	//		}
+	//		glEnd();
+
+
+	//		glDisable(GL_NORMALIZE);
+
+
+	//	}
+	//	glEndList();
+	//}
+
+
+
+	void Co3View::createSurfaceList2(const surfaceMesh& sfm)
 	{
 
 		m_surfaceList2 = glGenLists(1);
@@ -1279,51 +1535,23 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 
 		float rgba[4];
 
-		float mxcv=trm.maxPointValue;
-		float mncv=trm.minPointValue;
+		float mxcv=sfm.maxPointValue;
+		float mncv=sfm.minPointValue;
 
-		//float mxcv=trm.maxPointValueInterp;
-		//float mncv=trm.minPointValueInterp;
-
-		//float mxcv=0.5;
-		//float mncv=0.2;
-
-		for(i=1;i<=trm.nface;i++){
+		for(i=1;i<sfm.triangle.size();i++){
 			glEnable(GL_NORMALIZE);
-
-			//genColor(rgba,(facecolor[i]-mncv)/(mxcv-mncv)*0.8);
-			//glColor4fv(rgba);
-
 			glBegin(GL_TRIANGLES);
-
-
-			//for(k=1;k<=3;k++){
-			//	v1[k-1]=trm.point[trm.face[i][1]][k]-trm.point[trm.face[i][3]][k];
-			//	v2[k-1]=trm.point[trm.face[i][2]][k]-trm.point[trm.face[i][3]][k];
-			//}
-			//nor[0]=v1[1]*v2[2]-v1[2]*v2[1];
-			//nor[1]=v1[2]*v2[0]-v1[0]*v2[2];
-			//nor[2]=v1[0]*v2[1]-v1[1]*v2[0];
-
-
-			for(j=1;j<=3;j++){
-				genColor(rgba,(trm.pointValue[trm.face[i][j]]-mncv)/(mxcv-mncv)*0.8);
-				//genColor(rgba,(trm.pointValueInterp[trm.face[i][j]]-mncv)/(mxcv-mncv)*0.8);
+			for(j=0;j<sfm.triangle[i].size();j++){
+				genColor(rgba,(sfm.pointValue[sfm.triangle[i][j]]-mncv)/(mxcv-mncv)*0.8);
 				glColor4fv(rgba);
-
-				//selectNormal(nor,&trm.point[trm.face[i][j]][1],innerp,true);
-				//glNormal3fv(nor);
-				glVertex3fv(&trm.point[trm.face[i][j]][1]);
+				glVertex3dv(sfm.point[sfm.triangle[i][j]].data());
 			}
 			glEnd();
-
-
 			glDisable(GL_NORMALIZE);
-
-
 		}
 		glEndList();
 	}
+
 
 
 	void Co3View::OnViewSmoothsurface()
@@ -1447,26 +1675,64 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 	}
 
 
-	void Co3View::createContourList(const triangleMesh& trm)
+	//void Co3View::createContourList(const triangleMesh& trm)
+	//{
+	//	GLfloat linewidth=1;
+	//	long i,j;
+	//	float rgba[4]={1,1,1,1};
+	//	m_contourList = glGenLists(1);
+
+	//			float mxcv=trm.maxPointValue;
+	//	float mncv=trm.minPointValue;
+	//	glNewList(m_contourList, GL_COMPILE);
+
+	//	glLineWidth(linewidth);
+
+	//	for(i=0;i<trm.contourv.size();i++){
+
+	//		genColor(rgba,(trm.contourValue[i]-mncv)/(mxcv-mncv)*0.8);
+	//		glColor4fv(rgba);
+
+	//		glBegin (GL_LINE_STRIP);
+	//		for(j=0;j<trm.contourv[i][0].size();j++){
+	//			glVertex3f(trm.contourv[i][0][j],trm.contourv[i][1][j],trm.contourv[i][2][j]);
+	//		}
+	//		glEnd();
+	//	}
+	//	glEndList();
+
+	//}
+
+
+
+	void Co3View::createContourList(const surfaceMesh& sfm)
 	{
+		char buf[50];
 		GLfloat linewidth=1;
 		long i,j;
 		float rgba[4]={1,1,1,1};
+		float mxcv=sfm.maxPointValue;
+		float mncv=sfm.minPointValue;
 		m_contourList = glGenLists(1);
 		glNewList(m_contourList, GL_COMPILE);
 
 		glLineWidth(linewidth);
 
-		for(i=0;i<trm.contourv.size();i++){
+		for(i=0;i<sfm.contourv.size();i++){
 
-			genColor(rgba,(trm.contourValue[i]-trm.minPointValue)/(trm.maxPointValue-trm.minPointValue)*0.8);
+			genColor(rgba,(sfm.contourValue[i]-mncv)/(mxcv-mncv)*0.8);
 			glColor4fv(rgba);
 
 			glBegin (GL_LINE_STRIP);
-			for(j=0;j<trm.contourv[i][0].size();j++){
-				glVertex3f(trm.contourv[i][0][j],trm.contourv[i][1][j],trm.contourv[i][2][j]);
+			for(j=0;j<sfm.contourv[i].size();j++){
+				glVertex3dv(sfm.contourv[i][j].data());
+				//glVertex3f(trm.contourv[i][0][j],trm.contourv[i][1][j],trm.contourv[i][2][j]);
 			}
 			glEnd();
+
+			//glRasterPos3dv(sfm.contourv[i][0].data());
+			//sprintf(buf,"%.2g",sfm.contourValue[i]);
+			//drawString(buf);
 		}
 		glEndList();
 
@@ -1474,82 +1740,295 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 
 
 
-		void Co3View::createSurfaceList3(const triangleMesh& trm)
+	//	void Co3View::createSurfaceList3(const triangleMesh& trm)
+	//{
+
+	//	m_surfaceList3 = glGenLists(1);
+	//	glNewList(m_surfaceList3, GL_COMPILE);
+
+	//	long i,j,k;
+
+	//	float v1[3];
+	//	float v2[3];
+	//	float nor[3];
+	//	float innerp[3]={0,0,0};
+
+	//	float rgba[4];
+
+	//	//float mxcv=trm.maxPointValue;
+	//	//float mncv=trm.minPointValue;
+
+	//	float mxcv=trm.maxPointValueInterp;
+	//	float mncv=trm.minPointValueInterp;
+
+	//	//float mxcv=0.5;
+	//	//float mncv=0.2;
+
+	//	for(i=1;i<=trm.nface;i++){
+	//		glEnable(GL_NORMALIZE);
+
+	//		//genColor(rgba,(facecolor[i]-mncv)/(mxcv-mncv)*0.8);
+	//		//glColor4fv(rgba);
+
+	//		glBegin(GL_TRIANGLES);
+
+
+	//		//for(k=1;k<=3;k++){
+	//		//	v1[k-1]=trm.point[trm.face[i][1]][k]-trm.point[trm.face[i][3]][k];
+	//		//	v2[k-1]=trm.point[trm.face[i][2]][k]-trm.point[trm.face[i][3]][k];
+	//		//}
+	//		//nor[0]=v1[1]*v2[2]-v1[2]*v2[1];
+	//		//nor[1]=v1[2]*v2[0]-v1[0]*v2[2];
+	//		//nor[2]=v1[0]*v2[1]-v1[1]*v2[0];
+
+
+	//		for(j=1;j<=3;j++){
+	//			//genColor(rgba,(trm.pointValue[trm.face[i][j]]-mncv)/(mxcv-mncv)*0.8);
+	//			genColor(rgba,(trm.pointValueInterp[trm.face[i][j]]-mncv)/(mxcv-mncv)*0.8);
+	//			glColor4fv(rgba);
+
+	//			//selectNormal(nor,&trm.point[trm.face[i][j]][1],innerp,true);
+	//			//glNormal3fv(nor);
+	//			glVertex3fv(&trm.point[trm.face[i][j]][1]);
+	//		}
+	//		glEnd();
+
+
+	//		glDisable(GL_NORMALIZE);
+
+
+	//	}
+	//	glEndList();
+	//	}
+
+	void Co3View::OnViewPlane()
 	{
-
-		m_surfaceList3 = glGenLists(1);
-		glNewList(m_surfaceList3, GL_COMPILE);
-
-		long i,j,k;
-
-		float v1[3];
-		float v2[3];
-		float nor[3];
-		float innerp[3]={0,0,0};
-
-		float rgba[4];
-
-		//float mxcv=trm.maxPointValue;
-		//float mncv=trm.minPointValue;
-
-		float mxcv=trm.maxPointValueInterp;
-		float mncv=trm.minPointValueInterp;
-
-		//float mxcv=0.5;
-		//float mncv=0.2;
-
-		for(i=1;i<=trm.nface;i++){
-			glEnable(GL_NORMALIZE);
-
-			//genColor(rgba,(facecolor[i]-mncv)/(mxcv-mncv)*0.8);
-			//glColor4fv(rgba);
-
-			glBegin(GL_TRIANGLES);
+		isplane=!isplane;
+		// TODO: Add your command handler code here
+	}
 
 
-			//for(k=1;k<=3;k++){
-			//	v1[k-1]=trm.point[trm.face[i][1]][k]-trm.point[trm.face[i][3]][k];
-			//	v2[k-1]=trm.point[trm.face[i][2]][k]-trm.point[trm.face[i][3]][k];
-			//}
-			//nor[0]=v1[1]*v2[2]-v1[2]*v2[1];
-			//nor[1]=v1[2]*v2[0]-v1[0]*v2[2];
-			//nor[2]=v1[0]*v2[1]-v1[1]*v2[0];
+	void Co3View::OnUpdateViewPlane(CCmdUI *pCmdUI)
+	{
+		// TODO: Add your command update UI handler code here
 
-
-			for(j=1;j<=3;j++){
-				//genColor(rgba,(trm.pointValue[trm.face[i][j]]-mncv)/(mxcv-mncv)*0.8);
-				genColor(rgba,(trm.pointValueInterp[trm.face[i][j]]-mncv)/(mxcv-mncv)*0.8);
-				glColor4fv(rgba);
-
-				//selectNormal(nor,&trm.point[trm.face[i][j]][1],innerp,true);
-				//glNormal3fv(nor);
-				glVertex3fv(&trm.point[trm.face[i][j]][1]);
-			}
-			glEnd();
-
-
-			glDisable(GL_NORMALIZE);
-
-
-		}
-		glEndList();
-		}
-
-		void Co3View::OnViewPlane()
-		{
-			isplane=!isplane;
-			// TODO: Add your command handler code here
-		}
-
-
-		void Co3View::OnUpdateViewPlane(CCmdUI *pCmdUI)
-		{
-			// TODO: Add your command update UI handler code here
-
-					if(isplane==0){
+		if(isplane==0){
 			pCmdUI->SetText(L"plane");
 		}
 		else{
 			pCmdUI->SetText(L"volume");
 		}
+	}
+
+
+	void Co3View::OnEdit()
+	{
+		// TODO: Add your command handler code here
+		//AfxMessageBox(L"more");
+		Ncontour++;
+
+		sfm0.contourv.clear();
+		sfm0.contourValue.clear();
+		sfm0.genContourMap(Ncontour);
+		createContourList(sfm0);
+		//Redraw the view
+		InvalidateRect(NULL,FALSE);
+	}
+
+
+	void Co3View::OnEditLess()
+	{
+		// TODO: Add your command handler code here
+		//AfxMessageBox(L"less");
+		if(Ncontour>1)
+			Ncontour--;
+
+		sfm0.contourv.clear();
+		sfm0.contourValue.clear();
+		sfm0.genContourMap(Ncontour);
+		createContourList(sfm0);
+		//Redraw the view
+		InvalidateRect(NULL,FALSE);
+	}
+
+
+	void Co3View::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+	{
+		// TODO: Add your message handler code here and/or call default
+		switch(nChar){
+
+		case 'A':
+			OnEdit();
+			break;
+		case 'S':
+			OnEditLess();
+			break;
+		default:
+			break;
+
 		}
+
+		CView::OnKeyDown(nChar, nRepCnt, nFlags);
+	}
+
+
+	void Co3View::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
+	{
+		// TODO: Add your message handler code here and/or call default
+
+		CView::OnKeyUp(nChar, nRepCnt, nFlags);
+	}
+
+
+	//	void Co3View::OnViewNumber()
+	//	{
+	//		// TODO: Add your command handler code here
+	//
+	//
+	//	}
+
+
+	void Co3View::OnViewContourProperty()
+	{
+		// TODO: Add your command handler code here
+
+		contourProperty ctpDlg(Ncontour, sfm0.minPointValue, sfm0.maxPointValue, showLabel);
+		if(ctpDlg.DoModal()==IDOK){
+			//AfxMessageBox(L"ff");
+			double xl=ctpDlg.m_xlow;
+			double xh=ctpDlg.m_xhigh;
+			bool flg=ctpDlg.m_isnew;
+			Ncontour=ctpDlg.m_contourNumber;
+			showLabel=ctpDlg.m_showcv;
+			if(!flg){
+				sfm0.clearContour();
+			}
+			sfm0.genContourMap(Ncontour,xl,xh);
+
+			createContourList(sfm0);
+			//Redraw the view
+			InvalidateRect(NULL,FALSE);
+
+
+		}
+
+
+		//////////////////////////////////////////////////////////////////
+		//if(NULL == m_pCtpDlg)   
+		//   {   
+		//       // 创建非模态对话框实例   
+		//       m_pCtpDlg = new contourProperty(Ncontour, sfm0.minPointValue, sfm0.maxPointValue, showLabel);   
+		//       m_pCtpDlg->Create(IDD_DIALOG1, this);   
+		//   }   
+		//   // 显示非模态对话框   
+		//   m_pCtpDlg->ShowWindow(SW_SHOW);   
+
+		//m_pCtpDlg->UpdateData(true);
+
+		//		double xl=m_pCtpDlg->m_xlow;
+		//		double xh=m_pCtpDlg->m_xhigh;
+		//		bool flg=m_pCtpDlg->m_isnew;
+		//		Ncontour=m_pCtpDlg->m_contourNumber;
+		//		showLabel=m_pCtpDlg->m_showcv;
+		//		if(!flg){
+		//			sfm0.clearContour();
+		//		}
+		//		sfm0.genContourMap(Ncontour,xl,xh);
+
+		//		createContourList(sfm0);
+		//		//Redraw the view
+		//		InvalidateRect(NULL,FALSE);
+
+		////m_pCtpDlg->UpdateData(false);
+
+
+
+
+	}
+
+
+	// generate ASCII character display lists
+	void Co3View::genCharList(void)
+	{
+		// 为每一个ASCII字符产生一个显示列表
+		//isFirstCall = 0;
+		const int MAX_CHAR=128;
+
+		// 申请MAX_CHAR个连续的显示列表编号
+		charlists = glGenLists(MAX_CHAR);
+
+		// 把每个字符的绘制命令都装到对应的显示列表中
+		//wglUseFontBitmaps(wglGetCurrentDC(), 0, MAX_CHAR, charlists);
+		wglUseFontBitmaps(m_pDC->GetSafeHdc(), 0, MAX_CHAR, charlists);
+	}
+
+
+
+
+
+
+
+
+	void Co3View::drawString(const char * str)
+	{
+		for(; *str!='\0'; ++str){
+			glCallList(charlists + *str);
+		}
+	}
+
+
+	void Co3View::Create3DTextLists(void)
+	{
+		CFont m_font;
+		GLYPHMETRICSFLOAT agmf[256]; 
+		m_font.CreateFont(    -12,                            // Height Of Font
+			0,                                // Width Of Font
+			0,                                // Angle Of Escapement
+			0,                                // Orientation Angle
+			FW_BOLD,                        // Font Weight
+			FALSE,                            // Italic
+			FALSE,                            // Underline
+			FALSE,                            // Strikeout
+			ANSI_CHARSET,                    // Character Set Identifier
+			OUT_TT_PRECIS,                    // Output Precision
+			CLIP_DEFAULT_PRECIS,            // Clipping Precision
+			ANTIALIASED_QUALITY,            // Output Quality
+			FF_DONTCARE|DEFAULT_PITCH,        // Family And Pitch
+			L"Algerian");
+		CFont* m_pOldFont = m_pDC->SelectObject(&m_font);
+		// create display lists for glyphs 0 through 255 with 0.1 extrusion 
+		// and default deviation. The display list numbering starts at 1000 
+		// (it could be any number) 
+		m_3DTextList = glGenLists(256);
+		wglUseFontOutlines(m_pDC->GetSafeHdc(), 0, 255, m_3DTextList, 0.0f, 0.5f,WGL_FONT_POLYGONS, agmf); 
+		m_pDC->SelectObject(m_pOldFont);
+
+	}
+
+
+	void Co3View::Create2DTextLists(void)
+	{
+		CFont m_font;
+		m_font.CreateFont(    -12,                            // Height Of Font
+			0,                                // Width Of Font
+			0,                                // Angle Of Escapement
+			0,                                // Orientation Angle
+			FW_NORMAL,                        // Font Weight
+			FALSE,                            // Italic
+			FALSE,                            // Underline
+			FALSE,                            // Strikeout
+			ANSI_CHARSET,                    // Character Set Identifier
+			OUT_TT_PRECIS,                    // Output Precision
+			CLIP_DEFAULT_PRECIS,            // Clipping Precision
+			DEFAULT_QUALITY,                // Output Quality
+			FF_DONTCARE|DEFAULT_PITCH,        // Family And Pitch
+			L"Arial");
+		CFont* m_pOldFont = m_pDC->SelectObject(&m_font);
+		// create display lists for glyphs 0 through 255 with 0.1 extrusion 
+		// and default deviation. The display list numbering starts at 1000 
+		// (it could be any number) 
+		m_2DTextList = glGenLists(256);
+		wglUseFontBitmaps(m_pDC->GetSafeHdc(), 0, 255, m_2DTextList); 
+		m_pDC->SelectObject(m_pOldFont);
+
+	}

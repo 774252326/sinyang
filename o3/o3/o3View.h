@@ -4,7 +4,9 @@
 
 #pragma once
 #include "atltypes.h"
-#include "triangleMesh.h"
+//#include "triangleMesh.h"
+#include "surfaceMesh.h"
+#include "contourProperty.h"
 
 class Co3View : public CView
 {
@@ -119,20 +121,47 @@ public:
 	bool checkContour;
 	afx_msg void OnUpdateViewContour(CCmdUI *pCmdUI);
 
-	void createMeshList(const triangleMesh& trm);
-	void createSurfaceList(const triangleMesh& trm);
-	void createSurfaceList2(const triangleMesh& trm);
+	//void createMeshList(const triangleMesh& trm);
+	//void createSurfaceList(const triangleMesh& trm);
+	//void createSurfaceList2(const triangleMesh& trm);
 	//triangleMesh tm;
-	void createContourList(const triangleMesh& trm);
+	//void createContourList(const triangleMesh& trm);
 	GLuint m_contourList;
 
-	void createSurfaceList3(const triangleMesh& trm);
+	//void createSurfaceList3(const triangleMesh& trm);
 	
 
 	GLuint m_surfaceList3;
 	int isplane;
 	afx_msg void OnViewPlane();
 	afx_msg void OnUpdateViewPlane(CCmdUI *pCmdUI);
+
+
+		void createMeshList(const surfaceMesh& trm);
+	void createSurfaceList(const surfaceMesh& trm);
+	void createSurfaceList2(const surfaceMesh& trm);
+	void createContourList(const surfaceMesh& trm);
+
+	afx_msg void OnEdit();
+	long Ncontour;
+	afx_msg void OnEditLess();
+	surfaceMesh sfm0;
+	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
+	afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
+//	afx_msg void OnViewNumber();
+	afx_msg void OnViewContourProperty();
+	CString windowTitle;
+	// generate ASCII character display lists
+	void genCharList(void);
+	GLuint charlists;
+	void drawString(const char * str);
+	void Create3DTextLists(void);
+	GLuint m_3DTextList;
+	void Create2DTextLists(void);
+	GLuint m_2DTextList;
+	bool showLabel;
+private:
+	contourProperty *m_pCtpDlg;
 };
 
 #ifndef _DEBUG  // debug version in o3View.cpp
