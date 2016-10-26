@@ -74,6 +74,7 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 		ON_WM_KEYUP()
 		//ON_COMMAND(ID_VIEW_NUMBER, &Co3View::OnViewNumber)
 		ON_COMMAND(ID_VIEW_CONTOUR_PROPERTY, &Co3View::OnViewContourProperty)
+		ON_WM_CHAR()
 	END_MESSAGE_MAP()
 
 	// Co3View construction/destruction
@@ -99,7 +100,7 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 		, checkSurface(false)
 		, checkSmoothSurface(false)
 		, m_unityCube(0)
-		, checkContour(true)
+		, checkContour(false)
 		, m_contourList(0)
 		, m_surfaceList3(0)
 		, isplane(0)
@@ -321,16 +322,16 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 
 		glMatrixMode(GL_PROJECTION);
 
-		glBegin (GL_POLYGON);
-		glColor3f(1,0,0);
-		glVertex3f (0, 0, -10);
-		glColor3f(0,1,0);
-		glVertex3f (-1, 0, -10);
-		glColor3f(0,1,1);
-		glVertex3f (-1, -1, -10);
-		glColor3f(0,0,1);
-		glVertex3f (0, -1, -10);
-		glEnd();
+		//glBegin (GL_POLYGON);
+		//glColor3f(1,0,0);
+		//glVertex3f (0, 0, -10);
+		//glColor3f(0,1,0);
+		//glVertex3f (-1, 0, -10);
+		//glColor3f(0,1,1);
+		//glVertex3f (-1, -1, -10);
+		//glColor3f(0,0,1);
+		//glVertex3f (0, -1, -10);
+		//glEnd();
 
 
 
@@ -396,6 +397,56 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 			else
 				glCallList(m_surfaceList);
 		}
+
+		auto res=std::minmax_element(sfmb.triangleValue.begin(),sfmb.triangleValue.end());
+
+
+		//glColor3f(1.0f, 0.0f, 1.0f); 
+		//for(long i=0;i<sfmb.triangle.size();i++){	
+		//	glBegin (GL_LINE_LOOP);
+		//	for(long j=0;j<sfmb.triangle[i].size();j++){
+		//		glVertex3d(sfmb.point[sfmb.triangle[i][j]].x[0],sfmb.point[sfmb.triangle[i][j]].x[1],0.5);
+		//	}
+		//	glEnd();
+		//	//glLineWidth(1);
+		//}
+
+
+				//glColor3f(1.0f, 1.0f, 0.0f); 
+		for(long i=0;i<sfmb.contourp.size();i++){
+			float rgba[4];
+			glBegin (GL_LINE_STRIP);
+			
+			genColor(rgba,(sfmb.contourValue[i]-*res.first)/(*res.second-*res.first)*0.9);
+			glColor4fv(rgba);
+
+			for(long j=0;j<sfmb.contourp[i].size();j++){			
+				glVertex3d(sfmb.contourp[i][j].x[0],sfmb.contourp[i][j].x[1],0.5);
+			}
+			glEnd();
+			//glLineWidth(1);
+		}
+
+
+		for(long i=0;i<sfmb.sfma.triangle.size();i++){	
+			float rgba[4];
+			//glBegin (GL_LINE_LOOP);
+			glBegin(GL_TRIANGLES);
+			for(long j=0;j<sfmb.sfma.triangle[i].size();j++){
+				genColor(rgba,(sfmb.sfma.pointValue[sfmb.sfma.triangle[i][j]]-*res.first)/(*res.second-*res.first)*0.9);
+				glColor4fv(rgba);
+				glVertex3d(sfmb.sfma.point[sfmb.sfma.triangle[i][j]].x[0],sfmb.sfma.point[sfmb.sfma.triangle[i][j]].x[1],0.5);
+			}
+			glEnd();
+			//glLineWidth(1);
+		}
+
+		//glColor3f(0.0f, 1.0f, 0.0f);
+		//for(long i=0;i<d2d.point.size();i++){	
+		//	glRasterPos3d(d2d.point[i].x[0],d2d.point[i].x[1],0.5);
+		//	glListBase(m_2DTextList);
+		//	glCallLists(1, GL_UNSIGNED_BYTE ,"x");
+		//}
 
 
 
@@ -862,14 +913,87 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 			createMeshList(sfm0);
 			createSurfaceList(sfm0);
 
-			sfm0.interpPointV(4);			
+			sfm0.interpPointV(0);			
 			createSurfaceList2(sfm0);
 
 			sfm0.genContourMap(Ncontour);
 			createContourList(sfm0);
 
 
+			sfmb.Clear();
+			sfmb.ClearContour();
 
+			
+
+			for(size_t i=1;i<sfm0.point.size();i++){
+				Point2D pt;
+				pt.x[0]=sfm0.point[i][0];
+				pt.x[1]=sfm0.point[i][1];
+				sfmb.point.push_back(pt);
+			}
+			for(size_t i=1;i<sfm0.triangle.size();i++){
+				std::vector<size_t> onet(3);
+				onet[0]=sfm0.triangle[i][0]-1;
+				onet[1]=sfm0.triangle[i][1]-1;
+				onet[2]=sfm0.triangle[i][2]-1;
+				sfmb.triangle.push_back(onet);
+			}
+			sfmb.triangleValue.assign(sfm0.triangleValue.begin()+1,sfm0.triangleValue.end());
+
+			sfmb.Init();
+			sfmb.GenContourMap();
+
+
+			//d2d.point.clear();
+			//sfma.Clear();
+			//sfma.ClearContour();
+
+			//for(size_t i=1;i<sfm0.triangleCentroid.size();i++){
+			//	Point2D pt;
+			//	pt.x[0]=sfm0.triangleCentroid[i][0];
+			//	pt.x[1]=sfm0.triangleCentroid[i][1];
+			//	d2d.point.push_back(pt);
+			//	sfma.point.push_back(pt);
+			//	sfma.pointValue.push_back(sfm0.triangleValue[i]);
+			//}
+
+						
+			//d2d.point.assign(9,Point2D(0,0));
+			//d2d.point[0]=Point2D(-1,-1);
+			//d2d.point[1]=Point2D(-1,0);
+			//d2d.point[2]=Point2D(-1,1);
+
+			//d2d.point[3]=Point2D(0,-1);
+			//d2d.point[4]=Point2D(0,0);
+			//d2d.point[5]=Point2D(0,1);
+
+			//d2d.point[6]=Point2D(1,-1);
+			//d2d.point[7]=Point2D(1,0);
+			//d2d.point[8]=Point2D(1,1);
+
+			//bool flag=d2d.GenMesh();
+
+			//sfma.point.assign(d2d.point.begin(),d2d.point.end());
+			//sfma.triangle.assign(d2d.triangle.begin(),d2d.triangle.end());
+//			sfma.pointValue.assign(9,0);
+//			sfma.pointValue[0]=2;
+//			sfma.pointValue[1]=7;
+//			sfma.pointValue[2]=0;
+//			sfma.pointValue[3]=6;
+//sfma.pointValue[4]=9;
+//sfma.pointValue[5]=4;
+//sfma.pointValue[6]=0;
+//sfma.pointValue[7]=1;
+//sfma.pointValue[8]=3;
+
+
+			//sfma.GenPointToFaceMap();
+
+			//sfma.GenContourMap(30);
+
+			//sfma.FindContour(1);
+
+			//d2d.Init();
 
 			///////////////////////////draw window////////////////////////////////////
 			//InvalidateRect(NULL,FALSE);
@@ -1223,6 +1347,18 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 			glEnd();
 			//glLineWidth(1);
 		}
+
+		//glColor3f(1.0f, 0.0f, 1.0f); 
+		//for(i=0;i<d2d.triangle.size();i++){			
+		//	glBegin (GL_LINE_LOOP);
+		//	for(j=0;j<d2d.triangle[i].size();j++){
+		//		glVertex2dv(d2d.point[d2d.triangle[i][j]].x);
+		//	}
+		//	glEnd();
+		//	//glLineWidth(1);
+		//}
+
+
 		glEndList();
 	}
 
@@ -2031,4 +2167,28 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 		wglUseFontBitmaps(m_pDC->GetSafeHdc(), 0, 255, m_2DTextList); 
 		m_pDC->SelectObject(m_pOldFont);
 
+	}
+
+
+	void Co3View::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
+	{
+		// TODO: Add your message handler code here and/or call default
+
+		//static int i=0;
+		switch(nChar){
+		case 'f':
+			//if(i<d2d.point.size()-4){
+			//	d2d.AddPoint(i);
+			//	i++;
+			//	this->Invalidate();
+			//}
+
+
+			break;
+		default:
+			break;
+		}
+
+
+		CView::OnChar(nChar, nRepCnt, nFlags);
 	}

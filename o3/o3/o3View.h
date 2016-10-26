@@ -8,6 +8,9 @@
 #include "surfaceMesh.h"
 #include "contourProperty.h"
 
+#include "m/SurfaceMeshA.hpp"
+#include "m/SurfaceMeshB.hpp"
+
 class Co3View : public CView
 {
 protected: // create from serialization only
@@ -160,8 +163,15 @@ public:
 	void Create2DTextLists(void);
 	GLuint m_2DTextList;
 	bool showLabel;
+
+
+	//Delaunay2D d2d;
+	SurfaceMeshA sfma;
+	SurfaceMeshB sfmb;
 private:
 	contourProperty *m_pCtpDlg;
+public:
+	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
 };
 
 #ifndef _DEBUG  // debug version in o3View.cpp

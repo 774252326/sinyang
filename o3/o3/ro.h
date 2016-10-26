@@ -224,7 +224,7 @@ T **readf2(wchar_t *fn, long *r, long c){
 	T **dtt;
 	long nd;
 
-	long i,j;
+	long j;
 
 	r[0]=0;
 	if(ifs.bad()){
