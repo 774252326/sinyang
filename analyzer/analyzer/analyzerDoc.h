@@ -73,4 +73,7 @@ public:
 	int AddPD(const PlotData & pda, int lr);
 	afx_msg void OnAnalysisReport();
 	bool SaveImage(const PlotData & pd, CSize sz, CString filepath);
+
+	bool SaveImagePrint(PlotData & pd, CSize sz, CString filepath);
+	int pdfd(CString filepath);
 };

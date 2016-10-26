@@ -1365,19 +1365,19 @@ void OnePlot(PlotData & pdat,
 	std::vector<double> x(1,0);
 	std::vector<double> y(1,0);
 
-							SetData(x[0],y[0],plotFilter,doa);
-							doa.UseIndex=doa.Ar.size()-1;
+	SetData(x[0],y[0],plotFilter,doa);
+	doa.UseIndex=doa.Ar.size()-1;
 
-							outw->GetListCtrl()->SetLastUse(doa);
+	outw->GetListCtrl()->SetLastUse(doa);
 
-						if(bNewLine){
-							LineSpec ps1=lsp;
-							ps1.colour=genColor( genColorvFromIndex<float>( pdat.ps.size() ) ) ;
-							pdat.AddNew(x,y,ps1);
-						}
-						else{
-							pdat.AddFollow(x,y);
-						}
+	if(bNewLine){
+		LineSpec ps1=lsp;
+		ps1.colour=genColor( genColorvFromIndex<float>( pdat.ps.size() ) ) ;
+		pdat.AddNew(x,y,ps1);
+	}
+	else{
+		pdat.AddFollow(x,y);
+	}
 }
 
 
@@ -1424,7 +1424,7 @@ UINT OneProcess3(CanalyzerViewL *leftp,
 				postr.LoadStringW(IDS_STRING_POTENTIAL);
 				CString custr;
 				custr.LoadStringW(IDS_STRING_CURRENT);
-				pDoc->lp.back().SetSpec(postr,custr,PlotSpec(0));
+				pDoc->lp.back().SetSpec(postr,custr,PlotSpec(0,leftp->bkcr));
 			}
 
 			if(stepControl&SC_NEW_RIGHT_PLOT
@@ -1433,7 +1433,7 @@ UINT OneProcess3(CanalyzerViewL *leftp,
 					CString xla;
 					CString yla;
 					GetXYLabel(xla,yla,plotFilter);
-					pDoc->rp.back().SetSpec(xla,yla,PlotSpec(0));
+					pDoc->rp.back().SetSpec(xla,yla,PlotSpec(0,rightp->bkcr));
 			}
 
 			OneStep(outw,leftp,cba,pst,dataB,filelist,p3,!(step&DOA_MORE)/*,!(stepControl&SC_NO_PLOT)*/);
@@ -1491,12 +1491,12 @@ UINT OneProcess3(CanalyzerViewL *leftp,
 
 						OnePlot(pDoc->rp.back(),
 							outw,
-						//dataB.doa,
-						pDoc->dol.back(),
-						plotFilter,
-						stepControl,
-						((stepControl&SC_NEW_LINE)),
-						lsp);
+							//dataB.doa,
+							pDoc->dol.back(),
+							plotFilter,
+							stepControl,
+							((stepControl&SC_NEW_LINE)),
+							lsp);
 
 						if(rightp->updatePlotRange((int)(pDoc->rp.size())-1))
 							rightp->Invalidate(FALSE);
@@ -2462,7 +2462,7 @@ bool Compute11(const std::vector<DataOutA> &dol, /*PlotData & pdat,*/ const ANPa
 
 	std::vector<PlotData> pdl;
 	flg=GetPlotData(dol,sl,pdl,dolast);
-	
+
 	std::vector<double> x0;
 	std::vector<double> y0;
 	pdl.back().GetDatai(0,x0,y0);
@@ -2589,7 +2589,7 @@ bool Compute(const std::vector<DataOutA> &dol, const ANPara &p1, std::vector<CSt
 {
 	CString str,strt;
 
-	
+
 
 	switch(p1.analysistype){
 	case 0:
@@ -2734,7 +2734,7 @@ bool Compute(const std::vector<DataOutA> &dol, const ANPara &p1, std::vector<CSt
 
 				str.Format(L"Q=%gA%+g",lis.GetK(),lis.GetB());
 				res.push_back(str);
-				
+
 				return true;
 
 			}
@@ -2774,7 +2774,7 @@ bool Compute(const std::vector<DataOutA> &dol, const ANPara &p1, std::vector<CSt
 			if(Compute6(dol, p1, Lc, SPc, Q)){
 				//str.Format(L"Lc=%g,SPc=%g",Lc,SPc);
 
-				
+
 				strt.LoadStringW(IDS_STRING_L);
 				str=strt;
 				str+=L" ";
@@ -2787,7 +2787,7 @@ bool Compute(const std::vector<DataOutA> &dol, const ANPara &p1, std::vector<CSt
 				res.push_back(str);
 
 
-				
+
 				strt.LoadStringW(IDS_STRING_SAMPLE);
 				str=strt;
 				str+=L" ";
@@ -2933,7 +2933,7 @@ bool Compute(const std::vector<DataOutA> &dol, const ANPara &p1, std::vector<CSt
 				res.push_back(str);
 
 
-				
+
 				strt.LoadStringW(IDS_STRING_SAMPLE);
 				str=strt;
 				str+=L" ";
@@ -2955,7 +2955,7 @@ bool Compute(const std::vector<DataOutA> &dol, const ANPara &p1, std::vector<CSt
 		//return NER(leftp,rightp,cba,outw,*pst,p1,p2,p3);
 		{
 
-						LineSeg lis;
+			LineSeg lis;
 			if(Compute11(dol, p1, lis)){
 				//str.Format(L"nQ=%gL%+g",lis.GetK(),lis.GetB());
 
@@ -2995,7 +2995,7 @@ bool Compute(const std::vector<DataOutA> &dol, const ANPara &p1, std::vector<CSt
 				res.push_back(str);
 
 
-				
+
 				strt.LoadStringW(IDS_STRING_SAMPLE);
 				str=strt;
 				str+=L" ";
@@ -3058,7 +3058,7 @@ CString Compute(const std::vector<DataOutA> &dol, const ANPara &p1, CanalyzerVie
 
 	CString str;
 
-	
+
 
 	switch(p1.analysistype){
 	case 0:
@@ -3374,7 +3374,7 @@ CString Compute(const std::vector<DataOutA> &dol, const ANPara &p1, CanalyzerVie
 			//	}
 			//}
 
-						LineSeg lis;
+			LineSeg lis;
 			if(Compute11(dol, p1, lis)){
 				str.Format(L"nQ=%gL%+g",lis.GetK(),lis.GetB());
 
@@ -3732,6 +3732,8 @@ UINT PROCESS(LPVOID pParam)
 
 	CString strres=Compute(pDoc->dol,p1,rightp,true);
 	::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(strres.GetBuffer()),NULL);
+
+	//::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,NULL,NULL);
 
 	*pst=stop;
 	return 0;
@@ -4972,4 +4974,48 @@ CString TimeString(bool bSeg)
 	wchar_t buf[l];
 	size_t aa=mbstowcs(buf,buffer,l);
 	return CString(buf);
+}
+
+
+
+bool SaveImage(PlotData pd, CSize sz, CString filepath, CDC *pdc, COLORREF bkcr)
+{
+
+	//POSITION pos = GetFirstViewPosition();
+	//CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));	
+	//CDC* pdc=lv->GetDC();
+
+
+
+	CDC dcMem;   //用于缓冲作图的内存DC
+	dcMem.CreateCompatibleDC(pdc);               //依附窗口DC创建兼容内存DC		
+
+	CBitmap bmp;           //内存中承载临时图象的位图
+	bmp.CreateCompatibleBitmap(pdc,sz.cx,sz.cy);//创建兼容位图
+
+	dcMem.SelectObject(&bmp);  	//将位图选择进内存DC
+
+	double xmin,xmax,ymin,ymax,pct=0.02;
+	UpdateRange(pd.xll,xmin,xmax,pct,true);
+	UpdateRange(pd.yll,ymin,ymax,pct,true);
+
+	pd.psp=PlotSpec(0);
+	pd.psp.labelC=black;
+
+	CRect plotrect(0,0,sz.cx,sz.cy);
+	DrawData(plotrect,&dcMem,pd,xmin,xmax,ymin,ymax,bkcr);
+	dcMem.DeleteDC(); //删除DC
+
+	CImage img;
+	img.Attach(HBITMAP(bmp));
+	HRESULT hResult = img.Save((LPCWSTR)filepath);
+
+
+	bmp.DeleteObject(); //删除位图
+
+	if (SUCCEEDED(hResult))
+		return true;
+
+
+	return false;
 }

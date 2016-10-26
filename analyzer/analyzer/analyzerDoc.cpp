@@ -22,10 +22,11 @@
 //#include "colormapT.h"
 #include "analyzerViewL.h"
 #include "analyzerViewR.h"
-//#include "func.h"
-#include "MainFrm.h"
 
+#include "MainFrm.h"
 #include "pdfout.h"
+#include "func.h"
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -156,32 +157,32 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 			///////////////////////////////////////////////
 
 			//if(bUpdateView){
-				//POSITION pos = GetFirstViewPosition();
-				//CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));
-				//lv->selectIdx=0;
-				//lv->SetSpin(lp.size()-1);
-				//lv->updatePlotRange();
+			//POSITION pos = GetFirstViewPosition();
+			//CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));
+			//lv->selectIdx=0;
+			//lv->SetSpin(lp.size()-1);
+			//lv->updatePlotRange();
 
-				//CMainFrame *mf=(CMainFrame*)(GetNextView(pos)->GetParentFrame());
-				//CMainFrame *mf=(CMainFrame*)(lv->GetParentFrame());
-				//COutputList* ol=mf->GetOutputWnd()->GetListCtrl();
-				//ol->DeleteAllItems();
+			//CMainFrame *mf=(CMainFrame*)(GetNextView(pos)->GetParentFrame());
+			//CMainFrame *mf=(CMainFrame*)(lv->GetParentFrame());
+			//COutputList* ol=mf->GetOutputWnd()->GetListCtrl();
+			//ol->DeleteAllItems();
 
-				//size_t c=0;
-				//for(size_t i=0;i<dol.size();i++){
-				//	for(size_t j=0;j<dol[i].Ar.size();j++){
-				//		ol->InsertListCtrl(c,dol[i],i,j);
-				//		c++;
-				//	}
-				//}
+			//size_t c=0;
+			//for(size_t i=0;i<dol.size();i++){
+			//	for(size_t j=0;j<dol[i].Ar.size();j++){
+			//		ol->InsertListCtrl(c,dol[i],i,j);
+			//		c++;
+			//	}
+			//}
 
-				//CString str=Compute(dol,p1);
-				//mf->GetCaptionBar()->ShowMessage(str);
+			//CString str=Compute(dol,p1);
+			//mf->GetCaptionBar()->ShowMessage(str);
 
-				//CanalyzerViewR* rv=((CanalyzerViewR*)GetNextView(pos));
-				//rv->selectIdx=0;
-				//rv->SetSpin(rp.size()-1);
-				//rv->updatePlotRange();
+			//CanalyzerViewR* rv=((CanalyzerViewR*)GetNextView(pos));
+			//rv->selectIdx=0;
+			//rv->SetSpin(rp.size()-1);
+			//rv->updatePlotRange();
 
 
 			//}
@@ -406,7 +407,8 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		fp=fp.Left(fp.ReverseFind('\\')+1);
 		fp+=TimeString()+L".pdf";
 
-		if(pdfd(fp,this)==0){
+		//if(pdfd(fp,this)==0){
+		if(pdfd(fp)==0){
 			//AfxMessageBox(L"report "+fp+L" is saved");
 
 			ShellExecute(NULL, L"open", fp, NULL, NULL, SW_SHOW);
@@ -423,8 +425,12 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 	{
 
 		POSITION pos = GetFirstViewPosition();
-		CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));
+		CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));	
 		CDC* pdc=lv->GetDC();
+
+		//return ::SaveImage(pd,sz,filepath,pdc,lv->bkcr);
+
+
 
 		CDC dcMem;   //用于缓冲作图的内存DC
 		dcMem.CreateCompatibleDC(pdc);               //依附窗口DC创建兼容内存DC		
@@ -437,6 +443,7 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		double xmin,xmax,ymin,ymax,pct=0.02;
 		UpdateRange(pd.xll,xmin,xmax,pct,true);
 		UpdateRange(pd.yll,ymin,ymax,pct,true);
+		//pd.psp=PlotSpec(0);
 
 		CRect plotrect(0,0,sz.cx,sz.cy);
 		DrawData(plotrect,&dcMem,pd,xmin,xmax,ymin,ymax,lv->bkcr);
@@ -452,4 +459,112 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 
 
 		return false;
+	}
+
+
+
+	bool CanalyzerDoc::SaveImagePrint(PlotData & pd, CSize sz, CString filepath)
+	{
+
+		POSITION pos = GetFirstViewPosition();
+		CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));	
+		CDC* pdc=lv->GetDC();
+		//pd.psp=PlotSpec(0);
+		//return ::SaveImage(pd,sz,filepath,pdc);
+
+
+
+		//CDC dcMem;   //用于缓冲作图的内存DC
+		//dcMem.CreateCompatibleDC(pdc);               //依附窗口DC创建兼容内存DC		
+
+		//CBitmap bmp;           //内存中承载临时图象的位图
+		//bmp.CreateCompatibleBitmap(pdc,sz.cx,sz.cy);//创建兼容位图
+
+		//dcMem.SelectObject(&bmp);  	//将位图选择进内存DC
+
+		//double xmin,xmax,ymin,ymax,pct=0.02;
+		//UpdateRange(pd.xll,xmin,xmax,pct,true);
+		//UpdateRange(pd.yll,ymin,ymax,pct,true);
+		////
+
+		//CRect plotrect(0,0,sz.cx,sz.cy);
+		//DrawData(plotrect,&dcMem,pd,xmin,xmax,ymin,ymax,lv->bkcr);
+
+		//CImage img;
+		//img.Attach(HBITMAP(bmp));
+		//HRESULT hResult = img.Save((LPCWSTR)filepath);
+
+		//dcMem.DeleteDC(); //删除DC
+		//bmp.DeleteObject(); //删除位图
+		//if (SUCCEEDED(hResult))
+		//	return true;
+
+
+		return false;
+	}
+
+	int CanalyzerDoc::pdfd(CString outfile)
+	{
+		const std::wstring searchpath = L"../data";
+
+		const std::wstring temppdf = L"temp.pdf";
+
+		pdflib::PDFlib p;
+
+		std::wostringstream optlist;
+
+		optlist.str(L"");
+
+		p.set_parameter(L"errorpolicy", L"return");
+
+		p.set_parameter(L"SearchPath", searchpath);
+
+		if (p.begin_document(temppdf, optlist.str()) == -1) {
+			//if (p.begin_document((LPCWSTR)outfile, L"") == -1) {
+			std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
+			return 2;
+		}
+		p.set_info(L"Creator", L"PDFlib starter sample");
+		p.set_info(L"Title", L"starter_table");
+
+		int a;
+
+
+		std::vector<CString> res;
+		bool flg=Compute(dol, p1, res);
+
+		a=pdfout6(p,p1,res,p2,p3);
+
+		a=pdfout(p,dol);
+		
+		std::vector<PlotData> pdl;
+		pdl.assign(lp.begin(),lp.end());
+		pdl.resize(rp.size()+lp.size());
+		std::copy_backward(rp.begin(),rp.end(),pdl.end());
+
+		CString str;
+		str.LoadStringW(IDS_STRING_VOLTAMMOGRAM);
+		std::vector<CString> nl;
+		nl.assign(lp.size(),str);
+		str.LoadStringW(IDS_STRING_TEST_CURVE);
+		nl.resize(rp.size()+lp.size(),str);
+
+
+		POSITION pos = GetFirstViewPosition();
+		CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));	
+		CDC* pdc=lv->GetDC();
+
+		a=imgout2(p,pdc,pdl,nl);
+
+
+		//a=imgout2(p,this,pdl,nl);
+
+		p.end_document(optlist.str());
+
+		AddPageNumber(temppdf,(LPCWSTR)outfile);
+
+		CFile::Remove(temppdf.c_str());
+
+		return 0;
+		//return 0;
 	}

@@ -12,7 +12,7 @@ public:
 	PlotSpec(const PlotSpec &src){ operator=(src); };
 
 	PlotSpec(int i);
-
+	PlotSpec(int i, COLORREF ic);
 
 	COLORREF bkgndC;
 	COLORREF borderC;

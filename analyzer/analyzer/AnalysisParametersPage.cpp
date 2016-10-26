@@ -225,25 +225,59 @@ void AnalysisParametersPage::ComboSelectChange(void)
 	case 11:
 		this->GetDlgItem(IDS_COMBO_CALIBRATION_TYPE)->ShowWindow(SW_HIDE);
 		//this->GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR)->ShowWindow(SW_HIDE);
-		//this->GetDlgItem(IDS_EDIT_CALIBRATION_CURVE_FILE)->ShowWindow(SW_HIDE);
-		//this->GetDlgItem(IDS_EDIT_INTERCEPT_VALUE)->ShowWindow(SW_HIDE);
+
+		this->GetDlgItem(IDS_STRING_CALIBRATION_CURVE_FILE)->ShowWindow(SW_HIDE);
+		this->GetDlgItem(IDS_STRING_INTERCEPT_VALUE)->ShowWindow(SW_HIDE);
 
 		this->GetDlgItem(IDS_COMBO_CALIBRATION_TYPE)->EnableWindow(FALSE);
 
 		//this->GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR)->EnableWindow(FALSE);
 		//this->GetDlgItem(IDS_EDIT_CALIBRATION_CURVE_FILE)->EnableWindow(FALSE);
 		//this->GetDlgItem(IDS_EDIT_INTERCEPT_VALUE)->EnableWindow(FALSE);
+
+		this->GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR)->ShowWindow(SW_HIDE);
+		this->GetDlgItem(IDS_EDIT_CALIBRATION_CURVE_FILE)->ShowWindow(SW_HIDE);
+		this->GetDlgItem(IDS_EDIT_INTERCEPT_VALUE)->ShowWindow(SW_HIDE);
+
 		break;
 	case 2:
+		this->GetDlgItem(IDS_COMBO_CALIBRATION_TYPE)->ShowWindow(SW_SHOW);
+		this->GetDlgItem(IDS_COMBO_CALIBRATION_TYPE)->EnableWindow(TRUE);
+
+		this->GetDlgItem(IDS_STRING_CALIBRATION_CURVE_FILE)->ShowWindow(SW_HIDE);
+		this->GetDlgItem(IDS_STRING_INTERCEPT_VALUE)->ShowWindow(SW_HIDE);
+
+		CalibrationComboSelectChange();
+		break;
 	case 4:
+
+		this->GetDlgItem(IDS_COMBO_CALIBRATION_TYPE)->ShowWindow(SW_HIDE);
+		this->GetDlgItem(IDS_COMBO_CALIBRATION_TYPE)->EnableWindow(FALSE);
+
+		this->GetDlgItem(IDS_STRING_CALIBRATION_CURVE_FILE)->ShowWindow(SW_HIDE);
+		this->GetDlgItem(IDS_STRING_INTERCEPT_VALUE)->ShowWindow(SW_SHOW);
+		
+		this->GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR)->ShowWindow(SW_HIDE);
+		this->GetDlgItem(IDS_EDIT_CALIBRATION_CURVE_FILE)->ShowWindow(SW_HIDE);
+		this->GetDlgItem(IDS_EDIT_INTERCEPT_VALUE)->ShowWindow(SW_SHOW);
+
+		break;
 	case 6:
 	case 8:
 	case 10:
 	case 12:
-		this->GetDlgItem(IDS_COMBO_CALIBRATION_TYPE)->ShowWindow(SW_SHOW);
 
-		this->GetDlgItem(IDS_COMBO_CALIBRATION_TYPE)->EnableWindow(TRUE);
 
+		this->GetDlgItem(IDS_COMBO_CALIBRATION_TYPE)->ShowWindow(SW_HIDE);
+		this->GetDlgItem(IDS_COMBO_CALIBRATION_TYPE)->EnableWindow(FALSE);
+
+		this->GetDlgItem(IDS_STRING_CALIBRATION_CURVE_FILE)->ShowWindow(SW_SHOW);
+		this->GetDlgItem(IDS_STRING_INTERCEPT_VALUE)->ShowWindow(SW_HIDE);
+
+
+				this->GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR)->ShowWindow(SW_HIDE);
+		this->GetDlgItem(IDS_EDIT_CALIBRATION_CURVE_FILE)->ShowWindow(SW_SHOW);
+		this->GetDlgItem(IDS_EDIT_INTERCEPT_VALUE)->ShowWindow(SW_HIDE);
 		//this->GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR)->ShowWindow(SW_SHOW);
 		//this->GetDlgItem(IDS_EDIT_CALIBRATION_CURVE_FILE)->ShowWindow(SW_SHOW);
 		//this->GetDlgItem(IDS_EDIT_INTERCEPT_VALUE)->ShowWindow(SW_SHOW);
@@ -252,7 +286,7 @@ void AnalysisParametersPage::ComboSelectChange(void)
 		break;
 	}
 
-	CalibrationComboSelectChange();
+	
 
 
 	switch(para.analysistype){
@@ -471,16 +505,37 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 
 
+
+	str.LoadStringW(IDS_STRING_INTERCEPT_VALUE);
+	pStatic=new CStatic;
+	pStatic->Create(
+		str,
+		//WS_VISIBLE|
+		WS_CHILD, 
+		CRect(pt,staticSize),
+		this,
+		IDS_STRING_INTERCEPT_VALUE);
+
+	str.LoadStringW(IDS_STRING_CALIBRATION_CURVE_FILE);
+	pStatic=new CStatic;
+	pStatic->Create(
+		str,
+		//WS_VISIBLE|
+		WS_CHILD, 
+		CRect(pt,staticSize),
+		this,
+		IDS_STRING_CALIBRATION_CURVE_FILE);
+
 	pCombo2=new CComboBox;
 	pCombo2->Create(
-		CBS_DROPDOWN
-		|WS_CHILD
-		|WS_VISIBLE, 
+		CBS_DROPDOWN|
+		//WS_VISIBLE|
+		WS_CHILD, 
 		CRect(pt,staticSize),
 		this,
 		IDS_COMBO_CALIBRATION_TYPE);
 
-	for(int i=IDS_STRING_CALIBRATION_FACTOR;i<=IDS_STRING_INTERCEPT_VALUE;i++){
+	for(int i=IDS_STRING_CALIBRATION_FACTOR;i<=IDS_STRING_CALIBRATION_CURVE_FILE;i++){
 		str.LoadStringW(i);
 		pCombo2->AddString(str);
 	}
@@ -762,6 +817,8 @@ void AnalysisParametersPage::CalibrationComboSelectChange(void)
 		//GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR+i)->ShowWindow(SW_HIDE);
 		//}
 		//}
+
+
 
 	}
 

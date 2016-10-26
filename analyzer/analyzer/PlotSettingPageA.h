@@ -48,4 +48,5 @@ public:
 	//int GetChoice(int nIterm, int nSubItem);
 //	CString xlabel;
 //	CString ylabel;
+	COLORREF bkcr;
 };

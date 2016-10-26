@@ -103,6 +103,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 
 
+	//CMFCToolBar::SetCustomizeMode(TRUE);
 
 	
 
@@ -226,6 +227,8 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 			//CMFCToolBar::SetUserImages(&m_UserImages);
 		}
 	}
+
+	//m_wndToolBar.SetCustomizeMode(FALSE);
 
 	// enable menu personalization (most-recently used commands)
 	// TODO: define your own basic commands, ensuring that each pulldown menu has at least one basic command.
@@ -370,9 +373,9 @@ void CMainFrame::Dump(CDumpContext& dc) const
 
 void CMainFrame::OnViewCustomize()
 {
-	CMFCToolBarsCustomizeDialog* pDlgCust = new CMFCToolBarsCustomizeDialog(this, TRUE /* scan menus */);
-	pDlgCust->EnableUserDefinedToolbars();
-	pDlgCust->Create();
+	//CMFCToolBarsCustomizeDialog* pDlgCust = new CMFCToolBarsCustomizeDialog(this, TRUE /* scan menus */);
+	//pDlgCust->EnableUserDefinedToolbars();
+	//pDlgCust->Create();
 }
 
 LRESULT CMainFrame::OnToolbarCreateNew(WPARAM wp,LPARAM lp)
@@ -391,7 +394,7 @@ LRESULT CMainFrame::OnToolbarCreateNew(WPARAM wp,LPARAM lp)
 	bNameValid = strCustomize.LoadString(IDS_TOOLBAR_CUSTOMIZE);
 	ASSERT(bNameValid);
 
-	pUserToolbar->EnableCustomizeButton(TRUE, ID_VIEW_CUSTOMIZE, strCustomize);
+	pUserToolbar->EnableCustomizeButton(FALSE, ID_VIEW_CUSTOMIZE, strCustomize);
 	return lres;
 }
 
@@ -516,7 +519,7 @@ BOOL CMainFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParent
 		CMFCToolBar* pUserToolbar = GetUserToolBarByIndex(i);
 		if (pUserToolbar != NULL)
 		{
-			pUserToolbar->EnableCustomizeButton(TRUE, ID_VIEW_CUSTOMIZE, strCustomize);
+			pUserToolbar->EnableCustomizeButton(FALSE, ID_VIEW_CUSTOMIZE, strCustomize);
 		}
 	}
 

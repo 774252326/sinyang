@@ -1,3 +1,5 @@
+#pragma once
+
 
 //#include "stdafx.h"
 //#include "dlg1.h"
@@ -14,6 +16,7 @@
 #include "PlotData.h"
 #include <vector>
 #include <algorithm>
+#include "colormapT.h"
 
 //bool isend=false;
 //bool waiting=false;
@@ -154,6 +157,8 @@ void AdjustWidth(CListCtrl *ls, int nCol, CString str, int gap=12);
 void AdjustWidth(CListCtrl *ls, int nCol, int nRow, int gap=12);
 
 CString TimeString(bool bSeg=false);
+
+bool SaveImage(PlotData pd, CSize sz, CString filepath, CDC *pdc, COLORREF bkcr=white);
 
 
 //typedef struct ANRESULT{

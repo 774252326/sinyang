@@ -430,7 +430,9 @@ void PlotSettingPage::SetList(void)
 
 void PlotSettingPage::GetList(void)
 {
-	fs=PlotSpec( ((CComboBox*)GetDlgItem(IDS_COMBO_COLOR_STYLE))->GetCurSel() );
+	//fs=PlotSpec( ((CComboBox*)GetDlgItem(IDS_COMBO_COLOR_STYLE))->GetCurSel() );
+
+	fs=PlotSpec( ((CComboBox*)GetDlgItem(IDS_COMBO_COLOR_STYLE))->GetCurSel(), bkcr );
 
 	//fs.bkgndC=( (CColorButton*)GetDlgItem(IDS_COLOR_BKGND) )->color;
 	//fs.borderC=( (CColorButton*)GetDlgItem(IDS_COLOR_BORDER) )->color;

@@ -451,6 +451,8 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 				//,pd->ylabel
 				);
 
+			fig1setting.bkcr=this->bkcr;
+
 			sheet.AddPage(&fig1setting);
 
 			// 打开模态向导对话框   

@@ -104,6 +104,45 @@ PlotSpec::PlotSpec(int i)
 	metricSize=15;
 }
 
+
+
+PlotSpec::PlotSpec(int i, COLORREF ic)
+{
+	if(i<0)
+		i=-i;
+	int k=i%3;
+
+	int j=k;
+	//i--;
+	
+	BYTE b=ic>>16;
+	BYTE g=ic>>8;
+	BYTE r=ic;
+
+	BYTE gray=(r*38 + g*75 + b*15) >> 7;
+
+	if(gray>10){
+		j--;
+		if(gray>245){
+			j--;
+		}
+	}
+	BYTE bcg=gray+j*10;
+	BYTE fcg=(bcg>127)?0:255;
+
+	bkgndC=RGB(bcg,bcg,bcg);
+	borderC=RGB(bcg,bcg,bcg);
+	gridC=RGB(fcg,fcg,fcg);
+	metricC=RGB(fcg,fcg,fcg);
+	labelC=255<<(k*8);
+
+	gridType=5;
+	labelSize=20;
+	metricSize=15;
+}
+
+
+
 void PlotSpec::operator=(const PlotSpec &src)
 {
 	bkgndC=src.bkgndC;
@@ -149,15 +188,29 @@ void PlotSpec::Serialize(CArchive& ar)
 
 int PlotSpec::GetCrType(void)
 {
-	for(int i=0;i<ncr;i++){
-		int j=i*ncritm;
-		if(	bkgndC==crl[j++]
-		&& borderC==crl[j++]
-		&& gridC==crl[j++]
-		&& metricC==crl[j++]
-		&& labelC==crl[j++])
-			return i;
+	//for(int i=0;i<ncr;i++){
+	//	int j=i*ncritm;
+	//	if(	bkgndC==crl[j++]
+	//	&& borderC==crl[j++]
+	//	&& gridC==crl[j++]
+	//	&& metricC==crl[j++]
+	//	&& labelC==crl[j++])
+	//		return i;
+	//}
+
+
+	switch(labelC){
+	case RGB(255,0,0):
+		return 0;
+	case RGB(0,255,0):
+		return 1;
+	case RGB(0,0,255):
+		return 2;
+	default:
+		break;
 	}
+	
+
 
 	return -1;
 }
