@@ -96,16 +96,6 @@ bool SARCalibCurve::CalSARLine(double evoR, double & c1, double & c0)
 
 		if(ni>0){
 			SortInsert(xs,ys,r.back()*scl[i].AC/scl[i].SC,r.back());
-
-			//double x1=r.back()*scl[i].AC/scl[i].SC;
-			//
-
-			//	std::vector<double>::iterator it;
-			//	it = std::find_first_of (xs.begin(), xs.end(),&x1, (&x1)+1, compless);
-			//	size_t idx=it-xs.begin();
-			//	xs.insert(it,x1);
-			//	ys.insert(ys.begin()+idx,r.back());
-
 		}
 
 		si+=ll[i];

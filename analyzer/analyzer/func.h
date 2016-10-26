@@ -18,6 +18,20 @@
 //bool isend=false;
 //bool waiting=false;
 
+#define SC_STEP_COMPLETE 0x01
+#define SC_NEW_RIGHT_PLOT 0x02
+#define SC_NO_PLOT 0x04
+#define SC_PLOT_LAST 0x08
+#define SC_NEW_LINE 0x10
+#define SC_NEW_ONCE 0x20
+
+
+#define PF_Q_NORMALIZED 0x04
+#define PF_CONCERTRATION 0x08
+#define PF_S 0x10
+#define PF_A 0x20
+#define PF_L 0x40
+#define PF_SAMPLE 0x80
 
 
 typedef struct MYPARA{
