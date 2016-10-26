@@ -63,6 +63,11 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		bUpdateView=false;
 	}
 
+	CanalyzerDoc::CanalyzerDoc(bool flg)
+	{
+		bUpdateView=flg;
+	}
+
 
 	CanalyzerDoc::~CanalyzerDoc()
 	{
@@ -349,4 +354,19 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		default:
 			return -1;
 		}
+	}
+
+	int CanalyzerDoc::AddPD(const PlotData & pda, int lr)
+	{
+		switch(lr){
+		case 0:
+			lp.push_back(pda);
+			return lp.size();
+		case 1:	
+			rp.push_back(pda);
+			return rp.size();
+		default:
+			return -1;
+		}
+		//return 0;
 	}

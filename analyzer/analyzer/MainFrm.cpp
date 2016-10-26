@@ -558,7 +558,7 @@ void CMainFrame::OnUpdateAnalysisStartanalysis(CCmdUI *pCmdUI)
 void CMainFrame::OnUpdateViewFitwindow(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst!=running);
+	//pCmdUI->Enable(pst!=running);
 }
 
 

@@ -78,7 +78,7 @@ public:
 	bool updatePlotRange(int plotIndex, bool flg=true);
 	bool updatePlotRange(bool flg=true);
 
-//	int AddPlot(const PlotData & pda);
+	int AddPlot(const PlotData & pda);
 
 
 	void OnDeltaposSpin(NMHDR* pNMHDR, LRESULT* pResult);
@@ -102,6 +102,7 @@ public:
 	int lri;
 	PlotData * GetPD(void);
 	PlotData * GetPD(int idx);
+	bool SavePic(CSize sz, CString filename);
 };
 
 #ifndef _DEBUG  // debug version in analyzerView.cpp

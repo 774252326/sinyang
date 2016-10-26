@@ -22,6 +22,7 @@ public:
 
 	void operator=(const CanalyzerDoc &src);
 	CanalyzerDoc(const CanalyzerDoc &src){ operator=(src); };
+	CanalyzerDoc(bool flg);
 
 	ANPara p1;
 	CVPara p2;
@@ -68,4 +69,5 @@ public:
 	bool bUpdateView;
 	PlotData * GetPD(int lr, int index);
 	int GetNPD(int lr);
+	int AddPD(const PlotData & pda, int lr);
 };

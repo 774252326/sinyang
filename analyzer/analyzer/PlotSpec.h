@@ -26,6 +26,7 @@ public:
 	COLORREF metricC;
 	int metricSize;
 	virtual void Serialize(CArchive& ar);
+	int GetCrType(void);
 };
 
 

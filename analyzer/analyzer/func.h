@@ -123,7 +123,10 @@ void DrawData1(CRect &plotrect
 	, const double &xmin
 	, const double &xmax
 	, const double &ymin
-	, const double &ymax);
+	, const double &ymax
+	, COLORREF textColor=0);
+
+inline COLORREF inv(const COLORREF &oc);
 
 
 HCURSOR BigCross(const CRect &rect, const CPoint & pt);

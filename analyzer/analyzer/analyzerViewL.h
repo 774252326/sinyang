@@ -6,6 +6,6 @@ class CanalyzerViewL :
 public:
 	CanalyzerViewL(void);
 	~CanalyzerViewL(void);
-	int AddPlot(const PlotData & pda);
+	//int AddPlot(const PlotData & pda);
 };
 

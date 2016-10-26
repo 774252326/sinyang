@@ -67,7 +67,7 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 	}
 
 
-		CanalyzerView::CanalyzerView(int i)
+	CanalyzerView::CanalyzerView(int i)
 		: xmin(0)
 		, xmax(0)
 		, ymin(0)
@@ -118,7 +118,7 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 			CRect plotrect=rect;
 
 			DrawData(plotrect,&dcMem,*pd,xmin,xmax,ymin,ymax);
-			if(bMouseCursor){
+			if(bMouseCursor && !pd->ps.empty()){
 				//CString str;
 				//str.Format(L"%g,%g",pDoc->lp[m_spBtn.GetPos32()].xll[selectIdx],pDoc->lp[m_spBtn.GetPos32()].yll[selectIdx]);
 				//dcMem.TextOutW(m_mouseDownPoint.x,m_mouseDownPoint.y,str);
@@ -127,7 +127,8 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 					,&dcMem
 					,pd->xll[selectIdx]
 				,pd->yll[selectIdx]
-				,xmin,xmax,ymin,ymax);
+				,xmin,xmax,ymin,ymax
+					,inv(pd->psp.bkgndC));
 			}
 
 			pDC->BitBlt(0,0,rect.Width(),rect.Height(),&dcMem,0,0,SRCCOPY);//将内存DC上的图象拷贝到前台
@@ -392,13 +393,13 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 
 		switch(lri){
 		case 0:
-		if( !(pDoc->lp.empty()) )
-			pDoc->lp.clear();
-		return;
+			if( !(pDoc->lp.empty()) )
+				pDoc->lp.clear();
+			return;
 		case 1:
-					if( !(pDoc->rp.empty()) )
-			pDoc->rp.clear();
-					return;
+			if( !(pDoc->rp.empty()) )
+				pDoc->rp.clear();
+			return;
 		default:
 			return;
 		}
@@ -421,6 +422,9 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		// TODO: Add your command handler code here
 
 		//AfxMessageBox(L"left");
+
+
+		//SavePic(CSize(1000,600),L"view.jpg");
 
 
 		// 创建属性表对象   
@@ -591,11 +595,11 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		//CanalyzerDoc* pDoc=GetDocument();
 		//int idx=m_spBtn.GetPos32();
 
-				//PlotData * pd=pDoc->GetPD(lri,idx);
+		//PlotData * pd=pDoc->GetPD(lri,idx);
 		PlotData * pd=GetPD();
 
 		if(pd!=NULL && !pd->ps.empty() ){
-						ScreenToClient(&pt);
+			ScreenToClient(&pt);
 			CRect plotrect;
 			this->GetClientRect(&plotrect);
 			if( WheelUpdate(plotrect
@@ -638,7 +642,7 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		//return updatePlotRange(plotIndex,pDoc->lp[plotIndex].xll,pDoc->lp[plotIndex].yll,flg);
 
 
-		
+
 		PlotData *pd=GetPD(plotIndex);
 		if(pd==NULL)
 			return false;
@@ -667,14 +671,18 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 	}
 
 
-//	int CanalyzerView::AddPlot(const PlotData & pda)
-//	{
-//		CanalyzerDoc* pDoc=GetDocument();
-//		pDoc->lp.push_back(pda);
-//		int newi=pDoc->lp.size()-1;
-//		SetSpin(newi);
-//		return newi;
-//	}
+	int CanalyzerView::AddPlot(const PlotData & pda)
+	{
+		CanalyzerDoc* pDoc=GetDocument();
+
+		//pDoc->lp.push_back(pda);
+		//int newi=pDoc->lp.size()-1;
+		int newi=pDoc->AddPD(pda,lri)-1;
+		selectIdx=0;
+		bMouseCursor=false;
+		SetSpin(newi);
+		return newi;
+	}
 
 	void CanalyzerView::OnViewFitwindow()
 	{
@@ -709,6 +717,9 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 
 		UpdateRange(pd->xll,xmin,xmax,pct,true);
 		UpdateRange(pd->yll,ymin,ymax,pct,true);
+
+		selectIdx=0;
+		bMouseCursor=false;
 
 		Invalidate(FALSE);
 
@@ -801,4 +812,34 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		//	return NULL;
 
 		return pDoc->GetPD(lri,idx);	
+	}
+
+	bool CanalyzerView::SavePic(CSize sz, CString filename)
+	{
+
+		PlotData *pd=GetPD();
+		if(pd!=NULL){  			
+			CDC* pdc=this->GetDC();
+			CDC dcMem;   //用于缓冲作图的内存DC
+			dcMem.CreateCompatibleDC(pdc);               //依附窗口DC创建兼容内存DC		
+
+			CBitmap bmp;           //内存中承载临时图象的位图
+			bmp.CreateCompatibleBitmap(pdc,sz.cx,sz.cy);//创建兼容位图
+
+			dcMem.SelectObject(&bmp);  	//将位图选择进内存DC
+
+			CRect plotrect(0,0,sz.cx,sz.cy);
+			DrawData(plotrect,&dcMem,*pd,xmin,xmax,ymin,ymax);
+
+			CImage img;
+			img.Attach(HBITMAP(bmp));
+			HRESULT hResult = img.Save((LPCWSTR)filename);
+
+			dcMem.DeleteDC(); //删除DC
+			bmp.DeleteObject(); //删除位图
+			if (SUCCEEDED(hResult))
+				return true;
+			
+		}
+		return false;
 	}

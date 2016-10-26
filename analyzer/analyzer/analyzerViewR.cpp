@@ -13,11 +13,11 @@ CanalyzerViewR::~CanalyzerViewR(void)
 {
 }
 
-int CanalyzerViewR::AddPlot(const PlotData & pda)
-{
-	CanalyzerDoc* pDoc=GetDocument();
-	pDoc->rp.push_back(pda);
-	int newi=pDoc->rp.size()-1;
-	SetSpin(newi);
-	return newi;
-}
+//int CanalyzerViewR::AddPlot(const PlotData & pda)
+//{
+//	CanalyzerDoc* pDoc=GetDocument();
+//	pDoc->rp.push_back(pda);
+//	int newi=pDoc->rp.size()-1;
+//	SetSpin(newi);
+//	return newi;
+//}

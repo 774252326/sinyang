@@ -39,13 +39,32 @@ PlotSpec::~PlotSpec()
 
 PlotSpec::PlotSpec(int i)
 {
-	bkgndC=white;
-	borderC=black;
-	gridC=black;
+	switch(i){
+	case 0:
+		bkgndC=white;
+		borderC=black;
+		gridC=black;
+		metricC=black;
+		labelC=blue;
+		break;
+	case 1:
+		bkgndC=black;
+		borderC=white;
+		gridC=white;
+		metricC=white;
+		labelC=blue;
+		break;
+	default:
+		bkgndC=white;
+		borderC=black;
+		gridC=black;
+		metricC=black;
+		labelC=blue;
+		break;
+	}
+
 	gridType=3;
-	labelC=blue;
 	labelSize=20;
-	metricC=black;
 	metricSize=15;
 }
 
@@ -90,4 +109,24 @@ void PlotSpec::Serialize(CArchive& ar)
 			>> metricC
 			>> metricSize;
 	}
+}
+
+
+int PlotSpec::GetCrType(void)
+{
+	if(	bkgndC==white
+		&& borderC==black
+		&& gridC==black
+		&& metricC==black
+		&& labelC==blue)
+		return 0;
+
+	if(	bkgndC==black
+		&& borderC==white
+		&& gridC==white
+		&& metricC==white
+		&& labelC==blue)
+		return 1;
+
+	return -1;
 }

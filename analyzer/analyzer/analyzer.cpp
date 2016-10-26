@@ -165,7 +165,7 @@ int CanalyzerApp::ExitInstance()
 {
 	//TODO: handle additional resources you may have added
 
-	this->CleanState(); 
+	//this->CleanState(); 
 
 
 	AfxOleTerm(FALSE);

@@ -171,7 +171,7 @@
     <ClCompile Include="pcct.cpp" />
     <ClCompile Include="pcctB.cpp" />
     <ClCompile Include="PlotData.cpp" />
-    <ClCompile Include="PlotSettingPage.cpp" />
+    <ClCompile Include="PlotSettingPageA.cpp" />
     <ClCompile Include="PlotSpec.cpp" />
     <ClCompile Include="SAPara.cpp" />
     <ClCompile Include="sapitemA.cpp" />

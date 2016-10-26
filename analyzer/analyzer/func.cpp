@@ -26,37 +26,29 @@
 
 
 int intv=1;
-size_t n1=100;
+size_t n1=1000;
 //PlotSpec psp0;
 
-//CString folderp=L"C:\\Users\\r8anw2x\\Desktop\\";
+CString folderp=L"C:\\Users\\r8anw2x\\Desktop\\data\\d\\";
+//CString folderp=L"data\\d\\";
+//CString folderp=L"C:\\Users\\G\\Desktop\\data\\d\\";
 
-CString folderp=L"C:\\Users\\G\\Desktop\\";
-
-//CString DTRsetup=L"data\\b1.ghb";
-CString DTRflist=folderp+L"data\\dtr\\b.txt";
-CString DEMOflist=folderp+L"data\\d\\fl1.txt";
-
-CString DTAflist=folderp+L"data\\dta\\c.txt";
-
-CString LATRflist=folderp+L"data\\latr\\d.txt";
-
-CString LATAflist=folderp+L"data\\lata\\e.txt";
-
-CString RCRflist=folderp+L"data\\rcr\\f1.txt";
-
-CString RCAflist=folderp+L"data\\rca\\g.txt";
-
-CString SARRflist=folderp+L"data\\sarr\\h1.txt";
-
-CString SARAflist=folderp+L"data\\sara\\i.txt";
+CString DEMOflist=folderp+L"fl1.txt";
+CString DTRflist=folderp+L"dtr.txt";
+CString DTAflist=folderp+L"dta.txt";
+CString LATRflist=folderp+L"latr.txt";
+CString LATAflist=folderp+L"lata.txt";
+CString RCRflist=folderp+L"rcr.txt";
+CString RCAflist=folderp+L"rca.txt";
+CString SARRflist=folderp+L"sarr.txt";
+CString SARAflist=folderp+L"sara.txt";
 
 
 
 void WaitSecond(ProcessState &waitflg
 	//,int second=-1
-	,int second=2
-	//,int second=0
+	//,int second=2
+	,int second=0
 	)
 {
 	int interval=1000;
@@ -851,11 +843,11 @@ UINT DEMOP(CanalyzerViewL *leftp,
 
 	rightp->AddPlot(PlotData());
 	pDoc->rp.back().psp=PlotSpec(0);
-		rightp->AddPlot(PlotData());
+	rightp->AddPlot(PlotData());
 	pDoc->rp.back().psp=PlotSpec(0);
-		rightp->AddPlot(PlotData());
+	rightp->AddPlot(PlotData());
 	pDoc->rp.back().psp=PlotSpec(0);
-		rightp->AddPlot(PlotData());
+	rightp->AddPlot(PlotData());
 	pDoc->rp.back().psp=PlotSpec(0);
 
 
@@ -1214,7 +1206,8 @@ UINT DTA(CanalyzerViewL *leftp,
 		//	if(rightp->updatePlotRange(0))
 		//		rightp->Invalidate(FALSE);
 
-		CanalyzerDoc tmp(*pDoc);
+
+		CanalyzerDoc tmp(false);
 		if(ReadFileCustom(&tmp,1,p1.calibrationfilepath)){
 			tmp.rp.front().ps.back().name.LoadStringW(IDS_STRING_CALIBRATION_CURVE);
 			rightp->AddPlot(tmp.rp.front());
@@ -1765,7 +1758,7 @@ UINT RCA(CanalyzerViewL *leftp,
 		//		rightp->Invalidate(FALSE);
 
 
-		CanalyzerDoc tmp(*pDoc);
+		CanalyzerDoc tmp(false);
 		if(ReadFileCustom(&tmp,1,p1.calibrationfilepath)){
 			tmp.rp.front().ps.back().name.LoadStringW(IDS_STRING_CALIBRATION_CURVE);
 			rightp->AddPlot(tmp.rp.front());
@@ -1776,7 +1769,8 @@ UINT RCA(CanalyzerViewL *leftp,
 
 		}
 		else{
-			return 0;
+			pst=stop;
+			return 1;
 		}
 	}
 	else{
@@ -2075,7 +2069,7 @@ UINT SARA(CanalyzerViewL *leftp,
 
 	SARCalibCurve scc;
 	{
-		CanalyzerDoc tmp(*pDoc);
+		CanalyzerDoc tmp(false);
 		if(ReadFileCustom(&tmp,1,p1.calibrationfilepath)){
 
 			scc.ll.assign(tmp.rp[0].ll.begin(), tmp.rp[0].ll.end());
@@ -2327,7 +2321,7 @@ int metricGridLong=5;
 int metricGridShort=3;
 int gap0=10;
 
-COLORREF inv(const COLORREF &oc){
+inline COLORREF inv(const COLORREF &oc){
 	return (oc^0x00ffffff);
 }
 
@@ -3046,15 +3040,18 @@ void DrawData1(CRect &plotrect
 	, const double &xmin
 	, const double &xmax
 	, const double &ymin
-	, const double &ymax)
+	, const double &ymax
+	, COLORREF textColor)
 {
 	if( x>xmin && x<xmax && y>ymin && y<ymax ){
-			CString str;
-				str.Format(L"%g,%g",x,y);
+		CString str;
+		str.Format(L"%g,%g",x,y);
 
-				int px=xRescale(x,xmin,xmax,plotrect.left,plotrect.right);
-				int py=xRescale(y,ymin,ymax,plotrect.bottom,plotrect.top);
-				pDC->TextOutW(px,py,str);
+		COLORREF cr=pDC->SetTextColor(textColor);
+		int px=xRescale(x,xmin,xmax,plotrect.left,plotrect.right);
+		int py=xRescale(y,ymin,ymax,plotrect.bottom,plotrect.top);
+		pDC->TextOutW(px,py,str);
+		pDC->SetTextColor(cr);
 	}
 
 }
@@ -3234,7 +3231,7 @@ int MoveUpdateC(CRect &plotrect
 			if(fi>=0){
 				pt.x=xRescale(xl[fi], xmin, xmax, plotrect.left, plotrect.right);
 				pt.y=xRescale(yl[fi], ymin, ymax, plotrect.bottom, plotrect.top);	
-				
+
 				str.Format(L"%g,%g,2",xl[fi],yl[fi]);
 				mouseDownPoint=point;
 				return 2;
@@ -3244,15 +3241,15 @@ int MoveUpdateC(CRect &plotrect
 				mouseDownPoint=point;
 				return 1;
 			}
-			
+
 			//return true;
 		}
 		//return false;
 	}
 	else{
-	HCURSOR hCur  =  LoadCursor( NULL, IDC_ARROW ) ;
-	::SetCursor(hCur);
-	mouseDownPoint=point;
+		HCURSOR hCur  =  LoadCursor( NULL, IDC_ARROW ) ;
+		::SetCursor(hCur);
+		mouseDownPoint=point;
 	}
 	return 0;
 
@@ -3289,7 +3286,7 @@ int DownUpdate(CRect &plotrect
 				CPoint pt;
 				pt.x=xRescale(xl[fi], xmin, xmax, plotrect.left, plotrect.right);
 				pt.y=xRescale(yl[fi], ymin, ymax, plotrect.bottom, plotrect.top);	
-				
+
 				//str.Format(L"%g,%g,2",xl[fi],yl[fi]);
 				mouseDownPoint=pt;
 				index=fi;
@@ -3298,13 +3295,13 @@ int DownUpdate(CRect &plotrect
 			return 0;
 		}
 		else{
-				mouseDownPoint=point;		
+			mouseDownPoint=point;		
 
-				HCURSOR hCur  =  LoadCursor( NULL  , IDC_SIZEALL ) ;
-				::SetCursor(hCur);
-				return 1;
+			HCURSOR hCur  =  LoadCursor( NULL  , IDC_SIZEALL ) ;
+			::SetCursor(hCur);
+			return 1;
 		}
-			
+
 
 	}
 
