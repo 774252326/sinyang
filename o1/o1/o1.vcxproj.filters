@@ -33,6 +33,15 @@
     <ClInclude Include="surfaceMesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="eigenslvmat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mtl4slvmat.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="planefitT.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

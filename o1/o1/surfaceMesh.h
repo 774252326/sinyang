@@ -1,10 +1,11 @@
 #pragma once
 
-#include <boost/numeric/ublas/vector.hpp>
-#include <boost/numeric/ublas/matrix.hpp>
-#include <boost/numeric/ublas/io.hpp>
+//#include <boost/numeric/ublas/vector.hpp>
+//#include <boost/numeric/ublas/matrix.hpp>
+//#include <boost/numeric/ublas/io.hpp>
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 class surfaceMesh
 {
@@ -64,15 +65,22 @@ public:
 	// indicate whether surface is close or open
 	bool isClose;
 
-	std::vector< std::vector<double> > findContourInOneTriangle(long triangleIndex, double v, long * pinLocate, long * poutLocate);
+	//std::vector< std::vector<double> > findContourInOneTriangle(long triangleIndex, double v, long * pinLocate, long * poutLocate);
+	void findContourInOneTriangle(long triangleIndex, double v, long * pinLocate, long * poutLocate);
 	void findContour(double v);
 
 	double rsl(double x1, double x2, double y1, double y2, double x);
 	long findOutPointLocateInOneTriangle(long triangleIndex, double v, long pinLocate);
 	std::vector<double> calPointAtLocate(long pLocate, double v);
+	void calPointAtLocate(long pLocate, double v, double *pp);
 	void genContourMap(long contourNumber);
 	void loadPointAndFace(double ** pt, long np, long ** fc, long nf);
 	bool loadPointV(double * ptv, long np);
 	bool loadFaceV(double * fcv, long nf);
+
+
+	long findEdgeFromList(std::vector<long> cedge, std::vector< std::vector<long> > elist);
+	//double *pv;
+	void interpPointV(void);
 };
 

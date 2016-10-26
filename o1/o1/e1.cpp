@@ -12,6 +12,7 @@
 #include "surfaceMesh.h"
 #include <vector>
 #include <string>
+#include <assert.h>
 
 //#include "../../interp/shepard_interp_2d.h"
 
@@ -22,7 +23,7 @@
 //long r=1604,c=3,h=4;
 long r=4696,c=3,h=4;
 
-float ***dt=f3tensor<float>(1,r,1,c,1,h);
+//float ***dt=f3tensor<float>(1,r,1,c,1,h);
 
 static GLdouble di,tw, el, az;
 
@@ -43,7 +44,7 @@ bool showmesh=false;
 bool showface=false;
 bool showcont=true;
 
-std::vector< std::vector< std::vector<float> > > contourv1;
+//std::vector< std::vector< std::vector<float> > > contourv1;
 
 triangleMesh trm;
 surfaceMesh sfm;
@@ -159,70 +160,70 @@ void init(void)
 
 }
 
-void triangle(void)
-{
-	long i,j,k;
-
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_NORMALIZE);
-
-	//glLineWidth(1);
-
-	float v1[3];
-	float v2[3];
-	float nor[3];
-	float rgba[4];
-
-	float mncv=0.2;
-	float mxcv=0.5;
-
-	//glEnable(GL_CULL_FACE);
-	//glCullFace(GL_BACK);
-	//glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
-	for(i=1;i<=r;i++){
-
-		//glColor3f(0.0f, 0.0f, 1.0f); 
-		glBegin (GL_TRIANGLES);
-
-
-		for(k=1;k<=3;k++){
-			v1[k-1]=dt[i][1][k]-dt[i][3][k];
-			v2[k-1]=dt[i][2][k]-dt[i][3][k];
-		}
-		nor[0]=v1[1]*v2[2]-v1[2]*v2[1];
-		nor[1]=v1[2]*v2[0]-v1[0]*v2[2];
-		nor[2]=v1[0]*v2[1]-v1[1]*v2[0];
-
-
-		//glNormal3f(v1[1]*v2[2]-v1[2]*v2[1],v1[2]*v2[0]-v1[0]*v2[2],v1[0]*v2[1]-v1[1]*v2[0]);
-		for(j=1;j<=c;j++){
-			//glColor3f(dt[i][j][3]+0.5,0.5-dt[i][j][3],0.5+dt[i][j][1]);
-			//glColor3f(1,0,0.50);
-			//glNormal3f(v1[1]*v2[2]-v1[2]*v2[1],v1[2]*v2[0]-v1[0]*v2[2],v1[0]*v2[1]-v1[1]*v2[0]);
-			//glNormal3f(v1[2]*v2[1]-v1[1]*v2[2],v1[0]*v2[2]-v1[2]*v2[0],v1[1]*v2[0]-v1[0]*v2[1]);
-
-
-			genColor(rgba,(dt[i][j][4]-mncv)/(mxcv-mncv)*0.9);
-			glColor4fv(rgba);
-			selectNormal(nor,&dt[i][j][1],innerp,true);
-
-			glNormal3fv(nor);
-
-
-			glVertex3f(dt[i][j][1],dt[i][j][2],dt[i][j][3]);
-		}
-		glEnd();
-
-		//glLineWidth(2);
-		//glColor3f(1.0f, 0.0f, 0.0f); 
-		//glBegin (GL_LINE_LOOP);
-		//for(j=1;j<=c;j++){
-		//	glVertex3f(dt[i][j][1],dt[i][j][2],dt[i][j][3]);
-		//}
-		//glEnd();
-		////glLineWidth(1);
-	}
-}
+//void triangle(void)
+//{
+//	long i,j,k;
+//
+//	glEnable(GL_DEPTH_TEST);
+//	glEnable(GL_NORMALIZE);
+//
+//	//glLineWidth(1);
+//
+//	float v1[3];
+//	float v2[3];
+//	float nor[3];
+//	float rgba[4];
+//
+//	float mncv=0.2;
+//	float mxcv=0.5;
+//
+//	//glEnable(GL_CULL_FACE);
+//	//glCullFace(GL_BACK);
+//	//glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+//	for(i=1;i<=r;i++){
+//
+//		//glColor3f(0.0f, 0.0f, 1.0f); 
+//		glBegin (GL_TRIANGLES);
+//
+//
+//		for(k=1;k<=3;k++){
+//			v1[k-1]=dt[i][1][k]-dt[i][3][k];
+//			v2[k-1]=dt[i][2][k]-dt[i][3][k];
+//		}
+//		nor[0]=v1[1]*v2[2]-v1[2]*v2[1];
+//		nor[1]=v1[2]*v2[0]-v1[0]*v2[2];
+//		nor[2]=v1[0]*v2[1]-v1[1]*v2[0];
+//
+//
+//		//glNormal3f(v1[1]*v2[2]-v1[2]*v2[1],v1[2]*v2[0]-v1[0]*v2[2],v1[0]*v2[1]-v1[1]*v2[0]);
+//		for(j=1;j<=c;j++){
+//			//glColor3f(dt[i][j][3]+0.5,0.5-dt[i][j][3],0.5+dt[i][j][1]);
+//			//glColor3f(1,0,0.50);
+//			//glNormal3f(v1[1]*v2[2]-v1[2]*v2[1],v1[2]*v2[0]-v1[0]*v2[2],v1[0]*v2[1]-v1[1]*v2[0]);
+//			//glNormal3f(v1[2]*v2[1]-v1[1]*v2[2],v1[0]*v2[2]-v1[2]*v2[0],v1[1]*v2[0]-v1[0]*v2[1]);
+//
+//
+//			genColor(rgba,(dt[i][j][4]-mncv)/(mxcv-mncv)*0.9);
+//			glColor4fv(rgba);
+//			selectNormal(nor,&dt[i][j][1],innerp,true);
+//
+//			glNormal3fv(nor);
+//
+//
+//			glVertex3f(dt[i][j][1],dt[i][j][2],dt[i][j][3]);
+//		}
+//		glEnd();
+//
+//		//glLineWidth(2);
+//		//glColor3f(1.0f, 0.0f, 0.0f); 
+//		//glBegin (GL_LINE_LOOP);
+//		//for(j=1;j<=c;j++){
+//		//	glVertex3f(dt[i][j][1],dt[i][j][2],dt[i][j][3]);
+//		//}
+//		//glEnd();
+//		////glLineWidth(1);
+//	}
+//}
 
 
 void triangle1(void)
@@ -537,8 +538,8 @@ void display(void)
 	//triangle();
 
 	//triangle1();
-	triangle2();
-	//triangle3();
+	//triangle2();
+	triangle3();
 	//p44();
 
 	//glFlush ();
@@ -730,8 +731,8 @@ void keyboard2 (unsigned char key, int x, int y)
 
 int main(int argc, char** argv)
 {
-	time_t start,end;
-
+	//time_t start,end;
+	clock_t t;
 	//wchar_t fp[]=L"C:\\Users\\r8anw2x\\Documents\\Visual Studio 2010\\Projects\\testgrid2.txt";
 	//char fp[]="C:\\Users\\r8anw2x\\Documents\\Visual Studio 2010\\Projects\\grid1.txt";
 	//char fp[]="C:\\Users\\r8anw2x\\Dropbox\\OpenGL\\data\\octahedron.txt";
@@ -799,6 +800,16 @@ int main(int argc, char** argv)
 		pv[i]=point[i][4];
 	}
 
+	//pv=&point[1][1];
+	//std::cout<<pv[0]<<pv[1]<<pv[2]<<pv[3]<<pv[4]<<pv[5]<<'\n';
+	//std::cout<<point[1][1]<<point[1][2]<<point[1][3]<<point[1][4]<<point[2][1]<<point[2][2];
+
+	//for(i=1;i<=np;i++){
+	//	for(j=1;j<=4;j++){
+	//		assert(point[i][j]==pv[4*i+j-5]);
+	//	}
+	//}
+
 
 
 
@@ -831,36 +842,40 @@ int main(int argc, char** argv)
 
 
 
-	time (&start);
-	//trm.interpPointV();
-
-	//std::cout<<'['<<trm.minFaceValue<<','<<trm.maxFaceValue<<']'<<'\n';
-	//std::cout<<'['<<trm.minPointValue<<','<<trm.maxPointValue<<']'<<'\n';
 
 
-	//sfm.loadPointAndFace(point,np,face,nf);
-	////sfm.loadPoint(point,np);
-	////sfm.loadFace(face,nf);
-	////sfm.genEdge();
-	////sfm.genPointToFaceMap();
-	////sfm.genFaceCentroid();
-	//sfm.loadFaceV(facecolor,nf);
-	//sfm.loadPointV(pv,np);
-	//sfm.genContourMap(50);
+	sfm.loadPointAndFace(point,np,face,nf);
+	sfm.loadFaceV(facecolor,nf);
+	////sfm.loadPointV(trm.pointValue,np);
+	t = clock();
+	sfm.interpPointV();
+	printf( "Elapsed time %d ms.\n", clock() - t );
+	sfm.genContourMap(50);
 
 	
+
+
 	trm.loadPointAndFace(point,np,face,nf,0);
 	trm.loadFaceV(facecolor,nf);
-	trm.loadPointV(pv,np);
+	////trm.loadPointV(pv,np);
+
+	trm.interpPointV();
+
+
+
+
+
+	////std::cout<<'['<<trm.minFaceValue<<','<<trm.maxFaceValue<<']'<<'\n';
+	////std::cout<<'['<<trm.minPointValue<<','<<trm.maxPointValue<<']'<<'\n';
+
 	trm.genContourMap(50);
 
-	time (&end);
 
-
-
-	printf ("Elapsed time %.2lf seconds.\n", difftime (end,start) );
+	//printf( "Elapsed time %.3f seconds.\n",(float)(clock() - t)/CLOCKS_PER_SEC );
+	
+	////////////////////////////////////////////////////////////////////////
 	//writef1(pvifp,trm.pointValueInterp,trm.npoint);
-
+///////////////////////////////////////////////////////////////////////////
 
 	//trm.pointValue[3]=1;
 	//trm.pointValue[6]=1;
@@ -889,12 +904,12 @@ int main(int argc, char** argv)
 
 	//glGetIntegerv(GL_MAJOR_VERSION,&vv);
 	//printf("opengl version=%c\n",v[0]);
+//////////////////////////////////////////////////////////////////////
 
-
-	//glutInit(&argc, argv);
+	glutInit(&argc, argv);
 	glutInitDisplayMode ( GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH );
-	//glutInitWindowSize (400, 400);
-	//glutInitWindowPosition (100, 100);
+	glutInitWindowSize (400, 400);
+	glutInitWindowPosition (100, 100);
 	glutCreateWindow (argv[0]);
 	init();
 
