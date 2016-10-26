@@ -15,7 +15,8 @@
 #include "struct1\pcct.hpp"
 
 #include "PropertySheetA.h"
-#include "PlotSettingPageA.h"
+#include "PlotSettingPageC.h"
+#include "PlotSettingPageB.h"
 
 #include "MainFrm.h"
 #include "filefunc.h"
@@ -168,7 +169,7 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		//pw.pdex=NULL;
 		if(pw.Create(_T("STATIC"), _T(""), WS_CHILD | WS_VISIBLE /*| WS_DISABLED*/, CRect(), this, 1234)==FALSE)
 			return -1;
-		
+
 		if(	m_spBtn.CreateEx(
 			WS_EX_TOPMOST			
 			//|WS_EX_TRANSPARENT
@@ -307,63 +308,79 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		// TODO: Add your command handler code here
 
 
-		if(pdl.empty()){
+		//if(pdl.empty()){
+		//	PropertySheetA1 sheet(IDS_STRING_POLT_SETTINGS);
+		//	PlotSettingPage fig1setting;
+
+		//	//fig1setting.lgc=pw.pdex->lgc;
+		//	//fig1setting.lgs=pw.pdex->lgs;
+		//	fig1setting.fs=pw.blankPS;
+		//	sheet.AddPage(&fig1setting);
+
+		//	// 打开模态向导对话框   
+		//	if(sheet.DoModal()==IDOK){
+
+		//		pw.blankPS=fig1setting.fs;
+		//		pw.Invalidate(FALSE);
+
+		//	}
 
 
+		//	return;
 
-			PropertySheetA1 sheet(IDS_STRING_POLT_SETTINGS);
-
-
-
-			PlotSettingPage fig1setting;
-
-			//fig1setting.lgc=pw.pdex->lgc;
-			//fig1setting.lgs=pw.pdex->lgs;
-			fig1setting.fs=pw.blankPS;
-			sheet.AddPage(&fig1setting);
-
-			// 打开模态向导对话框   
-			if(sheet.DoModal()==IDOK){
-
-				pw.blankPS=fig1setting.fs;
-				pw.Invalidate(FALSE);
-
-			}
+		//}
 
 
-			return;
+		//// 创建属性表对象   
+		//CString str;
 
-		}
 
+		//PropertySheetA1 sheet(IDS_STRING_POLT_SETTINGS);
 
-		// 创建属性表对象   
-		CString str;
+		//str.LoadStringW(IDS_STRING_FIGURE1);
+		//str=L"";
 
+		//PlotSettingPage fig1setting(str,pw.pdex->pd.ps,pw.pdex->pd.ls);
+
+		//fig1setting.lgc=pw.pdex->lgc;
+		//fig1setting.lgs=pw.pdex->lgs;
+
+		//sheet.AddPage(&fig1setting);
+
+		//// 打开模态向导对话框   
+		//if(sheet.DoModal()==IDOK){
+
+		//	pw.pdex->pd.ps=fig1setting.fs;
+		//	pw.pdex->pd.ls.assign(fig1setting.ps.begin(),fig1setting.ps.end());
+		//	pw.pdex->lgc=fig1setting.lgc;
+		//	pw.pdex->lgs=fig1setting.lgs;
+
+		//	pw.SetLegend();
+		//	pw.Invalidate(FALSE);
+
+		//}
+
+		//////////////////////////////////////////////////////////////////
 
 		PropertySheetA1 sheet(IDS_STRING_POLT_SETTINGS);
-
-		str.LoadStringW(IDS_STRING_FIGURE1);
-		str=L"";
-
-		PlotSettingPage fig1setting(str,pw.pdex->pd.ps,pw.pdex->pd.ls);
-
-		fig1setting.lgc=pw.pdex->lgc;
-		fig1setting.lgs=pw.pdex->lgs;
-
-		sheet.AddPage(&fig1setting);
-
-		// 打开模态向导对话框   
-		if(sheet.DoModal()==IDOK){
-
-			pw.pdex->pd.ps=fig1setting.fs;
-			pw.pdex->pd.ls.assign(fig1setting.ps.begin(),fig1setting.ps.end());
-			pw.pdex->lgc=fig1setting.lgc;
-			pw.pdex->lgs=fig1setting.lgs;
-
-			pw.SetLegend();
-			pw.Invalidate(FALSE);
-
+		PlotSettingPageB fig1setting;
+		if(pdl.empty()){		
+			fig1setting.fs=pw.blankPS;
 		}
+		else{
+			fig1setting.fs=pw.pdex->pd.ps;
+			
+			fig1setting.lgc=pw.pdex->lgc;
+			fig1setting.lgs=pw.pdex->lgs;			
+		}
+		PlotSettingPageC fig2setting;
+		if(!pdl.empty()){
+			fig2setting.ps.assign(pw.pdex->pd.ls.begin(),pw.pdex->pd.ls.end());
+			fig2setting.bTwo=FALSE;
+		}
+		sheet.AddPage(&fig1setting);
+		sheet.AddPage(&fig2setting);
+		sheet.DoModal();
 
 	}
 
@@ -536,11 +553,11 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		edd.DoModal();
 		//if(edd.DoModal()==IDOK){
 
-			//for(int i=0;i<edd.lcl.GetItemCount();i++){
-			//	if(edd.lcl.GetCheck(i)!=FALSE){
-			//		edd.lcl.rde.SaveToText(i);
-			//	}
-			//}
+		//for(int i=0;i<edd.lcl.GetItemCount();i++){
+		//	if(edd.lcl.GetCheck(i)!=FALSE){
+		//		edd.lcl.rde.SaveToText(i);
+		//	}
+		//}
 
 		//}
 

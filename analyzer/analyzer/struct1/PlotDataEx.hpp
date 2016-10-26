@@ -28,8 +28,10 @@ public:
 			COLORREF cr=pDC->SetTextColor(textColor);
 			int px=xRescale(x,xmin,xmax,plotrect.left,plotrect.right);
 			int py=xRescale(y,ymin,ymax,plotrect.bottom,plotrect.top);
+			int pbkmode=pDC->SetBkMode(TRANSPARENT);
 			pDC->TextOutW(px,py,str);
 			pDC->SetTextColor(cr);
+			pDC->SetBkMode(pbkmode);
 		}
 
 	};

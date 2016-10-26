@@ -25,6 +25,7 @@
 #include "calfunc.h"
 
 #include "MainFrm.h"
+//#include "plot\LegendDlg.hpp"
 
 
 #ifdef _DEBUG
@@ -785,7 +786,4 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 			return 100;
 		}
 
-
-
-		//return 0;
 	}

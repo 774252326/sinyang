@@ -145,31 +145,13 @@
     <ClInclude Include="list\ComboItem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="list\EditB.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="list\EditInt.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="list\EditNum.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="list\EditReal.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="StartDlg.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="filefunc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="plot\LegendDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="plot\PlotWnd.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PlotSettingPageA.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="list\ListCtrlLS.h">
@@ -223,6 +205,24 @@
     <ClInclude Include="ExportDataDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="list\EditB.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="list\EditInt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="list\EditNum.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="list\EditReal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PlotSettingPageB.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PlotSettingPageC.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="analyzer.cpp">
@@ -264,28 +264,10 @@
     <ClCompile Include="filefunc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="plot\LegendDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="plot\PlotWnd.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="list\ComboItem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="list\EditB.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="list\EditInt.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="list\EditNum.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="list\EditReal.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PlotSettingPageA.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="list\ListCtrlLS.cpp">
@@ -337,6 +319,24 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ExportDataDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="list\EditB.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="list\EditInt.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="list\EditNum.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="list\EditReal.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PlotSettingPageB.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PlotSettingPageC.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

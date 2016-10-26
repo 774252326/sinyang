@@ -45,6 +45,8 @@ BOOL PropertySheetA1::OnInitDialog()
 
 	//CPropertyPage* pp=this->GetPage(1);
 	//pp->ShowWindow(SW_HIDE);
+	//CWnd *pWnd = GetDlgItem (ID_APPLY_NOW);
+	//pWnd->ShowWindow(SW_HIDE);
 
 	return bResult;
 }

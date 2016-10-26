@@ -152,8 +152,8 @@
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="OutputWnd.h" />
     <ClInclude Include="pdfout.h" />
-    <ClInclude Include="PlotSettingPageA.h" />
-    <ClInclude Include="plot\LegendDlg.h" />
+    <ClInclude Include="PlotSettingPageB.h" />
+    <ClInclude Include="PlotSettingPageC.h" />
     <ClInclude Include="plot\PlotWnd.h" />
     <ClInclude Include="PropertySheetA.h" />
     <ClInclude Include="PropertySheetA1ML.h" />
@@ -195,8 +195,8 @@
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="OutputWnd.cpp" />
     <ClCompile Include="pdfout.cpp" />
-    <ClCompile Include="PlotSettingPageA.cpp" />
-    <ClCompile Include="plot\LegendDlg.cpp" />
+    <ClCompile Include="PlotSettingPageB.cpp" />
+    <ClCompile Include="PlotSettingPageC.cpp" />
     <ClCompile Include="plot\PlotWnd.cpp" />
     <ClCompile Include="PropertySheetA.cpp" />
     <ClCompile Include="PropertySheetA1ML.cpp" />

@@ -5,10 +5,7 @@
 #include "PlotWnd.h"
 //#include "drawfunc.h"
 #include "../resource.h"
-#include "LegendDlg.h"
-
-//class LegendDlg;
-
+#include "LegendDlg.hpp"
 
 // PlotWnd
 
@@ -42,7 +39,6 @@ BEGIN_MESSAGE_MAP(PlotWnd, CWnd)
 	ON_WM_NCHITTEST()
 	ON_WM_MOVE()
 	ON_WM_SIZE()
-	//	ON_WM_ERASEBKGND()
 	ON_WM_LBUTTONDBLCLK()
 END_MESSAGE_MAP()
 
@@ -63,12 +59,6 @@ void PlotWnd::OnPaint()
 	CRect rect;
 	this->GetClientRect(&rect);	
 
-	//DrawData(rect,&dc,pd,xmin,xmax,ymin,ymax);
-	//if(bMouseCursor && !pd.ps.empty()
-	//	&& selectPIdx>=0 && selectPIdx<pd.xll.size()){
-	//		DrawData1(rect,&dc,pd.xll[selectPIdx],pd.yll[selectPIdx],xmin,xmax,ymin,ymax,inv(pd.psp.bkgndC));
-	//}
-
 	CSize winsz=rect.Size();
 
 	CDC dcMem;//用于缓冲作图的内存DC
@@ -79,10 +69,8 @@ void PlotWnd::OnPaint()
 	dcMem.SelectObject(&bmp);  	//将位图选择进内存DC
 
 	if(pdex!=NULL){
-		//DrawDataEx(rect,&dcMem,*pdex);
 		pdex->Draw(rect,&dcMem);
 		if(bMouseCursor){
-			//DrawData1Ex(rect,&dcMem,*pdex,selectPIdx);
 			if(selectPIdx<pdex->pd.raw.xll.size() && selectPIdx<pdex->pd.raw.yll.size()){
 				pdex->Draw1(rect,&dcMem,pdex->pd.raw.xll[selectPIdx],pdex->pd.raw.yll[selectPIdx]);
 			}
@@ -90,7 +78,6 @@ void PlotWnd::OnPaint()
 	}
 	else{
 		PlotDataEx dx(blankPS);
-		//DrawDataEx(rect,&dcMem,dx);
 		dx.Draw(rect,&dcMem);
 	}
 	dc.BitBlt(0,0,winsz.cx,winsz.cy,&dcMem,0,0,SRCCOPY);//将内存DC上的图象拷贝到前台
@@ -112,24 +99,9 @@ void PlotWnd::OnLButtonDown(UINT nFlags, CPoint point)
 	SetFocus();
 	if(pdex!=NULL){
 		if(!pdex->pd.ls.empty()){
-
-
 			CRect plotrect;
 			this->GetClientRect(&plotrect);	
 			pdex->pd.ps.CalPlotRect(plotrect);
-
-			//int re=DownUpdate(plotrect
-			//, pdex->pd.ps.metricSize
-			//, pdex->pd.ps.labelSize
-			//, pdex->pd.ps.metricGridLong
-			//, pdex->pd.ps.gap
-			//, point
-			//, m_mouseDownPoint
-			//, pdex->xmin, pdex->xmax, pdex->ymin, pdex->ymax
-			//, bMouseCursor
-			//, pdex->pd.raw.xll
-			//, pdex->pd.raw.yll
-			//, selectPIdx);
 
 			int re=DownUpdateB(plotrect
 				, point
@@ -139,11 +111,6 @@ void PlotWnd::OnLButtonDown(UINT nFlags, CPoint point)
 			case 1:
 				SetCapture();
 				break;
-				//case 2:
-				//	this->ClientToScreen(&m_mouseDownPoint);
-				//	::SetCursorPos(m_mouseDownPoint.x,m_mouseDownPoint.y);
-				//	Invalidate(FALSE);
-				//	break;
 			default:
 				break;
 			}
@@ -159,12 +126,10 @@ void PlotWnd::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	// TODO: Add your message handler code here and/or call default
 
-
 	ReleaseCapture();
 
 	HCURSOR hCur  =  LoadCursor( NULL  , IDC_ARROW ) ;
 	::SetCursor(hCur);
-
 
 	CWnd::OnLButtonUp(nFlags, point);
 }
@@ -178,7 +143,6 @@ void PlotWnd::OnMouseMove(UINT nFlags, CPoint point)
 		//size_t selectIdx=m_spBtn.GetPos32();
 		if(!pdex->pd.ls.empty()){
 
-			//if(pd!=NULL && !pd->ps.empty() ){
 			CRect plotrect;
 			this->GetClientRect(&plotrect);	
 			pdex->pd.ps.CalPlotRect(plotrect);
@@ -217,7 +181,6 @@ BOOL PlotWnd::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 	if(pdex!=NULL){
 		if(!pdex->pd.ls.empty()){
 
-			//if(pd!=NULL && !pd->ps.empty() ){
 			ScreenToClient(&pt);
 			CRect plotrect;
 			this->GetClientRect(&plotrect);
@@ -274,13 +237,11 @@ int PlotWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	// TODO:  Add your specialized creation code here
 
-
 	m_tool.Create(this);
 	m_tool.AddTool(this);
 	m_tool.Activate(true);
 
 	ModifyStyle(0, SS_NOTIFY);
-	//this->SetFocus();
 	return 0;
 }
 
@@ -311,8 +272,6 @@ void PlotWnd::OnMove(int x, int y)
 
 		TRACE("[%d,%d,%d,%d,%d,%d]\n",rc.left,rc.top,rc.right,rc.bottom,x-wndPosition.x,y-wndPosition.y);
 
-		//this->ScreenToClient(&rc);//for view only
-
 		td->MoveWindow(&rc);
 
 	}
@@ -328,9 +287,12 @@ void PlotWnd::OnSize(UINT nType, int cx, int cy)
 	// TODO: Add your message handler code here
 
 	if(td!=NULL){
-		((LegendDlg*)td)->PositionWnd();
-		((LegendDlg*)td)->Invalidate();
-		//td->Invalidate();
+		//((LegendDlg*)td)->PositionWnd();
+		//((LegendDlg*)td)->Invalidate();
+		CRect legendrect;
+		bool flg=GetLegendRect(legendrect);
+		td->MoveWindow(&legendrect);
+		td->Invalidate();
 	}
 
 
@@ -342,19 +304,21 @@ void PlotWnd::SetLegend(void)
 
 	if( pdex!=NULL && (pdex->lgc.legendDpMode&LEGEND_DP_SHOW) /*&& !pdex->pd.ls.empty()*/){
 
-		if(td==NULL){
-			td=new LegendDlg(this);
-			td->Create(IDD_DIALOG1,this);
+		if(td!=NULL){
+			//((LegendDlg*)td)->PositionWnd();
+			//((LegendDlg*)td)->Invalidate();
+			CRect legendrect;
+			bool flg=GetLegendRect(legendrect);
+			td->MoveWindow(&legendrect);
+			td->Invalidate();
 		}
 		else{
-			((LegendDlg*)td)->PositionWnd();
-			((LegendDlg*)td)->Invalidate();
-			//td->Invalidate();
+			td=new LegendDlg(this);
+			td->Create(IDD_DIALOG1,this);
 		}
 		td->ShowWindow(SW_SHOW);
 	}
 	else{
-
 		if(td!=NULL){
 			td->ShowWindow(SW_HIDE);
 			delete td;
@@ -403,8 +367,6 @@ void PlotWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
 					{
 						this->ClientToScreen(&m_mouseDownPoint);
 						::SetCursorPos(m_mouseDownPoint.x,m_mouseDownPoint.y);
-						//HCURSOR hCur  =  LoadCursor( NULL  , IDC_ARROW ) ;
-						//::SetCursor(hCur);
 						Invalidate(FALSE);
 					}
 					break;

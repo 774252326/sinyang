@@ -28,11 +28,6 @@ public:
 
 // Dialog Data
 	enum { IDD = IDD_DIALOG4 };
-
-protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-
-	DECLARE_MESSAGE_MAP()
 public:
 
 	std::vector<LineSpec> ps;
@@ -60,4 +55,21 @@ public:
 	void AdjustComboSelectChange(void);
 	void OnCheck(void);
 
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+
+	DECLARE_MESSAGE_MAP()
+
+public:
+	virtual void OnOK();
 };
+
+
+
+//BEGIN_MESSAGE_MAP(PlotSettingPage, CPropertyPage)
+//	ON_WM_CREATE()
+//	ON_CBN_SELCHANGE(IDS_COMBO_FIGURE_SPEC, &PlotSettingPage::ComboSelectChange)
+//	ON_CBN_SELCHANGE(IDS_COMBO_ADJUST, &PlotSettingPage::AdjustComboSelectChange)
+//	ON_BN_CLICKED(IDS_CHECK_SHOW_LEGEND, &PlotSettingPage::OnCheck)
+//END_MESSAGE_MAP()
+	

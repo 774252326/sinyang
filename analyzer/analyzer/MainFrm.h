@@ -13,7 +13,7 @@
 //#include "UserAccount.h"
 //#include "AccountList.h"
 #include "struct\AccountList.hpp"
-
+#include "plot\PlotWnd.h"
 //#include "filefunc.h"
 
 #include "WaitDlg.h"

@@ -5,7 +5,9 @@
 //#include "calfunc.h"
 //#include "analyzerViewR.h"
 
-
+#include "PropertySheetA.h"
+#include "PlotSettingPageC.h"
+#include "PlotSettingPageB.h"
 
 
 
@@ -77,6 +79,26 @@ IMPLEMENT_DYNCREATE(CanalyzerViewL, CanalyzerView)
 
 		//::AfxMessageBox(L"ll");
 
-
+		PropertySheetA1 sheet(IDS_STRING_POLT_SETTINGS);
+		PlotSettingPageB fig1setting;
+		if(pdl.empty()){		
+			fig1setting.fs=pw.blankPS;
+		}
+		else{
+			fig1setting.fs=pw.pdex->pd.ps;
+			
+			fig1setting.lgc=pw.pdex->lgc;
+			fig1setting.lgs=pw.pdex->lgs;			
+		}
+		PlotSettingPageC fig2setting;
+		if(!pdl.empty()){
+			fig2setting.ps.assign(pw.pdex->pd.ls.begin(),pw.pdex->pd.ls.end());
+			fig2setting.bTwo=TRUE;
+			fig2setting.newC=newCr;
+			fig2setting.oldC=oldCr;
+		}
+		sheet.AddPage(&fig1setting);
+		sheet.AddPage(&fig2setting);
+		sheet.DoModal();
 
 	}

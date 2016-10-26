@@ -138,7 +138,7 @@ int CVParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	CPoint pt(gap1);
 
-	CSize editSize(winrect.Width()-staticSize.cx-gap2.cx,staticSize.cy);
+	CSize editSize((winrect.Width()-3*gap2.cx)/2-staticSize.cx,staticSize.cy);
 
 
 	CStatic *pStatic;
@@ -146,7 +146,8 @@ int CVParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	CComboBox *pCombo;
 	CString str;
 
-	for(int i=0;i<7;i++){
+	int i=0;
+	for(;i<7;){
 
 		str.LoadStringW(IDS_STRING_LOW_E_LIMIT+i);
 		pStatic=new CStatic;
@@ -171,10 +172,15 @@ int CVParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 			CRect(pt,editSize),
 			this,
 			IDS_EDIT_LOW_E_LIMIT+i);
-
+		if(i%2==0){
+		pt.x+=gap2.cx+editSize.cx;
+		}
+		else{
 		pt.y+=staticSize.cy+gap2.cy;
-		pt.x-=gap2.cx+staticSize.cx;
+		pt.x=gap1.cx;
+		}
 
+		i++;
 	}
 
 

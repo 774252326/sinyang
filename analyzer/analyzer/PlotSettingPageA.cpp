@@ -6,6 +6,7 @@
 #include "PlotSettingPageA.h"
 #include "afxdialogex.h"
 //#include "ColorButton.h"
+#include "analyzerView.h"
 
 //#include "func.h"
 
@@ -175,6 +176,8 @@ BOOL PlotSettingPage::OnSetActive()
 {
 	// TODO: Add your specialized code here and/or call the base class
 	UpdateData(FALSE);
+
+	SetModified();    // Enable Apply Now button.
 
 	return CPropertyPage::OnSetActive();
 }
@@ -631,3 +634,31 @@ void PlotSettingPage::GetList(void)
 }
 
 
+
+
+void PlotSettingPage::OnOK()
+{
+	// TODO: Add your specialized code here and/or call the base class
+
+   CFrameWndEx* pframe = (CFrameWndEx*) AfxGetMainWnd();
+   //CMDIChildWnd* pchild = pframe->MDIGetActive();
+   //CPSheetDoc* doc = (CPSheetDoc*) pchild->GetActiveDocument();
+   //doc->m_Color = m_Color;
+
+   // Tell the view to paint with the new selected color.
+   CanalyzerView* view = (CanalyzerView*)(pframe->GetActiveView());
+
+   *(view->pw.GetPlotSpec())=fs;
+
+   if(!ps.empty()){
+	   view->pw.pdex->pd.ls.assign(ps.begin(),ps.end());
+	view->pw.pdex->lgc=lgc;
+	view->pw.pdex->lgs=lgs;
+	view->pw.SetLegend();
+   }
+
+
+   view->Invalidate();
+
+	CPropertyPage::OnOK();
+}

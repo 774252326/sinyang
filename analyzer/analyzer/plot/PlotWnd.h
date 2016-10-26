@@ -153,28 +153,28 @@ public:
 			//if(bmouse){
 
 
-				double x=xRescale(point.x, plotrect.left, plotrect.right, xmin, xmax);
-				double y=xRescale(point.y, plotrect.bottom, plotrect.top, ymin, ymax);
-				double thres=(xmax-xmin)/plotrect.Width()+(ymax-ymin)/plotrect.Height();
-				int fi=FindClosest(x,y,xl,yl,thres);
-				if(fi>=0){
-					CPoint pt;
-					pt.x=xRescale(xl[fi], xmin, xmax, plotrect.left, plotrect.right);
-					pt.y=xRescale(yl[fi], ymin, ymax, plotrect.bottom, plotrect.top);	
+			double x=xRescale(point.x, plotrect.left, plotrect.right, xmin, xmax);
+			double y=xRescale(point.y, plotrect.bottom, plotrect.top, ymin, ymax);
+			double thres=(xmax-xmin)/plotrect.Width()+(ymax-ymin)/plotrect.Height();
+			int fi=FindClosest(x,y,xl,yl,thres);
+			if(fi>=0){
+				CPoint pt;
+				pt.x=xRescale(xl[fi], xmin, xmax, plotrect.left, plotrect.right);
+				pt.y=xRescale(yl[fi], ymin, ymax, plotrect.bottom, plotrect.top);	
 
-					//str.Format(L"%g,%g,2",xl[fi],yl[fi]);
-					mouseDownPoint=pt;
-					index=fi;
-					return 2;
-				}
-				//return 0;
+				//str.Format(L"%g,%g,2",xl[fi],yl[fi]);
+				mouseDownPoint=pt;
+				index=fi;
+				return 2;
+			}
+			//return 0;
 			//}
 			//else{
-				//mouseDownPoint=point;		
+			//mouseDownPoint=point;		
 
-				//HCURSOR hCur  =  LoadCursor( NULL  , IDC_SIZEALL ) ;
-				//::SetCursor(hCur);
-				//return 1;
+			//HCURSOR hCur  =  LoadCursor( NULL  , IDC_SIZEALL ) ;
+			//::SetCursor(hCur);
+			//return 1;
 			//}
 
 
@@ -192,32 +192,26 @@ public:
 	{
 		//GetPlotRect(plotrect,lbsz,mtsz,metricGridLong,gap);
 		if(plotrect.PtInRect(point)){
-				mouseDownPoint=point;		
-				HCURSOR hCur  =  LoadCursor( NULL  , IDC_SIZEALL ) ;
-				::SetCursor(hCur);
-				return 1;
+			mouseDownPoint=point;		
+			HCURSOR hCur  =  LoadCursor( NULL  , IDC_SIZEALL ) ;
+			::SetCursor(hCur);
+			return 1;
 		}
 		return 0;
 	};
 
 
 
-public:
-	PlotWnd(PlotDataEx *pd=NULL);
-	virtual ~PlotWnd();
 
 protected:
-	DECLARE_MESSAGE_MAP()
-public:
-	//double xmin;
-	//double xmax;
-	//double ymin;
-	//double ymax;
-	//
-	//PlotData pd;
-	//LegendSpec lgs;
+	CToolTipCtrl m_tool;
+	CDialogEx *td;
+	CPoint wndPosition;
+	CPoint m_mouseDownPoint;
+	bool bShowToolTip;
 
-	//LegendCondition lgc;
+public:
+
 	PlotDataEx *pdex;
 
 	size_t selectPIdx;
@@ -227,11 +221,41 @@ public:
 
 	PlotSpec blankPS;
 
+
+public:
+	PlotWnd(PlotDataEx *pd=NULL);
+	virtual ~PlotWnd();
+
 	void ResetRange(void);
 	void SetLegend(void);
-	//	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	PlotSpec * GetPlotSpec(void);
 
+	bool GetLegendRect(CRect &legendrect)
+	{
+		if(pdex!=NULL){
+			CRect plotrect;
+			GetClientRect(&plotrect);
+			pdex->pd.ps.CalPlotRect(plotrect);			
+			legendrect=pdex->SetLegendSpec(plotrect,this->GetDC());
+
+			//this->ClientToScreen(&legendrect);//for dlg only
+
+			return true;
+		}
+		return false;
+	};
+
+	bool GetLegendPos(CPoint &pt)
+	{
+		if(td!=NULL && pdex!=NULL){
+			CRect rc;
+			td->GetWindowRect(&rc);
+			this->ScreenToClient(&rc);	
+			pdex->lgs.position=pt=rc.TopLeft();
+			return true;
+		}
+		return false;
+	};
 
 protected:
 	afx_msg void OnPaint();
@@ -250,15 +274,8 @@ protected:
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	virtual BOOL OnWndMsg(UINT message, WPARAM wParam, LPARAM lParam, LRESULT* pResult);
 
-
-	CToolTipCtrl m_tool;
-	CDialogEx *td;
-	CPoint wndPosition;
-	CPoint m_mouseDownPoint;
-	bool bShowToolTip;
-
-public:
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
+	DECLARE_MESSAGE_MAP()
 };
 
 
