@@ -120,6 +120,7 @@ BEGIN_MESSAGE_MAP(Cz3Dlg, CDialogEx)
 
 
 	ON_WM_ERASEBKGND()
+	ON_WM_SIZE()
 END_MESSAGE_MAP()
 
 
@@ -1059,4 +1060,116 @@ BOOL Cz3Dlg::OnEraseBkgnd(CDC* pDC)
 	//return true;
 
 	return CDialogEx::OnEraseBkgnd(pDC);
+}
+
+
+void Cz3Dlg::OnSize(UINT nType, int cx, int cy)
+{
+	CDialogEx::OnSize(nType, cx, cy);
+
+	// TODO: Add your message handler code here
+	if(isInit){
+	resize(cx,cy);
+	Invalidate();
+	}
+
+}
+
+
+void Cz3Dlg::resize(int w, int h)
+{
+	//	//main window
+	//CPoint winpos=CPoint(50,50);
+	//this->SetWindowPos(&CWnd::wndTop, winpos.x, winpos.y, winrect.Width(), winrect.Height(), SWP_SHOWWINDOW);
+
+	winrect.bottom=h;
+	winrect.right=w;
+
+	//cancel button
+	CPoint cancelpos=winrect.BottomRight()-towinedge-btnrect.Size();
+	this->GetDlgItem(IDCANCEL)->SetWindowPos(&CWnd::wndTop,cancelpos.x,cancelpos.y,btnrect.Width(),btnrect.Height(),SWP_SHOWWINDOW);
+
+	//ok button
+	CPoint okpos=cancelpos-CSize(tobtnedge.cx+btnrect.Width(),0);
+	this->GetDlgItem(IDOK)->SetWindowPos(&CWnd::wndTop,okpos.x,okpos.y,btnrect.Width(),btnrect.Height(),SWP_SHOWWINDOW);
+
+
+	CString str;
+	//open button
+	//CButton *pOpen;
+	//pOpen=new CButton;
+	//str.LoadStringW(IDC_OPEN);
+	openrect=btnrect;
+	openrect.MoveToXY(okpos-CSize(tobtnedge.cx+btnrect.Width(),0));
+	//pOpen->Create(str,WS_CHILD|WS_VISIBLE|BS_PUSHBUTTON, openrect, this, IDC_OPEN);
+	//pOpen->Create(str,WS_CHILD|WS_VISIBLE|BS_PUSHBUTTON, openrect, this, IDC_OPEN);
+	this->GetDlgItem(IDC_OPEN)->SetWindowPos(&CWnd::wndTop,openrect.left,openrect.top,openrect.Width(),openrect.Height(),SWP_SHOWWINDOW);
+
+	//file path edit
+	//CEdit *pFilepath;
+	//pFilepath=new CEdit;
+	fprect=CRect(towinedge.cx,winrect.bottom-towinedge.cy-btnrect.Height(),openrect.left-tobtnedge.cx,winrect.bottom-towinedge.cy);
+	//pFilepath->Create(ES_LEFT|WS_CHILD|WS_VISIBLE,fprect,this,IDC_FILEPATH);
+	this->GetDlgItem(IDC_FILEPATH)->SetWindowPos(&CWnd::wndTop,fprect.left,fprect.top,fprect.Width(),fprect.Height(),SWP_SHOWWINDOW);
+
+	//plot region
+	//pPlot=new CButton;
+	plotrect=winrect;
+	plotrect.DeflateRect(towinedge);
+	plotrect.DeflateRect(towinedge.cx,0,btnrect.Width()+tobtnedge.cx,btnrect.Height()+tobtnedge.cy*2);
+	//str.LoadStringW(IDC_PLOT);
+	//pPlot->Create( str, WS_CHILD|BS_GROUPBOX/*|WS_VISIBLE*/, plotrect, this, IDC_PLOT); 
+	this->GetDlgItem(IDC_PLOT)->SetWindowPos(&CWnd::wndTop,plotrect.left,plotrect.top,plotrect.Width(),plotrect.Height(),SWP_HIDEWINDOW);
+
+	redrawrect=plotrect;
+	redrawrect.InflateRect(towinedge.cx,0,0,tobtnedge.cy);
+
+	//threshold edit
+	//CEdit *pThres;
+	//pThres=new CEdit;
+	threct=btnrect;
+	threct.MoveToXY(winrect.Width()-towinedge.cx-btnrect.Width(),towinedge.cy);
+	//pThres->Create(ES_LEFT|WS_CHILD|WS_VISIBLE,threct,this,IDC_THRES);
+	this->GetDlgItem(IDC_THRES)->SetWindowPos(&CWnd::wndTop,threct.left,threct.top,threct.Width(),threct.Height(),SWP_SHOWWINDOW);
+
+	//smooth button
+	//CButton *pSmooth;
+	//pSmooth=new CButton;
+	smrect=threct;
+	smrect.OffsetRect(0,tobtnedge.cy+btnrect.Height());
+	//str.LoadStringW(IDC_SMOOTH);
+	//pSmooth->Create(str,WS_CHILD|WS_VISIBLE|BS_PUSHBUTTON, smrect, this, IDC_SMOOTH);
+	this->GetDlgItem(IDC_SMOOTH)->SetWindowPos(&CWnd::wndTop,smrect.left,smrect.top,smrect.Width(),smrect.Height(),SWP_SHOWWINDOW);
+
+	//CEdit *pKnee1;
+	//pKnee1=new CEdit;
+	k1rect=smrect;
+	k1rect.OffsetRect(0,tobtnedge.cy+btnrect.Height());
+	//pKnee1->Create(ES_LEFT|WS_CHILD|WS_VISIBLE|ES_READONLY,k1rect,this,IDC_KNEE1);
+	this->GetDlgItem(IDC_KNEE1)->SetWindowPos(&CWnd::wndTop,k1rect.left,k1rect.top,k1rect.Width(),k1rect.Height(),SWP_SHOWWINDOW);
+
+	//CEdit *pKnee2;
+	//pKnee2=new CEdit;
+	k2rect=k1rect;
+	k2rect.OffsetRect(0,tobtnedge.cy+btnrect.Height());
+	//pKnee2->Create(ES_LEFT|WS_CHILD|WS_VISIBLE|ES_READONLY,k2rect,this,IDC_KNEE2);
+	this->GetDlgItem(IDC_KNEE2)->SetWindowPos(&CWnd::wndTop,k2rect.left,k2rect.top,k2rect.Width(),k2rect.Height(),SWP_SHOWWINDOW);
+
+	//threshold slider
+	//CSliderCtrl *pThSlider;
+	//pThSlider=new CSliderCtrl;
+	thslrect=CRect(k2rect.left,k2rect.top+tobtnedge.cy+btnrect.Height(),k2rect.CenterPoint().x,cancelpos.y-tobtnedge.cy);
+	//pThSlider->Create(TBS_AUTOTICKS|TBS_VERT|WS_CHILD|WS_VISIBLE,thslrect,this,IDC_THRESCTRL);
+	//pThSlider->SetRange(0,100);
+	//pThSlider->SetPos(20);
+	this->GetDlgItem(IDC_THRESCTRL)->SetWindowPos(&CWnd::wndTop,thslrect.left,thslrect.top,thslrect.Width(),thslrect.Height(),SWP_SHOWWINDOW);
+
+	//smooth slider
+	//CSliderCtrl *pSmSlider;
+	//pSmSlider=new CSliderCtrl;
+	smslrect=CRect(k2rect.CenterPoint().x,k2rect.top+tobtnedge.cy+btnrect.Height(),k2rect.right,cancelpos.y-tobtnedge.cy);
+	//pSmSlider->Create(TBS_AUTOTICKS|TBS_VERT|WS_CHILD|WS_VISIBLE,smslrect,this,IDC_SMOOTHSPAN);
+	//pSmSlider->SetRange(0,100);
+	//pSmSlider->SetPos(0);
+	this->GetDlgItem(IDC_SMOOTHSPAN)->SetWindowPos(&CWnd::wndTop,smslrect.left,smslrect.top,smslrect.Width(),smslrect.Height(),SWP_SHOWWINDOW);
 }

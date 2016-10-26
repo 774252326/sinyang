@@ -126,4 +126,8 @@ public:
 	CPoint mouseDownPoint;
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	CRect redrawrect;
+	afx_msg void OnSize(UINT nType, int cx, int cy);
+	void resize(int w, int h);
+	CRect thslrect;
+	CRect smslrect;
 };
