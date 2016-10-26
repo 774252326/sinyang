@@ -23,7 +23,7 @@ public:
 	//int maxFsz;
 	//int minFsz;
 	//int axisW;
-	//float ratio;
+	////float ratio;
 
 
 protected:

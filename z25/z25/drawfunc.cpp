@@ -3,9 +3,13 @@
 #include "stdafx.h"
 #include "drawfunc.h"
 //#include "funT\\smsp.h"
-#include "CSplineT.h"
-#include "calgridT.h"
-#include "xRescaleT.h"
+#include "funT1\\CSplineT.h"
+#include "funT1\\calgridT.h"
+#include "funT1\\xRescaleT.h"
+
+//#include "CSplineT.h"
+//#include "calgridT.h"
+//#include "xRescaleT.h"
 
 //int metricGridLong=5;
 //int metricGridShort=3;
@@ -14,7 +18,7 @@
 //int gap=2;
 //int Hmax=15;
 //CString fontName=L"Arial";
-#include "PlotWnd.h"
+//#include "PlotWnd.h"
 
 inline COLORREF inv(const COLORREF &oc){
 	return (oc^0x00ffffff);
@@ -94,7 +98,7 @@ void DrawGridLine(const CRect & rect
 	, const std::vector<long> & gridH
 	, const std::vector<long> & gridV)
 {
-	
+
 	//draw xy grid line
 	if(gridType>=0 && gridType<5){
 
@@ -564,29 +568,29 @@ CSize GetLegendExtent(CDC* pDC
 	, CString fontName
 	)
 {
-		pfont->DeleteObject();
+	pfont->DeleteObject();
 
-		pfont->CreateFont(
-			metricH,                   // nHeight
-			0,                         // nWidth
-			0,                         // nEscapement
-			0,                         // nOrientation
-			FW_NORMAL,                 // nWeight
-			FALSE,                     // bItalic
-			FALSE,                     // bUnderline
-			0,                         // cStrikeOut
-			ANSI_CHARSET,              // nCharSet
-			OUT_DEFAULT_PRECIS,        // nOutPrecision
-			CLIP_DEFAULT_PRECIS,       // nClipPrecision
-			DEFAULT_QUALITY,           // nQuality
-			DEFAULT_PITCH | FF_SWISS,  // nPitchAndFamily
-			fontName);                 // lpszFacename
+	pfont->CreateFont(
+		metricH,                   // nHeight
+		0,                         // nWidth
+		0,                         // nEscapement
+		0,                         // nOrientation
+		FW_NORMAL,                 // nWeight
+		FALSE,                     // bItalic
+		FALSE,                     // bUnderline
+		0,                         // cStrikeOut
+		ANSI_CHARSET,              // nCharSet
+		OUT_DEFAULT_PRECIS,        // nOutPrecision
+		CLIP_DEFAULT_PRECIS,       // nClipPrecision
+		DEFAULT_QUALITY,           // nQuality
+		DEFAULT_PITCH | FF_SWISS,  // nPitchAndFamily
+		fontName);                 // lpszFacename
 
-		CSize LTsz=GetLegendTextExtent(pDC,ps,pfont);
+	CSize LTsz=GetLegendTextExtent(pDC,ps,pfont);
 
-		LTsz.cx+=lc+gap*3;
+	LTsz.cx+=lc+gap*3;
 
-		return LTsz;
+	return LTsz;
 
 }
 
@@ -607,88 +611,88 @@ int GetAutoFontSize(CDC* pDC
 	CFont font;
 	int uf=maxSize;
 
-		CSize szu=GetLegendExtent(pDC,ls,&font,lineLength,gap,uf,fontName);
-		if(szu.cx<=borderSize.cx && szu.cy<=borderSize.cy){
-			TRACE("\nmax\n");
-			return maxSize;
-		}
+	CSize szu=GetLegendExtent(pDC,ls,&font,lineLength,gap,uf,fontName);
+	if(szu.cx<=borderSize.cx && szu.cy<=borderSize.cy){
+		TRACE("\nmax\n");
+		return maxSize;
+	}
 
-		int lf=minSize;
-		CSize szl=GetLegendExtent(pDC,ls,&font,lineLength,gap,lf,fontName);
-		if(szl.cx>borderSize.cx || szl.cy>borderSize.cy){
-			TRACE("\nmin\n");
-			return minSize;
-		}
+	int lf=minSize;
+	CSize szl=GetLegendExtent(pDC,ls,&font,lineLength,gap,lf,fontName);
+	if(szl.cx>borderSize.cx || szl.cy>borderSize.cy){
+		TRACE("\nmin\n");
+		return minSize;
+	}
 
-		while(uf-lf>1){
-			int tf=(uf+lf)/2;
-			CSize szt=GetLegendExtent(pDC,ls,&font,lineLength,gap,tf,fontName);
-			if(szt.cx<=borderSize.cx && szt.cy<=borderSize.cy){
-				lf=tf;
-				szl=szt;
-			}
-			else{
-				uf=tf;
-			}
+	while(uf-lf>1){
+		int tf=(uf+lf)/2;
+		CSize szt=GetLegendExtent(pDC,ls,&font,lineLength,gap,tf,fontName);
+		if(szt.cx<=borderSize.cx && szt.cy<=borderSize.cy){
+			lf=tf;
+			szl=szt;
 		}
+		else{
+			uf=tf;
+		}
+	}
 
-		return lf;
+	return lf;
 
 }
 
 
-
-CSize UpdateLegendSpec(LegendSpec &lgs
-	, CDC *pDC
-	, const std::vector<LineSpec> &ls
-	, BYTE legendDpMode
-	, CRect plotrect
-	, CRect lgrect
-	, int minFontSize
-	, int maxFontSize
-	, int axisWidth)
-{
-
-	if( legendDpMode&LEGEND_DP_FIT_RECT ){
-				if( legendDpMode&LEGEND_DP_AUTO_RECT ){
-
-
-					CSize sz=plotrect.Size();
-					lgrect.right=lgrect.left+sz.cx/2;
-					lgrect.bottom=lgrect.top+sz.cy/2;
-
-				}
-
-				int fsz=GetAutoFontSize(pDC,ls,lgs.lineLength,lgs.gap,minFontSize,maxFontSize,lgs.fontName,lgrect.Size());
-
-				lgs.fontSize=fsz;
-			}
-
-				CFont font;
-				CSize sz=GetLegendExtent(pDC,ls,&font,lgs.lineLength,lgs.gap,lgs.fontSize,lgs.fontName);
-
-			if( legendDpMode&LEGEND_DP_ALIGN ){
-				lgs.bDock=true;
-
-				plotrect.DeflateRect(axisWidth,0,0,axisWidth);
-
-				if( legendDpMode&LEGEND_DP_LEFT ){
-					lgs.position.x=plotrect.left;
-				}
-				else{
-					lgs.position.x=plotrect.right-sz.cx;
-				}
-
-				if( legendDpMode&LEGEND_DP_TOP ){
-					lgs.position.y=plotrect.top;
-				}
-				else{
-					lgs.position.y=plotrect.bottom-sz.cy;
-				}
-			}
-
-			return sz;
-}
+//
+//CSize UpdateLegendSpec(LegendSpec &lgs
+//	, CDC *pDC
+//	, const std::vector<LineSpec> &ls
+//	, BYTE legendDpMode
+//	, CRect plotrect
+//	, CRect lgrect
+//	, int minFontSize
+//	, int maxFontSize
+//	, int axisWidth)
+//{
+//
+//	if( legendDpMode&LEGEND_DP_FIT_RECT ){
+//		if( legendDpMode&LEGEND_DP_AUTO_RECT ){
+//
+//
+//			CSize sz=plotrect.Size();
+//			lgrect.right=lgrect.left+sz.cx/2;
+//			lgrect.bottom=lgrect.top+sz.cy/2;
+//
+//		}
+//
+//		int fsz=GetAutoFontSize(pDC,ls,lgs.lineLength,lgs.gap,minFontSize,maxFontSize,lgs.fontName,lgrect.Size());
+//
+//		lgs.fontSize=fsz;
+//	}
+//
+//	CFont font;
+//	CSize sz=GetLegendExtent(pDC,ls,&font,lgs.lineLength,lgs.gap,lgs.fontSize,lgs.fontName);
+//
+//	if( legendDpMode&LEGEND_DP_ALIGN ){
+//		lgs.bDock=true;
+//
+//		plotrect.DeflateRect(axisWidth,0,0,axisWidth);
+//
+//		if( legendDpMode&LEGEND_DP_LEFT ){
+//			lgs.position.x=plotrect.left;
+//		}
+//		else{
+//			lgs.position.x=plotrect.right-sz.cx;
+//		}
+//
+//		if( legendDpMode&LEGEND_DP_TOP ){
+//			lgs.position.y=plotrect.top;
+//		}
+//		else{
+//			lgs.position.y=plotrect.bottom-sz.cy;
+//		}
+//	}
+//
+//	return sz;
+//}
 
 
 
@@ -969,28 +973,28 @@ void DrawLegend(CDC* pDC
 {
 	CFont font;
 	font.CreateFont(
-			fontSize,                   // nHeight
-			0,                         // nWidth
-			0,                         // nEscapement
-			0,                         // nOrientation
-			FW_NORMAL,                 // nWeight
-			FALSE,                     // bItalic
-			FALSE,                     // bUnderline
-			0,                         // cStrikeOut
-			ANSI_CHARSET,              // nCharSet
-			OUT_DEFAULT_PRECIS,        // nOutPrecision
-			CLIP_DEFAULT_PRECIS,       // nClipPrecision
-			DEFAULT_QUALITY,           // nQuality
-			DEFAULT_PITCH | FF_SWISS,  // nPitchAndFamily
-			fontName);                 // lpszFacename
+		fontSize,                   // nHeight
+		0,                         // nWidth
+		0,                         // nEscapement
+		0,                         // nOrientation
+		FW_NORMAL,                 // nWeight
+		FALSE,                     // bItalic
+		FALSE,                     // bUnderline
+		0,                         // cStrikeOut
+		ANSI_CHARSET,              // nCharSet
+		OUT_DEFAULT_PRECIS,        // nOutPrecision
+		CLIP_DEFAULT_PRECIS,       // nClipPrecision
+		DEFAULT_QUALITY,           // nQuality
+		DEFAULT_PITCH | FF_SWISS,  // nPitchAndFamily
+		fontName);                 // lpszFacename
 
 
 	DrawLegend(pDC
-	, ls
-	, &font
-	, bkColor
-	,  lineLength
-	,  gap);
+		, ls
+		, &font
+		, bkColor
+		,  lineLength
+		,  gap);
 
 }
 
@@ -1061,18 +1065,18 @@ void DrawCurve(CDC* pDC
 		si+=ll[j];
 
 		if(ps[j].traceLast){
-		CRect prect(0,0,1,1);
-		CSize ppoc=CSize(ps[j].lastWidth,ps[j].lastWidth);
-		prect.InflateRect(ppoc);
+			CRect prect(0,0,1,1);
+			CSize ppoc=CSize(ps[j].lastWidth,ps[j].lastWidth);
+			prect.InflateRect(ppoc);
 
-		oc=pDC->GetBkColor();
-		prect.MoveToXY(pointlist[si-1]-ppoc);
-		//drawRectangle(prect,pDC,ps.back().colour,ps.back().colour);
-		pDC->FillSolidRect(&prect,ps[j].colour);
-		pDC->SetBkColor(oc);
+			oc=pDC->GetBkColor();
+			prect.MoveToXY(pointlist[si-1]-ppoc);
+			//drawRectangle(prect,pDC,ps.back().colour,ps.back().colour);
+			pDC->FillSolidRect(&prect,ps[j].colour);
+			pDC->SetBkColor(oc);
 		}
 
-			
+
 
 	}
 

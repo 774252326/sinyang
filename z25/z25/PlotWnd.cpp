@@ -21,12 +21,30 @@ IMPLEMENT_DYNAMIC(PlotWnd, CWnd)
 	, bMouseCursor(false)
 	, selectPIdx(0)
 	, zoomrate(0.9)
-	, wndPosition(CPoint())
+	, wndPosition(0)
 	//, legendDpMode(0)
 {
 	td=NULL;
 
 	//lgs.bDock=false;
+	//lgs.bkColor=pd.ps.bkgndC;
+	//lgs.fontName=pd.ps.fontName;
+	//lgs.fontSize=15;
+	//lgs.gap=2;
+	//lgs.lineLength=40;
+	//lgs.position=CPoint(200,200);
+
+
+	//CRect winrect(0,0,20,30);
+	//				
+	//				CSize sz=winrect.Size();
+	//				//lgrect.right=lgrect.left+sz.cx/2;
+	//				//lgrect.bottom=lgrect.top+sz.cy/2;
+
+	//				lgrect.Size()=sz;
+
+	//lgrect=CRect(0,0,30,30);
+
 }
 
 PlotWnd::~PlotWnd()
@@ -302,6 +320,10 @@ void PlotWnd::OnMove(int x, int y)
 		td->GetWindowRect(&rc);
 		rc.OffsetRect(x-wndPosition.x,y-wndPosition.y);
 		td->MoveWindow(&rc);
+
+		//LPARAM pt=MAKELPARAM((short)(x+lgs.position.x),(short)(y+lgs.position.y));
+		//::PostMessage(td->GetSafeHwnd(),WM_MOVE,NULL,pt);
+
 	}
 
 	wndPosition=CPoint(x,y);
@@ -359,16 +381,16 @@ void PlotWnd::ShowLegend(bool bShow)
 
 
 
-CRect PlotWnd::GetWindowPlotRect(bool bWnd)
-{
-
-	CRect plotrect;
-	if(bWnd)
-		this->GetWindowRect(&plotrect);
-	else
-		this->GetClientRect(&plotrect);
-
-	pd.ps.CalPlotRect(plotrect);
-
-	return plotrect;
-}
+//CRect PlotWnd::GetWindowPlotRect(bool bWnd)
+//{
+//
+//	CRect plotrect;
+//	if(bWnd)
+//		this->GetWindowRect(&plotrect);
+//	else
+//		this->GetClientRect(&plotrect);
+//
+//	pd.ps.CalPlotRect(plotrect);
+//
+//	return plotrect;
+//}

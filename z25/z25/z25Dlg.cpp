@@ -7,11 +7,11 @@
 #include "z25Dlg.h"
 #include "afxdialogex.h"
 
-#include "pcct.hpp"
+#include "struct\\pcct.hpp"
 //#include "LineSpec.hpp"
 //#include "PlotSpec.hpp"
 //#include "RawData.hpp"
-#include "PlotData.hpp"
+#include "struct\\PlotData.hpp"
 
 
 
@@ -186,12 +186,12 @@ void Cz25Dlg::OnBnClickedButton1()
 			pd.AddNew(a.time,a.current,ls,a.label[0],a.label[1]);
 		}
 		//pd.ps.legendPos=0;
-		pw.lgc.legendDpMode=LEGEND_DP_SHOW;
+
 		pw.pd=pd;
 		pw.ResetRange();
 		pw.SetLegend();
 
-		m_bcheck=bool(pw.lgc.legendDpMode&LEGEND_DP_SHOW);
+		//m_bcheck=pw.pd.ps.legendPos;
 
 
 
@@ -273,7 +273,7 @@ void Cz25Dlg::OnMove(int x, int y)
 
 	// TODO: Add your message handler code here
 
-	//TRACE("%d,%d\n",x,y);
+	TRACE("dlg:%d,%d\n",x,y);
 
 	//if(td!=NULL){
 	//	CRect rc;
@@ -284,9 +284,12 @@ void Cz25Dlg::OnMove(int x, int y)
 
 	//opt=CPoint(x,y);
 
-	pw.OnMove(x,y);
+	//pw.OnMove(x,y);
 
-	//::SendMessage(pw.GetSafeHwnd(),WM_MOVE,NULL,NULL);
+	LPARAM pt=MAKELPARAM((short)(x),(short)(y));
+	::PostMessage(pw.GetSafeHwnd(),WM_MOVE,NULL,pt);
+	//::SendMessage(pw.GetSafeHwnd(),WM_SIZE,x,y);
+
 }
 
 
@@ -296,10 +299,15 @@ void Cz25Dlg::OnBnClickedCheck1()
 
 	UpdateData();
 
+	//pw.pd.ps.legendPos=m_bcheck;
+
+	//this->Invalidate();
+
 	if(m_bcheck)
 		pw.lgc.legendDpMode|=LEGEND_DP_SHOW;
 	else
 		pw.lgc.legendDpMode&=~LEGEND_DP_SHOW;
+
 
 	pw.SetLegend();
 

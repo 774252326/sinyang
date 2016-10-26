@@ -75,7 +75,7 @@ CSize LegendDlg::GetExtent(void)
 {
 	CFont fnt;
 
-	return GetLegendExtent(this->GetDC(),ppw->pd.ls,&fnt,ppw->lgs.lineLength,ppw->lgs.gap,ppw->lgs.fontSize,ppw->lgs.fontName);;
+	return GetLegendExtent(this->GetDC(),ppw->pd.ls,&fnt,ppw->lgs.lineLength,ppw->lgs.gap,ppw->lgs.fontSize,ppw->lgs.fontName);
 }
 
 
@@ -104,53 +104,47 @@ void LegendDlg::OnMove(int x, int y)
 	CDialogEx::OnMove(x, y);
 
 	// TODO: Add your message handler code here
-
-	if(bInitComplete)
+	TRACE("lg:%d,%d\n",x,y);
+	if(bInitComplete){
 		CPoint pt=GetPos();
+		//		CRect rc;
+		//GetWindowRect(&rc);
+		////rc.OffsetRect(x-wndPosition.x,y-wndPosition.y);
+
+		//CSize sz=rc.Size();
+
+		//rc=CRect(CPoint(x,y),sz);
+
+		//MoveWindow(&rc);
+	}
 }
 
 
 void LegendDlg::PositionWnd(void)
 {
 
-	CRect plotrect=ppw->GetWindowPlotRect();
+	CRect plotrect;
+	
+	ppw->GetClientRect(&plotrect);
 
+	ppw->pd.ps.CalPlotRect(plotrect);	
 
 	if( ppw->lgc.legendDpMode&LEGEND_DP_FIT_RECT ){
 		if( ppw->lgc.legendDpMode&LEGEND_DP_AUTO_RECT ){
 			CSize plotsz=plotrect.Size();
-			
-			ppw->lgs.fontSize=GetAutoFontSize(CSize(plotsz.cx*ppw->lgc.ratio,plotsz.cy*ppw->lgc.ratio),ppw->lgc.maxFsz,ppw->lgc.minFsz);
+			ppw->lgs.fontSize=GetAutoFontSize(CSize(plotsz.cx* ppw->lgc.ratio,plotsz.cy* ppw->lgc.ratio), ppw->lgc.maxFsz, ppw->lgc.minFsz);
 		}
 		else{
-			ppw->lgs.fontSize=GetAutoFontSize(ppw->lgc.limitSize,ppw->lgc.maxFsz,ppw->lgc.minFsz);
+			ppw->lgs.fontSize=GetAutoFontSize(ppw->lgc.limitSize, ppw->lgc.maxFsz, ppw->lgc.minFsz);
 		}
-
-
 	}
 
 	CSize sz=GetExtent();
 
 	if( ppw->lgc.legendDpMode&LEGEND_DP_ALIGN ){
-		ppw->lgs.bDock=true;
-		
-		plotrect.DeflateRect(ppw->lgc.axisW,0,0,ppw->lgc.axisW);
-
-		if( ppw->lgc.legendDpMode&LEGEND_DP_LEFT ){
-			ppw->lgs.position.x=plotrect.left;
-		}
-		else{
-			ppw->lgs.position.x=plotrect.right-sz.cx;
-		}
-
-		if( ppw->lgc.legendDpMode&LEGEND_DP_TOP ){
-			ppw->lgs.position.y=plotrect.top;
-		}
-		else{
-			ppw->lgs.position.y=plotrect.bottom-sz.cy;
-		}
+		ppw->lgs.bDock=true;		
+		ppw->lgs.position=ppw->lgc.CalAlignPos(plotrect,sz);
 	}
-
 
 	CRect legendrect(ppw->lgs.position,sz);
 

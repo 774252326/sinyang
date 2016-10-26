@@ -3,11 +3,11 @@
 #include <afxcmn.h>
 #include <vector>
 #include <algorithm>
-#include "funT\\smsp.h"
-#include "funT\\lspfitT.h"
+#include "funT1\\smsp.h"
+#include "funT1\\lspfitT.h"
 
-#include "PlotData.hpp"
-#include "LegendSpec.hpp"
+#include "struct\\PlotData.hpp"
+//#include "LegendSpec.hpp"
 
 //void AdjustWidth(CListCtrl *ls, int nCol, CString str, int gap=15);
 //void AdjustWidth(CListCtrl *ls, int nCol, int nRow, int gap=15);
@@ -124,16 +124,16 @@ int GetAutoFontSize(CDC* pDC
 //	, int metricGridLong
 //	, int gap0
 //	);
-
-CSize UpdateLegendSpec(LegendSpec &lgs
-	, CDC *pDC
-	, const std::vector<LineSpec> &ls
-	, BYTE legendDpMode
-	, CRect plotrect
-	, CRect lgrect
-	, int minFontSize
-	, int maxFontSize
-	, int axisWidth);
+//
+//CSize UpdateLegendSpec(LegendSpec &lgs
+//	, CDC *pDC
+//	, const std::vector<LineSpec> &ls
+//	, BYTE legendDpMode
+//	, CRect plotrect
+//	, CRect lgrect
+//	, int minFontSize
+//	, int maxFontSize
+//	, int axisWidth);
 
 
 void DrawLegend(CDC* pDC
