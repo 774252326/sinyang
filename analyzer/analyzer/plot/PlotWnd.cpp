@@ -11,21 +11,16 @@
 
 IMPLEMENT_DYNAMIC(PlotWnd, CWnd)
 
-	PlotWnd::PlotWnd()
-	//: xmin(0)
-	//, xmax(0)
-	//, ymin(0)
-	//, ymax(0)
+	PlotWnd::PlotWnd(PlotDataEx *pd/*=NULL*/)
 	: pct(0.010)
 	, m_mouseDownPoint(CPoint())
 	, bMouseCursor(false)
 	, selectPIdx(0)
 	, zoomrate(0.9)
 	, wndPosition(CPoint(0,0))
-	//, legendDpMode(0)
 {
 	td=NULL;
-
+	pdex=pd;
 }
 
 PlotWnd::~PlotWnd()
@@ -43,7 +38,7 @@ BEGIN_MESSAGE_MAP(PlotWnd, CWnd)
 	ON_WM_NCHITTEST()
 	ON_WM_MOVE()
 	ON_WM_SIZE()
-//	ON_WM_ERASEBKGND()
+	//	ON_WM_ERASEBKGND()
 END_MESSAGE_MAP()
 
 
@@ -78,14 +73,15 @@ void PlotWnd::OnPaint()
 	bmp.CreateCompatibleBitmap(&dc,winsz.cx,winsz.cy);//创建兼容位图
 	dcMem.SelectObject(&bmp);  	//将位图选择进内存DC
 
-
-	DrawData(rect,&dcMem,pdex.pd,pdex.xmin,pdex.xmax,pdex.ymin,pdex.ymax);
-
-	if(bMouseCursor && !pdex.pd.ls.empty()
-		&& selectPIdx>=0 && selectPIdx<pdex.pd.raw.xll.size()){
-			DrawData1(rect,&dcMem,pdex.pd.raw.xll[selectPIdx],pdex.pd.raw.yll[selectPIdx],pdex.xmin,pdex.xmax,pdex.ymin,pdex.ymax,inv(pdex.pd.ps.bkgndC));
+	if(pdex!=NULL){
+		DrawDataEx(rect,&dcMem,*pdex);
+		if(bMouseCursor)
+			DrawData1Ex(rect,&dcMem,*pdex,selectPIdx);
 	}
-
+	else{
+		PlotDataEx dx(blankPS);
+		DrawDataEx(rect,&dcMem,dx);
+	}
 	dc.BitBlt(0,0,winsz.cx,winsz.cy,&dcMem,0,0,SRCCOPY);//将内存DC上的图象拷贝到前台
 	//pDC->BitBlt(100,100,winsz.cx,winsz.cy,&dcMem,0,0,SRCCOPY);//将内存DC上的图象拷贝到前台
 
@@ -103,41 +99,41 @@ void PlotWnd::OnLButtonDown(UINT nFlags, CPoint point)
 	// TODO: Add your message handler code here and/or call default
 
 	SetFocus();
+	if(pdex!=NULL){
+		if(!pdex->pd.ls.empty()){
 
-	if(!pdex.pd.ls.empty()){
 
+			CRect plotrect;
+			this->GetClientRect(&plotrect);	
 
-		CRect plotrect;
-		this->GetClientRect(&plotrect);	
+			int re=DownUpdate(plotrect
+				, pdex->pd.ps.metricSize
+				, pdex->pd.ps.labelSize
+				, pdex->pd.ps.metricGridLong
+				, pdex->pd.ps.gap
+				, point
+				, m_mouseDownPoint
+				, pdex->xmin, pdex->xmax, pdex->ymin, pdex->ymax
+				, bMouseCursor
+				, pdex->pd.raw.xll
+				, pdex->pd.raw.yll
+				, selectPIdx);
 
-		int re=DownUpdate(plotrect
-			, pdex.pd.ps.metricSize
-			, pdex.pd.ps.labelSize
-			, pdex.pd.ps.metricGridLong
-			, pdex.pd.ps.gap
-			, point
-			, m_mouseDownPoint
-			, pdex.xmin, pdex.xmax, pdex.ymin, pdex.ymax
-			, bMouseCursor
-			, pdex.pd.raw.xll
-			, pdex.pd.raw.yll
-			, selectPIdx);
+			switch(re){
+			case 1:
+				SetCapture();
+				break;
+			case 2:
+				this->ClientToScreen(&m_mouseDownPoint);
+				::SetCursorPos(m_mouseDownPoint.x,m_mouseDownPoint.y);
+				Invalidate(FALSE);
+				break;
+			default:
+				break;
+			}
 
-		switch(re){
-		case 1:
-			SetCapture();
-			break;
-		case 2:
-			this->ClientToScreen(&m_mouseDownPoint);
-			::SetCursorPos(m_mouseDownPoint.x,m_mouseDownPoint.y);
-			Invalidate(FALSE);
-			break;
-		default:
-			break;
 		}
-
 	}
-
 
 	CWnd::OnLButtonDown(nFlags, point);
 }
@@ -162,44 +158,44 @@ void PlotWnd::OnMouseMove(UINT nFlags, CPoint point)
 {
 	// TODO: Add your message handler code here and/or call default
 
+	if(pdex!=NULL){
+		//size_t selectIdx=m_spBtn.GetPos32();
+		if(!pdex->pd.ls.empty()){
 
-	//size_t selectIdx=m_spBtn.GetPos32();
-	if(!pdex.pd.ls.empty()){
+			//if(pd!=NULL && !pd->ps.empty() ){
+			CRect plotrect;
+			this->GetClientRect(&plotrect);	
+			//ScreenToClient(&point);
 
-		//if(pd!=NULL && !pd->ps.empty() ){
-		CRect plotrect;
-		this->GetClientRect(&plotrect);	
-		//ScreenToClient(&point);
+			if(GetCapture()==this){
+				if(MoveUpdateA(plotrect
+					, pdex->pd.ps.metricSize
+					, pdex->pd.ps.labelSize
+					, pdex->pd.ps.metricGridLong
+					, pdex->pd.ps.gap
+					, point
+					, this->m_mouseDownPoint
+					, pdex->xmin,pdex->xmax,pdex->ymin,pdex->ymax))
+					this->Invalidate(/*FALSE*/);
+			}
+			else{
 
-		if(GetCapture()==this){
-			if(MoveUpdateA(plotrect
-				, pdex.pd.ps.metricSize
-				, pdex.pd.ps.labelSize
-				, pdex.pd.ps.metricGridLong
-				, pdex.pd.ps.gap
-				, point
-				, this->m_mouseDownPoint
-				, pdex.xmin,pdex.xmax,pdex.ymin,pdex.ymax))
-				this->Invalidate(/*FALSE*/);
+				CString str;
+				if(MoveUpdateB(plotrect
+					, pdex->pd.ps.metricSize
+					, pdex->pd.ps.labelSize
+					, pdex->pd.ps.metricGridLong
+					, pdex->pd.ps.gap
+					, point
+					, this->m_mouseDownPoint
+					, pdex->xmin,pdex->xmax,pdex->ymin,pdex->ymax
+					, str))
+					m_tool.UpdateTipText(str,this);
+
+			}
+
 		}
-		else{
-
-			CString str;
-			if(MoveUpdateB(plotrect
-				, pdex.pd.ps.metricSize
-				, pdex.pd.ps.labelSize
-				, pdex.pd.ps.metricGridLong
-				, pdex.pd.ps.gap
-				, point
-				, this->m_mouseDownPoint
-				, pdex.xmin,pdex.xmax,pdex.ymin,pdex.ymax
-				, str))
-				m_tool.UpdateTipText(str,this);
-
-		}
-
 	}
-
 
 	CWnd::OnMouseMove(nFlags, point);
 }
@@ -208,26 +204,26 @@ void PlotWnd::OnMouseMove(UINT nFlags, CPoint point)
 BOOL PlotWnd::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 {
 	// TODO: Add your message handler code here and/or call default
+	if(pdex!=NULL){
+		if(!pdex->pd.ls.empty()){
 
-	if(!pdex.pd.ls.empty()){
+			//if(pd!=NULL && !pd->ps.empty() ){
+			ScreenToClient(&pt);
+			CRect plotrect;
+			this->GetClientRect(&plotrect);
+			if( WheelUpdate(plotrect
+				, pdex->pd.ps.metricSize
+				, pdex->pd.ps.labelSize
+				, pdex->pd.ps.metricGridLong
+				, pdex->pd.ps.gap
+				, pt
+				, ((zDelta>0)?zoomrate:1/zoomrate)
+				,pdex->xmin,pdex->xmax,pdex->ymin,pdex->ymax) ){
+					this->Invalidate(FALSE);
+			}
 
-		//if(pd!=NULL && !pd->ps.empty() ){
-		ScreenToClient(&pt);
-		CRect plotrect;
-		this->GetClientRect(&plotrect);
-		if( WheelUpdate(plotrect
-			, pdex.pd.ps.metricSize
-			, pdex.pd.ps.labelSize
-			, pdex.pd.ps.metricGridLong
-			, pdex.pd.ps.gap
-			, pt
-			, ((zDelta>0)?zoomrate:1/zoomrate)
-			,pdex.xmin,pdex.xmax,pdex.ymin,pdex.ymax) ){
-				this->Invalidate(FALSE);
 		}
-
 	}
-
 
 	return CWnd::OnMouseWheel(nFlags, zDelta, pt);
 }
@@ -237,8 +233,10 @@ BOOL PlotWnd::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 
 void PlotWnd::ResetRange(void)
 {
-	UpdateRange(pdex.pd.raw.xll,pdex.xmin,pdex.xmax,pct,true);
-	UpdateRange(pdex.pd.raw.yll,pdex.ymin,pdex.ymax,pct,true);
+	if(pdex!=NULL){
+		UpdateRange(pdex->pd.raw.xll,pdex->xmin,pdex->xmax,pct,true);
+		UpdateRange(pdex->pd.raw.yll,pdex->ymin,pdex->ymax,pct,true);
+	}
 }
 
 
@@ -300,23 +298,15 @@ void PlotWnd::OnMove(int x, int y)
 	if(td!=NULL){
 		CRect rc;
 		td->GetWindowRect(&rc);
-		
-
 
 		rc.OffsetRect(x-wndPosition.x,y-wndPosition.y);
-		
+
 		TRACE("[%d,%d,%d,%d,%d,%d]\n",rc.left,rc.top,rc.right,rc.bottom,x-wndPosition.x,y-wndPosition.y);
 
 		//this->ScreenToClient(&rc);//for view only
 
 		td->MoveWindow(&rc);
 
-		//lgs.position=rc.TopLeft();
-
-			//LPARAM pt=MAKELPARAM((short)(x),(short)(y));
-	//::PostMessage(td->GetSafeHwnd(),WM_MOVE,NULL,pt);
-
-		//((LegendDlg*)td)->GetPos();
 	}
 
 	wndPosition=CPoint(x,y);
@@ -341,8 +331,10 @@ void PlotWnd::OnSize(UINT nType, int cx, int cy)
 
 void PlotWnd::SetLegend(void)
 {
-	ShowLegend(pdex.lgc.legendDpMode&LEGEND_DP_SHOW);
-	//return 0;
+	if(pdex!=NULL){
+		ShowLegend(pdex->lgc.legendDpMode&LEGEND_DP_SHOW);
+		//return 0;
+	}
 }
 
 
@@ -373,27 +365,11 @@ void PlotWnd::ShowLegend(bool bShow)
 }
 
 
+PlotSpec * PlotWnd::GetPlotSpec(void)
+{
+	if(pdex!=NULL){
+		return &(pdex->pd.ps);
+	}
 
-//CRect PlotWnd::GetWindowPlotRect(bool bWnd)
-//{
-//
-//	CRect plotrect;
-//	if(bWnd)
-//		this->GetWindowRect(&plotrect);
-//	else
-//		this->GetClientRect(&plotrect);
-//
-//	pd.ps.CalPlotRect(plotrect);
-//
-//	return plotrect;
-//}
-
-
-//BOOL PlotWnd::OnEraseBkgnd(CDC* pDC)
-//{
-//	// TODO: Add your message handler code here and/or call default
-//
-//	return TRUE;
-//
-//	return CWnd::OnEraseBkgnd(pDC);
-//}
+	return &blankPS;
+}

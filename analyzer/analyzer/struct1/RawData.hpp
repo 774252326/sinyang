@@ -7,6 +7,9 @@
 #include <numeric>
 #include <algorithm>
 
+template<typename T>
+T myfunction (T x, T y) {return x+y;};
+
 class RawData : public CObject
 {
 public:
@@ -97,10 +100,28 @@ public:
 		ll.clear();
 	};
 
+	
+
+
+	size_t ValidPointNumber(void)
+	{
+		DWORD lltotal=0;
+		//std::accumulate(ll.begin(), ll.end(), lltotal, myfunction<DWORD>);
+
+		//std::accumulate(ll.data(),ll.data()+ll.size(),lltotal);
+		//DWORD lls=ll[0]+ll[1];
+
+		for(size_t i=0;i<ll.size();i++){
+			lltotal+=ll[i];
+		}
+
+		return (size_t)lltotal;
+	};
+
 	bool CheckData(void)
 	{
-		size_t lltotal=0;
-		std::accumulate(ll.begin(), ll.end(), lltotal);
+		size_t lltotal=ValidPointNumber();
+		
 		if(lltotal<=xll.size() && lltotal<=yll.size())
 			return true;
 

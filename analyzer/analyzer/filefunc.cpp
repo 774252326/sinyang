@@ -35,3 +35,27 @@ BOOL WriteFileCustom(CObject * co, size_t n, CString fp)
 	}
 	return FALSE;
 }
+
+
+void LoadFileList(const CString &m_filePath, std::vector<CString> &filelist)
+{
+
+	CString folderpath=m_filePath.Left(m_filePath.ReverseFind('\\'));
+
+	filelist.clear();
+	CStdioFile file;
+	BOOL readflag;
+	readflag=file.Open(m_filePath, CFile::modeRead);
+
+	if(readflag)
+	{	
+		CString strRead;
+		//TRACE("\n--Begin to read file");
+		while(file.ReadString(strRead)){
+			strRead=folderpath+"\\"+strRead;
+			filelist.push_back(strRead);
+		}
+		//TRACE("\n--End reading\n");
+		file.Close();
+	}
+}

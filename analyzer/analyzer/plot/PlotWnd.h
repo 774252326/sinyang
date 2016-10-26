@@ -19,7 +19,7 @@ class PlotWnd : public CWnd
 	DECLARE_DYNAMIC(PlotWnd)
 
 public:
-	PlotWnd();
+	PlotWnd(PlotDataEx *pd=NULL);
 	virtual ~PlotWnd();
 
 protected:
@@ -34,13 +34,14 @@ public:
 	//LegendSpec lgs;
 
 	//LegendCondition lgc;
-	PlotDataEx pdex;
+	PlotDataEx *pdex;
 
 	size_t selectPIdx;
 	double pct;
 	bool bMouseCursor;	
 	double zoomrate;
 
+	PlotSpec blankPS;
 
 	void ResetRange(void);
 	void SetLegend(void);
@@ -75,6 +76,7 @@ protected:
 
 public:
 //	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	PlotSpec * GetPlotSpec(void);
 };
 
 

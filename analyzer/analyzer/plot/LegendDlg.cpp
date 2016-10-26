@@ -50,7 +50,7 @@ LRESULT LegendDlg::OnNcHitTest(CPoint point)
 {
 	// TODO: Add your message handler code here and/or call default
 
-	return ppw->pdex.lgs.bDock ? CDialogEx::OnNcHitTest(point) : HTCAPTION;
+	return ppw->pdex->lgs.bDock ? CDialogEx::OnNcHitTest(point) : HTCAPTION;
 }
 
 
@@ -64,8 +64,8 @@ void LegendDlg::OnPaint()
 	CRect rc;
 	this->GetClientRect(&rc);	
 
-	std::vector<LineSpec> ls(ppw->pdex.pd.ls);
-	LegendSpec lgs=ppw->pdex.lgs;
+	std::vector<LineSpec> ls(ppw->pdex->pd.ls);
+	LegendSpec lgs=ppw->pdex->lgs;
 
 	dc.FillSolidRect(&rc,lgs.bkColor);
 	DrawLegend(&dc,ls,lgs.lineLength,lgs.gap,lgs.fontSize,lgs.fontName,lgs.bkColor);
@@ -75,15 +75,15 @@ CSize LegendDlg::GetExtent(void)
 {
 	CFont fnt;
 
-	return GetLegendExtent(this->GetDC(),ppw->pdex.pd.ls,&fnt,ppw->pdex.lgs.lineLength,ppw->pdex.lgs.gap,ppw->pdex.lgs.fontSize,ppw->pdex.lgs.fontName);;
+	return GetLegendExtent(this->GetDC(),ppw->pdex->pd.ls,&fnt,ppw->pdex->lgs.lineLength,ppw->pdex->lgs.gap,ppw->pdex->lgs.fontSize,ppw->pdex->lgs.fontName);;
 }
 
 
 int LegendDlg::GetAutoFontSize(CSize limitsz, int maxFontSize, int minFontSize)
 {
-	int newfsz=::GetAutoFontSize(this->GetDC(),ppw->pdex.pd.ls,ppw->pdex.lgs.lineLength,ppw->pdex.lgs.gap,minFontSize,maxFontSize,ppw->pdex.lgs.fontName,limitsz);
+	int newfsz=::GetAutoFontSize(this->GetDC(),ppw->pdex->pd.ls,ppw->pdex->lgs.lineLength,ppw->pdex->lgs.gap,minFontSize,maxFontSize,ppw->pdex->lgs.fontName,limitsz);
 
-	ppw->pdex.lgs.fontSize=newfsz;
+	ppw->pdex->lgs.fontSize=newfsz;
 
 	return newfsz;
 }
@@ -94,7 +94,7 @@ CPoint LegendDlg::GetPos(void)
 	GetWindowRect(&rc);
 	ppw->ScreenToClient(&rc);	
 
-	ppw->pdex.lgs.position=rc.TopLeft();
+	ppw->pdex->lgs.position=rc.TopLeft();
 
 	return rc.TopLeft();
 }
@@ -118,26 +118,26 @@ void LegendDlg::PositionWnd(void)
 	
 	ppw->GetClientRect(&plotrect);
 
-	ppw->pdex.pd.ps.CalPlotRect(plotrect);	
+	ppw->pdex->pd.ps.CalPlotRect(plotrect);	
 
-	if( ppw->pdex.lgc.legendDpMode&LEGEND_DP_FIT_RECT ){
-		if( ppw->pdex.lgc.legendDpMode&LEGEND_DP_AUTO_RECT ){
+	if( ppw->pdex->lgc.legendDpMode&LEGEND_DP_FIT_RECT ){
+		if( ppw->pdex->lgc.legendDpMode&LEGEND_DP_AUTO_RECT ){
 			CSize plotsz=plotrect.Size();
-			ppw->pdex.lgs.fontSize=GetAutoFontSize(CSize(plotsz.cx* ppw->pdex.lgc.ratio,plotsz.cy* ppw->pdex.lgc.ratio), ppw->pdex.lgc.maxFsz, ppw->pdex.lgc.minFsz);
+			ppw->pdex->lgs.fontSize=GetAutoFontSize(CSize(plotsz.cx* ppw->pdex->lgc.ratio,plotsz.cy* ppw->pdex->lgc.ratio), ppw->pdex->lgc.maxFsz, ppw->pdex->lgc.minFsz);
 		}
 		else{
-			ppw->pdex.lgs.fontSize=GetAutoFontSize(ppw->pdex.lgc.limitSize, ppw->pdex.lgc.maxFsz, ppw->pdex.lgc.minFsz);
+			ppw->pdex->lgs.fontSize=GetAutoFontSize(ppw->pdex->lgc.limitSize, ppw->pdex->lgc.maxFsz, ppw->pdex->lgc.minFsz);
 		}
 	}
 
 	CSize sz=GetExtent();
 
-	if( ppw->pdex.lgc.legendDpMode&LEGEND_DP_ALIGN ){
-		ppw->pdex.lgs.bDock=true;		
-		ppw->pdex.lgs.position=ppw->pdex.lgc.CalAlignPos(plotrect,sz);
+	if( ppw->pdex->lgc.legendDpMode&LEGEND_DP_ALIGN ){
+		ppw->pdex->lgs.bDock=true;		
+		ppw->pdex->lgs.position=ppw->pdex->lgc.CalAlignPos(plotrect,sz);
 	}
 
-	CRect legendrect(ppw->pdex.lgs.position,sz);
+	CRect legendrect(ppw->pdex->lgs.position,sz);
 
 	//ppw->ClientToScreen(&legendrect);//for dlg only
 

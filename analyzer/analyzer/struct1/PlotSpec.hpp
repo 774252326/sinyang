@@ -136,14 +136,12 @@ public:
 
 
 
-	PlotSpec::PlotSpec(int i, COLORREF ic)
-	{
-		gridType=5;
-		labelSize=20;
-		metricSize=20;
-		winbkC=ic;
-		SetCr(i);
-	}
+	//PlotSpec::PlotSpec(int i, COLORREF ic)
+	//{
+	//	PlotSpec();
+	//	winbkC=ic;
+	//	SetCr(i);
+	//}
 
 
 

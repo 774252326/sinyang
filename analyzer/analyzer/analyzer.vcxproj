@@ -130,6 +130,7 @@
     <ClInclude Include="analyzer.h" />
     <ClInclude Include="analyzerDoc.h" />
     <ClInclude Include="analyzerView.h" />
+    <ClInclude Include="calfunc.h" />
     <ClInclude Include="CVParametersPage.h" />
     <ClInclude Include="filefunc.h" />
     <ClInclude Include="list\ComboItem.h" />
@@ -155,7 +156,6 @@
     <ClInclude Include="SolutionAdditionParametersPageA.h" />
     <ClInclude Include="StartDlg.hpp" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="struct1\PlotDataEx.hpp" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="UserAccountPage.h" />
   </ItemGroup>
@@ -165,6 +165,7 @@
     <ClCompile Include="analyzer.cpp" />
     <ClCompile Include="analyzerDoc.cpp" />
     <ClCompile Include="analyzerView.cpp" />
+    <ClCompile Include="calfunc.cpp" />
     <ClCompile Include="CVParametersPage.cpp" />
     <ClCompile Include="filefunc.cpp" />
     <ClCompile Include="list\ComboItem.cpp" />

@@ -6,7 +6,7 @@
 #include "../funT1\\smsp.h"
 #include "../funT1\\lspfitT.h"
 
-#include "../struct1\\PlotData.hpp"
+#include "../struct1\\PlotDataEx.hpp"
 
 
 void DrawData1(CRect &plotrect
@@ -26,6 +26,17 @@ void DrawData(CRect &plotrect
 	, const double &xmax
 	, const double &ymin
 	, const double &ymax
+	);
+
+
+void DrawData1Ex(CRect &plotrect
+	, CDC* pDC
+	, const PlotDataEx &pd
+	, size_t selecti);
+
+void DrawDataEx(CRect &plotrect
+	, CDC* pDC
+	, const PlotDataEx &pd
 	);
 
 int DownUpdate(CRect &plotrect
@@ -143,160 +154,9 @@ void DrawLegend(CDC* pDC
 
 //////////////////////////////////////////////////////////////////////////
 
-template <typename T>
-UINT Seperate(const std::vector<T> &x, std::vector<size_t> &mini, std::vector<size_t> &maxi)
-{
-	if(x.size()<2)
-		return 1;
 
 
-	for(size_t i=1;i<x.size()-1;i++){
-		if(x[i]>x[i-1]&&x[i]>x[i+1])
-			maxi.push_back(i);
-		if(x[i]<x[i-1]&&x[i]<x[i+1])
-			mini.push_back(i);
-	}
 
-	if(mini.empty()){
-		if(maxi.empty()){
-			if(x.front()==x.back()){
-				return 2;
-			}
-			else{
-				if(x.front()>x.back()){
-					mini.push_back(x.size()-1);
-					maxi.push_back(0);
-				}
-				else{
-					maxi.push_back(x.size()-1);
-					mini.push_back(0);
-				}				
-			}
-		}
-		else{
-			mini.insert(mini.begin(),0);
-			mini.push_back(x.size()-1);
-		}
-	}
-	else{
-		if(maxi.empty()){
-			maxi.insert(maxi.begin(),0);
-			maxi.push_back(x.size()-1);
-		}
-		else{
-
-			if(mini.front()>maxi.front()){
-				mini.insert(mini.begin(),0);
-			}
-			else{
-				maxi.insert(maxi.begin(),0);
-			}
-
-			if(mini.back()>maxi.back()){
-				maxi.push_back(x.size()-1);
-			}
-			else{
-				mini.push_back(x.size()-1);
-			}
-		}
-	}
-
-	return 0;
-
-}
-
-template <typename T>
-UINT ComputeQList(const std::vector<T> &u, const std::vector<T> &i, T* QList, size_t nCycle, T upLimit, T scanRate, T umin, T umax, size_t nPperCycle=4)
-{
-	
-	size_t ci=0;
-
-	if(u.size()!=i.size()
-		||nCycle==0
-		||u.size()<nCycle*nPperCycle){
-			return ci;//输入错误
-	}
-
-	std::vector<size_t> mini;
-	std::vector<size_t> maxi;
-
-	int re=Seperate(u,mini,maxi);
-
-	if(re!=0){
-		return ci;//分段出错
-	}
-	
-	std::vector<T> intgi(i.size(),0);
-
-	if(mini.front()>maxi.front())
-		maxi.erase(maxi.begin());
-
-	
-
-	while(ci<nCycle){
-
-		if(mini.empty() || maxi.empty())
-			return ci;//数据不完整
-	
-		if(u[mini.front()]>=upLimit
-			|| u[mini.front()]>umin
-			|| u[maxi.front()]<umax
-			|| u[maxi.front()]<=upLimit){
-			mini.erase(mini.begin());
-			maxi.erase(maxi.begin());
-			continue;
-		}
-
-
-		auto result = std::minmax_element(i.begin()+mini.front(),i.begin()+maxi.front()+1);
-		size_t maxidx=result.second-i.begin();
-
-		if(*result.second<=0)
-			continue;
-
-		size_t minidx=maxidx;
-		for(;minidx>mini.front();minidx--){
-			if(i[minidx]>0 && i[minidx-1]<=0)
-				break;
-		}
-		
-		if(u[minidx]>=upLimit)
-			continue;
-
-		QList[ci]=0;
-
-		for(size_t j=minidx;j<maxi.front();j++){
-			if(u[j]<upLimit){
-				QList[ci]+=(i[j]+i[j+1])*(u[j+1]-u[j]);
-			}
-			else{
-				break;
-			}
-		}
-
-		//bool bStart=false;
-		//for(size_t j=maxi.front();j>mini.front();j--){			
-		//	if(bStart){
-		//		QList[ci]+=(i[j]+i[j+1])*(u[j+1]-u[j]);
-		//		//TRACE(L"\n%g,%g",u[j],i[j]);
-		//		if(i[j-1]<0)
-		//			break;
-		//	}
-		//	else{
-		//		bStart|=(u[j]<=upLimit);
-		//	}
-		//}
-
-		QList[ci]/=scanRate*2;
-
-		ci++;
-		mini.erase(mini.begin());
-		maxi.erase(maxi.begin());
-
-	}
-
-	return ci;
-}
 
 template <typename T>
 bool InterpX(const std::vector<T> &x, const std::vector<T> &y, T yr, T &xr)

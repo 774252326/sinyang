@@ -1135,7 +1135,7 @@ void DrawData(CRect &plotrect
 
 	GetPlotRect(plotrect, pd.ps.labelSize, pd.ps.metricSize, pd.ps.metricGridLong, pd.ps.gap);
 
-	if(!plotrect.IsRectEmpty() && !pd.ls.empty()){
+	if(!plotrect.IsRectEmpty()){
 		DrawXYAxis(plotrect
 			,pDC
 			,pd.ps
@@ -1143,6 +1143,8 @@ void DrawData(CRect &plotrect
 			,xmax
 			,ymin
 			,ymax);
+
+		if( !pd.ls.empty() ){
 
 		CRect mainrt;
 		CRgn rgn;
@@ -1211,6 +1213,7 @@ void DrawData(CRect &plotrect
 
 		rgn.SetRectRgn(&mainrt);
 		pDC->SelectClipRgn(&rgn);
+		}
 
 		pDC->DrawEdge(&plotrect,EDGE_BUMP,BF_BOTTOMLEFT);
 
@@ -1219,6 +1222,27 @@ void DrawData(CRect &plotrect
 
 	//ReleaseSemaphore(semaphoreWrite.m_hObject,1,NULL);
 }
+
+
+void DrawData1Ex(CRect &plotrect
+	, CDC* pDC
+	, const PlotDataEx &pd
+	, size_t selecti)
+{
+	 if(!pd.pd.ls.empty()
+		 && selecti<pd.pd.raw.xll.size()){
+			DrawData1(plotrect,pDC,pd.pd.raw.xll[selecti],pd.pd.raw.yll[selecti],pd.xmin,pd.xmax,pd.ymin,pd.ymax,inv(pd.pd.ps.bkgndC));
+	}
+}
+
+void DrawDataEx(CRect &plotrect
+	, CDC* pDC
+	, const PlotDataEx &pd
+	)
+{
+	DrawData(plotrect,pDC,pd.pd,pd.xmin,pd.xmax,pd.ymin,pd.ymax);
+}
+
 
 
 bool WheelUpdate(CRect &plotrect

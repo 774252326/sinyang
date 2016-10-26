@@ -6,6 +6,7 @@
 
 #include "analyzerDoc.h"
 #include "plot\PlotWnd.h"
+#include <vector>
 
 class CanalyzerView : public CView
 {
@@ -17,8 +18,12 @@ protected: // create from serialization only
 public:
 	CanalyzerDoc* GetDocument() const;
 	PlotWnd pw;
+	CSpinButtonCtrl m_spBtn;
+	CSize spBtnSize;
+	std::vector<PlotDataEx> pdl;
 // Operations
 public:
+	int UpdateSpinButton(int np, bool bLast);
 
 // Overrides
 public:
@@ -53,7 +58,10 @@ public:
 	afx_msg void OnOptionsPlotsettings();
 protected:
 	afx_msg LRESULT OnMessageChangeApplook(WPARAM wParam, LPARAM lParam);
-
+	afx_msg LRESULT OnMessageUpdateView(WPARAM wParam, LPARAM lParam);
+	void OnDeltaposSpin(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnViewFitwindow();
+	afx_msg LRESULT OnMessageUpdateRaw(WPARAM wParam, LPARAM lParam);
 };
 
 #ifndef _DEBUG  // debug version in analyzerView.cpp
