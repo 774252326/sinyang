@@ -65,6 +65,7 @@ public:
 	virtual void OnInitialUpdate();
 	void GetPlotRect(CRect & plotRect);
 	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
+	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 };
 
 

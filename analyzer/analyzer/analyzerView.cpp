@@ -137,9 +137,7 @@ void CanalyzerView::OnPaint()
 	// TODO: Add your message handler code here
 	// Do not call CView::OnPaint() for painting messages
 
-		//	CClientDC pDC(this);
-
-
+		//CClientDC pDC(this);
 		//CRect windrect;
 		//this->GetWindowRect(&windrect);
 		//int nWidth=windrect.Width();

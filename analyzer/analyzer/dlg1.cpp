@@ -45,6 +45,7 @@ BEGIN_MESSAGE_MAP(dlg1, CFormView)
 	ON_WM_LBUTTONUP()
 	ON_WM_MOUSEWHEEL()
 	ON_WM_CHAR()
+	ON_WM_ERASEBKGND()
 END_MESSAGE_MAP()
 
 
@@ -463,55 +464,87 @@ void dlg1::OnPaint()
 	// Do not call CFormView::OnPaint() for painting messages
 
 
+	/////////////////////////////////////////////////////////////////////////////////////
 
 
 
 
-	//CPaintDC dcplot(this->GetDlgItem(IDC_STATIC));
+
+	//CRect plotrect;
+	//GetPlotRect(plotrect);
+	////GetDlgItem(IDC_PLOT)->GetWindowRect(&plotrect);
+
+
+	//if( !xlist.empty() && !ylist.empty() ){
+	//	if(!plotrect.IsRectEmpty()){
+
+	//		DrawXYAxis(plotrect,&dc);
+
+	//		CRect mainrt;
+	//		CRgn rgn;
+	//		rgn.CreateRectRgnIndirect(&plotrect);	
+	//		dc.GetClipBox(&mainrt);
+	//		dc.SelectClipRgn(&rgn);
+	//		//clock_t t=clock();
+
+	//		//DrawPoint(plotrect,&dc,0);
+	//		DrawCurve(plotrect,&dc);
+
+	//		//TRACE("%dms\n",clock()-t);
+	//		//CString str;
+	//		//str.Format(L"%dms\n",clock()-t);
+	//		//AfxMessageBox(str);
+	//		rgn.SetRectRgn(&mainrt);
+	//		dc.SelectClipRgn(&rgn);
+
+	//		//CRect legendrect=DrawLegend1( CRect(plotrect.right-plotrect.Width()/4,plotrect.top,plotrect.right,plotrect.top+plotrect.Height()/4), &dc);
+	//		//legendrect.InflateRect(0,0,1,0);
+	//		//drawRectangle(legendrect,&dc,white,black);
+	//		//legendrect=DrawLegend(plotrect, &dc);
+
+	//	}
+	//}
+
+	////////////////////////////////////////////////////////////////////////////////////
+
+	CDC dcMem;                                                  //用于缓冲作图的内存DC
+	CBitmap bmp;                                                 //内存中承载临时图象的位图
+	CRect rect;
+	GetClientRect(&rect);
+	dcMem.CreateCompatibleDC(&dc);               //依附窗口DC创建兼容内存DC
+	bmp.CreateCompatibleBitmap(&dc,rect.Width(),rect.Height());//创建兼容位图
+	dcMem.SelectObject(&bmp);                          //将位图选择进内存DC
+	dcMem.FillSolidRect(rect,dc.GetBkColor());//按原来背景填充客户区，不然会是黑色
+
+
 
 	CRect plotrect;
-	CSize sz;
 	GetPlotRect(plotrect);
-
-	COLORREF oc;
-	//GetDlgItem(IDC_PLOT)->GetWindowRect(&plotrect);
-
-	CPen pen;
-
-	CString str;
-	//size_t i,j;
-	//long ll=1000;
-	//double *x;
-	//double *y;
-
-	//CBrush brush(cyan);
-	//CBrush *pOldBrush;
-
-
 
 	if( !xlist.empty() && !ylist.empty() ){
 		if(!plotrect.IsRectEmpty()){
 
-			DrawXYAxis(plotrect,&dc);
+			DrawXYAxis(plotrect,&dcMem);
 
 			CRect mainrt;
 			CRgn rgn;
 			rgn.CreateRectRgnIndirect(&plotrect);	
-			dc.GetClipBox(&mainrt);
-			dc.SelectClipRgn(&rgn);
+			dcMem.GetClipBox(&mainrt);
+			dcMem.SelectClipRgn(&rgn);
 			//clock_t t=clock();
 
 			//DrawPoint(plotrect,&dc,0);
-			DrawCurve(plotrect,&dc);
+			DrawCurve(plotrect,&dcMem);
 
 			//TRACE("%dms\n",clock()-t);
 			//CString str;
 			//str.Format(L"%dms\n",clock()-t);
 			//AfxMessageBox(str);
 			rgn.SetRectRgn(&mainrt);
-			dc.SelectClipRgn(&rgn);
+			dcMem.SelectClipRgn(&rgn);
 
-			CRect legendrect=DrawLegend1( CRect(plotrect.right-plotrect.Width()/4,plotrect.top,plotrect.right,plotrect.top+plotrect.Height()/4), &dc);
+			CRect legendrect=DrawLegend1( CRect(plotrect.right-plotrect.Width()/4,plotrect.top,plotrect.right,plotrect.top+plotrect.Height()/4), &dcMem);
+
 			//legendrect.InflateRect(0,0,1,0);
 			//drawRectangle(legendrect,&dc,white,black);
 			//legendrect=DrawLegend(plotrect, &dc);
@@ -519,6 +552,10 @@ void dlg1::OnPaint()
 		}
 	}
 
+
+	dc.BitBlt(0,0,rect.Width(),rect.Height(),&dcMem,0,0,SRCCOPY);//将内存DC上的图象拷贝到前台
+	dcMem.DeleteDC(); //删除DC
+	bmp.DeleteObject(); //删除位图
 
 
 }
@@ -598,7 +635,7 @@ void dlg1::OnMouseMove(UINT nFlags, CPoint point)
 		CRect plotrect;
 		//GetDlgItem(IDC_PLOT)->GetWindowRect(&plotrect);
 
-GetPlotRect(plotrect);
+		GetPlotRect(plotrect);
 
 		double kx=(double)(point.x-m_mouseDownPoint.x)*(xmax-xmin)/(double)plotrect.Width();
 		double ky=(double)(point.y-m_mouseDownPoint.y)*(ymax-ymin)/(double)plotrect.Height();
@@ -796,7 +833,7 @@ CRect dlg1::DrawLegend(CRect rect, CDC* pDC)
 		pDC->LineTo(textLocate.x+lc-gap,textLocate.y+sz.cy/2);	
 
 		pDC->TextOutW(textLocate.x+lc,textLocate.y,names[i]);
-		
+
 		textLocate.y+=sz.cy;
 
 		pDC->SelectObject(pOldPen);
@@ -937,7 +974,7 @@ CRect dlg1::DrawLegend1(CRect rect, CDC* pDC)
 		pDC->LineTo(textLocate.x+lc-gap,textLocate.y+sz.cy/2);	
 
 		pDC->TextOutW(textLocate.x+lc,textLocate.y,names[i]);
-		
+
 		textLocate.y+=sz.cy;
 
 		pDC->SelectObject(pOldPen);
@@ -1051,7 +1088,7 @@ void dlg1::DrawCurve(CRect rect, CDC* pDC)
 		pen.DeleteObject();
 	}
 
-	
+
 	//////////////////////////////fast///////////////////////////
 	//genPointToPlot(xll,yll,rect,pointlist);
 	//pen.CreatePen(PS_SOLID,1,clist[0]);
@@ -1106,4 +1143,12 @@ void dlg1::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 
 	CFormView::OnChar(nChar, nRepCnt, nFlags);
+}
+
+
+BOOL dlg1::OnEraseBkgnd(CDC* pDC)
+{
+	// TODO: Add your message handler code here and/or call default
+	return TRUE;
+	return CFormView::OnEraseBkgnd(pDC);
 }
