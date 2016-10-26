@@ -52,9 +52,9 @@ typedef struct MYPARA{
 } mypara;
 
 
-const DWORD sleepms=100;
+const DWORD sleepms=1;
 
-const size_t nd=1000;
+const size_t nd=20;
 //const size_t nd=sleepms/10;
 
 void WaitSecond(ProcessState &waitflg
@@ -182,6 +182,7 @@ UINT CMainFrame::PROCESS(LPVOID pParam)
 				case 1:
 				case 2:
 				case 6:
+				case 8:
 					{
 						rnd=data.popData(x,y,nd);
 
@@ -198,14 +199,10 @@ UINT CMainFrame::PROCESS(LPVOID pParam)
 							singleLock.Unlock();
 						}
 						
+						pDoc->UpdateState();
 
-							pDoc->UpdateState();
-
-
-::SendMessage(mf->GetSafeHwnd(),MESSAGE_UPDATE_DOL,PW_INIT,PW_INIT);
-
-	::SendMessage(mf->GetSafeHwnd(),MESSAGE_CLOSE_SAP_SHEET,NULL,NULL);
-
+						::SendMessage(mf->GetSafeHwnd(),MESSAGE_UPDATE_DOL,PW_INIT,PW_INIT);
+						::SendMessage(mf->GetSafeHwnd(),MESSAGE_CLOSE_SAP_SHEET,NULL,NULL);
 					}
 					break;
 
@@ -238,13 +235,11 @@ UINT CMainFrame::PROCESS(LPVOID pParam)
 							// unlock the resource for others.
 							singleLock.Unlock();
 						}
-													
+
 						pDoc->UpdateState();
 
-	::SendMessage(mf->GetSafeHwnd(),MESSAGE_UPDATE_DOL,PW_INIT,PW_INIT);
-
-	::SendMessage(mf->GetSafeHwnd(),MESSAGE_CLOSE_SAP_SHEET,NULL,NULL);
-
+						::SendMessage(mf->GetSafeHwnd(),MESSAGE_UPDATE_DOL,PW_INIT,PW_INIT);
+						::SendMessage(mf->GetSafeHwnd(),MESSAGE_CLOSE_SAP_SHEET,NULL,NULL);
 					}
 					break;
 
@@ -1052,6 +1047,9 @@ afx_msg LRESULT CMainFrame::OnMessageCloseSapSheet(WPARAM wParam, LPARAM lParam)
 			ShowWaitDlg(str);
 		}
 		break;
+	case 8:
+		::AfxMessageBox(L"cycle complete");
+		break;
 	default:
 		return 100;
 	}
@@ -1154,7 +1152,7 @@ void CMainFrame::OnAnalysisStartanalysis()
 void CMainFrame::OnAnalysisPause()
 {
 	// TODO: Add your command handler code here
-	
+
 	switch(pst){
 	case running:
 		//if(SuspendThread(pWriteA->m_hThread)!=(DWORD)(-1))

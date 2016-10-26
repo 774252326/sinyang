@@ -261,6 +261,17 @@ public:
 					if(!dol.empty()
 						//&& dol.back().Ar.size()<p2.noofcycles)
 						&& !dol.back().EndFlag(p2.noofcycles,p2.variationtolerance) ){
+
+																				size_t nx=raw.xll.size();
+
+								if(nx>1 
+									&& raw.xll[nx-1]>raw.xll[nx-2] 
+								&& abs(p2.highelimit-p2.EInterval()-raw.xll[nx-1])<p2.EInterval()/2){
+									TRACE("\n8c");
+									return 8;
+								}
+
+
 							TRACE("\n6");
 							return 6;//此时最后一次加液的转圈计数未必到达预设值p2.noofcycles
 					}
@@ -287,7 +298,17 @@ public:
 						if( rawi>0 
 							//&& dol[rawi-1].Ar.size()<p2.noofcycles)
 							&& !dol[rawi-1].EndFlag(p2.noofcycles,p2.variationtolerance) ){
-								TRACE("\n1");
+
+								size_t nx=raw.xll.size();
+
+								if(nx>1 
+									&& raw.xll[nx-1]>raw.xll[nx-2] 
+								&& abs(p2.highelimit-p2.EInterval()-raw.xll[nx-1])<p2.EInterval()/2){
+									TRACE("\n8a");
+									return 8;
+								}
+
+								TRACE("\n1a");
 								return 1;//第rawi－1次加液的转圈计数未必到达预设值p2.noofcycles
 						}
 						VtoAdd=d0.addVolume;
@@ -409,7 +430,17 @@ public:
 			if( rawi>0 
 				//&& dol[rawi-1].Ar.size()<p2.noofcycles)
 				&& !dol[rawi-1].EndFlag(p2.noofcycles,p2.variationtolerance) ){
-					TRACE("\n1");
+
+													size_t nx=raw.xll.size();
+
+								if(nx>1 
+									&& raw.xll[nx-1]>raw.xll[nx-2] 
+								&& abs(p2.highelimit-p2.EInterval()-raw.xll[nx-1])<p2.EInterval()/2){
+									TRACE("\n8b");
+									return 8;
+								}
+
+					TRACE("\n1b");
 					return 1;//第rawi－1次加液的转圈计数未必到达预设值p2.noofcycles
 			}
 

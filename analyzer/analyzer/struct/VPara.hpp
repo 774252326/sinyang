@@ -7,8 +7,6 @@
 class CVPara : public ObjectF
 {
 public:
-
-
 	double lowelimit;
 	double highelimit;
 	double scanrate;
@@ -18,6 +16,7 @@ public:
 	double rotationrate;
 	double endintegratione;
 	double startintegratione;
+	double samplefrequecy;
 
 	CVPara()
 		: lowelimit(-0.23)
@@ -29,6 +28,7 @@ public:
 		, rotationrate(2000)
 		, endintegratione(1)
 		, startintegratione(0)
+		, samplefrequecy(100)
 	{
 	};
 
@@ -44,6 +44,7 @@ public:
 		rotationrate=src.rotationrate;
 		endintegratione=src.endintegratione;
 		startintegratione=src.startintegratione;
+		samplefrequecy=src.samplefrequecy;
 	};
 
 	CVPara(const CVPara &src){ operator=(src); };
@@ -74,6 +75,13 @@ public:
 				>>startintegratione;
 		}
 	};
+
+
+	double EInterval() const
+	{
+		return scanrate/samplefrequecy;
+	};
+
 };
 
 
