@@ -128,8 +128,8 @@ float nfun(float x[], float y[], long starti, long endi, int m, float a[])
 	fcomplex *cda=vectorc(0,cdm);
 
 
-	for(i=1;i<=dm;i++){
-		cda[i-1]=Complex(da[i],0.0);
+	for(i=0;i<=cdm;i++){
+		cda[i]=Complex(da[i+1],0.0);
 	}
 
 	//for(i=0;i<=cdm;i++){
@@ -182,8 +182,8 @@ float nfun(float x[], float y[], long starti, long endi, int m, float a[])
 	fcomplex *nocda=vectorc(0,nocdm);
 
 
-	for(i=1;i<=nodm;i++){
-		nocda[i-1]=Complex(noda[i],0.0);
+	for(i=0;i<=nocdm;i++){
+		nocda[i]=Complex(noda[i+1],0.0);
 	}
 
 	//for(i=0;i<=cdm;i++){

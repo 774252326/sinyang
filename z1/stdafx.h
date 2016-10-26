@@ -38,9 +38,9 @@
 #include <afxcontrolbars.h>     // MFC support for ribbons and control bars
 
 
-#include "complex.h"
-#include "nrutil.h"
-#include <math.h>
+//#include "complex.h"
+//#include "nrutil.h"
+//#include <math.h>
 
 
 

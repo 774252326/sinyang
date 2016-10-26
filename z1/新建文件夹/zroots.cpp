@@ -1,8 +1,8 @@
 #include "stdafx.h"
 //#include "complex.cpp"
 //#include "complex.h"
-#define EPS 2.0e-6
-#define MAXM 100
+#define EPS 1.0e-6
+#define MAXM 1000
 //A small number, and maximum anticipated value of m.
 
 void zroots(fcomplex a[], int m, fcomplex roots[], int polish)
