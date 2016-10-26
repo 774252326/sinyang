@@ -1154,7 +1154,7 @@ void CMainFrame::ShowWaitDlg(CString tips, BOOL bShowButon)
 	if(tips.IsEmpty())
 		tips.LoadStringW(IDS_STRING_PAUSE);
 
-	((WaitDlg*)wd)->btnIDOK.ShowWindow(bShowButon);
+	((WaitDlg*)wd)->ShowTitleAndButton(bShowButon);
 
 	((WaitDlg*)wd)->m_tips=tips;
 	((WaitDlg*)wd)->UpdateData(FALSE);
@@ -1195,7 +1195,10 @@ void CMainFrame::OnAnalysisAbortanalysis()
 
 
 	if(theApp.runner->isRunningInWorkerThread()){
-		ShowWaitDlg(L"waiting for thread",FALSE);
+
+		CString str;
+		str.LoadStringW(IDS_STRING_WAIT_STOP);
+		ShowWaitDlg(str,FALSE);
 
 		//while(theApp.runner->isRunningInWorkerThread())
 		//{

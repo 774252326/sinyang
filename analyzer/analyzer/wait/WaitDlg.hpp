@@ -70,9 +70,9 @@ protected:
 		CButton *pButton;
 		CString str;
 
-		str.LoadStringW(IDS_STRING_PAUSE);
+		//str.LoadStringW(IDS_STRING_PAUSE);
 
-		this->SetWindowTextW(str);
+		//this->SetWindowTextW(str);
 		this->ModifyStyle(WS_SYSMENU,NULL);
 
 		//CFont * pFont = new CFont; 
@@ -119,11 +119,13 @@ protected:
 			return -1;
 		}
 
+		ShowTitleAndButton();
+
 		btnIDOK.SetFocus();
 
 		return 0;
 	};
-	
+
 
 	//BOOL PreCreateWindow(CREATESTRUCT& cs)
 	//	{
@@ -136,6 +138,15 @@ protected:
 	//return TRUE;
 	//};
 
+
+	void ShowTitleAndButton(BOOL bShow=TRUE)
+	{
+		btnIDOK.ShowWindow(bShow);
+		CString str=L"";
+		if(bShow)
+			str.LoadStringW(IDS_STRING_PAUSE);
+		this->SetWindowTextW(str);
+	};
 
 	virtual void DoDataExchange(CDataExchange* pDX)
 	{
