@@ -1,6 +1,7 @@
 #include "StdAfx.h"
 #include "analyzerViewR.h"
-#include "func.h"
+#include "calfunc.h"
+#include "MainFrm.h"
 
 IMPLEMENT_DYNCREATE(CanalyzerViewR, CanalyzerView)
 
@@ -25,14 +26,14 @@ IMPLEMENT_DYNCREATE(CanalyzerViewR, CanalyzerView)
 	afx_msg LRESULT CanalyzerViewR::OnMessageUpdateTest(WPARAM wParam, LPARAM lParam)
 	{
 		CMainFrame *mf=(CMainFrame*)(GetParentFrame());
-		COutputListA* ol=mf->GetOutputWnd()->GetListCtrl();
+		//COutputListA* ol=->GetListCtrl();
 
 		CanalyzerDoc* pDoc = GetDocument();
 
-		pdl.clear();
+		//pdl.clear();
 
 
-		UINT flg=DataOutAList2PlotDataList(ol->dol, pDoc->p1, psview, pdl);
+		UINT flg=DataOutAList2PlotDataExList(mf->GetOutputWnd()->dol, pDoc->p1, pw.GetPlotSpec()->winbkC, pdl);
 
 		//CString str=Compute(ol->dol,pDoc->p1,pdl,true);
 
@@ -46,18 +47,18 @@ IMPLEMENT_DYNCREATE(CanalyzerViewR, CanalyzerView)
 
 	afx_msg LRESULT CanalyzerViewR::OnMessageComputeResult(WPARAM wParam, LPARAM lParam)
 	{
-		CMainFrame *mf=(CMainFrame*)(GetParentFrame());
-		COutputListA* ol=mf->GetOutputWnd()->GetListCtrl();
+		//CMainFrame *mf=(CMainFrame*)(GetParentFrame());
+		//COutputListA* ol=mf->GetOutputWnd()->GetListCtrl();
 
-		CanalyzerDoc* pDoc = GetDocument();
+		//CanalyzerDoc* pDoc = GetDocument();
 
-		CString str=Compute(ol->dol,pDoc->p1,pdl,true);
+		//CString str=Compute(ol->dol,pDoc->p1,pdl,true);
 
 		//::SendMessage(mf->GetCaptionBar()->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)str.GetBuffer(),NULL);
 
-		mf->GetCaptionBar()->ShowMessage(str);
+		//mf->GetCaptionBar()->ShowMessage(str);
 
-		::PostMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_VIEW,NULL,NULL);
+		//::PostMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_VIEW,NULL,NULL);
 
 		return 0;
 	}

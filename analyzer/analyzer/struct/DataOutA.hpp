@@ -4,8 +4,48 @@
 #include "sapitemA.hpp"
 // DataOutA command target
 #include "../resource.h"
+#include <numeric>
 
-//one filter BYTE 
+
+template <typename T>
+T Sum(std::vector<T> x, T init=0)
+{
+	return std::accumulate(x.begin(),x.end(),init);
+}
+
+template <typename T>
+T Mean(std::vector<T> x)
+{
+	if(x.empty())
+		return 0;
+	return Sum(x)/((T)(x.size()));
+}
+
+template <typename T>
+T Variance(std::vector<T> x, bool bSample=true)
+{
+	T mx=Mean(x);
+	T n=x.size();
+	mx=-mx*mx*n;
+	T v=std::inner_product(x.begin(),x.end(),x.begin(),mx);
+	if(bSample){
+		if(x.size()<2)
+			return 0;
+		v/=n-1;
+	}
+	else{
+		v/=n;
+	}
+	return v;
+}
+
+template <typename T>
+T VarianceStd(std::vector<T> x, bool bSample=true)
+{
+	return sqrt(Variance(x,bSample));
+}
+
+//one step filter BYTE 
 #define DOA_VMS 0x01
 #define DOA_S 0x02
 #define DOA_A 0x04
@@ -14,6 +54,14 @@
 #define DOA_SAMPLE 0x20
 //#define DOA_RECOUNT 0x40
 #define DOA_RESET_SOLUTION_AT_END 0x80
+
+//one plot filter byte
+#define PF_Q_NORMALIZED 0x04
+#define PF_CONCERTRATION 0x08
+#define PF_S 0x10
+#define PF_A 0x20
+#define PF_L 0x40
+#define PF_SAMPLE 0x80
 
 
 class DataOutA : public CObject
@@ -181,7 +229,70 @@ public:
 		if(UseIndex>=0 && UseIndex<Ar.size())
 			return Ar[UseIndex];
 
-		return Ar.back();
+		return -100;
+	};
+
+
+	double GetX(BYTE plotFilter, CString &xlabel) const{
+		double x=additiveVolume;
+		CString str;
+		if( plotFilter&PF_S ){
+			str.LoadStringW(IDS_STRING_SUPPRESSOR);
+			str+=L" ";
+			x=SConc();
+		}
+		else{
+			if( plotFilter&PF_A ){
+				str.LoadStringW(IDS_STRING_ACCELERATOR);
+				str+=L" ";
+				x=AConc();
+			}
+			else{
+				if( plotFilter&PF_L ){
+					str.LoadStringW(IDS_STRING_LEVELER);
+					str+=L" ";
+					x=LConc();
+				}
+				else{
+					str="";
+				}
+			}
+		}
+
+		xlabel=str;
+
+		if( plotFilter&PF_CONCERTRATION ){
+			str.LoadStringW(IDS_STRING_CONC_);
+		}
+		else{
+			str.LoadStringW(IDS_STRING_VOL_);
+			x=additiveVolume;
+		}
+
+		xlabel+=str;
+
+		return x;
+
+	};
+
+
+	double GetY(BYTE plotFilter, CString &ylabel) const{
+		if( plotFilter&PF_Q_NORMALIZED ){
+			ylabel.LoadStringW(IDS_STRING_NORMALIZED_Q);
+			return ArUse()/Ar0;
+		}
+		//else{
+		ylabel.LoadStringW(IDS_STRING_CHARGE_Q);
+		return ArUse();
+		//}
+	};
+
+	bool EndFlag(int nCycle, double tolarance) const{
+		if( Ar.size()>=nCycle || (Ar.size()>1 && VarianceStd(Ar)<tolarance) ){
+			TRACE("\nv=%g",VarianceStd(Ar));
+			return true;
+		}
+		return false;
 	};
 
 	///////////////////////////////////set data /////////////////////////////////////////

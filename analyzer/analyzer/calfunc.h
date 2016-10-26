@@ -16,18 +16,18 @@
 #define SC_NEW_ONCE 0x20
 
 
-#define PF_Q_NORMALIZED 0x04
-#define PF_CONCERTRATION 0x08
-#define PF_S 0x10
-#define PF_A 0x20
-#define PF_L 0x40
-#define PF_SAMPLE 0x80
+//#define PF_Q_NORMALIZED 0x04
+//#define PF_CONCERTRATION 0x08
+//#define PF_S 0x10
+//#define PF_A 0x20
+//#define PF_L 0x40
+//#define PF_SAMPLE 0x80
 
 
 
-UINT DataOutAList2PlotDataList(
+UINT DataOutAList2PlotDataExList(
 	const std::vector<DataOutA> &dol,
-	const ANPara &p1, 
+	const ANPara &p1,
 	COLORREF bkc, 
 	std::vector<PlotDataEx> &pdl
 	);
@@ -57,7 +57,10 @@ UINT ComputeStateData(
 
 
 template <typename T>
-UINT Seperate(const std::vector<T> &x, std::vector<size_t> &mini, std::vector<size_t> &maxi)
+UINT Seperate(
+	const std::vector<T> &x,
+	std::vector<size_t> &mini,
+	std::vector<size_t> &maxi)
 {
 	if(x.size()<2)
 		return 1;
@@ -120,7 +123,16 @@ UINT Seperate(const std::vector<T> &x, std::vector<size_t> &mini, std::vector<si
 
 
 template <typename T>
-UINT ComputeQList(const std::vector<T> &u, const std::vector<T> &i, T* QList, size_t nCycle, T upLimit, T scanRate, T umin, T umax, size_t nPperCycle=4)
+UINT ComputeQList(
+	const std::vector<T> &u, 
+	const std::vector<T> &i,
+	T* QList, 
+	size_t nCycle,
+	T upLimit,
+	T scanRate,
+	T umin,
+	T umax,
+	size_t nPperCycle=4)
 {
 	
 	size_t ci=0;
@@ -158,25 +170,25 @@ UINT ComputeQList(const std::vector<T> &u, const std::vector<T> &i, T* QList, si
 			|| u[maxi.front()]<=upLimit){
 			mini.erase(mini.begin());
 			maxi.erase(maxi.begin());
-			continue;
+			continue;//分段区间过短，不能包含[umin,umax]，或积分上限超出分段区间
 		}
 
-
+		//////////////////////////////////找积分下限/////////////////////////////////
 		auto result = std::minmax_element(i.begin()+mini.front(),i.begin()+maxi.front()+1);
 		size_t maxidx=result.second-i.begin();
 
 		if(*result.second<=0)
-			continue;
+			continue;//区间值域为负
 
 		size_t minidx=maxidx;
 		for(;minidx>mini.front();minidx--){
 			if(i[minidx]>0 && i[minidx-1]<=0)
-				break;
+				break;//找积分下限
 		}
 		
 		if(u[minidx]>=upLimit)
-			continue;
-
+			continue;//积分下限大于积分上限
+		///////////////////////////////////////////////
 		QList[ci]=0;
 
 		for(size_t j=minidx;j<maxi.front();j++){
@@ -211,3 +223,118 @@ UINT ComputeQList(const std::vector<T> &u, const std::vector<T> &i, T* QList, si
 
 	return ci;
 }
+
+
+
+template <typename T>
+UINT ComputeQListA(
+	const std::vector<T> &u, 
+	const std::vector<T> &i,
+	T* QList, 
+	size_t nCycle,
+	T upLimit,
+	T lowLimit,
+	T scanRate,
+	//T umin,
+	//T umax,
+	size_t nPperCycle=4)
+{
+	
+	size_t ci=0;
+
+	if(u.size()!=i.size()
+		||nCycle==0
+		||u.size()<nCycle*nPperCycle){
+			return ci;//输入错误
+	}
+
+	std::vector<size_t> mini;
+	std::vector<size_t> maxi;
+
+	int re=Seperate(u,mini,maxi);
+
+	if(re!=0){
+		return ci;//分段出错
+	}
+	
+	std::vector<T> intgi(i.size(),0);
+
+	if(mini.front()>maxi.front())
+		maxi.erase(maxi.begin());
+
+	
+
+	while(ci<nCycle){
+
+		if(mini.empty() || maxi.empty())
+			return ci;//数据不完整
+	
+		if(u[mini.front()]>=lowLimit
+			//|| u[mini.front()]>umin
+			//|| u[maxi.front()]<umax
+			|| u[maxi.front()]<=upLimit){
+			mini.erase(mini.begin());
+			maxi.erase(maxi.begin());
+			continue;//分段区间过短，不能包含[umin,umax]，或积分上下限超出分段区间
+		}
+
+		QList[ci]=0;
+
+		for(size_t j=mini.front();j<maxi.front();j++){
+			if(u[j]<upLimit && u[j]>lowLimit){
+				QList[ci]+=(i[j]+i[j+1])*(u[j+1]-u[j]);
+			}
+			//else{
+				//break;
+			//}
+		}
+
+		QList[ci]/=scanRate*2;
+
+		ci++;
+		mini.erase(mini.begin());
+		maxi.erase(maxi.begin());
+
+	}
+
+	return ci;
+}
+
+//
+//template <typename T>
+//T Sum(std::vector<T> x, T init=0)
+//{
+//	return std::accumulate(x.begin(),x.end(),init);
+//}
+//
+//template <typename T>
+//T Mean(std::vector<T> x)
+//{
+//	if(x.empty())
+//		return 0;
+//	return sum(x)/((T)(x.size()));
+//}
+//
+//template <typename T>
+//T Variance(std::vector<T> x, bool bSample=true)
+//{
+//	T mx=Mean(x);
+//	T n=x.size();
+//	mx=-mx*mx*T;
+//	T v=std::inner_product(x.begin(),x.end(),x.begin(),mx);
+//	if(bSample){
+//		if(x.size()<2)
+//			return 0;
+//		v/=n-1;
+//	}
+//	else{
+//		v/=n;
+//	}
+//	return v;
+//}
+//
+//template <typename T>
+//T VarianceStd(std::vector<T> x, bool bSample=true)
+//{
+//	return sqrt(Variance(x,bSample));
+//}

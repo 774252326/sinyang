@@ -1,5 +1,5 @@
 #include "StdAfx.h"
-#include "analyzer.h"
+//#include "analyzer.h"
 #include "analyzerViewL.h"
 #include "MainFrm.h"
 #include "calfunc.h"
@@ -50,7 +50,7 @@ IMPLEMENT_DYNCREATE(CanalyzerViewL, CanalyzerView)
 
 		CMainFrame *mf=(CMainFrame*)(GetParentFrame());
 
-		pdl.clear();
+		//pdl.clear();
 		UINT flg=RawData2PlotDataList(pDoc->raw, mf->GetOutputWnd()->dol, pw.GetPlotSpec()->winbkC, pdl);
 
 		::PostMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_VIEW,(WPARAM)true,NULL);

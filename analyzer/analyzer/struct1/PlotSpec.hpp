@@ -30,6 +30,7 @@ public:
 	CString ylabel;
 	int gridWidth;
 
+
 public:
 	PlotSpec()
 		: bkgndC(RGB(255,255,255))
@@ -142,14 +143,11 @@ public:
 	//	winbkC=ic;
 	//	SetCr(i);
 	//}
+	
 
-
-
-	int GetCrType(void)
+	int GetPlotBKCrType(void)
 	{
 
-		const int ndiv=10;
-		const float bias=0.35;
 		const int ncr=3;
 		const int ncritm=5;
 		const COLORREF crl[]={
@@ -159,9 +157,7 @@ public:
 			RGB(60,60,60),RGB(60,60,60),RGB(150,150,150),RGB(0,0,0),RGB(0,0,0),
 			RGB(0,0,0)
 		};
-
-
-
+		
 		for(int i=0;i<ncr;i++){
 			int j=i*ncritm;
 			if(	
@@ -174,11 +170,8 @@ public:
 		return -1;
 	};
 
-	void PlotSpec::SetCr(int i)
+	void SetPlotBKCr(int i=0)
 	{
-
-		const int ndiv=10;
-		const float bias=0.35;
 		const int ncr=3;
 		const int ncritm=5;
 		const COLORREF crl[]={
@@ -189,9 +182,6 @@ public:
 			RGB(0,0,0)
 		};
 
-
-		COLORREF nc=ContractCr(winbkC,bias+(float)(i-1)/ndiv);
-		metricC=labelC=nc;
 		if(i<0 || i>=ncr)
 			i=0;
 		i*=ncritm;
@@ -199,6 +189,15 @@ public:
 		borderC=crl[i++];
 		gridC=crl[i++];
 	};
+
+	void RefreshWinCr(COLORREF bkc)
+	{
+		const int ndiv=10;
+		const float bias=0.35;
+		winbkC=bkc;
+		int i=GetPlotBKCrType();		
+		metricC=labelC=ContractCr(winbkC,bias+(float)(i-1)/ndiv);
+	}
 
 };
 

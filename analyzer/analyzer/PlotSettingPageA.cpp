@@ -151,9 +151,9 @@ void PlotSettingPage::DoDataExchange(CDataExchange* pDX)
 
 
 
-	int ci3=fs.GetCrType();
+	int ci3=fs.GetPlotBKCrType();
 	DDX_CBIndex(pDX, IDS_COMBO_COLOR_STYLE, ci3);
-	fs.SetCr(ci3);
+	fs.SetPlotBKCr(ci3);
 	lgs.bkColor=fs.bkgndC;
 
 	CPropertyPage::DoDataExchange(pDX);

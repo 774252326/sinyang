@@ -13,7 +13,7 @@ IMPLEMENT_DYNAMIC(CVParametersPage, CPropertyPage)
 
 CVParametersPage::CVParametersPage()
 	: CPropertyPage(CVParametersPage::IDD)
-	, strtmp(_T(""))
+	//, strtmp(_T(""))
 {
 	//para.endintegratione=1;
 	//para.highelimit=1;
@@ -54,12 +54,14 @@ void CVParametersPage::DoDataExchange(CDataExchange* pDX)
 	DDV_MinMaxDouble(pDX,para.rotationrate,0,DBL_MAX);
 
 	DDX_Text(pDX, IDS_EDIT_END_INTEGRATION_E, para.endintegratione);
+	DDV_MinMaxDouble(pDX,para.endintegratione,para.lowelimit,para.highelimit);
 
 	DDX_CBIndex(pDX, IDS_EDIT_START_INTEGRATION_E, para.combochoice);
 
 	if(para.combochoice!=0){
-		strtmp.Format(L"%g",para.startintegratione);
-		DDX_Text(pDX, IDS_EDIT_START_INTEGRATION_E, strtmp);
+		//strtmp.Format(L"%g",para.startintegratione);
+		DDX_Text(pDX, IDS_EDIT_START_INTEGRATION_E, para.startintegratione);
+		DDV_MinMaxDouble(pDX,para.startintegratione,para.lowelimit,para.endintegratione);
 	}
 
 	CPropertyPage::DoDataExchange(pDX);
@@ -100,16 +102,16 @@ BOOL CVParametersPage::OnKillActive()
 		return FALSE;
 	}
 
-	if(para.combochoice!=0){
-		para.startintegratione=_wtof(strtmp.GetBuffer());
+	//if(para.combochoice!=0){
+	//	para.startintegratione=_wtof(strtmp.GetBuffer());
 
-		if(para.startintegratione>=para.endintegratione){
-			AfxMessageBox(IDS_STRING_ERROR);			
-			CComboBox * pCombo=(CComboBox*)(this->GetDlgItem(IDS_EDIT_START_INTEGRATION_E));		
-			pCombo->SetFocus();
-			return FALSE;
-		}
-	}
+	//	if(para.startintegratione>=para.endintegratione){
+	//		AfxMessageBox(IDS_STRING_ERROR);			
+	//		CComboBox * pCombo=(CComboBox*)(this->GetDlgItem(IDS_EDIT_START_INTEGRATION_E));		
+	//		pCombo->SetFocus();
+	//		return FALSE;
+	//	}
+	//}
 
 	return CPropertyPage::OnKillActive();
 }

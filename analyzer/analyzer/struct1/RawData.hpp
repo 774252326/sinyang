@@ -146,7 +146,7 @@ public:
 
 	bool AddFollow(const std::vector<double> &x, const std::vector<double> &y)
 	{
-		if(x.size()!=y.size())
+		if(x.size()!=y.size() || ll.empty())
 			return false;
 
 		xll.resize(xll.size()+x.size());

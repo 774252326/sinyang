@@ -32,5 +32,5 @@ public:
 	void ComboSelectChange(void);
 //	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 //	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
-	CString strtmp;
+	//CString strtmp;
 };

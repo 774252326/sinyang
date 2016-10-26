@@ -4,7 +4,8 @@
 #include "OutputWnd.h"
 //#include "Resource.h"
 #include "MainFrm.h"
-#include "analyzerView.h"
+#include "analyzerViewL.h"
+#include "analyzerViewR.h"
 #include "calfunc.h"
 
 
@@ -154,9 +155,9 @@ afx_msg LRESULT COutputWnd::OnMessageUpdateDol(WPARAM wParam, LPARAM lParam)
 
 
 	CMainFrame *mf=(CMainFrame*)(GetParentFrame());
-	CanalyzerView *pavl=((CanalyzerView*)(mf->m_wndSplitter.GetPane(0,0)));
-	//CanalyzerViewR* pavr=((CanalyzerViewR*)(mf->m_wndSplitter.GetPane(0,1)));
-	CanalyzerDoc *pad=pavl->GetDocument();	 
+	CanalyzerViewL* pavl=((CanalyzerViewL*)(mf->m_wndSplitter.GetPane(0,0)));
+	CanalyzerViewR* pavr=((CanalyzerViewR*)(mf->m_wndSplitter.GetPane(0,1)));
+	CanalyzerDoc* pad=pavl->GetDocument();	 
 
 	dol.clear();
 
@@ -182,7 +183,7 @@ afx_msg LRESULT COutputWnd::OnMessageUpdateDol(WPARAM wParam, LPARAM lParam)
 
 	TRACE(L"%d\n",flg);
 
-	//::PostMessage(pavr->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
+	::PostMessage(pavr->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
 	::PostMessage(pavl->GetSafeHwnd(),MESSAGE_UPDATE_RAW,NULL,NULL);
 	::PostMessage(m_listCtrlMonitor.GetSafeHwnd(),MESSAGE_SHOW_DOL,NULL,(LPARAM)this);
 

@@ -2,31 +2,42 @@
 #define COLORMAPT_H
 
 //color
+#define FFV 255
 #define black RGB(0,0,0)
-#define red RGB(255,0,0)
-#define green RGB(0,255,0)
-#define blue RGB(0,0,255)
-#define yellow RGB(255,255,0)
-#define cyan RGB(0,255,255)
-#define magenta RGB(255,0,255)
-#define white RGB(255,255,255)
+#define red RGB(FFV,0,0)
+#define green RGB(0,FFV,0)
+#define blue RGB(0,0,FFV)
+#define yellow RGB(FFV,FFV,0)
+#define cyan RGB(0,FFV,FFV)
+#define magenta RGB(FFV,0,FFV)
+#define white RGB(FFV,FFV,FFV)
 
 #include <math.h>
 
 
 template <typename T>
-void GetrgbT(COLORREF ic, T rgb[3]){
-	BYTE b=ic>>16;
-	BYTE g=ic>>8;
-	BYTE r=ic;
+void Getrgb(COLORREF ic, T rgb[3]){
+	//BYTE b=ic>>16;
+	//BYTE g=ic>>8;
+	//BYTE r=ic;
+
+	BYTE b=GetBValue(ic);
+	BYTE g=GetGValue(ic);
+	BYTE r=GetRValue(ic);
+
 	rgb[0]=r;
 	rgb[1]=g;
 	rgb[2]=b;
 
-	rgb[0]/=255;
-	rgb[1]/=255;
-	rgb[2]/=255;
+	rgb[0]/=FFV;
+	rgb[1]/=FFV;
+	rgb[2]/=FFV;
 
+}
+
+template <typename T>
+COLORREF GetRGB(T rgb[3]){
+	return RGB(rgb[0]*FFV,rgb[1]*FFV,rgb[2]*FFV);
 }
 
 
@@ -149,7 +160,7 @@ COLORREF genColor(T colorv){
 	T rgb[3];
 	hsv2rgb(hsv,rgb);
 
-	return RGB(rgb[0]*255,rgb[1]*255,rgb[2]*255);
+	return GetRGB(rgb);
 }
 
 template <typename T>
@@ -172,38 +183,35 @@ T genColorvFromIndex(unsigned long idx){
 
 template <typename T>
 COLORREF genColorGray(T colorv){
-	int gray=colorv*255;
-	return RGB(gray,gray,gray);
+	T rgb[3]={colorv,colorv,colorv};
+	return GetRGB(rgb);
 }
 
 
 template <typename T>
-COLORREF ContractCr(COLORREF oc, T hbias){
+COLORREF ContractCr(COLORREF oc, T hbias, T vbias=0.5){
 	T rgb[3];
-	GetrgbT(oc,rgb);
+	Getrgb(oc,rgb);
 	T hsv[3];
 	rgb2hsv(hsv,rgb);
 
-	//float ni=bias+(float)(i-1)/ndiv;
 	hsv[0]+=hbias;
 
 	hsv[0]-=floor(hsv[0]);
 
 	hsv[1]=1;
 
-	if(hsv[2]>0.5){
-		hsv[2]-=0.5;
-	}
-	else{
-		hsv[2]+=0.5;
-	}
-	
+	hsv[2]+=vbias;
+
+	hsv[2]-=floor(hsv[2]);
+
 	hsv2rgb(hsv,rgb);
-
-	COLORREF nc=RGB(255*rgb[0],255*rgb[1],255*rgb[2]);
-
-	return nc;
+	
+	return GetRGB(rgb);
 }
+
+
+
 
 
 #endif

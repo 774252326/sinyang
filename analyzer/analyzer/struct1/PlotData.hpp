@@ -8,7 +8,9 @@
 #include "RawData.hpp"
 #include <algorithm>
 //#include "drawfunc.h"
-//#include "colormapT.h"
+#include "../funT1/colormapT.h"
+#include "../funT1/xRescaleT.h"
+
 
 class PlotData : public CObject
 {
@@ -136,6 +138,72 @@ public:
 
 	//	return false;
 	//};
+
+
+	int SetLineData( const RawData &newraw, const std::vector<CString> &namelist )
+	{
+		int ndiff=(int)newraw.ll.size()-(int)raw.ll.size();
+
+		ls.resize(newraw.ll.size());
+
+		for(size_t i=0;i<ls.size()&&i<namelist.size();i++){
+			ls[i].name=namelist[i];
+		}
+
+		raw=newraw;
+
+		return ndiff;
+	};
+
+	void SetLineColor(int lastN, int dotSize=0, int smoothType=0, int lineType=0)
+	{
+		size_t i=(lastN<ls.size())?ls.size()-lastN:0;
+		for(;i<ls.size();i++){
+			ls[i].colour=genColor(genColorvFromIndex<float>(i));
+			ls[i].dotSize=dotSize;
+			ls[i].lineType=lineType;
+			ls[i].smoothLine=smoothType;
+		}
+	};
+
+	void SetLineColor(int lastN, COLORREF c1, COLORREF c0, int dotSize=0, int smoothType=0, int lineType=0)
+	{
+		size_t lss=ls.size();
+		if(lss<2){
+			if(lastN>0 && lss>0){
+				ls.back().colour=c1;
+
+				ls.back().dotSize=dotSize;
+				ls.back().lineType=lineType;
+				ls.back().smoothLine=smoothType;
+			}
+			return;
+		}
+
+		size_t si=(lastN<lss)?lss-lastN:0;
+
+		float rgb1[3];
+		float rgb0[3];
+
+		Getrgb(c1,rgb1);
+		Getrgb(c0,rgb0);
+
+		float rgbi[3];		
+
+		for(size_t i=si;i<lss;i++){
+
+			rgbi[0]=xRescale(i,si,lss,rgb0[0],rgb1[0]);
+			rgbi[1]=xRescale(i,si,lss,rgb0[1],rgb1[1]);
+			rgbi[2]=xRescale(i,si,lss,rgb0[2],rgb1[2]);
+
+			ls[i].colour=GetRGB(rgbi);
+
+			ls[i].dotSize=dotSize;
+			ls[i].lineType=lineType;
+			ls[i].smoothLine=smoothType;
+		}
+	};
+
 };
 
 

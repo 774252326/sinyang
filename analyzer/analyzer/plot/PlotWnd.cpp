@@ -331,17 +331,42 @@ void PlotWnd::OnSize(UINT nType, int cx, int cy)
 
 void PlotWnd::SetLegend(void)
 {
-	if(pdex!=NULL){
-		ShowLegend(pdex->lgc.legendDpMode&LEGEND_DP_SHOW);
+	//if(pdex!=NULL){
+		//ShowLegend(pdex->lgc.legendDpMode&LEGEND_DP_SHOW);
 		//return 0;
+	//}
+
+	if( pdex!=NULL && (pdex->lgc.legendDpMode&LEGEND_DP_SHOW) /*&& !pdex->pd.ls.empty()*/){
+
+		if(td==NULL){
+			td=new LegendDlg(this);
+			td->Create(IDD_DIALOG4,this);
+		}
+		else{
+			((LegendDlg*)td)->PositionWnd();
+			((LegendDlg*)td)->Invalidate(FALSE);
+			//td->Invalidate();
+		}
+		td->ShowWindow(SW_SHOW);
 	}
+	else{
+
+		if(td!=NULL){
+			td->ShowWindow(SW_HIDE);
+			delete td;
+			td=NULL;
+		}
+	}
+		
+
+
 }
 
 
 void PlotWnd::ShowLegend(bool bShow)
 {
 
-	if(bShow){
+	if(bShow && pdex!=NULL && !pdex->pd.ls.empty()){
 
 		if(td==NULL){
 			td=new LegendDlg(this);

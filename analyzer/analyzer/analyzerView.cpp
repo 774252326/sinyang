@@ -48,7 +48,7 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		ON_MESSAGE(MESSAGE_UPDATE_VIEW, &CanalyzerView::OnMessageUpdateView)
 		ON_NOTIFY(UDN_DELTAPOS, SPIN_ID, &CanalyzerView::OnDeltaposSpin)
 
-		ON_MESSAGE(MESSAGE_UPDATE_RAW, &CanalyzerView::OnMessageUpdateRaw)
+		//ON_MESSAGE(MESSAGE_UPDATE_RAW, &CanalyzerView::OnMessageUpdateRaw)
 	END_MESSAGE_MAP()
 
 	// CanalyzerView construction/destruction
@@ -369,10 +369,14 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 
 		COLORREF oc=(COLORREF)wParam;
 
-		pw.blankPS.winbkC=oc;
+		//pw.blankPS.winbkC=oc;
+		//pw.blankPS.SetCr(pw.blankPS.GetCrType());
+		pw.blankPS.RefreshWinCr(oc);
 
 		for(size_t i=0;i<pdl.size();i++){
-			pdl[i].pd.ps.winbkC=oc;
+			//pdl[i].pd.ps.winbkC=oc;
+			//pdl[i].pd.ps.SetCr(pdl[i].pd.ps.GetCrType());
+			pdl[i].pd.ps.RefreshWinCr(oc);
 		}
 
 		pw.Invalidate(FALSE);
@@ -414,18 +418,19 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 
 		int selecti=UpdateSpinButton(pdl.size(),blast);
 
-		if(selecti<0){
-			//xmin=ymin=-1;
-			//xmax=ymax=1;
-			//PlotSpec ps=pw.pdex->pd.ps;
-			//pw.pdex=PlotDataEx(ps);
-			pw.pdex=NULL;
-			pw.selectPIdx=0;
-			pw.Invalidate(FALSE);	
-			return 1;
-		}
-
-		pw.pdex=&pdl[selecti];
+		//if(selecti<0){
+		//	//xmin=ymin=-1;
+		//	//xmax=ymax=1;
+		//	//PlotSpec ps=pw.pdex->pd.ps;
+		//	//pw.pdex=PlotDataEx(ps);
+		//	pw.pdex=NULL;
+		//	//pw.selectPIdx=0;
+		//	
+		//	//pw.Invalidate(FALSE);	
+		//	//return 1;
+		//}
+		pw.pdex=(selecti<0)? NULL : &pdl[selecti];
+		//pw.pdex=&pdl[selecti];
 		pw.selectPIdx=0;
 		pw.bMouseCursor=false;
 
