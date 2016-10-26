@@ -101,7 +101,10 @@ hid_security_user_accounts.htm
 menu_analysis.htm
 menu_language.htm
 menu_security.htm
-introduction.htm
+run_test.htm
+data_file.htm
+interface.htm
+example.htm
 
 [ALIAS]
 HIDR_MAINFRAME = main_index.htm

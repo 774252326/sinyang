@@ -1357,10 +1357,10 @@ void CMainFrame::ChangeLang(void)
 
 	switch(LangID){
 	case MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US):
-		CopyFile(L"analyzer[en].chm",L"analyzer.chm",FALSE);
+		//CopyFile(pcct::folderpath()+L"\\analyzer[en].chm",pcct::folderpath()+L"\\analyzer.chm",FALSE);
 		break;		
 	case MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED):
-		CopyFile(L"analyzer[ch].chm",L"analyzer.chm",FALSE);
+		//CopyFile(pcct::folderpath()+L"\\analyzer[ch].chm",pcct::folderpath()+L"\\analyzer.chm",FALSE);
 		break;
 	default:
 		break;

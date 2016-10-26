@@ -1,0 +1,62 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>(&lt;&lt;YourApp&gt;&gt; Help Index)</title>
+</head>
+<body>
+    <p>
+        <b>示例：线型近似法测量加速剂浓度</b></p>
+    <p>
+        1.启动软件，<a href="hid_file_new.htm">新建</a>一个数据文件，或<a href="hid_file_open.htm">打开</a>一个现有的数据文件。</p>
+    <p>
+        2.点击<a href="menu_analysis.htm">分析</a>－<a href="hid_analysis_analysis_setup.htm">分析设置</a>，打开<a
+            href="hid_analysis_analysis_setup.htm">分析设置对话框</a>。
+    </p>
+    <p>
+        3.在分析参数标签页，分析方法一项选择‘LAT-测样品’，截距一项填入已知的截距数值1.95。</p>
+    <p>
+        4.在伏安参数标签页，按实际的测试要求填写8个参数。</p>
+    <p>
+        5.在加液参数标签页，填写加液步骤参数。</p>
+    <p>
+        首先，参考分析参数标签页中关于加液步骤的提示(下图红圈部分)确定各步骤的具体加液的数值。</p>
+    <p>
+        <img src="images/example1.png" alt="" border="0"></p>
+    <p>
+        第一步，加电镀基液25ml：</p>
+    <p>
+        在加液列表中插入一行，编号为1，加液类型选择‘加电镀基液’，体积(ml)/浓度(ml/L)一项输入25，其余留空。</p>
+    <p>
+        第二步，加浓度1000ml/L的抑制剂0.075ml：</p>
+    <p>
+        在加液列表中插入一行，编号为2，加液类型选择‘按体积加一次’，S浓度(ml/L)一项输入1000，体积(ml)/浓度(ml/L)一项输入0.075，其余留空。</p>
+    <p>
+        第三步，加样品溶液4ml：</p>
+    <p>
+        在加液列表中插入一行，编号为3，加液类型选择‘按体积加一次’，体积(ml)/浓度(ml/L)一项输入4，其余留空。</p>
+    <p>
+        第四步，连续添加浓度25ml/L的加速剂，每次1ml，直到测得的归一化电量超过0.71：</p>
+    <p>
+        在加液列表中插入一行，编号为4，加液类型选择‘按体积递加’，A浓度(ml/L)一项输入25，体积(ml)/浓度(ml/L)一项输入1，结束点一项输入0.71，其余留空。</p>
+    <p>
+        填好的加液列表如下图：</p>
+    <p>
+        <img src="images/example2.png" alt="" border="0"></p>
+    <p>
+        6.点击确定，保存各参数并关闭<a href="hid_analysis_analysis_setup.htm">分析设置对话框</a>。</p>
+    <p>
+        7.点击<a href="menu_analysis.htm">分析</a>－<a href="hid_analysis_start_analysis.htm">开始分析</a>，开始分析测试，如下图。测试过程的操作详见<a
+            href="run_test.htm">运行测试</a>。</p>
+    <p>
+        <img src="images/example3.png" alt="" border="0"></p>
+    <p>
+        8.加液测试完成后，点击<a href="menu_analysis.htm">分析</a>－<a href="hid_analysis_compute.htm">计算</a>，程序将显示分析结果。如下图，测得的加速剂浓度为11.8715ml/L。</p>
+    <p>
+        管理员用户可进一步修改修正因子的值，然后点击‘计算’按钮重新计算结果。</p>
+    <p>
+        <img src="images/example4.png" alt="" border="0"></p>
+    <p>
+        9.关闭结果，<a href="hid_file_save.htm">保存</a>数据文件，<a href="hid_app_exit.htm">退出</a>软件。</p>
+</body>
+</html>

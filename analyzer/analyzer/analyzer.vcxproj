@@ -95,6 +95,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="analyzer.reg" />
+    <None Include="hlp\data_file.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="hlp\example.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
     <None Include="hlp\hid_analysis_abort_analysis.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
@@ -367,7 +373,7 @@ echo.
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="hlp\Images\Bullet.gif" />
-    <None Include="hlp\introduction.htm">
+    <None Include="hlp\interface.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="hlp\main_index.htm">
@@ -386,6 +392,9 @@ echo.
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="hlp\menu_window.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="hlp\run_test.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="hlp\scrollbars.htm">

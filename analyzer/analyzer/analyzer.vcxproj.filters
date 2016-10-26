@@ -421,7 +421,16 @@
     <None Include="hlp\menu_security.htm">
       <Filter>HTML Help Topics</Filter>
     </None>
-    <None Include="hlp\introduction.htm">
+    <None Include="hlp\data_file.htm">
+      <Filter>HTML Help Topics</Filter>
+    </None>
+    <None Include="hlp\run_test.htm">
+      <Filter>HTML Help Topics</Filter>
+    </None>
+    <None Include="hlp\interface.htm">
+      <Filter>HTML Help Topics</Filter>
+    </None>
+    <None Include="hlp\example.htm">
       <Filter>HTML Help Topics</Filter>
     </None>
   </ItemGroup>

@@ -291,9 +291,9 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 			m_spBtn.ShowWindow(SW_HIDE);
 			this->UpdateWindow();				
 		}
-		
+
 		CopyWndToClipboard(this);
-		
+
 		UpdateSpinButton();
 
 	}
@@ -389,7 +389,7 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 	void CanalyzerView::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 	{
 		// TODO: Add your specialized code here and/or call the base class
-		
+
 		int   nPrintW   =   pDC->GetDeviceCaps(HORZRES); 
 		int   nPrintH   =   pDC->GetDeviceCaps(VERTRES); 
 
@@ -409,7 +409,23 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		//bRet = memdc.BitBlt(0,0,rect.Width(),rect.Height(),&dc,0,0,SRCCOPY); 
 		//bRet = pDC->BitBlt(700-rect.Width(),0,rect.Width(),rect.Height(),&dc,0,0,SRCCOPY); 
 		//bRet = pDC->BitBlt(0,0,nPrintW,nPrintH,&dc,0,0,SRCCOPY);
-		bRet = pDC->StretchBlt(0,0,nPrintW,nPrintH,&dc,0,0,rect.Width(),rect.Height(),SRCCOPY);
+
+		CSize rectsz=rect.Size();
+		//CSize newsz;
+		if(nPrintW*rectsz.cy>nPrintH*rectsz.cx){
+			int newW=nPrintH*rectsz.cx/rectsz.cy;
+			//newsz=CSize(newW,nPrintH);
+
+			bRet = pDC->StretchBlt((nPrintW-newW)/2,0,newW,nPrintH,&dc,0,0,rect.Width(),rect.Height(),SRCCOPY);
+		}
+		else{
+			int newH=nPrintW*rectsz.cy/rectsz.cx;	
+			//newsz=CSize(nPrintW,newH);
+
+			bRet = pDC->StretchBlt(0,(nPrintH-newH)/2,nPrintW,newH,&dc,0,0,rect.Width(),rect.Height(),SRCCOPY);
+		}
+
+
 
 
 		CView::OnPrint(pDC, pInfo);

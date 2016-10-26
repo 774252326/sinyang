@@ -1,6 +1,6 @@
 <HTML>
 <HEAD>
-<META NAME="GENERATOR" Content="Microsoft Visual Studio 8.0">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <TITLE></TITLE>
 </HEAD>
 <BODY>
@@ -9,23 +9,212 @@
 
 
 
-<P><A NAME="hid_edit_cut"></A><B>��������(�����˵�)</B></P>
+<P><A NAME="hid_edit_cut"></A><B>分析设置(分析菜单)</B></P>
 
 
 
-<P>�򿪷������öԻ��� �ں�&#39;��������&#39;��&#39;��������&#39;�� &#39;��Һ����&#39;��������ǩҳ��</P>
+<P>打开分析设置对话框， 内含'分析参数'，'伏安参数'和 '加液参数'共三个标签页。</P>
 
 
 
-<P>��Щ�����������ڷ������̿�ʼǰȫ�����úá�</P>
 
 
-<P>&#39;��������&#39;��ǩҳ��</P>
+
+<P>'分析参数'标签页：
+
+</P>
+<TABLE cols=2 width=900>
+
+<TR VALIGN="top">
+<TD width="20%">分析方法 
+</TD>
+
+<TD width=85%>选择分析方法，下方的方法备注中有相应的加液步骤的提示。</TD>
+
+</TR>
+
+<TR VALIGN="top">
+
+<TD width="20%">评定比值</TD>
+
+<TD width=85%>取值范围一般是0～1，用于结果计算。</TD>
+
+</TR>
+
+<TR VALIGN="top">
+
+<TD width="20%">标定曲线/校正因子/截距</TD>
+<TD width=85%>校正因子/截距为一个数值，标定曲线要填写相应数据文件的路径。</TD>
+</TR>
+
+</TABLE>
+
  <P><IMG SRC="images/anp.png" ALT="" BORDER=0></P>
-<P>&#39;��������&#39;��ǩҳ��</P>
+
+<P>'伏安参数'标签页：</P>
+
+<P>此标签页的参数用于计算电量。</P>
+
+<TABLE cols=2 width=900>
+
+<TR VALIGN="top">
+<TD width="20%">最低电势/最高电势</TD>
+
+<TD width=85%>伏安曲线横坐标的上下限</TD>
+
+</TR>
+
+<TR VALIGN="top">
+
+<TD width="20%">扫描速度</TD>
+
+<TD width=85%>扫描电势的变化速度</TD>
+
+</TR>
+
+<TR VALIGN="top">
+
+<TD width="20%">旋转速度</TD>
+
+<TD width=85%>电极的转速</TD>
+
+</TR>
+
+<TR VALIGN="top">
+
+<TD width="20%">容限</TD>
+
+<TD width=85%>当最后一次电量的测量值与倒数第二的测量值相差的比值小于容限时，扫描停止。此项与'循环次数'项共同决定扫描次数。</TD>
+
+</TR>
+
+<TR VALIGN="top">
+
+<TD width="20%">循环次数</TD>
+
+<TD width=85%>电势扫描的最大次数，若此项设为0，则扫描次数不作限制。此项与'循环次数'项共同决定扫描次数。</TD>
+
+</TR>
+
+<TR VALIGN="top">
+
+<TD width="20%">积分上限/积分下限</TD>
+<TD width=85%>由伏安曲线计算电量时的积分上下限。积分下限项选择为'自适应'时，程序将自动查找积分下限。</TD>
+</TR>
+
+</TABLE>
+
  <P><IMG SRC="images/cvp.png" ALT="" BORDER=0></P>
-<P>&#39;��Һ����&#39;��ǩҳ��</P>
- <P><IMG SRC="images/sap.png" ALT="" BORDER=0></P>
+
+
+ <P>上述两个标签页的参数都必须在分析过程开始前全部设置好。</P>
+
+
+<P>'加液参数'标签页：</P>
+
+<P>在列表中填入将要执行的加液步骤，具体的参数设置如下：</P>
+
+
+<TABLE cols=2 width=900>
+
+<TR VALIGN="top">
+<TD width=15%>编号</TD>
+<TD width=85%>步骤的执行次序</TD>
+</TR>
+<TR VALIGN="top">
+<TD width=15%>加液类型</TD>
+<TD width=85%>共五种加液步骤类型，具体含义和相应参数设置见下表。</TD>
+</TR>
+
+</TABLE>
+
+
+<P>加液步骤的参数设置及含义：</P>
+
+<TABLE cols=6 width=1200 border="2">
+
+<TR VALIGN="top">
+<TD width=10% align="center" valign="middle">加液类型</TD>
+
+<TD width=18% align="center" valign="middle">S浓度(ml/L)</TD>
+<TD width=18% align="center" valign="middle">A浓度(ml/L)</TD>
+<TD width=18% align="center" valign="middle">L浓度(ml/L)</TD>
+<TD width=18% align="center" valign="middle">体积(ml)/浓度(ml/L)</TD>
+<TD width=18% align="center" valign="middle">结束点</TD>
+
+</TR>
+
+<TR VALIGN="top">
+
+<TD width=10% align="center" valign="middle">按体积加一次</TD>
+
+    <td align="center" rowspan="4" valign="middle">
+        待添加溶液的抑制剂浓度</td>
+    <td align="center" rowspan="4" valign="middle">
+        待添加溶液的加速剂浓度</td>
+    <td align="center" rowspan="4" valign="middle">
+        待添加溶液的整平剂浓度</td>
+
+<TD align="center" rowspan="2" valign="middle">一次加液的体积</TD>
+
+<TD width=18% align="center" valign="middle">无效</TD>
+
+</TR>
+
+<TR VALIGN="top">
+
+<TD width=10% align="center" valign="middle">按体积递加</TD>
+
+<TD width=18% align="center" valign="middle">
+    归一化电量值，当测得的归一化电量值小于（或大于，根据所选的分析方法而定）此值时，该步骤结束。</TD>
+
+</TR>
+
+<TR VALIGN="top">
+
+<TD width=10% align="center" valign="middle">按浓度加一次</TD>
+
+    <td align="center" valign="middle">
+        一次加液后电镀池里指定成分的浓度</td>
+
+<TD width=18% align="center" valign="middle">无效</TD>
+
+</TR>
+
+
+<TR VALIGN="top">
+
+<TD width=10% align="center" valign="middle">按浓度递加</TD>
+
+<TD width=18% align="center" valign="middle">一次加液后电镀池里指定成分的浓度增量</TD>
+<TD width=18% align="center" valign="middle">
+    归一化电量值，当测得的归一化电量值小于（或大于，根据所选的分析方法而定）此值时，该步骤结束。</TD>
+
+</TR>
+
+
+<TR VALIGN="top">
+
+<TD width=10% align="center" valign="middle">加电镀基液</TD>
+
+<TD width=18% align="center" valign="middle">无效</TD>
+<TD width=18% align="center" valign="middle">无效</TD>
+<TD width=18% align="center" valign="middle">无效</TD>
+<TD width=18% align="center" valign="middle">加液体积</TD>
+<TD width=18% align="center" valign="middle">无效</TD>
+</TR>
+
+
+</TABLE>
+
+    <p>
+        备注：</p>
+<P>1.无效是指程序在计算中不使用该参数，即填写任意的参数值都不会影响计算结果。</P>
+<P>2.若S浓度(ml/L)，A浓度(ml/L)和L浓度(ml/L)三项的值同时为0，代表待加溶液成分未知，这在浓度测量中用来表示添加样品。</P>
+    <p>
+        3.当加液类型为按浓度加一次或按浓度递加时，待加溶液必须为已知而成分单一，即S浓度(ml/L)，A浓度(ml/L)和L浓度(ml/L)三项的值有且只有一项不为0，其后体积(ml)/浓度(ml/L)一项中的指定成分即是待加溶液的成分。</p>
+        <P>4.若列表中留空的项将全部取默认值，数值项的默认值是0，加液类型的默认值是按体积加一次。</P>
+    <P><IMG SRC="images/sap.png" ALT="" BORDER=0></P>
 
 
 </BODY>

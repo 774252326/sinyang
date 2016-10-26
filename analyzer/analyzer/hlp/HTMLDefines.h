@@ -45,6 +45,8 @@
 #define HID_POPUP_ADDUSER                       0x18019
 #define HID_POPUP_DELETEUSER                    0x1801A
 #define HID_32795                               0x1801B
+#define HID_CONTROL                             0x1801C
+#define HID_32797                               0x1801D
 #define HID_FILE_CLOSE                          0x1E102
  
 // Prompts (IDP_*) 
