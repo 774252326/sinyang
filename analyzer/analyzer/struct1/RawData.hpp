@@ -7,6 +7,11 @@
 #include <numeric>
 #include <algorithm>
 
+#include "../funT1/InterpXT.h"
+#include "../funT1/FitLineT.h"
+#include "../funT1/CSplineT.h"
+
+
 template<typename T>
 T myfunction (T x, T y) {return x+y;};
 
@@ -100,8 +105,50 @@ public:
 		ll.clear();
 	};
 
-	
 
+
+	bool InterpX(size_t idx, double yr, double &xr)
+	{
+		std::vector<double> x;
+		std::vector<double> y;
+		GetDatai(idx,x,y);
+		return ::InterpX(x,y,yr,xr);
+	};
+
+	bool InterpDerivativeX(size_t idx, double yr, double &xr, bool bNormScale=false)
+	{
+		std::vector<double> x;
+		std::vector<double> y;
+		GetDatai(idx,x,y);
+
+		if(!bNormScale){					
+			yr*=y.front();
+		}
+
+		return ::InterpDerivativeX(x,y,yr,xr);
+	};
+
+	double InterpY(size_t idx, double xr)
+	{
+		std::vector<double> x;
+		std::vector<double> y;
+		GetDatai(idx,x,y);
+		
+		double yr;
+		std::vector<double> y2(x.size());
+		spline(x,y,1.0e30,1.0e30,y2);
+		splint(x,y,y2,xr,yr);
+		return yr;
+	};
+
+	bool FitLine(size_t idx, double &k, double &b, size_t nFront=0, size_t nBack=0)
+	{
+		std::vector<double> x;
+		std::vector<double> y;
+		GetDatai(idx,x,y);
+
+		return ::FitLine(x,y,k,b,nFront,nBack);
+	};
 
 	size_t ValidPointNumber(void)
 	{
@@ -121,7 +168,7 @@ public:
 	bool CheckData(void)
 	{
 		size_t lltotal=ValidPointNumber();
-		
+
 		if(lltotal<=xll.size() && lltotal<=yll.size())
 			return true;
 
@@ -144,6 +191,15 @@ public:
 		return true;
 	};
 
+	bool AddNew(double x, double y)
+	{
+		xll.push_back(x);
+		yll.push_back(y);
+		ll.push_back(1);
+
+		return true;
+	};
+
 	bool AddFollow(const std::vector<double> &x, const std::vector<double> &y)
 	{
 		if(x.size()!=y.size() || ll.empty())
@@ -155,6 +211,15 @@ public:
 		std::copy_backward(y.begin(),y.end(),yll.end());
 
 		ll.back()+=x.size();
+
+		return true;
+	};
+
+	bool AddFollow(double x, double y)
+	{
+		xll.push_back(x);
+		yll.push_back(y);
+		ll.back()+=1;
 
 		return true;
 	};

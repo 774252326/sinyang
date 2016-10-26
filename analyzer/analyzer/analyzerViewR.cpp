@@ -47,18 +47,20 @@ IMPLEMENT_DYNCREATE(CanalyzerViewR, CanalyzerView)
 
 	afx_msg LRESULT CanalyzerViewR::OnMessageComputeResult(WPARAM wParam, LPARAM lParam)
 	{
-		//CMainFrame *mf=(CMainFrame*)(GetParentFrame());
+		CMainFrame *mf=(CMainFrame*)(GetParentFrame());
 		//COutputListA* ol=mf->GetOutputWnd()->GetListCtrl();
 
-		//CanalyzerDoc* pDoc = GetDocument();
+		CanalyzerDoc* pDoc = GetDocument();
 
-		//CString str=Compute(ol->dol,pDoc->p1,pdl,true);
+		CString str=Compute(mf->GetOutputWnd()->dol,pDoc->p1,pdl,true);
 
 		//::SendMessage(mf->GetCaptionBar()->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)str.GetBuffer(),NULL);
 
 		//mf->GetCaptionBar()->ShowMessage(str);
 
-		//::PostMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_VIEW,NULL,NULL);
+		::PostMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_VIEW,NULL,NULL);
+
+		MessageBox(str);
 
 		return 0;
 	}

@@ -729,9 +729,9 @@ void CMainFrame::OnAnalysisCompute()
 {
 	// TODO: Add your command handler code here
 
-	//CanalyzerViewR *pavr=(CanalyzerViewR*)m_wndSplitter.GetPane(0,1);
+	CanalyzerViewR *pavr=(CanalyzerViewR*)m_wndSplitter.GetPane(0,1);
 	//::SendMessage(pavr->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
-	//::SendMessage(pavr->GetSafeHwnd(),MESSAGE_COMPUTE_RESULT,NULL,NULL);
+	::SendMessage(pavr->GetSafeHwnd(),MESSAGE_COMPUTE_RESULT,NULL,NULL);
 }
 
 

@@ -155,6 +155,21 @@ public:
 		return ndiff;
 	};
 
+	int AddLineData( const RawData &newraw, const std::vector<CString> &namelist )
+	{	
+		
+		size_t oldn=raw.ll.size();
+		
+		raw.AppendData(newraw);
+
+		ls.resize(raw.ll.size());
+
+		for(size_t i=0;i+oldn<ls.size()&&i<namelist.size();i++){
+			ls[i+oldn].name=namelist[i];
+		}
+		return newraw.ll.size();
+	};
+
 	void SetLineColor(int lastN, int dotSize=0, int smoothType=0, int lineType=0)
 	{
 		size_t i=(lastN<ls.size())?ls.size()-lastN:0;

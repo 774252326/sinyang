@@ -225,11 +225,14 @@ public:
 	};
 
 	double ArUse(void) const{
+		if( Ar.empty())
+			return -100;
 
 		if(UseIndex>=0 && UseIndex<Ar.size())
 			return Ar[UseIndex];
 
-		return -100;
+		return Ar.back();
+
 	};
 
 

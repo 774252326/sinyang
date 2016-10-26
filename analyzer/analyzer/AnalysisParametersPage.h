@@ -25,7 +25,7 @@ public:
 	virtual BOOL OnSetActive();
 //	virtual BOOL OnInitDialog();
 	afx_msg void ComboSelectChange(void);
-	//afx_msg void OnBnClickedButton1();
+	afx_msg void OnBnClickedButton1();
 
 	//anp para;
 	ANPara para;

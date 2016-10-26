@@ -3,8 +3,8 @@
 #include <afxcmn.h>
 #include <vector>
 #include <algorithm>
-#include "../funT1\\smsp.h"
-#include "../funT1\\lspfitT.h"
+//#include "../funT1\\smsp.h"
+//#include "../funT1\\lspfitT.h"
 
 #include "../struct1\\PlotDataEx.hpp"
 
@@ -158,42 +158,7 @@ void DrawLegend(CDC* pDC
 
 
 
-template <typename T>
-bool InterpX(const std::vector<T> &x, const std::vector<T> &y, T yr, T &xr)
-{
-	std::vector<T> c1(4,0);
-	std::vector< std::vector<T> > c(x.size()-1,c1);
-	smspl(x,y,1.0,c);
-	std::vector<T> r;
-	int ni=SolveCubicPP(x,c,yr,r);
-	if(ni<=0){
-		return false;
-	}
-	xr=r.back();
-	return true;
-}
 
-template <typename T>
-bool FitLine(std::vector<T> &x, std::vector<T> &y, T &k, T &b, size_t nFront=0, size_t nBack=0)
-{
-	if(	x.size()!=y.size()
-		|| x.size()<2+nFront+nBack){
-			return false;
-	}
-
-	x.erase(x.begin(),x.begin()+nFront);
-	x.erase(x.end()-nBack,x.end());
-
-	y.erase(y.begin(),y.begin()+nFront);
-	y.erase(y.end()-nBack,y.end());
-
-	std::vector<T> c;
-	lspfit(x,y,2,c);
-	k=c[1];
-	b=c[0];
-
-	return true;
-}
 
 template <typename T>
 void UpdateRange( const std::vector<T> &x, T &xmin, T &xmax, T gapPercent=0, bool bLocalRange=false)
@@ -222,17 +187,3 @@ void UpdateRange( const std::vector<T> &x, T &xmin, T &xmax, T gapPercent=0, boo
 
 }
 
-template <typename T>
-bool compless (T c1, T c2) {
-	return (c1>c2);
-}
-
-template <typename T>
-void SortInsert( std::vector<T> &xs, std::vector<T> &ys, T x, T y )
-{
-	std::vector<T>::iterator it;
-	it = std::find_first_of (xs.begin(), xs.end(),	&x, (&x)+1, compless<T>);
-	size_t idx=it-xs.begin();
-	xs.insert(it,x);
-	ys.insert(ys.begin()+idx,y);
-}

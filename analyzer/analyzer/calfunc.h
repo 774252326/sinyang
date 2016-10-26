@@ -8,6 +8,8 @@
 #include "struct1\PlotDataEx.hpp"
 
 
+
+
 #define SC_STEP_COMPLETE 0x01
 #define SC_NEW_RIGHT_PLOT 0x02
 #define SC_NO_PLOT 0x04
@@ -29,7 +31,8 @@ UINT DataOutAList2PlotDataExList(
 	const std::vector<DataOutA> &dol,
 	const ANPara &p1,
 	COLORREF bkc, 
-	std::vector<PlotDataEx> &pdl
+	std::vector<PlotDataEx> &pdl,
+	bool bReadCb=true
 	);
 
 UINT RawData2PlotDataList(
@@ -40,8 +43,16 @@ UINT RawData2PlotDataList(
 	);
 
 
-//CString Compute( const std::vector<DataOutA> &dol, const ANPara &p1, std::vector<PlotData> &pdl, bool bDraw );
-//bool Compute(const std::vector<DataOutA> &dol, const ANPara &p1, std::vector<CString> &res);
+CString Compute( 
+	const std::vector<DataOutA> &dol, 
+	const ANPara &p1, 
+	std::vector<PlotDataEx> &pdl, 
+	bool bDraw );
+
+bool Compute(
+	const std::vector<DataOutA> &dol, 
+	const ANPara &p1, 
+	std::vector<CString> &res);
 
 UINT ComputeStateData(
 	int ANPType,
@@ -338,3 +349,20 @@ UINT ComputeQListA(
 //{
 //	return sqrt(Variance(x,bSample));
 //}
+
+template <typename T>
+bool compless (T c1, T c2) {
+	return (c1>c2);
+}
+
+template <typename T>
+void SortInsert( std::vector<T> &xs, std::vector<T> &ys, T x, T y )
+{
+	std::vector<T>::iterator it;
+	it = std::find_first_of (xs.begin(), xs.end(),	&x, (&x)+1, compless<T>);
+	size_t idx=it-xs.begin();
+	xs.insert(it,x);
+	ys.insert(ys.begin()+idx,y);
+}
+
+

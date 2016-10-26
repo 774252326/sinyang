@@ -56,7 +56,7 @@ BEGIN_MESSAGE_MAP(AnalysisParametersPage, CPropertyPage)
 
 	//ON_EN_CHANGE(IDS_EDIT_CALIBRATION_FACTOR, &AnalysisParametersPage::editchange)
 
-	//ON_BN_CLICKED(IDC_BUTTON1, &AnalysisParametersPage::OnBnClickedButton1)
+	ON_BN_CLICKED(IDS_STRING_OPEN_CALIBRATION_FILE, &AnalysisParametersPage::OnBnClickedButton1)
 	ON_WM_CREATE()
 //	ON_WM_SHOWWINDOW()
 END_MESSAGE_MAP()
@@ -120,6 +120,7 @@ void AnalysisParametersPage::ComboSelectChange(void)
 
 		this->GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR)->ShowWindow(SW_HIDE);
 		this->GetDlgItem(IDS_EDIT_CALIBRATION_CURVE_FILE)->ShowWindow(SW_HIDE);
+		this->GetDlgItem(IDS_STRING_OPEN_CALIBRATION_FILE)->ShowWindow(SW_HIDE);
 		this->GetDlgItem(IDS_EDIT_INTERCEPT_VALUE)->ShowWindow(SW_HIDE);
 
 		break;
@@ -142,6 +143,7 @@ void AnalysisParametersPage::ComboSelectChange(void)
 		
 		this->GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR)->ShowWindow(SW_HIDE);
 		this->GetDlgItem(IDS_EDIT_CALIBRATION_CURVE_FILE)->ShowWindow(SW_HIDE);
+		this->GetDlgItem(IDS_STRING_OPEN_CALIBRATION_FILE)->ShowWindow(SW_HIDE);
 		this->GetDlgItem(IDS_EDIT_INTERCEPT_VALUE)->ShowWindow(SW_SHOW);
 
 		break;
@@ -160,6 +162,7 @@ void AnalysisParametersPage::ComboSelectChange(void)
 
 		this->GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR)->ShowWindow(SW_HIDE);
 		this->GetDlgItem(IDS_EDIT_CALIBRATION_CURVE_FILE)->ShowWindow(SW_SHOW);
+		this->GetDlgItem(IDS_STRING_OPEN_CALIBRATION_FILE)->ShowWindow(SW_SHOW);
 		this->GetDlgItem(IDS_EDIT_INTERCEPT_VALUE)->ShowWindow(SW_HIDE);
 		//this->GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR)->ShowWindow(SW_SHOW);
 		//this->GetDlgItem(IDS_EDIT_CALIBRATION_CURVE_FILE)->ShowWindow(SW_SHOW);
@@ -195,6 +198,28 @@ void AnalysisParametersPage::ComboSelectChange(void)
 
 }
 
+
+void AnalysisParametersPage::OnBnClickedButton1()
+{
+	TCHAR szFilters[]= _T("Analyzer Files (*.ghb)|*.ghb|All Files (*.*)|*.*||");
+
+		// Create an Open dialog; the default file name extension is ".my".
+
+		CFileDialog fileDlg(TRUE, _T("ghb"), _T("*.ghb"),
+			OFN_FILEMUSTEXIST | OFN_HIDEREADONLY /*| OFN_ALLOWMULTISELECT*/ , szFilters);
+
+		// Display the file dialog. When user clicks OK, fileDlg.DoModal() 
+
+		// returns IDOK.
+
+		if(fileDlg.DoModal() == IDOK)
+		{   
+			para.calibrationfilepath=fileDlg.GetPathName();
+			UpdateData(FALSE);
+		}
+
+	
+}
 
 
 
@@ -276,6 +301,7 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	CSize gap1(20,20);
 	CSize gap2(20,20);
 	CSize staticSize(180,22);
+	CSize btnSize(60,22);
 
 	CRect winrect;
 	this->GetWindowRect(&winrect);
@@ -287,6 +313,7 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	CEdit *pEdit;
 	CComboBox *pCombo;
 	CComboBox *pCombo2;
+	CButton *pBtn;
 
 	CString str;
 
@@ -445,19 +472,6 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		this,
 		IDS_EDIT_CALIBRATION_FACTOR);
 
-	str.LoadStringW(IDS_EDIT_CALIBRATION_CURVE_FILE);
-	pEdit=new CEdit;
-	pEdit->CreateEx(
-		WS_EX_CLIENTEDGE,
-		L"Edit", 
-		str,
-		ES_LEFT
-		|WS_CHILD,
-		//|WS_VISIBLE,
-		CRect(pt,editSize),
-		this,
-		IDS_EDIT_CALIBRATION_CURVE_FILE);
-
 
 	str.LoadStringW(IDS_EDIT_INTERCEPT_VALUE);
 	pEdit=new CEdit;
@@ -471,6 +485,35 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		CRect(pt,editSize),
 		this,
 		IDS_EDIT_INTERCEPT_VALUE);
+
+
+	str.LoadStringW(IDS_EDIT_CALIBRATION_CURVE_FILE);
+	pEdit=new CEdit;
+
+	CSize feditSize=editSize;
+	feditSize.cx-=btnSize.cx;
+
+	pEdit->CreateEx(
+		WS_EX_CLIENTEDGE,
+		L"Edit", 
+		str,
+		ES_LEFT
+		|WS_CHILD,
+		//|WS_VISIBLE,
+		CRect(pt,feditSize),
+		this,
+		IDS_EDIT_CALIBRATION_CURVE_FILE);
+
+
+	pt.x+=feditSize.cx;
+	str.LoadStringW(IDS_STRING_OPEN_CALIBRATION_FILE);
+	pBtn=new CButton;
+	pBtn->Create(str,
+		WS_CHILD
+		|BS_PUSHBUTTON,
+		CRect(pt,btnSize),
+		this,
+		IDS_STRING_OPEN_CALIBRATION_FILE);
 
 	UpdateData(FALSE);
 	ComboSelectChange();
@@ -490,11 +533,13 @@ void AnalysisParametersPage::CalibrationComboSelectChange(void)
 	case 0:
 		this->GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR)->ShowWindow(SW_SHOW);
 		this->GetDlgItem(IDS_EDIT_CALIBRATION_CURVE_FILE)->ShowWindow(SW_HIDE);
+		this->GetDlgItem(IDS_STRING_OPEN_CALIBRATION_FILE)->ShowWindow(SW_HIDE);
 		this->GetDlgItem(IDS_EDIT_INTERCEPT_VALUE)->ShowWindow(SW_HIDE);
 		break;
 	case 1:
 		this->GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR)->ShowWindow(SW_HIDE);
 		this->GetDlgItem(IDS_EDIT_CALIBRATION_CURVE_FILE)->ShowWindow(SW_SHOW);
+		this->GetDlgItem(IDS_STRING_OPEN_CALIBRATION_FILE)->ShowWindow(SW_SHOW);
 		this->GetDlgItem(IDS_EDIT_INTERCEPT_VALUE)->ShowWindow(SW_HIDE);
 		break;
 	default:

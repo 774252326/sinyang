@@ -205,83 +205,83 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		// TODO: Add your command handler code here
 
 
-		//TCHAR szFilters[]= _T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||");
+		TCHAR szFilters[]= _T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||");
 
-		//// Create an Open dialog; the default file name extension is ".my".
+		// Create an Open dialog; the default file name extension is ".my".
 
-		//CFileDialog fileDlg(TRUE, _T("txt"), _T("*.txt"),
-		//	OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_ALLOWMULTISELECT , szFilters);
+		CFileDialog fileDlg(TRUE, _T("txt"), _T("*.txt"),
+			OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_ALLOWMULTISELECT , szFilters);
 
-		//// Display the file dialog. When user clicks OK, fileDlg.DoModal() 
+		// Display the file dialog. When user clicks OK, fileDlg.DoModal() 
 
-		//// returns IDOK.
+		// returns IDOK.
 
-		//if(fileDlg.DoModal() == IDOK)
-		//{   
+		if(fileDlg.DoModal() == IDOK)
+		{   
 
-		//	//POSITION pos=fileDlg.GetStartPosition();
-		//	////PlotData pd;
-		//	////pd.ps=pw.pdex->pd.ps;
-
-
-
-		//	//while(pos!=NULL){
-		//	//	CString fp=fileDlg.GetNextPathName(pos);
-
-		//	//	pcct a;
-		//	//	a.readFile(fp);
-		//	//	a.TomA();
-		//	//	a.SetTimeIntv();
-
-		//	//	LineSpec ls;
-		//	//	ls.colour=RGB(255,0,0);
-		//	//	ls.name=L"line";
-
-		//	//	pdl.push_back(PlotDataEx(*pw.GetPlotSpec()));
-		//	//	pdl.back().pd.AddNew(a.time,a.current,ls,a.label[0],a.label[1]);
-
-		//	//}
-
-		//	////pw.pdex->lgc.legendDpMode=LEGEND_DP_SHOW
-		//	////|LEGEND_DP_FIT_RECT|LEGEND_DP_AUTO_RECT
-		//	////|LEGEND_DP_ALIGN|LEGEND_DP_TOP
-		//	////;
-
-		//	////pw.pdex->pd=pd;
-		//	//////pw.lgs.bkColor=pw.pd.ps.bkgndC;
-		//	////pw.ResetRange();
-		//	////pw.SetLegend();
-
-		//	////this->Invalidate(FALSE);
-		//	//::PostMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_VIEW,NULL,NULL);
-		//	//////////////////////////////////////////////////////////////////////////
+			//POSITION pos=fileDlg.GetStartPosition();
+			////PlotData pd;
+			////pd.ps=pw.pdex->pd.ps;
 
 
-		//	std::vector<CString> filelist;
-		//	LoadFileList(fileDlg.GetPathName(),filelist);
 
-		//	CanalyzerDoc* pDoc = GetDocument();
+			//while(pos!=NULL){
+			//	CString fp=fileDlg.GetNextPathName(pos);
 
-		//	while(!filelist.empty()){
-		//		pcct a;
-		//		a.readFile(filelist.front());
-		//		a.TomA();
-		//		a.SetTimeIntv();
+			//	pcct a;
+			//	a.readFile(fp);
+			//	a.TomA();
+			//	a.SetTimeIntv();
 
-		//		pDoc->raw.AddNew(a.potential,a.current);
+			//	LineSpec ls;
+			//	ls.colour=RGB(255,0,0);
+			//	ls.name=L"line";
 
-		//		filelist.erase(filelist.begin());
-		//	}
-		//	
-		//	CMainFrame *mf=(CMainFrame*)(GetParentFrame());
+			//	pdl.push_back(PlotDataEx(*pw.GetPlotSpec()));
+			//	pdl.back().pd.AddNew(a.time,a.current,ls,a.label[0],a.label[1]);
 
-		//	::SendMessage(mf->GetOutputWnd()->GetSafeHwnd(),MESSAGE_UPDATE_DOL,NULL,NULL);
-		//	
-		//}
+			//}
+
+			////pw.pdex->lgc.legendDpMode=LEGEND_DP_SHOW
+			////|LEGEND_DP_FIT_RECT|LEGEND_DP_AUTO_RECT
+			////|LEGEND_DP_ALIGN|LEGEND_DP_TOP
+			////;
+
+			////pw.pdex->pd=pd;
+			//////pw.lgs.bkColor=pw.pd.ps.bkgndC;
+			////pw.ResetRange();
+			////pw.SetLegend();
+
+			////this->Invalidate(FALSE);
+			//::PostMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_VIEW,NULL,NULL);
+			//////////////////////////////////////////////////////////////////////////
 
 
-		CMainFrame *mf=(CMainFrame*)(GetParentFrame());
-		::SendMessage(mf->GetOutputWnd()->GetSafeHwnd(),MESSAGE_UPDATE_DOL,NULL,NULL);
+			std::vector<CString> filelist;
+			LoadFileList(fileDlg.GetPathName(),filelist);
+
+			CanalyzerDoc* pDoc = GetDocument();
+
+			while(!filelist.empty()){
+				pcct a;
+				a.readFile(filelist.front());
+				a.TomA();
+				a.SetTimeIntv();
+
+				pDoc->raw.AddNew(a.potential,a.current);
+
+				filelist.erase(filelist.begin());
+			}
+			
+			CMainFrame *mf=(CMainFrame*)(GetParentFrame());
+
+			::SendMessage(mf->GetOutputWnd()->GetSafeHwnd(),MESSAGE_UPDATE_DOL,NULL,NULL);
+			
+		}
+
+
+		//CMainFrame *mf=(CMainFrame*)(GetParentFrame());
+		//::SendMessage(mf->GetOutputWnd()->GetSafeHwnd(),MESSAGE_UPDATE_DOL,NULL,NULL);
 
 	}
 
