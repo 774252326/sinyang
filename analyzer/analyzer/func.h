@@ -134,6 +134,8 @@ HCURSOR BigCross(const CRect &rect, const CPoint & pt);
 void AdjustWidth(CListCtrl *ls, int nCol, CString str, int gap=12);
 void AdjustWidth(CListCtrl *ls, int nCol, int nRow, int gap=12);
 
+CString TimeString();
+
 template <typename T>
 void UpdateRange( const std::vector<T> &x, T &xmin, T &xmax, T gapPercent=0, bool bLocalRange=false)
 {

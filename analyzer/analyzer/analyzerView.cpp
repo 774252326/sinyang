@@ -839,7 +839,7 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 			bmp.DeleteObject(); //É¾³ýÎ»Í¼
 			if (SUCCEEDED(hResult))
 				return true;
-			
+
 		}
 		return false;
 	}

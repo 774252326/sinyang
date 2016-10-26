@@ -103,7 +103,7 @@ bool setbmvalue(T **m, long nr, long nc, long m1, long m2, long ri, long ci, T v
 	if( ri<1 || ri>nr || ci<1 || ci>nc ){
 		nrerror("out of range");
 	}
-	else{
+	//else{
 		//T value;
 		bool zeroflag;
 		if( nc>=nr ){
@@ -125,7 +125,7 @@ bool setbmvalue(T **m, long nr, long nc, long m1, long m2, long ri, long ci, T v
 			}
 		}
 		return zeroflag;
-	}
+	//}
 
 }
 

@@ -171,6 +171,9 @@
     <ClInclude Include="PlotSettingPage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="pdfout.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="analyzer.cpp">
@@ -258,6 +261,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PlotSettingPageA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="pdfout.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -332,11 +332,11 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		IDS_COMBO_ANALYSIS_TYPE);
 
 
-	for(int i=IDS_STRING_AT1;i<=IDS_STRING_AT9;i++){
+	for(int i=IDS_STRING_AT1;i<=IDS_STRING_AT11;i++){
 		str.LoadStringW(i);
 		pCombo->AddString(str);
 	}
-	if(para.analysistype<0 || para.analysistype>8){
+	if(para.analysistype<0 || para.analysistype>10){
 		pCombo->SetCurSel(-1);
 	}
 	else{

@@ -70,4 +70,6 @@ public:
 	PlotData * GetPD(int lr, int index);
 	int GetNPD(int lr);
 	int AddPD(const PlotData & pda, int lr);
+	afx_msg void OnAnalysisReport();
+	bool SaveImage(const PlotData & pd, CSize sz, CString filepath);
 };

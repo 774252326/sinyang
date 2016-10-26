@@ -20,6 +20,10 @@
 #include "xRescaleT.h"
 #include "PlotData.h"
 
+
+
+#include <time.h>
+#include <stdlib.h>
 //#include "afxmt.h"
 
 //CSemaphore semaphoreWrite(1,1); //资源最多访问线程2个，当前可访问线程数2个 
@@ -29,8 +33,8 @@ int intv=1;
 size_t n1=1000;
 //PlotSpec psp0;
 
-CString folderp=L"C:\\Users\\r8anw2x\\Desktop\\data\\d\\";
-//CString folderp=L"data\\d\\";
+//CString folderp=L"C:\\Users\\r8anw2x\\Desktop\\data\\d\\";
+CString folderp=L"data\\d\\";
 //CString folderp=L"C:\\Users\\G\\Desktop\\data\\d\\";
 
 CString DEMOflist=folderp+L"fl1.txt";
@@ -42,8 +46,8 @@ CString RCRflist=folderp+L"rcr.txt";
 CString RCAflist=folderp+L"rca.txt";
 CString SARRflist=folderp+L"sarr.txt";
 CString SARAflist=folderp+L"sara.txt";
-
-
+CString NEWRflist=folderp+L"j.txt";
+CString NEWAflist=folderp+L"k.txt";
 
 void WaitSecond(ProcessState &waitflg
 	//,int second=-1
@@ -802,6 +806,45 @@ CString Output8(PlotData & pdat0
 	}
 	return str;
 }
+
+
+CString Output10(PlotData & pdat
+	, double nQ
+	, double totalVol
+	, double sampleVol
+	, double Lml)
+{
+	CString str;	
+	double LConc;
+	if(calVsupp(pdat,0,nQ,LConc)){
+
+		std::vector<double> nx(3,LConc);
+		std::vector<double> ny(3,nQ);
+		nx[0]=0;
+		ny[2]=pdat.yll.back();
+
+		LineSpec ps1;
+		ps1.colour=genColor( genColorvFromIndex<float>( pdat.ps.size() ) ) ;
+		ps1.dotSize=0;  
+		ps1.name.LoadStringW(IDS_STRING_TEST_POINT);
+		ps1.lineType=2;
+		ps1.smoothLine=0;
+		ps1.traceLast=false;
+		pdat.AddNew(nx,ny,ps1);
+		//p1->updatePlotRange();
+		//p1->Invalidate(FALSE);
+
+		double originalConc=(LConc*totalVol-Lml)/sampleVol;
+
+		str.Format(L" LConc.=%g ml/L @ nQ=%g, c(sample)=%g ml/L",LConc,nQ,originalConc);
+	}
+	else{
+		str.Format(L" invalid sample concertration");
+	}
+
+	return str;
+}
+
 
 
 
@@ -2248,8 +2291,246 @@ UINT SARA(CanalyzerViewL *leftp,
 
 
 
+UINT NEWR(CanalyzerViewL *leftp,
+	CanalyzerViewR *rightp,
+	CMFCCaptionBarA *cba,
+	COutputWnd *outw,
+	ProcessState &pst,
+	const ANPara &p1,
+	const CVPara &p2,
+	SAPara &p3)
+{
+
+	//////////////////////////////load data//////////////////////////////////////
+	std::vector<CString> filelist;
+	LoadFileList(NEWRflist,filelist);
+	if(filelist.empty()){ pst=stop;return 1;}
+
+	pcct dt1;
+	pcctB dataB;
+
+	//////////////////////////clear window/////////////////////////////////
+	outw->clear();
+	CanalyzerDoc *pDoc=leftp->GetDocument();
+	pDoc->dol.clear();
+
+	leftp->clear();
+	rightp->clear();
+	/////////////////////////////////////////////////////////////////////////////
+	std::vector<double> x;
+	std::vector<double> y;
+
+
+
+	leftp->AddPlot(PlotData());
+	rightp->AddPlot(PlotData());
+
+	pDoc->lp.back().psp=PlotSpec(0);
+	pDoc->rp.back().psp=PlotSpec(0);
+
+
+	CString xla;
+	CString yla;
+
+
+	//////////////////////////////first step////////////////////////////////////////////
+
+
+	dataB.initialPara(p2);
+
+	/////////////////////////////////vms/////////////////////////////////
+	if( dataB.ReadTask(p3.saplist.front()) ){
+		OneStep(outw,leftp,cba,pst,dt1,dataB,filelist,p3);
+
+
+		LineSpec ps1;
+		ps1.colour=genColor( genColorvFromIndex<float>( pDoc->rp[0].ps.size() ) ) ;
+		ps1.dotSize=3;
+		ps1.name.LoadStringW(IDS_STRING_TEST_CURVE);
+		ps1.lineType=0;
+		ps1.smoothLine=1;
+		ps1.traceLast=false;
+		{
+			CString str;
+			str.LoadStringW(IDS_STRING_LEVELER);
+			xla=str;
+			xla+=L" ";
+			str.LoadStringW(IDS_STRING_CONC_);
+			xla+=str;
+			str.LoadStringW(IDS_STRING_NORMALIZED_Q);
+			yla=str;
+		}
+		x.assign( 1, 0 );
+		y.assign( 1, dataB.Ar.back()/dataB.Ar0 );
+		pDoc->rp[0].AddNew(x,y,ps1,xla,yla);
+		if(rightp->updatePlotRange(0))
+			rightp->Invalidate(FALSE);
+
+	}
+	else{
+		CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
+		p3.saplist.erase(p3.saplist.begin());
+	}
+
+
+	//////////////////////////add leveler////////////////////////////////////
+
+	while(!p3.saplist.empty()){
+
+		if( dataB.ReadTask(p3.saplist.front(),PCCTB_L) ){
+			OneStep(outw,leftp,cba,pst,dt1,dataB,filelist,p3);
+
+			x.assign( 1, dataB.LConc() );
+			y.assign( 1, dataB.Ar.back()/dataB.Ar0 );
+			pDoc->rp[0].AddFollow(x,y);
+			if(rightp->updatePlotRange())
+				rightp->Invalidate(FALSE);
+		}
+		else{
+			CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
+			p3.saplist.erase(p3.saplist.begin());
+		}
+	}
+
+	////////////////////////////////////final step/////////////////////////////////////////////
+
+	pDoc->resultStr=L"";
+
+	::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,NULL,NULL);
+
+	TRACE(L"crcl ends\n");
+
+	pst=stop;
+
+	return 0;
+}
+
+
+
+UINT NEWA(CanalyzerViewL *leftp,
+	CanalyzerViewR *rightp,
+	CMFCCaptionBarA *cba,
+	COutputWnd *outw,
+	ProcessState &pst,
+	const ANPara &p1,
+	const CVPara &p2,
+	SAPara &p3)
+{
+
+	//////////////////////////////load data//////////////////////////////////////
+	std::vector<CString> filelist;
+	LoadFileList(NEWAflist,filelist);
+	if(filelist.empty()){ pst=stop;return 1;}
+
+	pcct dt1;
+
+	pcctB dataB;
+
+	//////////////////////////clear window/////////////////////////////////
+	outw->clear();
+	CanalyzerDoc *pDoc=leftp->GetDocument();
+	pDoc->dol.clear();
+
+	leftp->clear();
+	rightp->clear();
+	/////////////////////////plot standrad curve////////////////////////
+
+	leftp->AddPlot(PlotData());
+
+	if(p1.calibrationfactortype==1){
+		//PlotData pdr0;
+		//if(pdr0.ReadFile(p1.calibrationfilepath)){
+		//	pdr0.ps.back().colour=genColor( genColorvFromIndex<float>( pdr0.ps.size()-1 ) ) ;
+		//	pdr0.ps.back().name.LoadStringW(IDS_STRING_CALIBRATION_CURVE);
+		//	rightp->AddPlot(pdr0);
+		//	if(rightp->updatePlotRange(0))
+		//		rightp->Invalidate(FALSE);
+
+
+		CanalyzerDoc tmp(false);
+		if(ReadFileCustom(&tmp,1,p1.calibrationfilepath)){
+			tmp.rp.front().ps.back().name.LoadStringW(IDS_STRING_CALIBRATION_CURVE);
+			rightp->AddPlot(tmp.rp.front());
+			if(rightp->updatePlotRange(0))
+				rightp->Invalidate(FALSE);
+			//Sconc0=tmp.p3.saplist.back().Sconc;
+			////vmsvol0=tmp.p3.saplist.front().volconc;
+
+		}
+		else{
+			pst=stop;
+			return 1;
+		}
+	}
+	else{
+		rightp->AddPlot(PlotData());
+	}
+
+	pDoc->lp.back().psp=PlotSpec(0);
+	pDoc->rp.back().psp=PlotSpec(0);
+
+	///////////////////////////////////////end/////////////////////////////////////////////////
+	std::vector<double> x;
+	std::vector<double> y;
+
+	double lml;
+
+	//////////////////////////////first step////////////////////////////////////////////
+
+	dataB.initialPara(p2);
+
+	/////////////////////////////////vms/////////////////////////////////
+	if( dataB.ReadTask(p3.saplist.front()) ){
+		OneStep(outw,leftp,cba,pst,dt1,dataB,filelist,p3,true,false);
+	}
+	else{
+		CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
+		p3.saplist.erase(p3.saplist.begin());
+	}
+	/////////////////////////////////add l//////////////////////////////////
+	if( dataB.ReadTask(p3.saplist.front(),PCCTB_L) ){
+		OneStep(outw,leftp,cba,pst,dt1,dataB,filelist,p3,true,false);
+		lml=dataB.Lml;
+	}
+	else{
+		CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
+		p3.saplist.erase(p3.saplist.begin());
+	}
+	////////////////////////////////////////////add sample////////////////////////////
+
+	if( dataB.ReadTask(p3.saplist.front(),PCCTB_SAMPLE) ){
+		OneStep(outw,leftp,cba,pst,dt1,dataB,filelist,p3,true,false);
+	}
+	else{
+		CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
+		p3.saplist.erase(p3.saplist.begin());
+	}
+	/////////////////////////////////////last step////////////////////////////////////////////////////////////////
+
+	pDoc->resultStr=Output10(pDoc->rp[0],
+		dataB.Ar.back()/dataB.Ar0,
+		dataB.TotalVolume(),
+		dataB.addVolume,
+		lml);
+
+	if(rightp->updatePlotRange(0))
+		rightp->Invalidate(FALSE);
+
+	::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(pDoc->resultStr.GetBuffer()),NULL);
+
+	pst=stop;
+	return 0;
+}
+
+
+
+
 UINT PROCESS(LPVOID pParam)
 {
+
+	//pcct ppp;
+	//ppp.readFile(L"C:\\Users\\r8anw2x\\Desktop\\sinyang\\3360 new leveler\\3360 leveler sample\\2520base4.txt");
+	//ppp.TomA();
 
 	CanalyzerViewL *leftp=((mypara*)pParam)->leftp;
 	CanalyzerViewR *rightp=((mypara*)pParam)->rightp;
@@ -2300,6 +2581,12 @@ UINT PROCESS(LPVOID pParam)
 
 	case 8:
 		return SARA(leftp,rightp,cba,outw,*pst,p1,p2,p3);
+
+	case 9:
+		return NEWR(leftp,rightp,cba,outw,*pst,p1,p2,p3);
+
+	case 10:
+		return NEWA(leftp,rightp,cba,outw,*pst,p1,p2,p3);
 
 	default:
 		*pst=stop;
@@ -3496,3 +3783,16 @@ HCURSOR BigCross(const CRect &rect, const CPoint & pt)
 }
 
 
+CString TimeString()
+{
+	const int l=15;
+	time_t rawtime;
+	time (&rawtime);
+	struct tm * timeinfo = localtime (&rawtime);
+	char buffer [l];
+	strftime (buffer,l,"%Y%m%d%H%M%S",timeinfo);
+	//puts (buffer);
+	wchar_t buf[l];
+	size_t aa=mbstowcs(buf,buffer,l);
+	return CString(buf);
+}

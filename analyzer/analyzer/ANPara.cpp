@@ -11,7 +11,7 @@
 ANPara::ANPara()
 	: analysistype(0)
 	, evaluationratio(0)
-	, endpointratio(0)
+	, endpointratio(1)
 	, calibrationfactortype(0)
 	, calibrationfactor(0)
 	, interceptvalue(0)

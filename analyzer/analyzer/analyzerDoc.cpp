@@ -25,6 +25,8 @@
 //#include "func.h"
 #include "MainFrm.h"
 
+#include "pdfout.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -36,6 +38,7 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 	BEGIN_MESSAGE_MAP(CanalyzerDoc, CDocument)
 		ON_COMMAND(ID_ANALYSIS_METHODSETUP, &CanalyzerDoc::OnAnalysisMethodsetup)
 		//		ON_COMMAND(ID_ANALYSIS_STARTANALYSIS, &CanalyzerDoc::OnAnalysisStartanalysis)
+		ON_COMMAND(ID_ANALYSIS_REPORT, &CanalyzerDoc::OnAnalysisReport)
 	END_MESSAGE_MAP()
 
 
@@ -155,16 +158,20 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 			if(bUpdateView){
 				POSITION pos = GetFirstViewPosition();
 				CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));
+				lv->selectIdx=0;
 				lv->SetSpin(lp.size()-1);
 				lv->updatePlotRange();
 
 				CMainFrame *mf=(CMainFrame*)(lv->GetParentFrame());
 				COutputList* ol=mf->GetOutputWnd()->GetListCtrl();
+				ol->DeleteAllItems();
 				mf->GetCaptionBar()->ShowMessage(resultStr);
 
 				CanalyzerViewR* rv=((CanalyzerViewR*)GetNextView(pos));
+				rv->selectIdx=0;
 				rv->SetSpin(rp.size()-1);
 				rv->updatePlotRange();
+
 
 				for(size_t i=0;i<dol.size();i++){
 					ol->InsertListCtrl(i,dol[i]);
@@ -369,4 +376,59 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 			return -1;
 		}
 		//return 0;
+	}
+
+
+	void CanalyzerDoc::OnAnalysisReport()
+	{
+		// TODO: Add your command handler code here
+
+		CString fp=this->GetPathName();
+		fp=fp.Left(fp.ReverseFind('\\')+1);
+		fp+=TimeString()+L".pdf";
+
+		if(pdfd(fp,this)==0){
+			AfxMessageBox(L"report "+fp+L" is saved");
+		}
+		else{
+			AfxMessageBox(L"fail to save report");
+		}
+
+
+	}
+
+
+	bool CanalyzerDoc::SaveImage(const PlotData & pd, CSize sz, CString filepath)
+	{
+
+		POSITION pos = GetFirstViewPosition();
+		CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));
+		CDC* pdc=lv->GetDC();
+
+		CDC dcMem;   //用于缓冲作图的内存DC
+		dcMem.CreateCompatibleDC(pdc);               //依附窗口DC创建兼容内存DC		
+
+		CBitmap bmp;           //内存中承载临时图象的位图
+		bmp.CreateCompatibleBitmap(pdc,sz.cx,sz.cy);//创建兼容位图
+
+		dcMem.SelectObject(&bmp);  	//将位图选择进内存DC
+
+		double xmin,xmax,ymin,ymax,pct=0.02;
+		UpdateRange(pd.xll,xmin,xmax,pct,true);
+		UpdateRange(pd.yll,ymin,ymax,pct,true);
+
+		CRect plotrect(0,0,sz.cx,sz.cy);
+		DrawData(plotrect,&dcMem,pd,xmin,xmax,ymin,ymax);
+
+		CImage img;
+		img.Attach(HBITMAP(bmp));
+		HRESULT hResult = img.Save((LPCWSTR)filepath);
+
+		dcMem.DeleteDC(); //删除DC
+		bmp.DeleteObject(); //删除位图
+		if (SUCCEEDED(hResult))
+			return true;
+
+
+		return false;
 	}

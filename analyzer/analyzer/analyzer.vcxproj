@@ -135,6 +135,7 @@
     <ClInclude Include="OutputWnd.h" />
     <ClInclude Include="pcct.h" />
     <ClInclude Include="pcctB.h" />
+    <ClInclude Include="pdfout.h" />
     <ClInclude Include="PlotData.h" />
     <ClInclude Include="PlotSettingPage.h" />
     <ClInclude Include="PlotSpec.h" />
@@ -170,6 +171,7 @@
     <ClCompile Include="OutputWnd.cpp" />
     <ClCompile Include="pcct.cpp" />
     <ClCompile Include="pcctB.cpp" />
+    <ClCompile Include="pdfout.cpp" />
     <ClCompile Include="PlotData.cpp" />
     <ClCompile Include="PlotSettingPageA.cpp" />
     <ClCompile Include="PlotSpec.cpp" />

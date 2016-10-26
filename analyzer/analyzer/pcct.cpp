@@ -35,7 +35,9 @@ int pcct::readFile(LPCTSTR lpszFileName)
 		wchar_t sps5[]=L"QWERTYUIOPASDFGHJKLZXCVBNM";
 		wchar_t sps6[]=L"1234567890";
 		wchar_t sps7[]=L"Potential/V, Current/A, Charge/C, Time/s";
+		wchar_t sps8[]=L"Potential/V, Current/A";
 		long i=0;
+
 
 
 		segment tmp;
@@ -51,7 +53,9 @@ int pcct::readFile(LPCTSTR lpszFileName)
 		while(file.ReadString(strRead))
 		{	
 
-			if(wcscoll(strRead.GetBuffer(),sps7)==0){
+			if(wcscoll(strRead.GetBuffer(),sps7)==0 
+				||wcscoll(strRead.GetBuffer(),sps8)==0)
+			{
 
 				token = wcstok( strRead.GetBuffer(), sps1 );
 
@@ -69,48 +73,30 @@ int pcct::readFile(LPCTSTR lpszFileName)
 				token = wcstok( NULL, sps1 );
 				if(token!=NULL)
 					label.push_back(token);
-
 				break;
 			}
 			else{
-				segmentinfo=segmentinfo+strRead+L"\n";
-				//if(!strRead.IsEmpty())
-				seginfo.push_back(strRead);
+
+				if(wcscoll(strRead.GetBuffer(),sps8)==0){
+
+					token = wcstok( strRead.GetBuffer(), sps1 );
+
+					if(token!=NULL)
+						label.push_back(token);
+
+					token = wcstok( NULL, sps1 );
+					if(token!=NULL)
+						label.push_back(token);
+
+					break;
+				}
+				else{
+
+					segmentinfo=segmentinfo+strRead+L"\n";
+					//if(!strRead.IsEmpty())
+					seginfo.push_back(strRead);
+				}
 			}
-
-			//token = wcstok( strRead.GetBuffer(), sps2 );
-			//if(wcscoll(token,sps3)==0){
-			//	file.ReadString(strRead);
-			//	if(wcscoll(strRead.GetBuffer(),L"")==0){
-			//	}
-			//	else{
-
-			//		//file.ReadString(strRead);
-			//		token = wcstok( strRead.GetBuffer(), sps2 );
-			//		token = wcstok( NULL, sps2 );
-			//		token = wcstok( NULL, sps5 );
-			//		tmp.Ep=_wtof(token);
-			//		token = wcstok( NULL, sps2 );
-			//		tmp.EpUnit=token[0];
-
-			//		file.ReadString(strRead);
-			//		token = wcstok( strRead.GetBuffer(), sps2 );
-			//		token = wcstok( NULL, sps2 );
-			//		token = wcstok( NULL, sps5 );
-			//		tmp.ip=_wtof(token);
-			//		token = wcstok( NULL, sps2 );
-			//		tmp.ipUnit=token[0];
-
-			//		file.ReadString(strRead);
-			//		token = wcstok( strRead.GetBuffer(), sps2 );
-			//		token = wcstok( NULL, sps2 );
-			//		token = wcstok( NULL, sps5 );
-			//		tmp.Ah=_wtof(token);
-			//		token = wcstok( NULL, sps2 );
-			//		tmp.AhUnit=token[0];
-			//		segmentList.push_back(tmp);
-			//	}
-			//}
 
 		}
 
@@ -143,6 +129,7 @@ int pcct::readFile(LPCTSTR lpszFileName)
 
 
 		}
+
 
 		TRACE("\n--End reading");
 		file.Close();
@@ -232,7 +219,7 @@ double pcct::intg(double xtop)
 void pcct::copy(pcct a)
 {
 	copyPrefix(a);
-	
+
 	copyData(a);
 
 	xBreakIndex=a.xBreakIndex;
