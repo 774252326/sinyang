@@ -166,15 +166,10 @@ void CUpDlg::OnPaint()
 		if( DrawAxis2(plotrect,&dc) ){
 			DrawCursor(plotrect,&dc);
 			DrawCurve(plotrect, &dc);
-
-				//pen.CreatePen(PS_SOLID,1,black);
-				//DrawDiff(plotrect,&dc,&pen,m_xbottom,m_xtop);
-				//pen.DeleteObject();
-
 			if(isSmooth){
 				DrawSmoothCurve(plotrect,&dc);
 
-
+				
 
 				pen.CreatePen(PS_DASH,1,green);			
 				for(i=1;i<=nlmx;i++){
@@ -196,8 +191,6 @@ void CUpDlg::OnPaint()
 				//pen.DeleteObject();
 
 
-
-
 			}
 
 			if(isFit){
@@ -216,8 +209,6 @@ void CUpDlg::OnPaint()
 					DrawVLine(plotrect,&dc,&pen,kk*xknee[i]);
 				}
 
-
-
 				//}
 				//else{
 				//for(i=1;i<=nelbow;i++){
@@ -226,10 +217,6 @@ void CUpDlg::OnPaint()
 				//}
 				pen.DeleteObject();
 
-
-				pen.CreatePen(PS_SOLID,1,black);
-				DrawDiff(plotrect,&dc,&pen,m_xbottom,xknee[1]);
-				pen.DeleteObject();
 
 			}
 
@@ -319,8 +306,8 @@ void CUpDlg::OnBnClickedButton2()
 			///////////////////////////////////////////////////
 			xknee=getkneep(nc,nx,nd,&nknee,xp,nlcm,nlmx,nlmn);
 			//if(IsDlgButtonChecked(IDC_CHECK2) ){
-			//restorenx(xkm,nknee,-m_xtop,-m_xbottom,xknee);
-			//scalevt(xknee,nknee,xknee,-1.0);
+				//restorenx(xkm,nknee,-m_xtop,-m_xbottom,xknee);
+				//scalevt(xknee,nknee,xknee,-1.0);
 			//}
 
 			//xknee=getkpD(lmx,nlmx,lmn,nlmn,&nknee,nx[nd],nys[nd],xp);
@@ -375,8 +362,6 @@ void CUpDlg::OnBnClickedButton2()
 	//chisqpp=chisq/(double)(endind-startind+1);
 	//xp=tmp[1];
 	//chisq=tmp[3];
-
-	chisq=xknee[1];
 
 	UpdateData(false);
 
@@ -524,7 +509,7 @@ void CUpDlg::OnBnClickedButton3()
 		/////////////////////////////////////////////////////////////////////////
 
 		//////////////////////////////////////////for smoothing spline///////////////////////////////////////////
-		long i,j;
+				long i,j;
 		bool flgx,flgy;
 		double za,zb;
 		//m_m=0.999;
@@ -534,7 +519,7 @@ void CUpDlg::OnBnClickedButton3()
 		//double **nc;
 		nc=matrix<double>(1,nd-1,1,4);
 		nx=vector<double>(1,nd);
-
+		
 		flipFunc(coefs,xbreak,nd,nc,nx,IsDlgButtonChecked(IDC_CHECK2),IsDlgButtonChecked(IDC_CHECK3));
 
 		lcm=getlcm(nc,nx,nd,&lmx,&lmn);
@@ -566,9 +551,6 @@ void CUpDlg::OnBnClickedButton3()
 
 
 		isSmooth=true;
-
-		chisqpp=nlmx;
-		UpdateData(false);
 		Invalidate();
 	}
 
@@ -1005,7 +987,6 @@ bool CUpDlg::DrawAxis2(CRect rect, CPaintDC * dc)
 		}
 
 
-
 		float resoy=pow(10.0,calgrid(m_ymax-m_ymin));
 
 		for(gridi=resoy*ceil(m_ymin/resoy);gridi<=m_ymax;gridi+=resoy){
@@ -1021,18 +1002,6 @@ bool CUpDlg::DrawAxis2(CRect rect, CPaintDC * dc)
 
 			dc->TextOutW(rect.left-lc-sz.cx,tmp-sz.cy/2,str);
 		}
-
-		font.DeleteObject();
-		font.CreatePointFont(200,L"MS Gothic",NULL);
-
-		str.Format(L"time(s)");
-		dc->SelectObject(&font);
-		sz=dc->GetTextExtent(str);
-		dc->TextOutW(rect.right-sz.cx,rect.bottom-sz.cy,str);
-		str.Format(L"current(A)");
-		dc->SelectObject(&font);
-		sz=dc->GetTextExtent(str);
-		dc->TextOutW(rect.left,rect.top,str);
 
 		dc->SelectObject(pOldPen);
 		pen.DeleteObject();
@@ -1212,48 +1181,4 @@ void CUpDlg::DrawFunc2(CRect rect, CPaintDC * dc, CPen * pPen)
 
 
 	dc->SelectObject(pOldPen);
-}
-
-void CUpDlg::DrawDiff(CRect rect, CPaintDC * dc, CPen * pPen, double x1, double x2)
-{
-	CPen* pOldPen=dc->SelectObject(pPen);
-
-	CPoint cp=rect.CenterPoint();
-
-	long xp1=ptRsl(x1,0,rect).x;
-	long xp2=ptRsl(x2,0,rect).x;
-	long leg=4;
-
-	long lp=7;
-
-	dc->MoveTo(xp1+leg,cp.y-leg);
-	dc->LineTo(xp1,cp.y);
-	dc->LineTo(xp1+leg,cp.y+leg);
-
-	dc->MoveTo(xp2-leg,cp.y-leg);
-	dc->LineTo(xp2,cp.y);
-	dc->LineTo(xp2-leg,cp.y+leg);
-
-	CFont font;
-	font.CreatePointFont(300,L"MS Gothic",NULL);
-
-	CString str;
-	CSize sz;
-	str.Format(L"%.1fs",x2-x1);
-	dc->SelectObject(&font);
-	sz=dc->GetTextExtent(str);
-
-
-	long xl=xp2-xp1-sz.cx;
-	if(xl>=2*lp){
-		dc->MoveTo(xp1,cp.y);
-		dc->LineTo(xp1+xl/2,cp.y);
-		dc->TextOutW(xp1+xl/2,cp.y-sz.cy/2,str);
-		dc->MoveTo(xp2,cp.y);
-		dc->LineTo(xp2-xl/2,cp.y);
-	}
-
-
-	dc->SelectObject(pOldPen);
-
 }
