@@ -440,7 +440,13 @@ void CMainFrame::OnUpdateViewCaptionBar(CCmdUI* pCmdUI)
 
 void CMainFrame::OnOptions()
 {
-	m_wndCaptionBar.SetText(L"running...", CMFCCaptionBar::ALIGN_LEFT);
+	CString strTemp;
+	//BOOL bNameValid = strTemp.LoadString(IDS_STRING_RUNNING);
+	//ASSERT(bNameValid);
+
+	ASSERT(strTemp.LoadString(IDS_STRING_RUNNING));
+	m_wndCaptionBar.SetText(strTemp, CMFCCaptionBar::ALIGN_LEFT);
+
 	m_wndCaptionBar.EnableButton(FALSE);
 
 	timer1=SetTimer(1,10,NULL);
@@ -767,7 +773,7 @@ void CMainFrame::OnUpdateViewAnalysisProgress(CCmdUI *pCmdUI)
 void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 {
 	// TODO: Add your message handler code here and/or call default
-	size_t n1=40;
+	size_t n1=80;
 	plotspec ps1;
 	std::vector<double> x;
 	std::vector<double> y;
@@ -775,10 +781,10 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 
 	bool flg;
 	double addvol;
-	
+
 	INT_PTR nRes;
-
-
+	CString strTemp;
+	//BOOL bNameValid;
 
 	switch(nIDEvent){
 	case 1:
@@ -856,11 +862,9 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 
 		if(dat.empty()){
 			finishflag2=true;
-			//( (dlg1*)m_wndSplitter.GetPane(0,1) )->smoothLine();
-			//( (dlg1*)m_wndSplitter.GetPane(0,1) )->showall();
 			KillTimer(timer1);
-
-			m_wndCaptionBar.SetText(L"over...", CMFCCaptionBar::ALIGN_LEFT);
+			ASSERT(strTemp.LoadString(IDS_STRING_OVER));
+			m_wndCaptionBar.SetText(strTemp, CMFCCaptionBar::ALIGN_LEFT);
 			m_wndCaptionBar.EnableButton(FALSE);
 		}
 		else{
@@ -872,7 +876,17 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 			if(finishflag){//if to plot a new line
 				ps1.colour=genColor( genColorvFromIndex<float>( dat.size() ) ) ;
 				ps1.dotSize=-1;
-				ps1.name=dat.front().FileName;
+
+				if(stepCount>0){
+					ASSERT(strTemp.LoadString(IDS_STRING_STEPNAME1));
+					ps1.name.Format(L"%s%d",strTemp,stepCount);
+				}
+				else{
+					ASSERT(strTemp.LoadString(IDS_STRING_STEPNAME0));
+					ps1.name=strTemp;
+				}
+
+				//ps1.name=dat.front().FileName;
 				ps1.showLine=true;
 				ps1.smoothLine=0;
 				( (dlg1*)m_wndSplitter.GetPane(0,0) )->plot2d(x,y,ps1,dat.front().label[0],dat.front().label[1]);
@@ -949,7 +963,7 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 				//tipsdlg cttip;
 				//nRes = cttip.DoModal();  // 弹出对话框   
 				//if (IDCANCEL == nRes){     // 判断对话框退出后返回值是否为IDCANCEL，如果是则return，否则继续向下执行   
-    //     			finishflag2=true;
+				//     			finishflag2=true;
 				//	dat.clear();
 				//}
 
@@ -957,7 +971,9 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 				//	timer1=SetTimer(1,10,NULL);
 				//}
 
-				m_wndCaptionBar.SetText(L"please add suppressor solution, click button to continue->", CMFCCaptionBar::ALIGN_LEFT);
+				
+				ASSERT(strTemp.LoadString(IDS_STRING_WAIT_RESPONSE));
+				m_wndCaptionBar.SetText(strTemp, CMFCCaptionBar::ALIGN_LEFT);
 				m_wndCaptionBar.EnableButton();
 
 			}

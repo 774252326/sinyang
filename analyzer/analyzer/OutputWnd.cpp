@@ -39,8 +39,8 @@ int COutputWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// Create tabs window:
 	//if (!m_wndTabs.Create(CMFCTabCtrl::STYLE_FLAT, rectDummy, this, 1))
 	//{
-		//TRACE0("Failed to create output tab window\n");
-		//return -1;      // fail to create
+	//TRACE0("Failed to create output tab window\n");
+	//return -1;      // fail to create
 	//}
 
 	// Create output panes:
@@ -106,7 +106,7 @@ int COutputWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	///
 	///
 
-		// Attach list windows to tab:
+	// Attach list windows to tab:
 	//bNameValid = strTabName.LoadString(IDS_PROGRESS_TAB);
 	//ASSERT(bNameValid);
 	//strTabName = "Progress";
@@ -265,7 +265,7 @@ BOOL COutputWnd::InsertListCtrl(int StepNo, LPCTSTR StepName, double ArValue, bo
 
 	return TRUE;
 
-	
+
 }
 
 
@@ -274,18 +274,20 @@ BOOL COutputWnd::InsertListCtrl(int StepNo, int No2, int CycleNo, double addVol,
 
 	//insert the data from the list control head(记录改成从最上面插入)
 	CString str, StepName;
+	CString strTemp;
 
-	
 	str.Format(L"%d",StepNo);
 	m_listCtrlMonitor.InsertItem(StepNo,str);
 
-	if(No2>0){
-		StepName.Format(L"Suppressor Addition %d",No2);
+	if(No2>0){		
+		ASSERT(strTemp.LoadString(IDS_STRING_STEPNAME1));
+		StepName.Format(L"%s%d",strTemp,No2);
 	}
-	else{
-		StepName=L"VMS";
+	else{		
+		ASSERT(StepName.LoadString(IDS_STRING_STEPNAME0));		
 	}
-	str.Format(L"%s(Cycle %d)",StepName,CycleNo);
+	ASSERT(strTemp.LoadString(IDS_STRING_CYCLE));
+	str.Format(L"%s(%s%d)",StepName,strTemp,CycleNo);
 	m_listCtrlMonitor.SetItemText(StepNo,1,str);
 
 	str.Format(L"%f",addVol);
@@ -297,12 +299,17 @@ BOOL COutputWnd::InsertListCtrl(int StepNo, int No2, int CycleNo, double addVol,
 	str.Format(L"%f",Q);
 	m_listCtrlMonitor.SetItemText(StepNo,4,str);
 
-	str=( Use? (L"yes"):(L"no") );
+	if(Use){
+		ASSERT(str.LoadString(IDS_STRING_YES));
+	}
+	else{
+		ASSERT(str.LoadString(IDS_STRING_NO));
+	}
 	m_listCtrlMonitor.SetItemText(StepNo,5,str);
 
 	return TRUE;
 
-	
+
 }
 
 
