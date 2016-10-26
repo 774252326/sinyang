@@ -46,7 +46,14 @@ public:
 	};
 
 
-
+	void Clear()
+	{
+		p1.correction.clear();
+		p1=ANParaEx();
+		p2=CVPara();
+		p3.saplist.clear();
+		raw.Clear();
+	};
 
 
 

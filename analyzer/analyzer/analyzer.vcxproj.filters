@@ -106,10 +106,52 @@
     <ClInclude Include="list\EditReal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="list\EditNum.hpp">
+    <ClInclude Include="list\OutputListA.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="list\OutputListA.h">
+    <ClInclude Include="plot\PlotWnd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="property\PlotSettingPageB.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="property\PlotSettingPageC.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="analyzerViewL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="list\ListCtrlLS.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WaitDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="property\AnalysisParametersPage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="property\CVParametersPage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="property\PropertySheetA1ML.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="property\SolutionAdditionParametersPageA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="property\SolutionAdditionParametersPageB.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="list\ListCtrlSAP.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="analyzerViewR.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ComputeDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ParaList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -172,6 +214,51 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="list\OutputListA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="plot\PlotWnd.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="property\PlotSettingPageB.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="property\PlotSettingPageC.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="analyzerViewL.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="list\ListCtrlLS.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WaitDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="property\AnalysisParametersPage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="property\CVParametersPage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="property\PropertySheetA1ML.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="property\SolutionAdditionParametersPageA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="property\SolutionAdditionParametersPageB.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="list\ListCtrlSAP.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="analyzerViewR.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ComputeDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ParaList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

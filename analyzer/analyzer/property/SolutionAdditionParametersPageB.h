@@ -1,8 +1,8 @@
 #pragma once
-#include "struct\SAPara.hpp"
-#include "list\ListCtrlSAP.h"
-#include "analyzerDoc.h"
-#include "MainFrm.h"
+#include "../struct\SAPara.hpp"
+#include "../list\ListCtrlSAP.h"
+#include "../analyzerDoc.h"
+#include "../MainFrm.h"
 
 // SolutionAdditionParametersPageB dialog
 

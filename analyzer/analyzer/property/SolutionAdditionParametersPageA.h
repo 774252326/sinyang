@@ -5,8 +5,8 @@
 
 //#include "ListCtrlSAP.h"
 
-#include "struct\SAPara.hpp"
-#include "list\ListCtrlSAP.h"
+#include "../struct\SAPara.hpp"
+#include "../list\ListCtrlSAP.h"
 
 // SolutionAdditionParametersPageA dialog
 

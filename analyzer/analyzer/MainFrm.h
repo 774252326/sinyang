@@ -5,10 +5,14 @@
 #pragma once
 #include "OutputWnd.h"
 #include "user\AccountList.hpp"
+#include "WaitDlg.h"
+#include "property\PropertySheetA1ML.h"
 
 class CMainFrame : public CFrameWndEx
 {
-	
+	public:
+	static UINT PROCESS(LPVOID pParam);
+
 protected: // create from serialization only
 	CMainFrame();
 	DECLARE_DYNCREATE(CMainFrame)
@@ -17,10 +21,12 @@ protected: // create from serialization only
 protected:
 	CSplitterWnd m_wndSplitter;
 public:
-
+	ProcessState pst;
 // Operations
 public:
-
+	CWnd * LeftPane(void) const { return m_wndSplitter.GetPane(0,0);};
+	CWnd * RightPane(void) const { return m_wndSplitter.GetPane(0,1);};
+	
 // Overrides
 public:
 	virtual BOOL OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext);
@@ -58,9 +64,16 @@ public:
 	int userIndex;
 	AccountList al;
 	BOOL m_bSplitterCreated;
+	PropertySheetA1ML *psheetml;
+	WaitDlg *wd;
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnSecurityLogin();
 	afx_msg void OnSecurityUseraccounts();
+	afx_msg void OnAnalysisMethodsetup();
+	COutputWnd * GetOutputWnd(void){ return &m_wndOutput; };
+	afx_msg LRESULT OnMessageUpdateDol(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnMessageCloseSapSheet(WPARAM wParam, LPARAM lParam);
+	
 };
 
 

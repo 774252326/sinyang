@@ -31,6 +31,9 @@ public:
 public:
 	std::vector<double> correction;
 
+	size_t CorrectionNumber() const{ return CorrectionNumber(analysistype); };
+	void ResetCorrection(){ correction.resize(CorrectionNumber(),1); };
+
 	ANParaEx()
 		: ANPara()
 	{
@@ -38,13 +41,20 @@ public:
 	};
 	virtual ~ANParaEx(){};
 
-	void operator=(const ANParaEx &src){
+	void operator=(const ANPara &src)
+	{
+		ANPara::operator=(src);
+		ResetCorrection();
+	};
+
+	void operator=(const ANParaEx &src)
+	{
 		ANPara::operator=(src);
 		correction.assign(src.correction.begin(),src.correction.end());
 	};
+
 	ANParaEx(const ANParaEx &src){ operator=(src); };
 
-	size_t CorrectionNumber() const{ return CorrectionNumber(analysistype); };
 
 	virtual void Serialize(CArchive& ar)
 	{
@@ -64,6 +74,8 @@ public:
 			}
 		}
 	};
+
+
 
 };
 

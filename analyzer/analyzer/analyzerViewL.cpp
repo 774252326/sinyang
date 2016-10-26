@@ -5,9 +5,9 @@
 //#include "calfunc.h"
 //#include "analyzerViewR.h"
 
-#include "PropertySheetA.h"
-#include "PlotSettingPageC.h"
-#include "PlotSettingPageB.h"
+#include "property\PlotSettingPageB.h"
+#include "property\PlotSettingPageC.h"
+#include "property\PropertySheetA.h"
 
 
 
@@ -17,14 +17,11 @@ IMPLEMENT_DYNCREATE(CanalyzerViewL, CanalyzerView)
 		// Standard printing commands
 
 		ON_MESSAGE(MESSAGE_UPDATE_RAW, &CanalyzerViewL::OnMessageUpdateRaw)
-		//		ON_WM_TIMER()
-		//		ON_COMMAND(ID_ANALYSIS_STARTANALYSIS, &CanalyzerViewL::OnAnalysisStartanalysis)
 		ON_COMMAND(ID_OPTIONS_PLOTSETTINGS, &CanalyzerViewL::OnOptionsPlotsettings)
 	END_MESSAGE_MAP()
 
 
 	CanalyzerViewL::CanalyzerViewL(void)
-		//: timer(0)
 		: newCr(RGB(255,0,0))
 		, oldCr(RGB(80,80,100))
 	{
@@ -57,7 +54,7 @@ IMPLEMENT_DYNCREATE(CanalyzerViewL, CanalyzerView)
 		//if (singleLock.IsLocked())  // Resource has been locked
 		if(singleLock.Lock())
 		{
-			UINT flg=RawData2PlotDataList(pDoc->raw,pDoc->dol,pw.GetPlotSpec()->winbkC, newCr, oldCr, pdl);
+			UINT flg=RawData2PlotDataList(pDoc->da.raw,pDoc->da.dol,pw.GetPlotSpec()->winbkC, newCr, oldCr, pdl);
 			// Now that we are finished, 
 			// unlock the resource for others.
 			singleLock.Unlock();
@@ -76,8 +73,6 @@ IMPLEMENT_DYNCREATE(CanalyzerViewL, CanalyzerView)
 	void CanalyzerViewL::OnOptionsPlotsettings()
 	{
 		// TODO: Add your command handler code here
-
-		//::AfxMessageBox(L"ll");
 
 		PropertySheetA1 sheet(IDS_STRING_POLT_SETTINGS);
 		PlotSettingPageB fig1setting;

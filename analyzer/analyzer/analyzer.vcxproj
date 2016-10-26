@@ -109,31 +109,48 @@
     <ClInclude Include="analyzer.h" />
     <ClInclude Include="analyzerDoc.h" />
     <ClInclude Include="analyzerView.h" />
+    <ClInclude Include="analyzerViewL.h" />
+    <ClInclude Include="analyzerViewR.h" />
+    <ClInclude Include="ComputeDlg.h" />
     <ClInclude Include="filefunc.h" />
     <ClInclude Include="list\ComboItem.h" />
     <ClInclude Include="list\EditB.h" />
     <ClInclude Include="list\EditInt.h" />
     <ClInclude Include="list\EditNum.h" />
-    <ClInclude Include="list\EditNum.hpp" />
     <ClInclude Include="list\EditReal.h" />
     <ClInclude Include="list\ListCtrlA.h" />
     <ClInclude Include="list\ListCtrlAA.h" />
+    <ClInclude Include="list\ListCtrlLS.h" />
+    <ClInclude Include="list\ListCtrlSAP.h" />
     <ClInclude Include="list\ListCtrlUA.h" />
     <ClInclude Include="list\OutputListA.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="OutputWnd.h" />
+    <ClInclude Include="ParaList.h" />
+    <ClInclude Include="plot\PlotWnd.h" />
+    <ClInclude Include="property\AnalysisParametersPage.h" />
+    <ClInclude Include="property\CVParametersPage.h" />
+    <ClInclude Include="property\PlotSettingPageB.h" />
+    <ClInclude Include="property\PlotSettingPageC.h" />
     <ClInclude Include="property\PropertySheetA.h" />
+    <ClInclude Include="property\PropertySheetA1ML.h" />
+    <ClInclude Include="property\SolutionAdditionParametersPageA.h" />
+    <ClInclude Include="property\SolutionAdditionParametersPageB.h" />
     <ClInclude Include="property\UserAccountPage.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="user\AccountComboBox.h" />
     <ClInclude Include="user\LoginDlg.h" />
+    <ClInclude Include="WaitDlg.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="analyzer.cpp" />
     <ClCompile Include="analyzerDoc.cpp" />
     <ClCompile Include="analyzerView.cpp" />
+    <ClCompile Include="analyzerViewL.cpp" />
+    <ClCompile Include="analyzerViewR.cpp" />
+    <ClCompile Include="ComputeDlg.cpp" />
     <ClCompile Include="filefunc.cpp" />
     <ClCompile Include="list\ComboItem.cpp" />
     <ClCompile Include="list\EditB.cpp" />
@@ -142,11 +159,22 @@
     <ClCompile Include="list\EditReal.cpp" />
     <ClCompile Include="list\ListCtrlA.cpp" />
     <ClCompile Include="list\ListCtrlAA.cpp" />
+    <ClCompile Include="list\ListCtrlLS.cpp" />
+    <ClCompile Include="list\ListCtrlSAP.cpp" />
     <ClCompile Include="list\ListCtrlUA.cpp" />
     <ClCompile Include="list\OutputListA.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="OutputWnd.cpp" />
+    <ClCompile Include="ParaList.cpp" />
+    <ClCompile Include="plot\PlotWnd.cpp" />
+    <ClCompile Include="property\AnalysisParametersPage.cpp" />
+    <ClCompile Include="property\CVParametersPage.cpp" />
+    <ClCompile Include="property\PlotSettingPageB.cpp" />
+    <ClCompile Include="property\PlotSettingPageC.cpp" />
     <ClCompile Include="property\PropertySheetA.cpp" />
+    <ClCompile Include="property\PropertySheetA1ML.cpp" />
+    <ClCompile Include="property\SolutionAdditionParametersPageA.cpp" />
+    <ClCompile Include="property\SolutionAdditionParametersPageB.cpp" />
     <ClCompile Include="property\UserAccountPage.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -154,6 +182,7 @@
     </ClCompile>
     <ClCompile Include="user\AccountComboBox.cpp" />
     <ClCompile Include="user\LoginDlg.cpp" />
+    <ClCompile Include="WaitDlg.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="analyzer.rc" />
@@ -161,4 +190,9 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties RESOURCE_FILE="analyzer.rc" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>

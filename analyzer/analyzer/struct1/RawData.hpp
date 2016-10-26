@@ -249,6 +249,24 @@ public:
 		return true;
 	};
 
+	bool AddPointMark(double x, double y, double spanr=1)
+	{
+		double spanx=x;
+		if(x>0)
+			spanx-=spanr;
+		else
+			spanx+=spanr;
+
+		double spany=y;
+		if(y>0)
+			spany-=spanr;
+		else
+			spany+=spanr;
+
+		return AddPointMark(x,y,spanx,spany);
+	};
+
+
 	bool AddLineSeg(LineSeg lis)
 	{
 		AddNew(lis.p1.x,lis.p1.y);

@@ -16,10 +16,15 @@ protected: // create from serialization only
 
 // Attributes
 public:
+	DocDataEx da;
+
+	SAPara p3todo;
+	bool bChangeSAP;
+	CCriticalSection m_CritSection;
 
 // Operations
 public:
-
+	void Show(void);
 // Overrides
 public:
 	virtual BOOL OnNewDocument();
@@ -41,6 +46,8 @@ protected:
 
 // Generated message map functions
 protected:
+	afx_msg void OnAnalysisCompute();
+
 	DECLARE_MESSAGE_MAP()
 
 #ifdef SHARED_HANDLERS

@@ -2,7 +2,7 @@
 
 //#include "typedefine.h"
 //#include "VPara.h"
-#include "struct\VPara.hpp"
+#include "../struct\VPara.hpp"
 
 // CVParametersPage dialog
 

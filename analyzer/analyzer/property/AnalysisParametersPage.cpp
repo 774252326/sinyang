@@ -2,10 +2,11 @@
 //
 
 #include "stdafx.h"
-#include "analyzer.h"
+//#include "analyzer.h"
+#include "../Resource.h"
 #include "AnalysisParametersPage.h"
 #include "afxdialogex.h"
-
+#include <cfloat>
 // AnalysisParametersPage dialog
 
 IMPLEMENT_DYNAMIC(AnalysisParametersPage, CPropertyPage)

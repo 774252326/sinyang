@@ -3,10 +3,10 @@
 //#include "typedefine.h"
 //#include "EditList.h"
 //#include "struct1\PlotSpec.hpp"
-#include "struct1\LineSpec.hpp"
+#include "../struct1\LineSpec.hpp"
 
 //#include "ListCtrlLS.h"
-#include "list\ListCtrlLS.h"
+#include "../list\ListCtrlLS.h"
 //#include "struct1\LegendSpec.hpp"
 //#include "struct1\LegendCondition.hpp"
 

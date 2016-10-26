@@ -1,6 +1,6 @@
 #include "StdAfx.h"
 #include "analyzerViewR.h"
-#include "calfunc.h"
+//#include "calfunc.h"
 
 
 
@@ -34,9 +34,9 @@ IMPLEMENT_DYNCREATE(CanalyzerViewR, CanalyzerView)
 		//singleLock.Lock();
 
 		//if (singleLock.IsLocked())  // Resource has been locked
-			if(singleLock.Lock())
+		if(singleLock.Lock())
 		{
-			UINT flg=DataOutAList2PlotDataExList(pDoc->dol, pDoc->p1, pw.GetPlotSpec()->winbkC, pdl);
+			UINT flg=DataOutAList2PlotDataExList(pDoc->da.dol, pDoc->da.p1, pw.GetPlotSpec()->winbkC, pdl,(bool)(lParam));
 			// Now that we are finished, 
 			// unlock the resource for others.
 			singleLock.Unlock();
@@ -57,13 +57,13 @@ IMPLEMENT_DYNCREATE(CanalyzerViewR, CanalyzerView)
 	{
 		CanalyzerDoc* pDoc = GetDocument();
 
-		CString str=Compute(pDoc->dol,pDoc->p1,pdl,true);
+		//CString str=Compute(pDoc->dol,pDoc->p1,pdl,true);
 
 		wParam=(PW_LAST|PW_SHOW_ALL);
 
 		::PostMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_VIEW,wParam,NULL);
 
-		MessageBox(str);
+		//MessageBox(str);
 
 		return 0;
 	}

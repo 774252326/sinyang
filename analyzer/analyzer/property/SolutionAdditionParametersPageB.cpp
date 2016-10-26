@@ -2,10 +2,11 @@
 //
 
 #include "stdafx.h"
-#include "analyzer.h"
+//#include "analyzer.h"
+#include "../Resource.h"
 #include "SolutionAdditionParametersPageB.h"
 #include "afxdialogex.h"
-#include  "filefunc.h"
+//#include  "filefunc.h"
 
 // SolutionAdditionParametersPageB dialog
 

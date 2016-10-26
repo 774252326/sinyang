@@ -99,10 +99,6 @@ protected:
 protected:
 	afx_msg LRESULT OnMessageUpdateRaw(WPARAM wParam, LPARAM lParam);
 public:
-	//	int timer;
-	//	afx_msg void OnTimer(UINT_PTR nIDEvent);
-	//	afx_msg void OnAnalysisStartanalysis();
-	//	CWinThread *pWriteA;
 	COLORREF newCr;
 	COLORREF oldCr;
 	afx_msg void OnOptionsPlotsettings();

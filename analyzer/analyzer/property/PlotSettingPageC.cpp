@@ -2,11 +2,12 @@
 //
 
 #include "stdafx.h"
-#include "analyzer.h"
+//#include "analyzer.h"
+#include "../Resource.h"
 #include "PlotSettingPageC.h"
 #include "afxdialogex.h"
 //#include "ColorButton.h"
-#include "analyzerViewL.h"
+#include "../analyzerViewL.h"
 
 //#include "func.h"
 

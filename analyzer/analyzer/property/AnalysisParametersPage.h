@@ -2,7 +2,7 @@
 
 //#include "typedefine.h"
 //#include "ANPara.h"
-#include "struct\ANPara.hpp"
+#include "../struct\ANPara.hpp"
 
 // AnalysisParametersPage dialog
 

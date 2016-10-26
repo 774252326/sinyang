@@ -1,7 +1,7 @@
 #pragma once
 #include "afxwin.h"
 #include <vector>
-#include "Value.hpp"
+#include "struct\Value.hpp"
 #include "list\EditReal.h"
 
 // ParaList

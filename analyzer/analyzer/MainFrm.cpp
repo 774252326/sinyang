@@ -6,22 +6,271 @@
 #include "analyzer.h"
 
 #include "MainFrm.h"
-#include "analyzerView.h"
+#include "analyzerViewL.h"
+#include "analyzerViewR.h"
 #include "user\LoginDlg.h"
 #include "property\PropertySheetA.h"
 #include "property\UserAccountPage.h"
 #include "filefunc.h"
+#include "property\AnalysisParametersPage.h"
+#include "property\CVParametersPage.h"
+#include "property\SolutionAdditionParametersPageA.h"
+#include "property\SolutionAdditionParametersPageB.h"
 
+#include "struct1\pcct.hpp"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+//////////////////////////////////////////////////thread///////////////////////////////////////////
+
+typedef struct MYPARA{
+	CanalyzerViewL *leftp;
+	CanalyzerViewR *rightp;
+	//CanalyzerDoc *adoc;
+	//COutputWnd *outw;
+	COutputListA* ol;
+	//CMFCCaptionBarA *cba;
+	CMainFrame *mf;
+	//pcct *data;
+	//pcctB *dataB;
+	//CVPara *p2;
+	//SAPara *p3;
+	//WaitDlg *wd;
+	//ProcessState *psta;
+} mypara;
+
+
+
+const DWORD sleepms=100;
+
+const size_t nd=1000;
+//const size_t nd=sleepms/10;
+
+
+#ifndef _DEBUG
+//CString folderp=(GetWinVer()==6)? L"data\\d\\" : L"..\\data\\d\\";
+CString folderp=L"C:\\Users\\r8anw2x\\Desktop\\data\\d\\";
+//CString folderp=L"D:\\data\\d\\";
+//CString folderp=L"C:\\Users\\G\\Desktop\\data\\d\\";
+#else
+CString folderp=L"C:\\Users\\r8anw2x\\Desktop\\data\\d\\";
+//CString folderp=L"D:\\data\\d\\";
+//CString folderp=L"C:\\Users\\G\\Desktop\\data\\d\\";
+#endif
+
+CString DEMOflist=folderp+L"fl1.txt";
+CString DTRflist=folderp+L"dtr.txt";
+CString DTAflist=folderp+L"dta.txt";
+CString LATRflist=folderp+L"latr.txt";
+CString LATAflist=folderp+L"lata.txt";
+CString RCRflist=folderp+L"rcr.txt";
+CString RCAflist=folderp+L"rca.txt";
+CString SARRflist=folderp+L"sarr.txt";
+CString SARAflist=folderp+L"sara.txt";
+CString NEWRflist=folderp+L"j.txt";
+CString NEWAflist=folderp+L"k.txt";
+CString NERflist=folderp+L"l.txt";
+CString NEAflist=folderp+L"m.txt";
+
+
+CString flistlist[]={
+	DEMOflist,
+	DTRflist,
+	DTAflist,
+	LATRflist,
+	LATAflist,
+	RCRflist,
+	RCAflist,
+	SARRflist,
+	SARAflist,
+	NEWRflist,
+	NEWAflist,
+	NERflist,
+	NEAflist
+};
+
+
+
+void WaitSecond(ProcessState &waitflg
+	,int second=-1
+	//,int second=3
+	//,int second=0
+	,int interval=1000
+	)
+{
+	;
+	while( waitflg!=running
+		&& ( second<0 || second--!=0 )
+		){
+			Sleep(interval);
+	}
+	//waitflg=running;
+}
+
+
+UINT CMainFrame::PROCESS(LPVOID pParam)
+{
+	//CanalyzerDoc* pDoc=(CanalyzerDoc*)pParam;
+
+
+	CanalyzerViewL* lv=((mypara*)pParam)->leftp;
+	CanalyzerViewR* rv=((mypara*)pParam)->rightp;
+
+	CMainFrame *mf=((mypara*)pParam)->mf;
+
+	COutputListA* ol=((mypara*)pParam)->ol;
+
+
+
+	CanalyzerDoc* pDoc=lv->GetDocument();
+
+	delete pParam;
+	////////////////////////////////////////////////////
+	std::vector<CString> filelist;
+	LoadFileList(flistlist[pDoc->da.p1.analysistype],filelist);
+
+
+	double v2a;
+	BYTE outstep;
+	size_t nextidx;
+	size_t nowidx;
+	CSingleLock singleLock(&(pDoc->m_CritSection));
+	lv->pw.bMouseCursor=rv->pw.bMouseCursor=false;
+	//CSingleLock singleLock1(&(mf->m_CritSection));
+
+	pcct data;
+	std::vector<double> x;
+	std::vector<double> y;
+	size_t rnd;
+
+
+	if(singleLock.Lock())
+	{
+		pDoc->da.raw.Clear();
+		// Now that we are finished, 
+		// unlock the resource for others.
+		singleLock.Unlock();
+	}
+
+	mf->SendMessage(MESSAGE_UPDATE_DOL,NULL,NULL);
+	//mf->OnMessageUpdateDol(NULL,NULL);
+
+	while(mf->pst!=stop){
+
+		//if(mf->pst!=running){
+		//Sleep(sleepms);
+		//}
+
+		WaitSecond(mf->pst,-1,50);
+
+		//if(singleLock1.Lock())
+		{
+			if(pDoc->da.runstate==0){
+				//singleLock1.Unlock();
+				mf->pst=stop;
+				return 0;
+			}
+
+
+			if(pDoc->da.runstate==5){
+				//singleLock1.Unlock();
+
+				if(filelist.empty()){
+					CString strerr;
+					strerr.LoadStringW(IDS_STRING_STEP_ERROR);
+					//::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(strerr.GetBuffer()),NULL);
+					mf->pst=stop;
+					return 1;
+				}
+
+				/////load data from file////////////
+				data.clear();
+				data.readFile(filelist.front());
+				data.TomA();
+				filelist.erase(filelist.begin());
+
+				rnd=data.popData(x,y,nd);
+
+				if(x.empty()||y.empty()){
+					TRACE("input empty");
+					mf->pst=stop;
+					return 8;
+				}
+				if(singleLock.Lock())
+				{
+					pDoc->da.raw.AddNew(x,y);
+					// Now that we are finished, 
+					// unlock the resource for others.
+					singleLock.Unlock();
+				}
+			}
+			else{
+				//singleLock1.Unlock();
+
+				rnd=data.popData(x,y,nd);
+
+				if(x.empty()||y.empty()){
+					TRACE("input empty");
+					mf->pst=stop;
+					return 8;
+				}
+
+				if(singleLock.Lock())
+				{
+					pDoc->da.raw.AddFollow(x,y);
+					// Now that we are finished, 
+					// unlock the resource for others.
+					singleLock.Unlock();
+				}
+			}
+
+			mf->SendMessage(MESSAGE_UPDATE_DOL,NULL,NULL);
+			//mf->OnMessageUpdateDol(NULL,NULL);
+
+			//Sleep(sleepms);
+		}
+
+	}
+
+
+
+	mf->pst=stop;
+
+	return 0;
+}
+
+
+
+///////////////////////////////////////////thread///////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // CMainFrame
 
 IMPLEMENT_DYNCREATE(CMainFrame, CFrameWndEx)
 
-const int  iMaxUserToolbars = 10;
+	const int  iMaxUserToolbars = 10;
 const UINT uiFirstUserToolBarId = AFX_IDW_CONTROLBAR_FIRST + 40;
 const UINT uiLastUserToolBarId = uiFirstUserToolBarId + iMaxUserToolbars - 1;
 
@@ -35,6 +284,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_WM_SIZE()
 	ON_COMMAND(ID_SECURITY_LOGIN, &CMainFrame::OnSecurityLogin)
 	ON_COMMAND(ID_SECURITY_USERACCOUNTS, &CMainFrame::OnSecurityUseraccounts)
+	ON_COMMAND(ID_ANALYSIS_METHODSETUP, &CMainFrame::OnAnalysisMethodsetup)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -50,6 +300,9 @@ static UINT indicators[] =
 CMainFrame::CMainFrame()
 	: userIndex(-1)
 	, m_bSplitterCreated(FALSE)
+	, pst(stop)
+	, wd(NULL)
+	, psheetml(NULL)
 {
 	// TODO: add member initialization code here
 	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_OFF_2007_BLUE);
@@ -76,7 +329,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	CMFCToolBar::SetSizes (CSize (36, 30), CSize (24, 24));
 	CMFCToolBar::SetMenuSizes (CSize (22, 22), CSize (16, 16));
 
-	
+
 
 	if (!m_wndMenuBar.Create(this))
 	{
@@ -201,10 +454,10 @@ BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT /*lpcs*/,
 	m_bSplitterCreated = m_wndSplitter.CreateStatic(this, 1, 2);
 	// CMyView and CMyOtherView are user-defined views derived from CView
 	if(m_bSplitterCreated){
-		m_bSplitterCreated = m_wndSplitter.CreateView(0, 0, RUNTIME_CLASS(CanalyzerView), CSize(), pContext);
+		m_bSplitterCreated = m_wndSplitter.CreateView(0, 0, RUNTIME_CLASS(CanalyzerViewL), CSize(), pContext);
 		//this->LeftPlotPointer()->lri=0;
 		if(m_bSplitterCreated){
-			m_bSplitterCreated = m_wndSplitter.CreateView(0, 1, RUNTIME_CLASS(CanalyzerView), CSize(), pContext);
+			m_bSplitterCreated = m_wndSplitter.CreateView(0, 1, RUNTIME_CLASS(CanalyzerViewR), CSize(), pContext);
 			//this->RightPlotPointer()->lri=1;
 		}
 	}
@@ -300,6 +553,8 @@ LRESULT CMainFrame::OnToolbarCreateNew(WPARAM wp,LPARAM lp)
 
 void CMainFrame::OnApplicationLook(UINT id)
 {
+	COLORREF oc;
+
 	CWaitCursor wait;
 
 	theApp.m_nAppLook = id;
@@ -308,35 +563,42 @@ void CMainFrame::OnApplicationLook(UINT id)
 	{
 	case ID_VIEW_APPLOOK_WIN_2000:
 		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManager));
+		oc=RGB(240,240,240);
 		break;
 
 	case ID_VIEW_APPLOOK_OFF_XP:
 		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerOfficeXP));
+		oc=RGB(240,240,240);
 		break;
 
 	case ID_VIEW_APPLOOK_WIN_XP:
 		CMFCVisualManagerWindows::m_b3DTabsXPTheme = TRUE;
 		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerWindows));
+		oc=RGB(211,218,237);
 		break;
 
 	case ID_VIEW_APPLOOK_OFF_2003:
 		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerOffice2003));
 		CDockingManager::SetDockingMode(DT_SMART);
+		oc=RGB(141,183,226);
 		break;
 
 	case ID_VIEW_APPLOOK_VS_2005:
 		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerVS2005));
 		CDockingManager::SetDockingMode(DT_SMART);
+		oc=RGB(220,220,220);
 		break;
 
 	case ID_VIEW_APPLOOK_VS_2008:
 		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerVS2008));
 		CDockingManager::SetDockingMode(DT_SMART);
+		oc=RGB(236,238,252);
 		break;
 
 	case ID_VIEW_APPLOOK_WINDOWS_7:
 		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerWindows7));
 		CDockingManager::SetDockingMode(DT_SMART);
+		oc=RGB(211,218,237);
 		break;
 
 	default:
@@ -344,18 +606,22 @@ void CMainFrame::OnApplicationLook(UINT id)
 		{
 		case ID_VIEW_APPLOOK_OFF_2007_BLUE:
 			CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_LunaBlue);
+			oc=RGB(191,219,255);
 			break;
 
 		case ID_VIEW_APPLOOK_OFF_2007_BLACK:
 			CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_ObsidianBlack);
+			oc=RGB(83,83,83);
 			break;
 
 		case ID_VIEW_APPLOOK_OFF_2007_SILVER:
 			CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_Silver);
+			oc=RGB(208,212,221);
 			break;
 
 		case ID_VIEW_APPLOOK_OFF_2007_AQUA:
 			CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_Aqua);
+			oc=RGB(196,202,217);
 			break;
 		}
 
@@ -366,6 +632,10 @@ void CMainFrame::OnApplicationLook(UINT id)
 	RedrawWindow(NULL, NULL, RDW_ALLCHILDREN | RDW_INVALIDATE | RDW_UPDATENOW | RDW_FRAME | RDW_ERASE);
 
 	theApp.WriteInt(_T("ApplicationLook"), theApp.m_nAppLook);
+
+	::SendMessage(((CanalyzerView*)LeftPane())->GetSafeHwnd(),MESSAGE_CHANGE_APPLOOK,(WPARAM)oc,NULL);
+	::SendMessage(((CanalyzerView*)RightPane())->GetSafeHwnd(),MESSAGE_CHANGE_APPLOOK,(WPARAM)oc,NULL);
+
 }
 
 void CMainFrame::OnUpdateApplicationLook(CCmdUI* pCmdUI)
@@ -415,7 +685,7 @@ void CMainFrame::OnSize(UINT nType, int cx, int cy)
 
 	// TODO: Add your message handler code here
 
-	
+
 	if(m_bSplitterCreated){
 		int lc0,lc1,tmp;
 		m_wndSplitter.GetColumnInfo(0,lc0,tmp);
@@ -435,14 +705,10 @@ void CMainFrame::OnSecurityLogin()
 	ld.al=al;
 	if(ld.DoModal()==IDOK){
 		userIndex=ld.usridx;
-		//al=ld.al;
-		//au=ld.al.ual[ld.usridx].au;
-		//CanalyzerView *pavl=(CanalyzerView*)m_wndSplitter.GetPane(0,0);
-		//CanalyzerView *pavr=(CanalyzerView*)m_wndSplitter.GetPane(0,1);
-		//pavl->pw.bMouseCursor=pavr->pw.bMouseCursor=(al.ual[userIndex].au==UserAccount::authority::admin);
-
+		CanalyzerView *pavl=(CanalyzerView*)LeftPane();
+		CanalyzerView *pavr=(CanalyzerView*)RightPane();
+		pavl->pw.bMouseCursor=pavr->pw.bMouseCursor=(al.ual[userIndex].au==UserAccount::authority::admin);
 	}
-
 }
 
 
@@ -454,7 +720,6 @@ void CMainFrame::OnSecurityUseraccounts()
 	PropertySheetA1 sheet(IDS_STRING_USER_ACCOUNT);
 
 	UserAccountPage uap;
-	//uap.userList.bEditable=true;
 	uap.useIndex=userIndex;
 	uap.al=al;
 
@@ -470,4 +735,232 @@ void CMainFrame::OnSecurityUseraccounts()
 	}
 
 
+}
+
+
+
+void CMainFrame::OnAnalysisMethodsetup()
+{
+	// TODO: Add your command handler code here
+
+	CanalyzerDoc *pDoc=(CanalyzerDoc*)GetActiveDocument();
+
+	if(pst==stop){
+
+
+		// 创建属性表对象   
+		CString str;
+		str.LoadStringW(IDS_STRING_ANALYSIS_SETUP);
+		//CPropertySheet sheet(str);
+		PropertySheetA1 sheet(str);
+
+		AnalysisParametersPage appage;
+		appage.para=pDoc->da.p1;
+		sheet.AddPage(&appage);
+
+		CVParametersPage cppage;
+		cppage.para=pDoc->da.p2;
+		sheet.AddPage(&cppage);
+
+		SolutionAdditionParametersPageA sppage;		
+		sppage.para=pDoc->da.p3;
+		sheet.AddPage(&sppage);
+
+
+
+		// 打开模态向导对话框   
+		if(sheet.DoModal()==IDOK){
+			pDoc->da.p1=appage.para;
+			pDoc->da.p2=cppage.para;
+			pDoc->da.p3=sppage.para;
+
+
+			////////////////////////////////////////////
+
+		//	TCHAR szFilters[]= _T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||");
+
+		//// Create an Open dialog; the default file name extension is ".my".
+
+		//CFileDialog fileDlg(TRUE, _T("txt"), _T("*.txt"),
+		//	OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_ALLOWMULTISELECT , szFilters);
+
+		//// Display the file dialog. When user clicks OK, fileDlg.DoModal() 
+
+		//// returns IDOK.
+
+		//if(fileDlg.DoModal() == IDOK)
+		//{   
+		//	//////////////////////////////////////////////////////////////////////////
+
+
+		//	std::vector<CString> filelist;
+		//	LoadFileList(fileDlg.GetPathName(),filelist);
+
+		//	while(!filelist.empty()){
+		//		pcct a;
+		//		a.readFile(filelist.front());
+		//		a.TomA();
+		//		a.SetTimeIntv();
+
+		//		pDoc->da.raw.AddNew(a.potential,a.current);
+
+		//		filelist.erase(filelist.begin());
+		//	}
+
+		//	pDoc->UpdateAllViews(NULL);
+
+		//}
+
+
+		}
+
+	}
+	else{
+
+		CSingleLock singleLock(&(pDoc->m_CritSection));
+		if(singleLock.Lock())
+		{
+
+			singleLock.Unlock();
+			SolutionAdditionParametersPageB *sppage;
+			AnalysisParametersPage *appage;
+			//appage.para=pDoc->p1;
+			//sheet.AddPage(&appage);
+
+			CVParametersPage *cppage;
+			//cppage.para=pDoc->p2;
+			//sheet.AddPage(&cppage);
+			if(psheetml==NULL){
+				psheetml=new PropertySheetA1ML(IDS_STRING_ANALYSIS_SETUP,this,2);
+				sppage=new SolutionAdditionParametersPageB();
+				appage=new AnalysisParametersPage();
+				cppage=new CVParametersPage();
+				//appage->dwStyle|=WS_DISABLED;
+				//cppage->dwStyle|=WS_DISABLED;
+				psheetml->AddPage(appage);
+				psheetml->AddPage(cppage);
+				psheetml->AddPage(sppage);
+				//psheetml->Create();
+			}
+			//else{
+			sppage=(SolutionAdditionParametersPageB*)(psheetml->GetPage(2));
+			//	sppage->para1.saplist.assign(p3.saplist.begin()+nextSAPIndex,p3.saplist.end());
+			//	//sppage->para1=p3todo;
+			//	sppage->para0=p3done;
+			//	sppage->pDoc=this;
+			//}
+
+			if(pDoc->bChangeSAP){
+				sppage->para=pDoc->p3todo;
+			}
+			else{
+				sppage->para.saplist.assign(pDoc->da.p3.saplist.begin()+pDoc->da.nextSAPIndex,pDoc->da.p3.saplist.end());
+			}
+			//sppage->para0=pDoc->p3done;
+			sppage->pDoc=pDoc;
+			sppage->mf=this;
+
+			////if(psheetml->GetSafeHwnd()){
+			//	//sppage->SetList();			
+			//	//psheetml->ShowWindow(SW_SHOW);
+			////	psheetml->CenterWindow();			
+			////}
+			////else{
+			psheetml->Create();
+			////}
+
+			::SetWindowPos(psheetml->GetSafeHwnd(),
+				//HWND_TOPMOST,
+				HWND_TOP,
+				0,0,0,0,
+				SWP_NOMOVE|SWP_NOSIZE); 
+
+		}
+	}
+}
+
+
+
+
+afx_msg LRESULT CMainFrame::OnMessageUpdateDol(WPARAM wParam, LPARAM lParam)
+{
+	CanalyzerDoc *pDoc=(CanalyzerDoc*)GetActiveDocument();
+
+	CSingleLock singleLock(&m_CritSection);
+	singleLock.Lock();
+	if (singleLock.IsLocked())  // Resource has been locked
+	{
+		//...use the shared resource...
+		pDoc->ComputeStateData();
+		// Now that we are finished, 
+		// unlock the resource for others.
+		singleLock.Unlock();
+	}
+
+	//TRACE(L"rs=%d,ci=%d,ni=%d\n",pDoc->runstate,pDoc->currentSAPIndex,pDoc->nextSAPIndex);
+
+
+	OnMessageCloseSapSheet(NULL,NULL);
+
+
+	return 0;
+}
+
+
+afx_msg LRESULT CMainFrame::OnMessageCloseSapSheet(WPARAM wParam, LPARAM lParam)
+{
+
+	CanalyzerDoc *pDoc=(CanalyzerDoc*)GetActiveDocument();
+
+	pDoc->UpdateALL();
+
+	switch(pDoc->runstate){
+	case 0:
+		{
+			CString str;
+			str.Format(L"complete all");
+			pst=pause;
+			ShowWaitDlg(str);
+		}
+		break;
+	case 1:
+		break;
+	case 2:
+		break;
+	case 3:
+		{
+			AfxMessageBox(IDS_STRING_STEP_ERROR);
+			OnAnalysisAbortanalysis();
+		}
+		break;
+	case 4:
+		{
+			AfxMessageBox(IDS_STRING_STEP_ERROR);
+			OnAnalysisAbortanalysis();
+		}
+		break;
+	case 5:
+		{		
+			CString str;
+			str.Format(L"add solution %g ml",pDoc->VtoAdd);
+			pst=pause;
+			ShowWaitDlg(str);
+		}
+		break;
+	case 6:
+		break;
+
+	case 7:
+		{
+			CString str;
+			str.Format(L"complete all");
+			pst=pause;
+			ShowWaitDlg(str);
+		}
+		break;
+	default:
+		return 100;
+	}
+
+	return 0;
 }

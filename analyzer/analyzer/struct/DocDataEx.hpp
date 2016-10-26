@@ -464,7 +464,7 @@ public:
 	};
 
 
-
+	//1:success;0:not success
 	static UINT DataOutAList2RawDataList(
 		const std::vector<DataOutA> &dol,
 		const std::vector<DWORD> &sl,
@@ -688,7 +688,7 @@ public:
 
 
 
-
+	//1:success;0:not success
 	static UINT DataOutAList2RawDataList(
 		const std::vector<DataOutA> &dol,
 		int analysistype,
@@ -700,64 +700,67 @@ public:
 		std::vector<DWORD> sl;
 
 		bool flg=GetStepList(sl,analysistype);
+		//if(flg){
+			switch(analysistype){
 
-		switch(analysistype){
-
-		case 2:
-		case 6:
-		case 10:
-		case 12:
-			sl[0]|=(SC_NEW_RIGHT_PLOT<<8);
-			return DataOutAList2RawDataList(dol,sl,rdl,xlabellist,ylabellist,dolastidx);
-		case 7:
-			{
+			case 2:
+			case 6:
+			case 10:
+			case 12:
 				sl[0]|=(SC_NEW_RIGHT_PLOT<<8);
+				return DataOutAList2RawDataList(dol,sl,rdl,xlabellist,ylabellist,dolastidx);
+			case 7:
+				{
+					sl[0]|=(SC_NEW_RIGHT_PLOT<<8);
 
-				std::vector<DataOutA> dolcp(dol.begin(),dol.end());
+					std::vector<DataOutA> dolcp(dol.begin(),dol.end());
 
-				//RawData newraw;
-				std::vector<RawData> ardl;
-				UINT flg1=0;
-				do{
-					std::vector<RawData> rdltmp;
-					std::vector<size_t> dlidx;
-					flg1=DataOutAList2RawDataList(dolcp,sl,rdltmp,xlabellist,ylabellist,dlidx);
+					//RawData newraw;
+					std::vector<RawData> ardl;
+					UINT flg1=0;
+					do{
+						std::vector<RawData> rdltmp;
+						std::vector<size_t> dlidx;
+						flg1=DataOutAList2RawDataList(dolcp,sl,rdltmp,xlabellist,ylabellist,dlidx);
 
-					//for(size_t i=0;i<rdltmp.size();i++){
-					//	newraw.AppendData(rdltmp[i]);
-					//}
+						//for(size_t i=0;i<rdltmp.size();i++){
+						//	newraw.AppendData(rdltmp[i]);
+						//}
 
-					ardl.resize(ardl.size()+rdltmp.size());
-					std::copy_backward(rdltmp.begin(),rdltmp.end(),ardl.end());
+						ardl.resize(ardl.size()+rdltmp.size());
+						std::copy_backward(rdltmp.begin(),rdltmp.end(),ardl.end());
 
-					if(!dlidx.empty()){
-						dolcp.erase(dolcp.begin(),dolcp.begin()+dlidx.back()+1);
-						if(!dolastidx.empty()){
-							for(size_t i=0;i<dlidx.size();i++){
-								dlidx[i]+=dolastidx.back()+1;
+						if(!dlidx.empty()){
+							dolcp.erase(dolcp.begin(),dolcp.begin()+dlidx.back()+1);
+							if(!dolastidx.empty()){
+								for(size_t i=0;i<dlidx.size();i++){
+									dlidx[i]+=dolastidx.back()+1;
+								}
 							}
+							dolastidx.resize(dolastidx.size()+dlidx.size());
+							std::copy_backward(dlidx.begin(),dlidx.end(),dolastidx.end());
 						}
-						dolastidx.resize(dolastidx.size()+dlidx.size());
-						std::copy_backward(dlidx.begin(),dlidx.end(),dolastidx.end());
+
+					}while(!dolcp.empty() && flg1==1);
+
+					if(ardl.empty()){
+						rdl.clear();
+					}
+					else{
+						rdl.assign(1,ardl.front());
+						for(size_t i=1;i<ardl.size();i++){
+							rdl.front().AppendData(ardl[i]);
+						}
 					}
 
-				}while(!dolcp.empty() && flg1==1);
-
-				if(ardl.empty()){
-					rdl.clear();
+					return flg1;
 				}
-				else{
-					rdl.assign(1,ardl.front());
-					for(size_t i=1;i<ardl.size();i++){
-						rdl.front().AppendData(ardl[i]);
-					}
-				}
+			default:
+				return DataOutAList2RawDataList(dol,sl,rdl,xlabellist,ylabellist,dolastidx);
+			}	
+		//}
 
-				return flg1;
-			}
-		default:
-			return DataOutAList2RawDataList(dol,sl,rdl,xlabellist,ylabellist,dolastidx);
-		}	
+		return 0;
 	};
 
 
@@ -772,6 +775,15 @@ public:
 	SAPara p3done;
 
 public:
+
+	void Clear()
+	{
+		DocData::Clear();
+		dol.clear();
+		p3done.saplist.clear();
+		currentSAPIndex=nextSAPIndex=outstep=VtoAdd=runstate=0;
+	};
+
 	UINT ComputeStateData()
 	{
 		dol.clear();
@@ -1000,7 +1012,7 @@ public:
 	};
 
 	static bool AnalysisRCGetVL(
-		double &evaR,
+		double &evaQ,
 		double &Lc,
 		const std::vector<DataOutA> & dolast, 
 		CString fp, 
@@ -1013,7 +1025,8 @@ public:
 
 		if(ddex.Read(fp)){
 			if(ddex.FinalData(rd0,dolast0)){
-				evaR=ddex.p1.evaluationratio=dolast[2].ArUse()/dolast0.back().Ar0;
+				evaQ=dolast[2].ArUse();
+				ddex.p1.evaluationratio=evaQ/dolast0.back().Ar0;
 				if(RecordRC(dolast0,ddex.p1.evaluationratio,rd0,Lc)){
 					return true;
 				}
@@ -1335,12 +1348,12 @@ public:
 
 
 	static bool AnalysisLRTGetVL(
-		LineSeg ls0,
-		double SPv0,
-		double Lml,
-		double nQ,
-		double SPv,
-		LineSeg lis,
+		LineSeg &ls0,
+		double &SPv0,
+		double &Lml,
+		double &nQ,
+		double &SPv,
+		LineSeg &lis,
 		const std::vector<DataOutA> & dolast, 
 		CString fp,
 		const RawData & rd,
@@ -1499,11 +1512,11 @@ public:
 		}
 
 
-		return false;
+		return true;
 	};
 
 
-	static bool GetResult(DocDataEx *pDoc, const std::vector<Value> &vl, std::vector<CString> &name, std::vector<CString> &value)
+	static bool GetResultString(DocDataEx *pDoc, const std::vector<Value> &vl, std::vector<CString> &name, std::vector<CString> &value)
 	{
 		CString str,strt;
 		switch(pDoc->p1.analysistype){
@@ -1797,7 +1810,7 @@ public:
 
 
 
-
+	//1:success;0:not success
 	static UINT DataOutAList2RawDataList(
 		const std::vector<DataOutA> &dol,
 		const ANParaEx &p1,
@@ -1819,25 +1832,20 @@ public:
 		if(re1==1){
 
 			std::vector<DataOutA> dolast;
-			RawData rd;
+			
 			dolast.resize(dolastidx.size());
 			for(size_t i=0;i<dolast.size();i++){
 				dolast[i]=dol[dolastidx[i]];
 			}
 
-			rd=rdl.front();
-			for(size_t i=1;i<rdl.size();i++){
+			RawData rd;
+			for(size_t i=0;i<rdl.size();i++){
 				rd.AppendData(rdl[i]);
 			}
 
 
 			switch(p1.analysistype){
-			case 1:
-			case 2:
-			case 3:
-			case 5:
-			case 9:
-				return re1;
+
 			case 4:
 				{
 					double spv,spv0,itq;
@@ -1872,9 +1880,9 @@ public:
 						ls.Set(0,vl[2].Output(),x1,0);
 						rdRes.AddLineSeg(ls);
 
-						return true;
+						return 1;
 					}
-					return false;
+					return 0;
 				}
 
 			case 6:
@@ -1884,13 +1892,13 @@ public:
 						CString str0;
 						str0.LoadStringW(IDS_STRING_TEST_POINT);
 						nameRes.push_back(str0);
-						double xspan=0;
-						double yspan=rd.yll.back();
-						rdRes.AddPointMark(x,y,xspan,yspan);		
+						//double xspan=0;
+						//double yspan=0;
+						rdRes.AddPointMark(x,y);		
 
-						return true;
+						return 1;
 					}
-					return false;
+					return 0;
 				}
 			case 7:
 				{
@@ -1907,9 +1915,9 @@ public:
 						nameRes.push_back(str0);
 						rdRes.AddLineSeg(lis);
 
-						return true;
+						return 1;
 					}
-					return false;
+					return 0;
 
 				}
 			case 8:
@@ -1942,9 +1950,9 @@ public:
 						lis.Set(vl[5].Output(),vl[4].Output(),x1,x2);
 						rdRes.AddLineSeg(lis);
 
-						return true;
+						return 1;
 					}
-					return false;
+					return 0;
 
 				}
 			case 10:
@@ -1958,13 +1966,13 @@ public:
 						CString str0;
 						str0.LoadStringW(IDS_STRING_TEST_POINT);
 						nameRes.push_back(str0);
-						double xspan=0;
-						double yspan=rd.yll.back();
-						rdRes.AddPointMark(Lc,nQ,xspan,yspan);		
-
-						return true;
+						//double xspan=0;
+						//double yspan=rd.yll.back();
+						//rdRes.AddPointMark(Lc,nQ,xspan,yspan);		
+						rdRes.AddPointMark(Lc,nQ);
+						return 1;
 					}
-					return false;
+					return 0;
 				}
 			case 11:
 				{
@@ -1975,9 +1983,9 @@ public:
 						str0.LoadStringW(IDS_STRING_FITTING_LINE);
 						nameRes.push_back(str0);
 						rdRes.AddLineSeg(lis);
-						return true;
+						return 1;
 					}
-					return false;
+					return 0;
 				}
 			case 12:
 				{
@@ -2006,14 +2014,17 @@ public:
 						lis.Set(vl[5].Output(),lis.GetB(),lis.p1.x,lis.p2.x);
 						rdRes.AddLineSeg(lis);
 
-						return true;
+						return 1;
 					}
-					return false;
-
-
+					return 0;
 				}
+			case 1:
+			case 2:
+			case 3:
+			case 5:
+			case 9:
 			default:
-				return 0;
+				return re1;
 			};
 
 		}
@@ -2021,6 +2032,98 @@ public:
 
 	};
 
+
+	static bool GetResultData(
+		//DocDataEx *pDoc, 	
+		const std::vector<DataOutA> &dol,
+		const ANParaEx &p1,
+		std::vector<RawData> &rdl,
+		std::vector<CString> &xlabellist,
+		std::vector<CString> &ylabellist,
+		std::vector< std::vector<CString> > &nameReslist,		
+		CString str0)
+	{
+		//UINT f1=pDoc->ComputeStateData();
+		//if(f1==0){
+		std::vector<size_t> dolastidx;
+		std::vector<CString> nameres;
+		RawData rdres;
+		UINT f2=DataOutAList2RawDataList(dol,p1,rdl,xlabellist,ylabellist,dolastidx,rdres,nameres);
+		if(f2==1){
+			std::vector<CString> namelist;
+			nameReslist.assign(rdl.size(),namelist);
+
+			for(size_t i=0;i<nameReslist.size();i++){
+				nameReslist[i].assign(rdl[i].ll.size(),str0);
+			}
+
+			switch(p1.analysistype){
+			case 4:
+			case 6:
+			case 8:
+			case 10:
+			case 11:
+			case 12:
+				rdl.back().AppendData(rdres);
+				nameReslist.back().resize(nameReslist.back().size()+nameres.size());
+				std::copy_backward(nameres.begin(),nameres.end(),nameReslist.back().end());
+				break;
+			case 7:
+				{
+					rdl.push_back(rdres);
+					CString xla;
+					CString yla;
+					{
+						CString str;
+						str.LoadStringW(IDS_STRING_ACCELERATOR);
+						xla=str;
+						xla+=L" ";
+						str.LoadStringW(IDS_STRING_CONC_);
+						xla+=str;
+
+						str.LoadStringW(IDS_STRING_SUPPRESSOR);
+						yla=str;
+						yla+=L" ";
+						str.LoadStringW(IDS_STRING_CONC_);
+						yla+=str;
+					}
+					xlabellist.push_back(xla);
+					ylabellist.push_back(yla);
+
+					nameReslist.push_back(nameres);
+
+				}
+				break;
+			default:
+				break;
+			}
+
+			return true;
+		}
+		//}
+
+
+
+		return false;
+	};
+
+
+
+
+	static bool GetResultData(
+		//DocDataEx *pDoc, 		
+		const std::vector<DataOutA> &dol,
+		const ANParaEx &p1,
+		std::vector<RawData> &rdl,
+		std::vector<CString> &xlabellist,
+		std::vector<CString> &ylabellist,
+		std::vector< std::vector<CString> > &nameReslist,		
+		bool bCalib=false)
+	{
+		CString str0;
+		str0.LoadStringW( bCalib?IDS_STRING_CALIBRATION_CURVE:IDS_STRING_TEST_CURVE );
+		return GetResultData(dol,p1,rdl,xlabellist,ylabellist,nameReslist,str0);
+	};
 
 
 };

@@ -2,10 +2,11 @@
 //
 
 #include "stdafx.h"
-#include "analyzer.h"
+//#include "analyzer.h"
+#include "../Resource.h"
 #include "PlotSettingPageB.h"
 #include "afxdialogex.h"
-#include "analyzerView.h"
+#include "../analyzerView.h"
 
 // PlotSettingPageB dialog
 

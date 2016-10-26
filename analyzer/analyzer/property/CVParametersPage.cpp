@@ -2,10 +2,11 @@
 //
 
 #include "stdafx.h"
-#include "analyzer.h"
+//#include "analyzer.h"
+#include "../Resource.h"
 #include "CVParametersPage.h"
 #include "afxdialogex.h"
-
+#include <cfloat>
 
 // CVParametersPage dialog
 
