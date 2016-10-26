@@ -19,6 +19,26 @@ PlotData::~PlotData()
 }
 
 
+PlotData::PlotData(const PlotData &src)
+{
+	xlabel=src.xlabel;
+	ylabel=src.ylabel;
+	xll.assign(src.xll.begin(),src.xll.end());
+	yll.assign(src.yll.begin(),src.yll.end());
+	ll.assign(src.ll.begin(),src.ll.end());
+	ps.assign(src.ps.begin(),src.ps.end());
+}
+
+void PlotData::operator=(const PlotData &src)
+{
+	xlabel=src.xlabel;
+	ylabel=src.ylabel;
+	xll.assign(src.xll.begin(),src.xll.end());
+	yll.assign(src.yll.begin(),src.yll.end());
+	ll.assign(src.ll.begin(),src.ll.end());
+	ps.assign(src.ps.begin(),src.ps.end());
+}
+
 // PlotData member functions
 
 
@@ -186,8 +206,8 @@ void PlotData::AddNew(const std::vector<double> &x, const std::vector<double> &y
 	std::copy_backward(y.begin(),y.end(),yll.end());
 	ll.push_back(x.size());
 
-	xlist.push_back(x);
-	ylist.push_back(y);
+	//xlist.push_back(x);
+	//ylist.push_back(y);
 
 	ps.push_back(plotsp);
 
@@ -210,10 +230,10 @@ void PlotData::AddFollow(const std::vector<double> &x, const std::vector<double>
 	ll.back()+=x.size();
 
 
-	xlist.back().resize(xlist.back().size()+x.size());
-	std::copy_backward(x.begin(),x.end(),xlist.back().end());
-	ylist.back().resize(ylist.back().size()+y.size());
-	std::copy_backward(y.begin(),y.end(),ylist.back().end());
+	//xlist.back().resize(xlist.back().size()+x.size());
+	//std::copy_backward(x.begin(),x.end(),xlist.back().end());
+	//ylist.back().resize(ylist.back().size()+y.size());
+	//std::copy_backward(y.begin(),y.end(),ylist.back().end());
 
 }
 
@@ -223,8 +243,8 @@ void PlotData::clear(void)
 	xll.clear();
 	yll.clear();
 
-	xlist.clear();
-	ylist.clear();
+	//xlist.clear();
+	//ylist.clear();
 
 	ll.clear();
 	ps.clear();
@@ -242,6 +262,7 @@ BOOL PlotData::SaveFile(CString fp)
 	if( theFile.Open(fp, CFile::modeCreate | CFile::modeWrite) ){
 		CArchive archive(&theFile, CArchive::store);
 
+		archive<<(size_t)1;
 		Serialize(archive);
 
 		archive.Close();
@@ -257,6 +278,8 @@ BOOL PlotData::ReadFile(CString fp)
 	CFile theFile;
 	if( theFile.Open(fp, /*CFile::modeCreate |*/ CFile::modeRead) ){
 		CArchive archive(&theFile, CArchive::load);
+		size_t n;
+		archive >> n; 
 		Serialize(archive);
 		archive.Close();
 		theFile.Close();
@@ -284,18 +307,18 @@ void PlotData::AppendData(const PlotData & pda)
 	//std::copy_backward(pda.ylist.begin(),pda.ylist.end(),ylist.end());
 
 
-	for(size_t i=0;i<pda.xlist.size();i++){
-		{
-			std::vector<double> temp;
-			temp.assign(pda.xlist[i].begin(),pda.xlist[i].end());
-			xlist.push_back(temp);
-		}
-		{
-			std::vector<double> temp;
-			temp.assign(pda.ylist[i].begin(),pda.ylist[i].end());
-			ylist.push_back(temp);
-		}
-	}
+	//for(size_t i=0;i<pda.xlist.size();i++){
+	//	{
+	//		std::vector<double> temp;
+	//		temp.assign(pda.xlist[i].begin(),pda.xlist[i].end());
+	//		xlist.push_back(temp);
+	//	}
+	//	{
+	//		std::vector<double> temp;
+	//		temp.assign(pda.ylist[i].begin(),pda.ylist[i].end());
+	//		ylist.push_back(temp);
+	//	}
+	//}
 
 }
 

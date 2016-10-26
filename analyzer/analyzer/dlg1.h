@@ -42,57 +42,46 @@ protected:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnPaint();
 
-public:
-	//void plot2d(const std::vector<double> &x, const std::vector<double> &y, const CString &xla, const CString &yla );
-	////void plot2d(const std::vector<double> &x, const std::vector<double> &y, const CString &xla, const CString &yla, const CString &title );
-	//void plot2d(const std::vector<double> &x, const std::vector<double> &y, const CString &xla, const CString &yla, const CString &title, const int &LineStl );
-	//void plot2d(const std::vector<double> &x, const std::vector<double> &y, const plotspec &plotsp, const CString &xla, const CString &yla);
-
-private:
 	double xmin,xmax,ymin,ymax;
-	//CString xlabel,ylabel;
-
-	//std::vector< std::vector<double> > xlist;
-	//std::vector< std::vector<double> > ylist;
-
-	//std::vector<double> xll;
-	//std::vector<double> yll;
-	//std::vector<DWORD> ll;
-	//std::vector<plotspec> ps;
-
-
 
 
 	void genPointToPlot(const std::vector<double> &px, const std::vector<double> &py, const CRect &rect, std::vector<CPoint> &pointlist);
 	void drawRectangle(const CRect &rect, CDC * pDC, COLORREF insidecolor, COLORREF bordercolor);
-//	CRect DrawXYAxis(CRect rect, CDC* pdc);	
 
-//	CRect DrawLegend(CRect rect, CDC* pDC);
 	CRect DrawLegend1(CRect rect, CDC* pDC);
-	void DrawPoint(CRect rect, CDC * pDC, int d);
-	void DrawCurve(CRect rect, CDC* pDC);
+
 
 	void DrawCurveA(CRect rect, CDC* pDC);
-//	void DrawCurveB(CRect rect, CDC* pDC);
 
 	void GetPlotRect(CRect & plotRect);
 	void DrawSpline( CPoint * lpPoints, int np, CRect rect, CDC * pDC);
-
-public:
-	PlotData pd;
-	//void showall(void);
-	//void plot2dfollow(const std::vector<double> & x, const std::vector<double> & y);
-	void smoothLine(void);
-	void clear(void);
-	void updatePlotRange(const std::vector<double> &x, const std::vector<double> &y, bool flg=false);
-	void updatePlotRange(bool flg=true);
-	figspec fs;
 	CRect DrawXYAxis1(CRect rect, CDC * pdc);
 	void DrawGridLine(const CRect & rect, CDC * pdc, int gridType, COLORREF gridC, const std::vector<long> & gridH, const std::vector<long> & gridV);
 	CRect DrawMetric(const CRect & rect, CDC * pdc, int metricSize, COLORREF metricC, COLORREF gridC, const std::vector<long> & gridH, const std::vector<long> & gridV, const std::vector<double> & gridx, const std::vector<double> & gridy);
 	CRect DrawLabel(const CRect & rect, CDC * pdc, CPoint centerP, int labelSize, COLORREF labelC);
 	int metricGridLong;
 	int metricGridShort;
+	CSize spBtnSize;
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+
+	void OnDeltaposSpin(NMHDR* pNMHDR, LRESULT* pResult);
+public:
+	//PlotData pd;
+
+	//void smoothLine(void);
+	void clear(void);
+	bool updatePlotRange(int plotIndex, const std::vector<double> &x, const std::vector<double> &y, bool flg=false);
+	bool updatePlotRange(int plotIndex, bool flg=true);
+	bool updatePlotRange(bool flg=true);
+	figspec fs;
+
+	CSpinButtonCtrl m_spBtn;
+
+	std::vector<PlotData> pdl;
+	int AddPlot(const PlotData & pda);
+
+	BOOL SaveFile(CString fp);
+	BOOL ReadFile(CString fp);
 };
 
 

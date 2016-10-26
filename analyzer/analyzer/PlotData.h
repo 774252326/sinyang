@@ -11,19 +11,23 @@ class PlotData : public CObject
 {
 public:
 	PlotData();
+	PlotData(const PlotData &src);
+	void operator=(const PlotData &src);
+
 	virtual ~PlotData();
 	virtual void Serialize(CArchive& ar);
 
 	CString xlabel,ylabel;
 
-	std::vector< std::vector<double> > xlist;
-	std::vector< std::vector<double> > ylist;
+	//std::vector< std::vector<double> > xlist;
+	//std::vector< std::vector<double> > ylist;
 
 	std::vector<double> xll;
 	std::vector<double> yll;
 	std::vector<DWORD> ll;
 	//std::vector<LineSpec> ps;
 	std::vector<plotspec> ps;
+
 	bool CheckData(void);
 	void AddNew(const std::vector<double> &x, const std::vector<double> &y, const plotspec &plotsp, const CString &xla=NULL, const CString &yla=NULL);
 	void AddFollow(const std::vector<double> &x, const std::vector<double> &y);

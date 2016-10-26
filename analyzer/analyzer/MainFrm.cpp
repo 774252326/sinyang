@@ -584,8 +584,6 @@ void CMainFrame::OnFileOpen()
 		//////////////////////////////////////////////////////////////////////
 		CString m_filePath=fileDlg.GetPathName();
 
-
-
 		ANPara p1t;
 		CVPara p2t;
 		SAPara p3t;
@@ -593,61 +591,86 @@ void CMainFrame::OnFileOpen()
 		readini(p1t,p2t,p3t,m_filePath);
 		writeini(p1t,p2t,p3t);
 
-
 		CString lppath=m_filePath;
 		lppath.Replace(L".stp.txt",L"l.fig.txt");
 		CString rppath=m_filePath;
 		rppath.Replace(L".stp.txt",L"r.fig.txt");
 
-		if(this->LeftPlotPointer()->pd.ReadFile(lppath)){
-			this->LeftPlotPointer()->updatePlotRange();
-			this->LeftPlotPointer()->Invalidate();
+		////if(this->LeftPlotPointer()->pd.ReadFile(lppath)){
+		////	this->LeftPlotPointer()->updatePlotRange();
+		////	this->LeftPlotPointer()->Invalidate();
 
 
-			//double totalV=0;
-			//double q0=1;
+		////	//double totalV=0;
+		////	//double q0=1;
 
-			//this->GetOutputWnd()->clear();
-			//{
-			//	std::vector<double> x;
-			//	std::vector<double> y;
-			//	LeftPlotPointer()->pd.GetDatai(0,x,y);
-			//	double q=intgQ(x,y,p2t.lowelimit,p2t.highelimit,p2t.endintegratione)/p2t.scanrate;
-			//	totalV+=p3t.vmsvol;
-			//	q0=q;
-			//	this->GetOutputWnd()->InsertListCtrl(0,
-			//		LeftPlotPointer()->pd.ps[0].name,
-			//		p3t.vmsvol,
-			//		totalV,
-			//		q,
-			//		q/q0,
-			//		true);
-			//}
-
-
-			//for(size_t i=1;i<LeftPlotPointer()->pd.ll.size();i++){
-			//	std::vector<double> x;
-			//	std::vector<double> y;
-			//	LeftPlotPointer()->pd.GetDatai(i,x,y);
-			//	double q=intgQ(x,y,p2t.lowelimit,p2t.highelimit,p2t.endintegratione)/p2t.scanrate;
-			//	//totalV+=p3t.saplist[i-1].volconc;
-
-			//	this->GetOutputWnd()->InsertListCtrl(i,
-			//		LeftPlotPointer()->pd.ps[i].name,
-			//		//p3t.saplist[i-1].volconc,
-			//		//totalV,
-			//		1,1,
-			//		q,
-			//		q/q0,
-			//		true);
-			//}
-		}
+		////	//this->GetOutputWnd()->clear();
+		////	//{
+		////	//	std::vector<double> x;
+		////	//	std::vector<double> y;
+		////	//	LeftPlotPointer()->pd.GetDatai(0,x,y);
+		////	//	double q=intgQ(x,y,p2t.lowelimit,p2t.highelimit,p2t.endintegratione)/p2t.scanrate;
+		////	//	totalV+=p3t.vmsvol;
+		////	//	q0=q;
+		////	//	this->GetOutputWnd()->InsertListCtrl(0,
+		////	//		LeftPlotPointer()->pd.ps[0].name,
+		////	//		p3t.vmsvol,
+		////	//		totalV,
+		////	//		q,
+		////	//		q/q0,
+		////	//		true);
+		////	//}
 
 
-		if(this->RightPlotPointer()->pd.ReadFile(rppath)){
-			this->RightPlotPointer()->updatePlotRange();
-			this->RightPlotPointer()->Invalidate();
-		}
+		////	//for(size_t i=1;i<LeftPlotPointer()->pd.ll.size();i++){
+		////	//	std::vector<double> x;
+		////	//	std::vector<double> y;
+		////	//	LeftPlotPointer()->pd.GetDatai(i,x,y);
+		////	//	double q=intgQ(x,y,p2t.lowelimit,p2t.highelimit,p2t.endintegratione)/p2t.scanrate;
+		////	//	//totalV+=p3t.saplist[i-1].volconc;
+
+		////	//	this->GetOutputWnd()->InsertListCtrl(i,
+		////	//		LeftPlotPointer()->pd.ps[i].name,
+		////	//		//p3t.saplist[i-1].volconc,
+		////	//		//totalV,
+		////	//		1,1,
+		////	//		q,
+		////	//		q/q0,
+		////	//		true);
+		////	//}
+		////}
+
+		////PlotData pdl;
+		////if(pdl.ReadFile(lppath)){
+		////	LeftPlotPointer()->AddPlot(pdl);
+		////	if(LeftPlotPointer()->updatePlotRange())
+		////		LeftPlotPointer()->Invalidate();
+		////}
+
+		//if(LeftPlotPointer()->ReadFile(L"left.fig.txt")){
+		//	if(LeftPlotPointer()->updatePlotRange())
+		//		LeftPlotPointer()->Invalidate();
+		//}
+
+
+		////PlotData pdr;
+		////if(pdr.ReadFile(rppath)){
+		////	RightPlotPointer()->AddPlot(pdr);
+		////	if(RightPlotPointer()->updatePlotRange())
+		////		RightPlotPointer()->Invalidate();
+		////}
+
+
+		//if(RightPlotPointer()->ReadFile(L"right.fig.txt")){
+		//	if(RightPlotPointer()->updatePlotRange())
+		//		RightPlotPointer()->Invalidate();
+		//}
+
+
+		////if(this->RightPlotPointer()->pd.ReadFile(rppath)){
+		////	this->RightPlotPointer()->updatePlotRange();
+		////	this->RightPlotPointer()->Invalidate();
+		////}
 
 
 		CString strTemp;
@@ -660,6 +683,11 @@ void CMainFrame::OnFileOpen()
 		//this->LeftPlotPointer()->pd.ReadFile(m_filePath);
 		//this->LeftPlotPointer()->updatePlotRange();
 		//this->LeftPlotPointer()->Invalidate();
+		////////////////////////////////////////////////////////////////////////////////
+		//if(LeftPlotPointer()->ReadFile(fileDlg.GetPathName())){
+		//	if(LeftPlotPointer()->updatePlotRange())
+		//		LeftPlotPointer()->Invalidate();
+		//}
 
 		////////////////////////////////////////////////////////////////////////////
 
@@ -687,8 +715,8 @@ void CMainFrame::OnViewFitwindow()
 {
 	// TODO: Add your command handler code here
 
-	( (dlg1*)m_wndSplitter.GetActivePane() )->updatePlotRange();
-	( (dlg1*)m_wndSplitter.GetActivePane() )->Invalidate();
+	if( ( (dlg1*)m_wndSplitter.GetActivePane() )->updatePlotRange() )
+		( (dlg1*)m_wndSplitter.GetActivePane() )->Invalidate();
 
 }
 
@@ -730,407 +758,6 @@ void CMainFrame::OnUpdateViewToolbara(CCmdUI *pCmdUI)
 	pCmdUI->SetCheck(m_wndToolBar.IsVisible());
 }
 
-
-//void CMainFrame::OnTimer(UINT_PTR nIDEvent)
-//{
-//	// TODO: Add your message handler code here and/or call default
-//
-//	switch(nIDEvent){
-//	case 1:
-//		{
-//			/////////////////////////////////////////////////////////////////////////////////////////////
-//
-//			if( dat.empty() || stepCount>p3.saplist.size() ){
-//				finishflag2=true;
-//				KillTimer(timer1);
-//				CString strTemp;
-//				//ASSERT
-//				(strTemp.LoadString(IDS_STRING_OVER));
-//
-//				dlg1 *plotr=( (dlg1*)m_wndSplitter.GetPane(0,1) );
-//
-//				switch(p1.analysistype){
-//				case 1:
-//					////////////////////////////Record calibration curve of suppressor///////////////////////////////
-//					strTemp+=Output1(plotr->pd);
-//					///////////////////////////////////////end/////////////////////////////////////////////////
-//					break;
-//				case 2:
-//					///////////////////////////////////Analyze suppressor by DT method/////////////////////////////////
-//					strTemp+=Output2(plotr->pd);
-//					///////////////////////////////////////end/////////////////////////////////////////////////
-//					break;
-//				case 3:
-//					strTemp+=Output3(plotr->pd);
-//					break;
-//				case 4:
-//
-//					strTemp+=Output4(plotr->pd);
-//
-//					break;
-//
-//				default:
-//					break;
-//				}
-//
-//				m_wndCaptionBar.SetTextA(strTemp);
-//				m_wndCaptionBar.ShowButton(false);
-//			}
-//			else{
-//
-//				size_t n1=800;
-//
-//				std::vector<double> x;
-//				std::vector<double> y;
-//				size_t rn;
-//
-//				//load n1 points
-//				rn=dat.front().popData(x,y,n1);
-//				//plot points on plot1
-//				plot1(x,y,dat.front().label[0],dat.front().label[1]);
-//
-//				int nflg=datt.addXY(x,y);
-//
-//				//if line finish
-//				finishflag=/*(rn==0)|*/(nflg==2);
-//
-//				if(nflg>=1 /*|| finishflag*/){//if one cycle complete
-//
-//					double addvol;
-//					if(datt.Ar.size()==1){
-//						addvol=dat.front().addVolume;
-//					}
-//					else{
-//						addvol=0;
-//					}
-//					totalVolume+=addvol;
-//
-//					if(stepCount==0){
-//						Ar0=datt.Ar.back();
-//					}
-//					double Aratio=(datt.Ar.back()/Ar0);
-//
-//					CString str=( (dlg1*)m_wndSplitter.GetPane(0,0) )->pd.ps.back().name;
-//					m_wndOutput.InsertListCtrl(rowCount,str,datt.Ar.size(),addvol,totalVolume,datt.Ar.back(),Aratio,finishflag);
-//
-//					rowCount++;
-//					if(finishflag){
-//
-//						switch(p1.analysistype){
-//						case 1:
-//							x.assign( 1, totalVolume-p3.vmsvol );
-//							y.assign( 1, Aratio );
-//							plot2(x,y,L"Suppressor(ml)",L"Ratio of Charge",L"Ar/Ar0");
-//							break;
-//
-//						case 2:
-//							x.assign( 1, totalVolume-p3.vmsvol );
-//							y.assign( 1, Aratio );
-//							plot2(x,y,L"Suppressor(ml)",L"Ratio of Charge",L"Ar/Ar0");
-//							break;
-//
-//						case 3:
-//							if(stepCount==0){
-//								Aml=0;
-//							}
-//							else{
-//								Aml+=p3.saplist[stepCount-1].Sconc*dat.front().addVolume;
-//							}
-//							x.assign( 1, Aml/totalVolume );	
-//							//x.assign( 1, totalVolume-p3.vmsvol );	
-//							y.assign( 1, datt.Ar.back() );
-//							plot2(x,y,L"Suppressor Conc.(ml/L)",L"Charge(mC)",L"Ar");
-//
-//							break;
-//						case 4:
-//
-//
-//							if(stepCount>=1){
-//								if(stepCount==1){									
-//									Qintercept=datt.Ar.back();
-//									x.assign( 1, 0 );
-//									y.assign( 1, Qintercept );
-//									plot2(x,y,L"Conc.(ml/L)",L"Q(mC)",L"Q-Q(intercept)");	
-//								}
-//								else{
-//									if(stepCount==2){
-//										Aml=0;
-//									}
-//									else{
-//										Aml+=p3.saplist[stepCount-1].Aconc*dat.front().addVolume;
-//									}
-//									x.assign( 1, Aml/totalVolume );
-//									y.assign( 1, datt.Ar.back()/*-Qintercept*/ );
-//									plot2(x,y,L"Conc.(ml/L)",L"Q(mC)",L"Q-Q(intercept)");	
-//								}
-//
-//							}
-//
-//
-//
-//
-//							break;
-//						default:
-//							break;
-//
-//						}
-//
-//						stepCount++;
-//						datt.clear();
-//						dat.erase(dat.begin());
-//
-//
-//						{
-//							CString strTemp;
-//							//ASSERT
-//							(strTemp.LoadString(IDS_STRING_WAIT_RESPONSE));
-//
-//							for(int i=0;i<17;i++) strTemp+=" ";
-//
-//							m_wndCaptionBar.SetTextA(strTemp,true);
-//							m_wndCaptionBar.ShowButton();
-//							if(dat.empty()){
-//								m_wndCaptionBar.x=0;
-//							}
-//							else{
-//								m_wndCaptionBar.x=dat.front().addVolume;
-//							}
-//							m_wndCaptionBar.UpdateData(FALSE);
-//							m_wndCaptionBar.SetEdit();					
-//							m_wndCaptionBar.ec.ShowWindow(SW_SHOW);
-//							//m_wndCaptionBar.st.ShowWindow(SW_SHOW);
-//							m_wndCaptionBar.ShowWindow(SW_SHOW);
-//							RecalcLayout(FALSE);
-//						}
-//
-//						KillTimer(timer1);
-//					}
-//				}
-//
-//			}
-//			///////////////////////////////////////////////////////////////////////////////////////////////
-//		}
-//		break;
-//
-//	case 2:
-//		{
-//
-//		}
-//		break;
-//	default:
-//		break;
-//	}
-//
-//
-//	CFrameWndEx::OnTimer(nIDEvent);
-//}
-
-
-//void CMainFrame::plot1(const std::vector<double> & x, const std::vector<double> & y, const CString & xlabel, const CString & ylabel)
-//{
-//
-//	if(finishflag){//if to plot a new line
-//		plotspec ps1;
-//		//LineSpec ps1;
-//		CString strTemp;
-//		ps1.colour=genColor( genColorvFromIndex<float>( ( (dlg1*)m_wndSplitter.GetPane(0,0) )->pd.ps.size() ) ) ;
-//		//ps1.colour=genColorGray( genColorvFromIndex<float>( stepCount ) ) ;
-//		ps1.dotSize=-1;
-//		//if(stepCount>0){
-//		//	//ASSERT
-//		//	(strTemp.LoadString(IDS_STRING_STEPNAME1));
-//		//	ps1.name.Format(L"%s%d",strTemp,stepCount);
-//		//}
-//		//else{
-//		//	//ASSERT
-//		//	(strTemp.LoadString(IDS_STRING_STEPNAME0));
-//		//	ps1.name=strTemp;
-//		//}
-//
-//		ps1.name=dat.front().stepName;
-//		ps1.showLine=true;
-//		ps1.smoothLine=0;
-//		ps1.traceLast=true;
-//		( (dlg1*)m_wndSplitter.GetPane(0,0) )->pd.AddNew(x,y,ps1,xlabel,ylabel);
-//		( (dlg1*)m_wndSplitter.GetPane(0,0) )->updatePlotRange();
-//	}
-//	else{
-//		( (dlg1*)m_wndSplitter.GetPane(0,0) )->pd.AddFollow(x,y);
-//		( (dlg1*)m_wndSplitter.GetPane(0,0) )->updatePlotRange(x,y);
-//	}
-//	( (dlg1*)m_wndSplitter.GetPane(0,0) )->Invalidate();
-//
-//}
-
-
-//void CMainFrame::plot2(const std::vector<double> & x, const std::vector<double> & y, const CString & xlabel, const CString & ylabel, const CString & lineName)
-//{
-//
-//	//CString strTemp;
-//	if(finishflag2){
-//		plotspec ps1;
-//		//LineSpec ps1;
-//		ps1.colour=genColor( genColorvFromIndex<float>( ( (dlg1*)m_wndSplitter.GetPane(0,1) )->pd.ps.size() ) ) ;
-//		ps1.dotSize=3;
-//		ps1.name=lineName;
-//		ps1.showLine=true;
-//		ps1.smoothLine=1;
-//		ps1.traceLast=false;
-//		( (dlg1*)m_wndSplitter.GetPane(0,1) )->pd.AddNew(x,y,ps1,xlabel,ylabel);
-//		finishflag2=false;
-//	}
-//	else{
-//		( (dlg1*)m_wndSplitter.GetPane(0,1) )->pd.AddFollow(x,y);
-//	}
-//	( (dlg1*)m_wndSplitter.GetPane(0,1) )->updatePlotRange();
-//	( (dlg1*)m_wndSplitter.GetPane(0,1) )->Invalidate();
-//}
-
-
-//CString CMainFrame::Output1(PlotData & pdat)
-//{
-//	//dlg1 *plotr=( (dlg1*)m_wndSplitter.GetPane(0,1) );
-//	double vsupp;
-//	if(calVsupp(pdat,0,p1.evaluationratio,vsupp)){
-//		double z=p3.saplist[0].Sconc/(1+p3.vmsvol/vsupp);
-//		CString str;
-//		str.Format(L" Vsupp=%g ml @ Ar/Ar0=%g, Z=%g ml/L",vsupp, p1.evaluationratio, z);
-//		//pdat.SaveFile(L"figbr.txt");
-//		return str;
-//	}
-//	else{
-//		CString str;
-//		str.Format(L"invalid Vsupp @ Ar/Ar0=%g",p1.evaluationratio);
-//		return str;
-//	}
-//}
-
-
-//CString CMainFrame::Output2(PlotData & pdat)
-//{
-//	CString strTemp;
-//	double Vsuppbath;
-//	/////////////////compute Vsuppbath///////////////////////////
-//	if(calVsupp(pdat,pdat.ps.size()-1,p1.evaluationratio,Vsuppbath)){						
-//		{
-//			CString str;
-//			str.Format(L" Vsuppbath=%g ml @ Ar/Ar0=%g",Vsuppbath, p1.evaluationratio);
-//			strTemp+=str;
-//		}
-//		//////////////////////////load standrad suppressor parameters///////////////////////////////
-//		double Sconc=8.5;
-//		double vmsvol=25;
-//		double evor=0.5;
-//		{
-//			ANPara p1t;
-//			CVPara p2t;
-//			SAPara p3t;
-//			readini(L"../setupB.txt",p1t,p2t,p3t);
-//			Sconc=p3t.saplist.back().Sconc;
-//			vmsvol=p3t.vmsvol;
-//			evor=p1t.evaluationratio;
-//		}
-//		///////////////////////////////////////end/////////////////////////////////////////////////
-//
-//		double z;
-//		/////////////////////////////////////load calibration factor z///////////////////////////////////			
-//		if(p1.calibrationfactortype==0){
-//			if(p1.evaluationratio==evor){
-//				z=p1.calibrationfactor;
-//				CString str;
-//				str.Format(L", Z=%g ml/L, Csuppbath=%g ml/L", z, z*(1+p3.vmsvol/Vsuppbath));
-//				strTemp+=str;
-//			}
-//			else{
-//				CString str;
-//				str.Format(L", invalid evoluation ratio for standrad suppressor");
-//				strTemp+=str;
-//			}
-//		}
-//		///////////////////////////////////////end/////////////////////////////////////////////////
-//
-//		///////////////////////////////////compute calibration factor z from curve//////////////////////////////
-//		if(p1.calibrationfactortype==1){
-//
-//			double Vsuppstd;
-//			if(calVsupp(pdat,0,p1.evaluationratio,Vsuppstd)){
-//				z=Sconc/(1+vmsvol/Vsuppstd);
-//				/////////////////////////plot standrad curve////////////////////////
-//				//pdat.ps.back().colour=red;
-//				//pdat.ps.back().name=L"standrad";
-//				//plotr->pd.AppendData(pdat);
-//				//plotr->updatePlotRange();
-//				//plotr->Invalidate();
-//				///////////////////////////////////////end/////////////////////////////////////////////////
-//				CString str;
-//				str.Format(L", Vsuppstd=%g ml @ Ar/Ar0=%g, Z=%g ml/L, Csuppbath=%g ml/L", Vsuppstd, p1.evaluationratio, z, z*(1+p3.vmsvol/Vsuppbath));
-//				strTemp+=str;
-//			}
-//			else{
-//				CString str;
-//				str.Format(L", invalid evoluation ratio for standrad suppressor");
-//				strTemp+=str;
-//			}
-//		}
-//		///////////////////////////////////////end/////////////////////////////////////////////////
-//
-//	}
-//	else{
-//		CString str;
-//		str.Format(L" invalid Vsuppbath @ Ar/Ar0=%g",p1.evaluationratio);
-//		strTemp+=str;
-//	}
-//
-//	return strTemp;
-//}
-
-
-//CString CMainFrame::Output3(PlotData & pdat)
-//{
-//	CString str;
-//
-//	str.Format(L" intercept value %g ml/L", Aml/totalVolume);
-//
-//	return str;
-//}
-
-
-
-//CString CMainFrame::Output4(PlotData & pdat)
-//{
-//	//std::vector<double> x;
-//	//std::vector<double> y;
-//
-//	//pdat.GetDatai(pdat.ps.size()-1,x,y);
-//
-//	//std::vector<double> c;
-//	//lspfit(x,y,2,c);
-//
-//	//std::vector<double> nx(2,x.back());
-//	//std::vector<double> ny(2,0);
-//
-//	//ny[1]=c[1]*nx[1]+c[0];
-//	//nx[0]=(ny[0]-c[0])/c[1];
-//
-//
-//	//dlg1 *p1=( (dlg1*)m_wndSplitter.GetPane(0,1) );
-//	//plotspec ps1;
-//	//ps1.colour=genColor( genColorvFromIndex<float>( p1->pd.ps.size() ) ) ;
-//	//ps1.dotSize=-1;  
-//	//ps1.name=L"fit line";
-//	//ps1.showLine=true;
-//	//ps1.smoothLine=0;
-//	//ps1.traceLast=false;
-//	//p1->pd.AddNew(nx,ny,ps1);
-//	//p1->updatePlotRange();
-//	//p1->Invalidate();
-//
-//	//double originalConc=-nx[0]*(p3.vmsvol/p3.saplist[1].volconc+1);
-//	CString str;
-//	//str.Format(L" -c(sample)=%g ml/L, AConc.=%g ml/L",nx[0],originalConc);
-//
-//	return str;
-//}
 
 void CMainFrame::OnAnalysisMethodsetup()
 {
@@ -1186,8 +813,6 @@ void CMainFrame::OnFileSave()
 	{
 		//////////////////////////////////////////////////////////////////////
 		CString m_filePath=fileDlg.GetPathName();
-
-
 
 		ANPara p1t;
 		CVPara p2t;
@@ -1325,18 +950,21 @@ void CMainFrame::OnOptionsPlotsettings()
 	//sheet.SetWizardMode();   
 	//sheet.SetWindowPos(&CWnd::wndTopMost,10,10,800,600,SWP_SHOWWINDOW);
 
+	int il=LeftPlotPointer()->m_spBtn.GetPos32();
 	str.LoadStringW(IDS_STRING_FIGURE1);
 	PlotSettingPage fig1setting(str
 		,LeftPlotPointer()->fs
-		,LeftPlotPointer()->pd.ps
-		,LeftPlotPointer()->pd.xlabel
-		,LeftPlotPointer()->pd.ylabel);
+		,LeftPlotPointer()->pdl[il].ps
+		,LeftPlotPointer()->pdl[il].xlabel
+		,LeftPlotPointer()->pdl[il].ylabel);
+
+	int ir=RightPlotPointer()->m_spBtn.GetPos32();
 	str.LoadStringW(IDS_STRING_FIGURE2);
 	PlotSettingPage fig2setting(str
 		,RightPlotPointer()->fs
-		,RightPlotPointer()->pd.ps
-		,RightPlotPointer()->pd.xlabel
-		,RightPlotPointer()->pd.ylabel);
+		,RightPlotPointer()->pdl[ir].ps
+		,RightPlotPointer()->pdl[ir].xlabel
+		,RightPlotPointer()->pdl[ir].ylabel);
 
 	sheet.AddPage(&fig1setting);
 	sheet.AddPage(&fig2setting);
@@ -1344,18 +972,18 @@ void CMainFrame::OnOptionsPlotsettings()
 	// 打开模态向导对话框   
 	if(sheet.DoModal()==IDOK){
 
-		LeftPlotPointer()->pd.xlabel=fig1setting.xlabel;
-		LeftPlotPointer()->pd.ylabel=fig1setting.ylabel;
+		LeftPlotPointer()->pdl[il].xlabel=fig1setting.xlabel;
+		LeftPlotPointer()->pdl[il].ylabel=fig1setting.ylabel;
 		copyfs(fig1setting.fs,LeftPlotPointer()->fs);
-		LeftPlotPointer()->pd.ps.clear();
-		LeftPlotPointer()->pd.ps.assign(fig1setting.ps.begin(),fig1setting.ps.end());
+		LeftPlotPointer()->pdl[il].ps.clear();
+		LeftPlotPointer()->pdl[il].ps.assign(fig1setting.ps.begin(),fig1setting.ps.end());
 		LeftPlotPointer()->Invalidate();
 
-		RightPlotPointer()->pd.xlabel=fig2setting.xlabel;
-		RightPlotPointer()->pd.ylabel=fig2setting.ylabel;
+		RightPlotPointer()->pdl[ir].xlabel=fig2setting.xlabel;
+		RightPlotPointer()->pdl[ir].ylabel=fig2setting.ylabel;
 		copyfs(fig2setting.fs,RightPlotPointer()->fs);
-		RightPlotPointer()->pd.ps.clear();
-		RightPlotPointer()->pd.ps.assign(fig2setting.ps.begin(),fig2setting.ps.end());
+		RightPlotPointer()->pdl[ir].ps.clear();
+		RightPlotPointer()->pdl[ir].ps.assign(fig2setting.ps.begin(),fig2setting.ps.end());
 		RightPlotPointer()->Invalidate();
 	}
 }
@@ -1425,10 +1053,10 @@ afx_msg LRESULT CMainFrame::OnMessageSwitchFigure(WPARAM wParam, LPARAM lParam)
 	
 	CString str((wchar_t*)wParam);
 
-	this->RightPlotPointer()->clear();
-	this->RightPlotPointer()->pd.ReadFile(str);
-	this->RightPlotPointer()->updatePlotRange();
-	this->RightPlotPointer()->Invalidate();
+	//this->RightPlotPointer()->clear();
+	//this->RightPlotPointer()->pd.ReadFile(str);
+	//this->RightPlotPointer()->updatePlotRange();
+	//this->RightPlotPointer()->Invalidate();
 	
 	return 0;
 }

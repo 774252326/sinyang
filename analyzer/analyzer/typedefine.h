@@ -113,3 +113,26 @@ void mwriteini(wchar_t *fn, const anp &p1, const cvp &p2, const sap &p3 );
 void copyfs(const figspec &fsi, figspec & fso);
 
 double intgQ(std::vector<double> &x, std::vector<double> &y, double xmin, double xmax, double xUpLim);
+
+template <typename T>
+void UpdateRange( const std::vector<T> &x, T &xmin, T &xmax, T gapPercent=0, bool bLocalRange=false)
+{
+	auto resultx=std::minmax_element(x.begin(),x.end());
+	T tmin=*resultx.first;
+	T tmax=*resultx.second;
+	
+	T iv=tmax-tmin;
+	iv*=gapPercent;
+	tmin-=iv;
+	tmax+=iv;
+	if(bLocalRange||xmin>tmin)
+		xmin=tmin;
+	if(bLocalRange||xmax<tmax)
+		xmax=tmax;
+
+	if(xmin==xmax){
+		xmin-=1;
+		xmax+=1;
+	}
+
+}

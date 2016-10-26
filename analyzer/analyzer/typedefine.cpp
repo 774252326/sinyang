@@ -16,7 +16,7 @@ void mreadini(wchar_t *fn, anp &p1, cvp &p2, sap &p3 )
 	p3.saplist.clear();
 
 	if(!ifs.bad()){
-		
+
 		ifs>>p1.analysistype
 			>>p1.calibrationfactortype
 			>>p1.calibrationfactor
@@ -40,7 +40,7 @@ void mreadini(wchar_t *fn, anp &p1, cvp &p2, sap &p3 )
 
 		ifs.close();
 
-		
+
 	}
 }
 
@@ -130,3 +130,4 @@ double intgQ(std::vector<double> &x, std::vector<double> &y, double xmin, double
 
 	return ar;
 }
+
