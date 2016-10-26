@@ -8,6 +8,14 @@
 #include "plot\PlotWnd.h"
 #include <vector>
 
+
+#define PW_LAST 0x01
+#define PW_SHOW_ALL 0x02
+#define PW_INIT 0x04
+
+
+
+
 class CanalyzerView : public CView
 {
 protected: // create from serialization only

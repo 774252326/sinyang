@@ -69,6 +69,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_UPDATE_COMMAND_UI(ID_FILE_OPEN, &CMainFrame::OnUpdateFileOpen)
 	ON_WM_MOVE()
 	//ON_MESSAGE(MESSAGE_UPDATE_DOL, &CMainFrame::OnMessageUpdateDol)
+	ON_MESSAGE(MESSAGE_WAIT_RESPONSE, &CMainFrame::OnMessageWaitResponse)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -87,6 +88,7 @@ CMainFrame::CMainFrame()
 	, pWriteA(NULL)
 	, pst(stop)
 	, userIndex(-1)
+	, wd(NULL)
 {
 	// TODO: add member initialization code here
 	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_OFF_2007_BLUE);
@@ -590,6 +592,8 @@ void CMainFrame::OnAnalysisStartanalysis()
 	//pa1->cba=this->GetCaptionBar();
 	pa1->ol=this->GetOutputWnd()->GetListCtrl();
 	pa1->psta=&pst;
+	//pa1->wd=wd;
+	pa1->mf=this;
 	//
 
 	//
@@ -889,3 +893,16 @@ void CMainFrame::OnMove(int x, int y)
 //
 //	return 0;
 //}
+
+afx_msg LRESULT CMainFrame::OnMessageWaitResponse(WPARAM wParam, LPARAM lParam)
+{
+
+	wd=new WaitDlg();
+	wd->pst=&pst;
+	wd->Create(IDD_DIALOG_WAIT);
+	wd->ShowWindow(SW_SHOW);
+
+
+
+	return 0;
+}

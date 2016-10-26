@@ -46,9 +46,10 @@ void CVParametersPage::DoDataExchange(CDataExchange* pDX)
 	DDV_MinMaxDouble(pDX,para.scanrate,0,DBL_MAX);
 
 	DDX_Text(pDX, IDS_EDIT_NO_OF_CYCLES, para.noofcycles);
-	DDV_MinMaxInt(pDX,para.noofcycles,1,50);
+	DDV_MinMaxInt(pDX,para.noofcycles,0,50);
 
 	DDX_Text(pDX, IDS_EDIT_VARIATION_TOLERANCE, para.variationtolerance);
+	DDV_MinMaxDouble(pDX,para.rotationrate,0,DBL_MAX);
 
 	DDX_Text(pDX, IDS_EDIT_ROTATION_RATE, para.rotationrate);
 	DDV_MinMaxDouble(pDX,para.rotationrate,0,DBL_MAX);

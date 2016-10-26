@@ -15,15 +15,15 @@ IMPLEMENT_DYNCREATE(CanalyzerViewL, CanalyzerView)
 		// Standard printing commands
 
 		ON_MESSAGE(MESSAGE_UPDATE_RAW, &CanalyzerViewL::OnMessageUpdateRaw)
-//		ON_WM_TIMER()
-//		ON_COMMAND(ID_ANALYSIS_STARTANALYSIS, &CanalyzerViewL::OnAnalysisStartanalysis)
+		//		ON_WM_TIMER()
+		//		ON_COMMAND(ID_ANALYSIS_STARTANALYSIS, &CanalyzerViewL::OnAnalysisStartanalysis)
 	END_MESSAGE_MAP()
 
 
 	CanalyzerViewL::CanalyzerViewL(void)
 		//: timer(0)
 	{
-		
+
 	}
 
 
@@ -37,11 +37,7 @@ IMPLEMENT_DYNCREATE(CanalyzerViewL, CanalyzerView)
 
 		// TODO: Add your specialized code here and/or call the base class
 
-		//CMainFrame *mf=(CMainFrame*)(GetParentFrame());	
-
-		//::SendMessage(mf->GetOutputWnd()->GetSafeHwnd(),MESSAGE_UPDATE_DOL,(WPARAM)true,NULL);
-
-		::SendMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_RAW,NULL,NULL);
+		::SendMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_RAW,(WPARAM)PW_INIT,NULL);
 
 	}
 
@@ -50,25 +46,21 @@ IMPLEMENT_DYNCREATE(CanalyzerViewL, CanalyzerView)
 	{
 		CanalyzerDoc* pDoc = GetDocument();
 
-				CSingleLock singleLock(&(pDoc->m_CritSection));
+		CSingleLock singleLock(&(pDoc->m_CritSection));
 		singleLock.Lock();
 
 		if (singleLock.IsLocked())  // Resource has been locked
 		{
-
-	
-
-		//CMainFrame *mf=(CMainFrame*)(GetParentFrame());
-
-		//pdl.clear();
-		//UINT flg=RawData2PlotDataList(pDoc->raw, mf->GetOutputWnd()->dol, pw.GetPlotSpec()->winbkC, pdl);
-		UINT flg=RawData2PlotDataList(pDoc->raw,pDoc->dol,pw.GetPlotSpec()->winbkC, pdl);
-		// Now that we are finished, 
+			UINT flg=RawData2PlotDataList(pDoc->raw,pDoc->dol,pw.GetPlotSpec()->winbkC, pdl);
+			// Now that we are finished, 
 			// unlock the resource for others.
 			singleLock.Unlock();
 		}
 
-		::PostMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_VIEW,(WPARAM)true,NULL);
+		if(wParam&PW_INIT)
+			wParam=(PW_LAST|PW_SHOW_ALL);
+
+		::PostMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_VIEW,wParam,NULL);
 
 		return 0;
 	}

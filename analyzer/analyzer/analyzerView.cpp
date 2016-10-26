@@ -272,11 +272,11 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 
 				filelist.erase(filelist.begin());
 			}
-			
+
 			CMainFrame *mf=(CMainFrame*)(GetParentFrame());
 
 			::SendMessage(mf->GetOutputWnd()->GetSafeHwnd(),MESSAGE_UPDATE_DOL,NULL,NULL);
-			
+
 		}
 
 
@@ -414,9 +414,9 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 
 	afx_msg LRESULT CanalyzerView::OnMessageUpdateView(WPARAM wParam, LPARAM lParam)
 	{
-		bool blast=wParam;
+		//bool blast=wParam;
 
-		int selecti=UpdateSpinButton(pdl.size(),blast);
+		int selecti=UpdateSpinButton(pdl.size(),wParam&PW_LAST);
 
 		//if(selecti<0){
 		//	//xmin=ymin=-1;
@@ -433,6 +433,10 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		//pw.pdex=&pdl[selecti];
 		pw.selectPIdx=0;
 		pw.bMouseCursor=false;
+
+		if(wParam&PW_SHOW_ALL){
+			pw.ResetRange();
+		}
 
 		pw.SetLegend();
 		pw.Invalidate(FALSE);

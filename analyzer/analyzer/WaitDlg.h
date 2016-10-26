@@ -3,7 +3,16 @@
 
 // WaitDlg dialog
 
-#include "MainFrm.h"
+
+
+
+//#include "filefunc.h"
+
+enum ProcessState{
+	stop,
+	running,
+	pause
+};
 
 
 class WaitDlg : public CDialogEx
@@ -24,4 +33,5 @@ protected:
 public:
 
 	ProcessState *pst;
+	virtual void OnOK();
 };

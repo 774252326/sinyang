@@ -28,30 +28,23 @@ IMPLEMENT_DYNCREATE(CanalyzerViewR, CanalyzerView)
 
 	afx_msg LRESULT CanalyzerViewR::OnMessageUpdateTest(WPARAM wParam, LPARAM lParam)
 	{
-		//CMainFrame *mf=(CMainFrame*)(GetParentFrame());
-		//COutputListA* ol=->GetListCtrl();
-
-
-
-
 		CanalyzerDoc* pDoc = GetDocument();
 
-			CSingleLock singleLock(&(pDoc->m_CritSection));
+		CSingleLock singleLock(&(pDoc->m_CritSection));
 		singleLock.Lock();
 
 		if (singleLock.IsLocked())  // Resource has been locked
 		{
-
-
-		UINT flg=DataOutAList2PlotDataExList(pDoc->dol, pDoc->p1, pw.GetPlotSpec()->winbkC, pdl);
-
-				// Now that we are finished, 
+			UINT flg=DataOutAList2PlotDataExList(pDoc->dol, pDoc->p1, pw.GetPlotSpec()->winbkC, pdl);
+			// Now that we are finished, 
 			// unlock the resource for others.
 			singleLock.Unlock();
 		}
 
+		if(wParam&PW_INIT)
+			wParam=(PW_LAST|PW_SHOW_ALL);
 
-		::PostMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_VIEW,NULL,NULL);
+		::PostMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_VIEW,wParam,NULL);
 		//::SendMessage(mf->GetCaptionBar()->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)str.GetBuffer(),NULL);
 
 
@@ -61,20 +54,13 @@ IMPLEMENT_DYNCREATE(CanalyzerViewR, CanalyzerView)
 
 	afx_msg LRESULT CanalyzerViewR::OnMessageComputeResult(WPARAM wParam, LPARAM lParam)
 	{
-		//CMainFrame *mf=(CMainFrame*)(GetParentFrame());
-		//COutputListA* ol=mf->GetOutputWnd()->GetListCtrl();
-
-
-
 		CanalyzerDoc* pDoc = GetDocument();
 
 		CString str=Compute(pDoc->dol,pDoc->p1,pdl,true);
 
-		//::SendMessage(mf->GetCaptionBar()->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)str.GetBuffer(),NULL);
+		wParam=(PW_LAST|PW_SHOW_ALL);
 
-		//mf->GetCaptionBar()->ShowMessage(str);
-
-		::PostMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_VIEW,NULL,NULL);
+		::PostMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_VIEW,wParam,NULL);
 
 		MessageBox(str);
 
@@ -88,6 +74,5 @@ IMPLEMENT_DYNCREATE(CanalyzerViewR, CanalyzerView)
 
 		// TODO: Add your specialized code here and/or call the base class
 
-
-		::PostMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
+		::PostMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_TEST,(WPARAM)PW_INIT,NULL);
 	}

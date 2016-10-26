@@ -32,3 +32,14 @@ END_MESSAGE_MAP()
 
 
 // WaitDlg message handlers
+
+
+void WaitDlg::OnOK()
+{
+	// TODO: Add your specialized code here and/or call the base class
+
+	*pst=running;
+	
+
+	CDialogEx::OnOK();
+}

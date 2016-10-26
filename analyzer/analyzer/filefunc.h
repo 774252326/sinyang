@@ -8,13 +8,13 @@
 //#include "OutputWnd.h"
 #include "list\OutputListA.h"
 //#include "MainFrm.h"
+//#include "WaitDlg.h"
 
-
-enum ProcessState{
-	stop,
-	running,
-	pause
-};
+//enum ProcessState{
+//	stop,
+//	running,
+//	pause
+//};
 
 typedef struct MYPARA{
 	CanalyzerViewL *leftp;
@@ -28,6 +28,7 @@ typedef struct MYPARA{
 	//pcctB *dataB;
 	//CVPara *p2;
 	//SAPara *p3;
+	//WaitDlg *wd;
 	ProcessState *psta;
 } mypara;
 

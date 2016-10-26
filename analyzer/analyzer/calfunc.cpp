@@ -7,6 +7,8 @@
 #include "struct1\LineSeg.hpp"
 #include "analyzerDoc.h"
 #include "filefunc.h"
+#include "funT1\ComputeQT.h"
+
 
 
 DWORD stp(BYTE step,BYTE stepControl,BYTE plotFilter)
@@ -243,22 +245,40 @@ UINT ComputeStateData(
 						return 1;
 
 					VtoAdd=d0.addVolume;
-
-
-
 					return 5;
 				}
 
-				std::vector<double> Ql(p2.noofcycles,0);
+				//std::vector<double> Ql(p2.noofcycles,0);
+				//int tmp1;
+				//if(p2.combochoice==0)
+				//tmp1=ComputeQList(x,y,Ql.data(),Ql.size(),p2.endintegratione,p2.scanrate,p2.lowelimit*.9,p2.highelimit*.9);
+				//else
+				//tmp1=ComputeQListA(x,y,Ql.data(),Ql.size(),p2.endintegratione,p2.startintegratione,p2.scanrate);
 
-				int tmp1;
-				if(p2.combochoice==0)
-					tmp1=ComputeQList(x,y,Ql.data(),Ql.size(),p2.endintegratione,p2.scanrate,p2.lowelimit*.9,p2.highelimit*.9);
-				else
-					tmp1=ComputeQListA(x,y,Ql.data(),Ql.size(),p2.endintegratione,p2.startintegratione,p2.scanrate);
+				////if(tmp1!=0 && tmp1!=3){
+				//if(tmp1<=0){//第rawi步数据不足，即第rawi步未完成第一圈数据时，无法计算积分
+				//	d0.Ar.clear();
+				//	d0.UseIndex=-1;
+				//	dol.push_back(d0);
+				//	outitem=p3t.saplist.front();
+				//	outstep=step;
+				//	return 2;
+				//}
 
-				//if(tmp1!=0 && tmp1!=3){
-				if(tmp1<=0){//第rawi步数据不足，即第rawi步未完成第一圈数据时，无法计算积分
+
+				//d0.Ar.assign(Ql.begin(),Ql.begin()+tmp1);
+
+
+				std::vector<double> Ql;
+				UINT tmp1;
+				if(p2.combochoice==0){
+					tmp1=ComputeQList(x,y,Ql,p2.endintegratione,p2.scanrate,p2.lowelimit*.9,p2.highelimit*.9);
+				}else{
+					tmp1=ComputeQListA(x,y,Ql,p2.endintegratione,p2.startintegratione,p2.scanrate);
+				}
+
+				if(Ql.empty()){
+				//if(tmp1!=0){//第rawi步数据不足，即第rawi步未完成第一圈数据时，无法计算积分
 					d0.Ar.clear();
 					d0.UseIndex=-1;
 					dol.push_back(d0);
@@ -267,8 +287,7 @@ UINT ComputeStateData(
 					return 2;
 				}
 
-				//d0.Ar.assign(Ql.begin(),Ql.end());	
-				d0.Ar.assign(Ql.begin(),Ql.begin()+tmp1);	
+				d0.Ar.assign(Ql.begin(),Ql.end());	
 
 				if( (!(stepControl&SC_NO_PLOT))&&
 					(!(stepControl&SC_PLOT_LAST)) ){
@@ -404,7 +423,7 @@ UINT RawData2PlotDataList(const RawData &raw, const std::vector<DataOutA> dol, C
 		int insertN=pdl[pi0].pd.SetLineData(rawtmp,namelist);
 
 		insertN=pdl[pi0].pd.ls.size();
-			pdl[pi0].pd.SetLineColor(insertN,RGB(255,0,0),RGB(0,255,0));
+		pdl[pi0].pd.SetLineColor(insertN,RGB(255,0,0),RGB(80,100,80));
 
 		/////////////////////////////////////////////////////////////
 		pi0++;
@@ -701,7 +720,7 @@ bool GetCalibrationCurve(
 		BYTE bytedummy;
 		double doubledummy;
 		UINT flg=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol,sapitemdummy,bytedummy,doubledummy);
-		
+
 
 		if(flg==0){
 			UINT ff=DataOutAList2PlotDataExList(dol,tmp.p1,bkc,pdl);
@@ -751,46 +770,46 @@ UINT DataOutAList2PlotDataExList(
 	std::vector<CString> cbnamelist;
 
 	if(bReadCb){
-	switch(p1.analysistype){
-	case 2:
+		switch(p1.analysistype){
+		case 2:
 
-		{
+			{
 
-			/////////////////////////plot standrad curve////////////////////////
+				/////////////////////////plot standrad curve////////////////////////
 
-			if(p1.calibrationfactortype!=0){
-				if(	p1.calibrationfactortype!=1
-					||!GetCalibrationCurve(p1.calibrationfilepath,cbpdl)){	
-						return 1;
+				if(p1.calibrationfactortype!=0){
+					if(	p1.calibrationfactortype!=1
+						||!GetCalibrationCurve(p1.calibrationfilepath,cbpdl)){	
+							return 1;
+					}
+					bShowCb=true;
+				}
+			}
+			break;
+
+		case 6:
+		case 10:
+		case 12:
+			{
+				if(!GetCalibrationCurve(p1.calibrationfilepath,cbpdl)){
+					return 1;
 				}
 				bShowCb=true;
+
 			}
+			break;
+
+		default:
+			//return 1;
+			break;
 		}
-		break;
-
-	case 6:
-	case 10:
-	case 12:
-		{
-			if(!GetCalibrationCurve(p1.calibrationfilepath,cbpdl)){
-				return 1;
-			}
-			bShowCb=true;
-
-		}
-		break;
-	
-	default:
-		//return 1;
-		break;
-	}
 
 
-	//if(!cbpdl.empty()){
-	//			for(size_t j=0;j<cbpdl.back().pd.ls.size();j++){
-	//				cbnamelist.push_back(cbpdl.back().pd.ls[j].name);
-	//			}
-	//		}
+		//if(!cbpdl.empty()){
+		//			for(size_t j=0;j<cbpdl.back().pd.ls.size();j++){
+		//				cbnamelist.push_back(cbpdl.back().pd.ls[j].name);
+		//			}
+		//		}
 
 	}
 
@@ -811,8 +830,8 @@ UINT DataOutAList2PlotDataExList(
 	ps.SetPlotBKCr();
 	ps.RefreshWinCr(bkc);
 
-			CString str;
-			str.LoadStringW(IDS_STRING_TEST_CURVE);
+	CString str;
+	str.LoadStringW(IDS_STRING_TEST_CURVE);
 
 
 
@@ -1004,7 +1023,7 @@ bool Compute4(const std::vector<DataOutA> &dol,
 
 	//double k=0,b=0;
 	if(FitLine(x,y,ls,1,0)){
-	//if(rdl.back().FitLine(0,k,b,1,0)){
+		//if(rdl.back().FitLine(0,k,b,1,0)){
 		Ac=-(ITQ-ls.GetB())/ls.GetK();
 		//Ac=-(ITQ-b)/k;
 		SPc=Ac*SPv/SPv0;

@@ -5,6 +5,9 @@
 
 #include "windowsversion.hpp"
 
+#include "StartDlg.hpp"
+#include "MainFrm.h"
+
 sapitemA sapitemdummy;
 BYTE bytedummy;
 double doubledummy;
@@ -61,9 +64,9 @@ CString flistlist[]={
 };
 
 void WaitSecond(ProcessState &waitflg
-	//,int second=-1
+	,int second=-1
 	//,int second=3
-	,int second=0
+	//,int second=0
 	)
 {
 	int interval=1000;
@@ -154,10 +157,16 @@ UINT PROCESS(LPVOID pParam)
 
 	ProcessState *pst=((mypara*)pParam)->psta;
 
+	//WaitDlg *wd=((mypara*)pParam)->wd;
+
 	//COutputListA* ol=ow->GetListCtrl();
 	//ol->DeleteAllItems();
 
+	CMainFrame *mf=((mypara*)pParam)->mf;
+
 	COutputListA* ol=((mypara*)pParam)->ol;
+
+
 
 	CanalyzerDoc* pDoc=lv->GetDocument();
 
@@ -197,7 +206,23 @@ UINT PROCESS(LPVOID pParam)
 	//::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(v2a),NULL);
 
 	*pst=pause;
+
+	//wd=new WaitDlg();
+	//wd->pst=pst;
+	//wd->Create(IDD_DIALOG_WAIT);
+	//wd->ShowWindow(SW_SHOW);
+
+	::SendMessage(mf->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,NULL,NULL);
+
 	WaitSecond(*pst);
+
+
+	if(mf->wd!=NULL){
+		mf->wd->ShowWindow(SW_HIDE);
+		delete mf->wd;
+		mf->wd=NULL;
+	}
+
 	/////////////////////////////////////////
 	{		
 		//TCHAR szFilters[]= _T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||");

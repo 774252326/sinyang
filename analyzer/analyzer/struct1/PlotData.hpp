@@ -224,18 +224,39 @@ public:
 
 			float rgbi[3];		
 
-			for(size_t i=si;i<lss;i++){
+			//for(size_t i=si;i<lss;i++){
 
-				rgbi[0]=xRescale(i,si,lss-1,rgb0[0],rgb1[0]);
-				rgbi[1]=xRescale(i,si,lss-1,rgb0[1],rgb1[1]);
-				rgbi[2]=xRescale(i,si,lss-1,rgb0[2],rgb1[2]);
+			//	rgbi[0]=xRescale(i,si,lss-1,rgb0[0],rgb1[0]);
+			//	rgbi[1]=xRescale(i,si,lss-1,rgb0[1],rgb1[1]);
+			//	rgbi[2]=xRescale(i,si,lss-1,rgb0[2],rgb1[2]);
 
-				ls[i].colour=GetRGB(rgbi);
+			//	ls[i].colour=GetRGB(rgbi);
 
+			//	ls[i].dotSize=dotSize;
+			//	ls[i].lineType=lineType;
+			//	ls[i].smoothLine=smoothType;
+			//}
+
+			//////////////////////////////////////////////
+			for(size_t i=si;i<lss-1;i++){
+
+				//rgbi[0]=xRescale(i,si,lss-1,rgb0[0],rgb1[0]);
+				//rgbi[1]=xRescale(i,si,lss-1,rgb0[1],rgb1[1]);
+				//rgbi[2]=xRescale(i,si,lss-1,rgb0[2],rgb1[2]);
+
+				//ls[i].colour=GetRGB(rgbi);
+
+
+				ls[i].colour=c0;
 				ls[i].dotSize=dotSize;
 				ls[i].lineType=lineType;
 				ls[i].smoothLine=smoothType;
 			}
+
+							ls[lss-1].colour=c1;
+				ls[lss-1].dotSize=dotSize;
+				ls[lss-1].lineType=lineType;
+				ls[lss-1].smoothLine=smoothType;
 
 		}
 

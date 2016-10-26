@@ -16,7 +16,7 @@
 
 #include "filefunc.h"
 
-
+#include "WaitDlg.h"
 
 
 class CMainFrame : public CFrameWndEx
@@ -120,6 +120,9 @@ public:
 
 	//afx_msg LRESULT OnMessageUpdateDol(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnMove(int x, int y);
+	WaitDlg *wd;
+protected:
+	afx_msg LRESULT OnMessageWaitResponse(WPARAM wParam, LPARAM lParam);
 };
 
 

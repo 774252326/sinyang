@@ -291,12 +291,25 @@ public:
 	};
 
 	bool EndFlag(size_t nCycle, double tolarance) const{
-		if( Ar.size()>=nCycle || (Ar.size()>1 && VarianceStd(Ar)<tolarance) ){
-			
-			TRACE("\nv=%g\n",VarianceStd(Ar));
-			return true;//step should end
+		//if( Ar.size()>=nCycle || (Ar.size()>1 && VarianceStd(Ar)<tolarance) ){
+		//	
+		//	TRACE("\nv=%g\n",VarianceStd(Ar));
+		//	return true;//step should end
+		//}
+		//return false;//step should continue
+
+		///////////////////////////////////////////////////////////
+
+		
+
+		if( (nCycle>0 && Ar.size()>=nCycle) 
+			|| (Ar.size()>1 && abs(Ar[Ar.size()-2]/Ar.back()-1)<tolarance)
+			){
+				return true;
 		}
-		return false;//step should continue
+
+		return false;
+
 	};
 
 	///////////////////////////////////set data /////////////////////////////////////////
