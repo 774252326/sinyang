@@ -12,6 +12,7 @@
 //#include "plotdlg.h"
 #include "dlg1.h"
 #include "pcct.h"
+#include "colormapT.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -58,7 +59,7 @@ static UINT indicators[] =
 
 CMainFrame::CMainFrame()
 	: m_bSplitterCreated(FALSE)
-	, tflg(false)
+	//, tflg(false)
 {
 	// TODO: add member initialization code here
 	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_VS_2008);
@@ -146,10 +147,6 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	DockPane(&m_wndOutput);
 
 	
-			//////////////////////////////////////////////
-	this->ShowPane((CBasePane*)&m_wndOutput,tflg,false,false);
-	/////////////////////////////////////////////
-
 
 	// Enable toolbar and docking window menu replacement
 	//EnablePaneMenu(TRUE, ID_VIEW_CUSTOMIZE, strCustomize, ID_VIEW_TOOLBAR);
@@ -479,8 +476,7 @@ void CMainFrame::OnSize(UINT nType, int cx, int cy)
 	//CRect vrect;
 	//if(pView->GetSafeHwnd())
 	//	pView->GetWindowRect(&vrect);
-	if(m_wndOutput.GetSafeHwnd())
-		tflg=m_wndOutput.IsVisible();
+
 
 	//int h;
 
@@ -531,7 +527,9 @@ void CMainFrame::OnFileOpen()
 	{
 
 		CString m_filePath=fileDlg.GetPathName();
-		CString folderpath=fileDlg.GetFolderPath();
+		//CString folderpath=fileDlg.GetFolderPath();
+		CString folderpath=m_filePath.Left(m_filePath.ReverseFind('\\'));
+
 
 		//CString m_filePath=L"C:\\Users\\r8anw2x\\Dropbox\\W\\data\\a.txt";
 		//CString folderpath=L"C:\\Users\\r8anw2x\\Dropbox\\W\\data";
@@ -557,6 +555,9 @@ void CMainFrame::OnFileOpen()
 
 		std::vector<double> ar;
 
+		plotspec ps1;
+
+
 		for(size_t i=0;i<filelist.size();i++){
 			pcct dt1;
 			dt1.readFile(filelist[i]);
@@ -564,7 +565,13 @@ void CMainFrame::OnFileOpen()
 			dt1.AR=dt1.intg(0.8);
 			ar.push_back(dt1.AR);
 
-			( (dlg1*)m_wndSplitter.GetPane(0,0) )->plot2d(dt1.potential,dt1.current,dt1.label[0],dt1.label[1],dt1.FileName);
+			ps1.colour=genColor( genColorvFromIndex<float>( i ) ) ;
+			ps1.dotSize=-1;
+			ps1.name=dt1.FileName;
+			ps1.showLine=true;
+			ps1.smoothLine=0;
+
+			( (dlg1*)m_wndSplitter.GetPane(0,0) )->plot2d(dt1.potential,dt1.current,ps1,dt1.label[0],dt1.label[1]);
 
 			m_wndOutput.InsertListCtrl(i,dt1.FileName,dt1.AR,true);
 
@@ -583,7 +590,13 @@ void CMainFrame::OnFileOpen()
 			//pppty.nl.push_back(sstr);
 		}			
 
-		( (dlg1*)m_wndSplitter.GetPane(0,1) )->plot2d(spr,ar,L"suppressor(ml)",L"Ratio of Charge",L"Ar/Ar0");
+		ps1.colour=red;
+		ps1.dotSize=3;
+		ps1.name=L"Ar/Ar0";
+		ps1.showLine=true;
+		ps1.smoothLine=1;
+
+		( (dlg1*)m_wndSplitter.GetPane(0,1) )->plot2d(spr,ar,ps1,L"suppressor(ml)",L"Ratio of Charge");
 
 	}
 }
@@ -638,13 +651,14 @@ void CMainFrame::OnUpdateViewPro(CCmdUI *pCmdUI)
 void CMainFrame::OnViewAnalysisProgress()
 {
 	// TODO: Add your command handler code here
-		tflg=!tflg;		
-	this->ShowPane((CBasePane*)&m_wndOutput,tflg,false,false);
+		//tflg=!tflg;		
+		//tflg=m_wndOutput.IsVisible();
+	this->ShowPane((CBasePane*)&m_wndOutput,!m_wndOutput.IsVisible(),false,false);
 }
 
 
 void CMainFrame::OnUpdateViewAnalysisProgress(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->SetCheck(tflg);
+	pCmdUI->SetCheck(m_wndOutput.IsVisible());
 }

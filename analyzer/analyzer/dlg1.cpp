@@ -10,8 +10,15 @@
 //#include "../../funT/calgridT.h"
 #include "xRescaleT.h"
 #include "calgridT.h"
-#include "colormap.h"
+#include "colormapT.h"
+
+#include "../../W/funT/splineT.h"
+#include "../../W/funT/splintT.h"
+#include "CSpline.cpp"
 // dlg1
+
+//void splintA(const std::vector<double> &xa, const std::vector<double> &ya, const std::vector<int> &x, std::vector<int> &y);
+
 
 IMPLEMENT_DYNCREATE(dlg1, CFormView)
 
@@ -74,16 +81,7 @@ void dlg1::OnSize(UINT nType, int cx, int cy)
 	CFormView::OnSize(nType, cx, cy);
 
 	// TODO: Add your message handler code here
-
-	//int gap=50;
-	//CRect dlgRect(gap,gap,cx-gap,cy-gap);
-
-	//if( GetDlgItem(IDC_PLOT)->GetSafeHwnd()){
-	//	GetDlgItem(IDC_PLOT)->SetWindowPos(NULL, dlgRect.left, dlgRect.top, dlgRect.Width(), dlgRect.Height(),
-	//		SWP_HIDEWINDOW);
-	//	//SWP_SHOWWINDOW);
-	//}
-	//Invalidate();
+	Invalidate();
 
 }
 
@@ -138,15 +136,6 @@ void dlg1::drawRectangle(const CRect &rect, CDC * pDC, COLORREF insidecolor, COL
 	CPen penBlack;
 	penBlack.CreatePen(PS_SOLID, 0, bordercolor);
 	CPen* pOldPen = pDC->SelectObject(&penBlack);
-
-	// get our client rectangle
-
-	//CRect rect;
-	//GetClientRect(rect);
-
-	// shrink our rect 20 pixels in each direction
-
-	//rect.DeflateRect(20, 20);
 
 	// draw a thick black rectangle filled with blue
 
@@ -436,9 +425,9 @@ void dlg1::updatePlotRange(const std::vector<double> &x, const std::vector<doubl
 	tmin-=iv*pct;
 	tmax+=iv*pct;
 
-	if(flg||xmin>tmin||xlist.size()==1)
+	if(flg||xmin>tmin)
 		xmin=tmin;
-	if(flg||xmax<tmax||xlist.size()==1)
+	if(flg||xmax<tmax)
 		xmax=tmax;
 
 
@@ -451,9 +440,9 @@ void dlg1::updatePlotRange(const std::vector<double> &x, const std::vector<doubl
 	tmax+=iv*pct;
 
 
-	if(flg||ymin>tmin||ylist.size()==1)
+	if(flg||ymin>tmin)
 		ymin=tmin;
-	if(flg||ymax<tmax||ylist.size()==1)
+	if(flg||ymax<tmax)
 		ymax=tmax;
 }
 
@@ -465,16 +454,9 @@ void dlg1::OnPaint()
 
 
 	/////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-
 	//CRect plotrect;
 	//GetPlotRect(plotrect);
 	////GetDlgItem(IDC_PLOT)->GetWindowRect(&plotrect);
-
-
 	//if( !xlist.empty() && !ylist.empty() ){
 	//	if(!plotrect.IsRectEmpty()){
 
@@ -504,7 +486,6 @@ void dlg1::OnPaint()
 
 	//	}
 	//}
-
 	////////////////////////////////////////////////////////////////////////////////////
 
 	CDC dcMem;                                                  //用于缓冲作图的内存DC
@@ -519,32 +500,33 @@ void dlg1::OnPaint()
 	CRect plotrect;
 	GetPlotRect(plotrect);
 
-	if( !xlist.empty() && !ylist.empty() ){
-		if(!plotrect.IsRectEmpty()){
+	//if( !xlist.empty() && !ylist.empty() ){
+	if(!plotrect.IsRectEmpty() && !ps.empty()){
 
-			DrawXYAxis(plotrect,&dcMem);
+		DrawXYAxis(plotrect,&dcMem);
 
-			CRect mainrt;
-			CRgn rgn;
-			rgn.CreateRectRgnIndirect(&plotrect);	
-			dcMem.GetClipBox(&mainrt);
-			dcMem.SelectClipRgn(&rgn);
-			//clock_t t=clock();
+		CRect mainrt;
+		CRgn rgn;
+		rgn.CreateRectRgnIndirect(&plotrect);	
+		dcMem.GetClipBox(&mainrt);
+		dcMem.SelectClipRgn(&rgn);
+		//clock_t t=clock();
 
-			//DrawPoint(plotrect,&dcMem,0);
-			DrawCurve(plotrect,&dcMem);
+		//DrawPoint(plotrect,&dcMem,0);
+		//DrawCurve(plotrect,&dcMem);
+		DrawCurveA(plotrect,&dcMem);
 
-			//TRACE("%dms\n",clock()-t);
-			//CString str;
-			//str.Format(L"%dms\n",clock()-t);
-			//AfxMessageBox(str);
-			rgn.SetRectRgn(&mainrt);
-			dcMem.SelectClipRgn(&rgn);
+		//TRACE("%dms\n",clock()-t);
+		//CString str;
+		//str.Format(L"%dms\n",clock()-t);
+		//AfxMessageBox(str);
+		rgn.SetRectRgn(&mainrt);
+		dcMem.SelectClipRgn(&rgn);
 
-			CRect legendrect=DrawLegend1( CRect(plotrect.right-plotrect.Width()/4,plotrect.top,plotrect.right,plotrect.top+plotrect.Height()/4), &dcMem);
+		CRect legendrect=DrawLegend1( CRect(plotrect.right-plotrect.Width()/4,plotrect.top,plotrect.right,plotrect.top+plotrect.Height()/4), &dcMem);
 
-		}
 	}
+	//}
 
 
 	dc.BitBlt(0,0,rect.Width(),rect.Height(),&dcMem,0,0,SRCCOPY);//将内存DC上的图象拷贝到前台
@@ -556,16 +538,97 @@ void dlg1::OnPaint()
 
 
 
+//
+//void dlg1::plot2d(const std::vector<double> &x, const std::vector<double> &y, const CString &xla, const CString &yla )
+//{
+//	if(x.size()!=y.size())
+//		return;
+//
+//
+//	//xlist.push_back(x);
+//	//ylist.push_back(y);
+//
+//	xll.resize(xll.size()+x.size());
+//	std::copy_backward(x.begin(),x.end(),xll.end());
+//	yll.resize(yll.size()+y.size());
+//	std::copy_backward(y.begin(),y.end(),yll.end());
+//	ll.push_back(x.size());
+//
+//	CString str;
+//	str.Format(L"%d",clist.size());
+//	names.push_back(str);
+//
+//	clist.push_back( genColor( genColorvFromIndex<float>( clist.size() ) ) );
+//
+//	updatePlotRange(x,y,(ll.size()==1));
+//	xlabel=xla;
+//	ylabel=yla;
+//
+//	Invalidate();
+//}
 
-void dlg1::plot2d(const std::vector<double> &x, const std::vector<double> &y, const CString &xla, const CString &yla )
+
+//void dlg1::plot2d(const std::vector<double> &x, const std::vector<double> &y, const CString &xla, const CString &yla, const CString &title )
+//{
+//	if(x.size()!=y.size())
+//		return;
+//
+//	//xlist.push_back(x);
+//	//ylist.push_back(y);
+//
+//	xll.resize(xll.size()+x.size());
+//	std::copy_backward(x.begin(),x.end(),xll.end());
+//	yll.resize(yll.size()+y.size());
+//	std::copy_backward(y.begin(),y.end(),yll.end());
+//	ll.push_back(x.size());
+//	names.push_back(title);
+//
+//	clist.push_back( genColor( genColorvFromIndex<float>( clist.size() ) ) );
+//
+//	updatePlotRange(x,y,(ll.size()==1));
+//	xlabel=xla;
+//	ylabel=yla;
+//
+//	Invalidate();
+//}
+//
+//
+//void dlg1::plot2d(const std::vector<double> &x, const std::vector<double> &y, const CString &xla, const CString &yla, const CString &title, const int &LineStl )
+//{
+//	if(x.size()!=y.size())
+//		return;
+//
+//	//xlist.push_back(x);
+//	//ylist.push_back(y);
+//
+//	xll.resize(xll.size()+x.size());
+//	std::copy_backward(x.begin(),x.end(),xll.end());
+//	yll.resize(yll.size()+y.size());
+//	std::copy_backward(y.begin(),y.end(),yll.end());
+//	ll.push_back(x.size());
+//
+//
+//	names.push_back(title);
+//
+//	clist.push_back( genColor( genColorvFromIndex<float>( clist.size() ) ) );
+//
+//	updatePlotRange(x,y,(ll.size()==1));
+//
+//	xlabel=xla;
+//	ylabel=yla;
+//	LineStyle.push_back(LineStl);
+//
+//	Invalidate();
+//}
+
+
+void dlg1::plot2d(const std::vector<double> &x, const std::vector<double> &y, const plotspec &plotsp, const CString &xla, const CString &yla)
 {
 	if(x.size()!=y.size())
-		return;
-	//std::vector<double> x0(x);
-	//std::vector<double> y0(y);
+	return;
 
-	xlist.push_back(x);
-	ylist.push_back(y);
+	//xlist.push_back(x);
+	//ylist.push_back(y);
 
 	xll.resize(xll.size()+x.size());
 	std::copy_backward(x.begin(),x.end(),xll.end());
@@ -573,50 +636,15 @@ void dlg1::plot2d(const std::vector<double> &x, const std::vector<double> &y, co
 	std::copy_backward(y.begin(),y.end(),yll.end());
 	ll.push_back(x.size());
 
-	CString str;
-	str.Format(L"%d",clist.size());
-	names.push_back(str);
+	ps.push_back(plotsp);
 
+	updatePlotRange(x,y,(ll.size()==1));
 
-	clist.push_back( genColor( genColorvFromIndex( clist.size() ) ) );
-
-	updatePlotRange(x,y);
 	xlabel=xla;
 	ylabel=yla;
 
 	Invalidate();
 }
-
-
-void dlg1::plot2d(const std::vector<double> &x, const std::vector<double> &y, const CString &xla, const CString &yla, const CString &title )
-{
-	if(x.size()!=y.size())
-		return;
-	//std::vector<double> x0(x);
-	//std::vector<double> y0(y);
-
-	xlist.push_back(x);
-	ylist.push_back(y);
-
-	xll.resize(xll.size()+x.size());
-	std::copy_backward(x.begin(),x.end(),xll.end());
-	yll.resize(yll.size()+y.size());
-	std::copy_backward(y.begin(),y.end(),yll.end());
-	ll.push_back(x.size());
-
-	//CString str;
-	//str.Format(L"%d",clist.size());
-	names.push_back(title);
-
-	clist.push_back( genColor( genColorvFromIndex( clist.size() ) ) );
-
-	updatePlotRange(x,y);
-	xlabel=xla;
-	ylabel=yla;
-
-	Invalidate();
-}
-
 
 void dlg1::OnMouseMove(UINT nFlags, CPoint point)
 {
@@ -624,11 +652,9 @@ void dlg1::OnMouseMove(UINT nFlags, CPoint point)
 
 
 	// Check if we have captured the mouse
-	if (GetCapture()==this && !xlist.empty())
+	if (GetCapture()==this && !ps.empty())
 	{
 		CRect plotrect;
-		//GetDlgItem(IDC_PLOT)->GetWindowRect(&plotrect);
-
 		GetPlotRect(plotrect);
 
 		double kx=(double)(point.x-m_mouseDownPoint.x)*(xmax-xmin)/(double)plotrect.Width();
@@ -678,14 +704,10 @@ BOOL dlg1::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 {
 	// TODO: Add your message handler code here and/or call default
 	CRect plotrect;
-	//GetDlgItem(IDC_PLOT)->GetWindowRect(&plotrect);
-
 	GetPlotRect(plotrect);
-
 	ScreenToClient(&pt);
 
-
-	if(!xlist.empty()){
+	if(!ps.empty()){
 		double x=xRescale(pt.x, plotrect.left, plotrect.right, xmin, xmax);
 		double y=xRescale(pt.y, plotrect.bottom, plotrect.top, ymin, ymax);
 
@@ -766,14 +788,14 @@ CRect dlg1::DrawLegend(CRect rect, CDC* pDC)
 	//pDC->SetBkColor(white);
 	//pDC->SetBkMode(TRANSPARENT);
 
-	for(size_t i=0;i<names.size();i++){
+	for(size_t i=0;i<ps.size();i++){
 
 		//pen.CreatePen(PS_SOLID, 1, clist[i]);
 		//pOldPen=pDC->SelectObject(&pen);
 		//oc=pDC->SetTextColor(clist[i]);
 
 		//oc=pDC->SetTextColor(black);
-		sz=pDC->GetTextExtent(names[i]);
+		sz=pDC->GetTextExtent(ps[i].name);
 
 		if(sz.cx>rectsz.cx)
 			rectsz.cx=sz.cx;
@@ -814,19 +836,19 @@ CRect dlg1::DrawLegend(CRect rect, CDC* pDC)
 	pDC->SetBkColor(white);
 	pDC->SetBkMode(TRANSPARENT);
 
-	for(size_t i=0;i<names.size();i++){
+	for(size_t i=0;i<ps.size();i++){
 
-		pen.CreatePen(PS_SOLID, 1, clist[i]);
+		pen.CreatePen(PS_SOLID, 1, ps[i].colour);
 		pOldPen=pDC->SelectObject(&pen);
 		//oc=pDC->SetTextColor(clist[i]);
 
 		oc=pDC->SetTextColor(black);
-		sz=pDC->GetTextExtent(names[i]);
+		sz=pDC->GetTextExtent(ps[i].name);
 
 		pDC->MoveTo(textLocate.x,textLocate.y+sz.cy/2);
 		pDC->LineTo(textLocate.x+lc-gap,textLocate.y+sz.cy/2);	
 
-		pDC->TextOutW(textLocate.x+lc,textLocate.y,names[i]);
+		pDC->TextOutW(textLocate.x+lc,textLocate.y,ps[i].name);
 
 		textLocate.y+=sz.cy;
 
@@ -857,14 +879,13 @@ CRect dlg1::DrawLegend1(CRect rect, CDC* pDC)
 	CString str;
 	CPen * pOldPen;
 	CSize sz;
-	//CRect newrect=rect;
 
 	CSize rectsz(0,0);
 	CPen pen;
 
 	int metricH;
-	if(rect.Height()>names.size()){
-		metricH=rect.Height()/names.size();
+	if(rect.Height()>ps.size()){
+		metricH=rect.Height()/ps.size();
 		if(metricH>15)
 			metricH=15;
 	}
@@ -872,12 +893,10 @@ CRect dlg1::DrawLegend1(CRect rect, CDC* pDC)
 		metricH=1;
 	}
 
-	//int labelH=20;
-	int lc=20;
+	int lc=15;
 	int gap=2;
-	CPoint textLocate(rect.right-gap,rect.top);
-	//int lcs=lc-2;
-	//double gridi,XMAX,XMIN,YMAX,YMIN;
+	CPoint textLocate;
+	CPoint topright(rect.right,rect.top);
 	int tmp;
 	COLORREF oc;
 	CString fontName=L"Arial";
@@ -903,71 +922,54 @@ CRect dlg1::DrawLegend1(CRect rect, CDC* pDC)
 
 	pOldFont=pDC->SelectObject(&font);	
 
-
-	//pDC->SetBkColor(white);
-	//pDC->SetBkMode(TRANSPARENT);
-
-	for(size_t i=0;i<names.size();i++){
-
-		//pen.CreatePen(PS_SOLID, 1, clist[i]);
-		//pOldPen=pDC->SelectObject(&pen);
-		//oc=pDC->SetTextColor(clist[i]);
-
-		//oc=pDC->SetTextColor(black);
-		sz=pDC->GetTextExtent(names[i]);
-
+	for(size_t i=0;i<ps.size();i++){
+		sz=pDC->GetTextExtent(ps[i].name);
 		if(sz.cx>rectsz.cx)
 			rectsz.cx=sz.cx;
-
-		//pDC->TextOutW(textLocate.x-sz.cx,textLocate.y,names[i]);
-
-		//pDC->MoveTo(textLocate.x-sz.cx-gap,textLocate.y+sz.cy/2);
-		//pDC->LineTo(textLocate.x-sz.cx-lc,textLocate.y+sz.cy/2);
-		textLocate.y+=sz.cy;
-
-		//pDC->SelectObject(pOldPen);
-		//pen.DeleteObject();
-		//pDC->SetTextColor(oc);
+		rectsz.cy+=sz.cy;
 	}
+	rectsz.cx+=lc+gap*3;
 
-	//pDC->SelectObject(pOldFont);
-	//font.DeleteObject();
-
-
-	rectsz.cx+=lc;
-	//rectsz.cy=textLocate.y;
-
-
-	CRect legendrect(textLocate.x-rectsz.cx,rect.top,textLocate.x+1,textLocate.y);
-
-	//return CRect(textLocate.x-rectsz.cx,rect.top,textLocate.x,textLocate.y);
+	CRect borderrect(topright.x-rectsz.cx,topright.y,topright.x,topright.y+rectsz.cy);
+	CRect legendrect(borderrect);
+	legendrect.DeflateRect(gap,0,gap,0);
 
 	////////////////////////////////////////////////////////
 
-	drawRectangle(legendrect,pDC,white,black);
-
+	drawRectangle(borderrect,pDC,white,black);
 
 	textLocate=legendrect.TopLeft();
-
 	pOldFont=pDC->SelectObject(&font);	
 
 
 	pDC->SetBkColor(white);
 	pDC->SetBkMode(TRANSPARENT);
 
-	for(size_t i=0;i<names.size();i++){
-
-		pen.CreatePen(PS_SOLID, 1, clist[i]);
+	for(size_t i=0;i<ps.size();i++){
+		pen.CreatePen(PS_SOLID, 1, ps[i].colour);
 		pOldPen=pDC->SelectObject(&pen);
 		//oc=pDC->SetTextColor(clist[i]);
 
 		oc=pDC->SetTextColor(black);
-		sz=pDC->GetTextExtent(names[i]);
+		sz=pDC->GetTextExtent(ps[i].name);
 
+		if(ps[i].showLine){
 		pDC->MoveTo(textLocate.x,textLocate.y+sz.cy/2);
-		pDC->LineTo(textLocate.x+lc-gap,textLocate.y+sz.cy/2);	
+		pDC->LineTo(textLocate.x+lc,textLocate.y+sz.cy/2);	
+		}
 
-		pDC->TextOutW(textLocate.x+lc,textLocate.y,names[i]);
+		if(ps[i].dotSize==0){
+			pDC->SetPixelV(textLocate.x+lc/2,textLocate.y+sz.cy/2,ps[i].colour);
+		}
+
+		if(ps[i].dotSize>0){
+			CRect prect(0,0,1,1);
+			prect.InflateRect(ps[i].dotSize,ps[i].dotSize);
+			prect.MoveToXY(textLocate.x+lc/2-ps[i].dotSize,textLocate.y+sz.cy/2-ps[i].dotSize);
+			drawRectangle(prect,pDC,ps[i].colour,ps[i].colour);
+		}
+		
+		pDC->TextOutW(textLocate.x+lc+gap,textLocate.y,ps[i].name);
 
 		textLocate.y+=sz.cy;
 
@@ -979,107 +981,175 @@ CRect dlg1::DrawLegend1(CRect rect, CDC* pDC)
 	pDC->SelectObject(pOldFont);
 	font.DeleteObject();
 
-
-	rectsz.cx+=lc;
-
-
-	return CRect(textLocate.x-rectsz.cx,rect.top,textLocate.x,textLocate.y);
+	return borderrect;
 
 }
 
 
 
+//
+//void dlg1::DrawPoint(CRect rect, CDC * pDC, int d)
+//{
+//	std::vector<CPoint> pointlist;
+//
+//	if(d>0){
+//		CRect prect(0,0,2*d,2*d);
+//		CSize ppoc=CSize(d,d);
+//
+//		//for(size_t j=0;j<xlist.size();j++){
+//		//	genPointToPlot(xlist[j],ylist[j],rect,pointlist);
+//		//	for(size_t i=0;i<pointlist.size();i++){
+//		//		prect.MoveToXY(pointlist[i]-ppoc);
+//		//		drawRectangle(prect,pDC,clist[j],clist[j]);
+//		//	}
+//		//}
+//
+//		genPointToPlot(xll,yll,rect,pointlist);
+//		size_t si=0;
+//		for(size_t j=0;j<ll.size();j++){
+//			for(size_t i=0;i<ll[j];i++){
+//				prect.MoveToXY(pointlist[i+si]-ppoc);
+//				drawRectangle(prect,pDC,clist[j],clist[j]);
+//			}
+//			si+=ll[j];
+//		}
+//
+//	}
+//	else{
+//
+//		//for(size_t j=0;j<xlist.size();j++){
+//		//	genPointToPlot(xlist[j],ylist[j],rect,pointlist);
+//		//	for(size_t i=0;i<pointlist.size();i++){
+//		//		pDC->SetPixelV(pointlist[i],clist[j]);					
+//		//	}
+//		//}
+//
+//		genPointToPlot(xll,yll,rect,pointlist);
+//		size_t si=0;
+//		for(size_t j=0;j<ll.size();j++){
+//			for(size_t i=0;i<ll[j];i++){
+//				pDC->SetPixelV(pointlist[i+si],ps[j].colour);	
+//			}
+//			si+=ll[j];
+//		}
+//
+//
+//	}
+//
+//
+//
+//	//	//oc=dc.SetTextColor(clist[j]);
+//	//	//sz=dc.GetTextExtent(dtlist[j].FileName);
+//	//	//MemDC.TextOutW(plotrect.right,plotrect.top+sz.cy*j,dtlist[j].FileName);
+//	//	//dc.SetTextColor(oc);
+//
+//}
+//
+//
+//void dlg1::DrawCurve(CRect rect, CDC* pDC)
+//{
+//	std::vector<CPoint> pointlist;
+//	CPen pen;
+//	CPen * pOldPen;
+//
+//	//for(size_t j=0;j<xlist.size();j++){
+//	//	genPointToPlot(xlist[j],ylist[j],rect,pointlist);
+//	//	pen.CreatePen(PS_SOLID,1,clist[j]);
+//	//	pOldPen=pDC->SelectObject(&pen);
+//	//	pDC->Polyline(pointlist.data(),pointlist.size());
+//	//	//std::vector<BYTE> styl(pointlist.size(),PT_LINETO);
+//	//	//styl[0]=PT_MOVETO;
+//	//	//dc.PolyDraw(pointlist.data(),styl.data(),pointlist.size());
+//	//	pDC->SelectObject(pOldPen);
+//	//	pen.DeleteObject();
+//	//}
+//
+//
+//	genPointToPlot(xll,yll,rect,pointlist);
+//	size_t si=0;
+//	CPoint *pp=pointlist.data();
+//	for(size_t j=0;j<ll.size();j++){
+//		pen.CreatePen(PS_SOLID,1,clist[j]);
+//		pOldPen=pDC->SelectObject(&pen);		
+//		pDC->Polyline(&pp[si],ll[j]);
+//		si+=ll[j];
+//		//std::vector<BYTE> styl(pointlist.size(),PT_LINETO);
+//		//styl[0]=PT_MOVETO;
+//		//dc.PolyDraw(pointlist.data(),styl.data(),pointlist.size());
+//		pDC->SelectObject(pOldPen);
+//		pen.DeleteObject();
+//	}
+//
+//
+//	//////////////////////////////fast///////////////////////////
+//	//genPointToPlot(xll,yll,rect,pointlist);
+//	//pen.CreatePen(PS_SOLID,1,clist[0]);
+//	//pOldPen=pDC->SelectObject(&pen);
+//	//pDC->PolyPolyline(pointlist.data(),ll.data(),ll.size());
+//	////dc.PolyDraw(pointlist.data(),styl.data(),pointlist.size());
+//	//pDC->SelectObject(pOldPen);
+//	//pen.DeleteObject();
+//	//////////////////////////////////////////////////////////////////
+//
+//
+//}
+//
 
-void dlg1::DrawPoint(CRect rect, CDC * pDC, int d)
-{
-	std::vector<CPoint> pointlist;
-
-	if(d>0){
-		CRect prect(0,0,2*d,2*d);
-		CSize ppoc=CSize(d,d);
-
-		//for(size_t j=0;j<xlist.size();j++){
-		//	genPointToPlot(xlist[j],ylist[j],rect,pointlist);
-		//	for(size_t i=0;i<pointlist.size();i++){
-		//		prect.MoveToXY(pointlist[i]-ppoc);
-		//		drawRectangle(prect,pDC,clist[j],clist[j]);
-		//	}
-		//}
-
-		genPointToPlot(xll,yll,rect,pointlist);
-		size_t si=0;
-		for(size_t j=0;j<ll.size();j++){
-			for(size_t i=0;i<ll[j];i++){
-				prect.MoveToXY(pointlist[i+si]-ppoc);
-				drawRectangle(prect,pDC,clist[j],clist[j]);
-			}
-			si+=ll[j];
-		}
-
-	}
-	else{
-
-		//for(size_t j=0;j<xlist.size();j++){
-		//	genPointToPlot(xlist[j],ylist[j],rect,pointlist);
-		//	for(size_t i=0;i<pointlist.size();i++){
-		//		pDC->SetPixelV(pointlist[i],clist[j]);					
-		//	}
-		//}
-
-		genPointToPlot(xll,yll,rect,pointlist);
-		size_t si=0;
-		for(size_t j=0;j<ll.size();j++){
-			for(size_t i=0;i<ll[j];i++){
-				pDC->SetPixelV(pointlist[i+si],clist[j]);	
-			}
-			si+=ll[j];
-		}
 
 
-	}
-
-
-
-	//	//oc=dc.SetTextColor(clist[j]);
-	//	//sz=dc.GetTextExtent(dtlist[j].FileName);
-	//	//MemDC.TextOutW(plotrect.right,plotrect.top+sz.cy*j,dtlist[j].FileName);
-	//	//dc.SetTextColor(oc);
-
-}
-
-
-void dlg1::DrawCurve(CRect rect, CDC* pDC)
+void dlg1::DrawCurveA(CRect rect, CDC* pDC)
 {
 	std::vector<CPoint> pointlist;
 	CPen pen;
 	CPen * pOldPen;
 
-	//for(size_t j=0;j<xlist.size();j++){
-	//	genPointToPlot(xlist[j],ylist[j],rect,pointlist);
-	//	pen.CreatePen(PS_SOLID,1,clist[j]);
-	//	pOldPen=pDC->SelectObject(&pen);
-	//	pDC->Polyline(pointlist.data(),pointlist.size());
-	//	//std::vector<BYTE> styl(pointlist.size(),PT_LINETO);
-	//	//styl[0]=PT_MOVETO;
-	//	//dc.PolyDraw(pointlist.data(),styl.data(),pointlist.size());
-	//	pDC->SelectObject(pOldPen);
-	//	pen.DeleteObject();
-	//}
-
 
 	genPointToPlot(xll,yll,rect,pointlist);
 	size_t si=0;
-	CPoint *pp=pointlist.data();
+	CPoint *pp=pointlist.data();	
+
 	for(size_t j=0;j<ll.size();j++){
-		pen.CreatePen(PS_SOLID,1,clist[j]);
-		pOldPen=pDC->SelectObject(&pen);		
-		pDC->Polyline(&pp[si],ll[j]);
+
+		if(ps[j].showLine){
+
+			pen.CreatePen(PS_SOLID,1,ps[j].colour);
+			pOldPen=pDC->SelectObject(&pen);
+
+			if(ps[j].smoothLine==1){
+				DrawSpline(&pp[si],ll[j],rect,pDC);
+			}
+			if(ps[j].smoothLine==2){
+				pDC->PolyBezier(&pp[si],ll[j]);
+			}
+			if(ps[j].smoothLine==0){
+				pDC->Polyline(&pp[si],ll[j]);
+			}
+			
+			pDC->SelectObject(pOldPen);
+			pen.DeleteObject();
+
+		}
+
+
+		if(ps[j].dotSize==0){
+			for(size_t i=0;i<ll[j];i++){
+				pDC->SetPixelV(pointlist[i+si],ps[j].colour);	
+			}
+			//si+=ll[j];
+		}
+		if(ps[j].dotSize>0){
+			CRect prect(0,0,1,1);
+			CSize ppoc=CSize(ps[j].dotSize,ps[j].dotSize);
+			prect.InflateRect(ppoc);
+			for(size_t i=0;i<ll[j];i++){
+				prect.MoveToXY(pointlist[i+si]-ppoc);
+				drawRectangle(prect,pDC,ps[j].colour,ps[j].colour);
+			}
+			//si+=ll[j];
+		}
+
 		si+=ll[j];
-		//std::vector<BYTE> styl(pointlist.size(),PT_LINETO);
-		//styl[0]=PT_MOVETO;
-		//dc.PolyDraw(pointlist.data(),styl.data(),pointlist.size());
-		pDC->SelectObject(pOldPen);
-		pen.DeleteObject();
+
 	}
 
 
@@ -1095,6 +1165,10 @@ void dlg1::DrawCurve(CRect rect, CDC* pDC)
 
 
 }
+
+
+
+
 
 
 void dlg1::OnInitialUpdate()
@@ -1128,8 +1202,6 @@ void dlg1::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 	switch(nChar){
 	case 'f':
-		//this->updatePlotRange(xll,yll,true);
-		//Invalidate();
 		showall();
 		break;
 	default:
@@ -1153,4 +1225,40 @@ void dlg1::showall(void)
 {
 	this->updatePlotRange(xll,yll,true);
 	Invalidate();
+}
+
+void dlg1::DrawSpline( CPoint *lpPoints, int np, CRect rect, CDC * pDC)
+{
+
+	std::vector<double> x(np);
+	std::vector<double> y(np);
+
+	for(int i=0;i<np;i++){
+		x[i]=lpPoints[i].x;
+		y[i]=lpPoints[i].y;
+	}
+
+	//std::vector<int> xx;
+	//for(int j=x.front()+1;j<x.back();j++){
+	//	xx.push_back(j);
+	//}
+	//std::vector<int> yy(xx.size());
+	//splintA(x,y,xx,yy);
+
+	std::vector<CPoint> pr;
+	int j=x.front()+1;
+	if(j<rect.left+1)
+		j=rect.left+1;
+
+	for(;j<x.back() && j<rect.right;j++){
+		pr.push_back(CPoint(j,0));
+	}
+	splintA(x,y,pr);
+
+
+	pDC->Polyline(pr.data(),pr.size());
+	//for(size_t k=0;k<pr.size();k++){
+	//	pDC->SetPixelV(pr[k],pDC->GetDCPenColor());
+	//}
+
 }

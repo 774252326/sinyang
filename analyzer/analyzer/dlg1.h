@@ -3,6 +3,16 @@
 #include <vector>
 #include "atltypes.h"
 
+
+typedef struct PLOTSPEC{
+	COLORREF colour;
+	CString name;
+	int dotSize;
+	bool showLine;
+	int smoothLine;
+} plotspec;
+
+
 // dlg1 form view
 
 class dlg1 : public CFormView
@@ -39,21 +49,23 @@ protected:
 	afx_msg void OnPaint();
 
 public:
-	void plot2d(const std::vector<double> &x, const std::vector<double> &y, const CString &xla, const CString &yla );
-	void plot2d(const std::vector<double> &x, const std::vector<double> &y, const CString &xla, const CString &yla, const CString &title );
-	
+	//void plot2d(const std::vector<double> &x, const std::vector<double> &y, const CString &xla, const CString &yla );
+	////void plot2d(const std::vector<double> &x, const std::vector<double> &y, const CString &xla, const CString &yla, const CString &title );
+	//void plot2d(const std::vector<double> &x, const std::vector<double> &y, const CString &xla, const CString &yla, const CString &title, const int &LineStl );
+	void plot2d(const std::vector<double> &x, const std::vector<double> &y, const plotspec &plotsp, const CString &xla, const CString &yla);
+
 private:
 	double xmin,xmax,ymin,ymax;
 	CString xlabel,ylabel;
-	std::vector< std::vector<double> > xlist;
-	std::vector< std::vector<double> > ylist;
+
+	//std::vector< std::vector<double> > xlist;
+	//std::vector< std::vector<double> > ylist;
 
 	std::vector<double> xll;
 	std::vector<double> yll;
 	std::vector<DWORD> ll;
 
-	std::vector<COLORREF> clist;
-	std::vector<CString> names;
+	std::vector<plotspec> ps;
 
 	void genPointToPlot(const std::vector<double> &px, const std::vector<double> &py, const CRect &rect, std::vector<CPoint> &pointlist);
 	void drawRectangle(const CRect &rect, CDC * pDC, COLORREF insidecolor, COLORREF bordercolor);
@@ -63,11 +75,16 @@ private:
 	CRect DrawLegend(CRect rect, CDC* pDC);
 	CRect DrawLegend1(CRect rect, CDC* pDC);
 	void DrawPoint(CRect rect, CDC * pDC, int d);
-	void DrawCurve(CRect rect, CDC* pDC);	
+	void DrawCurve(CRect rect, CDC* pDC);
+
+	void DrawCurveA(CRect rect, CDC* pDC);
+	void DrawCurveB(CRect rect, CDC* pDC);
+
 	void GetPlotRect(CRect & plotRect);
 
 public:
 	void showall(void);
+	void DrawSpline( CPoint * lpPoints, int np, CRect rect, CDC * pDC);
 };
 
 

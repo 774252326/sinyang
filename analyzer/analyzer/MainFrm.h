@@ -67,7 +67,7 @@ public:
 	afx_msg void OnViewFitwindow();
 	afx_msg void OnViewToolbar32787();
 	afx_msg void OnUpdateViewToolbar32787(CCmdUI *pCmdUI);
-	bool tflg;
+//	bool tflg;
 	afx_msg void OnViewPro();
 	afx_msg void OnUpdateViewPro(CCmdUI *pCmdUI);
 	afx_msg void OnViewAnalysisProgress();
