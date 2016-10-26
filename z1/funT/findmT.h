@@ -245,8 +245,49 @@ T **getlmnD(T *x, T *y, long nd, long *nlmn){
 		return lmn;
 }
 
+template <typename T>
+void restorenx(T **x, long nd, T xmin, T xmax, T *rex){
+	long i;
+	for(i=1;i<=nd;i++){
+		rex[i]=x[i][1]*(xmax-xmin)+xmin;
+	}
+}
 
+template <typename T>
+void reversevt(T *x, long nd){
+	long i;
+	T tmp;
+	for(i=1;i<=nd/2;i++){
+		tmp=x[i];
+		x[i]=x[nd+1-i];
+		x[nd+1-i]=tmp;
+	}
+}
 
+template <typename T>
+void reversemx(T **x, long r, long c, bool rowflag){
+
+	long i,j;
+	T tmp;
+	if(rowflag){/*reverse by row*/
+		for(i=1;i<=r/2;i++){
+			for(j=1;j<=c;j++){
+				tmp=x[i][j];
+				x[i][j]=x[r+1-i][j];
+				x[r+1-i][j]=tmp;
+			}
+		}
+	}
+	else{/*reverse by column*/
+		for(i=1;i<=r;i++){
+			for(j=1;j<=c/2;j++){
+				tmp=x[i][j];
+				x[i][j]=x[i][c+1-j];
+				x[i][c+1-j]=tmp;
+			}
+		}
+	}
+}
 
 
 

@@ -157,12 +157,12 @@ T **getkneepD(T **lmx, long nlmx, T **lmn, long nlmn, long *nk, T xend, T yend, 
 		tmp[nlmx][2]=yend;
 	}
 	else{
-		if(lmn[1][2]<lmx[1][2])/*first local minimum smaller than first local maximum*/
+		if(lmn[1][1]<lmx[1][1])/*first local minimum smaller than first local maximum*/
 			copymx(&lmn[1],nlmn-1,2,tmp);
 		else
 			copymx(&lmn[0],nlmn,2,tmp);
 
-		if(lmn[nlmn][2]<lmx[nlmx][2]){/*last local minimum smaller than last local maximum*/
+		if(lmn[nlmn][1]<lmx[nlmx][1]){/*last local minimum smaller than last local maximum*/
 			tmp[nlmx][1]=xend;
 			tmp[nlmx][2]=yend;
 		}
@@ -198,6 +198,25 @@ T **getkneepD(T **lmx, long nlmx, T **lmn, long nlmn, long *nk, T xend, T yend, 
 
 }
 
+template <typename T>
+T *getkpD(T **lmx, long nlmx, T **lmn, long nlmn, long *nk, T xend, T yend, T thres){
+	T **kmx;
+	kmx=getkneepD<T>(lmx, nlmx, lmn, nlmn, nk, xend, yend, thres);
+	T *kvt;
+	if(nk[0]>=1){
+		kvt=vector<T>(1,nk[0]);
+		long i;
+		for(i=1;i<=nk[0];i++){
+			kvt[i]=kmx[i][1];
+		}
+		return kvt;
+	}
+	else{
+		return NULL;
+	}
+}
+
+
 
 template <typename T>
 T **getelbowpD(T **lmx, long nlmx, T **lmn, long nlmn, long *ne, T xend, T yend, T thres){
@@ -213,12 +232,12 @@ T **getelbowpD(T **lmx, long nlmx, T **lmn, long nlmn, long *ne, T xend, T yend,
 		tmp[nlmn][2]=yend;
 	}
 	else{
-		if(lmx[1][2]<lmn[1][2])/*first local maximum smaller than first local minimum*/
+		if(lmx[1][1]<lmn[1][1])/*first local maximum smaller than first local minimum*/
 			copymx(&lmx[1],nlmx-1,2,tmp);
 		else
 			copymx(&lmx[0],nlmx,2,tmp);
 
-		if(lmx[nlmx][2]<lmn[nlmn][2]){/*last local maximum smaller than last local minimum*/
+		if(lmx[nlmx][1]<lmn[nlmn][1]){/*last local maximum smaller than last local minimum*/
 			tmp[nlmn][1]=xend;
 			tmp[nlmn][2]=yend;
 		}
@@ -254,6 +273,23 @@ T **getelbowpD(T **lmx, long nlmx, T **lmn, long nlmn, long *ne, T xend, T yend,
 
 }
 
+template <typename T>
+T *getepD(T **lmx, long nlmx, T **lmn, long nlmn, long *ne, T xend, T yend, T thres){
+	T **emx;
+	emx=getelbowpD<T>(lmx, nlmx, lmn, nlmn, ne, xend, yend, thres);
+	T *evt;
+	if(ne[0]>=1){
+		evt=vector<T>(1,ne[0]);
+		long i;
+		for(i=1;i<=ne[0];i++){
+			evt[i]=emx[i][1];
+		}
+		return evt;
+	}
+	else{
+		return NULL;
+	}
+}
 
 template <typename T>
 bool chkpt(T **nc, T *xbreak, long nd, T *nlcm, long nlmx, long nlmn, T radius){

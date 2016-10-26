@@ -124,5 +124,9 @@ public:
 	double *nlcm;
 	double *xelbow;
 	long nelbow;
+	double *nx;
+	double *nys;
+	double **lmn;
+	double **lmx;
 };
 

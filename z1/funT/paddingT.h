@@ -53,22 +53,32 @@ T **matrix1(long nrl, long nrh, long ncl, long nch){
 
 
 template <typename T>
-void copyvt(T *ov, long n, T *nv){
+void scalevt(T *ov, long n, T *nv, T k){
 	long i;
 	for( i=1; i<=n; i++){
-		nv[i]=ov[i];
+		nv[i]=k*ov[i];
 	}
+}
+
+template <typename T>
+void copyvt(T *ov, long n, T *nv){
+	scalevt(ov,n,nv,(T)1);
 }
 
 
 template <typename T>
-void copymx(T **om, long r, long c, T **nm){
+void scalemx(T **om, long r, long c, T **nm, T k){
 	long i,j;
 	for( i=1; i<=r; i++ )
 		for( j=1; j<=c; j++ )
-			nm[i][j]=om[i][j];
-
+			nm[i][j]=k*om[i][j];
 }
+
+template <typename T>
+void copymx(T **om, long r, long c, T **nm){
+	scalemx(om,r,c,nm,(T)1);
+}
+
 
 //template <typename T>
 //void renewvt(T * v, long nl, long nh, long nnl, long nnh){

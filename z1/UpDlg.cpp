@@ -69,6 +69,10 @@ IMPLEMENT_DYNAMIC(CUpDlg, CDialog)
 	, nlcm(NULL)
 	, xelbow(NULL)
 	, nelbow(0)
+	, nx(NULL)
+	, nys(NULL)
+	, lmn(NULL)
+	, lmx(NULL)
 {
 
 	m_xbottom = 0.1;
@@ -80,8 +84,8 @@ IMPLEMENT_DYNAMIC(CUpDlg, CDialog)
 	m_ymin = -0.01;
 	m_ymax = 0.0;
 	m_m = 0.1;
-	m_span = 10;
-	m_degree = 2;
+	m_span = 30;
+	m_degree = 1;
 }
 
 CUpDlg::~CUpDlg()
@@ -169,11 +173,13 @@ void CUpDlg::OnPaint()
 				pen.CreatePen(PS_DASH,1,green);			
 				for(i=1;i<=nlmx;i++){
 					DrawVLine(plotrect,&dc,&pen,nxlmx[i]);
+					//DrawVLine(plotrect,&dc,&pen,lmx[i][1]);
 				}
 				pen.DeleteObject();
 				pen.CreatePen(PS_DASH,1,cyan);			
 				for(i=1;i<=nlmn;i++){
 					DrawVLine(plotrect,&dc,&pen,nxlmn[i]);
+					//DrawVLine(plotrect,&dc,&pen,lmn[i][1]);
 				}
 				pen.DeleteObject();
 
@@ -197,17 +203,17 @@ void CUpDlg::OnPaint()
 				//}
 				//pen.DeleteObject();
 				pen.CreatePen(PS_DASH,1,magenta);
-				if(!IsDlgButtonChecked(IDC_CHECK2)){
-					for(i=1;i<=nknee;i++){
-						DrawVLine(plotrect,&dc,&pen,xknee[i]);
-					}
+				//if(!IsDlgButtonChecked(IDC_CHECK2)){
+				for(i=1;i<=nknee;i++){
+					DrawVLine(plotrect,&dc,&pen,xknee[i]);
+				}
 
-				}
-				else{
-					for(i=1;i<=nelbow;i++){
-						DrawVLine(plotrect,&dc,&pen,xelbow[i]);
-					}
-				}
+				//}
+				//else{
+				//for(i=1;i<=nelbow;i++){
+				//DrawVLine(plotrect,&dc,&pen,xelbow[i]);
+				//}
+				//}
 				pen.DeleteObject();
 
 
@@ -293,46 +299,74 @@ void CUpDlg::OnBnClickedButton2()
 			//yknee=vector<double>(1,nknee);
 			//selectvt1(ys,m_n,bk,nknee,yknee);
 			//free_vector(bk,1,m_n);
-			if(!IsDlgButtonChecked(IDC_CHECK2) ){
-				xknee=getkneep(nc,xbreak,nd,&nknee,xp,nlcm,nlmx,nlmn);
-				if(xknee==NULL)
-					AfxMessageBox(L"no knee point! reduce threshold and try again");
+
+
+
+			///////////////////////////////////////////////////
+			//xknee=getkneep(nc,xbreak,nd,&nknee,xp,nlcm,nlmx,nlmn);
+
+
+			//xknee=getkpD(lmx,nlmx,lmn,nlmn,&nknee,nx[nd],nys[nd],xp);
+
+			double **xkm=getkneepD(lmx,nlmx,lmn,nlmn,&nknee,nx[nd],nys[nd],xp);
+			xknee=vector<double>(1,nknee);
+
+
+			if(IsDlgButtonChecked(IDC_CHECK2) ){
+				restorenx(xkm,nknee,-m_xtop,-m_xbottom,xknee);
+				scalevt(xknee,nknee,xknee,-1.0);
 			}
 			else{
-				//xp=nfun( x, y, startind, endind, m_m, a, IsDlgButtonChecked(IDC_CHECK2));
-				//xp=nfun2( x, y, startind, endind, m_m, a, covar, &chisq, IsDlgButtonChecked(IDC_CHECK2));
-				//nfun3(x,y,startind,endind,m_m,a,&chisq, IsDlgButtonChecked(IDC_CHECK2), tmp);
-
-				//bool *bk=vector<bool>(1,m_n);
-
-				//nknee=getpoint4(x,y,m_n,bk,m_m);
-				//nknee=getpoint5(x,y,m_n,bk,m_m,!IsDlgButtonChecked(IDC_CHECK2));
-
-				//xknee=vector<double>(1,nknee);
-				//selectvt1(x,m_n,bk,nknee,xknee);
-				//yknee=vector<double>(1,nknee);
-				//selectvt1(y,m_n,bk,nknee,yknee);
-
-				//free_vector(bk,1,m_n);
-				xelbow=getelbowp(nc,xbreak,nd,&nelbow,xp,nlcm,nlmx,nlmn);
-				if(xelbow==NULL)
-					AfxMessageBox(L"no elbow point! reduce threshold and try again");
+				restorenx(xkm,nknee,m_xbottom,m_xtop,xknee);
 			}
+			if(xknee==NULL)
+				AfxMessageBox(L"no knee point! reduce threshold and try again");
+			/////////////////////////////////////////////////////////////////////////////////////////
 
 		}
+		//else{
+		//	//xp=nfun( x, y, startind, endind, m_m, a, IsDlgButtonChecked(IDC_CHECK2));
+		//	//xp=nfun2( x, y, startind, endind, m_m, a, covar, &chisq, IsDlgButtonChecked(IDC_CHECK2));
+		//	//nfun3(x,y,startind,endind,m_m,a,&chisq, IsDlgButtonChecked(IDC_CHECK2), tmp);
 
-		//chisqpp=chisq/(double)(endind-startind+1);
-		//xp=tmp[1];
-		//chisq=tmp[3];
+		//	//bool *bk=vector<bool>(1,m_n);
 
-		UpdateData(false);
+		//	//nknee=getpoint4(x,y,m_n,bk,m_m);
+		//	//nknee=getpoint5(x,y,m_n,bk,m_m,!IsDlgButtonChecked(IDC_CHECK2));
 
-		isFit=true;
+		//	//xknee=vector<double>(1,nknee);
+		//	//selectvt1(x,m_n,bk,nknee,xknee);
+		//	//yknee=vector<double>(1,nknee);
+		//	//selectvt1(y,m_n,bk,nknee,yknee);
 
-		Invalidate();
+		//	//free_vector(bk,1,m_n);
 
+		//	//////////////////////////////////////////////////////////////////
+		//	//xelbow=getelbowp(nc,xbreak,nd,&nelbow,xp,nlcm,nlmx,nlmn);
+
+		//	//xelbow=getepD(lmx, nlmx,lmn, nlmn, &nelbow, nx[nd], nys[nd], xp);
+
+		//	double **xem=getelbowpD(lmx,nlmx,lmn,nlmn,&nelbow,nx[nd],nys[nd],xp);
+		//	xelbow=vector<double>(1,nelbow);
+		//	restorenx(xem,nelbow,m_xbottom,m_xtop,xelbow);
+
+		//	if(xelbow==NULL)
+		//		AfxMessageBox(L"no elbow point! reduce threshold and try again");
+		//}
 
 	}
+
+	//chisqpp=chisq/(double)(endind-startind+1);
+	//xp=tmp[1];
+	//chisq=tmp[3];
+
+	UpdateData(false);
+
+	isFit=true;
+
+	Invalidate();
+
+
 }
 
 
@@ -345,39 +379,47 @@ void CUpDlg::OnBnClickedButton3()
 		long startind=findbottomidx(x,m_n,m_xbottom);
 		long endind=findtopidx(x, m_n,m_xtop );
 
+		m_xbottom=x[startind];
+		m_xtop=x[endind];
+
+		UpdateData(false);
+
 		//long nd;
 		//nd=m_n;
 		nd=endind-startind+1;
 		ys=vector<double>(1,nd);
-		coefs=matrix<double>(1,nd-1,1,4);
-		xbreak=vector<double>(1,nd);
+		//coefs=matrix<double>(1,nd-1,1,4);
+		//xbreak=vector<double>(1,nd);
 
 		if(IsDlgButtonChecked(IDC_CHECK1)){
 			//loregR(y,m_n,m_span,m_degree,ys);
-			//loregR(y+startind,nd,m_span,m_degree,ys);
+			loregR(&y[startind-1],nd,m_span,m_degree,ys);
 		}
 		else{
 			//loreg(y,m_n,m_span,m_degree,ys);
+			loreg(&y[startind-1],nd,m_span,m_degree,ys);
 			//smoothspline(y,m_n,m_m,ys);
-			long i,j;
-			bool flg;
-			double za,zb;
-			//m_m=0.999;
-			//double *nlcm;
-			double *lcm;
-			long lmx,lmn;
-			//double **nc;
-			nc=matrix<double>(1,nd-1,1,4);
-			double pa1=1,pa0=0;
+
+			/////////////////////smoothing spline///////////////////////////
+			//long i,j;
+			//bool flg;
+			//double za,zb;
+			////m_m=0.999;
+			////double *nlcm;
+			//double *lcm;
+			//long lmx,lmn;
+			////double **nc;
+			//nc=matrix<double>(1,nd-1,1,4);
+			//double pa1=1,pa0=0;
 
 
-			smspl2(x+startind,y+startind,nd,m_m,coefs,xbreak);
-			lcm=getlcm(coefs,xbreak,nd,&lmx,&lmn);
-			normalizecoef(coefs,xbreak,nd,lcm,lmx,lmn,nc);
-			nlcm=getlcm(nc,xbreak,nd,&nlmx,&nlmn);
+			//smspl2(x+startind,y+startind,nd,m_m,coefs,xbreak);
+			//lcm=getlcm(coefs,xbreak,nd,&lmx,&lmn);
+			//normalizecoef(coefs,xbreak,nd,lcm,lmx,lmn,nc);
+			//nlcm=getlcm(nc,xbreak,nd,&nlmx,&nlmn);
 
 
-
+			////////////////////////////////////pa automation////////////////////////
 			//while( pa1-pa0>0.0001 || flg ){
 			//smspl2(&x[startind],&y[startind],nd,(pa1+pa0)/2,coefs,xbreak);
 			//smspl2(x,y,nd,(pa1+pa0)/2,coefs,xbreak);
@@ -393,13 +435,13 @@ void CUpDlg::OnBnClickedButton3()
 
 			//}
 
+			//////////////////////////////////////////////////////////////////////
 
 
-
-			nxlmx=vector<double>(1,nlmx);
-			copyvt(nlcm,nlmx,nxlmx);
-			nxlmn=vector<double>(1,nlmn);
-			copyvt(&nlcm[nlmx],nlmn,nxlmn);
+			//nxlmx=vector<double>(1,nlmx);
+			//copyvt(nlcm,nlmx,nxlmx);
+			//nxlmn=vector<double>(1,nlmn);
+			//copyvt(&nlcm[nlmx],nlmn,nxlmn);
 
 			//xknee=getkneep(nc,xbreak,nd,&nknee,xp,nlcm,nlmx,nlmn);
 
@@ -414,7 +456,64 @@ void CUpDlg::OnBnClickedButton3()
 
 		//xp=maxind(y2,m_n);
 
+		////////////////////////////////////////////////////////////////
+		nys=vector<double>(1,nd);
+		nx=vector<double>(1,nd);
+		if(IsDlgButtonChecked(IDC_CHECK3)){
+			scalevt(ys,nd,nys,-1.0);
+		}
+		else{
+			scalevt(ys,nd,nys,+1.0);
+		}
 
+		if(IsDlgButtonChecked(IDC_CHECK2)){
+			scalevt(&x[startind-1],nd,nx,-1.0);
+			reversevt(nx,nd);
+			reversevt(nys,nd);
+		}
+		else{
+			scalevt(&x[startind-1],nd,nx,+1.0);
+		}
+
+
+		norvt(nx,nys,nd,nx,nys);
+		long i;
+
+		for(i=1;i<=nd;i++){
+			nys[i]-=nx[i];
+		}
+
+		//double **lmx;
+		//long nlmx;
+		lmx=getlmxD(nx,nys,nd,&nlmx);
+
+		nxlmx=vector<double>(1,nlmx);
+
+
+		if(IsDlgButtonChecked(IDC_CHECK2)){
+			restorenx(lmx,nlmx,-m_xtop,-m_xbottom,nxlmx);
+			scalevt(nxlmx,nlmx,nxlmx,-1.0);
+		}
+		else{
+			restorenx(lmx,nlmx,m_xbottom,m_xtop,nxlmx);
+		}
+
+		//double **lmn;
+		//long nlmn;
+		lmn=getlmnD(nx,nys,nd,&nlmn);
+
+		nxlmn=vector<double>(1,nlmn);
+
+
+		if(IsDlgButtonChecked(IDC_CHECK2)){
+			restorenx(lmn,nlmn,-m_xtop,-m_xbottom,nxlmn);
+			scalevt(nxlmn,nlmn,nxlmn,-1.0);
+		}
+		else{
+			restorenx(lmn,nlmn,m_xbottom,m_xtop,nxlmn);
+		}
+
+		/////////////////////////////////////////////////////////////////////////
 
 		Invalidate();
 	}
@@ -747,6 +846,31 @@ void CUpDlg::OnMouseHWheel(UINT nFlags, short zDelta, CPoint pt)
 	CDialog::OnMouseHWheel(nFlags, zDelta, pt);
 }
 
+
+CPoint CUpDlg::ptRsl(double x, double y,CRect can)
+	//convert to window coordinate
+{
+	long xt=xRescale(x,m_xmin,m_xmax,can.left,can.right);
+	long yt=xRescale(y,m_ymin,m_ymax,can.bottom,can.top);
+
+
+	return CPoint(xt,yt);
+}
+
+
+double CUpDlg::xRsl(long x)
+	//convert to actual coordinate
+{
+	return xRescale(x, plotrect.left, plotrect.right, m_xmin, m_xmax);
+}
+
+
+double CUpDlg::yRsl(long y)
+	//convert to actual coordinate
+{
+	return xRescale(y, plotrect.bottom, plotrect.top, m_ymin, m_ymax);
+}
+
 bool CUpDlg::DrawCursor(CRect rect, CPaintDC * dc)
 {
 	CPen pen;
@@ -868,38 +992,8 @@ bool CUpDlg::DrawCurve(CRect rect, CPaintDC * dc)
 
 }
 
-
-CPoint CUpDlg::ptRsl(double x, double y,CRect can)
-	//convert to window coordinate
-{
-	long xt=xRescale(x,m_xmin,m_xmax,can.left,can.right);
-	long yt=xRescale(y,m_ymin,m_ymax,can.bottom,can.top);
-
-
-	return CPoint(xt,yt);
-}
-
-
-double CUpDlg::xRsl(long x)
-	//convert to actual coordinate
-{
-	return xRescale(x, plotrect.left, plotrect.right, m_xmin, m_xmax);
-}
-
-
-double CUpDlg::yRsl(long y)
-	//convert to actual coordinate
-{
-	return xRescale(y, plotrect.bottom, plotrect.top, m_ymin, m_ymax);
-}
-
-
-
 bool CUpDlg::DrawFittingCurve(CRect rect, CPaintDC * dc)
 {
-
-
-
 	if( m_xmin<m_xmax && m_ymin<m_ymax )
 	{
 		CPen pen(PS_SOLID, 1, magenta);
@@ -944,9 +1038,10 @@ bool CUpDlg::DrawSmoothCurve(CRect rect, CPaintDC * dc)
 	{
 		CPen pen(PS_SOLID, 1, yellow);
 
-		//DrawPolyline(rect,dc,&pen,x,ys,m_n);
+		long startind=findbottomidx(x,m_n,m_xbottom);
+		DrawPolyline(rect,dc,&pen,&x[startind-1],ys,nd);
 
-		DrawFunc(rect,dc,&pen);
+		//DrawFunc(rect,dc,&pen);
 
 		pen.DeleteObject();
 
@@ -958,11 +1053,6 @@ bool CUpDlg::DrawSmoothCurve(CRect rect, CPaintDC * dc)
 }
 
 
-
-
-
-
-
 // draw a vertical line at x
 void CUpDlg::DrawVLine(CRect rect, CPaintDC * dc, CPen * pen, double x)
 {
@@ -971,7 +1061,6 @@ void CUpDlg::DrawVLine(CRect rect, CPaintDC * dc, CPen * pen, double x)
 	dc->LineTo(ptRsl(x,0,rect).x,rect.top);
 	dc->SelectObject(pOldPen);
 }
-
 
 
 void CUpDlg::DrawPoint(CRect rect, CPaintDC * pdc, CPen * pPen, double x, double y)
