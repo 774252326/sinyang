@@ -15,6 +15,7 @@
 #include "user\StartDlg.hpp"
 #include "user\LoginDlg.h"
 
+#include "windowsversion.hpp"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -77,20 +78,8 @@ BOOL CanalyzerApp::InitInstance()
 
 	CWinAppEx::InitInstance();
 
-	UINT LangID=0;
-	switch(LangID) // 判断并设置当前界面语言
-	{
-	case  0: 
-		SetThreadUILanguage(MAKELANGID(
-			LANG_CHINESE_SIMPLIFIED,SUBLANG_CHINESE_SIMPLIFIED));
-		break;
-	case  1: 
-		SetThreadUILanguage(MAKELANGID(
-			LANG_ENGLISH,SUBLANG_ENGLISH_US));
-		break;
-	default: 
-		break;
-	}
+	LANGID LangID=MAKELANGID(LANG_CHINESE_SIMPLIFIED,SUBLANG_CHINESE_SIMPLIFIED);
+	setLg(LangID);
 
 	// Initialize OLE libraries
 	if (!AfxOleInit())

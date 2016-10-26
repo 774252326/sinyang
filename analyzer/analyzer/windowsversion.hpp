@@ -13,7 +13,7 @@
 typedef void (WINAPI *PGNSI)(LPSYSTEM_INFO);
 typedef BOOL (WINAPI *PGPI)(DWORD, DWORD, DWORD, DWORD, PDWORD);
 
-BOOL GetOSDisplayString( LPTSTR pszOS)
+static BOOL GetOSDisplayString( LPTSTR pszOS)
 {
    OSVERSIONINFOEX osvi;
    SYSTEM_INFO si;
@@ -258,12 +258,36 @@ BOOL GetOSDisplayString( LPTSTR pszOS)
 //    WCHAR szCSDVersion[ 128 ];     // Maintenance string for PSS usage    关于操作系统的一些附加信息
 //} OSVERSIONINFOW, *POSVERSIONINFOW, *LPOSVERSIONINFOW, RTL_OSVERSIONINFOW, *PRTL_OSVERSIONINFOW;
 
-int GetWinVer()  
+static int GetWinVer()  
 {  
     OSVERSIONINFO   osver;     
     osver.dwOSVersionInfoSize   =   sizeof(OSVERSIONINFO);     
     GetVersionEx(&osver);  
 
 	return osver.dwMajorVersion;
+}
+
+
+static void setLg(LANGID lid)
+{	
+	//LANGID lid;
+	//switch(LangID) // 判断并设置当前界面语言
+	//{
+	//case  0:
+	//	lid=MAKELANGID(LANG_CHINESE_SIMPLIFIED,SUBLANG_CHINESE_SIMPLIFIED);
+	//	break;
+	//case  1: 
+	//	lid=MAKELANGID(LANG_ENGLISH,SUBLANG_ENGLISH_US);
+	//	break;
+	//default: 
+	//	return;
+	//}
+
+	if(GetWinVer()==6){
+		SetThreadUILanguage(lid);
+	}
+	else{
+		SetThreadLocale(MAKELCID(lid, SORT_DEFAULT));
+	}
 }
 

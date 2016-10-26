@@ -45,7 +45,7 @@ protected: // create from serialization only
 	CanalyzerView();
 	DECLARE_DYNCREATE(CanalyzerView)
 
-// Attributes
+	// Attributes
 public:
 	CanalyzerDoc* GetDocument() const;
 
@@ -54,12 +54,12 @@ public:
 	CSize spBtnSize;
 	std::vector<PlotDataEx> pdl;
 
-// Operations
+	// Operations
 public:
 
 	int UpdateSpinButton(int np, bool bLast);
 
-// Overrides
+	// Overrides
 public:
 	virtual void OnDraw(CDC* pDC);  // overridden to draw this view
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
@@ -68,7 +68,7 @@ protected:
 	virtual void OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo);
 	virtual void OnEndPrinting(CDC* pDC, CPrintInfo* pInfo);
 
-// Implementation
+	// Implementation
 public:
 	virtual ~CanalyzerView();
 #ifdef _DEBUG
@@ -78,7 +78,7 @@ public:
 
 protected:
 
-// Generated message map functions
+	// Generated message map functions
 protected:
 	afx_msg void OnFilePrintPreview();
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
@@ -86,12 +86,12 @@ protected:
 protected:
 	afx_msg LRESULT OnMessageChangeApplook(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnMessageUpdateView(WPARAM wParam, LPARAM lParam);
-		void OnDeltaposSpin(NMHDR* pNMHDR, LRESULT* pResult);
-			afx_msg void OnEditCopy();
+	void OnDeltaposSpin(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnEditCopy();
 	afx_msg void OnViewDatacursor();
-		afx_msg void OnViewFitwindow();
-		afx_msg void OnOptionsPlotsettings();
-		afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg void OnViewFitwindow();
+	afx_msg void OnOptionsPlotsettings();
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnAnalysisExportdata();
 
@@ -104,6 +104,6 @@ protected:
 
 #ifndef _DEBUG  // debug version in analyzerView.cpp
 inline CanalyzerDoc* CanalyzerView::GetDocument() const
-   { return reinterpret_cast<CanalyzerDoc*>(m_pDocument); }
+{ return reinterpret_cast<CanalyzerDoc*>(m_pDocument); }
 #endif
 

@@ -15,29 +15,89 @@ typedef struct SEGMENT{
 class pcct
 {
 
-	public:
-		static void LoadFileList(const CString &m_filePath, std::vector<CString> &filelist)
-{
 
-	CString folderpath=m_filePath.Left(m_filePath.ReverseFind('\\'));
+public:
 
-	filelist.clear();
-	CStdioFile file;
-	BOOL readflag;
-	readflag=file.Open(m_filePath, CFile::modeRead);
 
-	if(readflag)
-	{	
-		CString strRead;
-		//TRACE("\n--Begin to read file");
-		while(file.ReadString(strRead)){
-			strRead=folderpath+"\\"+strRead;
-			filelist.push_back(strRead);
+	static CString folderpath()
+	{
+		CString  strdir,tmpdir; 
+		TCHAR szPath[MAX_PATH] = {0};
+		::GetModuleFileName(NULL, szPath, MAX_PATH);
+		tmpdir=szPath; 
+		strdir=tmpdir.Left(tmpdir.ReverseFind('\\'));
+		return strdir;
+	};
+
+	static void LoadFileList(const CString &m_filePath, std::vector<CString> &filelist)
+	{
+
+		CString folderpath=m_filePath.Left(m_filePath.ReverseFind('\\'));
+
+		filelist.clear();
+		CStdioFile file;
+		BOOL readflag;
+		readflag=file.Open(m_filePath, CFile::modeRead);
+
+		if(readflag)
+		{	
+			CString strRead;
+			//TRACE("\n--Begin to read file");
+			while(file.ReadString(strRead)){
+				strRead=folderpath+"\\"+strRead;
+				filelist.push_back(strRead);
+			}
+			//TRACE("\n--End reading\n");
+			file.Close();
 		}
-		//TRACE("\n--End reading\n");
-		file.Close();
-	}
-};
+	};
+
+	static void LoadFileList(const int atype, std::vector<CString> &filelist)
+	{
+#ifndef _DEBUG
+		CString folderp=folderpath()+L"\\data\\d\\";
+		//CString folderp=L"C:\\Users\\r8anw2x\\Desktop\\data\\d\\";
+		//CString folderp=L"D:\\data\\d\\";
+		//CString folderp=L"C:\\Users\\G\\Desktop\\data\\d\\";
+#else
+		CString folderp=L"C:\\Users\\r8anw2x\\Desktop\\data\\d\\";
+		//CString folderp=L"D:\\data\\d\\";
+		//CString folderp=L"C:\\Users\\G\\Desktop\\data\\d\\";
+#endif
+
+		CString DEMOflist=folderp+L"fl1.txt";
+		CString DTRflist=folderp+L"dtr.txt";
+		CString DTAflist=folderp+L"dta.txt";
+		CString LATRflist=folderp+L"latr.txt";
+		CString LATAflist=folderp+L"lata.txt";
+		CString RCRflist=folderp+L"rcr.txt";
+		CString RCAflist=folderp+L"rca.txt";
+		CString SARRflist=folderp+L"sarr.txt";
+		CString SARAflist=folderp+L"sara.txt";
+		CString NEWRflist=folderp+L"j.txt";
+		CString NEWAflist=folderp+L"k.txt";
+		CString NERflist=folderp+L"l.txt";
+		CString NEAflist=folderp+L"m.txt";
+
+
+		CString flistlist[]={
+			DEMOflist,
+			DTRflist,
+			DTAflist,
+			LATRflist,
+			LATAflist,
+			RCRflist,
+			RCAflist,
+			SARRflist,
+			SARAflist,
+			NEWRflist,
+			NEWAflist,
+			NERflist,
+			NEAflist
+		};
+		LoadFileList(flistlist[atype],filelist);
+	};
+
 
 public:
 	std::vector<segment> segmentList;
@@ -67,7 +127,7 @@ public:
 		, FileName(_T(""))
 	{};
 	~pcct(void){};
-	
+
 	void clear(void)
 	{
 		segmentList.clear();

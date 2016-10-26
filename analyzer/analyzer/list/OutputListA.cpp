@@ -193,6 +193,6 @@ void COutputListA::ResetHeader(void)
 		SetColumn(i,&col);
 		AdjustWidth(i,strl[i],30);
 	}
-	delete col.pszText;
+	delete [] col.pszText;
 
 }

@@ -25,16 +25,6 @@
 #include "windowsversion.hpp"
 //////////////////////////////////////////////////thread///////////////////////////////////////////
 
-CString folderpath()
-{
-		CString  strdir,tmpdir; 
-	TCHAR szPath[MAX_PATH] = {0};
-	::GetModuleFileName(NULL, szPath, MAX_PATH);
-	 tmpdir=szPath; 
-    strdir=tmpdir.Left(tmpdir.ReverseFind('\\'));
-	return strdir;
-}
-
 
 
 typedef struct MYPARA{
@@ -54,56 +44,10 @@ typedef struct MYPARA{
 } mypara;
 
 
-
 const DWORD sleepms=100;
 
 const size_t nd=1000;
 //const size_t nd=sleepms/10;
-
-
-#ifndef _DEBUG
-CString folderp=folderpath()+L"\\data\\d\\";
-//CString folderp=L"C:\\Users\\r8anw2x\\Desktop\\data\\d\\";
-//CString folderp=L"D:\\data\\d\\";
-//CString folderp=L"C:\\Users\\G\\Desktop\\data\\d\\";
-#else
-CString folderp=L"C:\\Users\\r8anw2x\\Desktop\\data\\d\\";
-//CString folderp=L"D:\\data\\d\\";
-//CString folderp=L"C:\\Users\\G\\Desktop\\data\\d\\";
-#endif
-
-CString DEMOflist=folderp+L"fl1.txt";
-CString DTRflist=folderp+L"dtr.txt";
-CString DTAflist=folderp+L"dta.txt";
-CString LATRflist=folderp+L"latr.txt";
-CString LATAflist=folderp+L"lata.txt";
-CString RCRflist=folderp+L"rcr.txt";
-CString RCAflist=folderp+L"rca.txt";
-CString SARRflist=folderp+L"sarr.txt";
-CString SARAflist=folderp+L"sara.txt";
-CString NEWRflist=folderp+L"j.txt";
-CString NEWAflist=folderp+L"k.txt";
-CString NERflist=folderp+L"l.txt";
-CString NEAflist=folderp+L"m.txt";
-
-
-CString flistlist[]={
-	DEMOflist,
-	DTRflist,
-	DTAflist,
-	LATRflist,
-	LATAflist,
-	RCRflist,
-	RCAflist,
-	SARRflist,
-	SARAflist,
-	NEWRflist,
-	NEWAflist,
-	NERflist,
-	NEAflist
-};
-
-
 
 void WaitSecond(ProcessState &waitflg
 	,int second=-1
@@ -139,7 +83,7 @@ UINT CMainFrame::PROCESS(LPVOID pParam)
 	delete pParam;
 	////////////////////////////////////////////////////
 	std::vector<CString> filelist;
-	pcct::LoadFileList(flistlist[pDoc->da.p1.analysistype],filelist);
+	pcct::LoadFileList(pDoc->da.p1.analysistype,filelist);
 
 	CSingleLock singleLock(&(pDoc->m_CritSection));
 
@@ -369,10 +313,13 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 
 
 
-	ON_COMMAND(ID_LANGUAGE_CHINESE, &CMainFrame::OnLanguageChinese)
-	ON_COMMAND(ID_LANGUAGE_ENGLISH, &CMainFrame::OnLanguageEnglish)
-	ON_UPDATE_COMMAND_UI(ID_LANGUAGE_CHINESE, &CMainFrame::OnUpdateLanguageChinese)
-	ON_UPDATE_COMMAND_UI(ID_LANGUAGE_ENGLISH, &CMainFrame::OnUpdateLanguageEnglish)
+	//ON_COMMAND(ID_LANGUAGE_CHINESE, &CMainFrame::OnLanguageChinese)
+	//ON_COMMAND(ID_LANGUAGE_ENGLISH, &CMainFrame::OnLanguageEnglish)
+	//ON_UPDATE_COMMAND_UI(ID_LANGUAGE_CHINESE, &CMainFrame::OnUpdateLanguageChinese)
+	//ON_UPDATE_COMMAND_UI(ID_LANGUAGE_ENGLISH, &CMainFrame::OnUpdateLanguageEnglish)
+
+	ON_COMMAND_RANGE(ID_LANGUAGE_CHINESE, ID_LANGUAGE_ENGLISH, &CMainFrame::OnLanguage)
+	ON_UPDATE_COMMAND_UI_RANGE(ID_LANGUAGE_CHINESE,ID_LANGUAGE_ENGLISH,&CMainFrame::OnUpdateLanguage)
 
 	ON_MESSAGE(MESSAGE_CHANGE_LANG, &CMainFrame::OnMessageChangeLang)
 END_MESSAGE_MAP()
@@ -397,17 +344,28 @@ CMainFrame::CMainFrame()
 	, pWriteA(NULL)
 {
 	// TODO: add member initialization code here
-	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_OFF_2007_BLUE);
+	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), (GetWinVer()==6?ID_VIEW_APPLOOK_OFF_2007_BLACK:ID_VIEW_APPLOOK_WIN_XP) );
 }
 
 CMainFrame::~CMainFrame()
 {
-	if(pWriteA!=NULL)
-		::TerminateThread(pWriteA->m_hThread,0);
+	if(pWriteA!=NULL){
+		if(::TerminateThread(pWriteA->m_hThread,0)!=FALSE)
+			delete pWriteA;
+	}
 	this->HideWaitDlg();
-	delete psheetml;
+
+	if(psheetml!=NULL){
+		SolutionAdditionParametersPageB *sppage;
+		AnalysisParametersPage *appage;
+		CVParametersPage *cppage;
+		delete (psheetml->GetPage(0));
+		delete (psheetml->GetPage(1));
+		delete (psheetml->GetPage(2));	
+		delete psheetml;
+	}
 	//pWriteA->m_hThread
-	//delete pWriteA;
+
 }
 
 int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -700,6 +658,7 @@ void CMainFrame::OnApplicationLook(UINT id)
 
 void CMainFrame::OnUpdateApplicationLook(CCmdUI* pCmdUI)
 {
+	pCmdUI->Enable(GetWinVer()==6);
 	pCmdUI->SetRadio(theApp.m_nAppLook == pCmdUI->m_nID);
 }
 
@@ -1212,28 +1171,28 @@ void CMainFrame::OnUpdateViewToolbarA(CCmdUI *pCmdUI)
 void CMainFrame::OnUpdateAnalysisMethodsetup(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(/*pst==stop &&*/ al.ual[userIndex].au!=UserAccount::authority::guest);
+	pCmdUI->Enable(/*pst==stop &&*/ GetCurAuth()!=UserAccount::authority::guest);
 }
 
 
 void CMainFrame::OnUpdateAnalysisStartanalysis(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=UserAccount::authority::guest);
+	pCmdUI->Enable(pst==stop && GetCurAuth()!=UserAccount::authority::guest);
 }
 
 
 void CMainFrame::OnUpdateAnalysisPause(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst!=stop && al.ual[userIndex].au!=UserAccount::authority::guest);
+	pCmdUI->Enable(pst!=stop && GetCurAuth()!=UserAccount::authority::guest);
 }
 
 
 void CMainFrame::OnUpdateAnalysisAbortanalysis(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst!=stop && al.ual[userIndex].au!=UserAccount::authority::guest);
+	pCmdUI->Enable(pst!=stop && GetCurAuth()!=UserAccount::authority::guest);
 }
 
 
@@ -1241,7 +1200,7 @@ void CMainFrame::OnUpdateAnalysisReport(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
 	pCmdUI->Enable( (pst==stop) 
-		& (al.ual[userIndex].au!=UserAccount::authority::guest)
+		& (GetCurAuth()!=UserAccount::authority::guest)
 		);
 }
 
@@ -1258,7 +1217,7 @@ void CMainFrame::OnUpdateAnalysisExportdata(CCmdUI *pCmdUI)
 	// TODO: Add your command update UI handler code here
 
 	pCmdUI->Enable( (pst!=running) 
-		& (al.ual[userIndex].au!=UserAccount::authority::guest)
+		& (GetCurAuth()!=UserAccount::authority::guest)
 		);
 }
 
@@ -1268,35 +1227,35 @@ void CMainFrame::OnUpdateAnalysisExportdata(CCmdUI *pCmdUI)
 void CMainFrame::OnUpdateFilePrint(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=UserAccount::authority::guest);
+	pCmdUI->Enable(pst==stop && GetCurAuth()!=UserAccount::authority::guest);
 }
 
 
 void CMainFrame::OnUpdateFilePrintPreview(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=UserAccount::authority::guest);
+	pCmdUI->Enable(pst==stop && GetCurAuth()!=UserAccount::authority::guest);
 }
 
 
 void CMainFrame::OnUpdateFilePrintSetup(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=UserAccount::authority::guest);
+	pCmdUI->Enable(pst==stop && GetCurAuth()!=UserAccount::authority::guest);
 }
 
 
 void CMainFrame::OnUpdateFileSave(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=UserAccount::authority::guest);
+	pCmdUI->Enable(pst==stop && GetCurAuth()!=UserAccount::authority::guest);
 }
 
 
 void CMainFrame::OnUpdateFileNew(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=UserAccount::authority::guest);
+	pCmdUI->Enable(pst==stop && GetCurAuth()!=UserAccount::authority::guest);
 }
 
 void CMainFrame::OnUpdateFileOpen(CCmdUI *pCmdUI)
@@ -1309,14 +1268,14 @@ void CMainFrame::OnUpdateFileOpen(CCmdUI *pCmdUI)
 void CMainFrame::OnUpdateViewFitwindow(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst!=running && al.ual[userIndex].au!=UserAccount::authority::guest);
+	pCmdUI->Enable(pst!=running && GetCurAuth()!=UserAccount::authority::guest);
 }
 
 
 void CMainFrame::OnUpdateViewDatacursor(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst!=running && al.ual[userIndex].au==UserAccount::authority::admin);
+	pCmdUI->Enable(pst!=running && GetCurAuth()==UserAccount::authority::admin);
 
 	pCmdUI->SetCheck(((CanalyzerView*)GetActiveView())->pw.bMouseCursor);
 
@@ -1326,7 +1285,7 @@ void CMainFrame::OnUpdateOptionsPlotsettings(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
 
-	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=UserAccount::authority::guest);
+	pCmdUI->Enable(pst==stop && GetCurAuth()!=UserAccount::authority::guest);
 }
 
 
@@ -1342,7 +1301,7 @@ void CMainFrame::OnUpdateSecurityLogin(CCmdUI *pCmdUI)
 void CMainFrame::OnUpdateSecurityUseraccounts(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst==stop && al.ual[userIndex].au==UserAccount::authority::admin);
+	pCmdUI->Enable(pst==stop && GetCurAuth()==UserAccount::authority::admin);
 }
 
 
@@ -1351,19 +1310,7 @@ void CMainFrame::OnUpdateSecurityUseraccounts(CCmdUI *pCmdUI)
 
 void CMainFrame::ChangeLang(void)
 {
-	switch(LangID) // 判断并设置当前界面语言
-	{
-	case  0: 
-		SetThreadUILanguage(MAKELANGID(
-			LANG_CHINESE_SIMPLIFIED,SUBLANG_CHINESE_SIMPLIFIED));
-		break;
-	case  1: 
-		SetThreadUILanguage(MAKELANGID(
-			LANG_ENGLISH,SUBLANG_ENGLISH_US));
-		break;
-	default: 
-		break;
-	}
+	setLg(LangID); 
 
 	m_wndMenuBar.RestoreOriginalstate();
 
@@ -1381,96 +1328,12 @@ void CMainFrame::ChangeLang(void)
 	::PostMessage(rv->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
 	::PostMessage(GetOutputWnd()->GetListCtrl()->GetSafeHwnd(),MESSAGE_SHOW_DOL,NULL,NULL);
 
-	COutputListA *ol=this->GetOutputWnd()->GetListCtrl();
-
-	ol->ResetHeader();
-
-	//m_wndStatusBar.UpdateVirtualRect();
+	this->GetOutputWnd()->GetListCtrl()->ResetHeader();
 
 	strOutputWnd.LoadStringW(AFX_IDS_IDLEMESSAGE);
-
 	m_wndStatusBar.SetWindowTextW(strOutputWnd);
-	//	LVCOLUMN col;
-	//	col.mask = LVCF_TEXT;
-	//	col.cchTextMax=256;
-	//	col.pszText=new TCHAR[col.cchTextMax];
-
-
-	//if(ol->GetSafeHwnd()!=NULL && ol->IsWindowVisible()==TRUE ){
-
-
-
-	//	ol->GetColumn(5,&col);
-
-	//			   CString str;  
-	//	   str.LoadStringW(5+IDS_STRING111);
-
-	//	   CString::CopyChars(col.pszText,str.GetBuffer(),str.GetLength()+1);
-
-	//	   ol->SetColumn(5,&col);
-
-	//	//ol->cbstr[6][0].LoadString(IDS_STRING_YES);
-	//	//ol->cbstr[6][1].LoadString(IDS_STRING_NO);
-
-	//	//	CHeaderCtrl* pha=ol->GetHeaderCtrl();
-	//	//
-	//	//	int    i, nCount = pha->GetItemCount();
-	//	//HDITEM hdi;
-	//	//enum   { sizeOfBuffer = 256 };
-	//	//TCHAR  lpBuffer[sizeOfBuffer];
-	//	//bool   fFound = false;
-	//	//
-	//	//hdi.mask = HDI_TEXT;
-	//	//hdi.pszText = lpBuffer;
-	//	//hdi.cchTextMax = sizeOfBuffer;
-	//	//
-	//	//for (i=0; i < nCount; i++)
-	//	//{
-	//	//   pha->GetItem(i, &hdi); 
-	//	//   CString str;  
-	//	//   str.LoadStringW(i+IDS_STRING111);
-	//	//   hdi.pszText=str.GetBuffer();
-	//	//   pha->SetItem(i, &hdi);
-	//	//}
-
-
-	//}
-
-	//delete col.pszText;
-
 }
 
-
-void CMainFrame::OnLanguageChinese()
-{
-	// TODO: Add your command handler code here
-	LangID=0;
-	ChangeLang();
-}
-
-
-void CMainFrame::OnLanguageEnglish()
-{
-	// TODO: Add your command handler code here
-	LangID=1;
-	ChangeLang();
-}
-
-
-void CMainFrame::OnUpdateLanguageChinese(CCmdUI *pCmdUI)
-{
-	// TODO: Add your command update UI handler code here
-	pCmdUI->SetCheck(LangID==0);
-	pCmdUI->Enable(pst==stop );
-}
-
-
-void CMainFrame::OnUpdateLanguageEnglish(CCmdUI *pCmdUI)
-{
-	// TODO: Add your command update UI handler code here
-	pCmdUI->SetCheck(LangID==1);
-	pCmdUI->Enable(pst==stop );
-}
 
 afx_msg LRESULT CMainFrame::OnMessageChangeLang(WPARAM wParam, LPARAM lParam)
 {
@@ -1480,52 +1343,30 @@ afx_msg LRESULT CMainFrame::OnMessageChangeLang(WPARAM wParam, LPARAM lParam)
 
 
 
-//
-//DWORD WINAPI Check(LPVOID lpParameter )  // thread data
-//{
-//	//DebugBreak();
-//	COoDlg *pMonitor = (COoDlg*)lpParameter;
-//	while(pMonitor->bStart)
-//	{ 
-//		OVERLAPPED opd;
-//		if(NotifyAddrChange(NULL,&opd) == NO_ERROR)
-//		{
-//			TRACE("aaa");
-//		}
-//		WaitForSingleObject(pMonitor->m_hThread,5000);
-//	}
-//	return FALSE;
-//}
-//void COoDlg::OnOK() 
-//{
-//	DWORD ThreadID;  
-//	m_hThread = CreateThread(NULL,0,Check,this,0,&ThreadID);
-//	if(m_hThread == NULL)
-//	{
-//		//AfxMessageBox("创建监控线程失败!");
-//		return ;//FALSE;
-//	}
-//	else
-//	{
-//		bStart = true;
-//		return ;//TRUE;
-//	}
-//	return ;//FALSE;
-//
-//}
-//
-//void COoDlg::OnCancel() 
-//{
-//	bStart=0;
-//	if(m_hThread)
-//	{
-//		if(::WaitForSingleObject(m_hThread,1000) == WAIT_TIMEOUT)
-//		{
-//			//如果超时：
-//			TerminateThread(m_hThread,NULL);
-//		}
-//		CloseHandle(m_hThread);
-//		m_hThread = NULL; 
-//	} 
-//	//CDialog::OnCancel();
-//}
+LANGID CMainFrame::nID2LangID(UINT nID)
+{
+	switch(nID){
+	case ID_LANGUAGE_ENGLISH:
+		return MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US);
+	case ID_LANGUAGE_CHINESE:
+		return MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED);
+	default:
+		return WORD();
+	}
+}
+
+
+void CMainFrame::OnUpdateLanguage(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->SetCheck( LangID==nID2LangID(pCmdUI->m_nID) );
+	pCmdUI->Enable(pst==stop );
+}
+
+
+void CMainFrame::OnLanguage(UINT id)
+{
+	LangID=nID2LangID(id);
+	ChangeLang();
+}
+

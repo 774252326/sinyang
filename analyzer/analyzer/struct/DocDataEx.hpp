@@ -823,6 +823,7 @@ public:
 		{
 			return true;
 		}
+		::AfxMessageBox(IDS_STRING_READ_ERROR);
 		return false;
 	};
 

@@ -128,86 +128,94 @@ BOOL ComputeDlg::OnInitDialog()
 
 	pt.y+=editH;
 
-	switch(doc->da.p1.analysistype){
-	case 2:
-	case 4:
-	case 6:
-	case 8:
-	case 10:
-	case 12:
-		{
-			if(!(doc->da.GetVL(m_list.vl))){
-				return FALSE;
+	winSize.cy=offset+editH+gap1.cy*2;
+
+	if(!(doc->da.GetVL(m_list.vl))){
+		return FALSE;
+	}
+
+	if( ((CMainFrame*)pframe)->GetCurAuth()==UserAccount::authority::admin )
+		switch(doc->da.p1.analysistype){
+		case 2:
+		case 4:
+		case 6:
+		case 8:
+		case 10:
+		case 12:
+			{
+
+
+				formulaImg.LoadBitmapW(GetFormulaImgID());
+				BITMAP bm;
+				formulaImg.GetBitmap(&bm);
+				int imgH=winSize.cx*bm.bmHeight/bm.bmWidth;
+
+				imgrc=CRect(pt,CSize(w,imgH));
+
+				int btnH=22;
+				int listH=(m_list.rowH+2)*m_list.vl.size()+24;
+
+				winSize.cy+=imgH+gap2.cy*2+listH+btnH;
+
+
+				//::SetWindowPos(this->GetSafeHwnd(),
+				//	HWND_TOP,
+				//	rc.CenterPoint().x-winSize.cx/2,
+				//	rc.CenterPoint().y-winSize.cy/2,
+				//	winSize.cx,
+				//	winSize.cy,		
+				//	SWP_SHOWWINDOW);
+
+
+				pt.y+=gap2.cy+imgH;
+
+
+				const DWORD dwStyle = WS_VISIBLE 
+					| WS_CHILD 
+					| WS_BORDER
+					| WS_HSCROLL 
+					| WS_VSCROLL 
+					| LBS_NOINTEGRALHEIGHT;
+
+				if(!m_list.Create(dwStyle, CRect(pt,CSize(w,listH)), this, 1256) ){
+					TRACE0("Failed to create output windows\n");
+					return -1;      // fail to create
+				}
+
+				pt.y+=gap2.cy+listH;
+
+
+				m_list.Refresh();
+
+
+				str.LoadStringW(IDS_BTN_COMPUTE);
+				//pBtn=new CButton;
+				BtnIDS_BTN_COMPUTE.Create(str,
+					BS_PUSHBUTTON
+					|WS_CHILD
+					|WS_VISIBLE,
+					CRect(pt,CSize(w,btnH)),
+					this,
+					IDS_BTN_COMPUTE);
+
+				break;
+
+
 			}
-
-			formulaImg.LoadBitmapW(GetFormulaImgID());
-			BITMAP bm;
-			formulaImg.GetBitmap(&bm);
-			int imgH=winSize.cx*bm.bmHeight/bm.bmWidth;
-
-			imgrc=CRect(pt,CSize(w,imgH));
-
-			int btnH=22;
-			int listH=(m_list.rowH+2)*m_list.vl.size()+24;
-
-			winSize.cy=editH+imgH+gap2.cy*2+listH+btnH+gap1.cy*2+offset;
-
-
-			::SetWindowPos(this->GetSafeHwnd(),
-				HWND_TOP,
-				rc.CenterPoint().x-winSize.cx/2,
-				rc.CenterPoint().y-winSize.cy/2,
-				winSize.cx,
-				winSize.cy,		
-				SWP_SHOWWINDOW);
-
-
-			pt.y+=gap2.cy+imgH;
-
-
-			const DWORD dwStyle = WS_VISIBLE 
-				| WS_CHILD 
-				| WS_BORDER
-				| WS_HSCROLL 
-				| WS_VSCROLL 
-				| LBS_NOINTEGRALHEIGHT;
-
-			if(!m_list.Create(dwStyle, CRect(pt,CSize(w,listH)), this, 1256) ){
-				TRACE0("Failed to create output windows\n");
-				return -1;      // fail to create
-			}
-
-			pt.y+=gap2.cy+listH;
-
-
-			m_list.Refresh();
-
-
-			str.LoadStringW(IDS_BTN_COMPUTE);
-			//pBtn=new CButton;
-			BtnIDS_BTN_COMPUTE.Create(str,
-				BS_PUSHBUTTON
-				|WS_CHILD
-				|WS_VISIBLE,
-				CRect(pt,CSize(w,btnH)),
-				this,
-				IDS_BTN_COMPUTE);
+		default:
 
 			break;
-
-
-		}
-	default:
-		winSize.cy=offset+editH+gap1.cy*2;
-		::SetWindowPos(this->GetSafeHwnd(),
-			HWND_TOP,
-			rc.CenterPoint().x-winSize.cx/2,
-			rc.CenterPoint().y-winSize.cy/2,
-			winSize.cx,
-			winSize.cy,		
-			SWP_SHOWWINDOW);
-		break;
 	}
+
+
+	::SetWindowPos(this->GetSafeHwnd(),
+		HWND_TOP,
+		rc.CenterPoint().x-winSize.cx/2,
+		rc.CenterPoint().y-winSize.cy/2,
+		winSize.cx,
+		winSize.cy,		
+		SWP_SHOWWINDOW);
+
 
 	ClickCompute();
 

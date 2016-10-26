@@ -34,7 +34,7 @@ public:
 	PropertySheetA1ML *psheetml;
 	WaitDlg *wd;
 	CWinThread *pWriteA;
-	UINT LangID;
+	LANGID LangID;
 // Operations
 public:
 	CWnd * LeftPane(void) const { return m_wndSplitter.GetPane(0,0);};
@@ -43,6 +43,7 @@ public:
 	void HideWaitDlg(void);
 	COutputWnd * GetOutputWnd(void){ return &m_wndOutput; };
 	void ChangeLang(void);
+	UserAccount::authority GetCurAuth(void){ return al.ual[userIndex].au; };
 // Overrides
 public:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
@@ -89,6 +90,7 @@ protected:
 
 	afx_msg LRESULT OnMessageUpdateDol(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnMessageCloseSapSheet(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnMessageChangeLang(WPARAM wParam, LPARAM lParam);
 
 	afx_msg void OnViewAnalysisProgress();
 	afx_msg void OnViewToolbarA();
@@ -119,14 +121,13 @@ protected:
 	afx_msg void OnUpdateSecurityLogin(CCmdUI *pCmdUI);
 	afx_msg void OnUpdateSecurityUseraccounts(CCmdUI *pCmdUI);
 
-	afx_msg void OnLanguageChinese();
-	afx_msg void OnLanguageEnglish();
-	afx_msg void OnUpdateLanguageChinese(CCmdUI *pCmdUI);
-	afx_msg void OnUpdateLanguageEnglish(CCmdUI *pCmdUI);
-	afx_msg LRESULT OnMessageChangeLang(WPARAM wParam, LPARAM lParam);
+	LANGID nID2LangID(UINT nID);
+	afx_msg void OnLanguage(UINT id);
+	afx_msg void OnUpdateLanguage(CCmdUI *pCmdUI);
 
 public:
 	HANDLE m_hStop;
+	
 };
 
 
