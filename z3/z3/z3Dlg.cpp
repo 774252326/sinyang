@@ -72,6 +72,7 @@ Cz3Dlg::Cz3Dlg(CWnd* pParent /*=NULL*/)
 	, ABSkPeak(NULL)
 	, peaknd(0)
 	, xybreak(NULL)
+	, mouseDownPoint(0)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 
@@ -118,6 +119,7 @@ BEGIN_MESSAGE_MAP(Cz3Dlg, CDialogEx)
 	ON_WM_VSCROLL()
 
 
+	ON_WM_ERASEBKGND()
 END_MESSAGE_MAP()
 
 
@@ -179,7 +181,10 @@ BOOL Cz3Dlg::OnInitDialog()
 	plotrect.DeflateRect(towinedge);
 	plotrect.DeflateRect(towinedge.cx,0,btnrect.Width()+tobtnedge.cx,btnrect.Height()+tobtnedge.cy*2);
 	str.LoadStringW(IDC_PLOT);
-	pPlot->Create( str, WS_CHILD/*|WS_VISIBLE*/|BS_GROUPBOX, plotrect, this, IDC_PLOT); 
+	pPlot->Create( str, WS_CHILD|BS_GROUPBOX/*|WS_VISIBLE*/, plotrect, this, IDC_PLOT); 
+
+	redrawrect=plotrect;
+	redrawrect.InflateRect(towinedge.cx,0,0,tobtnedge.cy);
 
 	//threshold edit
 	CEdit *pThres;
@@ -312,7 +317,7 @@ void Cz3Dlg::OnPaint()
 				dc.SelectClipRgn(&rgn);
 			}		
 		}
-		
+
 
 		CDialogEx::OnPaint();
 
@@ -659,29 +664,24 @@ void Cz3Dlg::DrawPolyline(CRect rect, CPaintDC * pdc, CPen * pPen, double * x, d
 void Cz3Dlg::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	// TODO: Add your message handler code here and/or call default
+
+
+	//if( plotrect.PtInRect(point)){
+	//	isMove=true;
+	//	////ptMove=point;
+	//	xMove=xRsl(point.x);
+	//	yMove=yRsl(point.y);
+	//	xminMove=m_xmin;
+	//	yminMove=m_ymin;
+	//	xmaxMove=m_xmax;
+	//	ymaxMove=m_ymax;
+	//}
+
+	////////////////////////////////////
 	if( plotrect.PtInRect(point)){
-
-		//if( abs(point.x-ptRsl(m_xtop,0,plotrect).x)<=lineWidth ){
-		//	isSelectTop=true;
-		//	Invalidate();
-		//}
-		//else if(abs(point.x-ptRsl(m_xbottom,0,plotrect).x)<=lineWidth){
-		//	isSelectBottom=true;
-		//	Invalidate();
-		//}
-		//else{
-		isMove=true;
-		////ptMove=point;
-		xMove=xRsl(point.x);
-		yMove=yRsl(point.y);
-		xminMove=m_xmin;
-		yminMove=m_ymin;
-		xmaxMove=m_xmax;
-		ymaxMove=m_ymax;
-		//}
-
+		mouseDownPoint=point;
+		SetCapture();
 	}
-
 
 	CDialogEx::OnLButtonDown(nFlags, point);
 }
@@ -705,9 +705,12 @@ void Cz3Dlg::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	// TODO: Add your message handler code here and/or call default
 
-	isMove=false;
-	Invalidate();
+	//isMove=false;
+	//Invalidate();
 
+	///////////////////////////////////
+	mouseDownPoint=CPoint(0,0);
+	ReleaseCapture();
 
 	CDialogEx::OnLButtonUp(nFlags, point);
 }
@@ -716,39 +719,46 @@ void Cz3Dlg::OnLButtonUp(UINT nFlags, CPoint point)
 void Cz3Dlg::OnMouseMove(UINT nFlags, CPoint point)
 {
 	// TODO: Add your message handler code here and/or call default
-	if( plotrect.PtInRect(point)){
 
-		//if(isSelectTop){
-		//	m_xtop=xRsl(point.x);
-		//	UpdateData(false);
-		//	Invalidate();
-		//}
-		//else 
-		//	if(isSelectBottom){
-		//		m_xbottom=xRsl(point.x);
-		//		UpdateData(false);
-		//		Invalidate();
-		//	}
-		//	else 
-		if( isMove ){
+	//if( plotrect.PtInRect(point)){
+	//	if( isMove ){
 
-			double xmove=xMove-xRescale(point.x, plotrect.left, plotrect.right, xminMove, xmaxMove);
-			double ymove=yMove-xRescale(point.y, plotrect.bottom, plotrect.top, yminMove, ymaxMove);
-			m_xmin=xminMove+xmove;
-			m_xmax=xmaxMove+xmove;
-			m_ymin=yminMove+ymove;
-			m_ymax=ymaxMove+ymove;
+	//		double xmove=xMove-xRescale(point.x, plotrect.left, plotrect.right, xminMove, xmaxMove);
+	//		double ymove=yMove-xRescale(point.y, plotrect.bottom, plotrect.top, yminMove, ymaxMove);
+	//		m_xmin=xminMove+xmove;
+	//		m_xmax=xmaxMove+xmove;
+	//		m_ymin=yminMove+ymove;
+	//		m_ymax=ymaxMove+ymove;
 
-			UpdateData(false);
+	//		UpdateData(false);
 
+	//		Invalidate();
+	//	}
+	//}
+	//else{
+	//	isMove=false;
+	//}
+
+	////////////////////////////////////////////////////////
+	if (GetCapture()==this)
+	{
+		if(isLoad){
+			double xmove=xRsl(mouseDownPoint.x)-xRsl(point.x);
+			double ymove=yRsl(mouseDownPoint.y)-yRsl(point.y);
+
+			m_xmin+=xmove;
+			m_xmax+=xmove;
+			m_ymin+=ymove;
+			m_ymax+=ymove;
+
+			//Redraw the view
+			//InvalidateRect(redrawrect);
 			Invalidate();
+			//Set the mouse point
+			mouseDownPoint=point;
 		}
 	}
-	else{
-		//isSelectTop=false;
-		//isSelectBottom=false;
-		isMove=false;
-	}
+
 
 	CDialogEx::OnMouseMove(nFlags, point);
 }
@@ -1039,4 +1049,14 @@ void Cz3Dlg::cmpt(void)
 		}
 	}
 
+}
+
+
+BOOL Cz3Dlg::OnEraseBkgnd(CDC* pDC)
+{
+	// TODO: Add your message handler code here and/or call default
+
+	//return true;
+
+	return CDialogEx::OnEraseBkgnd(pDC);
 }

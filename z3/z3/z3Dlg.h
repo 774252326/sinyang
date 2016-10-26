@@ -122,4 +122,8 @@ public:
 	double **xybreak;
 	// computation part
 	void cmpt(void);
+
+	CPoint mouseDownPoint;
+	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	CRect redrawrect;
 };
