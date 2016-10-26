@@ -25,7 +25,7 @@ CVParametersPage::CVParametersPage()
 
 	CString title;
 	title.LoadStringW(IDS_STRING_CV_PARA);
-	m_psp.dwFlags = m_psp.dwFlags | PSP_USETITLE ; 	
+	m_psp.dwFlags = m_psp.dwFlags | PSP_USETITLE | PSH_HASHELP ; 	
 	m_psp.pszTitle = new TCHAR[title.GetLength()+1];
 	_tcscpy((wchar_t*)m_psp.pszTitle, title);
 }
@@ -215,7 +215,9 @@ int CVParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	pCombo=new CComboBox;
 	pCombo->Create(
-		CBS_DROPDOWN
+		//CBS_DROPDOWN
+		CBS_DROPDOWNLIST
+		//|WS_TILED
 		|WS_CHILD
 		|WS_VISIBLE, 
 		CRect(pt,staticSize),
@@ -228,8 +230,12 @@ int CVParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 	pCombo->SetCurSel(para.combochoice);
 
-	pEdit = (CEdit*)pCombo->GetWindow(GW_CHILD);
-	pEdit->SetReadOnly();
+	//pCombo->ModifyStyle(WS_BORDER,NULL);
+	//pCombo->ModifyStyleEx(WS_EX_CLIENTEDGE|WS_EX_STATICEDGE, NULL);
+
+
+	//pEdit = (CEdit*)pCombo->GetWindow(GW_CHILD);
+	//pEdit->SetReadOnly();
 
 	pt.x+=gap2.cx+staticSize.cx;
 

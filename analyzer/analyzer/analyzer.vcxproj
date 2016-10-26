@@ -103,6 +103,10 @@
     <None Include="res\astri.bmp" />
     <None Include="res\bitmap8.bmp" />
     <None Include="res\hottoolb.bmp" />
+    <None Include="res\icon2.ico" />
+    <None Include="res\icon3.ico" />
+    <None Include="res\icon4.ico" />
+    <None Include="res\icon5.ico" />
     <None Include="res\index_02_01_01.bmp" />
     <None Include="res\info.bmp" />
     <None Include="res\menutoolb.bmp" />
@@ -114,6 +118,9 @@
     <None Include="res\Panorama16.bmp" />
     <None Include="res\Panorama24.bmp" />
     <None Include="res\Panorama32.bmp" />
+    <None Include="res\qq.bmp" />
+    <None Include="res\qq16.bmp" />
+    <None Include="res\qq16.ico" />
     <None Include="res\ThinkCentre.ico" />
     <None Include="res\Toolbar.bmp" />
     <None Include="res\Toolbar256.bmp" />
@@ -121,6 +128,7 @@
     <None Include="UserImages.bmp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AccountComboBox.h" />
     <ClInclude Include="AccountList.h" />
     <ClInclude Include="AnalysisParametersPage.h" />
     <ClInclude Include="analyzer.h" />
@@ -159,6 +167,7 @@
     <ClInclude Include="PlotSettingPageA.h" />
     <ClInclude Include="PlotSpec.h" />
     <ClInclude Include="Point2d.h" />
+    <ClInclude Include="PropertySheetA.h" />
     <ClInclude Include="RawData.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SAPara.h" />
@@ -174,6 +183,7 @@
     <ClInclude Include="VPara.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AccountComboBox.cpp" />
     <ClCompile Include="AccountList.cpp" />
     <ClCompile Include="AnalysisParametersPage.cpp" />
     <ClCompile Include="analyzer.cpp" />
@@ -213,6 +223,7 @@
     <ClCompile Include="PlotSettingPageA.cpp" />
     <ClCompile Include="PlotSpec.cpp" />
     <ClCompile Include="Point2d.cpp" />
+    <ClCompile Include="PropertySheetA.cpp" />
     <ClCompile Include="RawData.cpp" />
     <ClCompile Include="SAPara.cpp" />
     <ClCompile Include="sapitemA.cpp" />

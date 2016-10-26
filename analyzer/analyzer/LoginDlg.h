@@ -3,6 +3,7 @@
 #include "MainFrm.h"
 #include "EditC.h"
 #include "AccountList.h"
+#include "AccountComboBox.h"
 // LoginDlg dialog
 
 class LoginDlg : public CDialogEx
@@ -23,12 +24,19 @@ protected:
 public:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 
-	CEdit euser;
+	//CEdit euser;
 	//EditC euser;
 	CEdit epass;
 	CStatic suser;
 	CStatic spass;
 	CStatic sbmp;
+	
+	AccountComboBox m_usr;
+
+	CMFCButton m_login;
+	CMFCButton m_cancel;
+	CImageList m_ImageList;
+
 	virtual void OnOK();
 
 	virtual BOOL OnInitDialog();

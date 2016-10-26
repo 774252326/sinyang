@@ -22,6 +22,7 @@
 #include "analyzerViewR.h"
 #include "pdfout.h"
 #include "func.h"
+#include "PropertySheetA.h"
 
 
 //void LoadFileList(const CString &m_filePath, std::vector<CString> &filelist)
@@ -228,7 +229,8 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		// 创建属性表对象   
 		CString str;
 		str.LoadStringW(IDS_STRING_ANALYSIS_SETUP);
-		CPropertySheet sheet(str);
+		//CPropertySheet sheet(str);
+			PropertySheetA1 sheet(str);
 
 		AnalysisParametersPage appage;
 		appage.para=p1;
@@ -241,6 +243,14 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		SolutionAdditionParametersPageA sppage;
 		sppage.para=p3;
 		sheet.AddPage(&sppage);
+
+		//sheet.ModifyStyleEx(0, WS_EX_CONTEXTHELP); 
+		//sheet.ModifyStyle(0, DS_CONTEXTHELP); 
+
+		//sheet.dwFlags   |=   (~PSH_HASHELP); 
+//sheet.m_psp.dwFlags   &=   (~PSP_HASHELP);
+		//sheet.
+
 
 		// 打开模态向导对话框   
 		if(sheet.DoModal()==IDOK){

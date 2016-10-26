@@ -45,32 +45,95 @@ int LoginDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	// TODO:  Add your specialized creation code here
 
-	//CSize gap(20,20);
+	CSize gap1(20,10);
+	CSize gap2(10,10);
 
-	//CRect winrect;
-	//this->GetClientRect(&winrect);
+	CRect winrect;
+	this->GetClientRect(&winrect);
+	winrect.DeflateRect(gap1);
 
-	//CSize esz( (winrect.Width()-3*gap.cx)/2, 23 );
-	//CPoint pt(gap);
+	int h=25,hs=10;
+	CSize esz( winrect.Width(), h );
+	CSize bsz( (winrect.Width()-gap2.cx)/2, h );
+	CPoint pt(gap1);
+	CString str;
 
-	//if( euser.Create( WS_CHILD | WS_TABSTOP | WS_BORDER |WS_VISIBLE, CRect(pt,esz), this, IDS_EDIT_USERNAME)==0 )
-	//	return -1;
+	pt.y+=80;
 
-	//pt.x+=esz.cx+gap.cx;
+	str.LoadStringW(IDS_EDIT_USERNAME);
+	if( suser.Create(
+		str,
+		WS_CHILD
+		|SS_LEFT
+		|SS_SIMPLE   
+		|WS_VISIBLE, 
+		CRect(pt,esz),
+		this,
+		IDS_EDIT_USERNAME)==0
+		){
+			return -1;
+	}
 
-	//if( epass.Create( WS_CHILD | WS_TABSTOP | WS_BORDER | ES_PASSWORD |WS_VISIBLE , CRect(pt,esz), this, IDS_EDIT_PASSWORD)==0 )
-	//	return -1;
+	pt.y+=esz.cy-hs;
 
-	//pt.x-=esz.cx+gap.cx;
-	//pt.y+=esz.cy+gap.cy;
+	m_usr.al=al;
 
-	//this->GetDlgItem(IDOK)->MoveWindow(pt.x,pt.y,esz.cx,esz.cy);
+	if(m_usr.CreateEx(NULL,
+		CBS_DROPDOWN
+		|CBS_AUTOHSCROLL
+		|WS_CHILD
+		|WS_VISIBLE,
+		CRect(pt,CSize(esz.cx,100)),
+		this,
+		IDS_EDIT_USERNAME
+		)==FALSE){
+			return -1;
+	}
 
-	//pt.x+=esz.cx+gap.cx;
+	pt.y+=esz.cy;
 
-	//this->GetDlgItem(IDCANCEL)->MoveWindow(CRect(pt,esz));
+	str.LoadStringW(IDS_EDIT_PASSWORD);
+
+	if( spass.Create(
+		str,
+		WS_CHILD
+		|SS_LEFT
+		|WS_VISIBLE, 
+		CRect(pt,esz),
+		this,
+		IDS_EDIT_PASSWORD)
+		==0 ){
+			return -1;
+	}
+	pt.y+=esz.cy-hs;
+
+	if( epass.CreateEx(
+		WS_EX_CLIENTEDGE,
+		L"Edit", 
+		L"a",
+		ES_LEFT
+		|WS_CHILD
+		|WS_TABSTOP
+		|ES_PASSWORD
+		|WS_VISIBLE,
+		CRect(pt,esz),
+		this,
+		IDS_EDIT_PASSWORD)
+		==0 )
+		return -1;
 
 
+	pt.y+=esz.cy+gap2.cy;
+	str.LoadStringW(IDS_STRING_LOGIN);
+	if(m_login.Create(str, WS_CHILD|WS_VISIBLE|BS_PUSHBUTTON, CRect(pt,bsz), this, IDOK)==FALSE){
+		return -1;
+	}
+
+	pt.x+=bsz.cx+gap2.cx;
+	str.LoadStringW(IDS_STRING_CANCEL);
+	if(m_cancel.Create(str, WS_CHILD|WS_VISIBLE|BS_PUSHBUTTON, CRect(pt,bsz), this, IDCANCEL)==FALSE){
+		return -1;
+	}
 
 	return 0;
 }
@@ -84,7 +147,9 @@ void LoginDlg::OnOK()
 
 	CString m_strUser,m_strPwd;
 
-	euser.GetWindowTextW(m_strUser);
+	//euser.GetWindowTextW(m_strUser);
+
+	m_usr.GetWindowTextW(m_strUser);
 	epass.GetWindowTextW(m_strPwd);
 
 	usridx=al.CheckUserAccount(m_strUser,m_strPwd);
@@ -96,11 +161,28 @@ void LoginDlg::OnOK()
 
 	}
 	else{
+		
+		CString title,str;
+		title.LoadStringW(IDS_STRING_ERROR);
+
 		if(usridx==-1){
-			AfxMessageBox(L"password error");
+			//AfxMessageBox(L"password error");
+
+			str.LoadStringW(IDS_STRING_WRONG_PASSWORD);
+			epass.ShowBalloonTip(title,str);
+			epass.SetSel(0,-1);
 		}
 		else{
-			AfxMessageBox(L"username error");
+			//AfxMessageBox(L"username error");
+
+			//m_usr.GetComboBoxCtrl()->SetCueBanner(L"username error");
+
+
+			str.LoadStringW(IDS_STRING_INVALID_USERNAME);
+
+			m_usr.GetEditCtrl()->ShowBalloonTip(title,str);
+			m_usr.GetEditCtrl()->SetSel(0,-1);
+			//m_usr.Invalidate();
 		}
 	}
 
@@ -141,139 +223,153 @@ BOOL LoginDlg::OnInitDialog()
 
 	// TODO:  Add extra initialization here
 
-	CSize gap(20,10);
+	//CSize gap1(20,10);
+	//CSize gap2(10,10);
 
-	CRect winrect;
-	this->GetClientRect(&winrect);
+	//CRect winrect;
+	//this->GetClientRect(&winrect);
+	//winrect.DeflateRect(gap1);
 
-	CSize esz( (winrect.Width()-3*gap.cx)/2, 23 );
-	CPoint pt(gap);
-	CString str;
+	//CSize esz( winrect.Width(), 23 );
+	//CSize bsz( (winrect.Width()-gap2.cx)/2, 23 );
+	//CPoint pt(gap1);
+	//CString str;
+	//
+	////pt.y+=270;
 
+	//str.LoadStringW(IDS_EDIT_USERNAME);
+	//if( suser.Create(
+	//	str,
+	//	WS_CHILD
+	//	|SS_CENTER
+	//	|WS_VISIBLE, 
+	//	CRect(pt,esz),
+	//	this,
+	//	IDS_EDIT_USERNAME)==0
+	//	){
+	//		return FALSE;
+	//}
 
-
-	CBitmap CBmp;
-	CImage CImg;
-
-	// Create a child bitmap static control and load it from a CBitmap object.
-
-	//CStatic * _m_pCStatic_A = new CStatic;
-	//_m_pCStatic_A->Create(_T("A bitmap static control (A)"), 
-	//    WS_CHILD|WS_BORDER|WS_VISIBLE|SS_BITMAP|SS_CENTERIMAGE, CRect(16,16,64,64),
-	//    this);
-	//CBmp.LoadOEMBitmap(IDB_BITMAP_SINYANG);  // Loads one of the default Windows bitmaps
-
-	//_m_pCStatic_A->SetBitmap( HBITMAP(CBmp) );
-	//_m_pCStatic_A->ShowWindow( SW_SHOW );
-
-
-
-	//CBitmap bmp;//内存中承载临时图象的位图
-	//bmp.LoadBitmapW(IDB_BITMAP_SINYANG);
-	CSize sz(271,92);
-
-	CPoint pt1=CPoint(winrect.CenterPoint().x-sz.cx/2,gap.cy);
-	str=L"";
-	if( sbmp.Create(
-		str,
-		WS_CHILD
-		//|WS_BORDER
-		|SS_BITMAP
-		//|SS_CENTERIMAGE
-		|WS_VISIBLE, 
-		CRect(pt1,sz),
-		//winrect,
-		this)==0
-		){
-			return FALSE;
-	}
+	//pt.y+=esz.cy;
 
 
-	//sbmp.SetBitmap((HBITMAP)(bmp));
-	//sbmp.ShowWindow(SW_HIDE);
-	//sbmp.Invalidate();
+	//if(m_usr.CreateEx(WS_EX_CLIENTEDGE,
+	//	CBS_DROPDOWN
+	//	|CBS_AUTOHSCROLL
+	//	|WS_CHILD
+	//	|WS_VISIBLE,
+	//	CRect(pt,esz),
+	//	this,
+	//	IDS_EDIT_USERNAME
+	//	)==FALSE){
+	//		return FALSE;
+	//}
 
-	pt.y+=sz.cy+gap.cy;
+	//pt.y+=esz.cy;
 
-	str.LoadStringW(IDS_EDIT_USERNAME);
-	if( suser.Create(
-		str,
-		WS_CHILD
-		|SS_CENTER
-		|WS_VISIBLE, 
-		CRect(pt,esz),
-		this,
-		IDS_EDIT_USERNAME)==0
-		){
-			return FALSE;
-	}
+	//str.LoadStringW(IDS_EDIT_PASSWORD);
 
-	pt.x+=esz.cx+gap.cx;
-
-	str.LoadStringW(IDS_EDIT_PASSWORD);
-
-	if( spass.Create(
-		str,
-		WS_CHILD
-		|SS_CENTER
-		|WS_VISIBLE, 
-		CRect(pt,esz),
-		this,
-		IDS_EDIT_PASSWORD)
-		==0 )
-		return FALSE;
-
-	pt.x-=esz.cx+gap.cx;
-	pt.y+=esz.cy;
+	//if( spass.Create(
+	//	str,
+	//	WS_CHILD
+	//	|SS_CENTER
+	//	|WS_VISIBLE, 
+	//	CRect(pt,esz),
+	//	this,
+	//	IDS_EDIT_PASSWORD)
+	//	==0 ){
+	//	return FALSE;
+	//}
+	//pt.y+=esz.cy;
 
 
-	if( euser.CreateEx(
-		WS_EX_CLIENTEDGE,
-		L"Edit", 
-		L"a",
-		ES_LEFT
-		|WS_CHILD
-		|WS_TABSTOP
-		|WS_VISIBLE,
-		CRect(pt,esz),
-		this,
-		IDS_EDIT_USERNAME)
-		==0 )
-		return FALSE;
+	//if( epass.CreateEx(
+	//	WS_EX_CLIENTEDGE,
+	//	L"Edit", 
+	//	L"a",
+	//	ES_LEFT
+	//	|WS_CHILD
+	//	|WS_TABSTOP
+	//	|ES_PASSWORD
+	//	|WS_VISIBLE,
+	//	CRect(pt,esz),
+	//	this,
+	//	IDS_EDIT_PASSWORD)
+	//	==0 )
+	//	return FALSE;
 
-	pt.x+=esz.cx+gap.cx;
+	////pt.x-=esz.cx+gap.cx;
+	//pt.y+=esz.cy+gap2.cy;
 
-	if( epass.CreateEx(
-		WS_EX_CLIENTEDGE,
-		L"Edit", 
-		L"a",
-		ES_LEFT
-		|WS_CHILD
-		|WS_TABSTOP
-		|ES_PASSWORD
-		|WS_VISIBLE,
-		CRect(pt,esz),
-		this,
-		IDS_EDIT_PASSWORD)
-		==0 )
-		return FALSE;
+	////this->GetDlgItem(IDOK)->MoveWindow(pt.x,pt.y,esz.cx,esz.cy);
 
-	pt.x-=esz.cx+gap.cx;
-	pt.y+=esz.cy+gap.cy;
-
-	this->GetDlgItem(IDOK)->MoveWindow(pt.x,pt.y,esz.cx,esz.cy);
-
-	pt.x+=esz.cx+gap.cx;
-
-	this->GetDlgItem(IDCANCEL)->MoveWindow(CRect(pt,esz));
+	//if(m_login.Create(_T("My button"), WS_CHILD|WS_VISIBLE|BS_PUSHBUTTON, CRect(pt,bsz), this, IDOK)==FALSE){
+	//	return FALSE;
+	//}
 
 
-		//CImage bmp;
+
+
+	//pt.x+=esz.cx+gap2.cx;
+
+	////this->GetDlgItem(IDCANCEL)->MoveWindow(CRect(pt,esz));
+
+	//if(m_cancel.Create(_T("My button2"), WS_CHILD|WS_VISIBLE|BS_PUSHBUTTON, CRect(pt,bsz), this, IDCANCEL)==FALSE){
+	//	return FALSE;
+	//}
+
+
+
+	//CImage bmp;
 	//bmp.Load(L"C:\\Users\\r8anw2x\\Pictures\\Sample Album\\Pensive Parakeet.jpg");
 
 	//this->SetBackgroundImage((HBITMAP)(bmp));
 	this->SetBackgroundImage(IDB_BITMAP_BK);
 	//sbmp.SetBitmap((HBITMAP)(bmp));
+
+
+
+	//m_ImageList.Create(16, 16, ILC_COLOR, 3, 3);
+
+	//HICON hIcon1;
+	//hIcon1 = AfxGetApp()->LoadIcon(IDI_ICON2);
+	//m_ImageList.Add(hIcon1);
+
+	//hIcon1 = AfxGetApp()->LoadIcon(IDI_ICON3);
+	//m_ImageList.Add(hIcon1);
+
+	//hIcon1 = AfxGetApp()->LoadIcon(IDI_ICON4);
+	//m_ImageList.Add(hIcon1);
+
+	////关联图像列表和扩展组合框
+
+	////m_pw.SetImageList(&m_ImageList);
+	//m_usr.SetImageList(&m_ImageList);
+
+
+
+	//COMBOBOXEXITEM     cbi;//扩展组合框单元
+	//cbi.mask = CBEIF_IMAGE| CBEIF_INDENT | CBEIF_OVERLAY |CBEIF_SELECTEDIMAGE | CBEIF_TEXT;
+
+
+	//for(size_t i=0;i<al.ual.size();i++){
+	//	cbi.iItem = i;
+	//	cbi.iImage = al.ual[i].au;
+	//	cbi.iSelectedImage = al.ual[i].au;
+	//	cbi.pszText = al.ual[i].userName.GetBuffer();
+	//	cbi.iOverlay = al.ual[i].au+1;
+	//	cbi.iIndent=0;
+	//	m_usr.InsertItem(&cbi);
+
+	//	//m_usr.SetItemHeight(i,20);
+	//}
+
+	//CComboBox *cb=m_usr.GetComboBoxCtrl();
+	//cb->SetCurSel(0);
+	//cb->SetMinVisibleItems(3);
+	//m_usr.SetWindowTextW(al.ual[0].userName);
+
+
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE

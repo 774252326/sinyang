@@ -504,3 +504,16 @@ int ListCtrlA::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	return 0;
 }
+
+
+BOOL ListCtrlA::SetChoice(int nItem, int nSubItem, int choiceIndex)
+{
+
+	if( nItem<0 || nSubItem<0 || nSubItem>=cbstr.size() || choiceIndex<0 || choiceIndex>=cbstr[nSubItem].size() ){
+		return FALSE;
+	}
+
+	return SetItemText(nItem,nSubItem,cbstr[nSubItem][choiceIndex]);
+
+	return 0;
+}

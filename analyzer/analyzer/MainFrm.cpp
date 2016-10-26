@@ -14,6 +14,7 @@
 #include "LoginDlg.h"
 //#include "UserAccountDlg.h"
 #include "UserAccountPage.h"
+#include "PropertySheetA.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -62,6 +63,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_UPDATE_COMMAND_UI(ID_FILE_PRINT_SETUP, &CMainFrame::OnUpdateFilePrintSetup)
 	ON_UPDATE_COMMAND_UI(ID_FILE_SAVE, &CMainFrame::OnUpdateFileSave)
 	ON_UPDATE_COMMAND_UI(ID_FILE_NEW, &CMainFrame::OnUpdateFileNew)
+	ON_COMMAND(ID_HELP_HELPTOPICS, &CMainFrame::OnHelpHelptopics)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -764,9 +766,9 @@ void CMainFrame::OnSecurityUseraccounts()
 
 
 		CString str;
-		str.LoadStringW(IDS_STRING_USER_ACCOUNT);
-		CPropertySheet sheet(str);
-
+		//str.LoadStringW(IDS_STRING_USER_ACCOUNT);
+		//CPropertySheet sheet(str);
+		PropertySheetA1 sheet(IDS_STRING_USER_ACCOUNT);
 		//str.LoadStringW(IDS_STRING_FIGURE1);
 		//str=L"";
 		//int selecti=m_spBtn.GetPos32();
@@ -828,4 +830,12 @@ void CMainFrame::OnUpdateFileNew(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
 	pCmdUI->Enable(al.ual[userIndex].au!=guest);
+}
+
+
+void CMainFrame::OnHelpHelptopics()
+{
+	// TODO: Add your command handler code here
+
+	AfxMessageBox(L"help");
 }

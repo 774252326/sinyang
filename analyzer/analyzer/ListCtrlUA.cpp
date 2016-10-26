@@ -126,34 +126,18 @@ int ListCtrlUA::InsertItemUA(int i, const UserAccount & ua, bool bUse)
 	SetItemText(i,1,ua.passWord);
 	AdjustWidth(this,1,ua.passWord);
 
-	CString strTemp;
-	strTemp.LoadString(IDS_STRING_ADMIN+ua.au);
-	SetItemText(i, 2, strTemp);
-	AdjustWidth(this,2,strTemp);
+	SetChoice(i,2,ua.au);
 
 	if(bUse){
-		strTemp.LoadString(IDS_STRING_YES);
 		bEditable=(ua.au==admin);	
-
-		if(bEditable){
-		
+		if(bEditable){		
 		typelist[0]=typelist[1]=typelist[4]=eEdit;
-
 		typelist[2]=eCombo;
-		//// insert string elements  for the ComboBox : 
-		//for ( int j=IDS_STRING_ADMIN ; j <= IDS_STRING_GUEST ; j++){
-		//	strTemp.LoadStringW(j);
-		//	cbstr[2].push_back(strTemp);
-		//	AdjustWidth(this,2,strTemp);
-		//}
 	}
 
 	}
-	else{
-		strTemp.LoadString(IDS_STRING_NO);
-	}
-	SetItemText(i,3,strTemp);
-	AdjustWidth(this,3,strTemp);
+	SetChoice(i,3,bUse?0:1);
+	AdjustWidth(this,3,i);
 
 	SetItemText(i,4,ua.remark);
 	AdjustWidth(this,4,ua.remark);

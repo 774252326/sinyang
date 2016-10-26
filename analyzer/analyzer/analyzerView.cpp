@@ -19,6 +19,8 @@
 
 #include "testdlg.h"
 
+#include "PropertySheetA.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -372,8 +374,10 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 
 		// 创建属性表对象   
 		CString str;
-		str.LoadStringW(IDS_STRING_POLT_SETTINGS);
-		CPropertySheet sheet(str);
+		//str.LoadStringW(IDS_STRING_POLT_SETTINGS);
+		//CPropertySheet sheet(str);
+
+		PropertySheetA1 sheet(IDS_STRING_POLT_SETTINGS);
 
 		str.LoadStringW(IDS_STRING_FIGURE1);
 		str=L"";

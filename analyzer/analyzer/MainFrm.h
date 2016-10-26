@@ -123,6 +123,7 @@ public:
 	afx_msg void OnUpdateFileSave(CCmdUI *pCmdUI);
 	afx_msg void OnUpdateFileNew(CCmdUI *pCmdUI);
 	int userIndex;
+	afx_msg void OnHelpHelptopics();
 };
 
 

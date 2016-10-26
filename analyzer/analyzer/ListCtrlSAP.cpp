@@ -144,39 +144,40 @@ void ListCtrlSAP::OnPopupRemove()
 
 int ListCtrlSAP::InsertItemSAP(int i, const sapitemA & si)
 {
-		CString strTemp;
+	CString strTemp;
 
-	//for(size_t i=0;i<para.saplist.size();i++){
-		strTemp.Format(L"%d",i+1);
-		int ri=InsertItem( i, strTemp );
-		AdjustWidth(this,0,strTemp);
+	strTemp.Format(L"%d",i+1);
+	int ri=InsertItem( i, strTemp );
+	AdjustWidth(this,0,strTemp);
 
-		if(si.addType<0)
-			strTemp.LoadStringW(IDS_STRING_VOL_ONCE);
-		else
-			strTemp.LoadStringW(IDS_STRING_VOL_ONCE+si.addType);
-		SetItemText(i,1,strTemp);
-		AdjustWidth(this,1,strTemp);
+	//if(si.addType<0)
+	//	strTemp.LoadStringW(IDS_STRING_VOL_ONCE);
+	//else
+	//	strTemp.LoadStringW(IDS_STRING_VOL_ONCE+si.addType);
+	//SetItemText(i,1,strTemp);
+	//AdjustWidth(this,1,strTemp);
 
-		strTemp.Format(L"%g",si.Sconc);
-		SetItemText(i,2,strTemp);
-		AdjustWidth(this,2,strTemp);
+	SetChoice(i,1,(si.addType<0?0:si.addType));
 
-		strTemp.Format(L"%g",si.Aconc);
-		SetItemText(i,3,strTemp);
-		AdjustWidth(this,3,strTemp);
+	strTemp.Format(L"%g",si.Sconc);
+	SetItemText(i,2,strTemp);
+	AdjustWidth(this,2,strTemp);
 
-		strTemp.Format(L"%g",si.Lconc);
-		SetItemText(i,4,strTemp);
-		AdjustWidth(this,4,strTemp);
+	strTemp.Format(L"%g",si.Aconc);
+	SetItemText(i,3,strTemp);
+	AdjustWidth(this,3,strTemp);
 
-		strTemp.Format(L"%g",si.volconc);
-		SetItemText(i,5,strTemp);
-		AdjustWidth(this,5,strTemp);
+	strTemp.Format(L"%g",si.Lconc);
+	SetItemText(i,4,strTemp);
+	AdjustWidth(this,4,strTemp);
 
-		strTemp.Format(L"%g",si.endRatio);
-		SetItemText(i,6,strTemp);
-		AdjustWidth(this,6,strTemp);
+	strTemp.Format(L"%g",si.volconc);
+	SetItemText(i,5,strTemp);
+	AdjustWidth(this,5,strTemp);
+
+	strTemp.Format(L"%g",si.endRatio);
+	SetItemText(i,6,strTemp);
+	AdjustWidth(this,6,strTemp);
 
 
 	return ri;
@@ -186,25 +187,25 @@ int ListCtrlSAP::InsertItemSAP(int i, const sapitemA & si)
 bool ListCtrlSAP::GetItemSAP(int i, sapitemA & si)
 {
 
-		CString strTemp;
+	CString strTemp;
 
 	//for(size_t i=0;i<nItem;i++){
-		si.addType=GetChoice(i,1);
+	si.addType=GetChoice(i,1);
 
-		strTemp=GetItemText(i,2);
-		si.Sconc=_wtof(strTemp.GetBuffer());
+	strTemp=GetItemText(i,2);
+	si.Sconc=_wtof(strTemp.GetBuffer());
 
-		strTemp=GetItemText(i,3);
-		si.Aconc=_wtof(strTemp.GetBuffer());
+	strTemp=GetItemText(i,3);
+	si.Aconc=_wtof(strTemp.GetBuffer());
 
-		strTemp=GetItemText(i,4);
-		si.Lconc=_wtof(strTemp.GetBuffer());
+	strTemp=GetItemText(i,4);
+	si.Lconc=_wtof(strTemp.GetBuffer());
 
-		strTemp=GetItemText(i,5);
-		si.volconc=_wtof(strTemp.GetBuffer());
+	strTemp=GetItemText(i,5);
+	si.volconc=_wtof(strTemp.GetBuffer());
 
-		strTemp=GetItemText(i,6);
-		si.endRatio=_wtof(strTemp.GetBuffer());
+	strTemp=GetItemText(i,6);
+	si.endRatio=_wtof(strTemp.GetBuffer());
 
 	return true;
 }

@@ -86,6 +86,27 @@
     <None Include="res\ThinkCentre.ico">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="res\icon2.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\icon3.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\icon4.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\qq.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\icon5.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\qq16.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\qq16.ico">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="analyzer.h">
@@ -241,6 +262,12 @@
     <ClInclude Include="ListCtrlDOA.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="AccountComboBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PropertySheetA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="analyzer.cpp">
@@ -391,6 +418,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ListCtrlDOA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AccountComboBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PropertySheetA.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

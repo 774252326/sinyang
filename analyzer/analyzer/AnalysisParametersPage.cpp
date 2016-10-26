@@ -528,7 +528,8 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	pCombo2=new CComboBox;
 	pCombo2->Create(
-		CBS_DROPDOWN|
+		//CBS_DROPDOWN|
+		CBS_DROPDOWNLIST|
 		//WS_VISIBLE|
 		WS_CHILD, 
 		CRect(pt,staticSize),
@@ -541,8 +542,8 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 	pCombo2->SetCurSel(para.calibrationfactortype);
 
-	pEdit = (CEdit*)pCombo2->GetWindow(GW_CHILD);
-	pEdit->SetReadOnly();
+	//pEdit = (CEdit*)pCombo2->GetWindow(GW_CHILD);
+	//pEdit->SetReadOnly();
 
 	pt.x+=gap2.cx+staticSize.cx;
 

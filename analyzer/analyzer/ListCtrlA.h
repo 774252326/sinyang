@@ -66,6 +66,7 @@ public:
 
 	BOOL SetHeader(const std::vector<CString> & headerstrl);
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	BOOL SetChoice(int nItem, int nSubItem, int choiceIndex);
 };
 
 

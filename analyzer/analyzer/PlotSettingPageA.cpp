@@ -135,6 +135,7 @@ int PlotSettingPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	pCombo=new CComboBox;
 	pCombo->Create(
+		//CBS_DROPDOWNLIST
 		CBS_DROPDOWN
 		|WS_VSCROLL   
 		|WS_CHILD

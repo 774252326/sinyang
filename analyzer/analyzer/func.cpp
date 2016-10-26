@@ -21,11 +21,11 @@ const DWORD sleepms=100;
 const size_t nd=500;
 //const size_t nd=sleepms/10;
 
-//CString folderp=L"C:\\Users\\r8anw2x\\Desktop\\data\\d\\";
+CString folderp=L"C:\\Users\\r8anw2x\\Desktop\\data\\d\\";
 //CString folderp=L"D:\\data\\d\\";
 //CString folderp=L"C:\\Users\\G\\Desktop\\data\\d\\";
 
-CString folderp=L"data\\d\\";
+//CString folderp=L"data\\d\\";
 
 CString DEMOflist=folderp+L"fl1.txt";
 CString DTRflist=folderp+L"dtr.txt";
@@ -2850,7 +2850,20 @@ UINT PROCESS(LPVOID pParam)
 
 	*pst=pause;
 	WaitSecond(*pst);
-
+					/////////////////////////////////////////
+	{		
+			TCHAR szFilters[]= _T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||");
+	CFileDialog fileDlg(TRUE, _T("txt"), _T("*.txt"),
+		OFN_FILEMUSTEXIST | OFN_HIDEREADONLY /*| OFN_ALLOWMULTISELECT*/ , szFilters);
+	if(fileDlg.DoModal() == IDOK)
+	{ 
+		filelist.assign(1,fileDlg.GetPathName());
+	}
+	else{
+		return 9;
+	}
+	}
+				////////////////////////////////////////
 	::SendMessage(cba->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
 
 	lv->bMouseCursor=rv->bMouseCursor=false;
@@ -2915,6 +2928,20 @@ UINT PROCESS(LPVOID pParam)
 				::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(v2a),NULL);
 				*pst=pause;
 				WaitSecond(*pst);
+				/////////////////////////////////////////
+				{
+							TCHAR szFilters[]= _T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||");
+	CFileDialog fileDlg(TRUE, _T("txt"), _T("*.txt"),
+		OFN_FILEMUSTEXIST | OFN_HIDEREADONLY /*| OFN_ALLOWMULTISELECT*/ , szFilters);
+	if(fileDlg.DoModal() == IDOK)
+	{ 
+		filelist.push_back(fileDlg.GetPathName());
+	}
+	else{
+		return 9;
+	}
+				}
+				////////////////////////////////////////
 				::SendMessage(cba->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
 				filelist.erase(filelist.begin());
 				break;
