@@ -4,6 +4,14 @@
 #include "sapitemA.h"
 #include "VPara.h"
 
+#define PCCTB_SAMPLE 0x00
+#define PCCTB_VMS 0x01
+#define PCCTB_S 0x02
+#define PCCTB_A 0x04
+#define PCCTB_L 0x08
+#define PCCTB_MORE 0x10
+
+
 class pcctB
 {
 public:
@@ -51,7 +59,11 @@ public:
 	double addVolume;
 	CString stepName;
 	//////////////////////////////////
-	bool ReadTask(sapitemA sapi);
+	bool ReadTask(sapitemA sapi, BYTE bFlag=PCCTB_VMS);
 	void initialPara(CVPara cvp);
+	double TotalVolume(void);
+	double AConc(void);
+	double SConc(void);
+	double LConc(void);
 };
 

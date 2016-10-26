@@ -20,13 +20,16 @@ protected: // create from serialization only
 // Attributes
 public:
 
+	void operator=(const CanalyzerDoc &src);
+	CanalyzerDoc(const CanalyzerDoc &src){ operator=(src); };
+
 	ANPara p1;
 	CVPara p2;
 	SAPara p3;
 	std::vector<DataOut> dol;
 	std::vector<PlotData> lp;
 	std::vector<PlotData> rp;
-
+	CString resultStr;
 // Operations
 public:
 
@@ -61,5 +64,6 @@ public:
 	afx_msg void OnAnalysisMethodsetup();
 //	afx_msg void OnAnalysisStartanalysis();
 //	CWinThread *ppa;
-	CString resultStr;
+
+	bool bUpdateView;
 };

@@ -66,10 +66,10 @@ bool sapitemA::isUnknownComposition(void)
 }
 
 
-bool sapitemA::isStepEnd(double currentRatio)
+bool sapitemA::isStepEnd(double currentRatio, bool bLess)
 {
 	if(addType==1/*||addType==3*/){
-		if(currentRatio>endRatio){
+		if( (currentRatio<endRatio)^bLess ){
 			return false;
 		}
 	}

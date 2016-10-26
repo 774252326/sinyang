@@ -22,7 +22,7 @@ public:
 
 	virtual void Serialize(CArchive& ar);
 	bool isUnknownComposition(void);
-	bool isStepEnd(double currentRatio);
+	bool isStepEnd(double currentRatio,bool bLess=true);
 };
 
 

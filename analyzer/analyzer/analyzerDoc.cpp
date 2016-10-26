@@ -44,10 +44,25 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 	CanalyzerDoc::CanalyzerDoc()
 		//: ppa(NULL)
 		: resultStr(_T(""))
+		, bUpdateView(true)
 	{
 		// TODO: add one-time construction code here
 
 	}
+
+
+	void CanalyzerDoc::operator=(const CanalyzerDoc &src)
+	{
+		p1=src.p1;
+		p2=src.p2;
+		p3=src.p3;
+		dol.assign(src.dol.begin(),src.dol.end());
+		lp.assign(src.lp.begin(),src.lp.end());
+		rp.assign(src.rp.begin(),src.rp.end());
+		resultStr=src.resultStr;
+		bUpdateView=false;
+	}
+
 
 	CanalyzerDoc::~CanalyzerDoc()
 	{
@@ -132,23 +147,24 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 			}
 			///////////////////////////////////////////////
 
-			POSITION pos = GetFirstViewPosition();
-			CanalyzerView* lv=((CanalyzerView*)GetNextView(pos));
-			lv->SetSpin(lp.size()-1);
-			lv->updatePlotRange();
+			if(bUpdateView){
+				POSITION pos = GetFirstViewPosition();
+				CanalyzerView* lv=((CanalyzerView*)GetNextView(pos));
+				lv->SetSpin(lp.size()-1);
+				lv->updatePlotRange();
 
-			CMainFrame *mf=(CMainFrame*)(lv->GetParentFrame());
-			COutputList* ol=mf->GetOutputWnd()->GetListCtrl();
-			mf->GetCaptionBar()->ShowMessage(resultStr);
+				CMainFrame *mf=(CMainFrame*)(lv->GetParentFrame());
+				COutputList* ol=mf->GetOutputWnd()->GetListCtrl();
+				mf->GetCaptionBar()->ShowMessage(resultStr);
 
-			CanalyzerViewR* rv=((CanalyzerViewR*)GetNextView(pos));
-			rv->SetSpin(rp.size()-1);
-			rv->updatePlotRange();
+				CanalyzerViewR* rv=((CanalyzerViewR*)GetNextView(pos));
+				rv->SetSpin(rp.size()-1);
+				rv->updatePlotRange();
 
-			for(size_t i=0;i<dol.size();i++){
-				ol->InsertListCtrl(i,dol[i]);
+				for(size_t i=0;i<dol.size();i++){
+					ol->InsertListCtrl(i,dol[i]);
+				}
 			}
-
 			//////////////////////////////////////////////
 
 			////CString str=this->GetPathName();

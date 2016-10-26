@@ -107,8 +107,23 @@ void pcctB::clear(void)
 }
 
 
-bool pcctB::ReadTask(sapitemA sapi)
+bool pcctB::ReadTask(sapitemA sapi, BYTE bFlag)
 {
+	if(sapi.volconc<=0)
+		return false;
+
+	if( (bFlag&PCCTB_VMS) && (sapi.addType!=4) )
+		return false;
+
+	if( !(bFlag&PCCTB_S) && (sapi.Sconc!=0) )
+		return false;
+
+	if( !(bFlag&PCCTB_A) && (sapi.Aconc!=0) )
+		return false;
+
+	if( !(bFlag&PCCTB_L) && (sapi.Lconc!=0) )
+		return false;
+
 	switch(sapi.addType){
 	case 0:
 		{
@@ -131,23 +146,23 @@ bool pcctB::ReadTask(sapitemA sapi)
 		return true;
 	case 1:
 		{
-			if(Ar.back()/Ar0>sapi.endRatio){
+			if( (Ar.back()/Ar0>sapi.endRatio)^(bFlag&PCCTB_MORE) ){
 
-			CString str;
-			str.LoadStringW(IDS_STRING_STEPNAME1);
-			stepName.Format(L"%s %d",str,stepCount);
-			bUpdateAr0=false;
+				CString str;
+				str.LoadStringW(IDS_STRING_STEPNAME1);
+				stepName.Format(L"%s %d",str,stepCount);
+				bUpdateAr0=false;
 
-			addVolume=sapi.volconc;
-			additiveVolume+=addVolume;
+				addVolume=sapi.volconc;
+				additiveVolume+=addVolume;
 
-			bUnknown|=sapi.isUnknownComposition();
+				bUnknown|=sapi.isUnknownComposition();
 
-			if(!bUnknown){
-				Aml+=sapi.Aconc*addVolume;
-				Lml+=sapi.Lconc*addVolume;
-				Sml+=sapi.Sconc*addVolume;
-			}
+				if(!bUnknown){
+					Aml+=sapi.Aconc*addVolume;
+					Lml+=sapi.Lconc*addVolume;
+					Sml+=sapi.Sconc*addVolume;
+				}
 				return true;
 			}
 			else{
@@ -193,4 +208,37 @@ void pcctB::initialPara(CVPara cvp)
 	spv=1/cvp.scanrate;
 	intgUpLim=cvp.endintegratione;
 	nCycle=cvp.noofcycles;
+}
+
+
+double pcctB::TotalVolume(void)
+{
+	return VMSVolume+additiveVolume;
+}
+
+
+
+
+double pcctB::AConc(void)
+{
+	if(bUnknown)
+		return -1;
+
+	return Aml/TotalVolume();
+}
+
+double pcctB::SConc(void)
+{
+	if(bUnknown)
+		return -1;
+
+	return Sml/TotalVolume();
+}
+
+double pcctB::LConc(void)
+{
+	if(bUnknown)
+		return -1;
+
+	return Lml/TotalVolume();
 }
