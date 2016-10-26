@@ -1831,47 +1831,68 @@ void CMainFrame::OnAnalysisStartanalysis()
 	switch(p1.analysistype){
 	case 1:
 
-		//pWriteA=AfxBeginThread(RCCS,
-		//(LPVOID)pa1,
-		//THREAD_PRIORITY_NORMAL,
-		//0,
-		//CREATE_SUSPENDED);
-		hThread=CreateThread(NULL,0,RCCS2,(LPVOID)pa1,0,NULL);
+		pWriteA=AfxBeginThread(RCCS,
+		(LPVOID)pa1,
+		THREAD_PRIORITY_NORMAL,
+		0,
+		CREATE_SUSPENDED);
+		//hThread=CreateThread(NULL,0,RCCS2,(LPVOID)pa1,0,NULL);
 		break;
 
 	case 2:
 
-		//pWriteA=AfxBeginThread(ASDTM,
-		//(LPVOID)pa1,
-		//THREAD_PRIORITY_NORMAL,
-		//0,
-		//CREATE_SUSPENDED);
-		hThread=CreateThread(NULL,0,ASDTM2,(LPVOID)pa1,0,NULL);
+		pWriteA=AfxBeginThread(ASDTM,
+		(LPVOID)pa1,
+		THREAD_PRIORITY_NORMAL,
+		0,
+		CREATE_SUSPENDED);
+		//hThread=CreateThread(NULL,0,ASDTM2,(LPVOID)pa1,0,NULL);
 		break;
 	case 3:
 
-		//pWriteA=AfxBeginThread(RIVLATM,
-		//(LPVOID)pa1,
-		//THREAD_PRIORITY_NORMAL,
-		//0,
-		//CREATE_SUSPENDED);
-		hThread=CreateThread(NULL,0,RIVLATM2,(LPVOID)pa1,0,NULL);
+		pWriteA=AfxBeginThread(RIVLATM,
+		(LPVOID)pa1,
+		THREAD_PRIORITY_NORMAL,
+		0,
+		CREATE_SUSPENDED);
+		//hThread=CreateThread(NULL,0,RIVLATM2,(LPVOID)pa1,0,NULL);
 		break;
 	case 4:
 
-		//pWriteA=AfxBeginThread(AALATM,
-		//	(LPVOID)pa1,
-		//	THREAD_PRIORITY_NORMAL,
-		//	0,
-		//	CREATE_SUSPENDED);
-		hThread=CreateThread(NULL,0,AALATM2,(LPVOID)pa1,0,NULL);
+		pWriteA=AfxBeginThread(AALATM,
+			(LPVOID)pa1,
+			THREAD_PRIORITY_NORMAL,
+			0,
+			CREATE_SUSPENDED);
+		//hThread=CreateThread(NULL,0,AALATM2,(LPVOID)pa1,0,NULL);
+		break;
+	case 5:
+		pWriteA=AfxBeginThread(CRCL,
+			(LPVOID)pa1,
+			THREAD_PRIORITY_NORMAL,
+			0,
+			CREATE_SUSPENDED);
+
+		break;
+	case 6:
+
+		pWriteA=AfxBeginThread(ALRCM,
+			(LPVOID)pa1,
+			THREAD_PRIORITY_NORMAL,
+			0,
+			CREATE_SUSPENDED);
+
+		break;
+	case 7:
+		break;
+	case 8:
 		break;
 	default:
 		return;
 	}
 
-	CloseHandle(hThread);
-	//pWriteA->ResumeThread();
+	//CloseHandle(hThread);
+	pWriteA->ResumeThread();
 
 
 

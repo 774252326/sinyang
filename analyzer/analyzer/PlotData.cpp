@@ -37,7 +37,8 @@ void PlotData::Serialize(CArchive& ar)
 				ar<<ps[i].colour
 					<<ps[i].name
 					<<ps[i].dotSize
-					<<ps[i].showLine
+					//<<ps[i].showLine
+					<<ps[i].lineType
 					<<ps[i].smoothLine
 					<<ps[i].traceLast;
 
@@ -91,7 +92,8 @@ void PlotData::Serialize(CArchive& ar)
 			ar>>ps[i].colour
 				>>ps[i].name
 				>>ps[i].dotSize
-				>>ps[i].showLine
+				//>>ps[i].showLine
+				>>ps[i].lineType
 				>>ps[i].smoothLine
 				>>ps[i].traceLast;
 

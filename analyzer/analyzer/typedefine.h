@@ -55,7 +55,8 @@ typedef struct PLOTSPEC{
 	COLORREF colour;
 	CString name;
 	int dotSize;
-	bool showLine;
+	//bool showLine;
+	int lineType;
 	int smoothLine;
 	bool traceLast;
 } plotspec;

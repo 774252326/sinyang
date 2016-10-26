@@ -153,7 +153,8 @@ void OneStep( CMainFrame * mf, dlg1 * leftp, pcct * data, pcctB &dataB, bool bSh
 	//ps1.colour=genColorGray( genColorvFromIndex<float>( stepCount ) ) ;
 	ps1.dotSize=-1;
 	ps1.name=data->stepName;
-	ps1.showLine=true;
+	//ps1.showLine=true;
+	ps1.lineType=0;
 	ps1.smoothLine=0;
 	ps1.traceLast=true;
 	leftp->pd.AddNew(x,y,ps1,data->label[0],data->label[1]);
@@ -339,7 +340,8 @@ CString Output4(PlotData & pdat, dlg1 *p1, double vmsvol, double Avol)
 	ps1.colour=genColor( genColorvFromIndex<float>( p1->pd.ps.size() ) ) ;
 	ps1.dotSize=-1;  
 	ps1.name=L"fit line";
-	ps1.showLine=true;
+	//ps1.showLine=true;
+	ps1.lineType=0;
 	ps1.smoothLine=0;
 	ps1.traceLast=false;
 	p1->pd.AddNew(nx,ny,ps1);
@@ -350,7 +352,8 @@ CString Output4(PlotData & pdat, dlg1 *p1, double vmsvol, double Avol)
 	ps1.colour=genColor( genColorvFromIndex<float>( p1->pd.ps.size() ) ) ;
 	ps1.dotSize=-1;  
 	ps1.name=L"Q intercept";
-	ps1.showLine=true;
+	//ps1.showLine=true;
+	ps1.lineType=2;
 	ps1.smoothLine=0;
 	ps1.traceLast=false;
 	p1->pd.AddNew(nx,ny,ps1);
@@ -404,7 +407,8 @@ UINT RCCS(LPVOID pParam)
 	ps1.colour=genColor( genColorvFromIndex<float>( rightp->pd.ps.size() ) ) ;
 	ps1.dotSize=3;
 	ps1.name=L"Ar/Ar0";
-	ps1.showLine=true;
+	//ps1.showLine=true;
+	ps1.lineType=0;
 	ps1.smoothLine=1;
 	ps1.traceLast=false;
 	rightp->pd.AddNew(x,y,ps1,L"Suppressor(ml)",L"Ratio of Charge");
@@ -476,6 +480,8 @@ UINT RCCS(LPVOID pParam)
 
 	//ReleaseSemaphore(semaphoreWrite.m_hObject,1,NULL);
 
+	rightp->pd.SaveFile(L"figbr.txt");
+
 	TRACE(L"rccs ends\n");
 	return 0;
 
@@ -529,7 +535,8 @@ UINT ASDTM(LPVOID pParam)
 	ps1.colour=genColor( genColorvFromIndex<float>( rightp->pd.ps.size() ) ) ;
 	ps1.dotSize=3;
 	ps1.name=L"Ar/Ar0";
-	ps1.showLine=true;
+	//ps1.showLine=true;
+	ps1.lineType=0;
 	ps1.smoothLine=1;
 	ps1.traceLast=false;
 	rightp->pd.AddNew(x,y,ps1,L"Suppressor(ml)",L"Ratio of Charge");
@@ -602,6 +609,8 @@ UINT ASDTM(LPVOID pParam)
 
 	::SendMessage(mf->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)strTemp.GetBuffer(),NULL);
 
+
+	rightp->pd.SaveFile(L"figcr.txt");
 	TRACE(L"asdtm ends\n");
 
 	mf->waiting=true;
@@ -651,7 +660,8 @@ UINT RIVLATM(LPVOID pParam)
 	ps1.colour=genColor( genColorvFromIndex<float>( rightp->pd.ps.size() ) ) ;
 	ps1.dotSize=3;
 	ps1.name=L"Ar";
-	ps1.showLine=true;
+	//ps1.showLine=true;
+	ps1.lineType=0;
 	ps1.smoothLine=1;
 	ps1.traceLast=false;
 	rightp->pd.AddNew(x,y,ps1,L"Suppressor Conc.(ml/L)",L"Charge(mC)");
@@ -723,6 +733,8 @@ UINT RIVLATM(LPVOID pParam)
 	str.Format(L" intercept value %g ml/L", Aml/dataB.totalVolume);
 
 	::SendMessage(mf->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)str.GetBuffer(),NULL);
+
+	rightp->pd.SaveFile(L"figdr.txt");
 	TRACE(L"rivlatm ends\n");
 	return 0;
 }
@@ -783,7 +795,8 @@ UINT AALATM(LPVOID pParam)
 	ps1.colour=genColor( genColorvFromIndex<float>( rightp->pd.ps.size() ) ) ;
 	ps1.dotSize=3;
 	ps1.name=L"Q";
-	ps1.showLine=false;
+	//ps1.showLine=false;
+	ps1.lineType=-1;
 	ps1.smoothLine=0;
 	ps1.traceLast=false;
 	rightp->pd.AddNew(x,y,ps1,L"Conc.(ml/L)",L"Q(mC)");
@@ -843,7 +856,195 @@ UINT AALATM(LPVOID pParam)
 	strTemp=Output4(rightp->pd,rightp,mf->p3.vmsvol,mf->p3.saplist[1].volconc);
 	::SendMessage(mf->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)strTemp.GetBuffer(),NULL);
 
+	rightp->pd.SaveFile(L"figer.txt");
 	TRACE(L"aalatm ends\n");
+	return 0;
+}
+
+UINT CRCL(LPVOID pParam)
+{
+	dlg1 *leftp=((mypara*)pParam)->leftp;
+	dlg1 *rightp=((mypara*)pParam)->rightp;
+	CMainFrame *mf=((mypara*)pParam)->mf;
+	delete pParam;
+	//////////////////////////////load data//////////////////////////////////////
+	std::vector<CString> filelist;
+	LoadFileList(L"data\\f.txt",filelist);
+	if(filelist.empty()) return 0;
+
+	pcct dt1;
+	pcctB dataB;
+	InitialData(filelist.front(),mf->p3.vmsvol,mf->p2,dt1,dataB);
+	pcct *data=&dt1;
+	//////////////////////////clear window/////////////////////////////////
+	mf->GetOutputWnd()->clear();
+	leftp->clear();
+	rightp->clear();
+	//////////////////////////////first step////////////////////////////////////////////
+	mf->waiting=false;
+
+	std::vector<double> x;
+	std::vector<double> y;
+
+	::SendMessage(mf->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
+
+	OneStep(mf,leftp,data,dataB);
+
+	x.assign( 1, dataB.totalVolume-mf->p3.vmsvol );
+	y.assign( 1, dataB.Ar.back() );
+
+	plotspec ps1;
+	ps1.colour=genColor( genColorvFromIndex<float>( rightp->pd.ps.size() ) ) ;
+	ps1.dotSize=3;
+	ps1.name=L"Ar";
+	//ps1.showLine=true;
+	ps1.lineType=0;
+	ps1.smoothLine=1;
+	ps1.traceLast=false;
+	rightp->pd.AddNew(x,y,ps1,L"Leveler(ml)",L"Charge(mC)");
+	rightp->updatePlotRange();
+	rightp->Invalidate();
+
+	filelist.erase(filelist.begin());
+	RefreshData(filelist.front(),mf->p3.saplist,dt1,dataB);
+
+	::SendMessage(mf->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
+
+	mf->waiting=true;
+	while(mf->waiting){
+		Sleep(intv);
+	}
+
+	/////////////////////////////////////second step////////////////////////////////////////////////////////////////
+
+	while(dataB.stepCount<(mf->p3.saplist.size())){
+
+		::SendMessage(mf->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
+
+		OneStep(mf,leftp,data,dataB);
+
+		x.assign( 1, dataB.totalVolume-mf->p3.vmsvol );
+		y.assign( 1, dataB.Ar.back() );
+
+		rightp->pd.AddFollow(x,y);
+		rightp->updatePlotRange();
+		rightp->Invalidate();
+
+		filelist.erase(filelist.begin());
+
+		RefreshData(filelist.front(),mf->p3.saplist,dt1,dataB);
+
+		::SendMessage(mf->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
+
+		mf->waiting=true;
+		while(mf->waiting){
+			Sleep(intv);
+		}
+
+	}
+
+
+	////////////////////////////////////final step/////////////////////////////////////////////
+
+
+	::SendMessage(mf->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
+
+	OneStep(mf,leftp,data,dataB);
+
+	x.assign( 1, dataB.totalVolume-mf->p3.vmsvol );
+	y.assign( 1, dataB.Ar.back() );
+
+	rightp->pd.AddFollow(x,y);
+	rightp->updatePlotRange();
+	rightp->Invalidate();
+
+	filelist.erase(filelist.begin());
+
+	//CString strTemp;
+	//strTemp=Output1(rightp->pd,
+	//	mf->p1.evaluationratio,
+	//	mf->p3.saplist.front().Sconc,
+	//	mf->p3.vmsvol);
+
+	//::SendMessage(mf->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)strTemp.GetBuffer(),NULL);
+	::SendMessage(mf->GetSafeHwnd(),MESSAGE_OVER,NULL,NULL);
+
+	//ReleaseSemaphore(semaphoreWrite.m_hObject,1,NULL);
+
+	rightp->pd.SaveFile(L"figfr.txt");
+
+	TRACE(L"crcl ends\n");
+	return 0;
+}
+
+UINT ALRCM(LPVOID pParam)
+{
+	dlg1 *leftp=((mypara*)pParam)->leftp;
+	dlg1 *rightp=((mypara*)pParam)->rightp;
+	CMainFrame *mf=((mypara*)pParam)->mf;
+	delete pParam;
+
+	//////////////////////////////load data//////////////////////////////////////
+	std::vector<CString> filelist;
+	LoadFileList(L"data\\h.txt",filelist);
+	if(filelist.empty()) return 0;
+
+	pcct dt1;
+	pcct *data=&dt1;
+	pcctB dataB;
+	InitialData(filelist.front(),mf->p3.saplist.front().volconc,mf->p2,dt1,dataB);
+	//////////////////////////clear window/////////////////////////////////
+	mf->GetOutputWnd()->clear();
+	leftp->clear();
+	rightp->clear();
+	/////////////////////////plot standrad curve////////////////////////
+
+	if(mf->p1.calibrationfactortype==1){
+		rightp->pd.ReadFile(mf->p1.calibrationfilepath);
+		rightp->pd.ps.back().colour=genColor( genColorvFromIndex<float>( rightp->pd.ps.size()-1 ) ) ;
+		rightp->pd.ps.back().name=L"standrad";
+		rightp->updatePlotRange();
+		rightp->Invalidate();
+	}
+	///////////////////////////////////////end/////////////////////////////////////////////////
+	//////////////////////////////first step////////////////////////////////////////////
+	mf->waiting=false;
+
+	std::vector<double> x;
+	std::vector<double> y;
+
+	::SendMessage(mf->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
+
+	OneStep(mf,leftp,data,dataB);
+
+	x.assign( 1, dataB.totalVolume );
+	y.assign( 1, dataB.Ar.back() );
+
+	plotspec ps1;
+	ps1.colour=genColor( genColorvFromIndex<float>( rightp->pd.ps.size() ) ) ;
+	ps1.dotSize=3;
+	ps1.name=L"Ar";
+	//ps1.showLine=true;
+	ps1.lineType=0;
+	ps1.smoothLine=1;
+	ps1.traceLast=false;
+	rightp->pd.AddNew(x,y,ps1,L"Leveler(ml)",L"Charge(mC)");
+	rightp->updatePlotRange();
+	rightp->Invalidate();
+
+	filelist.erase(filelist.begin());
+	//RefreshData(filelist.front(),mf->p3.saplist,dt1,dataB);
+
+	::SendMessage(mf->GetSafeHwnd(),MESSAGE_OVER,NULL,NULL);
+	//Sleep(intv);
+
+	//mf->waiting=true;
+	//while(mf->waiting){
+	//	Sleep(intv);
+	//}
+
+	//rightp->pd.SaveFile(L"fighr.txt");
+
 	return 0;
 }
 

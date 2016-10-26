@@ -939,7 +939,7 @@ CRect dlg1::DrawLegend1(CRect rect, CDC* pDC)
 		metricH=1;
 	}
 
-	int lc=15;
+	int lc=25;
 	int gap=2;
 	CPoint textLocate;
 	CPoint topright(rect.right,rect.top);
@@ -992,16 +992,25 @@ CRect dlg1::DrawLegend1(CRect rect, CDC* pDC)
 	pDC->SetBkMode(TRANSPARENT);
 
 	for(size_t i=0;i<pd.ps.size();i++){
-		pen.CreatePen(PS_SOLID, 1, pd.ps[i].colour);
-		pOldPen=pDC->SelectObject(&pen);
+		//pen.CreatePen(PS_SOLID, 1, pd.ps[i].colour);
+		//pOldPen=pDC->SelectObject(&pen);
 		//oc=pDC->SetTextColor(clist[i]);
 
 		oc=pDC->SetTextColor(black);
 		sz=pDC->GetTextExtent(pd.ps[i].name);
 
-		if(pd.ps[i].showLine){
+		//pDC->TextOutW(textLocate.x+lc+gap,textLocate.y,pd.ps[i].name);
+
+		//if(pd.ps[i].showLine){
+		if(pd.ps[i].lineType>=0){
+			//pen.CreatePen(PS_SOLID, 1, pd.ps[i].colour);
+			pen.CreatePen(pd.ps[i].lineType, 1, pd.ps[i].colour);
+			pOldPen=pDC->SelectObject(&pen);
 			pDC->MoveTo(textLocate.x,textLocate.y+sz.cy/2);
-			pDC->LineTo(textLocate.x+lc,textLocate.y+sz.cy/2);	
+			pDC->LineTo(textLocate.x+lc,textLocate.y+sz.cy/2);
+			pDC->SelectObject(pOldPen);
+			pen.DeleteObject();
+
 		}
 
 		if(pd.ps[i].dotSize==0){
@@ -1015,12 +1024,14 @@ CRect dlg1::DrawLegend1(CRect rect, CDC* pDC)
 			drawRectangle(prect,pDC,pd.ps[i].colour,pd.ps[i].colour);
 		}
 
+
+
 		pDC->TextOutW(textLocate.x+lc+gap,textLocate.y,pd.ps[i].name);
 
 		textLocate.y+=sz.cy;
 
-		pDC->SelectObject(pOldPen);
-		pen.DeleteObject();
+		//pDC->SelectObject(pOldPen);
+		//pen.DeleteObject();
 		pDC->SetTextColor(oc);
 	}
 
@@ -1156,9 +1167,11 @@ void dlg1::DrawCurveA(CRect rect, CDC* pDC)
 
 	for(size_t j=0;j<pd.ll.size();j++){
 
-		if(pd.ps[j].showLine){
+		//if(pd.ps[j].showLine){
+		if(pd.ps[j].lineType>=0){	
 
-			pen.CreatePen(PS_SOLID,1,pd.ps[j].colour);
+			//pen.CreatePen(PS_SOLID,1,pd.ps[j].colour);
+			pen.CreatePen(pd.ps[j].lineType,1,pd.ps[j].colour);
 			pOldPen=pDC->SelectObject(&pen);
 
 			if(pd.ll[j]>2){
@@ -1239,16 +1252,17 @@ void dlg1::DrawCurveB(CRect rect, CDC* pDC)
 
 	//genPointToPlot(pd.xll,pd.yll,rect,pointlist);
 	size_t si=0;
-	
+
 
 	for(size_t j=0;j<pd.ps.size();j++){
 
 		genPointToPlot(pd.xlist[j],pd.ylist[j],rect,pointlist);
-	CPoint *pp=pointlist.data();
+		CPoint *pp=pointlist.data();
 
-		if(pd.ps[j].showLine){
-
-			pen.CreatePen(PS_SOLID,1,pd.ps[j].colour);
+		//if(pd.ps[j].showLine){
+		if(pd.ps[j].lineType>=0){
+			//pen.CreatePen(PS_SOLID,1,pd.ps[j].colour);
+			pen.CreatePen(pd.ps[j].lineType,1,pd.ps[j].colour);
 			pOldPen=pDC->SelectObject(&pen);
 
 			if(pointlist.size()>2){
@@ -1424,7 +1438,8 @@ void dlg1::DrawSpline( CPoint *lpPoints, int np, CRect rect, CDC * pDC)
 
 void dlg1::smoothLine(void)
 {
-	pd.ps.back().showLine=true;
+	//pd.ps.back().showLine=true;
+	pd.ps.back().lineType=0;
 	pd.ps.back().smoothLine=1;
 }
 
