@@ -76,7 +76,7 @@ public:
 	double m_m; /*threshold*/
 	afx_msg void OnBnClickedButton2();
 	double *a;
-	float xp;
+	double xp;
 	//	long findbottomidx(float xbottom, float * x, long nd);
 	//	long findtopidx(float xtop, float * x, long nd);
 	bool DrawFittingCurve(CRect rect, CPaintDC * dc);
@@ -98,7 +98,7 @@ public:
 	double xp2;
 	// draw a vertical line at x of rectangle rect
 	void DrawVLine(CRect rect, CPaintDC * dc, CPen * pen, double x);
-	int nknee;
+	long nknee;
 	double *xknee;
 	double *yknee;
 	void DrawPoint(CRect rect, CPaintDC * pdc, CPen * pPen, double x, double y);
@@ -114,14 +114,15 @@ public:
 	void DrawFunc(CRect rect, CPaintDC * pdc, CPen * pPen);
 	double **coefs;
 	double *xbreak;
+	double *nxlmx;
+	double *nxlmn;
+	double *knee;
+	long nlmx;
+	long nlmn;
+	long nd;
+	double **nc;
+	double *nlcm;
+	double *xelbow;
+	long nelbow;
 };
 
-double nfun(double x[], double y[], long starti, long endi, int m, double a[], bool f);
-
-double nfun2(double x[], double y[], long starti, long endi, int m, double a[], double **covar, double *chisq, bool flag);
-
-void nfun3(double x[], double y[], long starti, long endi, int m, double a[], double *chisq, bool flag, double t[]);
-
-long getpoint3( double x[], double y[], long nd, bool knee[], double thres);
-long getpoint4( double x[], double y[], long nd, bool knee[], double thres);
-long getpoint5( double x[], double y[], long nd, bool knee[], double thres, bool kneeflag);

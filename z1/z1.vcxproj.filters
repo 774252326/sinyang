@@ -135,87 +135,6 @@
     <ClInclude Include="UpDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="funT\complexT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="funT\covsrtT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="funT\fitresultT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="funT\fpolyT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="funT\laguerT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="funT\lspfitT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="funT\lubksbT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="funT\ludcmpT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="funT\matmulT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="funT\nerror.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="funT\nrutilT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="funT\paddingT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="funT\zrootsT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="readcsvT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="calgridT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="funT\lfitT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="funT\gaussjT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="funT\loregT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="funT\piksrtT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="funT\findmT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="funT\banbksT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="funT\bandecT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="funT\banmatT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="funT\banmulT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="funT\slvmatT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="funT\smoothspline.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="funT\xRescaleT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="z1.cpp">
@@ -252,9 +171,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="funT\nerror.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="funT\nfun.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -123,38 +123,11 @@
     <None Include="UserImages.bmp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="calgridT.h" />
     <ClInclude Include="ClassView.h" />
     <ClInclude Include="FileView.h" />
-    <ClInclude Include="funT\banbksT.h" />
-    <ClInclude Include="funT\bandecT.h" />
-    <ClInclude Include="funT\banmatT.h" />
-    <ClInclude Include="funT\banmulT.h" />
-    <ClInclude Include="funT\complexT.h" />
-    <ClInclude Include="funT\covsrtT.h" />
-    <ClInclude Include="funT\findmT.h" />
-    <ClInclude Include="funT\fitresultT.h" />
-    <ClInclude Include="funT\fpolyT.h" />
-    <ClInclude Include="funT\gaussjT.h" />
-    <ClInclude Include="funT\laguerT.h" />
-    <ClInclude Include="funT\lfitT.h" />
-    <ClInclude Include="funT\loregT.h" />
-    <ClInclude Include="funT\lspfitT.h" />
-    <ClInclude Include="funT\lubksbT.h" />
-    <ClInclude Include="funT\ludcmpT.h" />
-    <ClInclude Include="funT\matmulT.h" />
-    <ClInclude Include="funT\nerror.h" />
-    <ClInclude Include="funT\nrutilT.h" />
-    <ClInclude Include="funT\paddingT.h" />
-    <ClInclude Include="funT\piksrtT.h" />
-    <ClInclude Include="funT\slvmatT.h" />
-    <ClInclude Include="funT\smoothspline.h" />
-    <ClInclude Include="funT\xRescaleT.h" />
-    <ClInclude Include="funT\zrootsT.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="OutputWnd.h" />
     <ClInclude Include="PropertiesWnd.h" />
-    <ClInclude Include="readcsvT.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -168,7 +141,6 @@
     <ClCompile Include="ClassView.cpp" />
     <ClCompile Include="FileView.cpp" />
     <ClCompile Include="funT\nerror.cpp" />
-    <ClCompile Include="funT\nfun.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="OutputWnd.cpp" />
     <ClCompile Include="PropertiesWnd.cpp" />

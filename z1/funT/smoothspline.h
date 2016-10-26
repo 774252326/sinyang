@@ -1,7 +1,13 @@
+#ifndef SMOOTHSPLINE_H
+#define SMOOTHSPLINE_H
+
 #include "slvmatT.h"
 #include "banbksT.h"
 #include "bandecT.h"
 #include "banmatT.h"
+#include "paddingT.h"
+#include "matmulT.h"
+
 
 template <typename T>
 T dx(T x){
@@ -276,27 +282,27 @@ void smspl( double *x, double *y, long nd, double p, double **c, double *xbreak)
 
 
 
-
-void smspl2( double *x, double *y, long nd, double p, double **c, double *xbreak){
+template <typename T>
+void smspl2( T *x, T *y, long nd, T p, T **c, T *xbreak){
 
 	long n=nd;
 	long yd=1;
-	double dd=1;
+	T dd=1;
 
-	double *dx=vector<double>(1,n-1);
+	T *dx=vector<T>(1,n-1);
 
 	long i,j;
 	for( i=1;i<=n-1;i++){
 		dx[i]=x[i+1]-x[i];
 	}
 
-	double *divdif=vector<double>(1,n-1);
+	T *divdif=vector<T>(1,n-1);
 
 	for( i=1;i<=n-1; i++){
 		divdif[i]=(y[i+1]-y[i])/dx[i];
 	}
 
-	double *dxol=vector<double>(1,n-1);
+	T *dxol=vector<T>(1,n-1);
 	for( i=1; i<=n-1; i++){
 		dxol[i]=dx[i];
 	}
@@ -305,8 +311,8 @@ void smspl2( double *x, double *y, long nd, double p, double **c, double *xbreak
 	//band diagonal matrix
 
 
-	double **R;
-	R=bmatrix<double>(n-2,n-2,1,1);
+	T **R;
+	R=bmatrix<T>(n-2,n-2,1,1);
 	for(i=1;i<=n-3; i++){
 		setbmvalue(R,n-2,n-2,1,1,i+1,i,dxol[i+1]);
 		//R[i+1][i]=dxol[i+1];
@@ -321,7 +327,7 @@ void smspl2( double *x, double *y, long nd, double p, double **c, double *xbreak
 	}
 
 
-	double *odx=vector<double>(1,n-1);
+	T *odx=vector<T>(1,n-1);
 	for(i=1;i<=n-1;i++){
 		odx[i]=1/dx[i];
 	}
@@ -329,8 +335,8 @@ void smspl2( double *x, double *y, long nd, double p, double **c, double *xbreak
 	//band diagonal matrix
 
 
-	double **Qt;
-	Qt=bmatrix<double>(n-2,n,0,0);
+	T **Qt;
+	Qt=bmatrix<T>(n-2,n,0,0);
 	for(i=1;i<n-2;i++){
 		//Qt[i][i]=odx[i];
 		setbmvalue(Qt,n-2,n,0,0,i,i,odx[i]);
@@ -340,63 +346,50 @@ void smspl2( double *x, double *y, long nd, double p, double **c, double *xbreak
 		setbmvalue(Qt,n-2,n,0,0,i,i+2,odx[i+1]);
 	}
 
-	double **Qtw;
+	T **Qtw;
 	Qtw=Qt;
 
 
 
-	double **Qtwt;
-	Qtwt=bmatrix<double>(n,n-2,0,0);
+	T **Qtwt;
+	Qtwt=bmatrix<T>(n,n-2,0,0);
 	bmattp(Qtw,n-2,n,0,0,Qtwt);
 
 
 
 
-	double **QtwQtwt;
+	T **QtwQtwt;
 	long a3=calupbw(n-2,n,0,n,n-2,0,n-2,n-2);
 	long b3=caldnbw(n-2,n,0,n,n-2,0,n-2,n-2);
-	QtwQtwt=bmatrix<double>(n-2,n-2,a3,b3);
+	QtwQtwt=bmatrix<T>(n-2,n-2,a3,b3);
 	bmatmul(Qtw,n-2,n,0,0,Qtwt,n,n-2,0,0,QtwQtwt,n-2,n-2,a3,b3);
 
 
 
 
-	double mp=6-6*p;
+	T mp=6-6*p;
 
-	double **A;
+	T **A;
 	long a4=MAX<long>(1,a3);
 	long b4=MAX<long>(1,b3);
-	A=bmatrix<double>(n-2,n-2,a4,b4);
+	A=bmatrix<T>(n-2,n-2,a4,b4);
 	bmatadd(QtwQtwt,n-2,n-2,a3,b3,mp,R,1,1,p,A,a4,b4);
 
 
 
 
-	double *ddivdif=vector<double>(1,n-2);
+	T *ddivdif=vector<T>(1,n-2);
 	for(i=1;i<=n-2;i++){
 		ddivdif[i]=divdif[i+1]-divdif[i];
 	}
 
-	double *u;
+	T *u;
 	u=ddivdif;
 
 	slvbmat(A,n-2,a4,b4,u);
 
 
-	double * yi=vector<double>(1,n);
-
-	//yi[1]=u[1]/dx[1];
-	//double tt1;
-	//double tt2;
-	//tt1=yi[1];
-	//for(i=2;i<=n-2;i++){
-	//	tt2=(u[i]-u[i-1])/dx[i];
-
-	//	yi[i]=tt2-tt1;
-	//	tt1=tt2;
-	//}
-	//yi[n]=u[n-2]/dx[n-1];
-	//yi[n-1]=-yi[n]-tt1;
+	T * yi=vector<T>(1,n);
 
 	yi[1]=u[1]/dx[1];
 	yi[2]=(u[2]-u[1])/dx[2]-u[1]/dx[1];
@@ -410,7 +403,7 @@ void smspl2( double *x, double *y, long nd, double p, double **c, double *xbreak
 		yi[i]=y[i]-yi[i]*mp;
 	}
 
-	double *c2=vector<double>(1,n-1);
+	T *c2=vector<T>(1,n-1);
 
 	c2[1]=(yi[2]-yi[1])/dx[1]-dxol[1]*p*u[1];
 
@@ -464,6 +457,7 @@ void smspl2( double *x, double *y, long nd, double p, double **c, double *xbreak
 }
 
 
+
 template <typename T>
 T ppval(T **c, T *xbreak, long nd, T x){
 	long i;
@@ -493,4 +487,151 @@ T ppval(T **c, T *xbreak, long nd, T x){
 
 
 
+template <typename T>
+T *getlcm(T **c, T *xbreak, long nd, long *lmx, long *lmn){
 
+	//return local minimum and local maximum of piecewise cubic polynomial
+
+	T *xmn;
+	T *xmnt;
+	lmn[0]=0;
+	T *xmx;
+	T *xmxt;
+	lmx[0]=0;
+
+	long i;
+	T tmp;
+	T p1;
+	T p2;
+	for(i=1;i<=nd-1;i++){
+		tmp=c[i][2]*c[i][2]-3*c[i][1]*c[i][3];
+		if( tmp>0 ){
+			p1=(-c[i][2]+sqrt(tmp))/3/c[i][1];
+
+			if (p1>0 && p1<=(xbreak[i+1]-xbreak[i])){
+				if(lmn[0]==0){
+					xmn=vector<T>(1,1);
+					xmn[1]=p1+xbreak[i];
+				}
+				else{
+					xmnt=vector<T>(1,lmn[0]+1);
+					copyvt(xmn,lmn[0],xmnt);
+					xmnt[lmn[0]+1]=p1+xbreak[i];
+					free_vector(xmn,1,lmn[0]);
+					xmn=xmnt;
+				}
+				lmn[0]+=1;
+			}
+
+
+			p2=(-c[i][2]-sqrt(tmp))/3/c[i][1];
+			if (p2>0 && p2<=(xbreak[i+1]-xbreak[i])){
+				if(lmx[0]==0){
+					xmx=vector<T>(1,1);
+					xmx[1]=p2+xbreak[i];
+				}
+				else{
+					xmxt=vector<T>(1,lmx[0]+1);
+					copyvt(xmx,lmx[0],xmxt);
+					xmxt[lmx[0]+1]=p2+xbreak[i];
+					free_vector(xmx,1,lmx[0]);
+					xmx=xmxt;
+				}
+				lmx[0]+=1;
+			}
+		}
+		else
+			if(tmp==0){
+				p1=-c[i][2]/3/c[i][1];
+				if(p1==(xbreak[i+1]-xbreak[i]) && i<=nd-2){
+					if(c[i][1]>0 && c[i+1][1]<0){
+						if(lmx[0]==0){
+							xmx=vector<T>(1,1);
+							xmx[1]=p1+xbreak[i];
+						}
+						else{
+							xmxt=vector<T>(1,lmx[0]+1);
+							copyvt(xmx,lmx[0],xmxt);
+							xmxt[lmx[0]+1]=p1+xbreak[i];
+							free_vector(xmx,1,lmx[0]);
+							xmx=xmxt;
+						}
+						lmx[0]+=1;
+					}
+
+					if(c[i][1]<0 && c[i+1][1]>0){
+						if(lmn[0]==0){
+							xmn=vector<T>(1,1);
+							xmn[1]=p1+xbreak[i];
+						}
+						else{
+							xmnt=vector<T>(1,lmn[0]+1);
+							copyvt(xmn,lmn[0],xmnt);
+							xmnt[lmn[0]+1]=p1+xbreak[i];
+							free_vector(xmn,1,lmn[0]);
+							xmn=xmnt;
+						}
+						lmn[0]+=1;
+					}	
+				}
+			}
+
+
+	}
+
+
+	T *lcm=vector<T>(1,lmx[0]+lmn[0]);
+	
+
+	if(lmx[0]>=1){
+		for(i=1;i<=lmx[0];i++){
+			lcm[i]=xmx[i];
+		}
+		free_vector(xmx,1,lmx[0]);
+	}
+	if(lmn[0]>=1){
+		for(i=1;i<=lmn[0];i++){
+			lcm[lmx[0]+i]=xmn[i];
+		}
+		free_vector(xmn,1,lmn[0]);
+	}
+
+
+	return lcm;
+}
+
+
+template <typename T>
+void normalizecoef(T **c, T *xbreak, long nd, const T *lcm, long lmx, long lmn, T **nc){
+	T ymin=ppval(c,xbreak,nd,xbreak[1]);
+	T ymax=ppval(c,xbreak,nd,xbreak[nd]);
+	T tmp;
+
+	if(ymin>ymax){
+		tmp=ymax;
+		ymax=ymin;
+		ymin=tmp;
+	}
+
+	long i;
+
+	for(i=1;i<=lmx+lmn;i++){
+		tmp=ppval(c,xbreak,nd,lcm[i]);
+		if(tmp<ymin)
+			ymin=tmp;
+		if(tmp>ymax)
+			ymax=tmp;
+	}
+
+	for(i=1;i<=nd-1;i++){
+		nc[i][1]=c[i][1]/(ymax-ymin);
+		nc[i][2]=c[i][2]/(ymax-ymin);
+		nc[i][3]=c[i][3]/(ymax-ymin)-1/(xbreak[nd]-xbreak[1]);
+		nc[i][4]=(c[i][4]-ymin)/(ymax-ymin)-(xbreak[i]-xbreak[1])/(xbreak[nd]-xbreak[1]);
+	}
+}
+
+
+
+
+#endif

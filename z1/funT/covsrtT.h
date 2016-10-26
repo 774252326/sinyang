@@ -4,6 +4,8 @@
 
 #define SWAP(a,b) {swap=(a);(a)=(b);(b)=swap;}
 
+//#include "nrutilT.h"
+
 template <typename T>
 void covsrt(T **covar, int ma, int ia[], int mfit)
 	//Expand in storage the covariance matrix covar, so as to take into account parameters that are

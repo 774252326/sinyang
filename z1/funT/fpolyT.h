@@ -2,10 +2,6 @@
 #define FPOLY_H
 
 //#include "stdafx.h"
-//#include "complexT.h"
-//#include "zrootsT.h"
-//#include "nrutilT.h"
-
 template <typename T>
 void fpoly(T x, T p[], long np)
 	//Fitting routine for a polynomial of degree np-1, with coefficients in the array p[1..np].
@@ -36,12 +32,16 @@ void polydev(T a[], long ma, T na[]){
 }
 
 
+
 template <typename T>
 void polyrange(T a[], long m, T xstart, T xend, T y[]){
 
 	//compute polynomial range within interval [xstart,xend], output y[1..4]
+	//minimum point (x,y)=(y[1],y[2]) and maximum point (x,y)=(y[3],y[4])
 	
 	long i;
+
+	T tmp;
 
 	long dm=m-1;
 	T *da=vector<T>(1,dm);
@@ -82,14 +82,15 @@ void polyrange(T a[], long m, T xstart, T xend, T y[]){
 	for(i=1;i<=cdm;i++){
 		if( rts[i].r>xstart && rts[i].r< xend ){
 
-			if(calp(a,m,rts[i].r)>y[4]){
+			tmp=calp(a,m,rts[i].r);
+			if(tmp>y[4]){
 
 				y[3]=rts[i].r;
-				y[4]=calp(a,m,rts[i].r);
+				y[4]=tmp;
 			}
-			else if(calp(a,m,rts[i].r)<y[2]){
+			else if(tmp<y[2]){
 				y[1]=rts[i].r;
-				y[2]=calp(a,m,rts[i].r);
+				y[2]=tmp;
 
 			}
 
@@ -99,5 +100,7 @@ void polyrange(T a[], long m, T xstart, T xend, T y[]){
 
 	free_vector(rts,1,cdm);
 }
+
+
 
 #endif

@@ -68,8 +68,33 @@ bool mtXvt(T **mat1, long rs1, long re1, long cs1, long ce1,
 }
 
 
+template <typename T>
+void copyvt(T *src, long nl, long nh, T *dst, long dnl){
+	long i;
+	for(i=nl;i<=nh;i++){
+		dst[i-nl+dnl]=src[i];
+	}
 
+}
 
+template <typename T>
+void addv(T *x, long l, T ax){
+	T * tmp;
+	long j;
+				tmp=vector<T>(1,l+1);
+			for(j=1;j<=l;j++){
+				tmp[j]=x[j];
+			}
+			tmp[l+1]=ax;
+
+			free_vector(x,1,l);
+			x=vector<T>(1,l+1);
+			for(j=1;j<=l+1;j++){
+				x[j]=tmp[j];
+			}
+			free_vector(tmp,1,l+1);
+			//lmn++;
+}
 
 
 #endif

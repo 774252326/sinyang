@@ -6,18 +6,17 @@
 #include "UpDlg.h"
 #include "afxdialogex.h"
 
-#include <math.h>
-#include "funT\loregT.h"
-
 #include "calgridT.h"
+#include "readcsvT.h"
+
+#include <math.h>
+#include "funT\nrutilT.h"
 #include "funT\findmT.h"
 #include "funT\xRescaleT.h"
-#include "readcsvT.h"
-#include "funT\nrutilT.h"
-#include "funT\fpolyT.h"
-#include "funT\splineT.h"
 #include "funT\smoothspline.h"
-
+#include "funT\fpolyT.h"
+#include "funT\getpt.h"
+#include "funT\loregT.h"
 
 #define black RGB(0,0,0)
 #define red RGB(255,0,0)
@@ -46,7 +45,7 @@ IMPLEMENT_DYNAMIC(CUpDlg, CDialog)
 	//, x2(0)
 	, reso(50)
 	, a(NULL)
-	, xp(0)
+	, xp(0.1)
 	, isFit(false)
 	, ys(NULL)
 	, isSmooth(false)
@@ -60,16 +59,26 @@ IMPLEMENT_DYNAMIC(CUpDlg, CDialog)
 	, yMove(0)
 	, coefs(NULL)
 	, xbreak(NULL)
+	, nxlmx(NULL)
+	, nxlmn(NULL)
+	, knee(NULL)
+	, nlmx(0)
+	, nlmn(0)
+	, nd(0)
+	, nc(NULL)
+	, nlcm(NULL)
+	, xelbow(NULL)
+	, nelbow(0)
 {
 
-	m_xbottom = 50.0f;
-	m_xtop = 100.0f;
+	m_xbottom = 0.1;
+	m_xtop = 299.9;
 	m_fileName = _T("");
 	m_n = 3000;
-	m_xmin = 0.0f;
-	m_xmax = 300.0f;
-	m_ymin = -0.01f;
-	m_ymax = 0.0f;
+	m_xmin = 0.0;
+	m_xmax = 300.0;
+	m_ymin = -0.01;
+	m_ymax = 0.0;
 	m_m = 0.1;
 	m_span = 10;
 	m_degree = 2;
@@ -127,17 +136,7 @@ END_MESSAGE_MAP()
 // CUpDlg message handlers
 
 
-void CUpDlg::OnChangeEdit2()
-{
-	// TODO:  If this is a RICHEDIT control, the control will not
-	// send this notification unless you override the CDialog::OnInitDialog()
-	// function and call CRichEditCtrl().SetEventMask()
-	// with the ENM_CHANGE flag ORed into the mask.
 
-	// TODO:  Add your control notification handler code here
-
-	Invalidate();
-}
 
 
 void CUpDlg::OnPaint()
@@ -154,7 +153,8 @@ void CUpDlg::OnPaint()
 	GetDlgItem(IDC_PLOT)->GetWindowRect(&plotrect);
 	//convert coordinate
 	ScreenToClient(&plotrect);
-
+	CPen pen;
+	long i;
 	if (isLoad){
 		UpdateData();
 
@@ -166,19 +166,49 @@ void CUpDlg::OnPaint()
 
 
 
+				pen.CreatePen(PS_DASH,1,green);			
+				for(i=1;i<=nlmx;i++){
+					DrawVLine(plotrect,&dc,&pen,nxlmx[i]);
+				}
+				pen.DeleteObject();
+				pen.CreatePen(PS_DASH,1,cyan);			
+				for(i=1;i<=nlmn;i++){
+					DrawVLine(plotrect,&dc,&pen,nxlmn[i]);
+				}
+				pen.DeleteObject();
+
+				//pen.CreatePen(PS_DASH,1,magenta);			
+				//for(i=1;i<=nknee;i++){
+				//	DrawVLine(plotrect,&dc,&pen,xknee[i]);
+				//}
+				//pen.DeleteObject();
+
+
 			}
 
 			if(isFit){
 				//DrawFittingCurve(plotrect, &dc);
 
-				CPen pen;
-				pen.CreatePen(PS_DASH,1,green);
-				long i;
-				for(i=1;i<=nknee;i++){
-					DrawVLine(plotrect,&dc,&pen,xknee[i]);
+				//CPen pen;
+				//pen.CreatePen(PS_DASH,1,green);
+				//long i;
+				//for(i=1;i<=nknee;i++){
+				//	DrawVLine(plotrect,&dc,&pen,xknee[i]);
+				//}
+				//pen.DeleteObject();
+				pen.CreatePen(PS_DASH,1,magenta);
+				if(!IsDlgButtonChecked(IDC_CHECK2)){
+					for(i=1;i<=nknee;i++){
+						DrawVLine(plotrect,&dc,&pen,xknee[i]);
+					}
+
+				}
+				else{
+					for(i=1;i<=nelbow;i++){
+						DrawVLine(plotrect,&dc,&pen,xelbow[i]);
+					}
 				}
 				pen.DeleteObject();
-
 
 
 			}
@@ -189,19 +219,6 @@ void CUpDlg::OnPaint()
 	//isFit=false;
 
 }
-
-
-void CUpDlg::OnChangeEdit3()
-{
-	// TODO:  If this is a RICHEDIT control, the control will not
-	// send this notification unless you override the CDialog::OnInitDialog()
-	// function and call CRichEditCtrl().SetEventMask()
-	// with the ENM_CHANGE flag ORed into the mask.
-
-	// TODO:  Add your control notification handler code here
-	Invalidate();
-}
-
 
 
 
@@ -215,9 +232,8 @@ void CUpDlg::OnBnClickedButton1()
 
 	if( fileDlg.DoModal()==IDOK){
 
-		//m_fileName=fileDlg.GetFileName();
 		m_fileName=fileDlg.GetPathName();
-		//SetDlgItemTextW(IDC_EDIT1,m_fileName);
+
 		UpdateData(false);
 
 		free_vector(x,1,m_n);
@@ -238,8 +254,6 @@ void CUpDlg::OnBnClickedButton1()
 			m_ymax=findmax(y,m_n);
 
 			UpdateData(false);
-			//str.Format(L"%f",findmax(y,m_n));
-			//SetDlgItemTextW(IDC_EDIT8,str);
 
 			//loreg(y,m_n,m_span,m_degree,ys);
 
@@ -253,6 +267,185 @@ void CUpDlg::OnBnClickedButton1()
 
 }
 
+void CUpDlg::OnBnClickedButton2()
+{
+	// TODO: Add your control notification handler code here
+
+
+	if( isLoad ){
+		UpdateData();
+		//a=vector<double>(1,m_m);
+		//covar=matrix<double>(1,m_m,1,m_m);
+		//double *tmp=vector<double>(1,4);
+
+		//long startind=findbottomidx(x,m_n,m_xbottom);
+		//long endind=findtopidx(x, m_n,m_xtop );
+
+		if(isSmooth){
+			//xp=nfun( x, ys, startind, endind, m_m, a, IsDlgButtonChecked(IDC_CHECK2));
+			//xp=nfun2( x, ys, startind, endind, m_m, a, covar, &chisq, IsDlgButtonChecked(IDC_CHECK2));
+			//nfun3(x,ys,startind,endind,m_m,a,&chisq, IsDlgButtonChecked(IDC_CHECK2), tmp);
+
+			//bool *bk=vector<bool>(1,m_n);
+			//nknee=getpoint5(x,ys,m_n,bk,m_m,!IsDlgButtonChecked(IDC_CHECK2));
+			//xknee=vector<double>(1,nknee);
+			//selectvt1(x,m_n,bk,nknee,xknee);
+			//yknee=vector<double>(1,nknee);
+			//selectvt1(ys,m_n,bk,nknee,yknee);
+			//free_vector(bk,1,m_n);
+			if(!IsDlgButtonChecked(IDC_CHECK2) ){
+				xknee=getkneep(nc,xbreak,nd,&nknee,xp,nlcm,nlmx,nlmn);
+				if(xknee==NULL)
+					AfxMessageBox(L"no knee point! reduce threshold and try again");
+			}
+			else{
+				//xp=nfun( x, y, startind, endind, m_m, a, IsDlgButtonChecked(IDC_CHECK2));
+				//xp=nfun2( x, y, startind, endind, m_m, a, covar, &chisq, IsDlgButtonChecked(IDC_CHECK2));
+				//nfun3(x,y,startind,endind,m_m,a,&chisq, IsDlgButtonChecked(IDC_CHECK2), tmp);
+
+				//bool *bk=vector<bool>(1,m_n);
+
+				//nknee=getpoint4(x,y,m_n,bk,m_m);
+				//nknee=getpoint5(x,y,m_n,bk,m_m,!IsDlgButtonChecked(IDC_CHECK2));
+
+				//xknee=vector<double>(1,nknee);
+				//selectvt1(x,m_n,bk,nknee,xknee);
+				//yknee=vector<double>(1,nknee);
+				//selectvt1(y,m_n,bk,nknee,yknee);
+
+				//free_vector(bk,1,m_n);
+				xelbow=getelbowp(nc,xbreak,nd,&nelbow,xp,nlcm,nlmx,nlmn);
+				if(xelbow==NULL)
+					AfxMessageBox(L"no elbow point! reduce threshold and try again");
+			}
+
+		}
+
+		//chisqpp=chisq/(double)(endind-startind+1);
+		//xp=tmp[1];
+		//chisq=tmp[3];
+
+		UpdateData(false);
+
+		isFit=true;
+
+		Invalidate();
+
+
+	}
+}
+
+
+void CUpDlg::OnBnClickedButton3()
+{
+	// TODO: Add your control notification handler code here
+	if(isLoad){
+		UpdateData();
+
+		long startind=findbottomidx(x,m_n,m_xbottom);
+		long endind=findtopidx(x, m_n,m_xtop );
+
+		//long nd;
+		//nd=m_n;
+		nd=endind-startind+1;
+		ys=vector<double>(1,nd);
+		coefs=matrix<double>(1,nd-1,1,4);
+		xbreak=vector<double>(1,nd);
+
+		if(IsDlgButtonChecked(IDC_CHECK1)){
+			//loregR(y,m_n,m_span,m_degree,ys);
+			//loregR(y+startind,nd,m_span,m_degree,ys);
+		}
+		else{
+			//loreg(y,m_n,m_span,m_degree,ys);
+			//smoothspline(y,m_n,m_m,ys);
+			long i,j;
+			bool flg;
+			double za,zb;
+			//m_m=0.999;
+			//double *nlcm;
+			double *lcm;
+			long lmx,lmn;
+			//double **nc;
+			nc=matrix<double>(1,nd-1,1,4);
+			double pa1=1,pa0=0;
+
+
+			smspl2(x+startind,y+startind,nd,m_m,coefs,xbreak);
+			lcm=getlcm(coefs,xbreak,nd,&lmx,&lmn);
+			normalizecoef(coefs,xbreak,nd,lcm,lmx,lmn,nc);
+			nlcm=getlcm(nc,xbreak,nd,&nlmx,&nlmn);
+
+
+
+			//while( pa1-pa0>0.0001 || flg ){
+			//smspl2(&x[startind],&y[startind],nd,(pa1+pa0)/2,coefs,xbreak);
+			//smspl2(x,y,nd,(pa1+pa0)/2,coefs,xbreak);
+			//lcm=getlcm(coefs,xbreak,nd,&lmx,&lmn);
+			//normalizecoef(coefs,xbreak,nd,lcm,lmx,lmn,nc);
+			//nlcm=getlcm(nc,xbreak,nd,&nlmx,&nlmn);
+			//flg=chkpt(nc,xbreak,nd,nlcm,nlmx,nlmn,m_m/3000.0);
+
+			//if(flg)
+			//pa1=(pa0+pa1)/2;
+			//else
+			//pa0=(pa0+pa1)/2;
+
+			//}
+
+
+
+
+			nxlmx=vector<double>(1,nlmx);
+			copyvt(nlcm,nlmx,nxlmx);
+			nxlmn=vector<double>(1,nlmn);
+			copyvt(&nlcm[nlmx],nlmn,nxlmn);
+
+			//xknee=getkneep(nc,xbreak,nd,&nknee,xp,nlcm,nlmx,nlmn);
+
+		}
+		isSmooth=true;
+
+		//double * y2=vector<double>(1,m_n);
+		//spline(x,ys,m_n,1e30,1e30,y2);
+
+		//double * yr2=vector<double>(1,m_n);
+		//spline(x,ys,m_n,1e30,1e30,yr2);
+
+		//xp=maxind(y2,m_n);
+
+
+
+		Invalidate();
+	}
+
+
+
+}
+
+
+void CUpDlg::OnChangeEdit3()
+{
+	// TODO:  If this is a RICHEDIT control, the control will not
+	// send this notification unless you override the CDialog::OnInitDialog()
+	// function and call CRichEditCtrl().SetEventMask()
+	// with the ENM_CHANGE flag ORed into the mask.
+
+	// TODO:  Add your control notification handler code here
+	Invalidate();
+}
+
+void CUpDlg::OnChangeEdit2()
+{
+	// TODO:  If this is a RICHEDIT control, the control will not
+	// send this notification unless you override the CDialog::OnInitDialog()
+	// function and call CRichEditCtrl().SetEventMask()
+	// with the ENM_CHANGE flag ORed into the mask.
+
+	// TODO:  Add your control notification handler code here
+
+	Invalidate();
+}
 
 void CUpDlg::OnChangeEdit4()
 {
@@ -271,15 +464,6 @@ void CUpDlg::OnChangeEdit4()
 	isLoad=false;
 
 }
-
-
-
-
-
-
-
-
-
 
 
 void CUpDlg::OnChangeEdit5()
@@ -330,43 +514,6 @@ void CUpDlg::OnChangeEdit8()
 }
 
 
-//CPoint CUpDlg::ptRescale(float x, float y, CRect can, float xmin, float xmax, float ymin, float ymax)
-//{
-//	float xt=((float)can.Width())/(xmax-xmin)*(x-xmin);
-//	float yt=((float)can.Height())/(ymax-ymin)*(y-ymin);
-//
-//	return CPoint(can.left+(int)xt,can.bottom-(int)yt);
-//}
-
-
-//bool CUpDlg::DrawAxis(CRect rect)
-//{
-//	//if (rect.IsRectEmpty()){
-//
-//	//return false;
-//	//}
-//	//else{
-//	//	//CPaintDC dc(this);
-//	//	//CPen pen(PS_SOLID, 1, RGB(255,0,0));
-//	//	//dc.SelectObject(&pen);
-//
-//	//	//CPoint ptOrigin(0,0);
-//	//	CPoint ptOffset1(rect.left,rect.top);
-//	//	CPoint ptOffset2(rect.left,rect.bottom);
-//	//	CPoint ptOffset3(rect.right,rect.top);
-//	//	CPoint ptOffset4(rect.right,rect.bottom);
-//
-//	//	//dc.MoveTo(ptOffset3);
-//	//	//dc.LineTo(ptOffset1);
-//	//	dc.MoveTo(ptOffset1);
-//	//	dc.LineTo(ptOffset2);
-//	//	dc.LineTo(ptOffset4);
-//
-//	return true;
-//	//}
-//}
-
-
 void CUpDlg::OnChangeEdit1()
 {
 	// TODO:  If this is a RICHEDIT control, the control will not
@@ -391,100 +538,45 @@ void CUpDlg::OnChangeEdit1()
 	//Invalidate();
 }
 
-
-bool CUpDlg::DrawAxis2(CRect rect, CPaintDC * dc)
+void CUpDlg::OnEnChangeEdit11()
 {
-	if (rect.IsRectEmpty()){
+	// TODO:  If this is a RICHEDIT control, the control will not
+	// send this notification unless you override the CDialog::OnInitDialog()
+	// function and call CRichEditCtrl().SetEventMask()
+	// with the ENM_CHANGE flag ORed into the mask.
 
-		return false;
-	}
-	else{
-		//CPaintDC dc(this);
-		CPen pen(PS_SOLID, 1, red);
+	// TODO:  Add your control notification handler code here
 
-		CPen * pOldPen=dc->SelectObject(&pen);
-
-		CFont font;
-		font.CreatePointFont(75,L"MS Gothic",NULL);
-
-		//CPoint ptOrigin(0,0);
-		CPoint ptOffset1(rect.left,rect.top);
-		CPoint ptOffset2(rect.left,rect.bottom);
-		CPoint ptOffset3(rect.right,rect.top);
-		CPoint ptOffset4(rect.right,rect.bottom);
-
-		//dc.MoveTo(ptOffset3);
-		//dc.LineTo(ptOffset1);
-		dc->MoveTo(ptOffset1);
-		dc->LineTo(ptOffset2);
-		dc->LineTo(ptOffset4);
-
-		int lc=5;
-		float gridi;
-		CString str;
-
-		CSize sz;
-
-		int tmp;
-
-		float resox=pow(10.0,calgrid(m_xmax-m_xmin));
-
-
-		for(gridi=resox*ceil(m_xmin/resox);gridi<=m_xmax;gridi+=resox){
-
-			tmp=ptRsl(gridi,0.0,rect).x;
-			dc->MoveTo(tmp,rect.bottom);
-			dc->LineTo(tmp,rect.bottom+lc);
-
-			str.Format(L"%.4f",gridi);
-
-			dc->SelectObject(&font);
-
-			sz=dc->GetTextExtent(str);
-
-			dc->TextOutW(tmp-sz.cx/2,rect.bottom+lc,str);
-		}
-
-
-		float resoy=pow(10.0,calgrid(m_ymax-m_ymin));
-
-		for(gridi=resoy*ceil(m_ymin/resoy);gridi<=m_ymax;gridi+=resoy){
-
-			tmp=ptRsl(0.0,gridi,rect).y;
-			dc->MoveTo(rect.left,tmp);
-			dc->LineTo(rect.left-lc,tmp);
-			str.Format(L"%.4f",gridi);
-
-			dc->SelectObject(&font);
-
-			sz=dc->GetTextExtent(str);
-
-			dc->TextOutW(rect.left-lc-sz.cx,tmp-sz.cy/2,str);
-		}
-
-		dc->SelectObject(pOldPen);
-		pen.DeleteObject();
-
-		return true;
-	}
+	//if(isLoad)
+	//	loreg(y,m_n,m_span,m_degree,ys);
+	//Invalidate();
 }
 
 
-bool CUpDlg::DrawCurve(CRect rect, CPaintDC * dc)
+void CUpDlg::OnEnChangeEdit12()
 {
+	// TODO:  If this is a RICHEDIT control, the control will not
+	// send this notification unless you override the CDialog::OnInitDialog()
+	// function and call CRichEditCtrl().SetEventMask()
+	// with the ENM_CHANGE flag ORed into the mask.
 
-	if( m_xmin<m_xmax && m_ymin<m_ymax )
-	{
-		CPen pen(PS_SOLID, 1, blue);
-		DrawPolyline(rect,dc,&pen,x,y,m_n);
-		pen.DeleteObject();
+	// TODO:  Add your control notification handler code here
 
-		return true;
-	}
-	else{
-		return false;
-	}
+	//if(isLoad)
+	//	loreg(y,m_n,m_span,m_degree,ys);
 
+	//Invalidate();
+}
+
+
+void CUpDlg::OnEnChangeEdit10()
+{
+	// TODO:  If this is a RICHEDIT control, the control will not
+	// send this notification unless you override the CDialog::OnInitDialog()
+	// function and call CRichEditCtrl().SetEventMask()
+	// with the ENM_CHANGE flag ORed into the mask.
+
+	// TODO:  Add your control notification handler code here
 }
 
 
@@ -587,275 +679,6 @@ void CUpDlg::OnMouseMove(UINT nFlags, CPoint point)
 	CDialog::OnMouseMove(nFlags, point);
 }
 
-
-bool CUpDlg::DrawCursor(CRect rect, CPaintDC * dc)
-{
-	CPen pen;
-
-	if(isSelectTop)
-		pen.CreatePen(/*PS_SOLID*/PS_DASHDOTDOT, 1/*+2*lineWidth*/, cyan);
-	else
-		pen.CreatePen(/*PS_SOLID*/PS_DASHDOTDOT, 1/*+2*lineWidth*/, black);
-
-	DrawVLine(rect,dc,&pen,m_xtop);
-
-	pen.DeleteObject();
-
-	if(isSelectBottom)
-		pen.CreatePen(/*PS_SOLID*/PS_DASHDOT, 1/*+2*lineWidth*/, cyan);
-	else
-		pen.CreatePen(/*PS_SOLID*/PS_DASHDOT, 1/*+2*lineWidth*/, black);
-
-
-	DrawVLine(rect,dc,&pen,m_xbottom);
-	pen.DeleteObject();
-
-
-	return false;
-}
-
-
-
-
-CPoint CUpDlg::ptRsl(double x, double y,CRect can)
-{
-	long xt=xRescale(x,m_xmin,m_xmax,can.left,can.right);
-	long yt=xRescale(y,m_ymin,m_ymax,can.bottom,can.top);
-
-
-	return CPoint(xt,yt);
-
-
-}
-
-
-
-
-double CUpDlg::xRsl(long x)
-{
-	return xRescale(x, plotrect.left, plotrect.right, m_xmin, m_xmax);
-}
-
-
-double CUpDlg::yRsl(long y)
-{
-	return xRescale(y, plotrect.bottom, plotrect.top, m_ymin, m_ymax);
-}
-
-
-
-
-void CUpDlg::OnBnClickedButton2()
-{
-	// TODO: Add your control notification handler code here
-
-
-	if( isLoad ){
-		UpdateData();
-		//a=vector<double>(1,m_m);
-		//covar=matrix<double>(1,m_m,1,m_m);
-		//double *tmp=vector<double>(1,4);
-
-		long startind=findbottomidx(x,m_n,m_xbottom);
-		long endind=findtopidx(x, m_n,m_xtop );
-		if(isSmooth){
-			//xp=nfun( x, ys, startind, endind, m_m, a, IsDlgButtonChecked(IDC_CHECK2));
-			//xp=nfun2( x, ys, startind, endind, m_m, a, covar, &chisq, IsDlgButtonChecked(IDC_CHECK2));
-			//nfun3(x,ys,startind,endind,m_m,a,&chisq, IsDlgButtonChecked(IDC_CHECK2), tmp);
-
-			bool *bk=vector<bool>(1,m_n);
-
-			nknee=getpoint5(x,ys,m_n,bk,m_m,!IsDlgButtonChecked(IDC_CHECK2));
-
-			xknee=vector<double>(1,nknee);
-			selectvt1(x,m_n,bk,nknee,xknee);
-			yknee=vector<double>(1,nknee);
-			selectvt1(ys,m_n,bk,nknee,yknee);
-			free_vector(bk,1,m_n);
-
-		}
-		else{
-			//xp=nfun( x, y, startind, endind, m_m, a, IsDlgButtonChecked(IDC_CHECK2));
-			//xp=nfun2( x, y, startind, endind, m_m, a, covar, &chisq, IsDlgButtonChecked(IDC_CHECK2));
-			//nfun3(x,y,startind,endind,m_m,a,&chisq, IsDlgButtonChecked(IDC_CHECK2), tmp);
-
-			bool *bk=vector<bool>(1,m_n);
-
-			//nknee=getpoint4(x,y,m_n,bk,m_m);
-			nknee=getpoint5(x,y,m_n,bk,m_m,!IsDlgButtonChecked(IDC_CHECK2));
-
-			xknee=vector<double>(1,nknee);
-			selectvt1(x,m_n,bk,nknee,xknee);
-			yknee=vector<double>(1,nknee);
-			selectvt1(y,m_n,bk,nknee,yknee);
-
-			free_vector(bk,1,m_n);
-
-		}
-
-
-
-		//chisqpp=chisq/(double)(endind-startind+1);
-		//xp=tmp[1];
-		//chisq=tmp[3];
-
-		UpdateData(false);
-
-		isFit=true;
-
-		Invalidate();
-
-
-	}
-}
-
-
-
-
-
-bool CUpDlg::DrawFittingCurve(CRect rect, CPaintDC * dc)
-{
-
-
-
-	if( m_xmin<m_xmax && m_ymin<m_ymax )
-	{
-		CPen pen(PS_SOLID, 1, magenta);
-		CPen * pOldPen=dc->SelectObject(&pen);
-
-		//CPoint ptt=ptRescale(x[1],y[1], rect);
-		CPoint ptt=ptRsl(m_xbottom,calp(a,m_m,m_xbottom), rect);
-		dc->MoveTo(ptt);
-		int i;
-
-		double tmpx;
-		int xend=ptRsl(m_xtop,0.0, rect).x;
-
-		for (i=ptt.x; i<=xend; i++){
-
-			tmpx=xRsl(i);
-
-			ptt=ptRsl(tmpx,calp(a,m_m,tmpx), rect);
-			dc->LineTo(ptt);
-		}
-
-		dc->SelectObject(pOldPen);
-		pen.DeleteObject();
-
-		//pen.CreatePen(PS_DASH, 1, green);
-		//DrawVLine(rect,dc,&pen,xp);
-		//DrawVLine(rect,dc,&pen,chisq);
-		//pen.DeleteObject();
-
-		return true;
-	}
-	else{
-		return false;
-	}
-
-}
-
-
-bool CUpDlg::DrawSmoothCurve(CRect rect, CPaintDC * dc)
-{
-	if( m_xmin<m_xmax && m_ymin<m_ymax )
-	{
-		CPen pen(PS_SOLID, 1, yellow);
-
-		//DrawPolyline(rect,dc,&pen,x,ys,m_n);
-
-		DrawFunc(rect,dc,&pen);
-
-		pen.DeleteObject();
-
-		return true;
-	}
-	else{
-		return false;
-	}
-}
-
-
-void CUpDlg::OnEnChangeEdit11()
-{
-	// TODO:  If this is a RICHEDIT control, the control will not
-	// send this notification unless you override the CDialog::OnInitDialog()
-	// function and call CRichEditCtrl().SetEventMask()
-	// with the ENM_CHANGE flag ORed into the mask.
-
-	// TODO:  Add your control notification handler code here
-
-	//if(isLoad)
-	//	loreg(y,m_n,m_span,m_degree,ys);
-	//Invalidate();
-}
-
-
-void CUpDlg::OnEnChangeEdit12()
-{
-	// TODO:  If this is a RICHEDIT control, the control will not
-	// send this notification unless you override the CDialog::OnInitDialog()
-	// function and call CRichEditCtrl().SetEventMask()
-	// with the ENM_CHANGE flag ORed into the mask.
-
-	// TODO:  Add your control notification handler code here
-
-	//if(isLoad)
-	//	loreg(y,m_n,m_span,m_degree,ys);
-
-	//Invalidate();
-}
-
-
-void CUpDlg::OnEnChangeEdit10()
-{
-	// TODO:  If this is a RICHEDIT control, the control will not
-	// send this notification unless you override the CDialog::OnInitDialog()
-	// function and call CRichEditCtrl().SetEventMask()
-	// with the ENM_CHANGE flag ORed into the mask.
-
-	// TODO:  Add your control notification handler code here
-}
-
-
-void CUpDlg::OnBnClickedButton3()
-{
-	// TODO: Add your control notification handler code here
-	if(isLoad){
-		UpdateData();
-		ys=vector<double>(1,m_n);
-		coefs=matrix<double>(1,m_n-1,1,4);
-		xbreak=vector<double>(1,m_n);
-
-		if(IsDlgButtonChecked(IDC_CHECK1)){
-			loregR(y,m_n,m_span,m_degree,ys);
-
-		}
-		else{
-			//loreg(y,m_n,m_span,m_degree,ys);
-			//smoothspline(y,m_n,m_m,ys);
-			smspl2(x,y,m_n,m_m,coefs,xbreak);
-		}
-		isSmooth=true;
-
-		//double * y2=vector<double>(1,m_n);
-		//spline(x,ys,m_n,1e30,1e30,y2);
-
-		//double * yr2=vector<double>(1,m_n);
-		//spline(x,ys,m_n,1e30,1e30,yr2);
-
-		//xp=maxind(y2,m_n);
-
-
-
-		Invalidate();
-	}
-
-
-
-}
-
-
 BOOL CUpDlg::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 {
 	// TODO: Add your message handler code here and/or call default
@@ -924,6 +747,221 @@ void CUpDlg::OnMouseHWheel(UINT nFlags, short zDelta, CPoint pt)
 	CDialog::OnMouseHWheel(nFlags, zDelta, pt);
 }
 
+bool CUpDlg::DrawCursor(CRect rect, CPaintDC * dc)
+{
+	CPen pen;
+
+	if(isSelectTop)
+		pen.CreatePen(/*PS_SOLID*/PS_DASHDOTDOT, 1/*+2*lineWidth*/, cyan);
+	else
+		pen.CreatePen(/*PS_SOLID*/PS_DASHDOTDOT, 1/*+2*lineWidth*/, black);
+
+	DrawVLine(rect,dc,&pen,m_xtop);
+
+	pen.DeleteObject();
+
+	if(isSelectBottom)
+		pen.CreatePen(/*PS_SOLID*/PS_DASHDOT, 1/*+2*lineWidth*/, cyan);
+	else
+		pen.CreatePen(/*PS_SOLID*/PS_DASHDOT, 1/*+2*lineWidth*/, black);
+
+
+	DrawVLine(rect,dc,&pen,m_xbottom);
+	pen.DeleteObject();
+
+
+	return false;
+}
+
+bool CUpDlg::DrawAxis2(CRect rect, CPaintDC * dc)
+{
+	if (rect.IsRectEmpty()){
+
+		return false;
+	}
+	else{
+		//CPaintDC dc(this);
+		CPen pen(PS_SOLID, 1, red);
+
+		CPen * pOldPen=dc->SelectObject(&pen);
+
+		CFont font;
+		font.CreatePointFont(75,L"MS Gothic",NULL);
+
+		//CPoint ptOrigin(0,0);
+		CPoint ptOffset1(rect.left,rect.top);
+		CPoint ptOffset2(rect.left,rect.bottom);
+		CPoint ptOffset3(rect.right,rect.top);
+		CPoint ptOffset4(rect.right,rect.bottom);
+
+		//dc.MoveTo(ptOffset3);
+		//dc.LineTo(ptOffset1);
+		dc->MoveTo(ptOffset1);
+		dc->LineTo(ptOffset2);
+		dc->LineTo(ptOffset4);
+
+		int lc=5;
+		float gridi;
+		CString str;
+
+		CSize sz;
+
+		int tmp;
+
+		float resox=pow(10.0,calgrid(m_xmax-m_xmin));
+
+
+		for(gridi=resox*ceil(m_xmin/resox);gridi<=m_xmax;gridi+=resox){
+
+			tmp=ptRsl(gridi,0.0,rect).x;
+			dc->MoveTo(tmp,rect.bottom);
+			dc->LineTo(tmp,rect.bottom+lc);
+
+			str.Format(L"%.4f",gridi);
+
+			dc->SelectObject(&font);
+
+			sz=dc->GetTextExtent(str);
+
+			dc->TextOutW(tmp-sz.cx/2,rect.bottom+lc,str);
+		}
+
+
+		float resoy=pow(10.0,calgrid(m_ymax-m_ymin));
+
+		for(gridi=resoy*ceil(m_ymin/resoy);gridi<=m_ymax;gridi+=resoy){
+
+			tmp=ptRsl(0.0,gridi,rect).y;
+			dc->MoveTo(rect.left,tmp);
+			dc->LineTo(rect.left-lc,tmp);
+			str.Format(L"%.4f",gridi);
+
+			dc->SelectObject(&font);
+
+			sz=dc->GetTextExtent(str);
+
+			dc->TextOutW(rect.left-lc-sz.cx,tmp-sz.cy/2,str);
+		}
+
+		dc->SelectObject(pOldPen);
+		pen.DeleteObject();
+
+		return true;
+	}
+}
+
+
+bool CUpDlg::DrawCurve(CRect rect, CPaintDC * dc)
+{
+
+	if( m_xmin<m_xmax && m_ymin<m_ymax )
+	{
+		CPen pen(PS_SOLID, 1, blue);
+		DrawPolyline(rect,dc,&pen,x,y,m_n);
+		pen.DeleteObject();
+
+		return true;
+	}
+	else{
+		return false;
+	}
+
+}
+
+
+CPoint CUpDlg::ptRsl(double x, double y,CRect can)
+	//convert to window coordinate
+{
+	long xt=xRescale(x,m_xmin,m_xmax,can.left,can.right);
+	long yt=xRescale(y,m_ymin,m_ymax,can.bottom,can.top);
+
+
+	return CPoint(xt,yt);
+}
+
+
+double CUpDlg::xRsl(long x)
+	//convert to actual coordinate
+{
+	return xRescale(x, plotrect.left, plotrect.right, m_xmin, m_xmax);
+}
+
+
+double CUpDlg::yRsl(long y)
+	//convert to actual coordinate
+{
+	return xRescale(y, plotrect.bottom, plotrect.top, m_ymin, m_ymax);
+}
+
+
+
+bool CUpDlg::DrawFittingCurve(CRect rect, CPaintDC * dc)
+{
+
+
+
+	if( m_xmin<m_xmax && m_ymin<m_ymax )
+	{
+		CPen pen(PS_SOLID, 1, magenta);
+		CPen * pOldPen=dc->SelectObject(&pen);
+
+		//CPoint ptt=ptRescale(x[1],y[1], rect);
+		CPoint ptt=ptRsl(m_xbottom,calp(a,m_m,m_xbottom), rect);
+		dc->MoveTo(ptt);
+		int i;
+
+		double tmpx;
+		int xend=ptRsl(m_xtop,0.0, rect).x;
+
+		for (i=ptt.x; i<=xend; i++){
+
+			tmpx=xRsl(i);
+
+			ptt=ptRsl(tmpx,calp(a,m_m,tmpx), rect);
+			dc->LineTo(ptt);
+		}
+
+		dc->SelectObject(pOldPen);
+		pen.DeleteObject();
+
+		//pen.CreatePen(PS_DASH, 1, green);
+		//DrawVLine(rect,dc,&pen,xp);
+		//DrawVLine(rect,dc,&pen,chisq);
+		//pen.DeleteObject();
+
+		return true;
+	}
+	else{
+		return false;
+	}
+
+}
+
+
+bool CUpDlg::DrawSmoothCurve(CRect rect, CPaintDC * dc)
+{
+	if( m_xmin<m_xmax && m_ymin<m_ymax )
+	{
+		CPen pen(PS_SOLID, 1, yellow);
+
+		//DrawPolyline(rect,dc,&pen,x,ys,m_n);
+
+		DrawFunc(rect,dc,&pen);
+
+		pen.DeleteObject();
+
+		return true;
+	}
+	else{
+		return false;
+	}
+}
+
+
+
+
+
+
 
 // draw a vertical line at x
 void CUpDlg::DrawVLine(CRect rect, CPaintDC * dc, CPen * pen, double x)
@@ -933,8 +971,6 @@ void CUpDlg::DrawVLine(CRect rect, CPaintDC * dc, CPen * pen, double x)
 	dc->LineTo(ptRsl(x,0,rect).x,rect.top);
 	dc->SelectObject(pOldPen);
 }
-
-
 
 
 
@@ -977,7 +1013,7 @@ void CUpDlg::DrawFunc(CRect rect, CPaintDC * dc, CPen * pPen)
 	CPen * pOldPen=dc->SelectObject(pPen);
 
 	double tmpx=xRsl(rect.left);
-	double tmpy=ppval(coefs,xbreak,m_n,tmpx);
+	double tmpy=ppval(coefs,xbreak,nd,tmpx);
 	CPoint ptt=ptRsl(tmpx, tmpy, rect);
 	dc->MoveTo(ptt);
 	long i;
@@ -985,11 +1021,14 @@ void CUpDlg::DrawFunc(CRect rect, CPaintDC * dc, CPen * pPen)
 	for (i=rect.left+1; i<=rect.right; i++){
 
 		tmpx=xRsl(i);
-		tmpy=ppval(coefs,xbreak,m_n,tmpx);
+		tmpy=ppval(coefs,xbreak,nd,tmpx);
 
 		ptt=ptRsl(tmpx,tmpy,rect);
 		dc->LineTo(ptt);
+		//TRACE("%d,",i);
 	}
+
+
 
 	dc->SelectObject(pOldPen);
 }
