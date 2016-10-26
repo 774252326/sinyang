@@ -13,7 +13,7 @@ GLdouble px, py, pz, ro, pi, he;
 GLdouble xp, yp, zp, xa, ya;
 
 double kk=2;
-double dd=50;
+double dd=10;
 
 GLuint charlists;
 
@@ -82,29 +82,7 @@ void lighting0(){
 
 void lighting2(){
 	GLfloat light_diffuse[] = { 01.0, 01.0, 1.0, 1.0 };
-	GLfloat light_position[] = { 0.0, 50.0, 0.0, 1.0 };
-	//GLfloat spot_direction[] = { 0.0, 0.0, -1.0 };
-	glLightfv(GL_LIGHT2, GL_POSITION, light_position);
-	glLightfv(GL_LIGHT2, GL_DIFFUSE, light_diffuse);
-	//glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, spot_direction);
-	//glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 5.0);
-	glEnable(GL_LIGHT2);
-}
-
-void lighting3(){
-	GLfloat light_diffuse[] = { 01.0, 01.0, 1.0, 1.0 };
-	GLfloat light_position[] = { 0.0, 50.0, 20.0, 1.0 };
-	//GLfloat spot_direction[] = { 0.0, 0.0, -1.0 };
-	glLightfv(GL_LIGHT2, GL_POSITION, light_position);
-	glLightfv(GL_LIGHT2, GL_DIFFUSE, light_diffuse);
-	//glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, spot_direction);
-	//glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 5.0);
-	glEnable(GL_LIGHT2);
-}
-
-void lighting4(){
-	GLfloat light_diffuse[] = { 01.0, 01.0, 1.0, 1.0 };
-	GLfloat light_position[] = { 0.0, 50.0, -20.0, 1.0 };
+	GLfloat light_position[] = { 0.0, 0.0, 1.0, 1.0 };
 	//GLfloat spot_direction[] = { 0.0, 0.0, -1.0 };
 	glLightfv(GL_LIGHT2, GL_POSITION, light_position);
 	glLightfv(GL_LIGHT2, GL_DIFFUSE, light_diffuse);
@@ -174,13 +152,11 @@ void init(void)
 	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
 	glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
 
-	glEnable(GL_LIGHTING);
+	//glEnable(GL_LIGHTING);
 
 	//lighting0();
-	lighting1();
-	lighting2();
-	lighting3();
-	lighting4();
+	//lighting1();
+	//lighting2();
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_NORMALIZE);
@@ -195,41 +171,20 @@ void init(void)
 
 	px=py=pz=ro=pi=he=0;
 
-	py=.5;
-
-	xp=yp=xa=ya=0;zp=-1;
+	xp=yp=xa=ya=0;zp=0;
 
 
 
 
 	glGenTextures(3, m_Texture);
-	//LoadTexture("5-best-panoramic-photography.bmp",0);
-	//LoadTexture("6-best-panoramic-photography.bmp",1);
-	//LoadTexture("9-best-panoramic-photography.bmp",2);
+	LoadTexture("5-best-panoramic-photography.bmp",0);
+	LoadTexture("6-best-panoramic-photography.bmp",1);
+	LoadTexture("9-best-panoramic-photography.bmp",2);
 
-	LoadTexture("14596142-start-track-line-on-a-red-running-track.bmp",0);
+
 
 
 }
-
-
-
-void pano(GLuint Texture)
-{
-	//glRotatef(90,-1,0,0);
-
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D,Texture);
-
-	GLUquadricObj* obj;
-	obj = gluNewQuadric();
-	gluQuadricNormals(obj, GLU_SMOOTH);
-	gluQuadricTexture(obj, GL_TRUE);
-	gluSphere(obj, 1, 200, 200);
-
-	glDisable(GL_TEXTURE_2D);
-}
-
 
 
 void display(void)
@@ -238,11 +193,11 @@ void display(void)
 
 	glLoadIdentity();
 
-	//normalView(xp,yp,zp,xa,ya);
+	normalView(xp,yp,zp,xa,ya);
 	//polarView(di,tw,el,az);
-	pilotView(px,py,pz,ro,pi,he);
+	//pilotView(px,py,pz,ro,pi,he);
 
-	//glRotatef(90,-1,0,0);
+	glRotatef(90,-1,0,0);
 	//char buf[50];
 	//glColor3f(1.0f, 1.0f, 1.0f);
 	//glRasterPos3d(0,0,0);
@@ -251,63 +206,32 @@ void display(void)
 
 	//glutWireCube(1);
 	//glutSolidCube(1);
-
-	glPushMatrix();
-	//glTranslatef(0,0,-30);
-	glutSolidSphere(30,500,500);
-	glPopMatrix();
+	//glutSolidSphere(1,50,50);
 
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D,m_Texture[0]);
 
 	// //Front Face
-	glBegin(GL_POLYGON);
-	     glTexCoord2f(0,0);
-	     glVertex3f(-1.0f,0.0f,-10.0f);
-	     glTexCoord2f(1,0);
-	     glVertex3f( 1.0f,0.0f,-10.0f);
-	     glTexCoord2f(1,1);
-	     glVertex3f( 1.0f,0.0f, 10.0f);
-	     glTexCoord2f(0,1);
-	     glVertex3f(-1.0f,0.0f, 10.0f);
-	 glEnd();
+	//glBegin(GL_POLYGON);
+	//     glTexCoord2f(0,0);
+	//     glVertex3f(-1.0f,-1.0f,0.0f);
+	//     glTexCoord2f(1,0);
+	//     glVertex3f( 1.0f,-1.0f,0.0f);
+	//     glTexCoord2f(1,1);
+	//     glVertex3f( 1.0f, 1.0f,0.0f);
+	//     glTexCoord2f(0,1);
+	//     glVertex3f(-1.0f, 1.0f,0.0f);
+	// glEnd();
 
-	//glRectf(-1,-100,1,100);
-
-	 glBegin(GL_POLYGON);
-	     glTexCoord2f(0,0);
-	     glVertex3f(-1.0f,0.0f,10.0f);
-	     glTexCoord2f(1,0);
-	     glVertex3f( 1.0f,0.0f,10.0f);
-	     glTexCoord2f(1,1);
-	     glVertex3f( 1.0f,0.0f, 30.0f);
-	     glTexCoord2f(0,1);
-	     glVertex3f(-1.0f,0.0f, 30.0f);
-	 glEnd();
+	GLUquadricObj* obj;
+	obj = gluNewQuadric();
+	gluQuadricNormals(obj, GLU_SMOOTH);
+	gluQuadricTexture(obj, GL_TRUE);
+	gluSphere(obj, 1, 200, 200);
 
 
-	 	 glBegin(GL_POLYGON);
-	     glTexCoord2f(0,0);
-	     glVertex3f(-1.0f,0.0f,-30.0f);
-	     glTexCoord2f(1,0);
-	     glVertex3f( 1.0f,0.0f,-30.0f);
-	     glTexCoord2f(1,1);
-	     glVertex3f( 1.0f,0.0f, -10.0f);
-	     glTexCoord2f(0,1);
-	     glVertex3f(-1.0f,0.0f, -10.0f);
-	 glEnd();
 
 	glDisable(GL_TEXTURE_2D);
-
-
-	//GLUquadricObj* obj;
-	//obj = gluNewQuadric();
-	//gluQuadricNormals(obj, GLU_SMOOTH);
-	//gluQuadricTexture(obj, GL_TRUE);
-	//gluSphere(obj, 10, 200, 200);
-
-
-	//pano(m_Texture[2]);
 
 	//glFlush ();
 	glFinish();
@@ -341,18 +265,6 @@ void reshape (int w, int h)
 
 	glLoadIdentity();
 }
-
-
-void spinDisplay(int value)
-{
-		pz-=.1;
-		if(pz<-10)
-			pz=10;
-		glutPostRedisplay();
-
-   glutTimerFunc(20, spinDisplay, 1);
-}
-
 
 void keyboard (unsigned char key, int x, int y)
 {
@@ -505,11 +417,7 @@ void mouseclick(int button, int state, int x, int y)
 		break;
 
 	case GLUT_MIDDLE_BUTTON:
-		//zp*=0.9;
-		//xp+=.5;
-		pz+=.5;
-		if(pz>10)
-			pz=-10;
+		zp*=0.9;
 		glutPostRedisplay();
 		switch(state){
 		case GLUT_UP:
@@ -522,15 +430,8 @@ void mouseclick(int button, int state, int x, int y)
 		break;
 
 	case GLUT_RIGHT_BUTTON:
-		//zp/=0.9;
-		//xp-=.5;
-		//pz-=.5;
-		//if(pz<-10)
-		//	pz=10;
-		//glutPostRedisplay();
-
-		glutTimerFunc(20, spinDisplay, 1);
-
+		zp/=0.9;
+		glutPostRedisplay();
 		switch(state){
 		case GLUT_UP:
 			break;
@@ -551,23 +452,11 @@ void mousemove(int x, int y)
 	if(lbstate==GLUT_DOWN){
 		ya+=(x-mx)/3.0;
 		xa+=(y-my)/3.0;
-
-		he+=(y-my)/3.0;
-		if(he>360)
-			he-=360;
-		pi+=(x-mx)/3.0;
-		if(pi>360)
-			pi-=360;
-
 		glutPostRedisplay();
 		mx=x;
 		my=y;
 	}
 }
-
-
-
-
 
 int main(int argc, char** argv)
 {

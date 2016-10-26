@@ -18,19 +18,5 @@
     <ClCompile Include="ogt.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="pcloud.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="point3d.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="pcloud.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="point3d.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>
