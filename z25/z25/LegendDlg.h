@@ -20,10 +20,10 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	void PositionWnd(void);
-	int maxFsz;
-	int minFsz;
-	int axisW;
-	float ratio;
+	//int maxFsz;
+	//int minFsz;
+	//int axisW;
+	//float ratio;
 
 
 protected:

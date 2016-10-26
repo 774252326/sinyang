@@ -6,9 +6,9 @@
 #include "LegendDlg.h"
 #include "afxdialogex.h"
 #include "drawfunc.h"
-#include "LineSpec.hpp"
-#include "LegendSpec.h"
-#include <vector>
+//#include "LineSpec.hpp"
+//#include "LegendSpec.hpp"
+//#include <vector>
 
 // LegendDlg dialog
 
@@ -17,10 +17,10 @@ IMPLEMENT_DYNAMIC(LegendDlg, CDialogEx)
 LegendDlg::LegendDlg(PlotWnd* pParent /*=NULL*/)
 	//: CDialogEx(LegendDlg::IDD, pParent)
 	: ppw(pParent)
-	, maxFsz(20)
-	, minFsz(1)
-	, axisW(2)
-	, ratio(0.5)
+	//, maxFsz(20)
+	//, minFsz(1)
+	//, axisW(2)
+	//, ratio(0.5)
 	, bInitComplete(false)
 {
 
@@ -114,15 +114,16 @@ void LegendDlg::PositionWnd(void)
 {
 
 	CRect plotrect=ppw->GetWindowPlotRect();
-	CSize plotsz=plotrect.Size();
 
-	if( ppw->legendDpMode&LEGEND_DP_FIT_RECT ){
-		if( ppw->legendDpMode&LEGEND_DP_AUTO_RECT ){
 
-			ppw->lgs.fontSize=GetAutoFontSize(CSize(plotsz.cx*ratio,plotsz.cy*ratio),maxFsz,minFsz);
+	if( ppw->lgc.legendDpMode&LEGEND_DP_FIT_RECT ){
+		if( ppw->lgc.legendDpMode&LEGEND_DP_AUTO_RECT ){
+			CSize plotsz=plotrect.Size();
+			
+			ppw->lgs.fontSize=GetAutoFontSize(CSize(plotsz.cx*ppw->lgc.ratio,plotsz.cy*ppw->lgc.ratio),ppw->lgc.maxFsz,ppw->lgc.minFsz);
 		}
 		else{
-			ppw->lgs.fontSize=GetAutoFontSize(ppw->lgrect.Size(),maxFsz,minFsz);
+			ppw->lgs.fontSize=GetAutoFontSize(ppw->lgc.limitSize,ppw->lgc.maxFsz,ppw->lgc.minFsz);
 		}
 
 
@@ -130,19 +131,19 @@ void LegendDlg::PositionWnd(void)
 
 	CSize sz=GetExtent();
 
-	if( ppw->legendDpMode&LEGEND_DP_ALIGN ){
+	if( ppw->lgc.legendDpMode&LEGEND_DP_ALIGN ){
 		ppw->lgs.bDock=true;
 		
-		plotrect.DeflateRect(axisW,0,0,axisW);
+		plotrect.DeflateRect(ppw->lgc.axisW,0,0,ppw->lgc.axisW);
 
-		if( ppw->legendDpMode&LEGEND_DP_LEFT ){
+		if( ppw->lgc.legendDpMode&LEGEND_DP_LEFT ){
 			ppw->lgs.position.x=plotrect.left;
 		}
 		else{
 			ppw->lgs.position.x=plotrect.right-sz.cx;
 		}
 
-		if( ppw->legendDpMode&LEGEND_DP_TOP ){
+		if( ppw->lgc.legendDpMode&LEGEND_DP_TOP ){
 			ppw->lgs.position.y=plotrect.top;
 		}
 		else{

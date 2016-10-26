@@ -17,7 +17,7 @@ public:
 	COLORREF metricC;
 	int metricSize;
 
-	BYTE legendPos;//0=rightbottom,1=leftbottom,2=righttop,3=lefttop
+	//BYTE legendPos;//0=rightbottom,1=leftbottom,2=righttop,3=lefttop
 	COLORREF winbkC;	
 
 	int gap;
@@ -38,7 +38,7 @@ public:
 		, labelSize(20)
 		, metricC(0)
 		, metricSize(20)
-		, legendPos(0)
+		//, legendPos(0)
 		, winbkC(RGB(255,255,255))
 		, gap(10)
 		, metricGridLong(5)
@@ -60,7 +60,7 @@ public:
 		labelSize=src.labelSize;
 		metricC=src.metricC;
 		metricSize=src.metricSize;
-		legendPos=src.legendPos;
+		//legendPos=src.legendPos;
 		winbkC=src.winbkC;
 
 		gap=src.gap;
@@ -86,7 +86,7 @@ public:
 				<< labelSize
 				<< metricC
 				<< metricSize
-				<< legendPos
+				//<< legendPos
 				<< winbkC
 				<< gap
 				<< metricGridLong
@@ -106,7 +106,7 @@ public:
 				>> labelSize
 				>> metricC
 				>> metricSize
-				>> legendPos
+				//>> legendPos
 				>> winbkC
 				>> gap
 				>> metricGridLong
@@ -118,7 +118,20 @@ public:
 		}
 	};
 
+	void CalPlotRect(CRect & wndRect)
+	{
+		//GetPlotRect(wndRect,labelSize,metricSize,metricGridLong,gap);
+		int gap0=gap;
 
+		if(labelSize>0){
+			gap0+=labelSize;
+		}
+		if(metricSize>0){
+			gap0+=metricGridLong+metricSize;
+		}
+		wndRect.DeflateRect(gap0,gap,gap,gap0);
+
+	};
 
 
 };

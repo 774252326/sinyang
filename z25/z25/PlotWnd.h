@@ -3,16 +3,13 @@
 
 //#include "LegendDlg.h"
 #include "atltypes.h"
-#include "legendspec.h"
+#include "legendspec.hpp"
 //#include "LegendDlgB.h"
-
+#include "LegendCondition.hpp"
 // PlotWnd
 
-#define LEGEND_DP_ALIGN	0x01
-#define LEGEND_DP_LEFT	0x02
-#define LEGEND_DP_TOP	0x04
-#define LEGEND_DP_FIT_RECT	0x08
-#define LEGEND_DP_AUTO_RECT	0x10
+
+
 
 class PlotWnd : public CWnd
 {
@@ -30,19 +27,29 @@ public:
 	double ymin;
 	double ymax;
 	double pct;
-	CPoint m_mouseDownPoint;
-	bool bMouseCursor;
 	size_t selectPIdx;
-	double zoomrate;
+
+	bool bMouseCursor;
 	
+	double zoomrate;
 	PlotData pd;
 	LegendSpec lgs;
 
-	void ResetRange(void);
 
-	CDialogEx *td;
+
+	LegendCondition lgc;
+
+
+	void ResetRange(void);
+	void SetLegend(void);
+	afx_msg void OnMove(int x, int y);
+	CRect GetWindowPlotRect(bool bWnd=false);
 
 protected:
+	CPoint m_mouseDownPoint;
+	CPoint wndPosition;	
+	CDialogEx *td;
+
 	afx_msg void OnPaint();
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 
@@ -56,18 +63,14 @@ protected:
 	virtual BOOL OnWndMsg(UINT message, WPARAM wParam, LPARAM lParam, LRESULT* pResult);
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg LRESULT OnNcHitTest(CPoint point);
-public:
-	afx_msg void OnMove(int x, int y);
-	CPoint wndPosition;
+
+	
 	afx_msg void OnSize(UINT nType, int cx, int cy);
-	int SetLegend(void);
+
 	void ShowLegend(bool bShow);
 	
-	BYTE legendDpMode;
-	CRect lgrect;
-	//void SetLegendPara(void);
-	//bool UpdateLegendPos(void);
-	CRect GetWindowPlotRect(bool bWnd=false);
+
+
 };
 
 

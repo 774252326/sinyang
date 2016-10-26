@@ -185,13 +185,13 @@ void Cz25Dlg::OnBnClickedButton1()
 
 			pd.AddNew(a.time,a.current,ls,a.label[0],a.label[1]);
 		}
-		pd.ps.legendPos=0;
-
+		//pd.ps.legendPos=0;
+		pw.lgc.legendDpMode=LEGEND_DP_SHOW;
 		pw.pd=pd;
 		pw.ResetRange();
 		pw.SetLegend();
 
-		m_bcheck=pw.pd.ps.legendPos;
+		m_bcheck=bool(pw.lgc.legendDpMode&LEGEND_DP_SHOW);
 
 
 
@@ -296,9 +296,10 @@ void Cz25Dlg::OnBnClickedCheck1()
 
 	UpdateData();
 
-	pw.pd.ps.legendPos=m_bcheck;
-
-	//this->Invalidate();
+	if(m_bcheck)
+		pw.lgc.legendDpMode|=LEGEND_DP_SHOW;
+	else
+		pw.lgc.legendDpMode&=~LEGEND_DP_SHOW;
 
 	pw.SetLegend();
 
@@ -331,9 +332,9 @@ void Cz25Dlg::OnBnClickedCheck2()
 	UpdateData();
 
 	if(m_align)
-		pw.legendDpMode|=LEGEND_DP_ALIGN;
+		pw.lgc.legendDpMode|=LEGEND_DP_ALIGN;
 	else
-		pw.legendDpMode&=~LEGEND_DP_ALIGN;
+		pw.lgc.legendDpMode&=~LEGEND_DP_ALIGN;
 
 	pw.SetLegend();
 
@@ -347,9 +348,9 @@ void Cz25Dlg::OnBnClickedCheck3()
 	UpdateData();
 
 	if(m_left)
-		pw.legendDpMode|=LEGEND_DP_LEFT;
+		pw.lgc.legendDpMode|=LEGEND_DP_LEFT;
 	else
-		pw.legendDpMode&=~LEGEND_DP_LEFT;
+		pw.lgc.legendDpMode&=~LEGEND_DP_LEFT;
 
 	pw.SetLegend();
 }
@@ -362,9 +363,9 @@ void Cz25Dlg::OnBnClickedCheck4()
 	UpdateData();
 
 	if(m_top)
-		pw.legendDpMode|=LEGEND_DP_TOP;
+		pw.lgc.legendDpMode|=LEGEND_DP_TOP;
 	else
-		pw.legendDpMode&=~LEGEND_DP_TOP;
+		pw.lgc.legendDpMode&=~LEGEND_DP_TOP;
 
 	pw.SetLegend();
 }
@@ -377,9 +378,9 @@ void Cz25Dlg::OnBnClickedCheck5()
 	UpdateData();
 
 	if(m_fit)
-		pw.legendDpMode|=LEGEND_DP_FIT_RECT;
+		pw.lgc.legendDpMode|=LEGEND_DP_FIT_RECT;
 	else
-		pw.legendDpMode&=~LEGEND_DP_FIT_RECT;
+		pw.lgc.legendDpMode&=~LEGEND_DP_FIT_RECT;
 
 	pw.SetLegend();
 }
@@ -391,9 +392,9 @@ void Cz25Dlg::OnBnClickedCheck6()
 	UpdateData();
 
 	if(m_auto)
-		pw.legendDpMode|=LEGEND_DP_AUTO_RECT;
+		pw.lgc.legendDpMode|=LEGEND_DP_AUTO_RECT;
 	else
-		pw.legendDpMode&=~LEGEND_DP_AUTO_RECT;
+		pw.lgc.legendDpMode&=~LEGEND_DP_AUTO_RECT;
 
 	pw.SetLegend();
 }

@@ -21,30 +21,12 @@ IMPLEMENT_DYNAMIC(PlotWnd, CWnd)
 	, bMouseCursor(false)
 	, selectPIdx(0)
 	, zoomrate(0.9)
-	, wndPosition(0)
-	, legendDpMode(0)
+	, wndPosition(CPoint())
+	//, legendDpMode(0)
 {
 	td=NULL;
 
-	lgs.bDock=false;
-	//lgs.bkColor=pd.ps.bkgndC;
-	//lgs.fontName=pd.ps.fontName;
-	//lgs.fontSize=15;
-	//lgs.gap=2;
-	//lgs.lineLength=40;
-	//lgs.position=CPoint(200,200);
-
-
-	//CRect winrect(0,0,20,30);
-	//				
-	//				CSize sz=winrect.Size();
-	//				//lgrect.right=lgrect.left+sz.cx/2;
-	//				//lgrect.bottom=lgrect.top+sz.cy/2;
-
-	//				lgrect.Size()=sz;
-
-	lgrect=CRect(0,0,30,30);
-
+	//lgs.bDock=false;
 }
 
 PlotWnd::~PlotWnd()
@@ -342,10 +324,10 @@ void PlotWnd::OnSize(UINT nType, int cx, int cy)
 }
 
 
-int PlotWnd::SetLegend(void)
+void PlotWnd::SetLegend(void)
 {
-	ShowLegend(pd.ps.legendPos!=0);
-	return 0;
+	ShowLegend(lgc.legendDpMode&LEGEND_DP_SHOW);
+	//return 0;
 }
 
 
@@ -356,7 +338,7 @@ void PlotWnd::ShowLegend(bool bShow)
 
 		if(td==NULL){
 			td=new LegendDlg(this);
-			td->Create(IDD_DIALOG1,this);
+			td->Create(IDD_LEGENDDLGA,this);
 		}
 		else{
 			((LegendDlg*)td)->PositionWnd();
@@ -386,7 +368,7 @@ CRect PlotWnd::GetWindowPlotRect(bool bWnd)
 	else
 		this->GetClientRect(&plotrect);
 
-	GetPlotRect(plotrect,pd.ps.labelSize,pd.ps.metricSize,pd.ps.metricGridLong,pd.ps.gap);
+	pd.ps.CalPlotRect(plotrect);
 
 	return plotrect;
 }

@@ -7,7 +7,7 @@
 #include "funT\\lspfitT.h"
 
 #include "PlotData.hpp"
-#include "LegendSpec.h"
+#include "LegendSpec.hpp"
 
 //void AdjustWidth(CListCtrl *ls, int nCol, CString str, int gap=15);
 //void AdjustWidth(CListCtrl *ls, int nCol, int nRow, int gap=15);
@@ -118,12 +118,12 @@ int GetAutoFontSize(CDC* pDC
 	);
 
 
-void GetPlotRect(CRect & plotRect
-	, int labelSize
-	, int metricSize
-	, int metricGridLong
-	, int gap0
-	);
+//void GetPlotRect(CRect & plotRect
+//	, int labelSize
+//	, int metricSize
+//	, int metricGridLong
+//	, int gap0
+//	);
 
 CSize UpdateLegendSpec(LegendSpec &lgs
 	, CDC *pDC

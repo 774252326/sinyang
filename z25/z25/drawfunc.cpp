@@ -1182,23 +1182,23 @@ void DrawData(CRect &plotrect
 			,plotrect.right);
 
 
-		CRect lrect=plotrect;
-		if(pd.ps.legendPos&0x01){
-			lrect.left=plotrect.left;
-			lrect.right=plotrect.CenterPoint().x;
-		}
-		else{
-			lrect.right=plotrect.right;
-			lrect.left=plotrect.CenterPoint().x;
-		}
-		if(pd.ps.legendPos&0x02){
-			lrect.top=plotrect.top;
-			lrect.bottom=plotrect.CenterPoint().y;
-		}
-		else{
-			lrect.bottom=plotrect.bottom;
-			lrect.top=plotrect.CenterPoint().y;
-		}
+		//CRect lrect=plotrect;
+		//if(pd.ps.legendPos&0x01){
+		//	lrect.left=plotrect.left;
+		//	lrect.right=plotrect.CenterPoint().x;
+		//}
+		//else{
+		//	lrect.right=plotrect.right;
+		//	lrect.left=plotrect.CenterPoint().x;
+		//}
+		//if(pd.ps.legendPos&0x02){
+		//	lrect.top=plotrect.top;
+		//	lrect.bottom=plotrect.CenterPoint().y;
+		//}
+		//else{
+		//	lrect.bottom=plotrect.bottom;
+		//	lrect.top=plotrect.CenterPoint().y;
+		//}
 
 
 		//CRect legendrect=DrawLegend( 
