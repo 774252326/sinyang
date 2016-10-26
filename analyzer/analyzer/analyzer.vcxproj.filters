@@ -129,6 +129,9 @@
     <ClInclude Include="SAPara.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="pcctB.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="analyzer.cpp">
@@ -207,6 +210,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SAPara.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="pcctB.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

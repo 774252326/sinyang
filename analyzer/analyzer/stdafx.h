@@ -39,7 +39,7 @@
 #include <afxdlgs.h>
 #include <afx.h>
 
-
+#include "afxmt.h"
 
 
 

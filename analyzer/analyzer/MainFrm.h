@@ -6,12 +6,14 @@
 #include "OutputWnd.h"
 #include "pcct.h"
 #include "pcctA.h"
+#include "pcctB.h"
 //#include "typedefine.h"
 #include "MFCCaptionBarA.h"
 #include "ANPara.h"
 #include "SAPara.h"
 #include "VPara.h"
 #include "PlotData.h"
+#include "afxmt.h"
 
 class CMainFrame : public CFrameWndEx
 {
@@ -47,6 +49,8 @@ protected:  // control bar embedded members
 	CMFCToolBar       m_wndToolBar;
 	CMFCStatusBar     m_wndStatusBar;
 	CMFCToolBarImages m_UserImages;
+
+public:
 	COutputWnd        m_wndOutput;
 	//CMFCCaptionBar    m_wndCaptionBar;
 	CMFCCaptionBarA    m_wndCaptionBar;

@@ -5,6 +5,13 @@
 #include <vector>       // std::vector
 //#include <fstream>
 
+//#include "MFCCaptionBarA.h"
+//#include "OutputWnd.h"
+//#include "pcct.h"
+//#include "pcctB.h"
+//#include "dlg1.h"
+
+
 //AnalysisParameters
 typedef struct ANP{
 	int analysistype;
@@ -52,6 +59,16 @@ typedef struct PLOTSPEC{
 	int smoothLine;
 	bool traceLast;
 } plotspec;
+
+
+//typedef struct MYPARA{
+//	dlg1 *leftp;
+//	dlg1 *rightp;
+//	COutputWnd *ow;
+//	CMFCCaptionBarA *cba;
+//	pcct *data;
+//	pcctB *dataB;
+//} mypara;
 
 
 void mreadini(wchar_t *fn, anp &p1, cvp &p2, sap &p3 );

@@ -23,12 +23,132 @@
 #include "funT\\smsp.h"
 #include "funT\\lspfitT.h"
 
+
+//#include "sst.cpp"
+
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
 
+//UINT freshp(LPVOID pParam);
 
+CSemaphore semaphoreWrite(3,6); //资源最多访问线程2个，当前可访问线程数2个 
+char g_Array[10]; 
+int intv=100;
+bool isend=false;
+
+
+typedef struct MYPARA{
+	dlg1 *leftp;
+	dlg1 *rightp;
+	COutputWnd *ow;
+	CMFCCaptionBarA *cba;
+	pcct *data;
+	pcctB *dataB;
+} mypara;
+
+UINT RCCS(LPVOID pParam)
+{
+	//CEdit *pEdit=(CEdit*)pParam;
+	//pEdit->SetWindowText(L"");
+
+
+
+	dlg1 *leftp=((mypara*)pParam)->leftp;
+	dlg1 *rightp=((mypara*)pParam)->rightp;
+	COutputWnd *ow=((mypara*)pParam)->ow;
+	CMFCCaptionBarA *cba=((mypara*)pParam)->cba;
+	pcct *data=((mypara*)pParam)->data;
+	pcctB *dataB=((mypara*)pParam)->dataB;
+
+
+	WaitForSingleObject(semaphoreWrite.m_hObject,INFINITE);
+
+
+
+	isend=false;
+
+	size_t n1=80;
+
+	std::vector<double> x;
+	std::vector<double> y;
+	size_t rn;
+	//load n1 points
+	rn=data->popData(x,y,n1);
+	//plot points on plot1
+
+
+	plotspec ps1;
+	CString strTemp;
+	ps1.colour=genColor( genColorvFromIndex<float>( leftp->pd.ps.size() ) ) ;
+	//ps1.colour=genColorGray( genColorvFromIndex<float>( stepCount ) ) ;
+	ps1.dotSize=-1;
+	ps1.name=data->stepName;
+	ps1.showLine=true;
+	ps1.smoothLine=0;
+	ps1.traceLast=true;
+	leftp->pd.AddNew(x,y,ps1,data->label[0],data->label[1]);
+	leftp->updatePlotRange();
+	leftp->Invalidate();
+	//isend=true;
+	Sleep(intv);
+
+
+	while(rn>0){
+			//isend=false;
+		TRACE(L"rccs running\n");
+		rn=data->popData(x,y,n1);
+		leftp->pd.AddFollow(x,y);
+		leftp->updatePlotRange(x,y);
+		leftp->Invalidate();
+			//isend=true;
+		Sleep(intv);
+	}
+
+
+	isend=true;
+
+	ReleaseSemaphore(semaphoreWrite.m_hObject,1,NULL);
+	return 0;
+
+}
+
+
+
+UINT freshp(LPVOID pParam)
+{
+	dlg1 *leftp=((dlg1*)pParam);
+	//dlg1 *rightp=((mypara*)pParam)->rightp;
+	//COutputWnd *ow=((mypara*)pParam)->ow;
+	//CMFCCaptionBarA *cba=((mypara*)pParam)->cba;
+	//pcct *data=((mypara*)pParam)->data;
+	//pcctB *dataB=((mypara*)pParam)->dataB;
+
+
+	WaitForSingleObject(semaphoreWrite.m_hObject,INFINITE);
+
+	//while(true)
+
+	Sleep(400);
+
+	while(!isend){
+
+		TRACE(L"freshp running\n");
+
+		leftp->Invalidate();
+		Sleep(400);
+	}
+
+	leftp->Invalidate();
+
+	ReleaseSemaphore(semaphoreWrite.m_hObject,1,NULL);
+	return 0;
+
+}
+
+//UINT RCCS(LPVOID pParam);
 
 void readini(CString fp, ANPara &p1t, CVPara &p2t, SAPara &p3t)
 {
@@ -350,6 +470,7 @@ BOOL CMainFrame::CreateCaptionBar()
 	//bNameValid = strTemp.LoadString(IDS_CAPTION_BUTTON_TIP);
 	//ASSERT(bNameValid);
 
+	//m_wndCaptionBar.SetMargin(0);
 
 	m_wndCaptionBar.ShowButton(false);
 	//m_wndCaptionBar.SetButtonToolTip(strTemp2);
@@ -371,7 +492,7 @@ BOOL CMainFrame::CreateCaptionBar()
 
 	//m_wndCaptionBar.EnableButton(FALSE);
 
-
+	//m_wndCaptionBar.gett
 
 	return TRUE;
 }
@@ -515,7 +636,7 @@ void CMainFrame::OnOptions()
 	m_wndCaptionBar.ShowButton(false);
 	m_wndCaptionBar.SetEdit();
 	m_wndCaptionBar.ec.ShowWindow(SW_HIDE);
-	m_wndCaptionBar.st.ShowWindow(SW_HIDE);
+	//m_wndCaptionBar.st.ShowWindow(SW_HIDE);
 	timer1=SetTimer(1,10,NULL);
 }
 
@@ -535,7 +656,7 @@ BOOL CMainFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParent
 	bNameValid = strCustomize.LoadString(IDS_TOOLBAR_CUSTOMIZE);
 	ASSERT(bNameValid);
 
-	for (int i = 0; i < iMaxUserToolbars; i ++)
+	for (int i = 0; i < iMaxUserToolbars; i++)
 	{
 		CMFCToolBar* pUserToolbar = GetUserToolBarByIndex(i);
 		if (pUserToolbar != NULL)
@@ -851,6 +972,9 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 							if(stepCount>=1){
 								if(stepCount==1){									
 									Qintercept=datt.Ar.back();
+									x.assign( 1, 0 );
+									y.assign( 1, Qintercept );
+									plot2(x,y,L"Conc.(ml/L)",L"Q(mC)",L"Q-Q(intercept)");	
 								}
 								else{
 									if(stepCount==2){
@@ -860,7 +984,7 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 										Aml+=p3.saplist[stepCount-1].Aconc*dat.front().addVolume;
 									}
 									x.assign( 1, Aml/totalVolume );
-									y.assign( 1, datt.Ar.back()-Qintercept );
+									y.assign( 1, datt.Ar.back()/*-Qintercept*/ );
 									plot2(x,y,L"Conc.(ml/L)",L"Q(mC)",L"Q-Q(intercept)");	
 								}
 
@@ -884,6 +1008,9 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 							CString strTemp;
 							//ASSERT
 							(strTemp.LoadString(IDS_STRING_WAIT_RESPONSE));
+
+							for(int i=0;i<17;i++) strTemp+=" ";
+
 							m_wndCaptionBar.SetTextA(strTemp,true);
 							m_wndCaptionBar.ShowButton();
 							if(dat.empty()){
@@ -895,7 +1022,7 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 							m_wndCaptionBar.UpdateData(FALSE);
 							m_wndCaptionBar.SetEdit();					
 							m_wndCaptionBar.ec.ShowWindow(SW_SHOW);
-							m_wndCaptionBar.st.ShowWindow(SW_SHOW);
+							//m_wndCaptionBar.st.ShowWindow(SW_SHOW);
 							m_wndCaptionBar.ShowWindow(SW_SHOW);
 							RecalcLayout(FALSE);
 						}
@@ -1177,7 +1304,100 @@ void CMainFrame::OnAnalysisStartanalysis()
 
 
 	////////////////////////////start tick///////////////////////////////////
-	this->OnOptions();
+	//this->OnOptions();
+	////////////////////////////////////////////////////////////////////////////
+
+	pcctB dattt;
+
+	dattt.clear();
+	dattt.xmax=p2.highelimit;
+	dattt.xmin=p2.lowelimit;
+	dattt.spv=1/p2.scanrate;
+	dattt.intgUpLim=p2.endintegratione;
+	dattt.nCycle=p2.noofcycles;
+	dattt.rowCount=0;
+	dattt.stepCount=0;
+	dattt.totalVolume=0;
+	dattt.Ar0=0;
+
+	mypara * pa1=new mypara;
+	pa1->cba=&m_wndCaptionBar;
+	pa1->data=dat.data();
+	pa1->dataB=&dattt;
+	pa1->leftp=( (dlg1*)m_wndSplitter.GetPane(0,0) );
+	pa1->ow=&m_wndOutput;
+	pa1->rightp=( (dlg1*)m_wndSplitter.GetPane(0,1) );
+
+
+
+	CWinThread *pWriteA=AfxBeginThread(RCCS,
+		(LPVOID)pa1,
+		THREAD_PRIORITY_NORMAL,
+		0,
+		CREATE_SUSPENDED);
+	pWriteA->ResumeThread();
+
+	CWinThread *pWriteB=AfxBeginThread(freshp,
+		( (dlg1*)m_wndSplitter.GetPane(0,0) ),
+		THREAD_PRIORITY_NORMAL,
+		0,
+		CREATE_SUSPENDED);
+	pWriteB->ResumeThread();
+
+
+	//	Sleep(400);
+
+	//while(!isend){
+
+	//	TRACE(L"freshp running\n");
+
+	//	( (dlg1*)m_wndSplitter.GetPane(0,0) )->Invalidate();
+	//	Sleep(400);
+	//}
+
+	//( (dlg1*)m_wndSplitter.GetPane(0,0) )->Invalidate();
+
+
+	/////////////////////////////////////////////////////////////////////
+
+
+
+	//size_t n1=80;
+
+	//std::vector<double> x;
+	//std::vector<double> y;
+	//size_t rn;
+	////load n1 points
+	//rn=pa1->data->popData(x,y,n1);
+	////plot points on plot1
+
+
+	//plotspec ps1;
+	//CString strTemp;
+	//ps1.colour=genColor( genColorvFromIndex<float>( pa1->leftp->pd.ps.size() ) ) ;
+	////ps1.colour=genColorGray( genColorvFromIndex<float>( stepCount ) ) ;
+	//ps1.dotSize=0;
+	//ps1.name=pa1->data->stepName;
+	//ps1.showLine=false;
+	//ps1.smoothLine=0;
+	//ps1.traceLast=true;
+	//pa1->leftp->pd.AddNew(x,y,ps1,pa1->data->label[0],pa1->data->label[1]);
+	//pa1->leftp->updatePlotRange();
+	////pa1->leftp->Invalidate();
+
+	//Sleep(100);
+
+
+	//while(rn>0){
+	//	rn=pa1->data->popData(x,y,n1);
+	//	pa1->leftp->pd.AddFollow(x,y);
+	//	pa1->leftp->updatePlotRange(x,y);
+	//	//pa1->leftp->Invalidate();
+	//	Sleep(100);
+
+	//	TRACE(L"main running\n");
+	//}
+
 
 
 }

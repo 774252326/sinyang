@@ -44,13 +44,14 @@ int CMFCCaptionBarA::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// TODO:  Add your specialized creation code here
 
 
-	//CRect rect1;
+	//CRect rect1=GetButtonRect();;
 	//this->GetWindowRect(&rect1);
 
-	if( ec.Create( WS_CHILD | WS_TABSTOP | WS_BORDER /*|WS_VISIBLE*/, CRect(0, 9, 100, 32), this, IDS_EDIT_CAPTION_EDIT)==0 )
+
+	if( ec.Create( WS_CHILD | WS_TABSTOP | WS_BORDER /*|WS_VISIBLE*/, CRect( 0,0,0,0 ), this, IDS_EDIT_CAPTION_EDIT)==0 )
 		return -1;
-	if(st.Create( _T("Volume(ml):"), WS_CHILD|SS_CENTER/*|WS_VISIBLE*/, CRect(0, 9, 60, 32), this)==FALSE)
-		return -1;
+	//if(st.Create( _T("Volume(ml):"), WS_CHILD|SS_CENTER/*|WS_VISIBLE*/, CRect(0, 9, 60, 32), this)==FALSE)
+		//return -1;
 
 	
 
@@ -88,20 +89,22 @@ int CMFCCaptionBarA::SetEdit(void)
 	CPoint pt=bRect.TopLeft();
 	pt.x-=this->GetMargin();
 
-	CRect ecrect;
-	ec.GetWindowRect(&ecrect);
-	pt.x-=ecrect.Width();
+	int ecw=50;
+	pt.x-=ecw;
+	CRect ecrect(0,0,ecw,bRect.Height());
+	//ec.GetWindowRect(&ecrect);
+	//ecrect.bottom=ecrect.top+bRect.Height();
 	ecrect.MoveToXY(pt);
 	ec.MoveWindow(&ecrect);
 	//ec.ShowWindow(SW_SHOW);
 
 
 	//pt.x-=this->GetMargin();
-	CRect strect;
-	st.GetWindowRect(&strect);
-	pt.x-=strect.Width();
-	strect.MoveToXY(pt);
-	st.MoveWindow(&strect);
+	//CRect strect;
+	//st.GetWindowRect(&strect);
+	//pt.x-=strect.Width();
+	//strect.MoveToXY(pt);
+	//st.MoveWindow(&strect);
 
 	return 0;
 }
@@ -120,12 +123,14 @@ int CMFCCaptionBarA::ShowButton(bool bShow)
 		CString strTemp;
 		//ASSERT
 		(strTemp.LoadString(IDS_CAPTION_BUTTON));
-		SetButton(strTemp, ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_RIGHT, FALSE);
+		//SetButton(strTemp, ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_RIGHT, FALSE);
+		SetButton(strTemp, ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_LEFT, FALSE);
 		EnableButton();
 	}
 	else{
 
-		SetButton(L" ", ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_RIGHT, FALSE);
+		//SetButton(L" ", ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_RIGHT, FALSE);
+		SetButton(L" ", ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_LEFT, FALSE);
 		EnableButton(FALSE);
 		Invalidate();
 	}
@@ -140,8 +145,8 @@ int CMFCCaptionBarA::SetTextA(CString str, bool bFlash)
 	//this->FlashWindow(bFlash);
 	KillTimer(timer);
 	m_clrBarText=black;
+	//SetText(str, CMFCCaptionBar::ALIGN_RIGHT);
 	SetText(str, CMFCCaptionBar::ALIGN_LEFT);
-
 	if(bFlash){
 		timer=SetTimer(1,500,NULL);
 	}
@@ -180,4 +185,20 @@ void CMFCCaptionBarA::DoDataExchange(CDataExchange* pDX)
 	CMFCCaptionBar::DoDataExchange(pDX);
 
 
+}
+
+void CMFCCaptionBarA::OnDrawButton(
+   CDC* pDC,
+   CRect rect,
+   const CString& strButton,
+   BOOL bEnabled 
+)
+{
+	//if(ec.IsWindowVisible()){
+	//	rect.left+=50;
+	//	rect.right+=50;
+	//}
+
+
+	CMFCCaptionBar::OnDrawButton(pDC, rect, strButton, bEnabled);
 }

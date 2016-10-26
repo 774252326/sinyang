@@ -13,6 +13,13 @@ public:
 	virtual ~CMFCCaptionBarA();
 
 protected:
+	virtual void OnDrawButton(
+   CDC* pDC,
+   CRect rect,
+   const CString& strButton,
+   BOOL bEnabled 
+);
+
 	DECLARE_MESSAGE_MAP()
 public:
 	CEdit ec;
