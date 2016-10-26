@@ -1711,7 +1711,8 @@ bool Compute7(
 	return false;
 
 }
-//
+
+
 
 bool Compute7(
 	const std::vector<DataOutA> &dol, 

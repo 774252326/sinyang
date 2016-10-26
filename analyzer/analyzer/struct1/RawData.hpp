@@ -10,7 +10,8 @@
 #include "../funT1/InterpXT.h"
 #include "../funT1/FitLineT.h"
 #include "../funT1/CSplineT.h"
-
+//#include "Point2d.hpp"
+#include "../funT1/piksr2T.h"
 
 class RawData : public CObject
 {
@@ -247,6 +248,15 @@ public:
 		yll.erase(yll.begin(),yll.begin()+tmpi);
 		ll.erase(ll.begin());
 		return true;
+	};
+
+	void Sort(size_t index)
+	{
+		if(index<ll.size()){
+			size_t starti=std::accumulate(ll.begin(),ll.begin()+index,0,std::plus<size_t>());
+			size_t ni=ll[index];
+			piksr2(ni,xll.data()+starti-1,yll.data()+starti-1);
+		}
 	};
 
 };
