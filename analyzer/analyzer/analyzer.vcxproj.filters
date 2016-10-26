@@ -199,6 +199,9 @@
     <ClInclude Include="calfunc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="analyzerViewL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="analyzer.cpp">
@@ -289,6 +292,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="calfunc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="analyzerViewL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

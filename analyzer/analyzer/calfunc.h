@@ -25,7 +25,13 @@
 
 
 
-//UINT DataOutAList2PlotDataList(const std::vector<DataOutA> &dol, const ANPara &p1, PlotSpec ps0, std::vector<PlotData> &pdl);
+UINT DataOutAList2PlotDataList(
+	const std::vector<DataOutA> &dol,
+	const ANPara &p1, 
+	COLORREF bkc, 
+	std::vector<PlotDataEx> &pdl
+	);
+
 UINT RawData2PlotDataList(
 	const RawData &raw, 
 	const std::vector<DataOutA> dol, 

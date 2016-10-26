@@ -130,6 +130,7 @@
     <ClInclude Include="analyzer.h" />
     <ClInclude Include="analyzerDoc.h" />
     <ClInclude Include="analyzerView.h" />
+    <ClInclude Include="analyzerViewL.h" />
     <ClInclude Include="calfunc.h" />
     <ClInclude Include="CVParametersPage.h" />
     <ClInclude Include="filefunc.h" />
@@ -165,6 +166,7 @@
     <ClCompile Include="analyzer.cpp" />
     <ClCompile Include="analyzerDoc.cpp" />
     <ClCompile Include="analyzerView.cpp" />
+    <ClCompile Include="analyzerViewL.cpp" />
     <ClCompile Include="calfunc.cpp" />
     <ClCompile Include="CVParametersPage.cpp" />
     <ClCompile Include="filefunc.cpp" />

@@ -7,7 +7,7 @@
 
 #include "MainFrm.h"
 
-//#include "analyzerViewL.h"
+#include "analyzerViewL.h"
 //#include "analyzerViewR.h"
 #include "filefunc.h"
 #include "analyzerView.h"
@@ -239,7 +239,7 @@ BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT /*lpcs*/,
 	m_bSplitterCreated = m_wndSplitter.CreateStatic(this, 1, 2);
 	// CMyView and CMyOtherView are user-defined views derived from CView
 	if(m_bSplitterCreated){
-		m_bSplitterCreated = m_wndSplitter.CreateView(0, 0, RUNTIME_CLASS(CanalyzerView), CSize(500,500), pContext);
+		m_bSplitterCreated = m_wndSplitter.CreateView(0, 0, RUNTIME_CLASS(CanalyzerViewL), CSize(500,500), pContext);
 		//this->LeftPlotPointer()->lri=0;
 		if(m_bSplitterCreated){
 			m_bSplitterCreated = m_wndSplitter.CreateView(0, 1, RUNTIME_CLASS(CanalyzerView), CSize(500,500), pContext);
