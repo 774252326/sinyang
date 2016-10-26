@@ -11,21 +11,26 @@
 #include <algorithm>
 #include "SARCalibCurve.h"
 
-int intv=10;
-size_t n1=800;
+int intv=1;
+size_t n1=1000;
 //PlotSpec psp0;
 
 //CString DTRsetup=L"data\\b1.ghb";
 CString DTRflist=L"data\\dtr\\b.txt";
+CString DEMOflist=L"data\\d\\fl1.txt";
+
 
 //CString DTAsetup=L"data\\dta\\c.stp.txt";
 CString DTAflist=L"data\\dta\\c.txt";
 
 //CString LATRsetup=L"data\\latr\\d.stp.txt";
 CString LATRflist=L"data\\latr\\d.txt";
+//CString LATRflist=L"C:\\Users\\r8anw2x\\Documents\\Visual Studio 2010\\Projects\\z21\\z21\\d\\fl1.txt";
+
 
 //CString LATAsetup=L"data\\lata\\e.stp.txt";
 CString LATAflist=L"data\\lata\\e.txt";
+//CString LATAflist=L"C:\\Users\\r8anw2x\\Documents\\Visual Studio 2010\\Projects\\z21\\z21\\d\\fl.txt";
 
 //CString RCRsetup=L"data\\rcr\\f.stp.txt";
 CString RCRflist=L"data\\rcr\\f1.txt";
@@ -43,8 +48,8 @@ CString SARAflist=L"data\\sara\\i.txt";
 
 void WaitSecond(ProcessState &waitflg
 	//,int second=-1
-	,int second=5
-	//,int second=0
+	//,int second=5
+	,int second=0
 	)
 {
 	int interval=1000;
@@ -475,34 +480,39 @@ CString Output3(PlotData & pdat
 
 	pdat.GetDatai(0,x,y);
 
-	double y0=y.front();
-	//for(size_t i=0;i<y.size();i++){
-	//	y[i]/=y0;
-	//}
+	if(x.size()>3){
 
-	std::vector<double> c1(4,0);
-	std::vector< std::vector<double> > c(x.size()-1,c1);
-	smspl(x,y,1.0,c);
+		double y0=y.front();
+		//for(size_t i=0;i<y.size();i++){
+		//	y[i]/=y0;
+		//}
 
-	for(size_t i=0;i<c.size();i++){
-		c[i][0]*=3;
-		c[i][1]*=2;
-		c[i].pop_back();
+		std::vector<double> c1(4,0);
+		std::vector< std::vector<double> > c(x.size()-1,c1);
+		smspl(x,y,1.0,c);
+
+		for(size_t i=0;i<c.size();i++){
+			c[i][0]*=3;
+			c[i][1]*=2;
+			c[i].pop_back();
+		}
+
+		std::vector<double> r;
+		int ni=SolveQuadraticPP(x,c,slopeThreshold*y0,r);	
+
+		if(ni>0){
+			CString str;
+			str.Format(L" intercept value=%g ml/L",r.back());
+			return str;
+		}
+
 	}
 
-	std::vector<double> r;
-	int ni=SolveQuadraticPP(x,c,slopeThreshold*y0,r);	
 
-	if(ni>0){
-		CString str;
-		str.Format(L" intercept value=%g ml/L",r.back());
-		return str;
-	}
-	else{
-		CString str;
-		str.Format(L" invalid intercept value");
-		return str;
-	}
+	CString str;
+	str.Format(L" invalid intercept value");
+	return str;
+
 
 }
 
@@ -779,6 +789,238 @@ CString Output8(PlotData & pdat0
 
 
 
+UINT DEMOP(CanalyzerView *leftp,
+	CanalyzerViewR *rightp,
+	CMFCCaptionBarA *cba,
+	COutputWnd *outw,
+	ProcessState &pst,
+	const ANPara &p1,
+	const CVPara &p2,
+	SAPara &p3
+	)
+{
+
+	//////////////////////////////load data//////////////////////////////////////
+	std::vector<CString> filelist;
+	LoadFileList(DEMOflist,filelist);
+	if(filelist.empty()){ pst=stop;return 1;}
+
+	pcct dt1;
+	pcctB dataB;
+
+	//////////////////////////clear window/////////////////////////////////
+
+	outw->clear();
+	leftp->clear();
+	rightp->clear();
+	//////////////////////////////////////////////////////////////////////////////
+	std::vector<double> x;
+	std::vector<double> y;
+
+	CanalyzerDoc *pDoc=leftp->GetDocument();
+	pDoc->dol.clear();
+
+	leftp->AddPlot(PlotData());
+	pDoc->lp.back().psp=PlotSpec(0);
+
+
+	rightp->AddPlot(PlotData());
+	pDoc->rp.back().psp=PlotSpec(0);
+		rightp->AddPlot(PlotData());
+	pDoc->rp.back().psp=PlotSpec(0);
+		rightp->AddPlot(PlotData());
+	pDoc->rp.back().psp=PlotSpec(0);
+		rightp->AddPlot(PlotData());
+	pDoc->rp.back().psp=PlotSpec(0);
+
+
+	CString xla;
+	CString yla;
+	//////////////////////////////first step////////////////////////////////////////////
+
+	dataB.initialPara(p2);
+
+	///////////////////////////////vms/////////////////////////////////////
+	if( dataB.ReadTask(p3.saplist.front()) ){
+
+		OneStep(outw,leftp,cba,pst,dt1,dataB,filelist,p3);
+
+		x.assign( 1, dataB.additiveVolume );
+		y.assign( 1, (dataB.Ar.back()/dataB.Ar0) );
+
+		{
+			LineSpec ps1;
+			ps1.colour=genColor( genColorvFromIndex<float>( pDoc->rp[0].ps.size() ) ) ;
+			ps1.dotSize=3;
+			ps1.name.LoadStringW(IDS_STRING_TEST_CURVE);
+			ps1.lineType=0;
+			ps1.smoothLine=0;
+			ps1.traceLast=false;
+
+			{
+				CString str;
+				//str.LoadStringW(IDS_STRING_SUPPRESSOR);
+				//xla=str;
+				//xla+=L" ";
+				str.LoadStringW(IDS_STRING_VOL_);
+				xla=str;
+				str.LoadStringW(IDS_STRING_NORMALIZED_Q);
+				yla=str;
+			}
+			pDoc->rp[0].AddNew(x,y,ps1,xla,yla);
+		}
+
+		{
+
+			x.assign( 1, dataB.SConc() );
+			y.assign( 1, (dataB.Ar.back()/dataB.Ar0) );
+
+			LineSpec ps1;
+			ps1.colour=genColor( genColorvFromIndex<float>( pDoc->rp[1].ps.size() ) ) ;
+			ps1.dotSize=3;
+			ps1.name.LoadStringW(IDS_STRING_TEST_CURVE);
+			ps1.lineType=0;
+			ps1.smoothLine=0;
+			ps1.traceLast=false;
+
+			{
+				CString str;
+				str.LoadStringW(IDS_STRING_SUPPRESSOR);
+				xla=str;
+				xla+=L" ";
+				str.LoadStringW(IDS_STRING_CONC_);
+				xla+=str;
+				str.LoadStringW(IDS_STRING_NORMALIZED_Q);
+				yla=str;
+			}
+			pDoc->rp[1].AddNew(x,y,ps1,xla,yla);
+		}
+
+
+		{
+
+			x.assign( 1, dataB.AConc() );
+			y.assign( 1, (dataB.Ar.back()/dataB.Ar0) );
+
+			LineSpec ps1;
+			ps1.colour=genColor( genColorvFromIndex<float>( pDoc->rp[2].ps.size() ) ) ;
+			ps1.dotSize=3;
+			ps1.name.LoadStringW(IDS_STRING_TEST_CURVE);
+			ps1.lineType=0;
+			ps1.smoothLine=0;
+			ps1.traceLast=false;
+
+			{
+				CString str;
+				str.LoadStringW(IDS_STRING_ACCELERATOR);
+				xla=str;
+				xla+=L" ";
+				str.LoadStringW(IDS_STRING_CONC_);
+				xla+=str;
+				str.LoadStringW(IDS_STRING_NORMALIZED_Q);
+				yla=str;
+			}
+			pDoc->rp[2].AddNew(x,y,ps1,xla,yla);
+		}
+
+
+
+		{
+
+			x.assign( 1, dataB.LConc() );
+			y.assign( 1, (dataB.Ar.back()/dataB.Ar0) );
+
+			LineSpec ps1;
+			ps1.colour=genColor( genColorvFromIndex<float>( pDoc->rp[3].ps.size() ) ) ;
+			ps1.dotSize=3;
+			ps1.name.LoadStringW(IDS_STRING_TEST_CURVE);
+			ps1.lineType=0;
+			ps1.smoothLine=0;
+			ps1.traceLast=false;
+
+			{
+				CString str;
+				str.LoadStringW(IDS_STRING_LEVELER);
+				xla=str;
+				xla+=L" ";
+				str.LoadStringW(IDS_STRING_CONC_);
+				xla+=str;
+				str.LoadStringW(IDS_STRING_NORMALIZED_Q);
+				yla=str;
+			}
+			pDoc->rp[3].AddNew(x,y,ps1,xla,yla);
+		}
+
+
+
+		if(rightp->updatePlotRange())
+			rightp->Invalidate(FALSE);
+	}
+	else{
+		AfxMessageBox(L"step error");pst=stop;return 1;		
+		p3.saplist.erase(p3.saplist.begin());
+	}
+
+	/////////////////////////add supressor////////////////////////////
+
+	while(!p3.saplist.empty()){
+
+		if( dataB.ReadTask(p3.saplist.front(),PCCTB_S|PCCTB_A|PCCTB_L|PCCTB_SAMPLE) ){
+
+			OneStep(outw,leftp,cba,pst,dt1,dataB,filelist,p3);
+
+			x.assign( 1, dataB.additiveVolume );
+			y.assign( 1, (dataB.Ar.back()/dataB.Ar0) );
+			pDoc->rp[0].AddFollow(x,y);
+
+			x.assign( 1, dataB.SConc() );
+			y.assign( 1, (dataB.Ar.back()/dataB.Ar0) );
+			pDoc->rp[1].AddFollow(x,y);
+
+			x.assign( 1, dataB.AConc() );
+			y.assign( 1, (dataB.Ar.back()/dataB.Ar0) );
+			pDoc->rp[2].AddFollow(x,y);
+
+			x.assign( 1, dataB.LConc() );
+			y.assign( 1, (dataB.Ar.back()/dataB.Ar0) );
+			pDoc->rp[3].AddFollow(x,y);
+
+			if(rightp->updatePlotRange())
+				rightp->Invalidate(FALSE);
+
+		}
+		else{
+			AfxMessageBox(L"step error");pst=stop;return 1;
+			p3.saplist.erase(p3.saplist.begin());
+		}
+	}
+
+	///////////////////////////////////////////////////////////////
+	if(dataB.bUnknown){
+		pDoc->resultStr=L"unknown sample";
+	}
+	else{
+		CString str;
+		pDoc->resultStr=L"";
+		str.Format(L"Aconc=%g ml/L,",dataB.AConc());
+		pDoc->resultStr+=str;
+		str.Format(L"Sconc=%g ml/L,",dataB.SConc());
+		pDoc->resultStr+=str;
+		str.Format(L"Lconc=%g ml/L",dataB.LConc());
+		pDoc->resultStr+=str;
+	}
+
+	::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(pDoc->resultStr.GetBuffer()),NULL);
+
+	TRACE(L"rccs ends\n");
+
+	pst=stop;
+
+	return 0;
+
+}
+
+
 
 
 
@@ -797,11 +1039,11 @@ UINT DTR(CanalyzerView *leftp,
 	//////////////////////////////load data//////////////////////////////////////
 	std::vector<CString> filelist;
 	LoadFileList(DTRflist,filelist);
-	if(filelist.empty()) return 0;
+	if(filelist.empty()){ pst=stop;return 1;}
 
 	pcct dt1;
 	pcctB dataB;
-	pcct *data=&dt1;
+
 	//////////////////////////clear window/////////////////////////////////
 
 	outw->clear();
@@ -856,7 +1098,7 @@ UINT DTR(CanalyzerView *leftp,
 			rightp->Invalidate(FALSE);
 	}
 	else{
-		AfxMessageBox(L"step error");return 1;		
+		AfxMessageBox(L"step error");pst=stop;return 1;		
 		p3.saplist.erase(p3.saplist.begin());
 	}
 
@@ -864,7 +1106,7 @@ UINT DTR(CanalyzerView *leftp,
 
 	while(!p3.saplist.empty()){
 
-		if( dataB.ReadTask(p3.saplist.front(),PCCTB_S) ){
+		if( dataB.ReadTask(p3.saplist.front(),PCCTB_S|PCCTB_A|PCCTB_L|PCCTB_SAMPLE) ){
 
 			OneStep(outw,leftp,cba,pst,dt1,dataB,filelist,p3);
 
@@ -876,7 +1118,7 @@ UINT DTR(CanalyzerView *leftp,
 
 		}
 		else{
-			AfxMessageBox(L"step error");return 1;
+			AfxMessageBox(L"step error");pst=stop;return 1;
 			p3.saplist.erase(p3.saplist.begin());
 		}
 	}
@@ -921,10 +1163,10 @@ UINT DTA(CanalyzerView *leftp,
 	//////////////////////////////load data//////////////////////////////////////
 	std::vector<CString> filelist;
 	LoadFileList(DTAflist,filelist);
-	if(filelist.empty()) return 0;
+	if(filelist.empty()){ pst=stop;return 1;}
 
 	pcct dt1;
-	pcct *data=&dt1;
+
 	pcctB dataB;
 
 	//////////////////////////clear window/////////////////////////////////
@@ -1012,14 +1254,14 @@ UINT DTA(CanalyzerView *leftp,
 			rightp->Invalidate(FALSE);
 	}
 	else{
-		AfxMessageBox(L"step error");return 1;
+		AfxMessageBox(L"step error");pst=stop;return 1;
 		p3.saplist.erase(p3.saplist.begin());
 	}
 
 
 	while(!p3.saplist.empty()){
 
-		if( dataB.ReadTask(p3.saplist.front(),PCCTB_S) ){
+		if( dataB.ReadTask(p3.saplist.front(),PCCTB_SAMPLE) ){
 
 			OneStep(outw,leftp,cba,pst,dt1,dataB,filelist,p3);
 
@@ -1030,7 +1272,7 @@ UINT DTA(CanalyzerView *leftp,
 				rightp->Invalidate(FALSE);
 		}
 		else{
-			AfxMessageBox(L"step error");return 1;
+			AfxMessageBox(L"step error");pst=stop;return 1;
 			p3.saplist.erase(p3.saplist.begin());
 		}
 	}
@@ -1073,10 +1315,10 @@ UINT LATR(CanalyzerView *leftp,
 	std::vector<CString> filelist;
 
 	LoadFileList(LATRflist,filelist);
-	if(filelist.empty()) return 0;
+	if(filelist.empty()){ pst=stop;return 1;}
 
 	pcct dt1;
-	pcct *data=&dt1;
+
 	pcctB dataB;
 
 
@@ -1141,7 +1383,7 @@ UINT LATR(CanalyzerView *leftp,
 
 	}
 	else{
-		AfxMessageBox(L"step error");return 1;
+		AfxMessageBox(L"step error");pst=stop;return 1;
 		p3.saplist.erase(p3.saplist.begin());
 	}
 
@@ -1160,7 +1402,7 @@ UINT LATR(CanalyzerView *leftp,
 				rightp->Invalidate(FALSE);
 		}
 		else{
-			AfxMessageBox(L"step error");return 1;
+			AfxMessageBox(L"step error");pst=stop;return 1;
 			p3.saplist.erase(p3.saplist.begin());
 		}
 	}
@@ -1195,9 +1437,9 @@ UINT LATA(CanalyzerView *leftp,
 
 	std::vector<CString> filelist;
 	LoadFileList(LATAflist,filelist);
-	if(filelist.empty()) return 0;
+	if(filelist.empty()){ pst=stop;return 1;}
 	pcct dt1;
-	pcct *data=&dt1;
+
 	pcctB dataB;
 
 	//////////////////////////clear window/////////////////////////////////
@@ -1229,7 +1471,7 @@ UINT LATA(CanalyzerView *leftp,
 		OneStep(outw,leftp,cba,pst,dt1,dataB,filelist,p3,true,false);
 	}
 	else{
-		AfxMessageBox(L"step error");return 1;
+		AfxMessageBox(L"step error");pst=stop;return 1;
 		p3.saplist.erase(p3.saplist.begin());
 	}
 
@@ -1266,7 +1508,7 @@ UINT LATA(CanalyzerView *leftp,
 
 	}
 	else{
-		AfxMessageBox(L"step error");return 1;
+		AfxMessageBox(L"step error");pst=stop;return 1;
 		p3.saplist.erase(p3.saplist.begin());
 	}
 
@@ -1289,7 +1531,7 @@ UINT LATA(CanalyzerView *leftp,
 
 	}
 	else{
-		AfxMessageBox(L"step error");return 1;
+		AfxMessageBox(L"step error");pst=stop;return 1;
 		p3.saplist.erase(p3.saplist.begin());
 	}
 
@@ -1310,7 +1552,7 @@ UINT LATA(CanalyzerView *leftp,
 				rightp->Invalidate(FALSE);
 		}
 		else{
-			AfxMessageBox(L"step error");return 1;
+			AfxMessageBox(L"step error");pst=stop;return 1;
 			p3.saplist.erase(p3.saplist.begin());
 		}
 	}
@@ -1345,11 +1587,11 @@ UINT RCR(CanalyzerView *leftp,
 	//////////////////////////////load data//////////////////////////////////////
 	std::vector<CString> filelist;
 	LoadFileList(RCRflist,filelist);
-	if(filelist.empty()) return 0;
+	if(filelist.empty()){ pst=stop;return 1;}
 
 	pcct dt1;
 	pcctB dataB;
-	pcct *data=&dt1;
+
 	//////////////////////////clear window/////////////////////////////////
 	outw->clear();
 	CanalyzerDoc *pDoc=leftp->GetDocument();
@@ -1384,7 +1626,7 @@ UINT RCR(CanalyzerView *leftp,
 		OneStep(outw,leftp,cba,pst,dt1,dataB,filelist,p3,true,false);
 	}
 	else{
-		AfxMessageBox(L"step error");return 1;
+		AfxMessageBox(L"step error");pst=stop;return 1;
 		p3.saplist.erase(p3.saplist.begin());
 	}
 
@@ -1420,7 +1662,7 @@ UINT RCR(CanalyzerView *leftp,
 
 	}
 	else{
-		AfxMessageBox(L"step error");return 1;
+		AfxMessageBox(L"step error");pst=stop;return 1;
 		p3.saplist.erase(p3.saplist.begin());
 	}
 
@@ -1440,7 +1682,7 @@ UINT RCR(CanalyzerView *leftp,
 				rightp->Invalidate(FALSE);
 		}
 		else{
-			AfxMessageBox(L"step error");return 1;
+			AfxMessageBox(L"step error");pst=stop;return 1;
 			p3.saplist.erase(p3.saplist.begin());
 		}
 	}
@@ -1450,8 +1692,6 @@ UINT RCR(CanalyzerView *leftp,
 	pDoc->resultStr=L"";
 
 	::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,NULL,NULL);
-
-	//pDoc->rp[0].SaveFile(L"fr.fig.txt");
 
 	TRACE(L"crcl ends\n");
 
@@ -1473,10 +1713,10 @@ UINT RCA(CanalyzerView *leftp,
 	//////////////////////////////load data//////////////////////////////////////
 	std::vector<CString> filelist;
 	LoadFileList(RCAflist,filelist);
-	if(filelist.empty()) return 0;
+	if(filelist.empty()){ pst=stop;return 1;}
 
 	pcct dt1;
-	pcct *data=&dt1;
+
 	pcctB dataB;
 
 	//////////////////////////clear window/////////////////////////////////
@@ -1534,7 +1774,7 @@ UINT RCA(CanalyzerView *leftp,
 		OneStep(outw,leftp,cba,pst,dt1,dataB,filelist,p3,true,false);
 	}
 	else{
-		AfxMessageBox(L"step error");return 1;
+		AfxMessageBox(L"step error");pst=stop;return 1;
 		p3.saplist.erase(p3.saplist.begin());
 	}
 	/////////////////////////////////add s and a//////////////////////////////////
@@ -1542,7 +1782,7 @@ UINT RCA(CanalyzerView *leftp,
 		OneStep(outw,leftp,cba,pst,dt1,dataB,filelist,p3,true,false);
 	}
 	else{
-		AfxMessageBox(L"step error");return 1;
+		AfxMessageBox(L"step error");pst=stop;return 1;
 		p3.saplist.erase(p3.saplist.begin());
 	}
 	////////////////////////////////////////////add sample////////////////////////////
@@ -1551,7 +1791,7 @@ UINT RCA(CanalyzerView *leftp,
 		OneStep(outw,leftp,cba,pst,dt1,dataB,filelist,p3,true,false);
 	}
 	else{
-		AfxMessageBox(L"step error");return 1;
+		AfxMessageBox(L"step error");pst=stop;return 1;
 		p3.saplist.erase(p3.saplist.begin());
 	}
 	/////////////////////////////////////last step////////////////////////////////////////////////////////////////
@@ -1589,10 +1829,10 @@ UINT SARR(CanalyzerView *leftp,
 	//LoadFileList(L"C:\\Users\\r8anw2x\\Dropbox\\W\\4 Mar (2.5S 2.5S3A 2.5S6.5A 2.5S10A 2.5S15A Cali)\\h2.txt",filelist);
 	LoadFileList(SARRflist,filelist);
 	//LoadFileList(L"data\\SARAstd\\i0.txt",filelist);
-	if(filelist.empty()) return 0;
+	if(filelist.empty()){ pst=stop;return 1;}
 
 	pcct dt1;
-	pcct *data=&dt1;
+
 	pcctB dataB;
 
 
@@ -1682,7 +1922,7 @@ UINT SARR(CanalyzerView *leftp,
 
 		}
 		else{
-			AfxMessageBox(L"step error");return 1;
+			AfxMessageBox(L"step error");pst=stop;return 1;
 			p3.saplist.erase(p3.saplist.begin());
 		}
 
@@ -1791,10 +2031,10 @@ UINT SARA(CanalyzerView *leftp,
 	std::vector<CString> filelist;
 
 	LoadFileList(SARAflist,filelist);
-	if(filelist.empty()) return 0;
+	if(filelist.empty()){ pst=stop;return 1;}
 
 	pcct dt1;
-	pcct *data=&dt1;
+
 	pcctB dataB;
 
 	//////////////////////////clear window/////////////////////////////////
@@ -1882,7 +2122,7 @@ UINT SARA(CanalyzerView *leftp,
 			rightp->Invalidate(FALSE);
 	}
 	else{
-		AfxMessageBox(L"step error");return 1;
+		AfxMessageBox(L"step error");pst=stop;return 1;
 		p3.saplist.erase(p3.saplist.begin());
 	}
 
@@ -1955,14 +2195,14 @@ UINT SARA(CanalyzerView *leftp,
 				rightp->Invalidate(FALSE);
 		}
 		else{
-			AfxMessageBox(L"step error");return 1;
+			AfxMessageBox(L"step error");pst=stop;return 1;
 			p3.saplist.erase(p3.saplist.begin());
 		}
 	}
 
 	////////////////////////////////////////////////////////////////////////
 
-	
+
 
 	pDoc->resultStr=Output8(pDoc->rp[0]
 	, pDoc->rp[1]
@@ -2015,8 +2255,12 @@ UINT PROCESS(LPVOID pParam)
 
 
 	switch(p1.analysistype){
+	case 0:
+		return DEMOP(leftp,rightp,cba,outw,*pst,p1,p2,p3);
+
 	case 1:
 		return DTR(leftp,rightp,cba,outw,*pst,p1,p2,p3);
+
 	case 2:
 		return DTA(leftp,rightp,cba,outw,*pst,p1,p2,p3);
 
@@ -2040,11 +2284,10 @@ UINT PROCESS(LPVOID pParam)
 
 	default:
 		*pst=stop;
+
 		return 1;
 	}
 
-
-	return 1;
 
 }
 

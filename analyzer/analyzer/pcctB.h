@@ -4,13 +4,13 @@
 #include "sapitemA.h"
 #include "VPara.h"
 
-#define PCCTB_SAMPLE 0x00
+
 #define PCCTB_VMS 0x01
 #define PCCTB_S 0x02
 #define PCCTB_A 0x04
 #define PCCTB_L 0x08
 #define PCCTB_MORE 0x10
-
+#define PCCTB_SAMPLE 0x20
 
 class pcctB
 {
@@ -65,5 +65,8 @@ public:
 	double AConc(void);
 	double SConc(void);
 	double LConc(void);
+private:
+	bool ConcOnce(double &ml, double endConc, double addConc);
+	bool ConcIntv(double &ml, double intvConc, double addConc);
 };
 

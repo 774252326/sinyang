@@ -112,8 +112,11 @@ bool pcctB::ReadTask(sapitemA sapi, BYTE bFlag)
 	if(sapi.volconc<=0)
 		return false;
 
-	if( (bFlag&PCCTB_VMS) && (sapi.addType!=4) )
-		return false;
+	if(bFlag&PCCTB_VMS){
+		if(sapi.addType!=4)
+			return false;
+	}
+	else{
 
 	if( !(bFlag&PCCTB_S) && (sapi.Sconc!=0) )
 		return false;
@@ -123,6 +126,11 @@ bool pcctB::ReadTask(sapitemA sapi, BYTE bFlag)
 
 	if( !(bFlag&PCCTB_L) && (sapi.Lconc!=0) )
 		return false;
+
+	if( !(bFlag&PCCTB_SAMPLE) && (sapi.isUnknownComposition()) )
+		return false;
+
+	}
 
 	switch(sapi.addType){
 	case 0:
@@ -165,14 +173,52 @@ bool pcctB::ReadTask(sapitemA sapi, BYTE bFlag)
 				}
 				return true;
 			}
-			else{
-				return false;
-			}
+
+			return false;
+
 		}
 
 	case 2:
-		return false;
+		{
+			if( bUnknown || sapi.isMixedComposition() || sapi.isUnknownComposition() )
+				return false;
+
+			if(sapi.Sconc>0){
+				return ConcOnce(Sml,sapi.volconc,sapi.Sconc);
+			}
+
+			if(sapi.Aconc>0){
+				return ConcOnce(Aml,sapi.volconc,sapi.Aconc);
+			}
+
+			if(sapi.Lconc>0){
+				return ConcOnce(Lml,sapi.volconc,sapi.Lconc);
+			}
+
+			return false;
+
+		}
+
 	case 3:
+
+		if( (Ar.back()/Ar0>sapi.endRatio)^(bFlag&PCCTB_MORE) ){
+
+			if( bUnknown || sapi.isMixedComposition() || sapi.isUnknownComposition() )
+				return false;
+
+			if(sapi.Lconc>0){					
+				return ConcIntv(Lml,sapi.volconc,sapi.Lconc);
+			}
+
+			if(sapi.Aconc>0){					
+				return ConcIntv(Aml,sapi.volconc,sapi.Aconc);
+			}
+
+			if(sapi.Sconc>0){					
+				return ConcIntv(Sml,sapi.volconc,sapi.Sconc);
+			}
+
+		}
 		return false;
 	case 4:
 		{
@@ -241,4 +287,46 @@ double pcctB::LConc(void)
 		return -1;
 
 	return Lml/TotalVolume();
+}
+
+bool pcctB::ConcOnce(double &ml, double endConc, double addConc)
+{
+	double tmp1=endConc-ml/TotalVolume();
+	double tmp2=addConc-endConc;
+	if(tmp1*tmp2>0){
+		addVolume=TotalVolume()*tmp1/tmp2;
+		ml+=addConc*addVolume;
+
+		additiveVolume+=addVolume;
+
+		CString str;
+		str.LoadStringW(IDS_STRING_STEPNAME1);
+		stepName.Format(L"%s %d",str,stepCount);
+		bUpdateAr0=false;
+
+		return true;
+
+	}
+	return false;
+
+}
+
+bool pcctB::ConcIntv(double &ml, double intvConc, double addConc)
+{
+	double tmp1=ml/TotalVolume()-addConc;//tmp1>0, dilute, tmp1<0, concertrate
+	tmp1=abs(tmp1)/intvConc-1;
+	if(tmp1>0){
+		addVolume=TotalVolume()/tmp1;
+		ml+=addConc*addVolume;
+
+		additiveVolume+=addVolume;
+
+		CString str;
+		str.LoadStringW(IDS_STRING_STEPNAME1);
+		stepName.Format(L"%s %d",str,stepCount);
+		bUpdateAr0=false;
+
+		return true;
+	}
+	return false;
 }

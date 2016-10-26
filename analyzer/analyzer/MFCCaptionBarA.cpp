@@ -319,16 +319,16 @@ afx_msg LRESULT CMFCCaptionBarA::OnMessageOver(WPARAM wParam, LPARAM lParam)
 
 void CMFCCaptionBarA::BtnClicked(void)
 {
-	bool bCheck=bn.GetCheck();
+	//bool bCheck=bn.GetCheck();
 
 	CString str;
 
-	if(bCheck){
+	//if(bCheck){
 		//str=rightPlotFile1;
-	}
-	else{
+	//}
+	//else{
 		//str=rightPlotFile0;
-	}
+	//}
 
 	::SendMessageW(this->GetParentFrame()->GetSafeHwnd(), MESSAGE_SWITCH_FIGURE, (WPARAM)str.GetBuffer(), NULL);
 

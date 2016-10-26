@@ -68,10 +68,22 @@ bool sapitemA::isUnknownComposition(void)
 
 bool sapitemA::isStepEnd(double currentRatio, bool bLess)
 {
-	if(addType==1/*||addType==3*/){
+	if(addType==1||addType==3){
 		if( (currentRatio<endRatio)^bLess ){
 			return false;
 		}
 	}
 	return true;
+}
+
+
+bool sapitemA::isMixedComposition(void)
+{
+	if( (Sconc>0 && Aconc>0)
+		||(Sconc>0 && Lconc>0)
+		||(Lconc>0 && Aconc>0)
+		){
+			return true;
+	}
+	return false;
 }
