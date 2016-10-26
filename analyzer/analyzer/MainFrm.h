@@ -20,6 +20,9 @@ class CMainFrame : public CFrameWndEx
 {
 public:
 	static UINT PROCESS(LPVOID pParam);
+	static UINT PROCESS0(LPVOID pParam);
+
+
 
 protected: // create from serialization only
 	CMainFrame();

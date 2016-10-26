@@ -35,6 +35,20 @@
 
 
 
+#include "standard_definitions_head.h"//
+//#include <iostream>
+////using std::cout;
+////using std::endl;
+//#include <QApplication>
+#include <QMessageBox>
+//#include <QTimer>
+#include "exports.h" // for Libec namespace
+#include "recorder.h"
+#include "runnerBase.h"
+#include "ECDEF.H"
+
+
+
 typedef struct MYPARA{
 	//CanalyzerViewL *leftp;
 	//CanalyzerViewR *rightp;
@@ -52,7 +66,7 @@ typedef struct MYPARA{
 } mypara;
 
 
-const DWORD sleepms=1;
+const DWORD sleepms=10;
 
 const size_t nd=20;
 //const size_t nd=sleepms/10;
@@ -72,22 +86,11 @@ void WaitSecond(ProcessState &waitflg
 }
 
 
-UINT CMainFrame::PROCESS(LPVOID pParam)
+UINT CMainFrame::PROCESS0(LPVOID pParam)
 {
 	CMainFrame *mf=((mypara*)pParam)->mf;
 	CanalyzerDoc* pDoc=((mypara*)pParam)->adoc;
-	//CanalyzerDoc* pDoc=(CanalyzerDoc*)pParam;
 
-
-	//CanalyzerViewL* lv=((mypara*)pParam)->leftp;
-	//CanalyzerViewR* rv=((mypara*)pParam)->rightp;
-
-
-	//COutputListA* ol=((mypara*)pParam)->ol;
-
-	//CanalyzerDoc* pDoc=(CanalyzerDoc*)(mf->GetActiveDocument());
-
-	//CanalyzerDoc* pDoc=((CanalyzerViewL*)(mf->LeftPane()))->GetDocument();
 	delete pParam;
 	////////////////////////////////////////////////////
 	std::vector<CString> filelist;
@@ -99,72 +102,6 @@ UINT CMainFrame::PROCESS(LPVOID pParam)
 	std::vector<double> x;
 	std::vector<double> y;
 	size_t rnd;
-	//////////////////////////////////////////////
-	//while(mf->pst!=stop){
-
-	//	mf->SendMessage(MESSAGE_UPDATE_DOL,NULL,NULL);
-	//	//mf->pst=pause;
-
-	//	WaitSecond(mf->pst);
-
-	//	if(mf->pst==pause){
-	//		::SendMessage(mf->GetSafeHwnd(),WM_COMMAND,ID_ANALYSIS_PAUSE,NULL);
-	//	}
-
-	//	if(pDoc->da.runstate==0){
-	//		mf->pst=stop;
-	//		return 0;
-	//	}
-
-	//	if(pDoc->da.runstate==5){
-
-	//		if(filelist.empty()){
-	//			CString strerr;
-	//			strerr.LoadStringW(IDS_STRING_STEP_ERROR);
-	//			mf->pst=stop;
-	//			return 1;
-	//		}
-
-	//		/////load data from file////////////
-	//		data.clear();
-	//		data.readFile(filelist.front());
-	//		data.TomA();
-	//		filelist.erase(filelist.begin());
-
-	//		rnd=data.popData(x,y,nd);
-
-	//		if(x.empty()||y.empty()){
-	//			TRACE("\ninput empty\n");
-	//			mf->pst=stop;
-	//			return 8;
-	//		}
-	//		if(singleLock.Lock())
-	//		{
-	//			pDoc->da.raw.AddNew(x,y);
-	//			// Now that we are finished, 
-	//			// unlock the resource for others.
-	//			singleLock.Unlock();
-	//		}
-	//	}
-	//	else{
-	//		rnd=data.popData(x,y,nd);
-
-	//		if(x.empty()||y.empty()){
-	//			TRACE("\ninput empty\n");
-	//			mf->pst=stop;
-	//			return 8;
-	//		}
-	//		if(singleLock.Lock())
-	//		{
-	//			pDoc->da.raw.AddFollow(x,y);
-	//			// Now that we are finished, 
-	//			// unlock the resource for others.
-	//			singleLock.Unlock();
-	//		}
-	//	}
-
-	//}
-	//////////////////////////////////////////////////////
 
 	while(true){
 		switch(mf->pst){
@@ -198,7 +135,7 @@ UINT CMainFrame::PROCESS(LPVOID pParam)
 							// unlock the resource for others.
 							singleLock.Unlock();
 						}
-						
+
 						pDoc->UpdateState();
 
 						::SendMessage(mf->GetSafeHwnd(),MESSAGE_UPDATE_DOL,PW_INIT,PW_INIT);
@@ -264,7 +201,263 @@ UINT CMainFrame::PROCESS(LPVOID pParam)
 	return 0;
 }
 
+UINT CMainFrame::PROCESS(LPVOID pParam)
+{
+	CMainFrame *mf=((mypara*)pParam)->mf;
+	CanalyzerDoc* pDoc=((mypara*)pParam)->adoc;
 
+	delete pParam;
+	////////////////////////////////////////////////////
+
+
+
+	//int ncnt=0, ncnt2=0;
+
+	//theApp.setsomething(pDoc->da.p2,3);
+
+	theApp.m_nCnt=0;
+
+	///////////////////////////////////////////////////////////////
+
+
+	CSingleLock singleLock(&(pDoc->m_CritSection));
+
+	pcct data;
+	std::vector<double> x;
+	std::vector<double> y;
+	size_t rnd;
+
+	while(true){
+		switch(mf->pst){
+		case running:
+			{
+				switch(pDoc->da.runstate){
+				case 0:
+				case 7:	
+				case 3:
+				case 4:
+					{
+						mf->pst=stop;
+					}
+					break;
+				case 1:
+				case 2:
+				case 6:
+					//case 8:
+					{
+						//rnd=data.popData(x,y,nd);
+
+						theApp.dosomething(x,y);
+
+						//if(x.empty()||y.empty()){
+						//	TRACE("\ninput empty\n");
+						//	mf->pst=stop;
+						//	return 8;
+						//}
+
+						if(!(x.empty()||y.empty()))
+						{
+
+							if(singleLock.Lock())
+							{
+								pDoc->da.raw.AddFollow(x,y);
+								// Now that we are finished, 
+								// unlock the resource for others.
+								singleLock.Unlock();
+							}
+
+							pDoc->UpdateState();
+
+							::SendMessage(mf->GetSafeHwnd(),MESSAGE_UPDATE_DOL,PW_INIT,PW_INIT);
+							::SendMessage(mf->GetSafeHwnd(),MESSAGE_CLOSE_SAP_SHEET,NULL,NULL);
+						}
+					}
+					break;
+				case 8:
+					{
+						//rnd=data.popData(x,y,nd);
+
+						while(theApp.runner->isRunningInWorkerThread())
+						{
+							Sleep(sleepms);
+						}
+						theApp.setsomething(pDoc->da.p2,2);
+
+		//						theApp.m_nCnt=0;
+
+
+		//Q_ASSERT(theApp.NN >= theApp.runner->singleChannelStorageRequired());
+		//// change technique. must do this before changing any Q_PROPERTYs...
+		//bool bResult1 = QMetaObject::invokeMethod(
+		//	theApp.runner, 
+		//	"set_iTech", // invoke (protected!) slot
+		//	Qt::DirectConnection,
+		//	Q_ARG(int, M_IT) // ECDEF.H
+		//	);
+		//Q_ASSERT(bResult1);
+
+		//int polar=0;
+		//double ie=(pDoc->da.p2.highelimit);
+		//theApp.runner->setProperty("m_ei", ie);//initial E
+		//theApp.runner->setProperty("m_eh", pDoc->da.p2.highelimit);//high E
+		//theApp.runner->setProperty("m_el", pDoc->da.p2.lowelimit);	//low E
+		//theApp.runner->setProperty("m_ef", 0.8);//final E
+		//theApp.runner->setProperty("m_pn", polar);//intial scan polarity
+		//theApp.runner->setProperty("m_vv",pDoc->da.p2.scanrate);//scan rate
+		//theApp.runner->setProperty("m_inpcl", 2);//sweep segment
+		//theApp.runner->setProperty("m_inpsi",pDoc->da.p2.EInterval());//sample interval
+		//theApp.runner->setProperty("m_qt", 1);//quiet time
+		//theApp.runner->setProperty("m_iSens",2);
+
+		////delete []theApp.fx;
+		////delete []theApp.fy;
+		////		
+		////theApp.fx=new float[theApp.NN];
+		////theApp.fy=new float[theApp.NN];
+
+		//theApp.arrayRecorder->reset();
+		//theApp.arrayRecorder->setStorageTarget(theApp.fx,theApp.fy,theApp.NN); // a quirk of my api	
+		//theApp.runner->runInWorkerThread();
+
+						Sleep(3000);
+						while(true)
+						{
+							//TRACE("num=%d",theApp.arrayRecorder->numRecorded());
+							//Sleep(sleepms);
+							theApp.dosomething(x,y);
+
+
+		//							int ncnt2=theApp.m_nCnt;
+		//theApp.arrayRecorder->recordAllSeries();
+		//theApp.m_nCnt = theApp.arrayRecorder->numRecorded();
+		//if(theApp.m_nCnt>=ncnt2){
+		//	x.resize(theApp.m_nCnt-ncnt2,0);
+		//	y.resize(theApp.m_nCnt-ncnt2,0);
+		//}
+		//else{
+		//	x.resize(theApp.m_nCnt,0);
+		//	y.resize(theApp.m_nCnt,0);
+		//}
+		//for(int i=ncnt2;i<theApp.m_nCnt;i++)
+		//{
+		//	x[i-ncnt2]=theApp.fx[i];
+		//	y[i-ncnt2]=theApp.fy[i];
+		//}
+
+
+							if(x.empty()||y.empty()){
+								Sleep(sleepms);
+							}
+							else{
+								break;
+							}
+						}
+
+						//if(x.empty()||y.empty()){
+						//	TRACE("\ninput empty\n");
+						//	mf->pst=stop;
+						//	return 8;
+						//}
+
+						if(!(x.empty()||y.empty()))
+						{
+
+							if(singleLock.Lock())
+							{
+								pDoc->da.raw.AddFollow(x,y);
+								// Now that we are finished, 
+								// unlock the resource for others.
+								singleLock.Unlock();
+							}
+
+							pDoc->UpdateState();
+
+							::SendMessage(mf->GetSafeHwnd(),MESSAGE_UPDATE_DOL,PW_INIT,PW_INIT);
+							::SendMessage(mf->GetSafeHwnd(),MESSAGE_CLOSE_SAP_SHEET,NULL,NULL);
+						}
+					}
+					break;
+				case 5:
+					{
+						//if(filelist.empty()){
+						//	CString strerr;
+						//	strerr.LoadStringW(IDS_STRING_STEP_ERROR);
+						//	mf->pst=stop;
+						//	return 3;
+						//}
+
+						///////load data from file////////////
+						//data.clear();
+						//data.readFile(filelist.front());
+						//data.TomA();
+						//filelist.erase(filelist.begin());
+
+						//rnd=data.popData(x,y,nd);
+
+
+						while(theApp.runner->isRunningInWorkerThread())
+						{
+							Sleep(sleepms);
+						}
+
+						theApp.setsomething(pDoc->da.p2,3);
+						Sleep(3000);
+
+						while(true)
+						{
+							theApp.dosomething(x,y);
+							if(x.empty()||y.empty()){
+								Sleep(sleepms);
+							}
+							else{
+								break;
+							}
+						}
+
+						//if(x.empty()||y.empty()){
+						//	TRACE("\ninput empty\n");
+						//	mf->pst=stop;
+						//	return 8;
+						//}
+
+						if(!(x.empty()||y.empty()))
+						{
+							if(singleLock.Lock())
+							{
+								pDoc->da.raw.AddNew(x,y);
+								// Now that we are finished, 
+								// unlock the resource for others.
+								singleLock.Unlock();
+							}
+
+							pDoc->UpdateState();
+
+							::SendMessage(mf->GetSafeHwnd(),MESSAGE_UPDATE_DOL,PW_INIT,PW_INIT);
+							::SendMessage(mf->GetSafeHwnd(),MESSAGE_CLOSE_SAP_SHEET,NULL,NULL);
+						}
+					}
+					break;
+
+				default:
+					return 2;
+				}
+
+				Sleep(sleepms);
+			}
+			break;
+		case pause:
+			Sleep(sleepms);
+			break;
+		case stop:
+			return 0;
+		default:
+			return 1;
+		}
+	}
+	mf->pst=stop;
+
+	return 0;
+}
 
 ///////////////////////////////////////////thread///////////////////////////////////////
 

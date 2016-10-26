@@ -20,6 +20,14 @@
 #include "windowsversion.hpp"
 
 
+
+#include "standard_definitions_head.h"//
+//#include <QApplication>
+#include <QMessageBox>
+//#include <QTimer>
+#include "exports.h" // for Libec namespace
+
+
 // CanalyzerApp
 
 BEGIN_MESSAGE_MAP(CanalyzerApp, CWinAppEx)
@@ -55,6 +63,15 @@ CanalyzerApp::CanalyzerApp()
 
 	// TODO: add construction code here,
 	// Place all significant initialization in InitInstance
+
+
+		runner=NULL;
+	arrayRecorder=NULL;
+	m_bRunning = FALSE;
+	m_nCnt = 0;
+	//	fx=new float[NN];
+	//fy=new float[NN];
+
 }
 
 // The one and only CanalyzerApp object
@@ -77,6 +94,23 @@ BOOL CanalyzerApp::InitInstance()
 	InitCommonControlsEx(&InitCtrls);
 
 	CWinAppEx::InitInstance();
+
+
+
+
+	/////open com for the electrochemical analyzer
+	 Libec::initializeSystemSettings(); 
+	runner = Libec::instantiateRunner();
+	arrayRecorder = new LabviewRecorder(runner->spectator());
+
+    if (!Libec::openCom(runner))
+	{
+		qWarning() << __FUNCTION__ << "could not open com port";
+	//	return FALSE;
+	}
+/////
+
+
 
 
 	// Initialize OLE libraries
@@ -179,6 +213,12 @@ int CanalyzerApp::ExitInstance()
 {
 	//TODO: handle additional resources you may have added
 	AfxOleTerm(FALSE);
+
+
+	delete runner;
+	delete arrayRecorder;
+	delete []fx;
+	delete []fy;
 
 	return CWinAppEx::ExitInstance();
 		_CrtDumpMemoryLeaks(); 
