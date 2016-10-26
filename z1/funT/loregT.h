@@ -343,7 +343,7 @@ void loreg(T *x, long lx, long h, long d, T *xs){
 
 
 template <typename T>
-void loregWithK(T *x, long lx, long h, long d, T *xs,T *k){
+void loregWithK(T *x, long lx, long h, long d, T *xs, T *k){
 	if(d<2)
 		nrerror("degree>=2!");
 
@@ -418,7 +418,7 @@ void loregR(T *x, long lx, long h, long d, T *xs){
 			xs[i]=a[1];
 
 		}
-		for(i=h;i<=lx-h;i++){
+		for(i=h;i<=lx-h+1;i++){
 			loregfR(x,i,h-1,h-1,h,d,a,r,madr);
 			xs[i]=a[1];
 
@@ -466,7 +466,7 @@ void loregRWithK(T *x, long lx, long h, long d, T *xs, T *k){
 			xs[i]=a[1];
 			k[i]=2*a[3]/pow((1+a[2]*a[2]),1.5);
 		}
-		for(i=h;i<=lx-h;i++){
+		for(i=h;i<=lx-h+1;i++){
 			loregfR(x,i,h-1,h-1,h,d,a,r,madr);
 			xs[i]=a[1];
 			k[i]=2*a[3]/pow((1+a[2]*a[2]),1.5);

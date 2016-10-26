@@ -198,9 +198,9 @@ void CUpDlg::OnPaint()
 				//pen.DeleteObject();
 
 				pen.CreatePen(PS_SOLID,1,black);
-				DrawDiff(plotrect,&dc,&pen,xknee[1],xelbow[1]);
-				DrawVLine(plotrect,&dc,&pen,xknee[1]);
-				DrawVLine(plotrect,&dc,&pen,xelbow[1]);
+				DrawDiff(plotrect,&dc,&pen,chisq,chisqpp);
+				DrawVLine(plotrect,&dc,&pen,chisq);
+				DrawVLine(plotrect,&dc,&pen,chisqpp);
 				pen.DeleteObject();
 
 
@@ -261,9 +261,9 @@ void CUpDlg::OnBnClickedButton1()
 		m_fileName=fileDlg.GetPathName();
 
 	
-
+		//free_vector(y,1,m_n);
 		free_vector(x,1,m_n);
-		free_vector(y,1,m_n);
+
 
 		//x=vector<double>(1,m_n);
 		//y=vector<double>(1,m_n);
@@ -415,7 +415,7 @@ void CUpDlg::OnBnClickedButton3()
 		//long nd;
 		//nd=m_n;
 		nd=endind-startind+1;
-
+		long i;
 
 
 		/////////////////////////////////local regression///////////////////////////////////////
@@ -580,13 +580,33 @@ void CUpDlg::OnBnClickedButton3()
 		//xknee=getkneep(nc,xbreak,nd,&nknee,xp,nlcm,nlmx,nlmn);
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		xknee=vector<double>(1,1);
-		xelbow=vector<double>(1,1);
-		xknee[1]=x[minind(curv,nd)];
-		xelbow[1]=x[maxind(curv,nd)];
+		//xknee=vector<double>(1,1);
+		//xelbow=vector<double>(1,1);
+		//xknee[1]=x[minind(curv,nd)];
+		//xelbow[1]=x[maxind(curv,nd)];
 
 
+		chisq=x[startind-1+minind(curv,nd)];
+		chisqpp=x[startind-1+maxind(curv,nd)];
 		isSmooth=true;
+
+		double **tm=getlmnD(&x[startind-1],curv,nd,&nlmn);
+		double *curvlmn=vector<double>(1,nlmn);
+		for(i=1;i<=nlmn;i++){
+			curvlmn[i]=tm[i][2];
+		}
+		chisq=tm[minind(curvlmn,nlmn)][1];
+		free_matrix(tm,1,nlmn,1,2);
+		free_vector(curvlmn,1,nlmn);
+
+		tm=getlmxD(&x[startind-1],curv,nd,&nlmx);
+		double *curvlmx=vector<double>(1,nlmx);
+		for(i=1;i<=nlmx;i++){
+			curvlmx[i]=tm[i][2];
+		}
+		chisqpp=tm[maxind(curvlmx,nlmx)][1];
+		free_matrix(tm,1,nlmx,1,2);
+		free_vector(curvlmx,1,nlmx);
 
 		//chisqpp=nlmx;
 		UpdateData(false);
@@ -630,12 +650,12 @@ void CUpDlg::OnChangeEdit4()
 
 	// TODO:  Add your control notification handler code here
 
-	free_vector(x,1,m_n);
-	free_vector(y,1,m_n);
-	free_vector(ys,1,m_n);
-	free_matrix(coefs,1,m_n-1,1,4);
-	free_vector(xbreak,1,m_n);
-	isLoad=false;
+	//free_vector(x,1,m_n);
+	//free_vector(y,1,m_n);
+	//free_vector(ys,1,m_n);
+	//free_matrix(coefs,1,m_n-1,1,4);
+	//free_vector(xbreak,1,m_n);
+	//isLoad=false;
 
 }
 
@@ -870,6 +890,8 @@ BOOL CUpDlg::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 		double k1=(zDelta>0)?0.9:1.1;	
 		double k2=1-k1;
 
+		int w=10;
+
 		if(plotrect.PtInRect(pt)){
 
 
@@ -881,7 +903,7 @@ BOOL CUpDlg::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 
 			Invalidate();
 		}
-		else if(plotrect.PtInRect(pt+CSize(5,0))){
+		else if(plotrect.PtInRect(pt+CSize(w,0))){
 
 
 			//m_xmin=x*k2+m_xmin*k1;
@@ -892,7 +914,7 @@ BOOL CUpDlg::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 
 			Invalidate();
 		}
-		else if(plotrect.PtInRect(pt-CSize(0,5))){
+		else if(plotrect.PtInRect(pt-CSize(0,w))){
 
 
 			m_xmin=x*k2+m_xmin*k1;
@@ -1129,7 +1151,7 @@ bool CUpDlg::DrawSmoothCurve(CRect rect, CPaintDC * dc)
 
 		long startind=findbottomidx(x,m_n,m_xbottom);
 		DrawPolyline(rect,dc,&pen,&x[startind-1],ys,nd);
-DrawPolyline(rect,dc,&pen,&x[startind-1],curv,nd);
+		DrawPolyline(rect,dc,&pen,&x[startind-1],curv,nd);
 		//DrawFunc(rect,dc,&pen);
 		//DrawFunc2(rect,dc,&pen);
 		pen.DeleteObject();

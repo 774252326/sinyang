@@ -49,6 +49,9 @@ bool readcsv(long n, LPCTSTR lpszFileName, T * x, T * y)
 template <typename T>
 T *readcsv2(long *nx, LPCTSTR lpszFileName, bool *readflag)
 {
+	//read two column csv file
+	//first column to tmp[1...nx[0]], second column to tmp[nx[0]+1...nx[0]+nx[0]]
+
 	CStdioFile file;
 	readflag[0]=file.Open(lpszFileName, CFile::modeRead);
 	if(readflag)
@@ -98,8 +101,7 @@ T *readcsv2(long *nx, LPCTSTR lpszFileName, bool *readflag)
 		file.Close();
 		return tmp;
 	}
-	else{
-		
+	else{		
 		return NULL;
 	}
 

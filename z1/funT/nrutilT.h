@@ -54,6 +54,11 @@ template <typename T>T SIGN(T a, T b){
 	if( b<0 && a<0 ) return a;
 }
 
+template <typename T>T ABS(T a){
+	if( a>=0 ) return a;
+	else return -a;
+}
+
 
 //#define SWAP(a,b) {temp=(a);(a)=(b);(b)=temp;}
 

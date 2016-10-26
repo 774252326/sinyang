@@ -50,6 +50,7 @@ long minind( T x[], long ndat){
 		if (tmp>x[i]) {
 			mi=i;
 			tmp=x[i];
+			TRACE("x[%d]=%.20f\n",i,tmp);
 		}
 	}
 	return mi;
@@ -243,6 +244,9 @@ T **getlmnD(T *x, T *y, long nd, long *nlmn){
 	else
 		return lmn;
 }
+
+
+
 
 template <typename T>
 void restorenx(T **x, long nd, T xmin, T xmax, T *rex){
