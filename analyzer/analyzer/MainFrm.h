@@ -9,6 +9,8 @@
 
 #include "analyzerViewL.h"
 #include "analyzerViewR.h"
+#include "MFCToolBarA.h"
+
 #include "afxwin.h"
 
 class CMainFrame : public CFrameWndEx
@@ -42,7 +44,7 @@ public:
 
 protected:  // control bar embedded members
 	CMFCMenuBar       m_wndMenuBar;
-	CMFCToolBar       m_wndToolBar;
+	CMFCToolBarA       m_wndToolBar;
 	CMFCStatusBar     m_wndStatusBar;
 	CMFCToolBarImages m_UserImages;
 	COutputWnd        m_wndOutput;

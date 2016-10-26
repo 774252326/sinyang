@@ -894,9 +894,10 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		int i=0;
 		PlotData * pd=GetPD(i);	
 		while(pd!=NULL){
-			//int ci=pd->psp.GetCrType();
-			//pd->psp=PlotSpec(ci,oc);
 			pd->psp.winbkC=bkcr;
+			int ci=pd->psp.GetCrType();
+			//pd->psp=PlotSpec(ci,oc);
+			pd->psp.SetCr(ci);
 			i++;
 			pd=GetPD(i);
 		}

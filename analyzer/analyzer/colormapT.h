@@ -14,6 +14,22 @@
 #include <math.h>
 
 
+template <typename T>
+void GetrgbT(COLORREF ic, T rgb[3]){
+	BYTE b=ic>>16;
+	BYTE g=ic>>8;
+	BYTE r=ic;
+	rgb[0]=r;
+	rgb[1]=g;
+	rgb[2]=b;
+
+	rgb[0]/=255;
+	rgb[1]/=255;
+	rgb[2]/=255;
+
+}
+
+
 template <typename T, typename TT>
 void hsv2rgb(T hsv[3], TT rgb[3]){
 	
@@ -67,6 +83,51 @@ void hsv2rgb(T hsv[3], TT rgb[3]){
 
 
 }
+
+
+template <typename T, typename TT>
+void rgb2hsv(T hsv[3], TT rgb[3])
+{
+     // r,g,b values are from 0 to 1
+    // h = [0,360], s = [0,1], v = [0,1]
+    // if s == 0, then h = -1 (undefined)
+    TT delta,min,max;
+
+	if(rgb[0]>rgb[1]){
+		min=rgb[1];
+		max=rgb[0];
+	}
+	else{
+		max=rgb[1];
+		min=rgb[0];
+	}
+	max=(rgb[2]>max)?rgb[2]:max;
+	min=(rgb[2]<min)?rgb[2]:min;
+
+
+    hsv[2] = max; // v
+	delta = max - min;
+    if( max == 0 || delta == 0 ){
+    	// r = g = b = 0 // s = 0, v is undefined
+		hsv[1] = 0;
+		hsv[0] = 0;
+    	return;
+    }	
+	hsv[1] = delta / max; // s
+
+	if(rgb[0] == max){
+		if (rgb[1] >= rgb[2])
+        	hsv[0] = (rgb[1] - rgb[2]) / delta; // between yellow & magenta
+		else
+			hsv[0] = (rgb[1] - rgb[2]) / delta + 6;
+	}
+	else if( rgb[1] == max )
+        hsv[0] = 2 + ( rgb[2] - rgb[0] ) / delta; // between cyan & yellow
+	else if (rgb[2] == max)
+        hsv[0] = 4 + ( rgb[0] - rgb[1] ) / delta; // between magenta & cyan
+    hsv[0] /= 6; // degrees
+}
+
 
 
 template <typename T, typename TT>

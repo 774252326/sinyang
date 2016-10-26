@@ -145,6 +145,7 @@
     <ClInclude Include="ListCtrlSAP.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="MFCCaptionBarA.h" />
+    <ClInclude Include="MFCToolBarA.h" />
     <ClInclude Include="OutputWnd.h" />
     <ClInclude Include="pcct.h" />
     <ClInclude Include="pcctC.h" />
@@ -186,6 +187,7 @@
     <ClCompile Include="ListCtrlSAP.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="MFCCaptionBarA.cpp" />
+    <ClCompile Include="MFCToolBarA.cpp" />
     <ClCompile Include="OutputWnd.cpp" />
     <ClCompile Include="pcct.cpp" />
     <ClCompile Include="pcctC.cpp" />

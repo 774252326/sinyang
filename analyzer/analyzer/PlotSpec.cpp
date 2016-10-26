@@ -6,13 +6,15 @@
 #include "PlotSpec.h"
 #include "colormapT.h"
 
+
+const int ndiv=10;
 const int ncr=3;
 const int ncritm=5;
 const COLORREF crl[]={
 
-	RGB(255,255,255),RGB(255,255,255),RGB(0,0,0),RGB(0,0,0),RGB(0,0,0),
-	RGB(200,200,200),RGB(200,200,200),RGB(100,100,100),RGB(100,100,100),RGB(100,100,100),
-	RGB(60,60,60),RGB(60,60,60),RGB(120,120,120),RGB(120,120,120),RGB(120,120,120),
+	RGB(255,255,255),RGB(255,255,255),RGB(0,0,0),RGB(255,255,0),RGB(255,0,0),
+	RGB(200,200,200),RGB(200,200,200),RGB(20,20,20),RGB(20,20,20),RGB(20,20,20),
+	RGB(60,60,60),RGB(60,60,60),RGB(200,200,200),RGB(0,0,0),RGB(0,0,0),
 
 
 
@@ -134,7 +136,7 @@ PlotSpec::PlotSpec(int i, COLORREF ic)
 
 	//////////////////////////////////////////
 
-	SetCr(i);
+	
 
 	gridType=5;
 	labelSize=20;
@@ -142,7 +144,10 @@ PlotSpec::PlotSpec(int i, COLORREF ic)
 	legendPos=2;
 
 	winbkC=ic;
-	//PlotSpec(i);
+	
+
+
+	SetCr(i);
 }
 
 
@@ -200,11 +205,13 @@ int PlotSpec::GetCrType(void)
 {
 	for(int i=0;i<ncr;i++){
 		int j=i*ncritm;
-		if(	bkgndC==crl[j++]
+		if(	
+			bkgndC==crl[j++]
 		&& borderC==crl[j++]
 		&& gridC==crl[j++]
-		&& metricC==crl[j++]
-		&& labelC==crl[j++])
+		//&& metricC==crl[j++]
+		//&& labelC==crl[j++]
+		)
 			return i;
 	}
 
@@ -228,6 +235,21 @@ int PlotSpec::GetCrType(void)
 
 void PlotSpec::SetCr(int i)
 {
+	float rgb[3];
+	GetrgbT(winbkC,rgb);
+	float hsv[3];
+	rgb2hsv(hsv,rgb);
+
+	float ni=0.35+(float)(i-1)/ndiv;
+	hsv[0]+=ni;
+	if(hsv[0]>=1)
+		hsv[0]-=1;
+
+	COLORREF nc=genColor(hsv[0]);
+
+	metricC=labelC=nc;
+
+
 	if(i<0 || i>=ncr)
 		i=0;
 	i*=ncritm;
@@ -237,7 +259,12 @@ void PlotSpec::SetCr(int i)
 	//i++;
 	gridC=crl[i++];
 	//i++;
-	metricC=crl[i++];
+	//metricC=crl[i++];
 	//i++;
-	labelC=crl[i++];
+	//labelC=crl[i++];
+
+
+
+
+
 }
