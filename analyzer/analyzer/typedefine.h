@@ -87,6 +87,14 @@ typedef struct FIGSPEC{
 
 } figspec;
 
+
+enum ProcessState{
+	stop,
+	running,
+	pause
+};
+
+
 void mreadini(wchar_t *fn, anp &p1, cvp &p2, sap &p3 );
 
 void mwriteini(wchar_t *fn, const anp &p1, const cvp &p2, const sap &p3 );

@@ -9,16 +9,16 @@
 //#include "pcctB.h"
 //#include "typedefine.h"
 #include "MFCCaptionBarA.h"
-#include "ANPara.h"
-#include "SAPara.h"
-#include "VPara.h"
-#include "PlotData.h"
+//#include "ANPara.h"
+//#include "SAPara.h"
+//#include "VPara.h"
+//#include "PlotData.h"
 #include "dlg1.h"
-#include "afxmt.h"
+//#include "afxmt.h"
 
-#define MESSAGE_BUSY WM_USER+1
-#define MESSAGE_WAIT_RESPONSE WM_USER+2
-#define MESSAGE_OVER WM_USER+3
+//#define MESSAGE_BUSY WM_USER+1
+//#define MESSAGE_WAIT_RESPONSE WM_USER+2
+//#define MESSAGE_OVER WM_USER+3
 
 class CMainFrame : public CFrameWndEx
 {
@@ -109,12 +109,12 @@ public:
 	//anp p1;
 	//cvp p2;
 	//sap p3;
-	ANPara p1;
-	CVPara p2;
-	SAPara p3;
+	//ANPara p1;
+	//CVPara p2;
+	//SAPara p3;
 
 	afx_msg void OnFileSave();
-	CString AnalysisSetupINI;
+//	CString AnalysisSetupINI;
 	
 	afx_msg void OnAnalysisStartanalysis();
 //	CString Output1(PlotData & pdat);
@@ -128,12 +128,24 @@ public:
 	bool waiting;
 	afx_msg void OnAnalysisAbortanalysis();
 protected:
-	afx_msg LRESULT OnMessagebusy(WPARAM wParam, LPARAM lParam);
-	afx_msg LRESULT OnMessageWaitResponse(WPARAM wParam, LPARAM lParam);
+//	afx_msg LRESULT OnMessagebusy(WPARAM wParam, LPARAM lParam);
+//	afx_msg LRESULT OnMessageWaitResponse(WPARAM wParam, LPARAM lParam);
 //	afx_msg LRESULT OnCaptionbarMessage(WPARAM wParam, LPARAM lParam);
-	afx_msg LRESULT OnMessageOver(WPARAM wParam, LPARAM lParam);
+//	afx_msg LRESULT OnMessageOver(WPARAM wParam, LPARAM lParam);
 public:
 	afx_msg void OnOptionsPlotsettings();
+	afx_msg void OnUpdateOptionsPlotsettings(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateAnalysisStartanalysis(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateViewFitwindow(CCmdUI *pCmdUI);
+private:
+	HANDLE hThread;
+public:
+	afx_msg void OnUpdateAnalysisAbortanalysis(CCmdUI *pCmdUI);
+	afx_msg void OnAnalysisPause();
+	afx_msg void OnUpdateAnalysisPause(CCmdUI *pCmdUI);
+//	int processState;
+	afx_msg void OnUpdateAnalysisMethodsetup(CCmdUI *pCmdUI);
+	ProcessState pst;
 };
 
 

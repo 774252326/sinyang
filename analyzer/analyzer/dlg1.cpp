@@ -1182,6 +1182,7 @@ void dlg1::DrawCurveA(CRect rect, CDC* pDC)
 	CPen pen;
 	CPen * pOldPen;
 
+	COLORREF oc;
 
 	genPointToPlot(pd.xll,pd.yll,rect,pointlist);
 	size_t si=0;
@@ -1228,16 +1229,21 @@ void dlg1::DrawCurveA(CRect rect, CDC* pDC)
 			}
 			//si+=ll[j];
 		}
-		if(pd.ps[j].dotSize>1){			
+		if(pd.ps[j].dotSize>1){
+
 			CSize ppoc=CSize(pd.ps[j].dotSize-1,pd.ps[j].dotSize-1);
 			CRect prect(0,0,1,1);
 			prect.InflateRect(ppoc);
+
+			oc=pDC->GetBkColor();
 			for(size_t i=0;i<pd.ll[j];i++){
 				prect.MoveToXY(pointlist[i+si]-ppoc);
 				//drawRectangle(prect,pDC,pd.ps[j].colour,pd.ps[j].colour);
 				pDC->FillSolidRect(&prect,pd.ps[j].colour);
 			}
 			//si+=ll[j];
+			pDC->SetBkColor(oc);
+
 		}
 
 		si+=pd.ll[j];
@@ -1247,10 +1253,13 @@ void dlg1::DrawCurveA(CRect rect, CDC* pDC)
 	if(pd.ps.back().traceLast){
 		CRect prect(0,0,1,1);
 		CSize ppoc=CSize(4,4);
-		prect.InflateRect(ppoc);			
+		prect.InflateRect(ppoc);
+
+		oc=pDC->GetBkColor();
 		prect.MoveToXY(pointlist.back()-ppoc);
 		//drawRectangle(prect,pDC,pd.ps.back().colour,pd.ps.back().colour);
 		pDC->FillSolidRect(&prect,pd.ps.back().colour);
+		pDC->SetBkColor(oc);
 	}
 
 	//////////////////////////////fast///////////////////////////

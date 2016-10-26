@@ -10,7 +10,7 @@
 #include "analyzerDoc.h"
 #include "analyzerView.h"
 //#include "plotdlg.h"
-#include "dlg1.h"
+//#include "dlg1.h"
 //#include "pcct.h"
 //#include "colormapT.h"
 //#include "tipsdlg.h"
@@ -28,523 +28,18 @@
 #include "PlotSettingSheet.h"
 #include "PlotSettingPage.h"
 
+#include "ANPara.h"
+#include "SAPara.h"
+#include "VPara.h"
+#include "PlotData.h"
+
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
 
-//UINT freshp(LPVOID pParam);
-
-//CSemaphore semaphoreWrite(3,6); //资源最多访问线程2个，当前可访问线程数2个 
-//char g_Array[10]; 
-//int intv=100;
-//bool isend=false;
-//bool waiting=false;
-//
-//typedef struct MYPARA{
-//	dlg1 *leftp;
-//	dlg1 *rightp;
-//	COutputWnd *ow;
-//	CMFCCaptionBarA *cba;
-//	CMainFrame *mf;
-//	//pcct *data;
-//	//pcctB *dataB;
-//	CVPara *p2;
-//	SAPara *p3;
-//} mypara;
-
-//UINT RCCS(LPVOID pParam)
-//{
-//
-//	dlg1 *leftp=((mypara*)pParam)->leftp;
-//	dlg1 *rightp=((mypara*)pParam)->rightp;
-//	COutputWnd *ow=((mypara*)pParam)->ow;
-//	CMFCCaptionBarA *cba=((mypara*)pParam)->cba;
-//	//pcct *data=((mypara*)pParam)->data;
-//	//pcctB *dataB=((mypara*)pParam)->dataB;
-//	CVPara *p2=((mypara*)pParam)->p2;
-//	SAPara *p3=((mypara*)pParam)->p3;
-//	//WaitForSingleObject(semaphoreWrite.m_hObject,INFINITE);
-//	CMainFrame *mf=((mypara*)pParam)->mf;
-//
-//
-//		//////////////////////////////load data//////////////////////////////////////
-//	CString m_filePath;
-//	
-//	m_filePath=L"data\\b.txt";
-//		
-//	CString folderpath=m_filePath.Left(m_filePath.ReverseFind('\\'));
-//
-//	std::vector<CString> filelist;
-//	CStdioFile file;
-//	BOOL readflag;
-//	readflag=file.Open(m_filePath, CFile::modeRead);
-//
-//	if(readflag)
-//	{	
-//		CString strRead;
-//		//TRACE("\n--Begin to read file");
-//		while(file.ReadString(strRead)){
-//			strRead=folderpath+"\\"+strRead;
-//			filelist.push_back(strRead);
-//		}
-//		//TRACE("\n--End reading\n");
-//		file.Close();
-//	}
-//
-//
-//
-//		pcct dt1;
-//
-//		dt1.readFile(filelist.front());
-//		dt1.TomA();
-//		//if(i==0){
-//			dt1.addVolume=p3->vmsvol;
-//			dt1.stepName=L"VMS";
-//
-//		//}
-//		//else{
-//		//	dt1.addVolume=p3.saplist[i-1].volconc;
-//		//	dt1.stepName.Format(L"Solution Addition %d",i);
-//		//}
-//
-//
-//	//////////////////////////clear window/////////////////////////////////
-//
-//	leftp->clear();
-//	rightp->clear();
-//	ow->clear();
-//
-//
-//
-//
-//
-//
-//	pcct *data=&dt1;
-//
-//
-//
-//
-//
-//	pcctB dataB;
-//
-//	dataB.clear();
-//	dataB.xmax=p2->highelimit;
-//	dataB.xmin=p2->lowelimit;
-//	dataB.spv=1/p2->scanrate;
-//	dataB.intgUpLim=p2->endintegratione;
-//	dataB.nCycle=p2->noofcycles;
-//	dataB.rowCount=0;
-//	dataB.stepCount=0;
-//	dataB.totalVolume=0;
-//	dataB.Ar0=0;
-//
-//	waiting=false;
-//
-//	size_t n1=500;
-//
-//	std::vector<double> x;
-//	std::vector<double> y;
-//	size_t rn;
-//	//load n1 points
-//	rn=data->popData(x,y,n1);
-//	//plot points on plot1
-//
-//
-//	plotspec ps1;
-//	CString strTemp;
-//	ps1.colour=genColor( genColorvFromIndex<float>( leftp->pd.ps.size() ) ) ;
-//	//ps1.colour=genColorGray( genColorvFromIndex<float>( stepCount ) ) ;
-//	ps1.dotSize=-1;
-//	ps1.name=data->stepName;
-//	ps1.showLine=true;
-//	ps1.smoothLine=0;
-//	ps1.traceLast=true;
-//	leftp->pd.AddNew(x,y,ps1,data->label[0],data->label[1]);
-//	leftp->updatePlotRange();
-//	leftp->Invalidate();
-//
-//	int nflg=dataB.addXY(x,y);
-//
-//
-//	if(nflg>=1){//if one cycle complete
-//
-//		double addvol;
-//		if(dataB.Ar.size()==1){
-//			addvol=data->addVolume;
-//		}
-//		else{
-//			addvol=0;
-//		}
-//		dataB.totalVolume+=addvol;
-//
-//		if(dataB.stepCount==0){
-//			dataB.Ar0=dataB.Ar.back();
-//		}
-//		double Aratio=(dataB.Ar.back()/dataB.Ar0);
-//
-//		CString str=leftp->pd.ps.back().name;
-//		ow->InsertListCtrl(dataB.rowCount,str,dataB.Ar.size(),addvol,dataB.totalVolume,dataB.Ar.back(),Aratio,(nflg==2));
-//
-//		dataB.rowCount++;
-//	}
-//
-//
-//
-//
-//	Sleep(intv);
-//
-//	double Aratio;
-//
-//	while(nflg<2){
-//
-//		TRACE(L"rccs running\n");
-//		rn=data->popData(x,y,n1);
-//		leftp->pd.AddFollow(x,y);
-//		leftp->updatePlotRange(x,y);
-//		leftp->Invalidate();
-//
-//
-//		nflg=dataB.addXY(x,y);
-//
-//		if(nflg>=1){//if one cycle complete
-//
-//			double addvol;
-//			if(dataB.Ar.size()==1){
-//				addvol=data->addVolume;
-//			}
-//			else{
-//				addvol=0;
-//			}
-//			dataB.totalVolume+=addvol;
-//
-//			if(dataB.stepCount==0){
-//				dataB.Ar0=dataB.Ar.back();
-//			}
-//			/*double*/ Aratio=(dataB.Ar.back()/dataB.Ar0);
-//
-//			CString str=leftp->pd.ps.back().name;
-//			ow->InsertListCtrl(dataB.rowCount,str,dataB.Ar.size(),addvol,dataB.totalVolume,dataB.Ar.back(),Aratio,(nflg==2));
-//
-//			dataB.rowCount++;
-//		}
-//
-//
-//		Sleep(intv);
-//	}
-//
-//
-//
-//	x.assign( 1, dataB.totalVolume-p3->vmsvol );
-//	y.assign( 1, Aratio );
-//	//plot2(x,y,L"Suppressor(ml)",L"Ratio of Charge",L"Ar/Ar0");
-//
-//	//plotspec ps1;
-//	ps1.colour=genColor( genColorvFromIndex<float>( rightp->pd.ps.size() ) ) ;
-//	ps1.dotSize=3;
-//	ps1.name=L"Ar/Ar0";
-//	ps1.showLine=true;
-//	ps1.smoothLine=1;
-//	ps1.traceLast=false;
-//	rightp->pd.AddNew(x,y,ps1,L"Suppressor(ml)",L"Ratio of Charge");
-//
-//
-//	rightp->updatePlotRange();
-//	rightp->Invalidate();
-//
-//
-//	dataB.stepCount++;
-//	dataB.clear();
-//	//dat.erase(dat.begin());
-//
-//
-//
-//	//CString strTemp;
-//	//ASSERT
-//	(strTemp.LoadString(IDS_STRING_WAIT_RESPONSE));
-//
-//	for(int i=0;i<17;i++) strTemp+=" ";
-//
-//
-//	cba->x=0;
-//	cba->SetTextA(strTemp,true);
-//	cba->EnableButton();
-//
-//
-//
-//
-//	//cba->UpdateData(FALSE);
-//	cba->SetEdit();					
-//	cba->ec.ShowWindow(SW_SHOW);
-//	//m_wndCaptionBar.st.ShowWindow(SW_SHOW);
-//	//m_wndCaptionBar.ShowWindow(SW_SHOW);
-//	//RecalcLayout(FALSE);
-//
-//	Sleep(intv);
-//
-//	waiting=true;
-//
-//	while(waiting){
-//		Sleep(intv);
-//	}
-//
-//	/////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-//	while(dataB.stepCount<=(p3->saplist.size())){
-//
-//	(strTemp.LoadString(IDS_STRING_RUNNING));
-//
-//	//cba->SetTextA(strTemp);
-//	////m_wndCaptionBar.ShowButton(false);
-//	//cba->EnableButton(FALSE);
-//	//cba->SetEdit();
-//	//cba->ec.ShowWindow(SW_HIDE);
-//
-//	mf->m_wndCaptionBar.SetTextA(strTemp);
-//	mf->m_wndCaptionBar.EnableButton(FALSE);
-//	mf->m_wndCaptionBar.SetEdit();
-//	mf->m_wndCaptionBar.ec.ShowWindow(SW_HIDE);
-//
-//	filelist.erase(filelist.begin());
-//
-//	dt1.clear();
-//	dt1.readFile(filelist.front());
-//	dt1.TomA();
-//	dt1.addVolume=p3->saplist[dataB.stepCount-1].volconc;
-//	dt1.stepName.Format(L"Solution Addition %d",dataB.stepCount);
-//
-//
-//	rn=data->popData(x,y,n1);
-//	//plot points on plot1
-//
-//
-//	//plotspec ps1;
-//	//CString strTemp;
-//	ps1.colour=genColor( genColorvFromIndex<float>( leftp->pd.ps.size() ) ) ;
-//	//ps1.colour=genColorGray( genColorvFromIndex<float>( stepCount ) ) ;
-//	ps1.dotSize=-1;
-//	ps1.name=data->stepName;
-//	ps1.showLine=true;
-//	ps1.smoothLine=0;
-//	ps1.traceLast=true;
-//	leftp->pd.AddNew(x,y,ps1,data->label[0],data->label[1]);
-//	leftp->updatePlotRange();
-//	leftp->Invalidate();
-//
-//	/*int*/ nflg=dataB.addXY(x,y);
-//
-//
-//	if(nflg>=1){//if one cycle complete
-//
-//		double addvol;
-//		if(dataB.Ar.size()==1){
-//			addvol=data->addVolume;
-//		}
-//		else{
-//			addvol=0;
-//		}
-//		dataB.totalVolume+=addvol;
-//
-//		if(dataB.stepCount==0){
-//			dataB.Ar0=dataB.Ar.back();
-//		}
-//		double Aratio=(dataB.Ar.back()/dataB.Ar0);
-//
-//		CString str=leftp->pd.ps.back().name;
-//		ow->InsertListCtrl(dataB.rowCount,str,dataB.Ar.size(),addvol,dataB.totalVolume,dataB.Ar.back(),Aratio,(nflg==2));
-//
-//		dataB.rowCount++;
-//	}
-//
-//
-//
-//		Sleep(intv);
-//
-//	//double Aratio;
-//
-//	while(nflg<2){
-//
-//		TRACE(L"rccs running\n");
-//		rn=data->popData(x,y,n1);
-//		leftp->pd.AddFollow(x,y);
-//		leftp->updatePlotRange(x,y);
-//		leftp->Invalidate();
-//
-//
-//		nflg=dataB.addXY(x,y);
-//
-//		if(nflg>=1){//if one cycle complete
-//
-//			double addvol;
-//			if(dataB.Ar.size()==1){
-//				addvol=data->addVolume;
-//			}
-//			else{
-//				addvol=0;
-//			}
-//			dataB.totalVolume+=addvol;
-//
-//			if(dataB.stepCount==0){
-//				dataB.Ar0=dataB.Ar.back();
-//			}
-//			/*double*/ Aratio=(dataB.Ar.back()/dataB.Ar0);
-//
-//			CString str=leftp->pd.ps.back().name;
-//			ow->InsertListCtrl(dataB.rowCount,str,dataB.Ar.size(),addvol,dataB.totalVolume,dataB.Ar.back(),Aratio,(nflg==2));
-//
-//			dataB.rowCount++;
-//		}
-//
-//
-//		Sleep(intv);
-//	}
-//
-//
-//
-//	x.assign( 1, dataB.totalVolume-p3->vmsvol );
-//	y.assign( 1, Aratio );
-//
-//	rightp->pd.AddFollow(x,y);
-//	rightp->updatePlotRange();
-//	rightp->Invalidate();
-//
-//
-//	dataB.stepCount++;
-//	dataB.clear();
-//
-//
-//		(strTemp.LoadString(IDS_STRING_WAIT_RESPONSE));
-//
-//	for(int i=0;i<17;i++) strTemp+=" ";
-//	//cba->x=0;
-//
-//	//cba->SetTextA(strTemp,true);
-//	//cba->EnableButton();
-//	//	//cba->UpdateData(FALSE);
-//	//cba->SetEdit();					
-//	//cba->ec.ShowWindow(SW_SHOW);
-//	////m_wndCaptionBar.st.ShowWindow(SW_SHOW);
-//	////m_wndCaptionBar.ShowWindow(SW_SHOW);
-//	////RecalcLayout(FALSE);
-//
-//
-//	mf->m_wndCaptionBar.x=0;
-//	mf->m_wndCaptionBar.SetTextA(strTemp,true);
-//		mf->m_wndCaptionBar.EnableButton();
-//		mf->m_wndCaptionBar.SetEdit();
-//		mf->m_wndCaptionBar.ec.ShowWindow(SW_SHOW);
-//
-//
-//
-//	Sleep(intv);
-//
-//	waiting=true;
-//
-//	while(waiting){
-//		Sleep(intv);
-//	}
-//
-//	}
-//
-//
-//
-//
-//	//ReleaseSemaphore(semaphoreWrite.m_hObject,1,NULL);
-//
-//
-//	TRACE(L"rccs ends\n");
-//	return 0;
-//
-//}
-
-
-
-//UINT freshp(LPVOID pParam)
-//{
-//dlg1 *leftp=((dlg1*)pParam);
-//dlg1 *rightp=((mypara*)pParam)->rightp;
-//COutputWnd *ow=((mypara*)pParam)->ow;
-//CMFCCaptionBarA *cba=((mypara*)pParam)->cba;
-//pcct *data=((mypara*)pParam)->data;
-//pcctB *dataB=((mypara*)pParam)->dataB;
-
-//leftp->Invalidate();
-
-//WaitForSingleObject(semaphoreWrite.m_hObject,INFINITE);
-
-//while(true){
-
-//Sleep(50);
-
-//while(isend){
-
-//	TRACE(L"freshp running\n");
-
-//	leftp->Invalidate();
-//	Sleep(40);
-//}
-
-//leftp->Invalidate();
-//}
-
-//ReleaseSemaphore(semaphoreWrite.m_hObject,1,NULL);
-//return 0;
-
-//}
-
-//UINT RCCS(LPVOID pParam);
-
-//void readini(CString fp, ANPara &p1t, CVPara &p2t, SAPara &p3t)
-//{
-//	CFile theFile;
-//	if(theFile.Open(fp, CFile::modeRead)!=FALSE){
-//		CArchive archive(&theFile, CArchive::load);
-//
-//		p1t.Serialize(archive);
-//		p2t.Serialize(archive);
-//		p3t.Serialize(archive);
-//
-//		archive.Close();
-//		theFile.Close();
-//	}
-//}
-
-//void writeini(CString fp, ANPara &p1t, CVPara &p2t, SAPara &p3t)
-//{
-//	CFile theFile;
-//	if(theFile.Open(fp, CFile::modeCreate | CFile::modeWrite)!=FALSE){
-//		CArchive archive(&theFile, CArchive::store);
-//
-//		p1t.Serialize(archive);
-//		p2t.Serialize(archive);
-//		p3t.Serialize(archive);
-//
-//		archive.Close();
-//		theFile.Close();
-//	}
-//}
-
-//bool calVsupp(PlotData & pdat, int idx, double evoR, double &Vsupp);
-//{
-//	//for(size_t i
-//	std::vector<double> x;
-//	std::vector<double> y;
-//
-//	pdat.GetDatai(idx,x,y);
-//
-//	std::vector<double> c1(4,0);
-//	std::vector< std::vector<double> > c(x.size()-1,c1);
-//	smspl(x,y,1.0,c);
-//	std::vector<double> r;
-//	int ni=SolveCubicPP(x,c,evoR,r);
-//	if(ni<=0){
-//		return false;
-//	}
-//	Vsupp=r.back();
-//	return true;
-//
-//}
 
 // CMainFrame
 
@@ -576,11 +71,18 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_COMMAND(ID_FILE_SAVE, &CMainFrame::OnFileSave)
 	ON_COMMAND(ID_ANALYSIS_STARTANALYSIS, &CMainFrame::OnAnalysisStartanalysis)
 	ON_COMMAND(ID_ANALYSIS_ABORTANALYSIS, &CMainFrame::OnAnalysisAbortanalysis)
-	ON_MESSAGE(MESSAGE_BUSY, &CMainFrame::OnMessagebusy)
-	ON_MESSAGE(MESSAGE_WAIT_RESPONSE, &CMainFrame::OnMessageWaitResponse)
+	//ON_MESSAGE(MESSAGE_BUSY, &CMainFrame::OnMessagebusy)
+	//ON_MESSAGE(MESSAGE_WAIT_RESPONSE, &CMainFrame::OnMessageWaitResponse)
 	//ON_MESSAGE(CAPTIONBAR_MESSAGE, &CMainFrame::OnCaptionbarMessage)
-	ON_MESSAGE(MESSAGE_OVER, &CMainFrame::OnMessageOver)
+	//ON_MESSAGE(MESSAGE_OVER, &CMainFrame::OnMessageOver)
 	ON_COMMAND(ID_OPTIONS_PLOTSETTINGS, &CMainFrame::OnOptionsPlotsettings)
+	ON_UPDATE_COMMAND_UI(ID_OPTIONS_PLOTSETTINGS, &CMainFrame::OnUpdateOptionsPlotsettings)
+	ON_UPDATE_COMMAND_UI(ID_ANALYSIS_STARTANALYSIS, &CMainFrame::OnUpdateAnalysisStartanalysis)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_FITWINDOW, &CMainFrame::OnUpdateViewFitwindow)
+	ON_UPDATE_COMMAND_UI(ID_ANALYSIS_ABORTANALYSIS, &CMainFrame::OnUpdateAnalysisAbortanalysis)
+	ON_COMMAND(ID_ANALYSIS_PAUSE, &CMainFrame::OnAnalysisPause)
+	ON_UPDATE_COMMAND_UI(ID_ANALYSIS_PAUSE, &CMainFrame::OnUpdateAnalysisPause)
+	ON_UPDATE_COMMAND_UI(ID_ANALYSIS_METHODSETUP, &CMainFrame::OnUpdateAnalysisMethodsetup)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -604,13 +106,17 @@ CMainFrame::CMainFrame()
 	//, rowCount(0)
 	//, totalVolume(0)
 	//, timer2(0)
-	, AnalysisSetupINI(_T("as.txt"))
+	//, AnalysisSetupINI(_T("as.txt"))
 	//, Aml(0)
 	//, Qintercept(0)
 	, waiting(false)
+	, pst(stop)
 {
 	// TODO: add member initialization code here
 	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_VS_2008);
+
+	//this->m_bAutoMenuEnable=FALSE;
+
 }
 
 CMainFrame::~CMainFrame()
@@ -1003,6 +509,8 @@ void CMainFrame::OnOptions()
 	//timer1=SetTimer(1,10,NULL);
 
 	waiting=false;
+
+	pst=running;
 }
 
 BOOL CMainFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParentWnd, CCreateContext* pContext) 
@@ -1072,100 +580,19 @@ void CMainFrame::OnFileOpen()
 
 	if( fileDlg.DoModal()==IDOK)
 	{
-		//dat.clear();
-		//( (dlg1*)m_wndSplitter.GetPane(0,0) )->clear();
-		//( (dlg1*)m_wndSplitter.GetPane(0,1) )->clear();
-		//m_wndOutput.clear();
-
-
-
-		////CString m_filePath=L"C:\\Users\\r8anw2x\\Dropbox\\W\\data\\a.txt";
-		//CString m_filePath=fileDlg.GetPathName();
-
-		////CString folderpath=fileDlg.GetFolderPath();
-		//CString folderpath=m_filePath.Left(m_filePath.ReverseFind('\\'));
-		////CString folderpath=L"C:\\Users\\r8anw2x\\Dropbox\\W\\data";
-
-
-		//std::vector<CString> filelist;
-		//CStdioFile file;
-		//BOOL readflag;
-		//readflag=file.Open(m_filePath, CFile::modeRead);
-
-		//if(readflag)
-		//{	
-		//	CString strRead;
-
-		//	//TRACE("\n--Begin to read file");
-		//	while(file.ReadString(strRead)){
-		//		strRead=folderpath+"\\"+strRead;
-		//		filelist.push_back(strRead);
-		//	}
-		//	//TRACE("\n--End reading\n");
-		//	file.Close();
-		//}
-
-		//AnalysisSetupINI=filelist.back();
-		//filelist.pop_back();
-
-		//for(size_t i=0;i<filelist.size();i++){
-		//	pcct dt1;
-		//	dt1.readFile(filelist[i]);
-		//	//dt1.seperate();
-		//	//dt1.AR=dt1.intg(0.8);
-
-		//	dt1.TomA();
-		//	dat.push_back(dt1);
-		//}
-
-
-
-		//finishflag=true;
-		//finishflag2=true;
-		//totalVolume=0;
-		//Ar0=0;	
-		//stepCount=0;
-		//rowCount=0;
-
-		////mreadini(AnalysisSetupINI.GetBuffer(),p1,p2,p3);
-
-		//CFile theFile;
-		//theFile.Open(AnalysisSetupINI, CFile::modeRead);
-		//CArchive archive(&theFile, CArchive::load);
-
-		//p1.Serialize(archive);
-		//p2.Serialize(archive);
-		//p3.Serialize(archive);
-
-		//archive.Close();
-		//theFile.Close();
-
-		//datt.clear();
-		//datt.xmax=p2.highelimit;
-		//datt.xmin=p2.lowelimit;
-		//datt.spv=1/p2.scanrate;
-		//datt.intgUpLim=p2.endintegratione;
-		//datt.nCycle=p2.noofcycles;
-
-		//this->OnOptions();
-		////////////////////////////////////////////////////////////////////////////////
-
-
 		CString m_filePath=fileDlg.GetPathName();
 
 		ANPara p1t;
 		CVPara p2t;
 		SAPara p3t;
 
-		readini(m_filePath,p1t,p2t,p3t);
-		writeini(AnalysisSetupINI,p1t,p2t,p3t);
+		readini(p1t,p2t,p3t,m_filePath);
+		writeini(p1t,p2t,p3t);
 
 		CString strTemp;
 		strTemp=L"setup file "+m_filePath+L" loaded";
 
 		m_wndCaptionBar.ShowMessage(strTemp);
-		//m_wndCaptionBar.ShowWindow(SW_SHOW);
-		//RecalcLayout(FALSE);
 
 		////////////////////////////////////////////////////////////////////////////
 
@@ -1654,10 +1081,10 @@ void CMainFrame::OnAnalysisMethodsetup()
 	//sheet.SetWizardMode();   
 	//sheet.SetWindowPos(&CWnd::wndTopMost,10,10,800,600,SWP_SHOWWINDOW);
 
-	readini(AnalysisSetupINI,sheet.APdlg.para,sheet.CVPdlg.para,sheet.SAPdlg.para);
+	readini(sheet.APdlg.para,sheet.CVPdlg.para,sheet.SAPdlg.para);
 	// 打开模态向导对话框   
 	if(sheet.DoModal()==IDOK){
-		writeini(AnalysisSetupINI,sheet.APdlg.para,sheet.CVPdlg.para,sheet.SAPdlg.para);
+		writeini(sheet.APdlg.para,sheet.CVPdlg.para,sheet.SAPdlg.para);
 	}
 
 }
@@ -1681,223 +1108,32 @@ void CMainFrame::OnAnalysisStartanalysis()
 {
 	// TODO: Add your command handler code here
 
-	//////////////////////////////////load analysis parameters/////////////////////////////////////
-	//CFile theFile;
-	//if(theFile.Open(AnalysisSetupINI, CFile::modeRead)==FALSE){
-	//	AfxMessageBox(L"open setup ini error");
-	//	return;
-	//}
-
-	//CArchive archive(&theFile, CArchive::load);
-
-	//p1.Serialize(archive);
-	//p2.Serialize(archive);
-	//p3.Serialize(archive);
-
-	//archive.Close();
-	//theFile.Close();
-
-
-
-
-	//datt.clear();
-	//datt.xmax=p2.highelimit;
-	//datt.xmin=p2.lowelimit;
-	//datt.spv=1/p2.scanrate;
-	//datt.intgUpLim=p2.endintegratione;
-	//datt.nCycle=p2.noofcycles;
-
-	////////////////////////////////load data//////////////////////////////////////
-	//CString m_filePath;
-
-	//switch(p1.analysistype){
-	//case 1:
-	//	m_filePath=L"data\\b.txt";
-	//	break;
-	//case 2:
-	//	m_filePath=L"data\\c.txt";
-	//	break;
-	//case 3:
-	//	m_filePath=L"data\\d.txt";
-	//	break;
-	//case 4:
-	//	m_filePath=L"data\\e.txt";
-	//	break;
-	//default:
-	//	return;
-	//}
-
-	//CString folderpath=m_filePath.Left(m_filePath.ReverseFind('\\'));
-
-	//dat.clear();
-
-	//std::vector<CString> filelist;
-	//CStdioFile file;
-	//BOOL readflag;
-	//readflag=file.Open(m_filePath, CFile::modeRead);
-
-	//if(readflag)
-	//{	
-	//	CString strRead;
-
-	//	//TRACE("\n--Begin to read file");
-	//	while(file.ReadString(strRead)){
-	//		strRead=folderpath+"\\"+strRead;
-	//		filelist.push_back(strRead);
-	//	}
-	//	//TRACE("\n--End reading\n");
-	//	file.Close();
-	//}
-
-
-	//for(size_t i=0;i<filelist.size();i++){
-	//	pcct dt1;
-	//	dt1.readFile(filelist[i]);
-	//	//dt1.seperate();
-	//	//dt1.AR=dt1.intg(0.8);
-
-	//	dt1.TomA();
-	//	if(i==0){
-	//		dt1.addVolume=p3.vmsvol;
-	//		dt1.stepName=L"VMS";
-
-	//	}
-	//	else{
-	//		dt1.addVolume=p3.saplist[i-1].volconc;
-	//		dt1.stepName.Format(L"Solution Addition %d",i);
-	//	}
-
-	//	dat.push_back(dt1);
-	//}
-
-	////////////////////////////clear window/////////////////////////////////
-
-	//( (dlg1*)m_wndSplitter.GetPane(0,0) )->clear();
-	//( (dlg1*)m_wndSplitter.GetPane(0,1) )->clear();
-	//m_wndOutput.clear();
-
-
-	//finishflag=true;
-	//finishflag2=true;
-	//totalVolume=0;
-	//Ar0=0;	
-	//stepCount=0;
-	//rowCount=0;
-
-	///////////////////////////initial plot//////////////////////////////////////////////////////
-
-	//switch(p1.analysistype){
-	//case 1:
-
-	//	break;
-	//case 2:
-
-	//	/////////////////////////plot standrad curve////////////////////////
-
-	//	if(p1.calibrationfactortype==1){
-	//		PlotData *pdat;
-	//		pdat=&(( (dlg1*)m_wndSplitter.GetPane(0,1) )->pd);
-	//		pdat->ReadFile(p1.calibrationfilepath);
-	//		pdat->ps.back().colour=genColor( genColorvFromIndex<float>( pdat->ps.size()-1 ) ) ;
-	//		pdat->ps.back().name=L"standrad";
-	//		( (dlg1*)m_wndSplitter.GetPane(0,1) )->updatePlotRange();
-	//		( (dlg1*)m_wndSplitter.GetPane(0,1) )->Invalidate();
-	//	}
-	//	///////////////////////////////////////end/////////////////////////////////////////////////
-
-	//	break;
-	//case 3:
-	//	break;
-	//case 4:
-	//	break;
-	//default:
-	//	return;
-	//}
-
-
-
-	////////////////////////////start tick///////////////////////////////////
-	//this->OnOptions();
 	////////////////////////////////////////////////////////////////////////////
-
-	if(readini(AnalysisSetupINI,p1,p2,p3)==FALSE){
-		AfxMessageBox(L"open setup ini error");
-		return;
-	}
 
 	mypara * pa1=new mypara;
 	pa1->leftp=this->LeftPlotPointer();
 	pa1->rightp=this->RightPlotPointer();
-	pa1->mf=this;
+	//pa1->mf=this;
+	pa1->outw=this->GetOutputWnd();
+	pa1->cba=this->GetCaptionBar();
+	pa1->psta=&pst;
+
 	CWinThread *pWriteA;
-	HANDLE hThread;
-	switch(p1.analysistype){
-	case 1:
 
-		pWriteA=AfxBeginThread(RCCS,
+	//HANDLE hThread;
+
+	pWriteA=AfxBeginThread(PROCESS,
 		(LPVOID)pa1,
 		THREAD_PRIORITY_NORMAL,
 		0,
 		CREATE_SUSPENDED);
-		//hThread=CreateThread(NULL,0,RCCS2,(LPVOID)pa1,0,NULL);
-		break;
 
-	case 2:
-
-		pWriteA=AfxBeginThread(ASDTM,
-		(LPVOID)pa1,
-		THREAD_PRIORITY_NORMAL,
-		0,
-		CREATE_SUSPENDED);
-		//hThread=CreateThread(NULL,0,ASDTM2,(LPVOID)pa1,0,NULL);
-		break;
-	case 3:
-
-		pWriteA=AfxBeginThread(RIVLATM,
-		(LPVOID)pa1,
-		THREAD_PRIORITY_NORMAL,
-		0,
-		CREATE_SUSPENDED);
-		//hThread=CreateThread(NULL,0,RIVLATM2,(LPVOID)pa1,0,NULL);
-		break;
-	case 4:
-
-		pWriteA=AfxBeginThread(AALATM,
-			(LPVOID)pa1,
-			THREAD_PRIORITY_NORMAL,
-			0,
-			CREATE_SUSPENDED);
-		//hThread=CreateThread(NULL,0,AALATM2,(LPVOID)pa1,0,NULL);
-		break;
-	case 5:
-		pWriteA=AfxBeginThread(CRCL,
-			(LPVOID)pa1,
-			THREAD_PRIORITY_NORMAL,
-			0,
-			CREATE_SUSPENDED);
-
-		break;
-	case 6:
-
-		pWriteA=AfxBeginThread(ALRCM,
-			(LPVOID)pa1,
-			THREAD_PRIORITY_NORMAL,
-			0,
-			CREATE_SUSPENDED);
-
-		break;
-	case 7:
-		break;
-	case 8:
-		break;
-	default:
-		return;
-	}
+	hThread=pWriteA->m_hThread;
 
 	//CloseHandle(hThread);
 	pWriteA->ResumeThread();
 
-
+	pst=running;
 
 
 }
@@ -1906,8 +1142,7 @@ void CMainFrame::OnAnalysisStartanalysis()
 
 dlg1 * CMainFrame::LeftPlotPointer(void)
 {
-	dlg1 *p1=( (dlg1*)m_wndSplitter.GetPane(0,0) );
-	return p1;
+	return ( (dlg1*)m_wndSplitter.GetPane(0,0) );
 }
 
 
@@ -1921,31 +1156,34 @@ void CMainFrame::OnAnalysisAbortanalysis()
 {
 	// TODO: Add your command handler code here
 
-}
+	TerminateThread(hThread,0);
 
-
-afx_msg LRESULT CMainFrame::OnMessagebusy(WPARAM wParam, LPARAM lParam)
-{
-
-
-	m_wndCaptionBar.ShowMessageRunning();
-
-	return 0;
-}
-
-
-afx_msg LRESULT CMainFrame::OnMessageWaitResponse(WPARAM wParam, LPARAM lParam)
-{
+	pst=stop;
 	CString strTemp;
-
-	(strTemp.LoadString(IDS_STRING_WAIT_RESPONSE));
-
-
-	double *px=(double*)wParam;
-
-	m_wndCaptionBar.ShowMessageWithButton(strTemp,*px,true);
-	return 0;
+	(strTemp.LoadString(IDS_STRING_OVER));
+	m_wndCaptionBar.ShowMessage(strTemp);
 }
+
+
+//afx_msg LRESULT CMainFrame::OnMessagebusy(WPARAM wParam, LPARAM lParam)
+//{
+//	m_wndCaptionBar.ShowMessageRunning();
+//
+//	return 0;
+//}
+
+
+//afx_msg LRESULT CMainFrame::OnMessageWaitResponse(WPARAM wParam, LPARAM lParam)
+//{
+//	CString strTemp;
+//
+//	(strTemp.LoadString(IDS_STRING_WAIT_RESPONSE));
+//
+//	double *px=(double*)wParam;
+//
+//	m_wndCaptionBar.ShowMessageWithButton(strTemp,*px,true);
+//	return 0;
+//}
 
 
 //afx_msg LRESULT CMainFrame::OnCaptionbarMessage(WPARAM wParam, LPARAM lParam)
@@ -1955,20 +1193,20 @@ afx_msg LRESULT CMainFrame::OnMessageWaitResponse(WPARAM wParam, LPARAM lParam)
 //}
 
 
-afx_msg LRESULT CMainFrame::OnMessageOver(WPARAM wParam, LPARAM lParam)
-{
-	CString strTemp;
-	(strTemp.LoadString(IDS_STRING_OVER));
-
-	CString str((wchar_t*)wParam);
-
-	strTemp+=str;
-
-	m_wndCaptionBar.ShowMessage(strTemp);
-
-
-	return 0;
-}
+//afx_msg LRESULT CMainFrame::OnMessageOver(WPARAM wParam, LPARAM lParam)
+//{
+//	CString strTemp;
+//	(strTemp.LoadString(IDS_STRING_OVER));
+//
+//	CString str((wchar_t*)wParam);
+//
+//	strTemp+=str;
+//
+//	m_wndCaptionBar.ShowMessage(strTemp);
+//
+//
+//	return 0;
+//}
 
 
 void CMainFrame::OnOptionsPlotsettings()
@@ -1991,10 +1229,9 @@ void CMainFrame::OnOptionsPlotsettings()
 	sheet.AddPage(&fig1setting);
 	sheet.AddPage(&fig2setting);
 
-	//readini(AnalysisSetupINI,sheet.APdlg.para,sheet.CVPdlg.para,sheet.SAPdlg.para);
 	// 打开模态向导对话框   
 	if(sheet.DoModal()==IDOK){
-		//writeini(AnalysisSetupINI,sheet.APdlg.para,sheet.CVPdlg.para,sheet.SAPdlg.para);
+
 		copyfs(fig1setting.fs,LeftPlotPointer()->fs);
 		LeftPlotPointer()->pd.ps.clear();
 		LeftPlotPointer()->pd.ps.assign(fig1setting.ps.begin(),fig1setting.ps.end());
@@ -2005,4 +1242,63 @@ void CMainFrame::OnOptionsPlotsettings()
 		RightPlotPointer()->pd.ps.assign(fig2setting.ps.begin(),fig2setting.ps.end());
 		RightPlotPointer()->Invalidate();
 	}
+}
+
+
+void CMainFrame::OnAnalysisPause()
+{
+	// TODO: Add your command handler code here
+	
+	if(waiting){
+		ResumeThread(hThread);
+		waiting=false;
+	}
+	else{
+		SuspendThread(hThread);	
+		waiting=true;
+	}
+
+}
+
+
+void CMainFrame::OnUpdateOptionsPlotsettings(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+
+	pCmdUI->Enable(pst!=running);
+}
+
+
+void CMainFrame::OnUpdateAnalysisStartanalysis(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+
+	pCmdUI->Enable(pst==stop);
+}
+
+
+void CMainFrame::OnUpdateViewFitwindow(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+
+	pCmdUI->Enable(pst!=running);
+}
+
+void CMainFrame::OnUpdateAnalysisAbortanalysis(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->Enable(pst!=stop);
+}
+
+void CMainFrame::OnUpdateAnalysisPause(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->Enable(pst==running);	
+}
+
+
+void CMainFrame::OnUpdateAnalysisMethodsetup(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->Enable(pst==stop);
 }

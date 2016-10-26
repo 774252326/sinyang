@@ -28,6 +28,9 @@ BEGIN_MESSAGE_MAP(CMFCCaptionBarA, CMFCCaptionBar)
 	ON_WM_SHOWWINDOW()
 	ON_WM_SIZE()
 	ON_WM_TIMER()
+	ON_MESSAGE(MESSAGE_BUSY, &CMFCCaptionBarA::OnMessageBusy)
+	ON_MESSAGE(MESSAGE_WAIT_RESPONSE, &CMFCCaptionBarA::OnMessageWaitResponse)
+	ON_MESSAGE(MESSAGE_OVER, &CMFCCaptionBarA::OnMessageOver)
 END_MESSAGE_MAP()
 
 
@@ -256,4 +259,41 @@ void CMFCCaptionBarA::OnDrawText(
 
 	CMFCCaptionBar::OnDrawText(pDC, rect, strText);
 
+}
+
+afx_msg LRESULT CMFCCaptionBarA::OnMessageBusy(WPARAM wParam, LPARAM lParam)
+{
+	ShowMessageRunning();
+	return 0;
+}
+
+
+afx_msg LRESULT CMFCCaptionBarA::OnMessageWaitResponse(WPARAM wParam, LPARAM lParam)
+{
+
+	CString strTemp;
+
+	(strTemp.LoadString(IDS_STRING_WAIT_RESPONSE));
+
+	double *px=(double*)wParam;
+
+	ShowMessageWithButton(strTemp,*px,true);
+
+	return 0;
+}
+
+
+afx_msg LRESULT CMFCCaptionBarA::OnMessageOver(WPARAM wParam, LPARAM lParam)
+{
+
+	CString strTemp;
+	(strTemp.LoadString(IDS_STRING_OVER));
+
+	CString str((wchar_t*)wParam);
+
+	strTemp+=str;
+
+	ShowMessage(strTemp);
+
+	return 0;
 }

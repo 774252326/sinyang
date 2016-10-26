@@ -2,6 +2,11 @@
 #include "afxwin.h"
 
 
+
+#define MESSAGE_BUSY WM_USER+1
+#define MESSAGE_WAIT_RESPONSE WM_USER+2
+#define MESSAGE_OVER WM_USER+3
+
 // CMFCCaptionBarA
 
 class CMFCCaptionBarA : public CMFCCaptionBar
@@ -48,6 +53,10 @@ public:
 	void ShowMessage(CString str);
 	void ShowMessageWithButton(CString str, double xv, bool bFlash);
 	int ecWidth;
+protected:
+	afx_msg LRESULT OnMessageBusy(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnMessageWaitResponse(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnMessageOver(WPARAM wParam, LPARAM lParam);
 };
 
 

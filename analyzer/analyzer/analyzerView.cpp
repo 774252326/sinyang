@@ -32,6 +32,8 @@ BEGIN_MESSAGE_MAP(CanalyzerView, CView)
 	ON_WM_PAINT()
 	ON_WM_ERASEBKGND()
 	ON_WM_SIZE()
+	ON_COMMAND(ID_ANALYSIS_ABORTANALYSIS, &CanalyzerView::OnAnalysisAbortanalysis)
+	ON_COMMAND(ID_ANALYSIS_DATALISTING, &CanalyzerView::OnAnalysisDatalisting)
 END_MESSAGE_MAP()
 
 // CanalyzerView construction/destruction
@@ -186,4 +188,41 @@ void CanalyzerView::OnSize(UINT nType, int cx, int cy)
 	//CMainFrame *pMain=(CMainFrame *)AfxGetApp()->m_pMainWnd; 
 	////if(	pMain->GetOutputWnd()->GetSafeHwnd())
 	//	pMain->GetOutputWnd()->SetWindowPos(NULL, 0, cy*2/3, cx, cy/3, SWP_SHOWWINDOW);
+}
+
+
+void CanalyzerView::OnAnalysisAbortanalysis()
+{
+	// TODO: Add your command handler code here
+
+	//this->GetMenu()->GetSubMenu(3)->EnableMenuItem(ID_OPTIONS_PLOTSETTINGS, MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
+
+
+}
+
+
+void CanalyzerView::OnAnalysisDatalisting()
+{
+	// TODO: Add your command handler code here
+
+	 //AfxMessageBox(L"BTN CLICKED!");
+	//this->GetMenu()->GetSubMenu(3)->EnableMenuItem(ID_OPTIONS_PLOTSETTINGS, MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
+
+}
+
+
+BOOL CanalyzerView::OnCommand(WPARAM wParam, LPARAM lParam)
+{
+	// TODO: Add your specialized code here and/or call the base class
+
+	//switch(wParam)
+ //{
+ //case ID_ANALYSIS_DATALISTING:
+ //AfxMessageBox(L"BTN CLICKED!");
+ //GetMenu()->GetSubMenu(0)->EnableMenuItem(1,MF_BYPOSITION | MF_DISABLED | MF_GRAYED);
+ //}
+
+
+
+	return CView::OnCommand(wParam, lParam);
 }

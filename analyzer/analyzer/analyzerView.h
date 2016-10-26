@@ -47,6 +47,9 @@ public:
 	afx_msg void OnPaint();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnAnalysisAbortanalysis();
+	afx_msg void OnAnalysisDatalisting();
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 };
 
 #ifndef _DEBUG  // debug version in analyzerView.cpp
