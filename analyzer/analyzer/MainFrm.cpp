@@ -277,29 +277,36 @@ BOOL CMainFrame::CreateCaptionBar()
 
 	BOOL bNameValid;
 
-	CString strTemp, strTemp2;
+	CString strTemp, strTemp2=L"";
 
-	bNameValid = strTemp.LoadString(IDS_CAPTION_BUTTON);
-	ASSERT(bNameValid);
-	strTemp=L"                  ";
-	m_wndCaptionBar.SetButton(strTemp, ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_LEFT, FALSE);
-	bNameValid = strTemp.LoadString(IDS_CAPTION_BUTTON_TIP);
-	ASSERT(bNameValid);
-	m_wndCaptionBar.SetButtonToolTip(strTemp);
+	//bNameValid = strTemp.LoadString(IDS_CAPTION_BUTTON);
+	//ASSERT(bNameValid);
+	//strTemp=L"fff ";
+	//m_wndCaptionBar.SetButton(strTemp, ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_RIGHT, FALSE);
+	//bNameValid = strTemp.LoadString(IDS_CAPTION_BUTTON_TIP);
+	//ASSERT(bNameValid);
+	//m_wndCaptionBar.SetButtonToolTip(strTemp2);
+
+	m_wndCaptionBar.ShowButton(false);
+
 
 	bNameValid = strTemp.LoadString(IDS_CAPTION_TEXT);
 	ASSERT(bNameValid);
-	m_wndCaptionBar.SetText(strTemp, CMFCCaptionBar::ALIGN_LEFT);
-
-	m_wndCaptionBar.SetBitmap(IDB_INFO, RGB(255, 255, 255), FALSE, CMFCCaptionBar::ALIGN_LEFT);
-	bNameValid = strTemp.LoadString(IDS_CAPTION_IMAGE_TIP);
-	ASSERT(bNameValid);
-	bNameValid = strTemp2.LoadString(IDS_CAPTION_IMAGE_TEXT);
-	ASSERT(bNameValid);
-	m_wndCaptionBar.SetImageToolTip(strTemp, strTemp2);
+	//m_wndCaptionBar.SetText(strTemp, CMFCCaptionBar::ALIGN_LEFT);
+	m_wndCaptionBar.SetTextA(strTemp);
 
 
-	m_wndCaptionBar.EnableButton(FALSE);
+	//m_wndCaptionBar.SetBitmap(IDB_INFO, RGB(255, 255, 255), FALSE, CMFCCaptionBar::ALIGN_LEFT);
+	//bNameValid = strTemp.LoadString(IDS_CAPTION_IMAGE_TIP);
+	//ASSERT(bNameValid);
+	//bNameValid = strTemp2.LoadString(IDS_CAPTION_IMAGE_TEXT);
+	//ASSERT(bNameValid);
+	//m_wndCaptionBar.SetImageToolTip(strTemp, strTemp2);
+
+
+
+	//m_wndCaptionBar.EnableButton(FALSE);
+
 
 
 	return TRUE;
@@ -437,23 +444,13 @@ void CMainFrame::OnUpdateViewCaptionBar(CCmdUI* pCmdUI)
 
 void CMainFrame::OnOptions()
 {
-
-	//BOOL bNameValid;
 	CString strTemp;
-
-	m_wndCaptionBar.m_clrBarText=black;
-
-	//ASSERT
+	////ASSERT
 	(strTemp.LoadString(IDS_STRING_RUNNING));
-	m_wndCaptionBar.SetText(strTemp, CMFCCaptionBar::ALIGN_LEFT);
-
-	m_wndCaptionBar.SetButton(L" ", ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_LEFT, FALSE);
-	m_wndCaptionBar.EnableButton(FALSE);
-	m_wndCaptionBar.Invalidate();
-
-
+	m_wndCaptionBar.SetTextA(strTemp);
+	m_wndCaptionBar.ShowButton(false);
+	m_wndCaptionBar.HideEdit();
 	timer1=SetTimer(1,10,NULL);
-	KillTimer(timer2);
 }
 
 BOOL CMainFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParentWnd, CCreateContext* pContext) 
@@ -628,20 +625,15 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 			if( dat.empty() || stepCount>=p3.size() ){
 				finishflag2=true;
 				KillTimer(timer1);
-
-				m_wndCaptionBar.m_clrBarText=black;
 				CString strTemp;
 				//ASSERT
 				(strTemp.LoadString(IDS_STRING_OVER));
-				m_wndCaptionBar.SetText(strTemp, CMFCCaptionBar::ALIGN_LEFT);
-
-				m_wndCaptionBar.SetButton(L" ", ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_LEFT, FALSE);
-				m_wndCaptionBar.EnableButton(FALSE);
-				m_wndCaptionBar.Invalidate();
+				m_wndCaptionBar.SetTextA(strTemp);
+				m_wndCaptionBar.ShowButton(false);
 			}
 			else{
 
-				size_t n1=60;
+				size_t n1=360;
 
 				std::vector<double> x;
 				std::vector<double> y;
@@ -689,15 +681,11 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 						CString strTemp;
 						//ASSERT
 						(strTemp.LoadString(IDS_STRING_WAIT_RESPONSE));
-						m_wndCaptionBar.SetText(strTemp, CMFCCaptionBar::ALIGN_LEFT);
-						//ASSERT
-						(strTemp.LoadString(IDS_CAPTION_BUTTON));
-						m_wndCaptionBar.SetButton(strTemp, ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_LEFT, FALSE);
-						m_wndCaptionBar.EnableButton();
+						m_wndCaptionBar.SetTextA(strTemp,true);
+						m_wndCaptionBar.ShowButton();
+						m_wndCaptionBar.SetEdit();
 						m_wndCaptionBar.ShowWindow(SW_SHOW);
 						RecalcLayout(FALSE);
-
-						timer2=SetTimer(2,400,NULL);
 
 					}
 				}
@@ -709,9 +697,9 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 
 	case 2:
 		{
-			bool aa=(m_wndCaptionBar.m_clrBarText==black);
-			m_wndCaptionBar.m_clrBarText=aa ? red : black;
-			m_wndCaptionBar.Invalidate();
+			//bool aa=(m_wndCaptionBar.m_clrBarText==black);
+			//m_wndCaptionBar.m_clrBarText=aa ? red : black;
+			//m_wndCaptionBar.Invalidate();
 		}
 		break;
 	default:

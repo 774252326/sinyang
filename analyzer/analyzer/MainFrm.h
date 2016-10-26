@@ -7,6 +7,7 @@
 #include "pcct.h"
 #include "pcctA.h"
 #include "typedefine.h"
+#include "MFCCaptionBarA.h"
 
 class CMainFrame : public CFrameWndEx
 {
@@ -43,7 +44,9 @@ protected:  // control bar embedded members
 	CMFCStatusBar     m_wndStatusBar;
 	CMFCToolBarImages m_UserImages;
 	COutputWnd        m_wndOutput;
-	CMFCCaptionBar    m_wndCaptionBar;
+	//CMFCCaptionBar    m_wndCaptionBar;
+	CMFCCaptionBarA    m_wndCaptionBar;
+
 
 // Generated message map functions
 protected:

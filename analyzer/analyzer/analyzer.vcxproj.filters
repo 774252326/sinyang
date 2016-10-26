@@ -108,6 +108,9 @@
     <ClInclude Include="typedefine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MFCCaptionBarA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="analyzer.cpp">
@@ -165,6 +168,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="typedefine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MFCCaptionBarA.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
