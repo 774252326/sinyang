@@ -85,6 +85,9 @@ void CMFCCaptionBarA::OnSize(UINT nType, int cx, int cy)
 
 int CMFCCaptionBarA::SetEdit(void)
 {
+	
+	//UpdateData(FALSE);
+
 	CRect bRect=this->GetButtonRect();
 	CPoint pt=bRect.TopLeft();
 	pt.x-=this->GetMargin();
@@ -199,6 +202,8 @@ void CMFCCaptionBarA::OnDrawButton(
 	//	rect.right+=50;
 	//}
 
-
-	CMFCCaptionBar::OnDrawButton(pDC, rect, strButton, bEnabled);
+	if(bEnabled)
+		CMFCCaptionBar::OnDrawButton(pDC, rect, strButton, bEnabled);
+	else
+		CMFCCaptionBar::OnDrawButton(pDC, rect, L" ", bEnabled);
 }

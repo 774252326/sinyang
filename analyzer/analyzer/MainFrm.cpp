@@ -46,31 +46,39 @@ typedef struct MYPARA{
 	COutputWnd *ow;
 	CMFCCaptionBarA *cba;
 	pcct *data;
-	pcctB *dataB;
+	//pcctB *dataB;
+	CVPara *p2;
+	SAPara *p3;
 } mypara;
 
 UINT RCCS(LPVOID pParam)
 {
-	//CEdit *pEdit=(CEdit*)pParam;
-	//pEdit->SetWindowText(L"");
-
-
 
 	dlg1 *leftp=((mypara*)pParam)->leftp;
 	dlg1 *rightp=((mypara*)pParam)->rightp;
 	COutputWnd *ow=((mypara*)pParam)->ow;
 	CMFCCaptionBarA *cba=((mypara*)pParam)->cba;
 	pcct *data=((mypara*)pParam)->data;
-	pcctB *dataB=((mypara*)pParam)->dataB;
+	//pcctB *dataB=((mypara*)pParam)->dataB;
+	CVPara *p2=((mypara*)pParam)->p2;
+	SAPara *p3=((mypara*)pParam)->p3;
+	//WaitForSingleObject(semaphoreWrite.m_hObject,INFINITE);
+
+	pcctB dataB;
+
+	dataB.clear();
+	dataB.xmax=p2->highelimit;
+	dataB.xmin=p2->lowelimit;
+	dataB.spv=1/p2->scanrate;
+	dataB.intgUpLim=p2->endintegratione;
+	dataB.nCycle=p2->noofcycles;
+	dataB.rowCount=0;
+	dataB.stepCount=0;
+	dataB.totalVolume=0;
+	dataB.Ar0=0;
 
 
-	WaitForSingleObject(semaphoreWrite.m_hObject,INFINITE);
-
-
-
-	isend=false;
-
-	size_t n1=80;
+	size_t n1=500;
 
 	std::vector<double> x;
 	std::vector<double> y;
@@ -92,25 +100,132 @@ UINT RCCS(LPVOID pParam)
 	leftp->pd.AddNew(x,y,ps1,data->label[0],data->label[1]);
 	leftp->updatePlotRange();
 	leftp->Invalidate();
-	//isend=true;
+
+	int nflg=dataB.addXY(x,y);
+
+	//if line finish
+	//finishflag=/*(rn==0)|*/(nflg==2);
+
+	if(nflg>=1){//if one cycle complete
+
+		double addvol;
+		if(dataB.Ar.size()==1){
+			addvol=data->addVolume;
+		}
+		else{
+			addvol=0;
+		}
+		dataB.totalVolume+=addvol;
+
+		if(dataB.stepCount==0){
+			dataB.Ar0=dataB.Ar.back();
+		}
+		double Aratio=(dataB.Ar.back()/dataB.Ar0);
+
+		CString str=leftp->pd.ps.back().name;
+		ow->InsertListCtrl(dataB.rowCount,str,dataB.Ar.size(),addvol,dataB.totalVolume,dataB.Ar.back(),Aratio,(nflg==2));
+
+		dataB.rowCount++;
+	}
+
+
+
+
 	Sleep(intv);
 
+	double Aratio;
 
-	while(rn>0){
-			//isend=false;
+	while(nflg<2){
+
 		TRACE(L"rccs running\n");
 		rn=data->popData(x,y,n1);
 		leftp->pd.AddFollow(x,y);
 		leftp->updatePlotRange(x,y);
 		leftp->Invalidate();
-			//isend=true;
+
+
+		nflg=dataB.addXY(x,y);
+
+		if(nflg>=1){//if one cycle complete
+
+			double addvol;
+			if(dataB.Ar.size()==1){
+				addvol=data->addVolume;
+			}
+			else{
+				addvol=0;
+			}
+			dataB.totalVolume+=addvol;
+
+			if(dataB.stepCount==0){
+				dataB.Ar0=dataB.Ar.back();
+			}
+			/*double*/ Aratio=(dataB.Ar.back()/dataB.Ar0);
+
+			CString str=leftp->pd.ps.back().name;
+			ow->InsertListCtrl(dataB.rowCount,str,dataB.Ar.size(),addvol,dataB.totalVolume,dataB.Ar.back(),Aratio,(nflg==2));
+
+			dataB.rowCount++;
+		}
+
+
 		Sleep(intv);
 	}
 
 
-	isend=true;
 
-	ReleaseSemaphore(semaphoreWrite.m_hObject,1,NULL);
+	x.assign( 1, dataB.totalVolume-p3->vmsvol );
+	y.assign( 1, Aratio );
+	//plot2(x,y,L"Suppressor(ml)",L"Ratio of Charge",L"Ar/Ar0");
+
+	//plotspec ps1;
+	ps1.colour=genColor( genColorvFromIndex<float>( rightp->pd.ps.size() ) ) ;
+	ps1.dotSize=3;
+	ps1.name=L"Ar/Ar0";
+	ps1.showLine=true;
+	ps1.smoothLine=1;
+	ps1.traceLast=false;
+	rightp->pd.AddNew(x,y,ps1,L"Suppressor(ml)",L"Ratio of Charge");
+
+
+	rightp->updatePlotRange();
+	rightp->Invalidate();
+
+
+	dataB.stepCount++;
+	dataB.clear();
+	//dat.erase(dat.begin());
+
+
+
+	//CString strTemp;
+	//ASSERT
+	(strTemp.LoadString(IDS_STRING_WAIT_RESPONSE));
+
+	for(int i=0;i<17;i++) strTemp+=" ";
+
+	cba->SetTextA(strTemp,true);
+	//Sleep(intv);
+	//cba->ShowButton();
+	//(strTemp.LoadString(IDS_CAPTION_BUTTON));
+
+	//cba->SetButton(strTemp, ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_LEFT, FALSE);
+	cba->EnableButton();
+
+
+	cba->x=0;
+
+	//cba->UpdateData(FALSE);
+	cba->SetEdit();					
+	cba->ec.ShowWindow(SW_SHOW);
+	//m_wndCaptionBar.st.ShowWindow(SW_SHOW);
+	//m_wndCaptionBar.ShowWindow(SW_SHOW);
+	//RecalcLayout(FALSE);
+
+	Sleep(intv);
+
+
+	//ReleaseSemaphore(semaphoreWrite.m_hObject,1,NULL);
 	return 0;
 
 }
@@ -126,24 +241,26 @@ UINT freshp(LPVOID pParam)
 	//pcct *data=((mypara*)pParam)->data;
 	//pcctB *dataB=((mypara*)pParam)->dataB;
 
-
-	WaitForSingleObject(semaphoreWrite.m_hObject,INFINITE);
-
-	//while(true)
-
-	Sleep(400);
-
-	while(!isend){
-
-		TRACE(L"freshp running\n");
-
-		leftp->Invalidate();
-		Sleep(400);
-	}
-
 	leftp->Invalidate();
 
-	ReleaseSemaphore(semaphoreWrite.m_hObject,1,NULL);
+	//WaitForSingleObject(semaphoreWrite.m_hObject,INFINITE);
+
+	//while(true){
+
+	Sleep(50);
+
+	//while(isend){
+
+	//	TRACE(L"freshp running\n");
+
+	//	leftp->Invalidate();
+	//	Sleep(40);
+	//}
+
+	//leftp->Invalidate();
+	//}
+
+	//ReleaseSemaphore(semaphoreWrite.m_hObject,1,NULL);
 	return 0;
 
 }
@@ -472,7 +589,16 @@ BOOL CMainFrame::CreateCaptionBar()
 
 	//m_wndCaptionBar.SetMargin(0);
 
-	m_wndCaptionBar.ShowButton(false);
+	//m_wndCaptionBar.ShowButton(false);
+
+	//CString strTemp;
+	//ASSERT
+	(strTemp.LoadString(IDS_CAPTION_BUTTON));
+	//SetButton(strTemp, ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_RIGHT, FALSE);
+	m_wndCaptionBar.SetButton(strTemp, ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_LEFT, FALSE);
+
+	m_wndCaptionBar.EnableButton(FALSE);
+
 	//m_wndCaptionBar.SetButtonToolTip(strTemp2);
 
 	bNameValid = strTemp.LoadString(IDS_CAPTION_TEXT);
@@ -1307,27 +1433,28 @@ void CMainFrame::OnAnalysisStartanalysis()
 	//this->OnOptions();
 	////////////////////////////////////////////////////////////////////////////
 
-	pcctB dattt;
+	//pcctB dattt;
 
-	dattt.clear();
-	dattt.xmax=p2.highelimit;
-	dattt.xmin=p2.lowelimit;
-	dattt.spv=1/p2.scanrate;
-	dattt.intgUpLim=p2.endintegratione;
-	dattt.nCycle=p2.noofcycles;
-	dattt.rowCount=0;
-	dattt.stepCount=0;
-	dattt.totalVolume=0;
-	dattt.Ar0=0;
+	//dattt.clear();
+	//dattt.xmax=p2.highelimit;
+	//dattt.xmin=p2.lowelimit;
+	//dattt.spv=1/p2.scanrate;
+	//dattt.intgUpLim=p2.endintegratione;
+	//dattt.nCycle=p2.noofcycles;
+	//dattt.rowCount=0;
+	//dattt.stepCount=0;
+	//dattt.totalVolume=0;
+	//dattt.Ar0=0;
 
 	mypara * pa1=new mypara;
 	pa1->cba=&m_wndCaptionBar;
 	pa1->data=dat.data();
-	pa1->dataB=&dattt;
+	//pa1->dataB=&dattt;
+	pa1->p2=&p2;
 	pa1->leftp=( (dlg1*)m_wndSplitter.GetPane(0,0) );
 	pa1->ow=&m_wndOutput;
 	pa1->rightp=( (dlg1*)m_wndSplitter.GetPane(0,1) );
-
+	pa1->p3=&p3;
 
 
 	CWinThread *pWriteA=AfxBeginThread(RCCS,
@@ -1337,12 +1464,12 @@ void CMainFrame::OnAnalysisStartanalysis()
 		CREATE_SUSPENDED);
 	pWriteA->ResumeThread();
 
-	CWinThread *pWriteB=AfxBeginThread(freshp,
-		( (dlg1*)m_wndSplitter.GetPane(0,0) ),
-		THREAD_PRIORITY_NORMAL,
-		0,
-		CREATE_SUSPENDED);
-	pWriteB->ResumeThread();
+	//CWinThread *pWriteB=AfxBeginThread(freshp,
+	//	( (dlg1*)m_wndSplitter.GetPane(0,0) ),
+	//	THREAD_PRIORITY_NORMAL,
+	//	0,
+	//	CREATE_SUSPENDED);
+	//pWriteB->ResumeThread();
 
 
 	//	Sleep(400);
@@ -1376,14 +1503,23 @@ void CMainFrame::OnAnalysisStartanalysis()
 	//CString strTemp;
 	//ps1.colour=genColor( genColorvFromIndex<float>( pa1->leftp->pd.ps.size() ) ) ;
 	////ps1.colour=genColorGray( genColorvFromIndex<float>( stepCount ) ) ;
-	//ps1.dotSize=0;
+	//ps1.dotSize=-1;
 	//ps1.name=pa1->data->stepName;
-	//ps1.showLine=false;
+	//ps1.showLine=true;
 	//ps1.smoothLine=0;
 	//ps1.traceLast=true;
 	//pa1->leftp->pd.AddNew(x,y,ps1,pa1->data->label[0],pa1->data->label[1]);
 	//pa1->leftp->updatePlotRange();
-	////pa1->leftp->Invalidate();
+	//pa1->leftp->Invalidate();
+
+	////	{
+	////		CWinThread *pWriteB=AfxBeginThread(freshp,
+	////	( (dlg1*)m_wndSplitter.GetPane(0,0) ),
+	////	THREAD_PRIORITY_NORMAL,
+	////	0,
+	////	CREATE_SUSPENDED);
+	////pWriteB->ResumeThread();
+	////	}
 
 	//Sleep(100);
 
@@ -1392,7 +1528,18 @@ void CMainFrame::OnAnalysisStartanalysis()
 	//	rn=pa1->data->popData(x,y,n1);
 	//	pa1->leftp->pd.AddFollow(x,y);
 	//	pa1->leftp->updatePlotRange(x,y);
-	//	//pa1->leftp->Invalidate();
+	//	pa1->leftp->Invalidate();
+
+
+	////			{
+	////		CWinThread *pWriteB=AfxBeginThread(freshp,
+	////	( (dlg1*)m_wndSplitter.GetPane(0,0) ),
+	////	THREAD_PRIORITY_NORMAL,
+	////	0,
+	////	CREATE_SUSPENDED);
+	////pWriteB->ResumeThread();
+	////	}
+
 	//	Sleep(100);
 
 	//	TRACE(L"main running\n");
