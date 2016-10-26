@@ -123,19 +123,10 @@
     <ClInclude Include="AnalysisParametersPage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ColorButton.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ComboItem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CVParametersPage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="EditItem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="EditList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MFCCaptionBarA.h">
@@ -228,13 +219,7 @@
     <ClInclude Include="ListCtrlSAP.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ListCtrlSAP1.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ListCtrlLS.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ListCtrlPS.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PlotSettingPageA.h">
@@ -263,19 +248,10 @@
     <ClCompile Include="AnalysisParametersPage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ColorButton.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ComboItem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CVParametersPage.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="EditItem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="EditList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MFCCaptionBarA.cpp">
@@ -350,13 +326,7 @@
     <ClCompile Include="ListCtrlSAP.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ListCtrlSAP1.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ListCtrlLS.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ListCtrlPS.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PlotSettingPageA.cpp">

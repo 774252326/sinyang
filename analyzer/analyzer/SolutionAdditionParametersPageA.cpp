@@ -42,82 +42,82 @@ BEGIN_MESSAGE_MAP(SolutionAdditionParametersPageA, CPropertyPage)
 END_MESSAGE_MAP()
 
 
-// SolutionAdditionParametersPageA message handlers
+//// SolutionAdditionParametersPageA message handlers
+//
+//
+//// this function is sent to CEditList 
+//// there it is used to determine which type of ctrl to create 
+//// when cell is being edited
+//static int _List_Type( int col )
+//{
+//	if ( col == 1 )
+//		return CEditList::eCombo;
+//	// else :
+//	return CEditList::eEdit;
+//}
 
 
-// this function is sent to CEditList 
-// there it is used to determine which type of ctrl to create 
-// when cell is being edited
-static int _List_Type( int col )
-{
-	if ( col == 1 )
-		return CEditList::eCombo;
-	// else :
-	return CEditList::eEdit;
-}
-
-
-void SolutionAdditionParametersPageA::BuildList(int width)
-{
-	//m_SAPlist.ModifyStyle(0,LVS_REPORT|LVS_SHOWSELALWAYS);
-
-	//LONG IStyle;
-	//IStyle=GetWindowLong(m_SAPlist.GetSafeHwnd(), GWL_STYLE);//获取当前窗口style
-	//IStyle&= ~LVS_TYPEMASK; //清除显示方式位
-	//IStyle|= LVS_REPORT; //set style
-	//SetWindowLong(m_SAPlist.GetSafeHwnd(), GWL_STYLE, IStyle);//设置style
-
-	//DWORD dwStyle1;
-	//dwStyle1 = m_SAPlist.GetExtendedStyle();
-	//dwStyle1 |= LVS_EX_FULLROWSELECT;//选中某行使整行高亮（只适用与report风格的listctrl）
-	//dwStyle1 |= LVS_EX_GRIDLINES;//网格线（只适用与report风格的listctrl）
-	////dwStyle1 |= LVS_EX_CHECKBOXES;//item前生成checkbox控件
-	//m_SAPlist.SetExtendedStyle(dwStyle1); //设置扩展风格
-
-	////int wi[]={33,150,90,90,90,150,90};
-
-
-	//CString strTemp;
-	//for(int i=0;i<totaln;i++){
-	//	strTemp.LoadStringW(IDS_STRING520+i);
-	//	m_SAPlist.InsertColumn(i, strTemp, LVCFMT_LEFT);
-	//	AdjustWidth(&m_SAPlist,i,strTemp);
-
-	//	if(i==typeidx){
-	//		// insert string elements  for the ComboBox : 
-	//		for ( int j=IDS_STRING_VOL_ONCE ; j <= IDS_STRING_VMS ; j++){
-	//			strTemp.LoadStringW(j);
-	//			m_SAPlist.allComboStr.AddTail( strTemp );
-	//			AdjustWidth(&m_SAPlist,i,strTemp);
-	//		}
-	//	}
-
-	//	m_SAPlist.cols.push_back(m_SAPlist.allComboStr.GetCount());
-
-	//}
-
-	//m_SAPlist.typelimit.assign(totaln,1);
-	//m_SAPlist.typelimit[typeidx]=0;
-
-	//// set functionality of list according to column
-	//m_SAPlist.SetColumnType ( (fGetType)_List_Type );	
-
-	////m_SAPlist.cols.push_back(4);
-	////CStringList m_strList;
-	//// insert string elements  for the ComboBox : 
-	////for ( int i=0 ; i < 4 ; i++){
-	////	strTemp.LoadStringW(IDS_STRING_VOL_ONCE+i);
-	////	m_strList.AddTail( strTemp );
-	////	m_SAPlist.m_strList.AddTail( strTemp );
-	////}
-	////m_SAPlist.cbStrList.push_back(m_strList);
-	//// insert a dummy row
-	////InsertEmpty();
-
-	//SetList();
-
-
-}
+//void SolutionAdditionParametersPageA::BuildList(int width)
+//{
+//	//m_SAPlist.ModifyStyle(0,LVS_REPORT|LVS_SHOWSELALWAYS);
+//
+//	//LONG IStyle;
+//	//IStyle=GetWindowLong(m_SAPlist.GetSafeHwnd(), GWL_STYLE);//获取当前窗口style
+//	//IStyle&= ~LVS_TYPEMASK; //清除显示方式位
+//	//IStyle|= LVS_REPORT; //set style
+//	//SetWindowLong(m_SAPlist.GetSafeHwnd(), GWL_STYLE, IStyle);//设置style
+//
+//	//DWORD dwStyle1;
+//	//dwStyle1 = m_SAPlist.GetExtendedStyle();
+//	//dwStyle1 |= LVS_EX_FULLROWSELECT;//选中某行使整行高亮（只适用与report风格的listctrl）
+//	//dwStyle1 |= LVS_EX_GRIDLINES;//网格线（只适用与report风格的listctrl）
+//	////dwStyle1 |= LVS_EX_CHECKBOXES;//item前生成checkbox控件
+//	//m_SAPlist.SetExtendedStyle(dwStyle1); //设置扩展风格
+//
+//	////int wi[]={33,150,90,90,90,150,90};
+//
+//
+//	//CString strTemp;
+//	//for(int i=0;i<totaln;i++){
+//	//	strTemp.LoadStringW(IDS_STRING520+i);
+//	//	m_SAPlist.InsertColumn(i, strTemp, LVCFMT_LEFT);
+//	//	AdjustWidth(&m_SAPlist,i,strTemp);
+//
+//	//	if(i==typeidx){
+//	//		// insert string elements  for the ComboBox : 
+//	//		for ( int j=IDS_STRING_VOL_ONCE ; j <= IDS_STRING_VMS ; j++){
+//	//			strTemp.LoadStringW(j);
+//	//			m_SAPlist.allComboStr.AddTail( strTemp );
+//	//			AdjustWidth(&m_SAPlist,i,strTemp);
+//	//		}
+//	//	}
+//
+//	//	m_SAPlist.cols.push_back(m_SAPlist.allComboStr.GetCount());
+//
+//	//}
+//
+//	//m_SAPlist.typelimit.assign(totaln,1);
+//	//m_SAPlist.typelimit[typeidx]=0;
+//
+//	//// set functionality of list according to column
+//	//m_SAPlist.SetColumnType ( (fGetType)_List_Type );	
+//
+//	////m_SAPlist.cols.push_back(4);
+//	////CStringList m_strList;
+//	//// insert string elements  for the ComboBox : 
+//	////for ( int i=0 ; i < 4 ; i++){
+//	////	strTemp.LoadStringW(IDS_STRING_VOL_ONCE+i);
+//	////	m_strList.AddTail( strTemp );
+//	////	m_SAPlist.m_strList.AddTail( strTemp );
+//	////}
+//	////m_SAPlist.cbStrList.push_back(m_strList);
+//	//// insert a dummy row
+//	////InsertEmpty();
+//
+//	//SetList();
+//
+//
+//}
 
 
 

@@ -11,8 +11,8 @@
 
 
 
-const std::wstring logofile = L"res\\sinyang.bmp";
-
+//const std::wstring logofile = L"res\\sinyang.bmp";
+const std::wstring logofile = L"res\\index_02_01_01.jpg";
 
 int AddPageNumber(const std::wstring fin, const std::wstring fout)
 {
@@ -488,7 +488,10 @@ int pdfout(pdflib::PDFlib &p, const std::vector<DataOutA> &dol){
 
 			//num << L"Col " << col << L"/Row " << row;
 
-			num << dol[di].Ar.back();
+			if( dol[di].UseIndex>=0 && dol[di].UseIndex<dol[di].Ar.size() )
+				num << dol[di].Ar[dol[di].UseIndex];
+			else
+				num << dol[di].Ar.back();
 
 			optlist.str(L"");
 			optlist << L"colwidth=15% fittextline={font=" << font
@@ -500,13 +503,18 @@ int pdfout(pdflib::PDFlib &p, const std::vector<DataOutA> &dol){
 
 		col = 6;
 		//if(dol[row-3].nQ!=0 && dol[row-3].Use)
-		if(dol[di].Ar.back()!=0)
+		//if(dol[di].Ar.back()!=0)
 		{
 			std::wostringstream num;
 
 			//num << L"Col " << col << L"/Row " << row;
 
-			num << dol[di].Ar.back()/dol[di].Ar0;
+			//num << dol[di].Ar.back()/dol[di].Ar0;
+
+			if( dol[di].UseIndex>=0 && dol[di].UseIndex<dol[di].Ar.size() )
+				num << dol[di].Ar[dol[di].UseIndex]/dol[di].Ar0;
+			else
+				num << L" ";
 
 			optlist.str(L"");
 			optlist << L"colwidth=15% fittextline={font=" << font
@@ -517,18 +525,24 @@ int pdfout(pdflib::PDFlib &p, const std::vector<DataOutA> &dol){
 
 		col = 7;
 		{
-			std::wostringstream num;
+			//std::wostringstream num;
 
 			//num << L"Col " << col << L"/Row " << row;
+			CString st;
+			//num << L"Yes";
+			if( dol[di].UseIndex>=0 && dol[di].UseIndex<dol[di].Ar.size() )
+				st.LoadStringW(IDS_STRING_YES);
+			else
+				st.LoadStringW(IDS_STRING_NO);
 
-			num << L"Yes";
-			//num << (dol[row-3].Use? L"Yes":L"No");
+			
 
 			optlist.str(L"");
 			optlist << L"colwidth=15% fittextline={font=" << font
 				<<  L" fontsize=10}";
 
-			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
+			//tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
+			tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)st, optlist.str());
 		}
 
 
@@ -2512,17 +2526,206 @@ int imgout(pdflib::PDFlib &p, const std::wstring imagefile, CString str)
 }
 
 
+
+
+
+int imgout2(pdflib::PDFlib &p, CanalyzerDoc *padoc, std::vector<PlotData> &imagelist, std::vector<CString> &namelist, CSize szimg=CSize(800,600))
+{
+
+
+
+		int fsize=10;
+
+		//const std::wstring searchpath = L"../data";
+
+	int row, col, font, image, tf=-1, tbl=-1;
+	//int rowmax=dol.size()+2, colmax=7;
+	//PDFlib p;
+	double llx=50, lly=50, urx=550, ury=800;
+
+	//CString str;
+		CString fptmp=L"temp.bmp";
+
+	//str.LoadStringW(IDS_OUTPUT_WND);
+
+	//const std::wstring headertext = (LPCWSTR)str;
+	//L"Table header (centered across all columns)";
+	std::wstring result;
+	std::wostringstream optlist;
+
+	/* -------------------- Add table cells -------------------- */
+	row = 1; col = 1;
+	/* ---------- Row 1: table header (spans all columns) */
+
+
+
+
+
+	//const std::wstring imagefile = L"C:\\Users\\r8anw2x\\Documents\\Visual Studio 2010\\project0\\analyzer\\analyzer\\res\\sinyang.bmp";
+
+	image = p.load_image(L"auto", logofile, L"");
+	if (image == -1) {
+		std::wcerr << L"Couldn't load image: " << p.get_errmsg() << std::endl;
+		return 2;
+	}
+
+	optlist.str(L"");
+	optlist << L"image=" << image << L" fitimage={fitmethod=auto position={right center}}";
+	optlist << L" rowheight=30";
+	//optlist << L" colspan=" << colmax;
+	optlist << L" colwidth=100%";
+
+	tbl = p.add_table_cell(tbl, col, row, L"", optlist.str());
+	if (tbl == -1) {
+		std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
+		return 2;
+	}
+
+	row++;
+
+
+
+
+	font = p.load_font(L"Helvetica", L"winansi", L"");
+	if (font == -1) {
+		std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
+		return(2);
+	}
+
+
+	while( !namelist.empty()
+		&& !imagelist.empty() ){
+
+	optlist.str(L"");
+	optlist << L"fittextline={position={left center} font=" << font
+		<< L" fontsize=" << fsize 
+		<< L"}"
+		//<< L" colspan=" << colmax
+		;
+	optlist << L" rowheight=15";
+
+
+
+	tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)(namelist.back()), optlist.str());
+	row++;
+
+	//tbl = p.add_table_cell(tbl, col, row, L" ", optlist.str());
+	//row++;
+
+	//std::wstring imagefile
+
+
+	padoc->SaveImage(imagelist.back(),szimg,fptmp);
+
+	image = p.load_image(L"auto", (LPCWSTR)fptmp, L"");
+	if (image == -1) {
+		std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
+		return 2;
+	}
+
+	optlist.str(L"");
+	optlist << L"image=" << image << L" fitimage={fitmethod=auto position={center top}}";
+	optlist << L" rowheight=345";
+	//optlist << L" colspan=" << colmax;
+
+	tbl = p.add_table_cell(tbl, col, row, L"", optlist.str());
+	if (tbl == -1) {
+		std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
+		return 2;
+	}
+
+	row++;
+
+	namelist.pop_back();
+	imagelist.pop_back();
+
+	}
+
+
+	optlist.str(L"");
+	//optlist <<L"fill={";
+	//optlist << L"{area=roweven"
+			//<< L" fillcolor={gray 0.918}} ";
+
+	//for(int i=rowstart;i<rowend;i+=2){
+		//optlist << L"{area=row"
+			//<< i
+			//<< L" fillcolor={gray 0.9}} ";
+	//}
+
+	//optlist << L"} "; 
+	//optlist << L"stroke={{line=other}} ";
+	optlist << L"header=1 ";
+
+
+
+	/* ---------- Place the table on one or more pages ---------- */
+
+	/*
+	* Loop until all of the table is placed; create new pages
+	* as long as more table instances need to be placed.
+	*/
+	do {
+		p.begin_page_ext(0, 0, L"width=a4.width height=a4.height");
+
+		/* Shade every other row; draw lines for all table cells.
+		* Add "showcells showborder" to visualize cell borders 
+		*/
+
+		/* Place the table instance */
+		result = p.fit_table(tbl, llx, lly, urx, ury, optlist.str());
+		if (result == L"_error") {
+			std::wcerr << L"Couldn't place table: " << p.get_errmsg() << std::endl;
+			return 2;
+		}
+
+		p.end_page_ext(L"");
+
+	} while (result == L"_boxfull");
+
+	/* Check the result; "_stop" means all is ok. */
+	if (result != L"_stop") {
+		if (result == L"_error") {
+			std::wcerr << L"Error when placing table: " << p.get_errmsg()
+				<< std::endl;
+			return 2;
+		}
+		else {
+			/* Any other return value is a user exit caused by
+			* the "return" option; this requires dedicated code to
+			* deal with.
+			*/
+			std::wcerr << L"User return found in Textflow" << std::endl;
+			return 2;
+		}
+	}
+	/* This will also delete Textflow handles used in the table */
+	p.delete_table(tbl, L"");
+
+
+	CFile::Remove(fptmp);
+
+	return 0;
+
+
+
+
+}
+
+
+
+
 int pdfd(CString outfile, CanalyzerDoc *padoc)
 {
 	const std::wstring searchpath = L"../data";
 
 	const std::wstring temppdf = L"temp.pdf";
 
-	CSize szimg(800,600);
+	//CSize szimg(800,600);
 	//CSize szimg(1200,900);
 	//CSize szimg(600,450);
 
-	CString fptmp=L"temp.bmp";
+	//CString fptmp=L"temp.bmp";
 
 
 	pdflib::PDFlib p;
@@ -2562,26 +2765,43 @@ int pdfd(CString outfile, CanalyzerDoc *padoc)
 
 
 
+	std::vector<PlotData> pdl;
+	pdl.assign(padoc->lp.begin(),padoc->lp.end());
+	pdl.resize(padoc->rp.size()+padoc->lp.size());
+	std::copy_backward(padoc->rp.begin(),padoc->rp.end(),pdl.end());
 
-	for(size_t i=0;i<padoc->rp.size();i++){
-		CString str;
-		str.LoadStringW(IDS_STRING_TEST_CURVE);
+	CString str;
+	str.LoadStringW(IDS_STRING_VOLTAMMOGRAM);
+	std::vector<CString> nl;
+	nl.assign(padoc->lp.size(),str);
+	str.LoadStringW(IDS_STRING_TEST_CURVE);
+	nl.resize(padoc->rp.size()+padoc->lp.size(),str);
+	
 
-		padoc->SaveImage(padoc->rp[i],szimg,fptmp);
-		imgout(p,(LPCWSTR)fptmp,str);
-	}
-
-	for(size_t i=0;i<padoc->lp.size();i++){
-		CString str;
-		str.LoadStringW(IDS_STRING_VOLTAMMOGRAM);
-
-		padoc->SaveImage(padoc->lp[i],szimg,fptmp);
-		imgout(p,(LPCWSTR)fptmp,str);
-	}
+	a=imgout2(p,padoc,pdl,nl);
 
 
 
-	CFile::Remove(fptmp);
+
+	//for(size_t i=0;i<padoc->rp.size();i++){
+	//	CString str;
+	//	str.LoadStringW(IDS_STRING_TEST_CURVE);
+
+	//	padoc->SaveImage(padoc->rp[i],szimg,fptmp);
+	//	imgout(p,(LPCWSTR)fptmp,str);
+	//}
+
+	//for(size_t i=0;i<padoc->lp.size();i++){
+	//	CString str;
+	//	str.LoadStringW(IDS_STRING_VOLTAMMOGRAM);
+
+	//	padoc->SaveImage(padoc->lp[i],szimg,fptmp);
+	//	imgout(p,(LPCWSTR)fptmp,str);
+	//}
+
+
+
+	//CFile::Remove(fptmp);
 
 	//p.end_document(L"");
 

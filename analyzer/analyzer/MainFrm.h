@@ -90,6 +90,7 @@ public:
 	afx_msg void OnAnalysisAbortanalysis();
 	afx_msg void OnAnalysisPause();
 	CMenu cume;
+	afx_msg void OnUpdateAnalysisReport(CCmdUI *pCmdUI);
 };
 
 

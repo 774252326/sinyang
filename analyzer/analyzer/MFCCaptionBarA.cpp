@@ -15,7 +15,9 @@ IMPLEMENT_DYNAMIC(CMFCCaptionBarA, CMFCCaptionBar)
 	: timer(0)
 	, x(0)
 	, ecWidth(50)
-	, strblank(_T("                     "))
+	, strblank(_T("                                        "))
+	, fontheight(-14)
+	, flashms(500)
 {
 
 }
@@ -34,7 +36,7 @@ BEGIN_MESSAGE_MAP(CMFCCaptionBarA, CMFCCaptionBar)
 	ON_MESSAGE(MESSAGE_WAIT_RESPONSE, &CMFCCaptionBarA::OnMessageWaitResponse)
 	ON_MESSAGE(MESSAGE_OVER, &CMFCCaptionBarA::OnMessageOver)
 
-	ON_BN_CLICKED(IDS_BUTTON_CAPTION_CHECKBOX, &CMFCCaptionBarA::BtnClicked)
+	//ON_BN_CLICKED(IDS_BUTTON_CAPTION_CHECKBOX, &CMFCCaptionBarA::BtnClicked)
 	ON_MESSAGE(MESSAGE_READY, &CMFCCaptionBarA::OnMessageReady)
 	ON_MESSAGE(MESSAGE_OVER_H, &CMFCCaptionBarA::OnMessageOverH)
 END_MESSAGE_MAP()
@@ -65,23 +67,23 @@ int CMFCCaptionBarA::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 
 
-	if( bn.Create(_T(""), WS_CHILD|/*WS_VISIBLE|*/BS_AUTOCHECKBOX, CRect(0,0,12,12), this, IDS_BUTTON_CAPTION_CHECKBOX) ==FALSE)
-		return -1;
+	//if( bn.Create(_T(""), WS_CHILD|/*WS_VISIBLE|*/BS_AUTOCHECKBOX, CRect(0,0,12,12), this, IDS_BUTTON_CAPTION_CHECKBOX) ==FALSE)
+		//return -1;
 
 	return 0;
 }
 
 
-void CMFCCaptionBarA::OnShowWindow(BOOL bShow, UINT nStatus)
-{
-	CMFCCaptionBar::OnShowWindow(bShow, nStatus);
-
-	// TODO: Add your message handler code here
-	//CRect rect1=this->GetButtonRect();
-
-	//ec.SetRect(CRect(10, rect1.top, 100, rect1.bottom));
-
-}
+//void CMFCCaptionBarA::OnShowWindow(BOOL bShow, UINT nStatus)
+//{
+//	CMFCCaptionBar::OnShowWindow(bShow, nStatus);
+//
+//	// TODO: Add your message handler code here
+//	//CRect rect1=this->GetButtonRect();
+//
+//	//ec.SetRect(CRect(10, rect1.top, 100, rect1.bottom));
+//
+//}
 
 
 void CMFCCaptionBarA::OnSize(UINT nType, int cx, int cy)
@@ -121,44 +123,44 @@ int CMFCCaptionBarA::SetEdit(void)
 	//st.MoveWindow(&strect);
 
 
-	CRect bnrect;
-	bn.GetWindowRect(&bnrect);
-	bnrect.MoveToXY(bRect.left,bRect.CenterPoint().y-bnrect.Height()/2);
-	bn.MoveWindow(&bnrect);
+	//CRect bnrect;
+	//bn.GetWindowRect(&bnrect);
+	//bnrect.MoveToXY(bRect.left,bRect.CenterPoint().y-bnrect.Height()/2);
+	//bn.MoveWindow(&bnrect);
 
 
 	return 0;
 }
 
 
-int CMFCCaptionBarA::HideEdit(void)
-{
-	//ec.ShowWindow(SW_HIDE);
-	return 0;
-}
+//int CMFCCaptionBarA::HideEdit(void)
+//{
+//	//ec.ShowWindow(SW_HIDE);
+//	return 0;
+//}
 
 
-int CMFCCaptionBarA::ShowButton(bool bShow)
-{
-	//if(bShow){
-	//	CString strTemp;
-	//	//ASSERT
-	//	(strTemp.LoadString(IDS_CAPTION_BUTTON));
-	//	//SetButton(strTemp, ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_RIGHT, FALSE);
-	//	SetButton(strTemp, ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_LEFT, FALSE);
-	//	EnableButton();
-	//}
-	//else{
-
-	//	//SetButton(L" ", ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_RIGHT, FALSE);
-	//	SetButton(L" ", ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_LEFT, FALSE);
-	//	EnableButton(FALSE);
-	//	Invalidate();
-	//}
-
-
-	return 0;
-}
+//int CMFCCaptionBarA::ShowButton(bool bShow)
+//{
+//	//if(bShow){
+//	//	CString strTemp;
+//	//	//ASSERT
+//	//	(strTemp.LoadString(IDS_CAPTION_BUTTON));
+//	//	//SetButton(strTemp, ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_RIGHT, FALSE);
+//	//	SetButton(strTemp, ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_LEFT, FALSE);
+//	//	EnableButton();
+//	//}
+//	//else{
+//
+//	//	//SetButton(L" ", ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_RIGHT, FALSE);
+//	//	SetButton(L" ", ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_LEFT, FALSE);
+//	//	EnableButton(FALSE);
+//	//	Invalidate();
+//	//}
+//
+//
+//	return 0;
+//}
 
 
 int CMFCCaptionBarA::SetTextA(CString str, bool bFlash)
@@ -170,7 +172,7 @@ int CMFCCaptionBarA::SetTextA(CString str, bool bFlash)
 	//SetText(str, CMFCCaptionBar::ALIGN_RIGHT);
 	SetText(str, CMFCCaptionBar::ALIGN_LEFT);
 	if(bFlash){
-		timer=SetTimer(1,500,NULL);
+		timer=SetTimer(1,flashms,NULL);
 
 		//FlashWindowEx(FLASHW_ALL,1000,500);
 	}
@@ -212,18 +214,6 @@ void CMFCCaptionBarA::DoDataExchange(CDataExchange* pDX)
 
 }
 
-void CMFCCaptionBarA::OnDrawButton(
-	CDC* pDC,
-	CRect rect,
-	const CString& strButton,
-	BOOL bEnabled 
-	)
-{
-	if(bEnabled)
-		CMFCCaptionBar::OnDrawButton(pDC, rect, strButton, bEnabled);
-	else
-		CMFCCaptionBar::OnDrawButton(pDC, rect, L" ", bEnabled);
-}
 
 void CMFCCaptionBarA::ShowMessageRunning(void)
 {
@@ -239,7 +229,7 @@ void CMFCCaptionBarA::ShowMessage(CString str)
 	EnableButton(FALSE);
 	SetEdit();
 	ec.ShowWindow(SW_HIDE);
-	bn.ShowWindow(SW_HIDE);
+	//bn.ShowWindow(SW_HIDE);
 	SetTextA(str);
 	this->ShowWindow(SW_SHOW);
 	this->GetParentFrame()->RecalcLayout(FALSE);
@@ -248,16 +238,36 @@ void CMFCCaptionBarA::ShowMessage(CString str)
 
 void CMFCCaptionBarA::ShowMessageWithButton(CString str, double xv, bool bFlash)
 {
-	//for(int i=0;i<21;i++) str+=" ";
 	str+=strblank;
+	SetTextA(str,bFlash);
+
 	x=xv;
 	UpdateData(FALSE);
-	SetTextA(str,bFlash);
+	
 	EnableButton();
 	SetEdit();
 	ec.ShowWindow(SW_SHOW);
 	this->ShowWindow(SW_SHOW);
 	this->GetParentFrame()->RecalcLayout(FALSE);
+}
+
+
+
+void CMFCCaptionBarA::OnDrawButton(
+	CDC* pDC,
+	CRect rect,
+	const CString& strButton,
+	BOOL bEnabled 
+	)
+{
+	if(bEnabled){
+		//rect.left+=ecWidth+this->GetMargin();
+		//rect.right+=ecWidth+this->GetMargin();
+		CMFCCaptionBar::OnDrawButton(pDC, rect, strButton, bEnabled);
+	}
+	else{
+		CMFCCaptionBar::OnDrawButton(pDC, rect, L" ", bEnabled);
+	}
 }
 
 
@@ -267,6 +277,24 @@ void CMFCCaptionBarA::OnDrawText(
 	const CString& strText 
 	)
 {
+	CFont font;
+
+	CFont *pfnt=pDC->GetCurrentFont();
+
+	LOGFONT lgft;
+	pfnt->GetLogFont(&lgft);
+
+	lgft.lfHeight=fontheight;
+
+	font.CreateFontIndirectW(&lgft);
+	pDC->SelectObject(&font);
+
+	CSize sz=pDC->GetTextExtent(strText);
+
+	rect.right=rect.left+sz.cx;
+	rect.top=rect.CenterPoint().y-sz.cy/2;
+	rect.bottom=rect.top+sz.cy;
+
 	if(ec.IsWindowVisible()){
 		rect.right-=ecWidth;
 		rect.right-=this->GetMargin();
@@ -277,6 +305,8 @@ void CMFCCaptionBarA::OnDrawText(
 	else{
 		CMFCCaptionBar::OnDrawText(pDC, rect, strText);
 	}
+
+	font.DeleteObject();
 }
 
 afx_msg LRESULT CMFCCaptionBarA::OnMessageBusy(WPARAM wParam, LPARAM lParam)
@@ -317,22 +347,22 @@ afx_msg LRESULT CMFCCaptionBarA::OnMessageOver(WPARAM wParam, LPARAM lParam)
 }
 
 
-void CMFCCaptionBarA::BtnClicked(void)
-{
-	//bool bCheck=bn.GetCheck();
-
-	CString str;
-
-	//if(bCheck){
-		//str=rightPlotFile1;
-	//}
-	//else{
-		//str=rightPlotFile0;
-	//}
-
-	::SendMessageW(this->GetParentFrame()->GetSafeHwnd(), MESSAGE_SWITCH_FIGURE, (WPARAM)str.GetBuffer(), NULL);
-
-}
+//void CMFCCaptionBarA::BtnClicked(void)
+//{
+//	//bool bCheck=bn.GetCheck();
+//
+//	CString str;
+//
+//	//if(bCheck){
+//		//str=rightPlotFile1;
+//	//}
+//	//else{
+//		//str=rightPlotFile0;
+//	//}
+//
+//	::SendMessageW(this->GetParentFrame()->GetSafeHwnd(), MESSAGE_SWITCH_FIGURE, (WPARAM)str.GetBuffer(), NULL);
+//
+//}
 
 
 afx_msg LRESULT CMFCCaptionBarA::OnMessageReady(WPARAM wParam, LPARAM lParam)
@@ -359,6 +389,6 @@ afx_msg LRESULT CMFCCaptionBarA::OnMessageOverH(WPARAM wParam, LPARAM lParam)
 
 	ShowMessage(strTemp);
 	SetEdit();
-	bn.ShowWindow(SW_SHOW);
+	//bn.ShowWindow(SW_SHOW);
 	return 0;
 }

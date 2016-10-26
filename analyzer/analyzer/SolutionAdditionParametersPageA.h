@@ -1,7 +1,7 @@
 #pragma once
 
 #include "SAPara.h"
-#include "EditList.h"
+//#include "EditList.h"
 
 #include "ListCtrlSAP.h"
 
@@ -32,7 +32,7 @@ public:
 	//CEditList m_SAPlist;
 	//virtual BOOL OnInitDialog();
 	//afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-	void BuildList(int width);
+//	void BuildList(int width);
 	//afx_msg void OnItemchangedList(NMHDR* pNMHDR, LRESULT* pResult);
 
 	CStatic stt;

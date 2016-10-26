@@ -73,9 +73,9 @@ CString flistlist[]={
 
 
 void WaitSecond(ProcessState &waitflg
-	//,int second=-1
+	,int second=-1
 	//,int second=2
-	,int second=0
+	//,int second=0
 	)
 {
 	int interval=1000;

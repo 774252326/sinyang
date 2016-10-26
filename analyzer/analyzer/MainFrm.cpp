@@ -48,6 +48,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_COMMAND(ID_ANALYSIS_STARTANALYSIS, &CMainFrame::OnAnalysisStartanalysis)
 	ON_COMMAND(ID_ANALYSIS_ABORTANALYSIS, &CMainFrame::OnAnalysisAbortanalysis)
 	ON_COMMAND(ID_ANALYSIS_PAUSE, &CMainFrame::OnAnalysisPause)
+	ON_UPDATE_COMMAND_UI(ID_ANALYSIS_REPORT, &CMainFrame::OnUpdateAnalysisReport)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -680,4 +681,11 @@ void CMainFrame::OnAnalysisPause()
 		SuspendThread(pWriteA->m_hThread);	
 		bWaiting=true;
 	}
+}
+
+
+void CMainFrame::OnUpdateAnalysisReport(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->Enable(pst==stop);
 }

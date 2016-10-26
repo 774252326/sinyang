@@ -5,7 +5,7 @@
 #include "analyzer.h"
 #include "PlotSettingPageA.h"
 #include "afxdialogex.h"
-#include "ColorButton.h"
+//#include "ColorButton.h"
 
 #include "func.h"
 
@@ -116,7 +116,7 @@ int PlotSettingPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	CComboBox *pCombo;
 	CStatic *pStatic;
 	CEdit *pEdit;
-	CColorButton *pColorButton;
+	//CColorButton *pColorButton;
 	CString str;
 
 
@@ -144,7 +144,7 @@ int PlotSettingPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		IDS_COMBO_COLOR_STYLE);
 
 
-	for(int i=IDS_STRING_COLOR_TYPE_0;i<=IDS_STRING940;i++){
+	for(int i=IDS_STRING_COLOR_TYPE_0;i<=IDS_STRING_COLOR_TYPE_0+2;i++){
 		//str.Format(L"%d",i);
 		str.LoadStringW(i);
 		pCombo->AddString(str);
