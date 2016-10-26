@@ -76,7 +76,7 @@ IMPLEMENT_DYNAMIC(CUpDlg, CDialog)
 {
 
 	m_xbottom = 0.1;
-	m_xtop = 299.9;
+	m_xtop = 300.0;
 	m_fileName = _T("");
 	m_n = 3000;
 	m_xmin = 0.0;
@@ -159,12 +159,18 @@ void CUpDlg::OnPaint()
 	ScreenToClient(&plotrect);
 	CPen pen;
 	long i;
+	double kk=IsDlgButtonChecked(IDC_CHECK2)?-1:1;
 	if (isLoad){
 		UpdateData();
 
 		if( DrawAxis2(plotrect,&dc) ){
 			DrawCursor(plotrect,&dc);
 			DrawCurve(plotrect, &dc);
+
+				//pen.CreatePen(PS_SOLID,1,black);
+				//DrawDiff(plotrect,&dc,&pen,m_xbottom,m_xtop);
+				//pen.DeleteObject();
+
 			if(isSmooth){
 				DrawSmoothCurve(plotrect,&dc);
 
@@ -172,13 +178,13 @@ void CUpDlg::OnPaint()
 
 				pen.CreatePen(PS_DASH,1,green);			
 				for(i=1;i<=nlmx;i++){
-					DrawVLine(plotrect,&dc,&pen,nxlmx[i]);
+					DrawVLine(plotrect,&dc,&pen,kk*nxlmx[i]);
 					//DrawVLine(plotrect,&dc,&pen,lmx[i][1]);
 				}
 				pen.DeleteObject();
 				pen.CreatePen(PS_DASH,1,cyan);			
 				for(i=1;i<=nlmn;i++){
-					DrawVLine(plotrect,&dc,&pen,nxlmn[i]);
+					DrawVLine(plotrect,&dc,&pen,kk*nxlmn[i]);
 					//DrawVLine(plotrect,&dc,&pen,lmn[i][1]);
 				}
 				pen.DeleteObject();
@@ -188,6 +194,8 @@ void CUpDlg::OnPaint()
 				//	DrawVLine(plotrect,&dc,&pen,xknee[i]);
 				//}
 				//pen.DeleteObject();
+
+
 
 
 			}
@@ -205,8 +213,10 @@ void CUpDlg::OnPaint()
 				pen.CreatePen(PS_DASH,1,magenta);
 				//if(!IsDlgButtonChecked(IDC_CHECK2)){
 				for(i=1;i<=nknee;i++){
-					DrawVLine(plotrect,&dc,&pen,xknee[i]);
+					DrawVLine(plotrect,&dc,&pen,kk*xknee[i]);
 				}
+
+
 
 				//}
 				//else{
@@ -216,6 +226,10 @@ void CUpDlg::OnPaint()
 				//}
 				pen.DeleteObject();
 
+
+				pen.CreatePen(PS_SOLID,1,black);
+				DrawDiff(plotrect,&dc,&pen,m_xbottom,xknee[1]);
+				pen.DeleteObject();
 
 			}
 
@@ -303,22 +317,24 @@ void CUpDlg::OnBnClickedButton2()
 
 
 			///////////////////////////////////////////////////
-			//xknee=getkneep(nc,xbreak,nd,&nknee,xp,nlcm,nlmx,nlmn);
-
+			xknee=getkneep(nc,nx,nd,&nknee,xp,nlcm,nlmx,nlmn);
+			//if(IsDlgButtonChecked(IDC_CHECK2) ){
+			//restorenx(xkm,nknee,-m_xtop,-m_xbottom,xknee);
+			//scalevt(xknee,nknee,xknee,-1.0);
+			//}
 
 			//xknee=getkpD(lmx,nlmx,lmn,nlmn,&nknee,nx[nd],nys[nd],xp);
 
-			double **xkm=getkneepD(lmx,nlmx,lmn,nlmn,&nknee,nx[nd],nys[nd],xp);
-			xknee=vector<double>(1,nknee);
+			//double **xkm=getkneepD(lmx,nlmx,lmn,nlmn,&nknee,nx[nd],nys[nd],xp);
+			//xknee=vector<double>(1,nknee);
 
-
-			if(IsDlgButtonChecked(IDC_CHECK2) ){
-				restorenx(xkm,nknee,-m_xtop,-m_xbottom,xknee);
-				scalevt(xknee,nknee,xknee,-1.0);
-			}
-			else{
-				restorenx(xkm,nknee,m_xbottom,m_xtop,xknee);
-			}
+			//if(IsDlgButtonChecked(IDC_CHECK2) ){
+			//	restorenx(xkm,nknee,-m_xtop,-m_xbottom,xknee);
+			//	scalevt(xknee,nknee,xknee,-1.0);
+			//}
+			//else{
+			//	restorenx(xkm,nknee,m_xbottom,m_xtop,xknee);
+			//}
 			if(xknee==NULL)
 				AfxMessageBox(L"no knee point! reduce threshold and try again");
 			/////////////////////////////////////////////////////////////////////////////////////////
@@ -360,6 +376,8 @@ void CUpDlg::OnBnClickedButton2()
 	//xp=tmp[1];
 	//chisq=tmp[3];
 
+	chisq=xknee[1];
+
 	UpdateData(false);
 
 	isFit=true;
@@ -381,73 +399,63 @@ void CUpDlg::OnBnClickedButton3()
 
 		m_xbottom=x[startind];
 		m_xtop=x[endind];
-
 		UpdateData(false);
 
 		//long nd;
 		//nd=m_n;
 		nd=endind-startind+1;
-		ys=vector<double>(1,nd);
-		//coefs=matrix<double>(1,nd-1,1,4);
-		//xbreak=vector<double>(1,nd);
-
-		if(IsDlgButtonChecked(IDC_CHECK1)){
-			//loregR(y,m_n,m_span,m_degree,ys);
-			loregR(&y[startind-1],nd,m_span,m_degree,ys);
-		}
-		else{
-			//loreg(y,m_n,m_span,m_degree,ys);
-			loreg(&y[startind-1],nd,m_span,m_degree,ys);
-			//smoothspline(y,m_n,m_m,ys);
-
-			/////////////////////smoothing spline///////////////////////////
-			//long i,j;
-			//bool flg;
-			//double za,zb;
-			////m_m=0.999;
-			////double *nlcm;
-			//double *lcm;
-			//long lmx,lmn;
-			////double **nc;
-			//nc=matrix<double>(1,nd-1,1,4);
-			//double pa1=1,pa0=0;
 
 
-			//smspl2(x+startind,y+startind,nd,m_m,coefs,xbreak);
-			//lcm=getlcm(coefs,xbreak,nd,&lmx,&lmn);
-			//normalizecoef(coefs,xbreak,nd,lcm,lmx,lmn,nc);
-			//nlcm=getlcm(nc,xbreak,nd,&nlmx,&nlmn);
+
+		/////////////////////////////////local regression///////////////////////////////////////
+		//ys=vector<double>(1,nd);
+		//if(IsDlgButtonChecked(IDC_CHECK1)){
+		//	//loregR(y,m_n,m_span,m_degree,ys);
+		//	loregR(&y[startind-1],nd,m_span,m_degree,ys);
+		//}
+		//else{
+		//	//loreg(y,m_n,m_span,m_degree,ys);
+		//	loreg(&y[startind-1],nd,m_span,m_degree,ys);
+		//}
+		///////////////////////////////////end////////////////////////////////////
 
 
-			////////////////////////////////////pa automation////////////////////////
-			//while( pa1-pa0>0.0001 || flg ){
-			//smspl2(&x[startind],&y[startind],nd,(pa1+pa0)/2,coefs,xbreak);
-			//smspl2(x,y,nd,(pa1+pa0)/2,coefs,xbreak);
-			//lcm=getlcm(coefs,xbreak,nd,&lmx,&lmn);
-			//normalizecoef(coefs,xbreak,nd,lcm,lmx,lmn,nc);
-			//nlcm=getlcm(nc,xbreak,nd,&nlmx,&nlmn);
-			//flg=chkpt(nc,xbreak,nd,nlcm,nlmx,nlmn,m_m/3000.0);
+		//smoothspline(y,m_n,m_m,ys);
 
-			//if(flg)
-			//pa1=(pa0+pa1)/2;
-			//else
-			//pa0=(pa0+pa1)/2;
+		/////////////////////smoothing spline///////////////////////////
+		coefs=matrix<double>(1,nd-1,1,4);
+		xbreak=vector<double>(1,nd);
 
-			//}
-
-			//////////////////////////////////////////////////////////////////////
+		double pa1=1,pa0=0;
 
 
-			//nxlmx=vector<double>(1,nlmx);
-			//copyvt(nlcm,nlmx,nxlmx);
-			//nxlmn=vector<double>(1,nlmn);
-			//copyvt(&nlcm[nlmx],nlmn,nxlmn);
+		smspl2(&x[startind-1],&y[startind-1],nd,m_m,coefs,xbreak);
 
-			//xknee=getkneep(nc,xbreak,nd,&nknee,xp,nlcm,nlmx,nlmn);
 
-		}
-		isSmooth=true;
 
+		////////////////////////////////////pa automation////////////////////////
+		//while( pa1-pa0>0.0001 || flg ){
+		//smspl2(&x[startind],&y[startind],nd,(pa1+pa0)/2,coefs,xbreak);
+		//smspl2(x,y,nd,(pa1+pa0)/2,coefs,xbreak);
+		//lcm=getlcm(coefs,xbreak,nd,&lmx,&lmn);
+		//normalizecoef(coefs,xbreak,nd,lcm,lmx,lmn,nc);
+		//nlcm=getlcm(nc,xbreak,nd,&nlmx,&nlmn);
+		//flg=chkpt(nc,xbreak,nd,nlcm,nlmx,nlmn,m_m/3000.0);
+
+		//if(flg)
+		//pa1=(pa0+pa1)/2;
+		//else
+		//pa0=(pa0+pa1)/2;
+
+		//}
+
+		////////////////////////////////end//////////////////////////////////////
+
+
+
+
+		//////////////////////////normalize and get local maximum and minimum//////////////////////////////////////
+		///////////////////////////////////////////		/////////////////////////////////////////////
 		//double * y2=vector<double>(1,m_n);
 		//spline(x,ys,m_n,1e30,1e30,y2);
 
@@ -456,65 +464,111 @@ void CUpDlg::OnBnClickedButton3()
 
 		//xp=maxind(y2,m_n);
 
-		////////////////////////////////////////////////////////////////
-		nys=vector<double>(1,nd);
-		nx=vector<double>(1,nd);
-		if(IsDlgButtonChecked(IDC_CHECK3)){
-			scalevt(ys,nd,nys,-1.0);
-		}
-		else{
-			scalevt(ys,nd,nys,+1.0);
-		}
+		////////////////////////////////////////////////for local regression and robust local regression//////////////////////////////////////////////////////////
+		//nys=vector<double>(1,nd);
+		//nx=vector<double>(1,nd);
+		//if(IsDlgButtonChecked(IDC_CHECK3)){
+		//	scalevt(ys,nd,nys,-1.0);
+		//}
+		//else{
+		//	scalevt(ys,nd,nys,+1.0);
+		//}
 
-		if(IsDlgButtonChecked(IDC_CHECK2)){
-			scalevt(&x[startind-1],nd,nx,-1.0);
-			reversevt(nx,nd);
-			reversevt(nys,nd);
-		}
-		else{
-			scalevt(&x[startind-1],nd,nx,+1.0);
-		}
-
-
-		norvt(nx,nys,nd,nx,nys);
-		long i;
-
-		for(i=1;i<=nd;i++){
-			nys[i]-=nx[i];
-		}
-
-		//double **lmx;
-		//long nlmx;
-		lmx=getlmxD(nx,nys,nd,&nlmx);
-
-		nxlmx=vector<double>(1,nlmx);
+		//if(IsDlgButtonChecked(IDC_CHECK2)){
+		//	scalevt(&x[startind-1],nd,nx,-1.0);
+		//	reversevt(nx,nd);
+		//	reversevt(nys,nd);
+		//}
+		//else{
+		//	scalevt(&x[startind-1],nd,nx,+1.0);
+		//}
 
 
-		if(IsDlgButtonChecked(IDC_CHECK2)){
-			restorenx(lmx,nlmx,-m_xtop,-m_xbottom,nxlmx);
-			scalevt(nxlmx,nlmx,nxlmx,-1.0);
-		}
-		else{
-			restorenx(lmx,nlmx,m_xbottom,m_xtop,nxlmx);
-		}
+		//norvt(nx,nys,nd,nx,nys);
+		//long i;
 
-		//double **lmn;
-		//long nlmn;
-		lmn=getlmnD(nx,nys,nd,&nlmn);
+		//for(i=1;i<=nd;i++){
+		//	nys[i]-=nx[i];
+		//}
 
-		nxlmn=vector<double>(1,nlmn);
+		////double **lmx;
+		////long nlmx;
+		//lmx=getlmxD(nx,nys,nd,&nlmx);
+
+		//nxlmx=vector<double>(1,nlmx);
 
 
-		if(IsDlgButtonChecked(IDC_CHECK2)){
-			restorenx(lmn,nlmn,-m_xtop,-m_xbottom,nxlmn);
-			scalevt(nxlmn,nlmn,nxlmn,-1.0);
-		}
-		else{
-			restorenx(lmn,nlmn,m_xbottom,m_xtop,nxlmn);
-		}
+		//if(IsDlgButtonChecked(IDC_CHECK2)){
+		//	restorenx(lmx,nlmx,-m_xtop,-m_xbottom,nxlmx);
+		//	scalevt(nxlmx,nlmx,nxlmx,-1.0);
+		//}
+		//else{
+		//	restorenx(lmx,nlmx,m_xbottom,m_xtop,nxlmx);
+		//}
+
+		////double **lmn;
+		////long nlmn;
+		//lmn=getlmnD(nx,nys,nd,&nlmn);
+
+		//nxlmn=vector<double>(1,nlmn);
+
+
+		//if(IsDlgButtonChecked(IDC_CHECK2)){
+		//	restorenx(lmn,nlmn,-m_xtop,-m_xbottom,nxlmn);
+		//	scalevt(nxlmn,nlmn,nxlmn,-1.0);
+		//}
+		//else{
+		//	restorenx(lmn,nlmn,m_xbottom,m_xtop,nxlmn);
+		//}
 
 		/////////////////////////////////////////////////////////////////////////
 
+		//////////////////////////////////////////for smoothing spline///////////////////////////////////////////
+		long i,j;
+		bool flgx,flgy;
+		double za,zb;
+		//m_m=0.999;
+		//double *nlcm;
+		double *lcm;
+		long lmx,lmn;
+		//double **nc;
+		nc=matrix<double>(1,nd-1,1,4);
+		nx=vector<double>(1,nd);
+
+		flipFunc(coefs,xbreak,nd,nc,nx,IsDlgButtonChecked(IDC_CHECK2),IsDlgButtonChecked(IDC_CHECK3));
+
+		lcm=getlcm(nc,nx,nd,&lmx,&lmn);
+
+		//AfxMessageBox(L"no elbow point! reduce threshold and try again");
+
+		//for(i=1;i<=lmx+lmn;i++)
+		//	TRACE("%f,",lcm[i]);
+		//TRACE("\n");
+
+		normalizecoef(nc,nx,nd,lcm,lmx,lmn,nc);
+		nlcm=getlcm(nc,nx,nd,&nlmx,&nlmn);
+
+
+		nxlmx=vector<double>(1,nlmx);
+		copyvt(nlcm,nlmx,nxlmx);
+		nxlmn=vector<double>(1,nlmn);
+		copyvt(&nlcm[nlmx],nlmn,nxlmn);
+
+		//for(i=1;i<=nlmx;i++)
+		//	TRACE("%f,",nxlmx[i]);
+		//TRACE("\n");
+		//for(i=1;i<=nlmn;i++)
+		//	TRACE("%f,",nxlmn[i]);
+		//TRACE("\n");
+
+		//xknee=getkneep(nc,xbreak,nd,&nknee,xp,nlcm,nlmx,nlmn);
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+		isSmooth=true;
+
+		chisqpp=nlmx;
+		UpdateData(false);
 		Invalidate();
 	}
 
@@ -951,6 +1005,7 @@ bool CUpDlg::DrawAxis2(CRect rect, CPaintDC * dc)
 		}
 
 
+
 		float resoy=pow(10.0,calgrid(m_ymax-m_ymin));
 
 		for(gridi=resoy*ceil(m_ymin/resoy);gridi<=m_ymax;gridi+=resoy){
@@ -966,6 +1021,18 @@ bool CUpDlg::DrawAxis2(CRect rect, CPaintDC * dc)
 
 			dc->TextOutW(rect.left-lc-sz.cx,tmp-sz.cy/2,str);
 		}
+
+		font.DeleteObject();
+		font.CreatePointFont(200,L"MS Gothic",NULL);
+
+		str.Format(L"time(s)");
+		dc->SelectObject(&font);
+		sz=dc->GetTextExtent(str);
+		dc->TextOutW(rect.right-sz.cx,rect.bottom-sz.cy,str);
+		str.Format(L"current(A)");
+		dc->SelectObject(&font);
+		sz=dc->GetTextExtent(str);
+		dc->TextOutW(rect.left,rect.top,str);
 
 		dc->SelectObject(pOldPen);
 		pen.DeleteObject();
@@ -1039,10 +1106,10 @@ bool CUpDlg::DrawSmoothCurve(CRect rect, CPaintDC * dc)
 		CPen pen(PS_SOLID, 1, yellow);
 
 		long startind=findbottomidx(x,m_n,m_xbottom);
-		DrawPolyline(rect,dc,&pen,&x[startind-1],ys,nd);
+		//DrawPolyline(rect,dc,&pen,&x[startind-1],ys,nd);
 
-		//DrawFunc(rect,dc,&pen);
-
+		DrawFunc(rect,dc,&pen);
+		//DrawFunc2(rect,dc,&pen);
 		pen.DeleteObject();
 
 		return true;
@@ -1120,4 +1187,73 @@ void CUpDlg::DrawFunc(CRect rect, CPaintDC * dc, CPen * pPen)
 
 
 	dc->SelectObject(pOldPen);
+}
+
+void CUpDlg::DrawFunc2(CRect rect, CPaintDC * dc, CPen * pPen)
+{
+	CPen * pOldPen=dc->SelectObject(pPen);
+
+	double tmpx=xRsl(rect.left);
+	double tmpy=ppval(nc,nx,nd,tmpx);
+	CPoint ptt=ptRsl(tmpx, tmpy, rect);
+	dc->MoveTo(ptt);
+	long i;
+
+	for (i=rect.left+1; i<=rect.right; i++){
+
+		tmpx=xRsl(i);
+		tmpy=ppval(nc,nx,nd,tmpx);
+
+		ptt=ptRsl(tmpx,tmpy,rect);
+		dc->LineTo(ptt);
+		//TRACE("%d,",i);
+	}
+
+
+
+	dc->SelectObject(pOldPen);
+}
+
+void CUpDlg::DrawDiff(CRect rect, CPaintDC * dc, CPen * pPen, double x1, double x2)
+{
+	CPen* pOldPen=dc->SelectObject(pPen);
+
+	CPoint cp=rect.CenterPoint();
+
+	long xp1=ptRsl(x1,0,rect).x;
+	long xp2=ptRsl(x2,0,rect).x;
+	long leg=4;
+
+	long lp=7;
+
+	dc->MoveTo(xp1+leg,cp.y-leg);
+	dc->LineTo(xp1,cp.y);
+	dc->LineTo(xp1+leg,cp.y+leg);
+
+	dc->MoveTo(xp2-leg,cp.y-leg);
+	dc->LineTo(xp2,cp.y);
+	dc->LineTo(xp2-leg,cp.y+leg);
+
+	CFont font;
+	font.CreatePointFont(300,L"MS Gothic",NULL);
+
+	CString str;
+	CSize sz;
+	str.Format(L"%.1fs",x2-x1);
+	dc->SelectObject(&font);
+	sz=dc->GetTextExtent(str);
+
+
+	long xl=xp2-xp1-sz.cx;
+	if(xl>=2*lp){
+		dc->MoveTo(xp1,cp.y);
+		dc->LineTo(xp1+xl/2,cp.y);
+		dc->TextOutW(xp1+xl/2,cp.y-sz.cy/2,str);
+		dc->MoveTo(xp2,cp.y);
+		dc->LineTo(xp2-xl/2,cp.y);
+	}
+
+
+	dc->SelectObject(pOldPen);
+
 }

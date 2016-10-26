@@ -581,7 +581,7 @@ T *getlcm(T **c, T *xbreak, long nd, long *lmx, long *lmn){
 
 
 	T *lcm=vector<T>(1,lmx[0]+lmn[0]);
-	
+
 
 	if(lmx[0]>=1){
 		for(i=1;i<=lmx[0];i++){
@@ -632,6 +632,54 @@ void normalizecoef(T **c, T *xbreak, long nd, const T *lcm, long lmx, long lmn, 
 }
 
 
+
+template <typename T>
+void flipFunc(T **c, T *xbreak, long nd, T **nc, T *nxbreak, bool flagx, bool flagy){
+
+
+	long i;
+
+	if(flagy){/*flip y*/
+		//for(i=1;i<=nd-1;i++){
+		//	nc[i][1]=-c[i][1];
+		//	nc[i][2]=-c[i][2];
+		//	nc[i][3]=-c[i][3];
+		//	nc[i][4]=-c[i][4];
+		//	scalevt(c[i],4,nc[i],(T)(-1));
+		//}
+
+		scalemx(c,nd-1,4,nc,(T)(-1));
+
+	}
+	else{
+		copymx(c,nd-1,4,nc);
+	}
+
+	T a,c1,c2,c3,c4;
+
+	if(flagx){/*flip x*/
+
+		for(i=1;i<=nd-1;i++){
+			a=xbreak[i+1]-xbreak[i];
+			c1=nc[i][1];
+			c2=nc[i][2];
+			c3=nc[i][3];
+			c4=nc[i][4];
+			nc[i][1]=-c1;
+			nc[i][2]=3*a*c1+c2;
+			nc[i][3]=-3*a*a*c1-2*a*c2-c3;
+			nc[i][4]=c1*a*a*a+c2*a*a+c3*a+c4;
+		}
+		reversemx(nc,nd-1,4,true);
+
+		scalevt(xbreak,nd,nxbreak,(T)(-1));
+		reversevt(nxbreak,nd);
+	}
+	else{
+		copyvt(xbreak,nd,nxbreak);
+	}
+
+}
 
 
 #endif

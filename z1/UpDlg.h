@@ -128,5 +128,7 @@ public:
 	double *nys;
 	double **lmn;
 	double **lmx;
+	void DrawFunc2(CRect rect, CPaintDC * dc, CPen * pPen);
+	void DrawDiff(CRect rect, CPaintDC * dc, CPen * pPen, double x1, double x2);
 };
 
