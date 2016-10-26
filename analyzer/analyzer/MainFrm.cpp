@@ -16,7 +16,7 @@
 #include "tipsdlg.h"
 #include "CSpline.cpp"
 #include "AnalysisSetupPage.h"
-
+#include "C:\\Users\\G\\Dropbox\\W\\funT\\smsp.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -520,7 +520,7 @@ void CMainFrame::OnFileOpen()
 
 	fileDlg.m_ofn.lpstrFilter=L"Text File(*.txt)\0*.txt\0\0";
 
-	//if( fileDlg.DoModal()==IDOK)
+	if( fileDlg.DoModal()==IDOK)
 	{
 		dat.clear();
 		( (dlg1*)m_wndSplitter.GetPane(0,0) )->clear();
@@ -529,8 +529,8 @@ void CMainFrame::OnFileOpen()
 
 
 
-		CString m_filePath=L"C:\\Users\\r8anw2x\\Dropbox\\W\\data\\a.txt";
-		//CString m_filePath=fileDlg.GetPathName();
+		//CString m_filePath=L"C:\\Users\\r8anw2x\\Dropbox\\W\\data\\a.txt";
+		CString m_filePath=fileDlg.GetPathName();
 
 		//CString folderpath=fileDlg.GetFolderPath();
 		CString folderpath=m_filePath.Left(m_filePath.ReverseFind('\\'));
@@ -630,11 +630,7 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 			if( dat.empty() || stepCount>p3.saplist.size() ){
 				finishflag2=true;
 				KillTimer(timer1);
-				CString strTemp;
-				//ASSERT
-				(strTemp.LoadString(IDS_STRING_OVER));
-				m_wndCaptionBar.SetTextA(strTemp);
-				m_wndCaptionBar.ShowButton(false);
+
 
 
 
@@ -646,26 +642,30 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 				//( (dlg1*)m_wndSplitter.GetPane(0,1) )->ReadFile(L"af0.txt");
 				//( (dlg1*)m_wndSplitter.GetPane(0,1) )->showall();
 
-	CFile theFile;
-	theFile.Open(L"af.txt", CFile::modeRead);
-	CArchive archive(&theFile, CArchive::load);
-	PlotData pdat;
-	pdat.Serialize(archive);
-	archive.Close();
-	theFile.Close();
+				CFile theFile;
+				theFile.Open(L"af.txt", CFile::modeRead);
+				CArchive archive(&theFile, CArchive::load);
+				PlotData pdat;
+				pdat.Serialize(archive);
+				archive.Close();
+				theFile.Close();
 
-	double z;
-	
-		std::vector<double> y2(pdat.yll.size());
-		spline(pdat.xll,pdat.yll,1.0e30,1.0e30,y2);
 
-		splint(pdat.xll, pdat.yll, y2, p1.evaluationratio, z);
-	
+				std::vector<double> c1(4,0);
+				std::vector< std::vector<double> > c(pdat.xll.size()-1,c1);
+				smspl(pdat.xll,pdat.yll,1.0,c);
+				std::vector<double> r;
+				int ni=SolveCubicPP(pdat.xll,c,p1.evaluationratio,r);
 
-		CString str;
-		str.Format(L"%g",(double)z);
-		AfxMessageBox(str);
+				CString str;
+				str.Format(L" Vsupp=%g ml @ Ar/Ar0=%g Z=%g ml/L",r.back(), p1.evaluationratio, p3.saplist[0].Sconc/(1+p3.vmsvol/r.back()));
+				//AfxMessageBox(str);
 
+				CString strTemp;
+				//ASSERT
+				(strTemp.LoadString(IDS_STRING_OVER));
+				m_wndCaptionBar.SetTextA(strTemp+str);
+				m_wndCaptionBar.ShowButton(false);
 
 
 			}
