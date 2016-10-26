@@ -13,7 +13,7 @@ GLdouble px, py, pz, ro, pi, he;
 GLdouble xp, yp, zp, xa, ya;
 
 double kk=2;
-double dd=200;
+double dd=10;
 
 GLuint charlists;
 
@@ -48,11 +48,21 @@ void drawString(const char * str)
 	}
 }
 
+void drawCoordinate(float x,float y, float z)
+{
+	char buf[50];
+	//glColor3f(1.0f, 1.0f, 1.0f);
+	glRasterPos3d(x,y,z);
+	sprintf_s(buf,"%g,%g,%g",x,y,z);
+	drawString(buf);
+}
+
+
 void lighting1(){
 	GLfloat light1_ambient[] = { 0.0, 1.0, 0.0, 1.0 };
 	GLfloat light1_diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
 	GLfloat light1_specular[] = { 1.0, 1.0, 1.0, 1.0 };
-	GLfloat light1_position[] = { -0.0, -5.0, -5.0, 0.0 };
+	GLfloat light1_position[] = { -0.0, -5.0, 0.0, 0.0 };
 	GLfloat spot_direction[] = { 0.0, 1.0, -0.0 };
 	glLightfv(GL_LIGHT1, GL_AMBIENT, light1_ambient);
 	glLightfv(GL_LIGHT1, GL_DIFFUSE, light1_diffuse);
@@ -70,11 +80,11 @@ void lighting1(){
 }
 
 void lighting0(){
-	//GLfloat light_diffuse[] = { 1.0, 1.0, 01.0, 1.0 };
-	//GLfloat light_position[] = { 0.0, 0.0, 0.0, 1.0 };
+	GLfloat light_diffuse[] = { 1.0, 1.0, 01.0, 1.0 };
+	GLfloat light_position[] = { -1.0, 0.0, 01.0, 0.0 };
 	//GLfloat spot_direction[] = { 0.0, 0.0, -1.0 };
-	//glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-	//glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
 	//glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, spot_direction);
 	//glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 5.0);
 	glEnable(GL_LIGHT0);
@@ -82,58 +92,13 @@ void lighting0(){
 
 void lighting2(){
 	GLfloat light_diffuse[] = { 01.0, 01.0, 1.0, 1.0 };
-	GLfloat light_position[] = { 0.0, 50.0, 0.0, 1.0 };
+	GLfloat light_position[] = { 0.0, 0.0, 1.0, 1.0 };
 	//GLfloat spot_direction[] = { 0.0, 0.0, -1.0 };
 	glLightfv(GL_LIGHT2, GL_POSITION, light_position);
 	glLightfv(GL_LIGHT2, GL_DIFFUSE, light_diffuse);
 	//glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, spot_direction);
 	//glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 5.0);
 	glEnable(GL_LIGHT2);
-}
-
-void lighting3(){
-	GLfloat light_diffuse[] = { 01.0, 01.0, 1.0, 1.0 };
-	GLfloat light_position[] = { 0.0, 50.0, 20.0, 1.0 };
-	//GLfloat spot_direction[] = { 0.0, 0.0, -1.0 };
-	glLightfv(GL_LIGHT3, GL_POSITION, light_position);
-	glLightfv(GL_LIGHT3, GL_DIFFUSE, light_diffuse);
-	//glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, spot_direction);
-	//glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 5.0);
-	glEnable(GL_LIGHT3);
-}
-
-void lighting4(){
-	GLfloat light_diffuse[] = { 01.0, 01.0, 1.0, 1.0 };
-	GLfloat light_position[] = { 0.0, 50.0, -20.0, 1.0 };
-	//GLfloat spot_direction[] = { 0.0, 0.0, -1.0 };
-	glLightfv(GL_LIGHT4, GL_POSITION, light_position);
-	glLightfv(GL_LIGHT4, GL_DIFFUSE, light_diffuse);
-	//glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, spot_direction);
-	//glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 5.0);
-	glEnable(GL_LIGHT4);
-}
-
-
-void lighting5(){
-	GLfloat light_diffuse[] = { 01.0, 01.0, 1.0, 1.0 };
-	GLfloat light_position[] = { 0.0, 50.0, 40.0, 1.0 };
-	//GLfloat spot_direction[] = { 0.0, 0.0, -1.0 };
-	glLightfv(GL_LIGHT5, GL_POSITION, light_position);
-	glLightfv(GL_LIGHT5, GL_DIFFUSE, light_diffuse);
-	//glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, spot_direction);
-	//glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 5.0);
-	glEnable(GL_LIGHT5);
-}
-
-void lighting6(){
-	GLfloat light_diffuse[] = { 01.0, 01.0, 1.0, 1.0 };
-	GLfloat light_position[] = { 0.0, 50.0, -40.0, 1.0 };
-	//GLfloat spot_direction[] = { 0.0, 0.0, -1.0 };
-	glLightfv(GL_LIGHT6, GL_POSITION, light_position);
-	glLightfv(GL_LIGHT6, GL_DIFFUSE, light_diffuse);
-	//glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, spot_direction);
-	//glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 5.0);
-	glEnable(GL_LIGHT6);
 }
 
 void polarView(GLdouble distance, GLdouble twist, GLdouble elevation, GLdouble azimuth){
@@ -197,15 +162,11 @@ void init(void)
 	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
 	glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
 
-	glEnable(GL_LIGHTING);
+	//glEnable(GL_LIGHTING);
 
-	lighting0();
+	//lighting0();
 	//lighting1();
 	//lighting2();
-	//lighting3();
-	//lighting4();
-	//lighting5();
-	//lighting6();
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_NORMALIZE);
@@ -220,23 +181,20 @@ void init(void)
 
 	px=py=pz=ro=pi=he=0;
 
-	py=0.1;
-
-	xp=yp=xa=ya=0;zp=-1;
+	xp=yp=xa=ya=0;zp=-2;
 
 
 
 
 	glGenTextures(3, m_Texture);
-	//LoadTexture("5-best-panoramic-photography.bmp",0);
-	//LoadTexture("6-best-panoramic-photography.bmp",1);
-	//LoadTexture("9-best-panoramic-photography.bmp",2);
+	LoadTexture("5-best-panoramic-photography.bmp",0);
+	LoadTexture("6-best-panoramic-photography.bmp",1);
+	LoadTexture("9-best-panoramic-photography.bmp",2);
 
-	LoadTexture("14596142-start-track-line-on-a-red-running-track.bmp",0);
+
 
 
 }
-
 
 
 void pano(GLuint Texture)
@@ -257,64 +215,75 @@ void pano(GLuint Texture)
 
 
 
+
+
+
+
 void display(void)
-{	
-	
-	GLfloat light_position[] = { 0, 0, 10, 1.0 };
-	//GLfloat spot_direction[] = { 0.0, 0.0, -1.0 };
+{
 	glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	
-	//glLoadIdentity();
-	//glPushMatrix();
-	////normalView(xp,yp,zp,xa,ya);
-	////polarView(di,tw,el,az);
-	//pilotView(px,py,pz,ro,pi,he);
-
-
-	//glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-	//glPopMatrix();
-
 
 	glLoadIdentity();
 
-	//normalView(xp,yp,zp,xa,ya);
+	normalView(xp,yp,zp,xa,ya);
 	//polarView(di,tw,el,az);
-	pilotView(px,py,pz,ro,pi,he);
+	//pilotView(px,py,pz,ro,pi,he);
 
-	glPushMatrix();
-	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-	glPopMatrix();
+	//glRotatef(90,-1,0,0);
+	//char buf[50];
+	//glColor3f(1.0f, 1.0f, 1.0f);
+	//glRasterPos3d(0,0,0);
+	//sprintf_s(buf,"77");
+	//drawString(buf);
 
-	//glPushMatrix();
-	//glTranslatef(0,0,-30);
-	//glutSolidSphere(30,500,500);
-	//glPopMatrix();
+	//glutWireCube(1);
+	//glutSolidCube(1);
+	//glutSolidSphere(1,50,50);
 
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D,m_Texture[0]);
 
-	for(int i=-10;i<10;i++){
 	// //Front Face
-	glBegin(GL_POLYGON);
+	//glBegin(GL_POLYGON);
+	//     glTexCoord2f(0,0);
+	//     glVertex3f(-1.0f,-1.0f,0.0f);
+	//     glTexCoord2f(1,0);
+	//     glVertex3f( 1.0f,-1.0f,0.0f);
+	//     glTexCoord2f(1,1);
+	//     glVertex3f( 1.0f, 1.0f,0.0f);
+	//     glTexCoord2f(0,1);
+	//     glVertex3f(-1.0f, 1.0f,0.0f);
+	// glEnd();
+
+	//GLUquadricObj* obj;
+	//obj = gluNewQuadric();
+	//gluQuadricNormals(obj, GLU_SMOOTH);
+	//gluQuadricTexture(obj, GL_TRUE);
+	//gluSphere(obj, 1, 200, 200);
+
+
+
+	glBegin(GL_QUADS);
 	     glTexCoord2f(0,0);
-	     glVertex3f(-1.0f,0.0f,-10.0f+i*20);
-	     glTexCoord2f(1,0);
-	     glVertex3f( 1.0f,0.0f,-10.0f+i*20);
-	     glTexCoord2f(1,1);
-	     glVertex3f( 1.0f,0.0f, 10.0f+i*20);
+	     glVertex3f(0,0,0);
 	     glTexCoord2f(0,1);
-	     glVertex3f(-1.0f,0.0f, 10.0f+i*20);
+	     glVertex3f( 0,0,1);
+	     glTexCoord2f(1,1);
+		 glVertex3f(1,0,0);	     
+		 glTexCoord2f(1,0);	
+	     glVertex3f( 0,1,0);
 	 glEnd();
-	}
+
+
 
 
 	glDisable(GL_TEXTURE_2D);
 
-
-//pano(m_Texture[2]);
-
-	
+	 glColor3f(1.0f, 1.0f, 1.0f);
+	drawCoordinate(0,0,0);
+	drawCoordinate(1,0,0);
+	drawCoordinate(0,1,0);
+	drawCoordinate(0,0,1);
 
 	//glFlush ();
 	glFinish();
@@ -347,21 +316,7 @@ void reshape (int w, int h)
 	glMatrixMode(GL_MODELVIEW);
 
 	glLoadIdentity();
-
-	//lighting0();
 }
-
-
-void spinDisplay(int value)
-{
-		pz-=.03;
-		if(pz<-10)
-			pz=10;
-		glutPostRedisplay();
-
-   glutTimerFunc(20, spinDisplay, 1);
-}
-
 
 void keyboard (unsigned char key, int x, int y)
 {
@@ -514,12 +469,7 @@ void mouseclick(int button, int state, int x, int y)
 		break;
 
 	case GLUT_MIDDLE_BUTTON:
-		//zp*=0.9;
-		//xp+=.5;
-		pz+=.5;
-		if(pz>10)
-			pz=-10;
-		
+		zp*=0.9;
 		glutPostRedisplay();
 		switch(state){
 		case GLUT_UP:
@@ -532,15 +482,8 @@ void mouseclick(int button, int state, int x, int y)
 		break;
 
 	case GLUT_RIGHT_BUTTON:
-		//zp/=0.9;
-		//xp-=.5;
-		//pz-=.5;
-		//if(pz<-10)
-		//	pz=10;
-		//glutPostRedisplay();
-
-		glutTimerFunc(20, spinDisplay, 1);
-
+		zp/=0.9;
+		glutPostRedisplay();
 		switch(state){
 		case GLUT_UP:
 			break;
@@ -561,23 +504,11 @@ void mousemove(int x, int y)
 	if(lbstate==GLUT_DOWN){
 		ya+=(x-mx)/3.0;
 		xa+=(y-my)/3.0;
-
-		he+=(y-my)/30.0;
-		if(he>360)
-			he-=360;
-		pi+=(x-mx)/30.0;
-		if(pi>360)
-			pi-=360;
-
 		glutPostRedisplay();
 		mx=x;
 		my=y;
 	}
 }
-
-
-
-
 
 int main(int argc, char** argv)
 {
