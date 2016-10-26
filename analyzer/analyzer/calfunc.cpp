@@ -659,10 +659,7 @@ UINT ComputeStateData(
 
 
 					for(;rawi<dol.size();rawi++){
-						size_t tmpi=rawt.ll.front();
-						rawt.xll.erase(rawt.xll.begin(),rawt.xll.begin()+tmpi);
-						rawt.yll.erase(rawt.yll.begin(),rawt.yll.begin()+tmpi);
-						rawt.ll.erase(rawt.ll.begin());
+						rawt.EraseFirst();
 					}
 
 					flg=GetStepList(sl,analysistype);

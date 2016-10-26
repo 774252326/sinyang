@@ -3,9 +3,12 @@
 
 #include "stdafx.h"
 #include "PlotWnd.h"
-#include "drawfunc.h"
+//#include "drawfunc.h"
 #include "../resource.h"
 #include "LegendDlg.h"
+
+//class LegendDlg;
+
 
 // PlotWnd
 
@@ -75,13 +78,16 @@ void PlotWnd::OnPaint()
 	dcMem.SelectObject(&bmp);  	//将位图选择进内存DC
 
 	if(pdex!=NULL){
-		DrawDataEx(rect,&dcMem,*pdex);
+		//DrawDataEx(rect,&dcMem,*pdex);
+		pdex->Draw(rect,&dcMem);
 		if(bMouseCursor)
-			DrawData1Ex(rect,&dcMem,*pdex,selectPIdx);
+			//DrawData1Ex(rect,&dcMem,*pdex,selectPIdx);
+		pdex->Draw1(rect,&dcMem,pdex->pd.raw.xll[selectPIdx],pdex->pd.raw.yll[selectPIdx]);
 	}
 	else{
 		PlotDataEx dx(blankPS);
-		DrawDataEx(rect,&dcMem,dx);
+		//DrawDataEx(rect,&dcMem,dx);
+		dx.Draw(rect,&dcMem);
 	}
 	dc.BitBlt(0,0,winsz.cx,winsz.cy,&dcMem,0,0,SRCCOPY);//将内存DC上的图象拷贝到前台
 	//pDC->BitBlt(100,100,winsz.cx,winsz.cy,&dcMem,0,0,SRCCOPY);//将内存DC上的图象拷贝到前台
@@ -106,12 +112,13 @@ void PlotWnd::OnLButtonDown(UINT nFlags, CPoint point)
 
 			CRect plotrect;
 			this->GetClientRect(&plotrect);	
+			pdex->pd.ps.CalPlotRect(plotrect);
 
 			int re=DownUpdate(plotrect
-				, pdex->pd.ps.metricSize
-				, pdex->pd.ps.labelSize
-				, pdex->pd.ps.metricGridLong
-				, pdex->pd.ps.gap
+				//, pdex->pd.ps.metricSize
+				//, pdex->pd.ps.labelSize
+				//, pdex->pd.ps.metricGridLong
+				//, pdex->pd.ps.gap
 				, point
 				, m_mouseDownPoint
 				, pdex->xmin, pdex->xmax, pdex->ymin, pdex->ymax
@@ -167,13 +174,14 @@ void PlotWnd::OnMouseMove(UINT nFlags, CPoint point)
 			CRect plotrect;
 			this->GetClientRect(&plotrect);	
 			//ScreenToClient(&point);
+			pdex->pd.ps.CalPlotRect(plotrect);
 
 			if(GetCapture()==this){
 				if(MoveUpdateA(plotrect
-					, pdex->pd.ps.metricSize
-					, pdex->pd.ps.labelSize
-					, pdex->pd.ps.metricGridLong
-					, pdex->pd.ps.gap
+					//, pdex->pd.ps.metricSize
+					//, pdex->pd.ps.labelSize
+					//, pdex->pd.ps.metricGridLong
+					//, pdex->pd.ps.gap
 					, point
 					, this->m_mouseDownPoint
 					, pdex->xmin,pdex->xmax,pdex->ymin,pdex->ymax))
@@ -183,10 +191,10 @@ void PlotWnd::OnMouseMove(UINT nFlags, CPoint point)
 
 				CString str;
 				if(MoveUpdateB(plotrect
-					, pdex->pd.ps.metricSize
-					, pdex->pd.ps.labelSize
-					, pdex->pd.ps.metricGridLong
-					, pdex->pd.ps.gap
+					//, pdex->pd.ps.metricSize
+					//, pdex->pd.ps.labelSize
+					//, pdex->pd.ps.metricGridLong
+					//, pdex->pd.ps.gap
 					, point
 					, this->m_mouseDownPoint
 					, pdex->xmin,pdex->xmax,pdex->ymin,pdex->ymax
@@ -215,11 +223,14 @@ BOOL PlotWnd::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 			ScreenToClient(&pt);
 			CRect plotrect;
 			this->GetClientRect(&plotrect);
+			pdex->pd.ps.CalPlotRect(plotrect);
+
 			if( WheelUpdate(plotrect
-				, pdex->pd.ps.metricSize
-				, pdex->pd.ps.labelSize
-				, pdex->pd.ps.metricGridLong
-				, pdex->pd.ps.gap
+				//, pdex->pd.ps.metricSize
+				//, pdex->pd.ps.labelSize
+				//, pdex->pd.ps.metricGridLong
+				//, pdex->pd.ps.gap
+				, pdex->pd.ps.metricGridLong+pdex->pd.ps.metricSize
 				, pt
 				, ((zDelta>0)?zoomrate:1/zoomrate)
 				,pdex->xmin,pdex->xmax,pdex->ymin,pdex->ymax) ){
@@ -238,8 +249,7 @@ BOOL PlotWnd::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 void PlotWnd::ResetRange(void)
 {
 	if(pdex!=NULL){
-		UpdateRange(pdex->pd.raw.xll,pdex->xmin,pdex->xmax,pct,true);
-		UpdateRange(pdex->pd.raw.yll,pdex->ymin,pdex->ymax,pct,true);
+		pdex->ResetRange(pct);
 	}
 }
 
@@ -269,7 +279,6 @@ int PlotWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	// TODO:  Add your specialized creation code here
-
 
 
 	m_tool.Create(this);
@@ -326,7 +335,7 @@ void PlotWnd::OnSize(UINT nType, int cx, int cy)
 
 	if(td!=NULL){
 		((LegendDlg*)td)->PositionWnd();
-		((LegendDlg*)td)->Invalidate(FALSE);
+		((LegendDlg*)td)->Invalidate();
 		//td->Invalidate();
 	}
 
@@ -336,20 +345,16 @@ void PlotWnd::OnSize(UINT nType, int cx, int cy)
 
 void PlotWnd::SetLegend(void)
 {
-	//if(pdex!=NULL){
-		//ShowLegend(pdex->lgc.legendDpMode&LEGEND_DP_SHOW);
-		//return 0;
-	//}
 
 	if( pdex!=NULL && (pdex->lgc.legendDpMode&LEGEND_DP_SHOW) /*&& !pdex->pd.ls.empty()*/){
 
 		if(td==NULL){
 			td=new LegendDlg(this);
-			td->Create(IDD_DIALOG4,this);
+			td->Create(IDD_DIALOG1,this);
 		}
 		else{
 			((LegendDlg*)td)->PositionWnd();
-			((LegendDlg*)td)->Invalidate(FALSE);
+			((LegendDlg*)td)->Invalidate();
 			//td->Invalidate();
 		}
 		td->ShowWindow(SW_SHOW);
@@ -365,33 +370,6 @@ void PlotWnd::SetLegend(void)
 		
 
 
-}
-
-
-void PlotWnd::ShowLegend(bool bShow)
-{
-
-	if(bShow && pdex!=NULL && !pdex->pd.ls.empty()){
-
-		if(td==NULL){
-			td=new LegendDlg(this);
-			td->Create(IDD_DIALOG4,this);
-		}
-		else{
-			((LegendDlg*)td)->PositionWnd();
-			((LegendDlg*)td)->Invalidate(FALSE);
-			//td->Invalidate();
-		}
-		td->ShowWindow(SW_SHOW);
-	}
-	else{
-
-		if(td!=NULL){
-			td->ShowWindow(SW_HIDE);
-			delete td;
-			td=NULL;
-		}
-	}
 }
 
 

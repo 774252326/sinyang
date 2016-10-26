@@ -9,8 +9,8 @@
 
 #include "analyzerViewL.h"
 #include "analyzerViewR.h"
-#include "filefunc.h"
-#include "analyzerView.h"
+//#include "filefunc.h"
+//#include "analyzerView.h"
 #include "LoginDlg.h"
 
 #include "UserAccountPage.h"
@@ -942,7 +942,7 @@ afx_msg LRESULT CMainFrame::OnMessageWaitResponse(WPARAM wParam, LPARAM lParam)
 
 	wd->m_tips=str;
 	wd->UpdateData(FALSE);
-	wd->GetDlgItem(IDC_BUTTON1)->EnableWindow();
+	//wd->GetDlgItem(IDC_BUTTON1)->EnableWindow();
 
 	return 0;
 }

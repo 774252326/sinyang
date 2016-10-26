@@ -5,7 +5,7 @@
 //#include "z25.h"
 #include "LegendDlg.h"
 #include "afxdialogex.h"
-#include "drawfunc.h"
+//#include "drawfunc.h"
 //#include "LineSpec.hpp"
 //#include "LegendSpec.hpp"
 //#include <vector>
@@ -14,7 +14,7 @@
 
 IMPLEMENT_DYNAMIC(LegendDlg, CDialogEx)
 
-LegendDlg::LegendDlg(PlotWnd* pParent /*=NULL*/)
+	LegendDlg::LegendDlg(PlotWnd* pParent /*=NULL*/)
 	//: CDialogEx(LegendDlg::IDD, pParent)
 	: ppw(pParent)
 	//, maxFsz(20)
@@ -68,25 +68,14 @@ void LegendDlg::OnPaint()
 	LegendSpec lgs=ppw->pdex->lgs;
 
 	dc.FillSolidRect(&rc,lgs.bkColor);
-	DrawLegend(&dc,ls,lgs.lineLength,lgs.gap,lgs.fontSize,lgs.fontName,lgs.bkColor);
+	//DrawLegend(&dc,ls,lgs.lineLength,lgs.gap,lgs.fontSize,lgs.fontName,lgs.bkColor);
+
+	//this->SetBackgroundColor(lgs.bkColor);
+
+	lgs.Draw(&dc,ls);
+
 }
 
-CSize LegendDlg::GetExtent(void)
-{
-	CFont fnt;
-
-	return GetLegendExtent(this->GetDC(),ppw->pdex->pd.ls,&fnt,ppw->pdex->lgs.lineLength,ppw->pdex->lgs.gap,ppw->pdex->lgs.fontSize,ppw->pdex->lgs.fontName);;
-}
-
-
-int LegendDlg::GetAutoFontSize(CSize limitsz, int maxFontSize, int minFontSize)
-{
-	int newfsz=::GetAutoFontSize(this->GetDC(),ppw->pdex->pd.ls,ppw->pdex->lgs.lineLength,ppw->pdex->lgs.gap,minFontSize,maxFontSize,ppw->pdex->lgs.fontName,limitsz);
-
-	ppw->pdex->lgs.fontSize=newfsz;
-
-	return newfsz;
-}
 
 CPoint LegendDlg::GetPos(void)
 {
@@ -111,33 +100,19 @@ void LegendDlg::OnMove(int x, int y)
 }
 
 
+
+
 void LegendDlg::PositionWnd(void)
 {
 
 	CRect plotrect;
-	
+
 	ppw->GetClientRect(&plotrect);
 
 	ppw->pdex->pd.ps.CalPlotRect(plotrect);	
 
-	if( ppw->pdex->lgc.legendDpMode&LEGEND_DP_FIT_RECT ){
-		if( ppw->pdex->lgc.legendDpMode&LEGEND_DP_AUTO_RECT ){
-			CSize plotsz=plotrect.Size();
-			ppw->pdex->lgs.fontSize=GetAutoFontSize(CSize(plotsz.cx* ppw->pdex->lgc.ratio,plotsz.cy* ppw->pdex->lgc.ratio), ppw->pdex->lgc.maxFsz, ppw->pdex->lgc.minFsz);
-		}
-		else{
-			ppw->pdex->lgs.fontSize=GetAutoFontSize(ppw->pdex->lgc.limitSize, ppw->pdex->lgc.maxFsz, ppw->pdex->lgc.minFsz);
-		}
-	}
-
-	CSize sz=GetExtent();
-
-	if( ppw->pdex->lgc.legendDpMode&LEGEND_DP_ALIGN ){
-		ppw->pdex->lgs.bDock=true;		
-		ppw->pdex->lgs.position=ppw->pdex->lgc.CalAlignPos(plotrect,sz);
-	}
-
-	CRect legendrect(ppw->pdex->lgs.position,sz);
+	//CRect legendrect=PlotDataEx::SetLegendSpec(plotrect,this->GetDC(),ppw->pdex->pd.ls,ppw->pdex->lgc,ppw->pdex->lgs);
+	CRect legendrect=ppw->pdex->SetLegendSpec(plotrect,this->GetDC());
 
 	//ppw->ClientToScreen(&legendrect);//for dlg only
 

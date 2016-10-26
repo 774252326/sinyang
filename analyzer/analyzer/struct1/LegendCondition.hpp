@@ -23,7 +23,7 @@ public:
 
 public:
 	LegendCondition()
-		: legendDpMode(0)
+		: legendDpMode(LEGEND_DP_SHOW|LEGEND_DP_ALIGN|LEGEND_DP_TOP)
 		, maxFsz(20)
 		, minFsz(1)
 		, axisW(2)

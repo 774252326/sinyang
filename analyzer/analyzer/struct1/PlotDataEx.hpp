@@ -1,14 +1,65 @@
 #pragma once
 
-// PlotDataEx command target
 
 #include "PlotData.hpp"
 #include "LegendCondition.hpp"
 #include "LegendSpec.hpp"
 
 
+// PlotDataEx command target
+
 class PlotDataEx : public CObject
 {
+public:
+	static void DrawData1(CRect &plotrect
+		, CDC* pDC
+		, const double &x
+		, const double &y
+		, const double &xmin
+		, const double &xmax
+		, const double &ymin
+		, const double &ymax
+		, COLORREF textColor)
+	{
+		if( x>xmin && x<xmax && y>ymin && y<ymax ){
+			CString str;
+			str.Format(L"%g,%g",x,y);
+
+			COLORREF cr=pDC->SetTextColor(textColor);
+			int px=xRescale(x,xmin,xmax,plotrect.left,plotrect.right);
+			int py=xRescale(y,ymin,ymax,plotrect.bottom,plotrect.top);
+			pDC->TextOutW(px,py,str);
+			pDC->SetTextColor(cr);
+		}
+
+	};
+
+	static CRect SetLegendSpec(CRect plotrect,
+		CDC *pDC, 
+		const std::vector<LineSpec> &ls, 
+		LegendCondition lgc,
+		LegendSpec &lgs)
+	{
+		if(lgc.legendDpMode&LEGEND_DP_FIT_RECT ){
+			if( lgc.legendDpMode&LEGEND_DP_AUTO_RECT ){
+				CSize plotsz=plotrect.Size();
+				lgs.fontSize=lgs.AutoFontSize(pDC,ls,CSize(plotsz.cx*lgc.ratio,plotsz.cy*lgc.ratio), lgc.maxFsz, lgc.minFsz);
+			}
+			else{
+				lgs.fontSize=lgs.AutoFontSize(pDC,ls,lgc.limitSize,lgc.maxFsz,lgc.minFsz);
+			}
+		}
+
+		CSize sz=lgs.GetExtent(pDC,ls);
+
+		if( lgc.legendDpMode&LEGEND_DP_ALIGN ){
+			lgs.bDock=true;		
+			lgs.position=lgc.CalAlignPos(plotrect,sz);
+		}
+
+		return CRect(lgs.position,sz);
+	};
+
 public:
 	double xmin;
 	double xmax;
@@ -75,40 +126,62 @@ public:
 
 	};
 
+	void ResetRange(double pct=0.02)
+	{	
+		UpdateRange(pd.raw.xll,xmin,xmax,pct,true);
+		UpdateRange(pd.raw.yll,ymin,ymax,pct,true);	
+	};
 
-	//bool SaveImage(CString filepath, CSize sz, CDC* pDC, double pct=0.02)
-	//{
 
-	//	CDC dcMem;   //用于缓冲作图的内存DC
-	//	dcMem.CreateCompatibleDC(pDC);               //依附窗口DC创建兼容内存DC		
+	CRect SetLegendSpec(CRect plotrect,
+		CDC *pDC)
+	{
+		return SetLegendSpec(plotrect,pDC, pd.ls,lgc,lgs);
+	};
 
-	//	CBitmap bmp;           //内存中承载临时图象的位图
-	//	bmp.CreateCompatibleBitmap(pDC,sz.cx,sz.cy);//创建兼容位图
+	void Draw(CRect &plotrect, CDC* pDC)
+	{
+		pd.Draw(plotrect, pDC, xmin, xmax, ymin, ymax);
+	};
 
-	//	dcMem.SelectObject(&bmp);  	//将位图选择进内存DC
+	void Draw1(CRect &plotrect, CDC* pDC, const double &x
+		, const double &y)
+	{
+		if(!pd.ls.empty()){
+			//		 && selecti<pd.pd.raw.xll.size()){
+			DrawData1(plotrect,pDC,x,y,xmin,xmax,ymin,ymax,inv(pd.ps.bkgndC));
+		}
+	};
+	
+	bool SaveImage(CString filepath, CSize sz, CDC* pDC)
+	{
 
-	//	double xmin,xmax,ymin,ymax;
-	//	UpdateRange(raw.xll,xmin,xmax,pct,true);
-	//	UpdateRange(raw.yll,ymin,ymax,pct,true);
+		CBitmap bmp;           //内存中承载临时图象的位图
+		bmp.CreateCompatibleBitmap(pDC,sz.cx,sz.cy);//创建兼容位图
 
-	//	ps.labelC=ps.gridC=ps.metricC=black;
-	//	ps.bkgndC=ps.borderC=ps.winbkC=white;
+		CDC dcMem;   //用于缓冲作图的内存DC
+		dcMem.CreateCompatibleDC(pDC); //依附窗口DC创建兼容内存DC	
 
-	//	CRect plotrect(0,0,sz.cx,sz.cy);
-	//	DrawData(plotrect,&dcMem,*this,xmin,xmax,ymin,ymax);
-	//	dcMem.DeleteDC(); //删除DC
+		dcMem.SelectObject(&bmp);  	//将位图选择进内存DC
 
-	//	CImage img;
-	//	img.Attach(HBITMAP(bmp));
-	//	HRESULT hResult = img.Save((LPCWSTR)filepath);
+		CRect plotrect(0,0,sz.cx,sz.cy);
+		Draw(plotrect, &dcMem);
+		SetLegendSpec(plotrect,&dcMem);
+		lgs.Draw(&dcMem, pd.ls, lgs.position);
 
-	//	bmp.DeleteObject(); //删除位图
+		dcMem.DeleteDC();
 
-	//	if (SUCCEEDED(hResult))
-	//		return true;
+		CImage img;
+		img.Attach(HBITMAP(bmp));
+		HRESULT hResult = img.Save((LPCWSTR)filepath);
 
-	//	return false;
-	//};
+		bmp.DeleteObject(); //删除位图
+
+		if (SUCCEEDED(hResult))
+			return true;
+
+		return false;
+	};
 };
 
 

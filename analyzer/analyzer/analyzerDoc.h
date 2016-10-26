@@ -9,6 +9,9 @@
 #include "struct\DataOutA.hpp"
 #include <vector>
 #include "afxmt.h"
+//#include "d:\project1\analyzer\analyzer\struct\sapara.hpp"
+
+#include "PropertySheetA1ML.h"
 
 class CanalyzerDoc : public CDocument
 {
@@ -74,4 +77,18 @@ public:
 	CCriticalSection m_CritSection;
 	afx_msg void OnBnClickedButton1();
 	void ChangeSAP(void);
+	SAPara p3done;
+	afx_msg void OnControlsChangesap();
+
+	PropertySheetA1ML *psheetml;
+
+	int pdfd(CString filepath,
+		bool b1,
+		bool b2,
+		bool b3,
+		bool b4,
+		bool b5,
+		bool b6,
+		bool b7);
+	afx_msg void OnAnalysisReport();
 };

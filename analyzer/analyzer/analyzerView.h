@@ -4,8 +4,9 @@
 
 #pragma once
 
-#include "analyzerDoc.h"
+
 #include "plot\PlotWnd.h"
+#include "analyzerDoc.h"
 #include <vector>
 
 

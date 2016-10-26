@@ -149,11 +149,12 @@
     <ClInclude Include="LoginDlg.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="OutputWnd.h" />
+    <ClInclude Include="pdfout.h" />
     <ClInclude Include="PlotSettingPageA.h" />
-    <ClInclude Include="plot\drawfunc.h" />
     <ClInclude Include="plot\LegendDlg.h" />
     <ClInclude Include="plot\PlotWnd.h" />
     <ClInclude Include="PropertySheetA.h" />
+    <ClInclude Include="PropertySheetA1ML.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SolutionAdditionParametersPageA.h" />
     <ClInclude Include="SolutionAdditionParametersPageB.h" />
@@ -189,11 +190,12 @@
     <ClCompile Include="LoginDlg.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="OutputWnd.cpp" />
+    <ClCompile Include="pdfout.cpp" />
     <ClCompile Include="PlotSettingPageA.cpp" />
-    <ClCompile Include="plot\drawfunc.cpp" />
     <ClCompile Include="plot\LegendDlg.cpp" />
     <ClCompile Include="plot\PlotWnd.cpp" />
     <ClCompile Include="PropertySheetA.cpp" />
+    <ClCompile Include="PropertySheetA1ML.cpp" />
     <ClCompile Include="SolutionAdditionParametersPageA.cpp" />
     <ClCompile Include="SolutionAdditionParametersPageB.cpp" />
     <ClCompile Include="StatePara.cpp" />

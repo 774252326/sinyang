@@ -9,6 +9,8 @@
 #include "analyzer.h"
 #endif
 
+#include "pdfout.h"
+
 #include "analyzerDoc.h"
 #include "analyzerViewL.h"
 #include "analyzerViewR.h"
@@ -24,6 +26,7 @@
 
 #include "MainFrm.h"
 
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -35,12 +38,15 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 	BEGIN_MESSAGE_MAP(CanalyzerDoc, CDocument)
 		ON_COMMAND(ID_ANALYSIS_METHODSETUP, &CanalyzerDoc::OnAnalysisMethodsetup)
 		ON_BN_CLICKED(IDC_BUTTON1, &CanalyzerDoc::OnBnClickedButton1)
+		ON_COMMAND(ID_CONTROLS_CHANGESAP, &CanalyzerDoc::OnControlsChangesap)
+		ON_COMMAND(ID_ANALYSIS_REPORT, &CanalyzerDoc::OnAnalysisReport)
 	END_MESSAGE_MAP()
 
 
 	// CanalyzerDoc construction/destruction
 
 	CanalyzerDoc::CanalyzerDoc()
+		: psheetml(NULL)
 	{
 		// TODO: add one-time construction code here
 
@@ -69,6 +75,7 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 			p3=SAPara();
 			raw=RawData();
 			dol.clear();
+			p3done=SAPara();
 			// Now that we are finished, 
 			// unlock the resource for others.
 			singleLock.Unlock();
@@ -97,6 +104,7 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 			p3=src.p3;
 			raw=src.raw;
 			dol.clear();
+			p3done.saplist.clear();
 			// Now that we are finished, 
 			// unlock the resource for others.
 			singleLock.Unlock();
@@ -282,7 +290,11 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 
 			dol.clear();
 			SAPara p3d;
+			
 			UINT res=::ComputeStateData(p1.analysistype,p2,p3,raw,dol,p3d,currentSAPIndex,nextSAPIndex,outstep,VtoAdd);
+
+			p3done=p3d;
+
 			// Now that we are finished, 
 			// unlock the resource for others.
 			singleLock.Unlock();
@@ -298,9 +310,9 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		if(!dol.empty()){
 			POSITION pos = GetFirstViewPosition();
 			if(pos!=NULL){
-				//CMainFrame *mf=(CMainFrame*)(GetNextView(pos)->GetParentFrame());
-				CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));
-				CMainFrame *mf=(CMainFrame*)(lv->GetParentFrame());
+				CMainFrame *mf=(CMainFrame*)(GetNextView(pos)->GetParentFrame());
+				//CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));
+				//CMainFrame *mf=(CMainFrame*)(lv->GetParentFrame());
 				::SendMessage(mf->GetOutputWnd()->GetListCtrl()->GetSafeHwnd(),
 					MESSAGE_SHOW_DOL,
 					NULL,
@@ -344,7 +356,11 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		CString str;
 		str.LoadStringW(IDS_STRING_ANALYSIS_SETUP);
 		//CPropertySheet sheet(str);
-		PropertySheetA1 sheet(str);
+		//PropertySheetA1 sheet(str);
+
+		PropertySheetA1 *sheet=new PropertySheetA1(str);
+
+
 
 		//AnalysisParametersPage appage;
 		//appage.para=p1;
@@ -356,48 +372,283 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 
 		SolutionAdditionParametersPageB sppage;
 
-		if(!dol.empty()){
-			sppage.para0.saplist.assign(p3.saplist.begin(),p3.saplist.begin()+nowidx+1);
+		//if(!dol.empty()){
+		//	sppage.para0.saplist.assign(p3.saplist.begin(),p3.saplist.begin()+nowidx+1);
 
-			sppage.para0.saplist.back().SetEndRatio(dol.back().ArUse()/dol.back().Ar0);
-		}
+		//	sppage.para0.saplist.back().SetEndRatio(dol.back().ArUse()/dol.back().Ar0);
+		//}
+
+		sppage.para0=p3done;
 
 		sppage.para1.saplist.assign(p3.saplist.begin()+nextidx,p3.saplist.end());
 
 		//sppage.para=p3;
-		sheet.AddPage(&sppage);
+		sheet->AddPage(&sppage);
+
+
+		sheet->Create();
+
+		sheet->ShowWindow(SW_SHOW);
+		sppage.ShowWindow(SW_SHOW);
+
+		//// 打开模态向导对话框   
+		//if(sheet.DoModal()==IDOK){
+
+
+		//	p3=sppage.para0;
+		//	p3.saplist.resize(p3.saplist.size()+sppage.para1.saplist.size());
+		//	std::copy_backward(sppage.para1.saplist.begin(),sppage.para1.saplist.end(),p3.saplist.end());
+
+		//	//p1=appage.para;
+		//	//p2=cppage.para;
+		//	//p3=sppage.para;
+
+		//	//POSITION pos = GetFirstViewPosition();
+		//	//CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));
+		//	//CMainFrame *mf=(CMainFrame*)(lv->GetParentFrame());
+
+		//	//CanalyzerViewR* rv=((CanalyzerViewR*)GetNextView(pos));
+
+		//	//::SendMessage(mf->GetOutputWnd()->GetListCtrl()->GetSafeHwnd(),
+		//	//	MESSAGE_UPDATE_DOL,
+		//	//	NULL,
+		//	//	NULL);
+
+		//	//str.LoadString(IDS_STRING_PARA_CHANGED);
+		//	//mf->GetCaptionBar()->ShowMessage(str);
+
+
+		//}
 
 
 
-		// 打开模态向导对话框   
-		if(sheet.DoModal()==IDOK){
+
+	}
 
 
-			p3=sppage.para0;
-			p3.saplist.resize(p3.saplist.size()+sppage.para1.saplist.size());
-			std::copy_backward(sppage.para1.saplist.begin(),sppage.para1.saplist.end(),p3.saplist.end());
+	void CanalyzerDoc::OnControlsChangesap()
+	{
+		// TODO: Add your command handler code here
 
-			//p1=appage.para;
-			//p2=cppage.para;
-			//p3=sppage.para;
+		std::vector<DataOutA> doltmp;
+		SAPara p3d;
 
-			//POSITION pos = GetFirstViewPosition();
-			//CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));
-			//CMainFrame *mf=(CMainFrame*)(lv->GetParentFrame());
+		BYTE outstep;
+		double VtoAdd;
+		size_t nextSAPIndex;
+		size_t currentSAPIndex;
 
-			//CanalyzerViewR* rv=((CanalyzerViewR*)GetNextView(pos));
+		UINT res=::ComputeStateData(p1.analysistype,p2,p3,raw,doltmp,p3d,currentSAPIndex,nextSAPIndex,outstep,VtoAdd);
 
-			//::SendMessage(mf->GetOutputWnd()->GetListCtrl()->GetSafeHwnd(),
-			//	MESSAGE_UPDATE_DOL,
-			//	NULL,
-			//	NULL);
+		if(psheetml==NULL){
+			psheetml=new PropertySheetA1ML();
+			SolutionAdditionParametersPageA *sppage=new SolutionAdditionParametersPageA();	
+			sppage->para.saplist.assign(p3.saplist.begin()+nextSAPIndex,p3.saplist.end());
+			psheetml->AddPage(sppage);			
+			
+		}
+		else{
+		SolutionAdditionParametersPageA *sppage=(SolutionAdditionParametersPageA*)(psheetml->GetPage(0));
 
-			//str.LoadString(IDS_STRING_PARA_CHANGED);
-			//mf->GetCaptionBar()->ShowMessage(str);
-
-
+		
 		}
 
+		if(psheetml->GetSafeHwnd()){			
+			psheetml->ShowWindow(SW_SHOW);
+			psheetml->CenterWindow();			
+		}
+		else{
+			psheetml->Create();
+		}
+
+		::SetWindowPos(psheetml->GetSafeHwnd(),HWND_TOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE); 
+
+	}
+
+
+	
+	int CanalyzerDoc::pdfd(CString outfile, 
+		bool b1,
+		bool b2,
+		bool b3,
+		bool b4,
+		bool b5,
+		bool b6,
+		bool b7
+		)
+	{
+
+		const std::wstring searchpath = L"../data";
+
+		const std::wstring temppdf = L"temp.pdf";
+
+		pdflib::PDFlib p;
+
+		std::wostringstream optlist;
+
+		optlist.str(L"");
+
+		p.set_parameter(L"errorpolicy", L"return");
+
+		p.set_parameter(L"SearchPath", searchpath);
+
+		if (p.begin_document(temppdf, optlist.str()) == -1) {
+			//if (p.begin_document((LPCWSTR)outfile, L"") == -1) {
+			std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
+			return 2;
+		}
+		p.set_info(L"Creator", L"PDFlib starter sample");
+		p.set_info(L"Title", L"starter_table");
+
+
+		CString templogobmp=L"templogo.bmp";
+
+
+
+		CBitmap bmp;
+		bmp.LoadBitmap(IDB_BITMAP_SINYANG);
+		CImage img;
+		//img.LoadFromResource(NULL,IDB_BITMAP_SINYANG);
+		img.Attach(HBITMAP(bmp));
+		HRESULT hResult = img.Save((LPCTSTR)templogobmp);
+		bmp.DeleteObject();
+		//if (SUCCEEDED(hResult))
+
+
+		POSITION pos = GetFirstViewPosition();
+		CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));
+		CMainFrame *mf=(CMainFrame*)(lv->GetParentFrame());
+		COutputListA *ol=mf->GetOutputWnd()->GetListCtrl();
+
+		CanalyzerViewR* rv=((CanalyzerViewR*)GetNextView(pos));
+
+
+		int a;
+
+		std::vector<CString> res;
+		if(b2){
+			bool flg=Compute(ol->dol, p1, res);
+		}
+
+
+		a=pdfout6(p,p1,res,p2,p3,b1,b2,b3,b4);
+
+		if(b5){
+			a=pdfout(p,ol->dol);
+		}
+
+
+		std::vector<PlotDataEx> pdl;
+		std::vector<CString> nl;
+
+		if(b7){
+			pdl.assign(lv->pdl.begin(),lv->pdl.end());
+			CString str;
+			str.LoadStringW(IDS_STRING_VOLTAMMOGRAM);
+			nl.assign(lv->pdl.size(),str);
+			if(b6){
+				pdl.resize(rv->pdl.size()+pdl.size());
+				std::copy_backward(rv->pdl.begin(),rv->pdl.end(),pdl.end());
+				str.LoadStringW(IDS_STRING_TEST_CURVE);
+				nl.resize(rv->pdl.size()+nl.size(),str);
+			}
+		}
+		else{
+			if(b6){
+				pdl.assign(rv->pdl.begin(),rv->pdl.end());
+				CString str;
+				str.LoadStringW(IDS_STRING_TEST_CURVE);
+				nl.assign(rv->pdl.size(),str);
+			}
+		}
+
+		for(size_t i=0;i<pdl.size();i++){
+			pdl[i].ResetRange();
+			pdl[i].pd.ps.SetStandradCr();
+		}
+
+		a=imgout2(p,lv->GetDC(),pdl,nl);
+
+		p.end_document(optlist.str());
+
+		AddPageNumber(temppdf,(LPCWSTR)outfile);
+
+		CFile::Remove(temppdf.c_str());
+		CFile::Remove(templogobmp);
+
+		return 0;
+	}
+
+	void CanalyzerDoc::OnAnalysisReport()
+	{
+		// TODO: Add your command handler code here
+
+		TCHAR szFilters[]= _T("PDF Files (*.pdf)|*.pdf||");
+
+		CFileDialog se(FALSE,L"pdf",TimeString()+L".pdf",OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,szFilters);
+
+		CString str;
+
+		str.LoadStringW(IDS_STRING_ANALYSIS_PARA);
+		se.AddCheckButton(IDS_STRING_ANALYSIS_PARA,str,TRUE);
+
+		str.LoadStringW(IDS_STRING_CV_PARA);
+		se.AddCheckButton(IDS_STRING_CV_PARA,str,TRUE);
+
+		str.LoadStringW(IDS_STRING_ADDITION_SOLUTION_PARA);
+		se.AddCheckButton(IDS_STRING_ADDITION_SOLUTION_PARA,str,TRUE);
+
+		str.LoadStringW(IDS_STRING_RESULT);
+		se.AddCheckButton(IDS_STRING_RESULT,str,TRUE);
+
+		str.LoadStringW(IDS_OUTPUT_WND);
+		se.AddCheckButton(IDS_OUTPUT_WND,str,TRUE);
+
+		str.LoadStringW(IDS_STRING_TEST_CURVE);
+		se.AddCheckButton(IDS_STRING_TEST_CURVE,str,TRUE);
+
+		str.LoadStringW(IDS_STRING_VOLTAMMOGRAM);
+		se.AddCheckButton(IDS_STRING_VOLTAMMOGRAM,str,TRUE);
+
+
+		if(se.DoModal()==IDOK){
+
+			CString fp = se.GetPathName();
+
+			BOOL chk1=TRUE,chk2=TRUE,chk3=TRUE,chk4=TRUE,chk5=TRUE,chk6=TRUE,chk7=TRUE;
+			se.GetCheckButtonState(IDS_STRING_ANALYSIS_PARA,chk1);
+			se.GetCheckButtonState(IDS_STRING_CV_PARA,chk2);
+			se.GetCheckButtonState(IDS_STRING_ADDITION_SOLUTION_PARA,chk3);
+			se.GetCheckButtonState(IDS_STRING_RESULT,chk4);
+			se.GetCheckButtonState(IDS_OUTPUT_WND,chk5);
+			se.GetCheckButtonState(IDS_STRING_TEST_CURVE,chk6);
+			se.GetCheckButtonState(IDS_STRING_VOLTAMMOGRAM,chk7);
+
+			str.LoadString(IDS_STRING_REPORTING);
+			str+=fp;
+			POSITION pos = GetFirstViewPosition();
+			CMainFrame *mf=(CMainFrame*)(GetNextView(pos)->GetParentFrame());
+			//mf->GetCaptionBar()->ShowMessage(str);
+
+			//if(pdfd(fp,this)==0){
+			if(pdfd(fp,chk1,chk2,chk3,chk4,chk5,chk6,chk7)==0){
+				//AfxMessageBox(L"report "+fp+L" is saved");
+
+				str.LoadStringW(IDS_STRING_REPORT);
+				CString tmps;
+				tmps.LoadStringW(IDS_STRING_IS_SAVED);
+
+				//mf->GetCaptionBar()->ShowMessage(str+L" "+se.GetFileName()+L" "+tmps);
+				ShellExecute(NULL, L"open", fp, NULL, NULL, SW_SHOW);			
+			}
+			else{
+				//AfxMessageBox(IDS_STRING_SAVE_ERROR);
+
+				str.LoadString(IDS_STRING_SAVE_ERROR);
+				//mf->GetCaptionBar()->ShowMessage(str);
+			}
+
+		}
 
 
 

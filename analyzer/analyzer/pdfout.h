@@ -5,17 +5,25 @@
 #include <afxwin.h>
 #include <atltypes.h>
 #include <vector>
-#include "DataOutA.h"
-#include "PlotData.h"
-#include "ANPara.h"
-#include "VPara.h"
-#include "SAPara.h"
 
-#include <iostream>
 
 #include "p/pdflib.hpp"
 #pragma comment(lib, "p/pdflib.lib")
 
+//#include "DataOutA.h"
+//#include "PlotData.h"
+//#include "ANPara.h"
+//#include "VPara.h"
+//#include "SAPara.h"
+
+#include "struct\ANPara.hpp"
+#include "struct\DataOutA.hpp"
+#include "struct\SAPara.hpp"
+#include "struct\VPara.hpp"
+
+#include "struct1\PlotDataEx.hpp"
+
+#include <iostream>
 CString TimeString(bool bSeg=false);
 
 //int pdfd(CString outfile, CanalyzerDoc *padoc);
@@ -25,7 +33,7 @@ int imgout2(
 	pdflib::PDFlib &p, 
 	//CanalyzerDoc *padoc, 
 	CDC *pdc,
-	std::vector<PlotData> &imagelist, 
+	std::vector<PlotDataEx> &imagelist, 
 	std::vector<CString> &namelist, 
 	CSize szimg=CSize(1000,690));
 

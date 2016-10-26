@@ -2,18 +2,252 @@
 
 // PlotData command target
 
-#include <vector>
+
 #include "LineSpec.hpp"
 #include "PlotSpec.hpp"
 #include "RawData.hpp"
 #include <algorithm>
-//#include "drawfunc.h"
-#include "../funT1/colormapT.h"
-#include "../funT1/xRescaleT.h"
 
 
 class PlotData : public CObject
 {
+public:
+
+	static void genPointToPlot(const std::vector<double> &px
+		, const std::vector<double> &py
+		, const CRect &rect
+		, std::vector<CPoint> &pointlist
+		, double xmin
+		, double xmax
+		, double ymin
+		, double ymax)
+	{
+
+		size_t nd=( (px.size()>py.size())?py.size():px.size() );
+		double tx1=(double)rect.Width()/(double)(xmax-xmin);
+		int tx2=rect.left-xmin*tx1;
+		double ty1=-(double)rect.Height()/(double)(ymax-ymin);
+		int ty2=rect.bottom-ymin*ty1;
+		pointlist.assign(nd,CPoint(tx2,ty2));
+		for(size_t i=0;i<nd;i++){
+			pointlist[i]+=CPoint(px[i]*tx1,py[i]*ty1);
+		}
+
+	};
+
+
+	static void DrawSpline( CPoint *lpPoints
+		, int np
+		, int lowlim
+		, int highlim
+		, CDC * pDC)
+	{
+
+		std::vector<double> x(np);
+		std::vector<double> y(np);
+
+		for(int i=0;i<np;i++){
+			x[i]=lpPoints[i].x;
+			y[i]=lpPoints[i].y;
+		}
+
+		std::vector<CPoint> pr;
+		int j=x.front();
+		if(j<=lowlim)
+			j=lowlim+1;
+
+		for(;j<=x.back() && j<highlim;j++){
+			pr.push_back(CPoint(j,0));
+		}
+		splintA(x,y,pr);
+
+		pDC->Polyline(pr.data(),pr.size());
+
+	};
+
+
+
+	static void DrawCurve(CDC* pDC
+		, std::vector<CPoint> &pointlist
+		, const std::vector<DWORD> &ll
+		, const std::vector<LineSpec> &ps
+		, int lborder
+		, int rborder)
+	{
+		//std::vector<CPoint> pointlist;
+		CPen pen;
+		CPen * pOldPen;
+		//int lastWidth=4;
+		COLORREF oc;
+
+		//genPointToPlot(xll,yll,rect,pointlist);
+		size_t si=0;
+		CPoint *pp=pointlist.data();
+
+		for(size_t j=0;j<ll.size();j++){
+
+			if(ps[j].lineType>=0 && ps[j].lineType<5){	
+				pen.CreatePen(ps[j].lineType,ps[j].lineWidth,ps[j].colour);
+				pOldPen=pDC->SelectObject(&pen);
+				if(ll[j]>2){
+					if(ps[j].smoothLine==1){
+						DrawSpline(&pp[si],ll[j],lborder,rborder,pDC);
+					}
+					if(ps[j].smoothLine==2){
+						pDC->PolyBezier(&pp[si],ll[j]);
+					}
+					if(ps[j].smoothLine==0){
+						pDC->Polyline(&pp[si],ll[j]);
+					}
+				}
+				else{
+					if(ll[j]==2){
+						pDC->Polyline(&pp[si],ll[j]);
+					}				
+				}
+				pDC->SelectObject(pOldPen);
+				pen.DeleteObject();
+			}
+
+
+			if(ps[j].dotSize==1){
+				for(size_t i=0;i<ll[j];i++){
+					pDC->SetPixelV(pointlist[i+si],ps[j].colour);	
+				}
+			}
+			if(ps[j].dotSize>1){
+				CSize ppoc=CSize(ps[j].dotSize-1,ps[j].dotSize-1);
+				CRect prect(0,0,1,1);
+				prect.InflateRect(ppoc);
+
+				oc=pDC->GetBkColor();
+				for(size_t i=0;i<ll[j];i++){
+					prect.MoveToXY(pointlist[i+si]-ppoc);
+					//drawRectangle(prect,pDC,ps[j].colour,ps[j].colour);
+					pDC->FillSolidRect(&prect,ps[j].colour);
+				}
+				pDC->SetBkColor(oc);
+			}
+
+			si+=ll[j];
+
+			if(ps[j].traceLast){
+				CRect prect(0,0,1,1);
+				CSize ppoc=CSize(ps[j].lastWidth,ps[j].lastWidth);
+				prect.InflateRect(ppoc);
+
+				oc=pDC->GetBkColor();
+				prect.MoveToXY(pointlist[si-1]-ppoc);
+				//drawRectangle(prect,pDC,ps.back().colour,ps.back().colour);
+				pDC->FillSolidRect(&prect,ps[j].colour);
+				pDC->SetBkColor(oc);
+			}
+
+
+
+		}
+
+		//if(ps.back().traceLast){
+		//	CRect prect(0,0,1,1);
+		//	CSize ppoc=CSize(ps.back().lastWidth,ps.back().lastWidth);
+		//	prect.InflateRect(ppoc);
+
+		//	oc=pDC->GetBkColor();
+		//	prect.MoveToXY(pointlist.back()-ppoc);
+		//	//drawRectangle(prect,pDC,ps.back().colour,ps.back().colour);
+		//	pDC->FillSolidRect(&prect,ps.back().colour);
+		//	pDC->SetBkColor(oc);
+		//}
+
+		//////////////////////////////fast///////////////////////////
+		//genPointToPlot(xll,yll,rect,pointlist);
+		//pen.CreatePen(PS_SOLID,1,clist[0]);
+		//pOldPen=pDC->SelectObject(&pen);
+		//pDC->PolyPolyline(pointlist.data(),ll.data(),ll.size());
+		////dc.PolyDraw(pointlist.data(),styl.data(),pointlist.size());
+		//pDC->SelectObject(pOldPen);
+		//pen.DeleteObject();
+		//////////////////////////////////////////////////////////////////
+
+
+	};
+
+
+
+
+
+	static void DrawData(CRect &plotrect
+		, CDC* pDC
+		//, const PlotData &pd
+		, const PlotSpec &ps
+		, const std::vector<LineSpec> &ls
+		, const RawData &raw
+		, const double &xmin
+		, const double &xmax
+		, const double &ymin
+		, const double &ymax
+		)
+	{
+
+		//WaitForSingleObject(semaphoreWrite.m_hObject,INFINITE);
+
+		pDC->FillSolidRect(plotrect,ps.winbkC);
+
+		ps.CalPlotRect(plotrect);
+
+		//GetPlotRect(plotrect, pd.ps.labelSize, pd.ps.metricSize, pd.ps.metricGridLong, pd.ps.gap);
+
+		if(!plotrect.IsRectEmpty()){
+
+			ps.Draw(plotrect
+				//DrawXYAxis(plotrect
+				,pDC
+				//,pd.ps
+				,xmin
+				,xmax
+				,ymin
+				,ymax);
+
+			if( !ls.empty() ){
+
+				CRect mainrt;
+				CRgn rgn;
+				rgn.CreateRectRgnIndirect(&plotrect);	
+				pDC->GetClipBox(&mainrt);
+				pDC->SelectClipRgn(&rgn);
+
+
+				std::vector<CPoint> pointlist;
+
+				genPointToPlot(raw.xll
+					,raw.yll
+					,plotrect
+					,pointlist
+					,xmin
+					,xmax
+					,ymin
+					,ymax);
+
+				DrawCurve(pDC
+					,pointlist
+					,raw.ll
+					,ls
+					,plotrect.left
+					,plotrect.right);
+
+
+				rgn.SetRectRgn(&mainrt);
+				pDC->SelectClipRgn(&rgn);
+			}
+
+			pDC->DrawEdge(&plotrect,EDGE_BUMP,BF_BOTTOMLEFT);
+
+		}
+
+
+		//ReleaseSemaphore(semaphoreWrite.m_hObject,1,NULL);
+	};
+
 public:
 	PlotSpec ps;
 	RawData raw;
@@ -108,6 +342,18 @@ public:
 
 		ps.xlabel=pda.ps.xlabel;
 		ps.ylabel=pda.ps.ylabel;
+	};
+
+
+	void Draw(CRect &plotrect
+		, CDC* pDC
+		, const double &xmin
+		, const double &xmax
+		, const double &ymin
+		, const double &ymax
+		)
+	{
+		DrawData(plotrect, pDC, ps, ls, raw, xmin, xmax, ymin, ymax);
 	};
 
 	//bool SaveImage(CString filepath, CSize sz, CDC* pDC, double pct=0.02)
@@ -222,7 +468,7 @@ public:
 			Getrgb(c1,rgb1);
 			Getrgb(c0,rgb0);
 
-			float rgbi[3];		
+			//float rgbi[3];		
 
 			//for(size_t i=si;i<lss;i++){
 
@@ -253,16 +499,19 @@ public:
 				ls[i].smoothLine=smoothType;
 			}
 
-							ls[lss-1].colour=c1;
-				ls[lss-1].dotSize=dotSize;
-				ls[lss-1].lineType=lineType;
-				ls[lss-1].smoothLine=smoothType;
+			ls[lss-1].colour=c1;
+			ls[lss-1].dotSize=dotSize;
+			ls[lss-1].lineType=lineType;
+			ls[lss-1].smoothLine=smoothType;
 
 		}
 
 
 
 	};
+
+
+
 
 };
 

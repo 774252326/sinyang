@@ -9,7 +9,7 @@
 #include "analyzer.h"
 #endif
 
-#include "analyzerDoc.h"
+//#include "analyzerDoc.h"
 #include "analyzerView.h"
 
 #include "struct1\pcct.hpp"

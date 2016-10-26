@@ -133,7 +133,7 @@ public:
 		std::vector<double> x;
 		std::vector<double> y;
 		GetDatai(idx,x,y);
-		
+
 		double yr;
 		std::vector<double> y2(x.size());
 		spline(x,y,1.0e30,1.0e30,y2);
@@ -235,6 +235,17 @@ public:
 
 		return true;
 
+	};
+
+	bool EraseFirst()
+	{
+		if(ll.empty())
+			return false;
+		size_t tmpi=ll.front();
+		xll.erase(xll.begin(),xll.begin()+tmpi);
+		yll.erase(yll.begin(),yll.begin()+tmpi);
+		ll.erase(ll.begin());
+		return true;
 	};
 
 };

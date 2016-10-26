@@ -4,7 +4,7 @@
 #include "struct\VPara.hpp"
 #include <afxcmn.h>
 #include <vector>
-#include "struct1\RawData.hpp"
+//#include "struct1\RawData.hpp"
 #include "struct1\PlotDataEx.hpp"
 #include <algorithm>
 
