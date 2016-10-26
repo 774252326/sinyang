@@ -439,7 +439,7 @@ void CMainFrame::OnOptions()
 {
 
 	//BOOL bNameValid;
-	CString strTemp, strTemp2=L"                                  ";
+	CString strTemp;
 
 	m_wndCaptionBar.m_clrBarText=black;
 
@@ -641,7 +641,7 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 			}
 			else{
 
-				size_t n1=360;
+				size_t n1=60;
 
 				std::vector<double> x;
 				std::vector<double> y;
@@ -694,6 +694,8 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 						(strTemp.LoadString(IDS_CAPTION_BUTTON));
 						m_wndCaptionBar.SetButton(strTemp, ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_LEFT, FALSE);
 						m_wndCaptionBar.EnableButton();
+						m_wndCaptionBar.ShowWindow(SW_SHOW);
+						RecalcLayout(FALSE);
 
 						timer2=SetTimer(2,400,NULL);
 
@@ -706,13 +708,11 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 		break;
 
 	case 2:
-		if(m_wndCaptionBar.m_clrBarText==black){
-			m_wndCaptionBar.m_clrBarText=red;
+		{
+			bool aa=(m_wndCaptionBar.m_clrBarText==black);
+			m_wndCaptionBar.m_clrBarText=aa ? red : black;
+			m_wndCaptionBar.Invalidate();
 		}
-		else{
-			m_wndCaptionBar.m_clrBarText=black;
-		}
-		m_wndCaptionBar.Invalidate();
 		break;
 	default:
 		break;
@@ -741,9 +741,10 @@ void CMainFrame::OnUpdateViewToolbara(CCmdUI *pCmdUI)
 
 void CMainFrame::plot1(const std::vector<double> & x, const std::vector<double> & y, const CString & xlabel, const CString & ylabel)
 {
-	plotspec ps1;
-	CString strTemp;
+
 	if(finishflag){//if to plot a new line
+		plotspec ps1;
+		CString strTemp;
 		ps1.colour=genColor( genColorvFromIndex<float>( stepCount ) ) ;
 		ps1.dotSize=-1;
 		if(stepCount>0){
@@ -758,6 +759,7 @@ void CMainFrame::plot1(const std::vector<double> & x, const std::vector<double> 
 		}
 		ps1.showLine=true;
 		ps1.smoothLine=0;
+		ps1.traceLast=true;
 		( (dlg1*)m_wndSplitter.GetPane(0,0) )->plot2d(x,y,ps1,xlabel,ylabel);
 	}
 	else{
@@ -768,14 +770,16 @@ void CMainFrame::plot1(const std::vector<double> & x, const std::vector<double> 
 
 void CMainFrame::plot2(const std::vector<double> & x, const std::vector<double> & y, const CString & xlabel, const CString & ylabel)
 {
-	plotspec ps1;
-	CString strTemp;
+
+	//CString strTemp;
 	if(finishflag2){
+		plotspec ps1;
 		ps1.colour=red;
 		ps1.dotSize=3;
 		ps1.name=L"Ar/Ar0";
 		ps1.showLine=true;
 		ps1.smoothLine=1;
+		ps1.traceLast=false;
 		( (dlg1*)m_wndSplitter.GetPane(0,1) )->plot2d(x,y,ps1,xlabel,ylabel);
 		finishflag2=false;
 	}

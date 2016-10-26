@@ -20,7 +20,11 @@ pcctA::~pcctA(void)
 
 int pcctA::addXY(std::vector<double> & x, std::vector<double> & y)
 {
+	int flag=-1;
+
 	if(x.size()==y.size()){
+
+		flag=0;
 
 		std::vector<double>::iterator itx;
 		itx=find(x.begin(),x.end(),xmax);
@@ -33,6 +37,19 @@ int pcctA::addXY(std::vector<double> & x, std::vector<double> & y)
 
 			yy.back().resize(yy.back().size()+index);
 			std::copy_backward(y.begin(),y.begin()+index,yy.back().end());
+
+			if( xx.back().size()>2 && xx.back().back()==xx.back()[1] ){
+				Ar.push_back(intg());
+				if( xx.size() >= nCycle ){
+					flag=2;
+					return flag;
+				}
+				else{
+					flag=1;
+				}
+			}
+
+			
 		}
 
 		x.erase(x.begin(), x.begin()+index);	
@@ -40,36 +57,41 @@ int pcctA::addXY(std::vector<double> & x, std::vector<double> & y)
 
 		if(!x.empty()){
 
-			if(!xx.empty()){
-				Ar.push_back(intg());
-			}
+			//if(!xx.empty()){
+			//	Ar.push_back(intg());
+			//}
 
-			if(xx.size()>=nCycle){
-				return 2;
-			}
+			//if(xx.size()>=nCycle){
+			//	return 2;
+			//}
 
 			xx.push_back(x);
 			yy.push_back(y);
 
 			//if(StartLoad){
-			if(xx.size()>1){
-				return 1;
-			}
+			//if(xx.size()>1){
+			//	return 1;
+			//}
 			//else{
 			//	StartLoad=true;
 			//}		
 
 		}
 
-		if( xx.size()>=nCycle && xx.back().back()==xx.back()[1] && xx.back().size()>2 ){
-			Ar.push_back(intg());
-			return 2;
-		}
+		//if( xx.size()>=nCycle && xx.back().back()==xx.back()[1] && xx.back().size()>2 ){
+		//	Ar.push_back(intg());
+		//	return 2;
+		//}
+
+
+
 
 
 	}
 
-	return 0;
+	//return 0;
+
+	return flag;
 
 }
 

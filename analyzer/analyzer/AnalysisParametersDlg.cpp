@@ -13,6 +13,7 @@ IMPLEMENT_DYNAMIC(AnalysisParametersDlg, CPropertyPage)
 
 AnalysisParametersDlg::AnalysisParametersDlg()
 	: CPropertyPage(AnalysisParametersDlg::IDD)
+	, filePath(_T(""))
 {
 	para.analysistype=0;
 	para.calibrationfactor=1;
@@ -31,13 +32,15 @@ void AnalysisParametersDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDS_EDIT_EVALUATION_RATIO, para.evaluationratio);
 	DDX_Text(pDX, IDS_EDIT_ENDPOINT_RATIO, para.endpointratio);
 	DDX_Text(pDX, IDS_EDIT_CALIBRATION_FACTOR, para.calibrationfactor);
-
+	DDX_Text(pDX, IDS_EDIT_CALIBRATION_CURVE_FILE, filePath);
 }
 
 
 BEGIN_MESSAGE_MAP(AnalysisParametersDlg, CPropertyPage)
 	
 	ON_CBN_SELCHANGE(IDS_COMBO_ANALYSIS_TYPE, &AnalysisParametersDlg::ComboSelectChange)
+
+	ON_CBN_SELCHANGE(IDS_COMBO_CALIBRATION_TYPE, &AnalysisParametersDlg::CalibrationComboSelectChange)
 
 	//ON_EN_CHANGE(IDS_EDIT_CALIBRATION_FACTOR, &AnalysisParametersDlg::editchange)
 
@@ -263,7 +266,7 @@ int AnalysisParametersDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	CSize gap1(20,20);
 	CSize gap2(20,20);
-	CSize staticSize(150,22);
+	CSize staticSize(180,22);
 
 	CRect winrect;
 	this->GetWindowRect(&winrect);
@@ -274,6 +277,7 @@ int AnalysisParametersDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	CStatic *pStatic;
 	CEdit *pEdit;
 	CComboBox *pCombo;
+	CComboBox *pCombo2;
 
 	CString str;
 
@@ -312,12 +316,34 @@ int AnalysisParametersDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		pCombo->SetCurSel(para.analysistype);
 	}
 
+	pEdit = (CEdit*)pCombo->GetWindow(GW_CHILD);
+	pEdit->SetReadOnly();
+
 	pt.x-=staticSize.cx+gap2.cx;
 	pt.y+=staticSize.cy+gap2.cy;
 
 	//double x[3]={0,0,0};
 
-	for(int i=0;i<3;i++){
+	int h=winrect.Height()-4*(gap2.cy+staticSize.cy);
+
+	str.LoadStringW( IDS_STRING_AT1+(pCombo->GetCurSel()) );
+	pEdit=new CEdit;
+	pEdit->CreateEx(
+		WS_EX_CLIENTEDGE,
+		L"Edit", 
+		str,
+		ES_LEFT
+		|ES_READONLY
+		|WS_CHILD
+		|WS_VISIBLE,
+		CRect(pt,CSize(winrect.Width(),h)),
+		this,
+		IDS_EDIT_REMARK_ON_ANALYSIS_TYPE);
+
+	pt.y+=h+gap2.cy;
+
+
+	for(int i=0;i<2;i++){
 
 		str.LoadStringW(IDS_STRING_EVALUATION_RATIO+i);
 		pStatic=new CStatic;
@@ -351,23 +377,57 @@ int AnalysisParametersDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 
 
-	//str.LoadStringW(IDS_EDIT_REMARK_ON_ANALYSIS_TYPE);
-	str.LoadStringW( IDS_STRING_AT1+(pCombo->GetCurSel()) );
-	pEdit=new CEdit;
-	pEdit->CreateEx(
-		WS_EX_CLIENTEDGE,
-		L"Edit", 
-		str,
-		ES_LEFT
-		|ES_READONLY
-		|WS_CHILD
-		|WS_VISIBLE,
-		CRect(pt,CPoint(winrect.Size()+gap1)),
-		this,
-		IDS_EDIT_REMARK_ON_ANALYSIS_TYPE);
 
-	pStatic->ShowWindow(SW_SHOW);
-	pEdit->ShowWindow(SW_SHOW);
+	pCombo2=new CComboBox;
+	pCombo2->Create(
+		CBS_DROPDOWN
+		|WS_CHILD
+		|WS_VISIBLE, 
+		CRect(pt,staticSize),
+		this,
+		IDS_COMBO_CALIBRATION_TYPE);
+
+	for(int i=IDS_STRING_CALIBRATION_FACTOR;i<=IDS_STRING_CALIBRATION_CURVE_FILE;i++){
+		str.LoadStringW(i);
+		pCombo2->AddString(str);
+	}
+	pCombo2->SetCurSel(0);
+
+	pEdit = (CEdit*)pCombo2->GetWindow(GW_CHILD);
+	pEdit->SetReadOnly();
+		
+	pt.x+=gap2.cx+staticSize.cx;
+
+		str.LoadStringW(IDS_EDIT_CALIBRATION_FACTOR);
+		pEdit=new CEdit;
+		pEdit->CreateEx(
+			WS_EX_CLIENTEDGE,
+			L"Edit", 
+			str,
+			ES_LEFT
+			|WS_CHILD
+			|WS_VISIBLE,
+			CRect(pt,editSize),
+			this,
+			IDS_EDIT_CALIBRATION_FACTOR);
+
+		str.LoadStringW(IDS_EDIT_CALIBRATION_CURVE_FILE);
+		pEdit=new CEdit;
+		pEdit->CreateEx(
+			WS_EX_CLIENTEDGE,
+			L"Edit", 
+			str,
+			ES_LEFT
+			|WS_CHILD,
+			//|WS_VISIBLE,
+			CRect(pt,editSize),
+			this,
+			IDS_EDIT_CALIBRATION_CURVE_FILE);
+
+
+
+	//pStatic->ShowWindow(SW_SHOW);
+	//pEdit->ShowWindow(SW_SHOW);
 
 	return 0;
 }
@@ -376,4 +436,25 @@ int AnalysisParametersDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 void AnalysisParametersDlg::editchange(void)
 {
 	UpdateData();
+}
+
+
+void AnalysisParametersDlg::CalibrationComboSelectChange(void)
+{
+	CString strWeb;   
+    int nSel;     
+	CComboBox * pcb=(CComboBox*)(this->GetDlgItem(IDS_COMBO_CALIBRATION_TYPE));
+    // 获取组合框控件的列表框中选中项的索引   
+	nSel = pcb->GetCurSel();  
+
+	for(int i=0;i<2;i++){
+		if(i==nSel){
+			GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR+i)->ShowWindow(SW_SHOW);
+		}
+		else{
+			GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR+i)->ShowWindow(SW_HIDE);
+		}
+	}
+
+
 }

@@ -1173,13 +1173,13 @@ void dlg1::DrawCurveA(CRect rect, CDC* pDC)
 
 	}
 
-
-	CRect prect(0,0,1,1);
-	CSize ppoc=CSize(4,4);
-	prect.InflateRect(ppoc);			
-	prect.MoveToXY(pointlist.back()-ppoc);
-	drawRectangle(prect,pDC,ps.back().colour,ps.back().colour);
-
+	if(ps.back().traceLast){
+		CRect prect(0,0,1,1);
+		CSize ppoc=CSize(4,4);
+		prect.InflateRect(ppoc);			
+		prect.MoveToXY(pointlist.back()-ppoc);
+		drawRectangle(prect,pDC,ps.back().colour,ps.back().colour);
+	}
 
 	//////////////////////////////fast///////////////////////////
 	//genPointToPlot(xll,yll,rect,pointlist);

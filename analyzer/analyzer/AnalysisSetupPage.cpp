@@ -64,9 +64,29 @@ int AnalysisSetupPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	//s1.volume=10;
 	//SAPdlg.paral.push_back(s1);
 
+
+
+
+
 	mreadini(L"pa.txt",APdlg.para,CVPdlg.para,SAPdlg.paral);
 
 
 
 	return 0;
+}
+
+
+BOOL AnalysisSetupPage::OnInitDialog()
+{
+	BOOL bResult = CPropertySheet::OnInitDialog();
+
+	// TODO:  Add your specialized code here
+
+
+	CRect winrect;
+	this->GetWindowRect(&winrect);
+	BOOL flg=this->SetWindowPos(&CWnd::wndTopMost, winrect.left, winrect.top, 1200, 600, this->GetStyle());
+
+
+	return bResult;
 }

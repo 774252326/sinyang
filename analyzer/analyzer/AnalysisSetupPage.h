@@ -25,6 +25,7 @@ public:
 	SolutionAdditionParametersDlg SAPdlg;
 	CVParametersDlg CVPdlg;
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	virtual BOOL OnInitDialog();
 };
 
 

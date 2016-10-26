@@ -26,4 +26,5 @@ public:
 	cvp para;
 	virtual BOOL OnKillActive();
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	void ComboSelectChange(void);
 };

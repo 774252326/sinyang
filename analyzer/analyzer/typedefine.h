@@ -20,6 +20,7 @@ typedef struct CVP{
 	double highelimit;
 	double scanrate;
 	int noofcycles;
+	double variationtolerance;
 	double rotationrate;
 	double endintegratione;
 } cvp;
@@ -40,6 +41,7 @@ typedef struct PLOTSPEC{
 	int dotSize;
 	bool showLine;
 	int smoothLine;
+	bool traceLast;
 } plotspec;
 
 

@@ -11,7 +11,7 @@ void mreadini(wchar_t *fn, anp &p1, cvp &p2, std::vector<sap> &p3 )
 {
 
 	std::ifstream ifs(fn);
-	double a;
+	//double a;
 	sap s1;
 	p3.clear();
 

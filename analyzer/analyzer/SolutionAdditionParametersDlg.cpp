@@ -73,19 +73,12 @@ BOOL SolutionAdditionParametersDlg::OnInitDialog()
 	// TODO:  Add extra initialization here
 
 
-	SetList();
+	//SetList();
 
 	/************************************************************************/
 	/*                                                                      */
 	/************************************************************************/
 
-
-	//if ( !m_SAPlist.GetSafeHwnd() )
-	//{
-	//	return 0;
-	//}
-
-	//m_SAPlist.ShowWindow(SW_SHOW);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
@@ -141,8 +134,8 @@ int SolutionAdditionParametersDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 // when cell is being edited
 static int _List_Type( int col )
 {
-	//if ( col == 0 )
-		//return CEditList::eLast;
+	if ( col == 4 )
+		return CEditList::eCombo;
 	// else :
 	return CEditList::eEdit;
 }
@@ -163,11 +156,11 @@ void SolutionAdditionParametersDlg::BuildList(int width)
 	//dwStyle1 |= LVS_EX_CHECKBOXES;//item前生成checkbox控件
 	m_SAPlist.SetExtendedStyle(dwStyle1); //设置扩展风格
 
-	int wi[5]={40,width/4,width/4,width/4,width/4-40};
+	int wi[6]={33,87,88,87,40,width/4};
 
 
 	CString strTemp;
-	for(int i=0;i<5;i++){
+	for(int i=0;i<6;i++){
 		strTemp.LoadStringW(IDS_STRING520+i);
 		m_SAPlist.InsertColumn(i, strTemp, LVCFMT_LEFT,wi[i]);
 	}
@@ -177,15 +170,15 @@ void SolutionAdditionParametersDlg::BuildList(int width)
 	m_SAPlist.SetColumnType ( (fGetType)_List_Type );	
 
 	// insert string elements  for the ComboBox : 
-	//for ( int i=0 ; i < 4 ; i++){
-	//	strTemp.LoadStringW(IDS_STRING530+i);
-	//	m_SAPlist.m_strList.AddTail( strTemp );
-	//}
+	for ( int i=0 ; i < 4 ; i++){
+		strTemp.LoadStringW(IDS_STRING_VOL_ONCE+i);
+		m_SAPlist.m_strList.AddTail( strTemp );
+	}
 
 	// insert a dummy row
 	//InsertEmpty();
 
-	//SetList();
+	SetList();
 
 
 }
@@ -246,7 +239,7 @@ void SolutionAdditionParametersDlg::SetList(void)
 	strTemp.Format(L"%g",paral[0].Lconc);
 	m_SAPlist.SetItemText(0,3,strTemp);
 	strTemp.Format(L"%g",paral[0].volume);
-	m_SAPlist.SetItemText(0,4,strTemp);
+	m_SAPlist.SetItemText(0,5,strTemp);
 
 
 	for(size_t i=1;i<paral.size();i++){
@@ -259,7 +252,7 @@ void SolutionAdditionParametersDlg::SetList(void)
 		strTemp.Format(L"%g",paral[i].Lconc);
 		m_SAPlist.SetItemText(i,3,strTemp);
 		strTemp.Format(L"%g",paral[i].volume);
-		m_SAPlist.SetItemText(i,4,strTemp);
+		m_SAPlist.SetItemText(i,5,strTemp);
 	}
 }
 
@@ -281,7 +274,7 @@ void SolutionAdditionParametersDlg::GetList(void)
 		strTemp=m_SAPlist.GetItemText(i,3);
 		paral[i].Lconc=_wtof(strTemp.GetBuffer());
 
-		strTemp=m_SAPlist.GetItemText(i,4);
+		strTemp=m_SAPlist.GetItemText(i,5);
 		paral[i].volume=_wtof(strTemp.GetBuffer());
 	}
 

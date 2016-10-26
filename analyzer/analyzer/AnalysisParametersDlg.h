@@ -30,4 +30,6 @@ public:
 	//virtual BOOL Create(LPCTSTR lpszTemplateName, CWnd* pParentWnd = NULL);
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	void editchange(void);
+	CString filePath;
+	void CalibrationComboSelectChange(void);
 };
