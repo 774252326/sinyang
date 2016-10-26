@@ -50,6 +50,7 @@ public:
 	CString GetStepName(int i=-1);
 
 	virtual void Serialize(CArchive& ar);
+	int UseIndex;
 };
 
 

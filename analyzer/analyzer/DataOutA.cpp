@@ -19,6 +19,7 @@ DataOutA::DataOutA()
 	, addVolume(0)
 	, bUnknown(false)
 	, stepFilter(0)
+	, UseIndex(-1)
 {
 }
 
@@ -41,6 +42,7 @@ void DataOutA::operator=(const DataOutA &src)
 	additiveVolume=src.additiveVolume;
 	addVolume=src.addVolume;	
 	stepFilter=src.stepFilter;
+	UseIndex=src.UseIndex;
 }
 
 // DataOutA member functions
@@ -51,6 +53,7 @@ void DataOutA::Serialize(CArchive& ar)
 	{	// storing code
 		ar	<< stepName
 			<< stepFilter
+			<< UseIndex
 			<< Ar0
 			<< Sml
 			<< Aml
@@ -70,6 +73,7 @@ void DataOutA::Serialize(CArchive& ar)
 		size_t i;
 		ar	>> stepName
 			>> stepFilter
+			>> UseIndex
 			>> Ar0
 			>> Sml
 			>> Aml

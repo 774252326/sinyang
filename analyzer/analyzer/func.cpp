@@ -2678,7 +2678,7 @@ bool Compute(const std::vector<DataOutA> &dol, const ANPara &p1, std::vector<CSt
 				str=strt;
 				res.push_back(str);
 
-				str.Format(L"y=%gx%+g",lis.GetK(),lis.GetB());
+				str.Format(L"Q=%gA%+g",lis.GetK(),lis.GetB());
 				res.push_back(str);
 				
 				return true;
@@ -2764,7 +2764,7 @@ bool Compute(const std::vector<DataOutA> &dol, const ANPara &p1, std::vector<CSt
 				str=strt;
 				res.push_back(str);
 
-				str.Format(L"y=%gx%+g",lis.GetK(),lis.GetB());
+				str.Format(L"S=%gA%+g",lis.GetK(),lis.GetB());
 				res.push_back(str);
 
 				return true;
@@ -2811,6 +2811,23 @@ bool Compute(const std::vector<DataOutA> &dol, const ANPara &p1, std::vector<CSt
 
 				strt.LoadStringW(IDS_STRING_ML_PER_L);
 				str.Format(L"%g%s",Ac,strt);
+				res.push_back(str);
+
+
+				strt.LoadStringW(IDS_STRING_FITTING_LINE);
+				str=strt;
+				res.push_back(str);
+
+				str.Format(L"nQ=%gA%+g",lis.GetK(),lis.GetB());
+				res.push_back(str);
+
+
+
+				strt.LoadStringW(IDS_STRING_FITTING_LINE);
+				str=strt;
+				res.push_back(str);
+
+				str.Format(L"S=%gA%+g",lis0.GetK(),lis0.GetB());
 				res.push_back(str);
 
 				return true;
@@ -2892,7 +2909,7 @@ bool Compute(const std::vector<DataOutA> &dol, const ANPara &p1, std::vector<CSt
 				str=strt;
 				res.push_back(str);
 
-				str.Format(L"y=%gx%+g",lis.GetK(),lis.GetB());
+				str.Format(L"nQ=%gL%+g",lis.GetK(),lis.GetB());
 				res.push_back(str);
 
 				return true;
@@ -2935,6 +2952,16 @@ bool Compute(const std::vector<DataOutA> &dol, const ANPara &p1, std::vector<CSt
 				strt.LoadStringW(IDS_STRING_ML_PER_L);
 				str.Format(L"%g%s",SPc,strt);
 				res.push_back(str);
+
+
+
+				strt.LoadStringW(IDS_STRING_FITTING_LINE);
+				str=strt;
+				res.push_back(str);
+
+				str.Format(L"nQ=%gL%+g",lis.GetK(),lis.GetB());
+				res.push_back(str);
+
 
 				return true;
 			}

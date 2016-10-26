@@ -223,7 +223,7 @@ void AnalysisParametersPage::ComboSelectChange(void)
 	case 7:
 	case 9:
 	case 11:
-		//this->GetDlgItem(IDS_COMBO_CALIBRATION_TYPE)->ShowWindow(SW_HIDE);
+		this->GetDlgItem(IDS_COMBO_CALIBRATION_TYPE)->ShowWindow(SW_HIDE);
 		//this->GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR)->ShowWindow(SW_HIDE);
 		//this->GetDlgItem(IDS_EDIT_CALIBRATION_CURVE_FILE)->ShowWindow(SW_HIDE);
 		//this->GetDlgItem(IDS_EDIT_INTERCEPT_VALUE)->ShowWindow(SW_HIDE);
@@ -240,7 +240,7 @@ void AnalysisParametersPage::ComboSelectChange(void)
 	case 8:
 	case 10:
 	case 12:
-		//this->GetDlgItem(IDS_COMBO_CALIBRATION_TYPE)->ShowWindow(SW_SHOW);
+		this->GetDlgItem(IDS_COMBO_CALIBRATION_TYPE)->ShowWindow(SW_SHOW);
 
 		this->GetDlgItem(IDS_COMBO_CALIBRATION_TYPE)->EnableWindow(TRUE);
 
@@ -253,6 +253,28 @@ void AnalysisParametersPage::ComboSelectChange(void)
 	}
 
 	CalibrationComboSelectChange();
+
+
+	switch(para.analysistype){
+	case 3:
+	case 11:
+	case 4:
+	case 6:
+	case 10:
+	case 12:
+		this->GetDlgItem(IDS_STRING_EVALUATION_RATIO)->EnableWindow(FALSE);
+		this->GetDlgItem(IDS_EDIT_EVALUATION_RATIO)->EnableWindow(FALSE);
+		this->GetDlgItem(IDS_STRING_EVALUATION_RATIO)->ShowWindow(SW_HIDE);
+		this->GetDlgItem(IDS_EDIT_EVALUATION_RATIO)->ShowWindow(SW_HIDE);
+		break;
+	default:
+		this->GetDlgItem(IDS_STRING_EVALUATION_RATIO)->EnableWindow(TRUE);
+		this->GetDlgItem(IDS_EDIT_EVALUATION_RATIO)->EnableWindow(TRUE);
+		this->GetDlgItem(IDS_STRING_EVALUATION_RATIO)->ShowWindow(SW_SHOW);
+		this->GetDlgItem(IDS_EDIT_EVALUATION_RATIO)->ShowWindow(SW_SHOW);
+		break;
+	}
+
 
 }
 
@@ -283,6 +305,7 @@ BOOL AnalysisParametersPage::OnKillActive()
 		return FALSE;
 	}
 
+	if(GetDlgItem(IDS_EDIT_EVALUATION_RATIO)->IsWindowEnabled()==TRUE)
 	if(para.evaluationratio<=0){
 		AfxMessageBox(IDS_STRING_ERROR);
 		CEdit *ped=(CEdit*)(this->GetDlgItem(IDS_EDIT_EVALUATION_RATIO));
