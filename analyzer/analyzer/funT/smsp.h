@@ -2,6 +2,7 @@
 #include "banbksT.h"
 #include "bandecT.h"
 #include "banmatT.h"
+
 //#include "../../funT/paddingT.h"
 #include "matmulT.h"
 #include <vector>
@@ -90,8 +91,8 @@ void smspl( const std::vector<T> &x, const std::vector<T> &y, T p, std::vector< 
 
 
 	T **QtwQtwt;
-	long a3=calupbw(n-2,n,0,n,n-2,0,n-2,n-2);
-	long b3=caldnbw(n-2,n,0,n,n-2,0,n-2,n-2);
+	long a3=calupbw<long>(n-2,n,0,n,n-2,0,n-2,n-2);
+	long b3=caldnbw<long>(n-2,n,0,n,n-2,0,n-2,n-2);
 	QtwQtwt=bmatrix<T>(n-2,n-2,a3,b3);
 	bmatmul(Qtw,n-2,n,0,0,Qtwt,n,n-2,0,0,QtwQtwt,n-2,n-2,a3,b3);
 

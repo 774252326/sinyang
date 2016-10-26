@@ -95,6 +95,17 @@ enum ProcessState{
 };
 
 
+typedef struct SOLUTIONCOMPOSITION{
+	double AC;
+	double LC;
+	double SC;
+} SCP;
+
+
+const CString rightPlotFile0=L"tempr0.fig.txt";
+const CString rightPlotFile1=L"tempr1.fig.txt";
+
+
 void mreadini(wchar_t *fn, anp &p1, cvp &p2, sap &p3 );
 
 void mwriteini(wchar_t *fn, const anp &p1, const cvp &p2, const sap &p3 );

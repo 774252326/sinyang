@@ -10,7 +10,11 @@ class PlotSettingPage : public CPropertyPage
 
 public:
 	PlotSettingPage();
-	PlotSettingPage(const CString &title, const figspec &fspec, const std::vector<plotspec> &pspec);
+	PlotSettingPage(const CString &title
+		, const figspec &fspec
+		, const std::vector<plotspec> &pspec
+		, const CString & x
+		, const CString & y);
 	virtual ~PlotSettingPage();
 
 // Dialog Data
@@ -34,4 +38,6 @@ public:
 	void SetList(void);
 	void GetList(void);
 	int GetChoice(int nIterm, int nSubItem);
+	CString xlabel;
+	CString ylabel;
 };

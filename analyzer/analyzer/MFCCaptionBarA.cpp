@@ -5,6 +5,7 @@
 #include "analyzer.h"
 #include "MFCCaptionBarA.h"
 #include "colormapT.h"
+#include "typedefine.h"
 
 // CMFCCaptionBarA
 
@@ -319,10 +320,10 @@ void CMFCCaptionBarA::BtnClicked(void)
 	CString str;
 
 	if(bCheck){
-		str=L"tempr1.fig.txt";
+		str=rightPlotFile1;
 	}
 	else{
-		str=L"tempr0.fig.txt";
+		str=rightPlotFile0;
 	}
 
 	::SendMessageW(this->GetParentFrame()->GetSafeHwnd(), MESSAGE_SWITCH_FIGURE, (WPARAM)str.GetBuffer(), NULL);
@@ -332,8 +333,6 @@ void CMFCCaptionBarA::BtnClicked(void)
 
 afx_msg LRESULT CMFCCaptionBarA::OnMessageReady(WPARAM wParam, LPARAM lParam)
 {
-
-	
 	CString strTemp;
 	(strTemp.LoadString(IDS_STRING_READY));
 	ShowMessage(strTemp);

@@ -132,6 +132,7 @@
     <ClInclude Include="PlotSettingSheet.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SAPara.h" />
+    <ClInclude Include="SARCalibCurve.h" />
     <ClInclude Include="SolutionAdditionParametersDlg.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -166,6 +167,7 @@
     <ClCompile Include="PlotSettingPage.cpp" />
     <ClCompile Include="PlotSettingSheet.cpp" />
     <ClCompile Include="SAPara.cpp" />
+    <ClCompile Include="SARCalibCurve.cpp" />
     <ClCompile Include="SolutionAdditionParametersDlg.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

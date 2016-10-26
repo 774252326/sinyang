@@ -1149,6 +1149,13 @@ void CMainFrame::OnAnalysisMethodsetup()
 	//sheet.SetWindowPos(&CWnd::wndTopMost,10,10,800,600,SWP_SHOWWINDOW);
 
 	readini(sheet.APdlg.para,sheet.CVPdlg.para,sheet.SAPdlg.para);
+
+	//std::vector<CObject> cl;
+	//cl.push_back(sheet.APdlg.para);
+	//cl.push_back(sheet.CVPdlg.para);
+	//cl.push_back(sheet.SAPdlg.para);
+	//ReadFileCustom(cl.data(), cl.size(), AnalysisSetupINI);
+
 	// 打开模态向导对话框   
 	if(sheet.DoModal()==IDOK){
 		writeini(sheet.APdlg.para,sheet.CVPdlg.para,sheet.SAPdlg.para);
@@ -1289,9 +1296,17 @@ void CMainFrame::OnOptionsPlotsettings()
 	//sheet.SetWindowPos(&CWnd::wndTopMost,10,10,800,600,SWP_SHOWWINDOW);
 
 	str.LoadStringW(IDS_STRING_FIGURE1);
-	PlotSettingPage fig1setting(str,LeftPlotPointer()->fs,LeftPlotPointer()->pd.ps);
+	PlotSettingPage fig1setting(str
+		,LeftPlotPointer()->fs
+		,LeftPlotPointer()->pd.ps
+		,LeftPlotPointer()->pd.xlabel
+		,LeftPlotPointer()->pd.ylabel);
 	str.LoadStringW(IDS_STRING_FIGURE2);
-	PlotSettingPage fig2setting(str,RightPlotPointer()->fs,RightPlotPointer()->pd.ps);
+	PlotSettingPage fig2setting(str
+		,RightPlotPointer()->fs
+		,RightPlotPointer()->pd.ps
+		,RightPlotPointer()->pd.xlabel
+		,RightPlotPointer()->pd.ylabel);
 
 	sheet.AddPage(&fig1setting);
 	sheet.AddPage(&fig2setting);
@@ -1299,11 +1314,15 @@ void CMainFrame::OnOptionsPlotsettings()
 	// 打开模态向导对话框   
 	if(sheet.DoModal()==IDOK){
 
+		LeftPlotPointer()->pd.xlabel=fig1setting.xlabel;
+		LeftPlotPointer()->pd.ylabel=fig1setting.ylabel;
 		copyfs(fig1setting.fs,LeftPlotPointer()->fs);
 		LeftPlotPointer()->pd.ps.clear();
 		LeftPlotPointer()->pd.ps.assign(fig1setting.ps.begin(),fig1setting.ps.end());
 		LeftPlotPointer()->Invalidate();
 
+		RightPlotPointer()->pd.xlabel=fig2setting.xlabel;
+		RightPlotPointer()->pd.ylabel=fig2setting.ylabel;
 		copyfs(fig2setting.fs,RightPlotPointer()->fs);
 		RightPlotPointer()->pd.ps.clear();
 		RightPlotPointer()->pd.ps.assign(fig2setting.ps.begin(),fig2setting.ps.end());

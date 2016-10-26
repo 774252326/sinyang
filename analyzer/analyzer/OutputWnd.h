@@ -53,10 +53,10 @@ public:
 	virtual ~COutputWnd();
 
 	CListCtrl* GetListCtrl(){return &m_listCtrlMonitor;}
-	BOOL InsertListCtrl(LPCTSTR StepNo,LPCTSTR StepName,LPCTSTR ArValue,LPCTSTR Use);
-	BOOL InsertListCtrl(int StepNo, LPCTSTR StepName, double ArValue, bool Use);
-	BOOL InsertListCtrl(int StepNo, int No2, int CycleNo, double addVol, double totalVol, double Q, double nQ, bool Use);
-	BOOL InsertListCtrl(int StepNo, int No2, int CycleNo, double Q, bool Use);
+//	BOOL InsertListCtrl(LPCTSTR StepNo,LPCTSTR StepName,LPCTSTR ArValue,LPCTSTR Use);
+//	BOOL InsertListCtrl(int StepNo, LPCTSTR StepName, double ArValue, bool Use);
+//	BOOL InsertListCtrl(int StepNo, int No2, int CycleNo, double addVol, double totalVol, double Q, double nQ, bool Use);
+//	BOOL InsertListCtrl(int StepNo, int No2, int CycleNo, double Q, bool Use);
 	BOOL InsertListCtrl(int StepNo, CString StepName, int CycleNo, double addVol, double totalVol, double Q, double nQ, bool Use);
 	BOOL InsertListCtrl(int StepNo, CString StepName, double addVol, double totalVol, double Q, double nQ, bool Use);
 

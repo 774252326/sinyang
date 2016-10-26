@@ -214,114 +214,114 @@ void COutputWnd::UpdateFonts()
 
 #pragma pack(1)
 #pragma warning(disable:4996)
-BOOL COutputWnd::InsertListCtrl(LPCTSTR StepNo, LPCTSTR StepName, LPCTSTR ArValue, LPCTSTR Use)
-{
-
-	////int m_temp = 19;//
-	////fill the list control
-	//wchar_t step[64];
-	//swprintf_s(&step[0],sizeof(step)/sizeof(wchar_t),_T("%d\0"),nTmp/*m_temp*/);
-	//wchar_t RunTime[64];   
-	//swprintf_s(&RunTime[0],sizeof(RunTime)/sizeof(wchar_t),_T("%f\0"),1.0);
-	//wchar_t Progress[64];   
-	//swprintf_s(&Progress[0],sizeof(Progress)/sizeof(wchar_t),_T("%f%%\0"),2.0);
-
-	//insert the data from the list control head(记录改成从最上面插入)
-	m_listCtrlMonitor.InsertItem(0,StepNo,0);
-	m_listCtrlMonitor.SetItemText(0,1,StepName);
-	m_listCtrlMonitor.SetItemText(0,2,ArValue);
-	m_listCtrlMonitor.SetItemText(0,3,Use);
-	return TRUE;
-}
-
-
-
-BOOL COutputWnd::InsertListCtrl(int StepNo, LPCTSTR StepName, double ArValue, bool Use)
-{
-
-	////int m_temp = 19;//
-	////fill the list control
-	//wchar_t step[64];
-	//swprintf_s(&step[0],sizeof(step)/sizeof(wchar_t),_T("%d\0"),nTmp/*m_temp*/);
-	//wchar_t RunTime[64];   
-	//swprintf_s(&RunTime[0],sizeof(RunTime)/sizeof(wchar_t),_T("%f\0"),1.0);
-	//wchar_t Progress[64];   
-	//swprintf_s(&Progress[0],sizeof(Progress)/sizeof(wchar_t),_T("%f%%\0"),2.0);
-
-	//insert the data from the list control head(记录改成从最上面插入)
-	CString str0,str2,str3;
-
-	str0.Format(L"%d",StepNo);
-	str2.Format(L"%f",ArValue);
-	str3=( Use? (L"yes"):(L"no") );
-
-	m_listCtrlMonitor.InsertItem(StepNo,str0);
-	m_listCtrlMonitor.SetItemText(StepNo,2,StepName);
-	m_listCtrlMonitor.SetItemText(StepNo,1,str0);
-	m_listCtrlMonitor.SetItemText(StepNo,3,str0);
-	m_listCtrlMonitor.SetItemText(StepNo,4,str2);
-	m_listCtrlMonitor.SetItemText(StepNo,5,str3);
-
-	return TRUE;
+//BOOL COutputWnd::InsertListCtrl(LPCTSTR StepNo, LPCTSTR StepName, LPCTSTR ArValue, LPCTSTR Use)
+//{
+//
+//	////int m_temp = 19;//
+//	////fill the list control
+//	//wchar_t step[64];
+//	//swprintf_s(&step[0],sizeof(step)/sizeof(wchar_t),_T("%d\0"),nTmp/*m_temp*/);
+//	//wchar_t RunTime[64];   
+//	//swprintf_s(&RunTime[0],sizeof(RunTime)/sizeof(wchar_t),_T("%f\0"),1.0);
+//	//wchar_t Progress[64];   
+//	//swprintf_s(&Progress[0],sizeof(Progress)/sizeof(wchar_t),_T("%f%%\0"),2.0);
+//
+//	//insert the data from the list control head(记录改成从最上面插入)
+//	m_listCtrlMonitor.InsertItem(0,StepNo,0);
+//	m_listCtrlMonitor.SetItemText(0,1,StepName);
+//	m_listCtrlMonitor.SetItemText(0,2,ArValue);
+//	m_listCtrlMonitor.SetItemText(0,3,Use);
+//	return TRUE;
+//}
 
 
-}
+
+//BOOL COutputWnd::InsertListCtrl(int StepNo, LPCTSTR StepName, double ArValue, bool Use)
+//{
+//
+//	////int m_temp = 19;//
+//	////fill the list control
+//	//wchar_t step[64];
+//	//swprintf_s(&step[0],sizeof(step)/sizeof(wchar_t),_T("%d\0"),nTmp/*m_temp*/);
+//	//wchar_t RunTime[64];   
+//	//swprintf_s(&RunTime[0],sizeof(RunTime)/sizeof(wchar_t),_T("%f\0"),1.0);
+//	//wchar_t Progress[64];   
+//	//swprintf_s(&Progress[0],sizeof(Progress)/sizeof(wchar_t),_T("%f%%\0"),2.0);
+//
+//	//insert the data from the list control head(记录改成从最上面插入)
+//	CString str0,str2,str3;
+//
+//	str0.Format(L"%d",StepNo);
+//	str2.Format(L"%f",ArValue);
+//	str3=( Use? (L"yes"):(L"no") );
+//
+//	m_listCtrlMonitor.InsertItem(StepNo,str0);
+//	m_listCtrlMonitor.SetItemText(StepNo,2,StepName);
+//	m_listCtrlMonitor.SetItemText(StepNo,1,str0);
+//	m_listCtrlMonitor.SetItemText(StepNo,3,str0);
+//	m_listCtrlMonitor.SetItemText(StepNo,4,str2);
+//	m_listCtrlMonitor.SetItemText(StepNo,5,str3);
+//
+//	return TRUE;
+//
+//
+//}
 
 
-BOOL COutputWnd::InsertListCtrl(int StepNo, int No2, int CycleNo, double addVol, double totalVol, double Q, double nQ, bool Use)
-{
-
-	//insert the data from the list control head(记录改成从最上面插入)
-	CString str, StepName;
-	CString strTemp;
-
-	str.Format(L"%d",StepNo);
-	m_listCtrlMonitor.InsertItem(StepNo,str);
-
-	if(No2>0){		
-		//ASSERT
-		(strTemp.LoadString(IDS_STRING_STEPNAME1));
-		StepName.Format(L"%s%d",strTemp,No2);
-	}
-	else{		
-		//ASSERT
-		(StepName.LoadString(IDS_STRING_STEPNAME0));		
-	}
-	//ASSERT
-	(strTemp.LoadString(IDS_STRING_CYCLE));
-	str.Format(L"%s(%s%d)",StepName,strTemp,CycleNo);
-	m_listCtrlMonitor.SetItemText(StepNo,1,str);
-
-	if(addVol!=0){
-		str.Format(L"%g",addVol);
-		m_listCtrlMonitor.SetItemText(StepNo,2,str);
-
-		str.Format(L"%g",totalVol);
-		m_listCtrlMonitor.SetItemText(StepNo,3,str);
-	}
-
-	str.Format(L"%g",Q);
-	m_listCtrlMonitor.SetItemText(StepNo,4,str);
-
-
-	if(Use){
-		if(nQ!=0){
-			str.Format(L"%g",nQ);
-			m_listCtrlMonitor.SetItemText(StepNo,5,str);
-		}
-		//ASSERT
-		(str.LoadString(IDS_STRING_YES));
-	}
-	else{
-		//ASSERT
-		(str.LoadString(IDS_STRING_NO));
-	}
-	m_listCtrlMonitor.SetItemText(StepNo,6,str);
-
-	return TRUE;
-
-
-}
+//BOOL COutputWnd::InsertListCtrl(int StepNo, int No2, int CycleNo, double addVol, double totalVol, double Q, double nQ, bool Use)
+//{
+//
+//	//insert the data from the list control head(记录改成从最上面插入)
+//	CString str, StepName;
+//	CString strTemp;
+//
+//	str.Format(L"%d",StepNo);
+//	m_listCtrlMonitor.InsertItem(StepNo,str);
+//
+//	if(No2>0){		
+//		//ASSERT
+//		(strTemp.LoadString(IDS_STRING_STEPNAME1));
+//		StepName.Format(L"%s%d",strTemp,No2);
+//	}
+//	else{		
+//		//ASSERT
+//		(StepName.LoadString(IDS_STRING_STEPNAME0));		
+//	}
+//	//ASSERT
+//	(strTemp.LoadString(IDS_STRING_CYCLE));
+//	str.Format(L"%s(%s%d)",StepName,strTemp,CycleNo);
+//	m_listCtrlMonitor.SetItemText(StepNo,1,str);
+//
+//	if(addVol!=0){
+//		str.Format(L"%g",addVol);
+//		m_listCtrlMonitor.SetItemText(StepNo,2,str);
+//
+//		str.Format(L"%g",totalVol);
+//		m_listCtrlMonitor.SetItemText(StepNo,3,str);
+//	}
+//
+//	str.Format(L"%g",Q);
+//	m_listCtrlMonitor.SetItemText(StepNo,4,str);
+//
+//
+//	if(Use){
+//		if(nQ!=0){
+//			str.Format(L"%g",nQ);
+//			m_listCtrlMonitor.SetItemText(StepNo,5,str);
+//		}
+//		//ASSERT
+//		(str.LoadString(IDS_STRING_YES));
+//	}
+//	else{
+//		//ASSERT
+//		(str.LoadString(IDS_STRING_NO));
+//	}
+//	m_listCtrlMonitor.SetItemText(StepNo,6,str);
+//
+//	return TRUE;
+//
+//
+//}
 
 
 
@@ -374,6 +374,8 @@ BOOL COutputWnd::InsertListCtrl(int StepNo, CString StepName, int CycleNo, doubl
 		(str.LoadString(IDS_STRING_NO));
 	}
 	m_listCtrlMonitor.SetItemText(StepNo,6,str);
+
+	m_listCtrlMonitor.EnsureVisible(StepNo, FALSE);
 
 	return TRUE;
 
@@ -432,64 +434,67 @@ BOOL COutputWnd::InsertListCtrl(int StepNo, CString StepName, double addVol, dou
 	}
 	m_listCtrlMonitor.SetItemText(StepNo,6,str);
 
-	return TRUE;
 
-
-}
-
-
-
-
-BOOL COutputWnd::InsertListCtrl(int StepNo, int No2, int CycleNo, double Q, bool Use)
-{
-
-	//insert the data from the list control head(记录改成从最上面插入)
-	CString str, StepName;
-	CString strTemp;
-
-	str.Format(L"%d",StepNo);
-	m_listCtrlMonitor.InsertItem(StepNo,str);
-
-	if(No2>0){		
-		//ASSERT
-		(strTemp.LoadString(IDS_STRING_STEPNAME1));
-		StepName.Format(L"%s%d",strTemp,No2);
-	}
-	else{		
-		//ASSERT
-		(StepName.LoadString(IDS_STRING_STEPNAME0));		
-	}
-	//ASSERT
-	(strTemp.LoadString(IDS_STRING_CYCLE));
-	str.Format(L"%s(%s%d)",StepName,strTemp,CycleNo);
-	m_listCtrlMonitor.SetItemText(StepNo,1,str);
-
-	//str.Format(L"%g",addVol);
-	//m_listCtrlMonitor.SetItemText(StepNo,2,str);
-
-	//str.Format(L"%g",totalVol);
-	//m_listCtrlMonitor.SetItemText(StepNo,3,str);
-
-	str.Format(L"%g",Q);
-	m_listCtrlMonitor.SetItemText(StepNo,4,str);
-
-	//str.Format(L"%g",nQ);
-	//m_listCtrlMonitor.SetItemText(StepNo,5,str);
-
-	if(Use){
-		//ASSERT
-		(str.LoadString(IDS_STRING_YES));
-	}
-	else{
-		//ASSERT
-		(str.LoadString(IDS_STRING_NO));
-	}
-	m_listCtrlMonitor.SetItemText(StepNo,6,str);
+	m_listCtrlMonitor.EnsureVisible(StepNo, FALSE);
 
 	return TRUE;
 
 
 }
+
+
+
+
+//BOOL COutputWnd::InsertListCtrl(int StepNo, int No2, int CycleNo, double Q, bool Use)
+//{
+//
+//	//insert the data from the list control head(记录改成从最上面插入)
+//	CString str, StepName;
+//	CString strTemp;
+//
+//	str.Format(L"%d",StepNo);
+//	m_listCtrlMonitor.InsertItem(StepNo,str);
+//
+//	if(No2>0){		
+//		//ASSERT
+//		(strTemp.LoadString(IDS_STRING_STEPNAME1));
+//		StepName.Format(L"%s%d",strTemp,No2);
+//	}
+//	else{		
+//		//ASSERT
+//		(StepName.LoadString(IDS_STRING_STEPNAME0));		
+//	}
+//	//ASSERT
+//	(strTemp.LoadString(IDS_STRING_CYCLE));
+//	str.Format(L"%s(%s%d)",StepName,strTemp,CycleNo);
+//	m_listCtrlMonitor.SetItemText(StepNo,1,str);
+//
+//	//str.Format(L"%g",addVol);
+//	//m_listCtrlMonitor.SetItemText(StepNo,2,str);
+//
+//	//str.Format(L"%g",totalVol);
+//	//m_listCtrlMonitor.SetItemText(StepNo,3,str);
+//
+//	str.Format(L"%g",Q);
+//	m_listCtrlMonitor.SetItemText(StepNo,4,str);
+//
+//	//str.Format(L"%g",nQ);
+//	//m_listCtrlMonitor.SetItemText(StepNo,5,str);
+//
+//	if(Use){
+//		//ASSERT
+//		(str.LoadString(IDS_STRING_YES));
+//	}
+//	else{
+//		//ASSERT
+//		(str.LoadString(IDS_STRING_NO));
+//	}
+//	m_listCtrlMonitor.SetItemText(StepNo,6,str);
+//
+//	return TRUE;
+//
+//
+//}
 
 
 BOOL COutputWnd::clear(void)

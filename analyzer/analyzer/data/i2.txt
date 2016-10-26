@@ -1,0 +1,9 @@
+[sara]base1.txt
+[sara]base1 +s5a3l2-5 0-3ml.txt
+[sara]base1 +s5a3l2-5 0-4ml.txt
+[sara]base1 +s5a3l2-5 0-5ml.txt
+[sara]base1 +s5a3l2-5 0-8ml.txt
+[sara]base1 +s5a3l2-5 1-1ml.txt
+[sara]base1 +s5a3l2-5 1-1ml +100a 25ul.txt
+[sara]base1 +s5a3l2-5 1-1ml +100a 50ul.txt
+[sara]base1 +s5a3l2-5 1-1ml +100a 75ul.txt

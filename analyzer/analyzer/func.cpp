@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "func.h"
 
-//#include "CSpline.cpp"
+#include "CSpline.cpp"
 #include "colormapT.h"
 #include "funT\\smsp.h"
 #include "funT\\lspfitT.h"
@@ -9,6 +9,7 @@
 #include "pcct.h"
 #include "pcctB.h"
 #include <algorithm>
+#include "SARCalibCurve.h"
 
 int intv=20;
 size_t n1=800;
@@ -28,7 +29,40 @@ void SortInsert( std::vector<double> &xs, std::vector<double> &ys, double x, dou
 }
 
 
+BOOL SaveFileCustom(CObject * co, size_t n, CString fp)
+{
+	CFile theFile;
+	if( theFile.Open(fp, CFile::modeCreate | CFile::modeWrite) ){
+		CArchive archive(&theFile, CArchive::store);
 
+		for(size_t i=0;i<n;i++){
+			co[i].Serialize(archive);
+		}
+
+		archive.Close();
+		theFile.Close();
+		return TRUE;
+	}
+	return FALSE;
+}
+
+
+BOOL ReadFileCustom(CObject * co, size_t n, CString fp)
+{
+	CFile theFile;
+	if( theFile.Open(fp, /*CFile::modeCreate |*/ CFile::modeRead) ){
+		CArchive archive(&theFile, CArchive::load);
+
+		for(size_t i=0;i<n;i++){
+			co[i].Serialize(archive);
+		}
+
+		archive.Close();
+		theFile.Close();
+		return TRUE;
+	}
+	return FALSE;
+}
 
 
 void WaitSecond(ProcessState &waitflg
@@ -162,8 +196,6 @@ bool calVsupp(PlotData & pdat, int idx, double evoR, double &Vsupp)
 	return true;
 
 }
-
-
 
 
 
@@ -537,10 +569,122 @@ CString Output7(PlotData & pdat
 	//p1->Invalidate();
 
 	CString str;
-	str.Format(L" Aconc.=%g*Sconc.%+g @ Ar/Ar0=%g, ", c[1], c[0], evoR);
+	str.Format(L" S=%g*A%+g @ Ar/Ar0=%g, ", c[1], c[0], evoR);
 
 	return str;
 }
+
+
+
+CString Output8(PlotData & pdat0
+	, PlotData & pdat1
+	, double evoR
+	, double vmsvol
+	, CString SARCurvefile
+
+	)
+{
+
+	CString str;
+
+
+	SARCalibCurve scc;
+	ReadFileCustom(&scc, 1, SARCurvefile);
+	double sccc[2];
+	if( scc.CalSARLine(evoR,sccc[1],sccc[0]) ){
+
+		//sccc[1]=0.0492;
+		//sccc[0]=0.0896;
+
+		std::vector<double> sstd;
+		std::vector<double> nqstd;
+		if( scc.GetStandradCalibCurve(sstd,nqstd) ){
+			double Vsam;
+			if( calVsupp(pdat0,pdat0.ps.size()-1, evoR, Vsam) ){
+
+				double VsamLast=pdat0.xll.back();
+				std::vector<double> c;
+				{
+					std::vector<double> x;
+					std::vector<double> y;
+
+					pdat1.GetDatai(pdat1.ps.size()-1,x,y);
+
+					//x.erase(x.begin());
+					//y.erase(y.begin());
+					//x.erase(x.begin());
+					//y.erase(y.begin());
+
+					//x.pop_back();
+					//y.pop_back();
+					//x.pop_back();
+					//y.pop_back();
+
+					lspfit(x,y,2,c);
+
+					//c[0]=0.5544;
+					//c[1]=0.1893;
+
+					std::vector<double> nx(2,x.back());
+					std::vector<double> ny(2,0);
+					nx[0]=x.front();
+					ny[0]=c[1]*nx[0]+c[0];
+					ny[1]=c[1]*nx[1]+c[0];
+
+					plotspec ps1;
+					ps1.colour=genColor( genColorvFromIndex<float>( pdat1.ps.size() ) ) ;
+					ps1.dotSize=0;  
+					ps1.name=L"fit line";
+					//ps1.showLine=true;
+					ps1.lineType=0;
+					ps1.smoothLine=0;
+					ps1.traceLast=false;
+					pdat1.AddNew(nx,ny,ps1);
+
+				}
+
+				
+				double ca;
+				double cs;
+				double tmp;
+				tmp=0;
+
+				for(int i=0;i<100;i++){
+					tmp=sccc[1]*tmp+sccc[0];
+					cs=tmp*(vmsvol/Vsam+1);
+					tmp=cs/(vmsvol/VsamLast+1);
+					{
+						double aaa=tmp;
+						std::vector<double> y2(nqstd.size());
+						spline(sstd,nqstd,1.0e30,1.0e30,y2);
+						splint(sstd,nqstd,y2,aaa,tmp);
+					}
+					tmp=(c[0]-tmp)/c[1];
+					ca=tmp*(vmsvol/VsamLast+1);
+					tmp=ca/(vmsvol/Vsam+1);
+
+					TRACE(L"ca=%g,cs=%g\n",ca,cs);
+
+				}
+
+				str.Format(L" R=%gA%+g, S=%gA%+g, Vsample=%g ml, Ca=%g ml/L, Cs=%g ml/L @ nQ=%g. ", c[1], c[0], sccc[1], sccc[0], Vsam, ca, cs, evoR);
+
+			}
+		}
+	}
+
+
+
+
+
+
+
+
+	return str;
+}
+
+
+
 
 
 UINT DTR(dlg1 *leftp,
@@ -1291,7 +1435,8 @@ UINT SARR(dlg1 *leftp,
 	//////////////////////////////load data//////////////////////////////////////
 	std::vector<CString> filelist;
 
-	LoadFileList(L"C:\\Users\\r8anw2x\\Dropbox\\W\\4 Mar (2.5S 2.5S3A 2.5S6.5A 2.5S10A 2.5S15A Cali)\\h2.txt",filelist);
+	//LoadFileList(L"C:\\Users\\r8anw2x\\Dropbox\\W\\4 Mar (2.5S 2.5S3A 2.5S6.5A 2.5S10A 2.5S15A Cali)\\h2.txt",filelist);
+	LoadFileList(L"data\\h2.txt",filelist);
 	if(filelist.empty()) return 0;
 
 	pcct dt1;
@@ -1324,6 +1469,27 @@ UINT SARR(dlg1 *leftp,
 	dataB.rowCount=0;
 	dataB.stepCount=0;
 
+	CString xla;
+	CString yla;
+	{
+		CString str;
+		str.LoadStringW(IDS_STRING_SUPPRESSOR);
+		xla=str;
+		xla+=L" ";
+		str.LoadStringW(IDS_STRING_CONC_);
+		xla+=str;
+
+		str.LoadStringW(IDS_STRING_NORMALIZED_Q);
+		yla=str;
+	}
+
+
+	SARCalibCurve scc;
+	SCP sc1;
+	sc1.AC=prevAconc;
+	sc1.LC=0;
+	sc1.SC=prevSconc;
+	scc.scl.push_back(sc1);
 
 	while(dataB.stepCount<(p3.saplist.size()) /*&& !filelist.empty()*/){
 
@@ -1357,7 +1523,7 @@ UINT SARR(dlg1 *leftp,
 		ps1.lineType=0;
 		ps1.smoothLine=1;
 		ps1.traceLast=false;
-		rightp->pd.AddNew(x,y,ps1,L"Suppressor Conc.(ml/L)",L"Ratio of Charge");
+		rightp->pd.AddNew(x,y,ps1,xla,yla);
 		rightp->updatePlotRange();
 		rightp->Invalidate();
 
@@ -1379,11 +1545,18 @@ UINT SARR(dlg1 *leftp,
 				if(flg){
 					//SC.push_back(sconc);
 					//AC.push_back(sconc*prevAconc/prevSconc);
-					SortInsert(SC,AC,sconc,sconc*prevAconc/prevSconc);
+					//SortInsert(SC,AC,sconc,sconc*prevAconc/prevSconc);
+					SortInsert(AC,SC,sconc*prevAconc/prevSconc,sconc);
 				}
 
 				prevSconc=p3.saplist[dataB.stepCount].Sconc;
 				prevAconc=p3.saplist[dataB.stepCount].Aconc;
+
+				sc1.AC=prevAconc;
+				sc1.LC=0;
+				sc1.SC=prevSconc;
+				scc.scl.push_back(sc1);
+
 				break;
 			}
 
@@ -1424,10 +1597,25 @@ UINT SARR(dlg1 *leftp,
 		if(flg){
 			//SC.push_back(sconc);
 			//AC.push_back(sconc*prevAconc/prevSconc);
-			SortInsert(SC,AC,sconc,sconc*prevAconc/prevSconc);
+			SortInsert(AC,SC,sconc*prevAconc/prevSconc,sconc);
 		}
 	}
 
+
+	{
+		CString str;
+		str.LoadStringW(IDS_STRING_ACCELERATOR);
+		xla=str;
+		xla+=L" ";
+		str.LoadStringW(IDS_STRING_CONC_);
+		xla+=str;
+
+		str.LoadStringW(IDS_STRING_SUPPRESSOR);
+		yla=str;
+		yla+=L" ";
+		str.LoadStringW(IDS_STRING_CONC_);
+		yla+=str;
+	}
 
 	PlotData pda;
 	//leftp->clear();
@@ -1439,13 +1627,33 @@ UINT SARR(dlg1 *leftp,
 	ps1.smoothLine=1;
 	ps1.traceLast=false;
 
-	pda.AddNew(SC,AC,ps1,L"Suppressor Conc.(ml/L)",L"Accelerator Conc.(ml/L)");
+	pda.AddNew(AC,SC,ps1,xla,yla);
 
 	CString str;
 	str=Output7(pda,p1.evaluationratio);
 
-	pda.SaveFile(L"tempr1.fig.txt");
-	rightp->pd.SaveFile(L"tempr0.fig.txt");
+	pda.SaveFile(rightPlotFile1);
+	rightp->pd.SaveFile(rightPlotFile0);
+
+	scc.ll.assign(rightp->pd.ll.begin(), rightp->pd.ll.end());
+	scc.normq.assign(rightp->pd.yll.begin(), rightp->pd.yll.end());
+	scc.sconc.assign(rightp->pd.xll.begin(), rightp->pd.xll.end());
+
+
+
+	CFile theFile;
+	if( theFile.Open(L"1.scc", CFile::modeCreate | CFile::modeWrite) ){
+		CArchive archive(&theFile, CArchive::store);
+
+		scc.Serialize(archive);
+
+		archive.Close();
+		theFile.Close();
+		//return TRUE;
+	}
+	//return FALSE;
+
+
 
 	//rightp->pd.AddNew(SC,AC,ps1,L"Suppressor Conc.(ml/L)",L"Accelerator Conc.(ml/L)");
 	//rightp->updatePlotRange();
@@ -1477,7 +1685,7 @@ UINT SARA(dlg1 *leftp,
 	//////////////////////////////load data//////////////////////////////////////
 	std::vector<CString> filelist;
 
-	LoadFileList(L"C:\\Users\\r8anw2x\\Dropbox\\W\\1 Mar (2.5S 2.5S3A 2.5S6.5A Cali)\\h2.txt",filelist);
+	LoadFileList(L"data\\i.txt",filelist);
 	if(filelist.empty()) return 0;
 
 	pcct dt1;
@@ -1514,6 +1722,18 @@ UINT SARA(dlg1 *leftp,
 	dataB.stepCount=0;
 
 
+	CString xla;
+	CString yla;
+	{
+		CString str;
+		str.LoadStringW(IDS_STRING_VOL_);
+		xla+=str;
+
+		str.LoadStringW(IDS_STRING_NORMALIZED_Q);
+		yla=str;
+	}
+
+
 	//////////////////////////////first step////////////////////////////////////////////
 
 	InitialData(filelist.front(),p3.vmsvol,p2,dt1,dataB);
@@ -1543,7 +1763,7 @@ UINT SARA(dlg1 *leftp,
 	ps1.lineType=0;
 	ps1.smoothLine=1;
 	ps1.traceLast=false;
-	rightp->pd.AddNew(x,y,ps1,L"Vol.(ml)",L"Ratio of Charge");
+	rightp->pd.AddNew(x,y,ps1,xla,yla);
 	rightp->updatePlotRange();
 	rightp->Invalidate();
 
@@ -1558,7 +1778,7 @@ UINT SARA(dlg1 *leftp,
 
 		if(p3.saplist[dataB.stepCount].Aconc!=0){
 
-			rightp->pd.SaveFile(L"tempr0.fig.txt");
+			rightp->pd.SaveFile(rightPlotFile0);
 
 			sampleEndVol=dataB.totalVolume;
 
@@ -1566,6 +1786,18 @@ UINT SARA(dlg1 *leftp,
 			y.assign(1,rightp->pd.yll.back());
 
 			rightp->clear();
+
+			{
+				CString str;
+				str.LoadStringW(IDS_STRING_ACCELERATOR);
+				xla=str;
+				xla+=L" ";
+				str.LoadStringW(IDS_STRING_CONC_);
+				xla+=str;
+
+				str.LoadStringW(IDS_STRING_NORMALIZED_Q);
+				yla=str;
+			}
 
 			ps1.colour=genColor( genColorvFromIndex<float>( rightp->pd.ps.size() ) ) ;
 			ps1.dotSize=3;
@@ -1575,7 +1807,7 @@ UINT SARA(dlg1 *leftp,
 			ps1.lineType=0;
 			ps1.smoothLine=1;
 			ps1.traceLast=false;
-			rightp->pd.AddNew(x,y,ps1,L"Vol.(ml)",L"Ratio of Charge");
+			rightp->pd.AddNew(x,y,ps1,xla,yla);
 			rightp->updatePlotRange();
 			rightp->Invalidate();
 
@@ -1593,7 +1825,7 @@ UINT SARA(dlg1 *leftp,
 			::SendMessage(cba->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
 			OneStep(outw,leftp,data,dataB);
 
-			x.assign( 1, dataB.totalVolume-sampleEndVol );	
+			x.assign( 1, Aml/(dataB.totalVolume/*-sampleEndVol*/) );	
 			y.assign( 1, dataB.Ar.back()/dataB.Ar0 );
 
 			rightp->pd.AddFollow(x,y);
@@ -1655,7 +1887,7 @@ UINT SARA(dlg1 *leftp,
 		::SendMessage(cba->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
 		OneStep(outw,leftp,data,dataB);
 
-		x.assign( 1, dataB.totalVolume-sampleEndVol );	
+		x.assign( 1, Aml/(dataB.totalVolume/*-sampleEndVol*/) );	
 		y.assign( 1, dataB.Ar.back()/dataB.Ar0 );
 
 		rightp->pd.AddFollow(x,y);
@@ -1678,7 +1910,8 @@ UINT SARA(dlg1 *leftp,
 	}
 
 
-	//PlotData pda;
+	PlotData pda;
+	pda.ReadFile(rightPlotFile0);
 	////leftp->clear();
 	//ps1.colour=genColor( genColorvFromIndex<float>( pda.ps.size() ) ) ;
 	//ps1.dotSize=3;
@@ -1690,17 +1923,31 @@ UINT SARA(dlg1 *leftp,
 
 	//pda.AddNew(SC,AC,ps1,L"Suppressor Conc.(ml/L)",L"Accelerator Conc.(ml/L)");
 
-	//CString str;
-	//str=Output7(pda,p1.evaluationratio);
+	CString str;
+	str=Output8(pda,rightp->pd, p1.evaluationratio, p3.vmsvol, p1.calibrationfilepath);
 
 	//pda.SaveFile(L"hr1.fig.txt");
-	rightp->pd.SaveFile(L"tempr1.fig.txt");
+	rightp->pd.SaveFile(rightPlotFile1);
 
 	//rightp->pd.AddNew(SC,AC,ps1,L"Suppressor Conc.(ml/L)",L"Accelerator Conc.(ml/L)");
-	//rightp->updatePlotRange();
-	//rightp->Invalidate();
 
-	::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER_H,NULL,NULL);
+	//CString str=L"tempr0.fig.txt";
+	//::SendMessageW(cba->GetParentFrame()->GetSafeHwnd(), MESSAGE_SWITCH_FIGURE, (WPARAM)str.GetBuffer(), NULL);
+
+	pst=pause;
+	WaitSecond(pst,1);
+
+	rightp->clear();
+	rightp->pd.ReadFile(rightPlotFile0);
+	rightp->updatePlotRange();
+	rightp->Invalidate();
+
+	pst=pause;
+	WaitSecond(pst,1);
+
+	::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER_H,(WPARAM)str.GetBuffer(),NULL);
+
+
 
 	TRACE(L"rivlatm ends\n");
 

@@ -32,7 +32,10 @@ BOOL writeini( ANPara &p1t, CVPara &p2t, SAPara &p3t, CString fp=AnalysisSetupIN
 BOOL readini( ANPara &p1t, CVPara &p2t, SAPara &p3t, CString fp=AnalysisSetupINI);
 
 UINT PROCESS(LPVOID pParam);
+BOOL ReadFileCustom(CObject * co, size_t n, CString fp);
+BOOL SaveFileCustom(CObject * co, size_t n, CString fp);
 
+void SortInsert( std::vector<double> &xs, std::vector<double> &ys, double x, double y );
 
 //UINT RCCS(LPVOID pParam);
 //UINT ASDTM(LPVOID pParam);

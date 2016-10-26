@@ -30,7 +30,8 @@ void free_bmatrix( T **m, long nr, long nc, long m1, long m2){
 	}
 }
 
-index m2mp(index mi, long r, long c, long a, long b){
+template <typename T>
+index m2mp(index mi, T r, T c, T a, T b){//T for int&long only 
 	if( mi.ri<1 || mi.ri>r || mi.ci<1 || mi.ci>c || mi.ri-mi.ci<a || mi.ri-mi.ci>b ){
 		nrerror("out of range");
 	}
@@ -42,7 +43,8 @@ index m2mp(index mi, long r, long c, long a, long b){
 	}
 }
 
-index mp2m(index mpi, long r, long c, long a, long b){
+template <typename T>
+index mp2m(index mpi, T r, T c, T a, T b){//T for int&long only 
 	index mi;
 	if(r>=c){
 		mi.ci=mpi.ri;
@@ -238,8 +240,8 @@ bool bmatmul(T **bm1, long r1, long c1, long a1, long b1,
 }
 
 
-
-long calupbw(long r1, long c1, long a1, long r2, long c2, long a2, long r3, long c3){
+template <typename T>
+T calupbw(T r1, T c1, T a1, T r2, T c2, T a2, T r3, T c3){//T for int&long only 
 	//compute the upper band width for product matrix
 
 
@@ -274,7 +276,7 @@ long calupbw(long r1, long c1, long a1, long r2, long c2, long a2, long r3, long
 	//}
 
 
-	long a3=a1+a2;
+	T a3=a1+a2;
 	if(r1>c1)
 		a3+=r1-c1;
 	if(r2>c2)
@@ -284,7 +286,8 @@ long calupbw(long r1, long c1, long a1, long r2, long c2, long a2, long r3, long
 	return a3;
 }
 
-long caldnbw(long r1, long c1, long b1, long r2, long c2, long b2, long r3, long c3){
+template <typename T>
+T caldnbw(T r1, T c1, T b1, T r2, T c2, T b2, T r3, T c3){//T for int&long only 
 	//long tmpdn;
 	//long b3;
 	//if(r1-c1>0){
@@ -316,7 +319,7 @@ long caldnbw(long r1, long c1, long b1, long r2, long c2, long b2, long r3, long
 
 	//compute the lower band width for product matrix
 
-	long b3=b1+b2;
+	T b3=b1+b2;
 	if(r1<=c1)
 		b3-=r1-c1;
 	if(r2<=c2)

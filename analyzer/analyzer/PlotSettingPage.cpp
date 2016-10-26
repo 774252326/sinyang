@@ -13,6 +13,8 @@ IMPLEMENT_DYNAMIC(PlotSettingPage, CPropertyPage)
 
 	PlotSettingPage::PlotSettingPage()
 	: CPropertyPage(PlotSettingPage::IDD)
+	, xlabel(_T(""))
+	, ylabel(_T(""))
 {
 	fs.bkgndC=0;
 	fs.borderC=0;
@@ -25,12 +27,19 @@ IMPLEMENT_DYNAMIC(PlotSettingPage, CPropertyPage)
 }
 
 
-PlotSettingPage::PlotSettingPage(const CString & title, const figspec &fspec, const std::vector<plotspec> &pspec)
+PlotSettingPage::PlotSettingPage(const CString & title
+	, const figspec &fspec
+	, const std::vector<plotspec> &pspec
+	, const CString & x
+	, const CString & y)
 	: CPropertyPage(PlotSettingPage::IDD)
 {
 	copyfs(fspec,fs);
 
 	ps.assign(pspec.begin(),pspec.end());
+
+	xlabel=x;
+	ylabel=y;
 
 	m_psp.dwFlags = m_psp.dwFlags | PSP_USETITLE ; 	
 	m_psp.pszTitle = new TCHAR[title.GetLength()+1];
@@ -48,6 +57,8 @@ void PlotSettingPage::DoDataExchange(CDataExchange* pDX)
 	DDV_MinMaxInt(pDX,fs.labelSize,0,50);
 	DDX_Text(pDX, IDS_EDIT_METRIC_SIZE, fs.metricSize);
 	DDV_MinMaxInt(pDX,fs.metricSize,0,50);
+	DDX_Text(pDX, IDS_EDIT_XLABEL, xlabel);
+	DDX_Text(pDX, IDS_EDIT_YLABEL, ylabel);
 
 	CPropertyPage::DoDataExchange(pDX);
 }
@@ -119,7 +130,7 @@ int PlotSettingPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		CRect(pt,comboSize),
 		this,
 		IDS_COMBO_FIGURE_SPEC);
-	for(int i=IDS_STRING_BKGND_BORDER_COLOR;i<=IDS_STRING_METRIC;i++){
+	for(int i=IDS_STRING_BKGND_BORDER_COLOR;i<=IDS_STRING_XLABEL_YLABEL;i++){
 		str.LoadStringW(i);
 		pCombo->AddString(str);
 	}
@@ -154,8 +165,8 @@ int PlotSettingPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	pEdit->SetReadOnly();
 	//pCombo->SetCurSel(fs.gridType);
 
-
-	str.LoadStringW(IDS_EDIT_LABEL_SIZE);
+	for(int i=IDS_EDIT_LABEL_SIZE;i<=IDS_EDIT_XLABEL;i++){
+	str.LoadStringW(i);
 	pEdit=new CEdit;
 	pEdit->CreateEx(
 		WS_EX_CLIENTEDGE,
@@ -166,21 +177,12 @@ int PlotSettingPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		//|WS_VISIBLE,
 		CRect(pt,buttonSize),
 		this,
-		IDS_EDIT_LABEL_SIZE);
+		i);
+	}
 
 
-	str.LoadStringW(IDS_EDIT_METRIC_SIZE);
-	pEdit=new CEdit;
-	pEdit->CreateEx(
-		WS_EX_CLIENTEDGE,
-		L"Edit", 
-		str,
-		ES_LEFT
-		|WS_CHILD,
-		//|WS_VISIBLE,
-		CRect(pt,buttonSize),
-		this,
-		IDS_EDIT_METRIC_SIZE);
+
+
 
 	pt.x+=buttonSize.cx;
 
@@ -202,6 +204,21 @@ int PlotSettingPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 			i);
 		//pColorButton->color=co[i-IDS_COLOR_BORDER];
 	}
+
+
+	str.LoadStringW(IDS_EDIT_YLABEL);
+	pEdit=new CEdit;
+	pEdit->CreateEx(
+		WS_EX_CLIENTEDGE,
+		L"Edit", 
+		str,
+		ES_LEFT
+		|WS_CHILD,
+		//|WS_VISIBLE,
+		CRect(pt,buttonSize),
+		this,
+		IDS_EDIT_YLABEL);
+
 
 	ComboSelectChange();
 
@@ -235,7 +252,7 @@ void PlotSettingPage::ComboSelectChange(void)
 	CComboBox * pcb=(CComboBox*)(this->GetDlgItem(IDS_COMBO_FIGURE_SPEC));
 	nSel = pcb->GetCurSel();
 
-	for(int i=0;i<4;i++){
+	for(int i=0;i<5;i++){
 		if(i==nSel){
 			GetDlgItem(IDS_COLOR_BORDER+i)->ShowWindow(SW_SHOW);
 			GetDlgItem(IDS_COLOR_BKGND+i)->ShowWindow(SW_SHOW);
@@ -385,6 +402,7 @@ void PlotSettingPage::GetList(void)
 		return;
 	}
 
+	
 
 	int nItem=pslist.GetItemCount();
 
