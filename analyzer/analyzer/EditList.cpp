@@ -214,16 +214,39 @@ void CEditList::OnKeydown(NMHDR* pNMHDR, LRESULT* pResult)
 
 	case VK_INSERT: 
 		{
-			int nItem = GetSelectionMark();
-			//if(nItem==-1) // valid item 					
+			int nItem;
+			//nItem=GetItemCount();
+			//if(nItem<1){
+			//	CString str;
+			//	str.Format(L"%d",nItem+1);
+			//	InsertItem( nItem, str );
+			//	EnsureVisible(nItem, FALSE);
+			//}
+			//else{
+
+
+			nItem = GetSelectionMark();
+			//if(nItem!=-1) // valid item 					
 			{
 				//DeleteItem( nItem );
-				nItem=GetItemCount();
+				//nItem=GetItemCount();
+
+				nItem++;
+
 				CString str;
 				str.Format(L"%d",nItem+1);
 				InsertItem( nItem, str );
 				EnsureVisible(nItem, FALSE);
+
+
+				for(nItem++;nItem<GetItemCount();nItem++){
+									//CString str;
+				str.Format(L"%d",nItem+1);
+					this->SetItemText(nItem,0,str);
+				}
+			//}
 			}
+
 		}	break;
 
 	default:
@@ -367,6 +390,8 @@ void CEditList::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	// TODO: Add your message handler code here and/or call default
 
 	//this->Invalidate();
+
+	//HWND hWnd= (HWND)SendMessage(LVN_ENDLABELEDIT);
 
 	CListCtrl::OnVScroll(nSBCode, nPos, pScrollBar);
 }

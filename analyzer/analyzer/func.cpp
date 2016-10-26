@@ -9,7 +9,7 @@
 #include "pcct.h"
 //#include "pcctB.h"
 #include <algorithm>
-#include "SARCalibCurve.h"
+//#include "SARCalibCurve.h"
 
 #include <afxwin.h>
 #include <atltypes.h>

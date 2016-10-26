@@ -15,8 +15,8 @@ IMPLEMENT_DYNAMIC(PlotSettingPage, CPropertyPage)
 
 	PlotSettingPage::PlotSettingPage()
 	: CPropertyPage(PlotSettingPage::IDD)
-	, xlabel(_T(""))
-	, ylabel(_T(""))
+	//, xlabel(_T(""))
+	//, ylabel(_T(""))
 {
 	fs=PlotSpec();
 }
@@ -25,16 +25,17 @@ IMPLEMENT_DYNAMIC(PlotSettingPage, CPropertyPage)
 PlotSettingPage::PlotSettingPage(const CString & title
 	, const PlotSpec &fspec
 	, const std::vector<LineSpec> &pspec
-	, const CString & x
-	, const CString & y)
+	//, const CString & x
+	//, const CString & y
+	)
 	: CPropertyPage(PlotSettingPage::IDD)
 {
 
 	fs=fspec;
 	ps.assign(pspec.begin(),pspec.end());
 
-	xlabel=x;
-	ylabel=y;
+	//xlabel=x;
+	//ylabel=y;
 
 	m_psp.dwFlags = m_psp.dwFlags | PSP_USETITLE ; 	
 	m_psp.pszTitle = new TCHAR[title.GetLength()+1];
@@ -87,12 +88,12 @@ BOOL PlotSettingPage::OnKillActive()
 }
 
 
-BOOL PlotSettingPage::Create(LPCTSTR lpszTemplateName, CWnd* pParentWnd)
-{
-	// TODO: Add your specialized code here and/or call the base class
-
-	return CPropertyPage::Create(lpszTemplateName, pParentWnd);
-}
+//BOOL PlotSettingPage::Create(LPCTSTR lpszTemplateName, CWnd* pParentWnd)
+//{
+//	// TODO: Add your specialized code here and/or call the base class
+//
+//	return CPropertyPage::Create(lpszTemplateName, pParentWnd);
+//}
 
 
 int PlotSettingPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -262,8 +263,9 @@ int PlotSettingPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;      // fail to create
 	}
 
-	BuildList(winrect.Width());
+	//BuildList(winrect.Width());
 
+	SetList();
 
 	return 0;
 }
@@ -289,88 +291,88 @@ void PlotSettingPage::ComboSelectChange(void)
 
 }
 
-// this function is sent to CEditList 
-// there it is used to determine which type of ctrl to create 
-// when cell is being edited
-static int _List_Type( int col )
-{
-	if ( col == 2 )
-		return CEditList::eLast;
-
-	if ( col >= 4 )
-		return CEditList::eCombo;
-	// else :
-	return CEditList::eEdit;
-}
-
-
-void PlotSettingPage::BuildList(int width)
-{
-	pslist.ModifyStyle(0,LVS_REPORT|LVS_SHOWSELALWAYS);
-	LONG IStyle;
-	IStyle=GetWindowLong(pslist.m_hWnd, GWL_STYLE);//获取当前窗口style
-	IStyle&= ~LVS_TYPEMASK; //清除显示方式位
-	IStyle|= LVS_REPORT; //set style
-	SetWindowLong(pslist.m_hWnd, GWL_STYLE, IStyle);//设置style
-	DWORD dwStyle1;
-	dwStyle1 = pslist.GetExtendedStyle();
-	dwStyle1 |= LVS_EX_FULLROWSELECT;//选中某行使整行高亮（只适用与report风格的listctrl）
-	dwStyle1 |= LVS_EX_GRIDLINES;//网格线（只适用与report风格的listctrl）
-	//dwStyle1 |= LVS_EX_CHECKBOXES;//item前生成checkbox控件
-	pslist.SetExtendedStyle(dwStyle1); //设置扩展风格
-
-	//int wi[7]={33,150,70,60,90,85,100};
+//// this function is sent to CEditList 
+//// there it is used to determine which type of ctrl to create 
+//// when cell is being edited
+//static int _List_Type( int col )
+//{
+//	if ( col == 2 )
+//		return CEditList::eLast;
+//
+//	if ( col >= 4 )
+//		return CEditList::eCombo;
+//	// else :
+//	return CEditList::eEdit;
+//}
 
 
-	CString strTemp;
-	for(int i=0;i<7;i++){
-		strTemp.LoadStringW(IDS_STRING720+i);
-		pslist.InsertColumn(i, strTemp, LVCFMT_LEFT);
-		AdjustWidth(&pslist,i,strTemp);
-
-		if(i==4){
-			for ( int j=IDS_STRING_GRID_LINE_SOLID ; j <= IDS_STRING_GRID_LINE_HIDE ; j++){
-				strTemp.LoadStringW(j);
-				pslist.allComboStr.AddTail( strTemp );
-				AdjustWidth(&pslist,i,strTemp);
-			}
-		}
-
-		if(i==5){
-			for ( int j=IDS_STRING_NO_SMOOTH ; j <= IDS_STRING_BEZIER ; j++){
-				strTemp.LoadStringW(j);
-				pslist.allComboStr.AddTail( strTemp );
-				AdjustWidth(&pslist,i,strTemp);
-			}
-		}
-
-		if(i==6){
-			for ( int j=IDS_STRING_YES ; j <= IDS_STRING_NO ; j++){
-				strTemp.LoadStringW(j);
-				pslist.allComboStr.AddTail( strTemp );
-				AdjustWidth(&pslist,i,strTemp);
-			}
-		}
-
-
-		pslist.cols.push_back(pslist.allComboStr.GetCount());
-
-
-
-	}
-
-	pslist.typelimit.assign(7,0);
-	pslist.typelimit[3]=2;
-
-	// set functionality of list according to column
-	pslist.SetColumnType ( (fGetType)_List_Type );	
-
-
-	// insert a dummy row
-	//InsertEmpty();
-
-	SetList();
-}
+//void PlotSettingPage::BuildList(int width)
+//{
+//	//pslist.ModifyStyle(0,LVS_REPORT|LVS_SHOWSELALWAYS);
+//	//LONG IStyle;
+//	//IStyle=GetWindowLong(pslist.m_hWnd, GWL_STYLE);//获取当前窗口style
+//	//IStyle&= ~LVS_TYPEMASK; //清除显示方式位
+//	//IStyle|= LVS_REPORT; //set style
+//	//SetWindowLong(pslist.m_hWnd, GWL_STYLE, IStyle);//设置style
+//	//DWORD dwStyle1;
+//	//dwStyle1 = pslist.GetExtendedStyle();
+//	//dwStyle1 |= LVS_EX_FULLROWSELECT;//选中某行使整行高亮（只适用与report风格的listctrl）
+//	//dwStyle1 |= LVS_EX_GRIDLINES;//网格线（只适用与report风格的listctrl）
+//	////dwStyle1 |= LVS_EX_CHECKBOXES;//item前生成checkbox控件
+//	//pslist.SetExtendedStyle(dwStyle1); //设置扩展风格
+//
+//	////int wi[7]={33,150,70,60,90,85,100};
+//
+//
+//	//CString strTemp;
+//	//for(int i=0;i<7;i++){
+//	//	strTemp.LoadStringW(IDS_STRING720+i);
+//	//	pslist.InsertColumn(i, strTemp, LVCFMT_LEFT);
+//	//	AdjustWidth(&pslist,i,strTemp);
+//
+//	//	if(i==4){
+//	//		for ( int j=IDS_STRING_GRID_LINE_SOLID ; j <= IDS_STRING_GRID_LINE_HIDE ; j++){
+//	//			strTemp.LoadStringW(j);
+//	//			pslist.allComboStr.AddTail( strTemp );
+//	//			AdjustWidth(&pslist,i,strTemp);
+//	//		}
+//	//	}
+//
+//	//	if(i==5){
+//	//		for ( int j=IDS_STRING_NO_SMOOTH ; j <= IDS_STRING_BEZIER ; j++){
+//	//			strTemp.LoadStringW(j);
+//	//			pslist.allComboStr.AddTail( strTemp );
+//	//			AdjustWidth(&pslist,i,strTemp);
+//	//		}
+//	//	}
+//
+//	//	if(i==6){
+//	//		for ( int j=IDS_STRING_YES ; j <= IDS_STRING_NO ; j++){
+//	//			strTemp.LoadStringW(j);
+//	//			pslist.allComboStr.AddTail( strTemp );
+//	//			AdjustWidth(&pslist,i,strTemp);
+//	//		}
+//	//	}
+//
+//
+//	//	pslist.cols.push_back(pslist.allComboStr.GetCount());
+//
+//
+//
+//	//}
+//
+//	//pslist.typelimit.assign(7,0);
+//	//pslist.typelimit[3]=2;
+//
+//	//// set functionality of list according to column
+//	//pslist.SetColumnType ( (fGetType)_List_Type );	
+//
+//
+//	//// insert a dummy row
+//	////InsertEmpty();
+//
+//	//SetList();
+//}
 
 
 void PlotSettingPage::SetList(void)

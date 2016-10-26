@@ -69,9 +69,9 @@ int AddPageNumber(const std::wstring fin, const std::wstring fout)
 
 		p.setfont(font, 10);
 		std::wostringstream strt;
-		strt<<pageno<<L"of"<<endpage;
+		strt<<L"P"<<pageno<<L" of "<<endpage;
 
-		p.fit_textline(strt.str(), 20, 20, L"");
+		p.fit_textline(strt.str(), 550, 20, L"");
 
 		p.end_page_ext(L"");
 	}
@@ -355,7 +355,7 @@ int pdfout(pdflib::PDFlib &p, const std::vector<DataOutA> &dol){
 	}
 
 	optlist.str(L"");
-	optlist << L"image=" << image << L" fitimage={fitmethod=auto}";
+	optlist << L"image=" << image << L" fitimage={fitmethod=auto position={right center}}";
 	optlist << L" rowheight=30";
 	optlist << L" colspan=" << colmax;
 
@@ -1610,7 +1610,7 @@ int pdfout6(pdflib::PDFlib &p, const ANPara &para, const std::vector<CString> &r
 	}
 
 	optlist.str(L"");
-	optlist << L"image=" << image << L" fitimage={fitmethod=auto}";
+	optlist << L"image=" << image << L" fitimage={fitmethod=auto position={right center} }";
 	optlist << L" rowheight=30";
 	optlist << L" colspan=" << colmax;
 
@@ -2414,7 +2414,7 @@ int imgout(pdflib::PDFlib &p, const std::wstring imagefile, CString str)
 	}
 
 	optlist.str(L"");
-	optlist << L"image=" << image << L" fitimage={fitmethod=auto}";
+	optlist << L"image=" << image << L" fitimage={fitmethod=auto position={right center}}";
 	optlist << L" rowheight=30";
 	//optlist << L" colspan=" << colmax;
 

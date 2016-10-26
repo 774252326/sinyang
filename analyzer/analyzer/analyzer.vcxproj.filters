@@ -210,6 +210,33 @@
     <ClInclude Include="pdfout.h">
       <Filter>Header Files\global func</Filter>
     </ClInclude>
+    <ClInclude Include="EditB.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EditInt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EditNum.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EditReal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ListCtrlA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ListCtrlSAP.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ListCtrlSAP1.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ListCtrlLS.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ListCtrlPS.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="PlotSettingPageA.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -263,9 +290,6 @@
     <ClCompile Include="analyzerViewL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PlotSettingPageA.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="VPara.cpp">
       <Filter>Source Files\data</Filter>
     </ClCompile>
@@ -307,6 +331,36 @@
     </ClCompile>
     <ClCompile Include="pdfout.cpp">
       <Filter>Source Files\global func</Filter>
+    </ClCompile>
+    <ClCompile Include="EditB.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EditInt.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EditNum.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EditReal.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ListCtrlA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ListCtrlSAP.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ListCtrlSAP1.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ListCtrlLS.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ListCtrlPS.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PlotSettingPageA.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

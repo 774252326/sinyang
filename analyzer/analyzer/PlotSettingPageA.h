@@ -4,6 +4,9 @@
 #include "EditList.h"
 #include "PlotSpec.h"
 #include "linespec.h"
+
+#include "ListCtrlLS.h"
+
 // PlotSettingPage dialog
 
 class PlotSettingPage : public CPropertyPage
@@ -15,8 +18,9 @@ public:
 	PlotSettingPage(const CString &title
 		, const PlotSpec &fspec
 		, const std::vector<LineSpec> &pspec
-		, const CString & x
-		, const CString & y);
+		//, const CString & x
+		//, const CString & y
+		);
 	virtual ~PlotSettingPage();
 
 // Dialog Data
@@ -31,15 +35,17 @@ public:
 	std::vector<LineSpec> ps;
 	virtual BOOL OnSetActive();
 	virtual BOOL OnKillActive();
-	virtual BOOL Create(LPCTSTR lpszTemplateName, CWnd* pParentWnd = NULL);
+//	virtual BOOL Create(LPCTSTR lpszTemplateName, CWnd* pParentWnd = NULL);
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	PlotSpec fs;
 	void ComboSelectChange(void);
-	CEditList pslist;
-	void BuildList(int width);
+	//CEditList pslist;
+	ListCtrlLS pslist;
+
+//	void BuildList(int width);
 	void SetList(void);
 	void GetList(void);
-	int GetChoice(int nIterm, int nSubItem);
-	CString xlabel;
-	CString ylabel;
+	//int GetChoice(int nIterm, int nSubItem);
+//	CString xlabel;
+//	CString ylabel;
 };

@@ -15,6 +15,8 @@
 #include "MainFrm.h"
 
 #include "func.h"
+//#include "PlotSettingPageB.h"
+
 #include "PlotSettingPageA.h"
 #include <math.h>
 
@@ -445,15 +447,16 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 			PlotSettingPage fig1setting(str
 				,pd->psp
 				,pd->ps
-				,pd->xlabel
-				,pd->ylabel);
+				//,pd->xlabel
+				//,pd->ylabel
+				);
 
 			sheet.AddPage(&fig1setting);
 
 			// 打开模态向导对话框   
 			if(sheet.DoModal()==IDOK){
-				pd->xlabel=fig1setting.xlabel;
-				pd->ylabel=fig1setting.ylabel;
+				//pd->xlabel=fig1setting.xlabel;
+				//pd->ylabel=fig1setting.ylabel;
 				pd->psp=fig1setting.fs;
 				pd->ps.clear();
 				pd->ps.assign(fig1setting.ps.begin(),fig1setting.ps.end());

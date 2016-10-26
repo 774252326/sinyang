@@ -3,6 +3,8 @@
 #include "SAPara.h"
 #include "EditList.h"
 
+#include "ListCtrlSAP.h"
+
 // SolutionAdditionParametersPageA dialog
 
 class SolutionAdditionParametersPageA : public CPropertyPage
@@ -23,8 +25,11 @@ protected:
 public:
 	SAPara para;
 
+	ListCtrlSAP m_SAPlist;
+
+
 	//virtual BOOL OnSetActive();
-	CEditList m_SAPlist;
+	//CEditList m_SAPlist;
 	//virtual BOOL OnInitDialog();
 	//afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	void BuildList(int width);
