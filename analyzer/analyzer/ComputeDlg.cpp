@@ -286,7 +286,7 @@ void ComputeDlg::ClickCompute(void)
 			doc->da.p1.correction[i]=m_list.vl[i].correction;
 		}
 
-		::PostMessage(rv->GetSafeHwnd(),MESSAGE_UPDATE_TEST,(PW_LAST|PW_SHOW_ALL),(LPARAM)true);
+		::PostMessage(rv->GetSafeHwnd(),MESSAGE_UPDATE_TEST,PW_INIT,(LPARAM)true);
 
 	}
 

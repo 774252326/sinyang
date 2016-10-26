@@ -7,7 +7,7 @@ class CanalyzerViewR :
 	public CanalyzerView
 {
 public:
-	
+
 	static UINT DataOutAList2PlotDataExList(
 		const std::vector<DataOutA> &dol, 
 		const ANParaEx &p1, 
@@ -48,6 +48,7 @@ public:
 						}
 						break;
 					default:
+						bReadCb=false;
 						break;
 					}
 
@@ -63,47 +64,55 @@ public:
 						UINT ff1=ddex0.ComputeStateData();
 						if(ff1==0||ff1==7)
 							bShowCb=DocDataEx::GetResultData(ddex0.dol,ddex0.p1,cbrdl,cbxlabellist,cbylabellist,cbnlist,true);
-							//bShowCb=false;
+						//bShowCb=false;
 					}
 				}
 				break;
 			default:
+				bReadCb=false;
 				break;
 			}
 		}
 
-		std::vector<RawData> rdl;
-		std::vector<CString> xlabellist;
 
-		std::vector<CString> ylabellist;
-	
-
-		std::vector< std::vector<CString> > nlist;
-		UINT ff;
-		if(bShowRs){
-			ff=DocDataEx::GetResultData(dol,p1,rdl,xlabellist,ylabellist,nlist);
-		}
-		else{
-			std::vector<size_t> dolastidx;
-			ff=DocDataEx::DataOutAList2RawDataList(dol,p1.analysistype,rdl,xlabellist,ylabellist,dolastidx);
-			CString str;
-			str.LoadStringW(IDS_STRING_TEST_CURVE);
-			nlist.resize(rdl.size());
-			for(size_t i=0;i<nlist.size();i++){
-				nlist[i].assign(rdl[i].ll.size(),str);
-			}
-		}
-
-		PlotSpec ps;
-		ps.SetPlotBKCr();
-		ps.RefreshWinCr(bkc);
+		if(bShowCb!=bReadCb)
+			return 2;
 
 
-
-
-
-		//if(ff==1)
 		{
+
+
+			std::vector<RawData> rdl;
+			std::vector<CString> xlabellist;
+
+			std::vector<CString> ylabellist;
+
+
+			std::vector< std::vector<CString> > nlist;
+			UINT ff;
+			if(bShowRs){
+				ff=DocDataEx::GetResultData(dol,p1,rdl,xlabellist,ylabellist,nlist);
+			}
+			else{
+				std::vector<size_t> dolastidx;
+				ff=DocDataEx::DataOutAList2RawDataList(dol,p1.analysistype,rdl,xlabellist,ylabellist,dolastidx);
+				CString str;
+				str.LoadStringW(IDS_STRING_TEST_CURVE);
+				nlist.resize(rdl.size());
+				for(size_t i=0;i<nlist.size();i++){
+					nlist[i].assign(rdl[i].ll.size(),str);
+				}
+			}
+
+			PlotSpec ps;
+			ps.SetPlotBKCr();
+			ps.RefreshWinCr(bkc);
+
+
+
+
+
+
 			for(size_t i=0;i<rdl.size();i++){
 				if(i>=pdl.size()){
 					pdl.push_back(PlotDataEx(ps));
@@ -159,7 +168,7 @@ public:
 protected:
 	DECLARE_MESSAGE_MAP()
 	afx_msg LRESULT OnMessageUpdateTest(WPARAM wParam, LPARAM lParam);
-	afx_msg LRESULT OnMessageComputeResult(WPARAM wParam, LPARAM lParam);
+	//	afx_msg LRESULT OnMessageComputeResult(WPARAM wParam, LPARAM lParam);
 public:
 	virtual void OnInitialUpdate();
 };

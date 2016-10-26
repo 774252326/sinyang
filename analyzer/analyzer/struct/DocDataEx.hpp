@@ -245,15 +245,19 @@ public:
 					//VtoAdd=0;
 
 					if(sl.size()>1){//未完成分析方法指定的加液步骤
-						return 4;
+						TRACE("\n4");
+						return 4;						
 					}
 
 					//完成分析方法指定的全部加液步骤
 					if(!dol.empty()
 						//&& dol.back().Ar.size()<p2.noofcycles)
-						&& !dol.back().EndFlag(p2.noofcycles,p2.variationtolerance) )
+						&& !dol.back().EndFlag(p2.noofcycles,p2.variationtolerance) ){
+							TRACE("\n6");
 						return 6;//此时最后一次加液的转圈计数未必到达预设值p2.noofcycles
+					}
 
+					TRACE("\n0");
 					return 0;//此时最后一次加液的转圈计数到达预设值
 				}
 
@@ -274,10 +278,12 @@ public:
 
 						if( rawi>0 
 							//&& dol[rawi-1].Ar.size()<p2.noofcycles)
-							&& !dol[rawi-1].EndFlag(p2.noofcycles,p2.variationtolerance) )
+							&& !dol[rawi-1].EndFlag(p2.noofcycles,p2.variationtolerance) ){
+								TRACE("\n1");
 							return 1;//第rawi－1次加液的转圈计数未必到达预设值p2.noofcycles
-
+						}
 						VtoAdd=d0.addVolume;
+						TRACE("\n5");
 						return 5;//第rawi－1次加液的转圈计数到达预设值
 					}
 
@@ -321,7 +327,7 @@ public:
 						//currentSAPIndex=p3.saplist.size()-p3t.saplist.size();
 
 						outstep=step;
-
+						TRACE("\n2");
 						return 2;//第rawi次加液数据不足，即第rawi次加液未完成第一圈数据时，无法计算积分
 					}
 
@@ -384,7 +390,7 @@ public:
 					else{				
 						nextSAPIndex=p3.saplist.size()-p3t.saplist.size();
 						outstep=step;
-
+						TRACE("\n3");
 						return 3;//第rawi－1次加液已完成第一圈数据，而第rawi次加液设置出错
 					}
 				}
@@ -392,6 +398,15 @@ public:
 
 			nextSAPIndex=p3.saplist.size()-p3t.saplist.size();
 
+			if( rawi>0 
+							//&& dol[rawi-1].Ar.size()<p2.noofcycles)
+							&& !dol[rawi-1].EndFlag(p2.noofcycles,p2.variationtolerance) ){
+								TRACE("\n1");
+							return 1;//第rawi－1次加液的转圈计数未必到达预设值p2.noofcycles
+						}
+
+
+			TRACE("\n7");
 			return 7;//完成分析方法指定的全部加液步骤,但用户设定的加液步骤还有剩余。
 
 	};
@@ -430,12 +445,18 @@ public:
 					RawData rawt=raw;
 					size_t rawi=dol.size();
 
+					std::vector<DataOutA> dol1;
+
 					while(!p3t.saplist.empty()){
 
 						sl[0]|=(SC_NEW_RIGHT_PLOT<<8);
 
-						res=ComputeStateData(sl,p2,p3t,rawt,dol,p3done,currentSAPIndex,nextSAPIndex,outstep,VtoAdd);
+						res=ComputeStateData(sl,p2,p3t,rawt,dol1,p3done,currentSAPIndex,nextSAPIndex,outstep,VtoAdd);
 						nextidx+=nextSAPIndex;
+
+						dol.resize(dol.size()+dol1.size());
+						std::copy_backward(dol1.begin(),dol1.end(),dol.end());
+						dol1.clear();
 
 						if(res!=0 && res!=7){
 							break;

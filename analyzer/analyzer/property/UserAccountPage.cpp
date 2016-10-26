@@ -88,12 +88,12 @@ BOOL UserAccountPage::OnSetActive()
 {
 	// TODO: Add your specialized code here and/or call the base class
 
-	CPropertySheet* psheet = (CPropertySheet*) GetParent();   
-	psheet->SetWizardButtons(PSWIZB_FINISH);
+	//CPropertySheet* psheet = (CPropertySheet*) GetParent();   
+	//psheet->SetWizardButtons(PSWIZB_FINISH);
 
-	CString str;
-	str.LoadStringW(IDS_STRING_OK);
-	psheet->SetFinishText(str);
+	//CString str;
+	//str.LoadStringW(IDS_STRING_OK);
+	//psheet->SetFinishText(str);
 
 
 	return CPropertyPage::OnSetActive();

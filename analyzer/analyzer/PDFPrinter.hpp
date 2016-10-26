@@ -91,8 +91,9 @@ public:
 			p.close_pdi_page(page);
 
 
-			int font = p.load_font(L"Times-Bold", L"winansi", L"");
-
+			int font;
+			//font = p.load_font(L"Times-Bold", L"winansi", L"");
+			font = p.findfont(L"STSong-Light", L"UniGB-UCS2-H", 0);
 			p.setfont(font, 10);
 			std::wostringstream strt;
 			//strt<<L"page "<<pageno<<L" of "<<endpage;
@@ -157,7 +158,8 @@ public:
 			str.LoadStringW(IDS_OUTPUT_WND);
 			const std::wstring headertext = (LPCWSTR)str;
 
-			titlefont = p.load_font(L"Times-Bold", L"winansi", L"");
+			//titlefont = p.load_font(L"Times-Bold", L"winansi", L"");
+			titlefont = p.findfont(L"STSong-Light", L"UniGB-UCS2-H", 0);
 			if (titlefont == -1) {
 				std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
 				return(2);
@@ -175,7 +177,8 @@ public:
 			row++;
 
 
-			font = p.load_font(L"Helvetica", L"winansi", L"");
+			//font = p.load_font(L"Helvetica", L"winansi", L"");
+			font = p.findfont(L"STSong-Light", L"UniGB-UCS2-H", 0);
 			if (font == -1) {
 				std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
 				return(2);
@@ -734,6 +737,24 @@ public:
 
 
 		col+=quartercolmax;
+		str.LoadStringW(IDS_STRING_ROTATION_RATE);
+		tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
+
+		col+=quartercolmax;
+		str.Format(L"%g",p2.rotationrate);
+		tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
+
+		col=1;
+		row++;
+
+		str.LoadStringW(IDS_STRING_VARIATION_TOLERANCE);
+		tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
+
+		col+=quartercolmax;
+		str.Format(L"%g",p2.variationtolerance);
+		tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
+
+		col+=quartercolmax;	
 		str.LoadStringW(IDS_STRING_NO_OF_CYCLES);
 		tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
 
@@ -741,17 +762,21 @@ public:
 		str.Format(L"%d",p2.noofcycles);
 		tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
 
-
-
 		col=1;
 		row++;
 
-
-		str.LoadStringW(IDS_STRING_ROTATION_RATE);
+		str.LoadStringW(IDS_STRING_START_INTEGRATION_E);
 		tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
 
 		col+=quartercolmax;
-		str.Format(L"%g",p2.rotationrate);
+		switch(p2.combochoice){
+		case 0:
+			str.LoadStringW(IDS_STRING_AUTO);
+			break;
+		default:
+			str.Format(L"%g",p2.startintegratione);
+			break;
+		}
 		tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
 
 
@@ -1098,7 +1123,8 @@ public:
 
 			row++;
 
-			font = p.load_font(L"Helvetica", L"winansi", L"");
+			//font = p.load_font(L"Helvetica", L"winansi", L"");
+			font = p.findfont(L"STSong-Light", L"UniGB-UCS2-H", 0);
 			if (font == -1) {
 				std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
 				return 2;
@@ -1115,7 +1141,8 @@ public:
 			row++;
 
 			/* ---------- Row 1: table header (spans all columns) */
-			titlefont = p.load_font(L"Times-Bold", L"winansi", L"");
+			//titlefont = p.load_font(L"Times-Bold", L"winansi", L"");
+			titlefont = p.findfont(L"STSong-Light", L"UniGB-UCS2-H", 0);
 			if (titlefont == -1) {
 				std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
 				return(2);
@@ -1134,7 +1161,8 @@ public:
 
 
 			/* ---------- Row 1: table header (spans all columns) */
-			font = p.load_font(L"Helvetica", L"winansi", L"");
+			//font = p.load_font(L"Helvetica", L"winansi", L"");
+			font = p.findfont(L"STSong-Light", L"UniGB-UCS2-H", 0);
 			if (font == -1) {
 				std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
 				return 2;
@@ -1368,8 +1396,9 @@ public:
 
 
 
-		font = p.load_font(L"Times-Bold", L"winansi", L"");
+		//font = p.load_font(L"Times-Bold", L"winansi", L"");
 		//font = p.load_font(L"Helvetica", L"winansi", L"");
+		font = p.findfont(L"STSong-Light", L"UniGB-UCS2-H", 0);
 		if (font == -1) {
 			std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
 			return(2);
@@ -1525,7 +1554,7 @@ public:
 		)
 	{
 
-		const std::wstring searchpath = L"../data";
+		const std::wstring searchpath = L"";
 
 		const std::wstring temppdf = L"temp.pdf";
 
@@ -1667,7 +1696,7 @@ public:
 
 			CString fp = se.GetPathName();
 
-			
+
 			se.GetCheckButtonState(IDS_STRING_ANALYSIS_PARA,chk1);
 			se.GetCheckButtonState(IDS_STRING_CV_PARA,chk2);
 			se.GetCheckButtonState(IDS_STRING_ADDITION_SOLUTION_PARA,chk3);

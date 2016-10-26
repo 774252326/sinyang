@@ -4,7 +4,7 @@
 #include "stdafx.h"
 //#include "analyzer.h"
 #include "PropertySheetA.h"
-
+#include "../resource.h"
 
 // PropertySheetA
 
@@ -47,6 +47,17 @@ BOOL PropertySheetA1::OnInitDialog()
 	//pp->ShowWindow(SW_HIDE);
 	//CWnd *pWnd = GetDlgItem (ID_APPLY_NOW);
 	//pWnd->ShowWindow(SW_HIDE);
+	//pWnd->SetWindowTextW(L"asdfsa");
+
+	CString str;
+	str.LoadStringW(IDS_STRING_OK);
+	GetDlgItem(IDOK)->SetWindowTextW(str);
+
+	str.LoadStringW(IDS_STRING_CANCEL);
+	GetDlgItem(IDCANCEL)->SetWindowTextW(str);
+
+	str.LoadStringW(IDS_STRING_APPLY);
+	GetDlgItem(ID_APPLY_NOW)->SetWindowTextW(str);
 
 	return bResult;
 }

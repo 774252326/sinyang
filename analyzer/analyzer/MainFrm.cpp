@@ -772,7 +772,7 @@ void CMainFrame::OnSecurityUseraccounts()
 
 	sheet.AddPage(&uap);
 
-	sheet.SetWizardMode();
+	//sheet.SetWizardMode();
 	INT_PTR res=sheet.DoModal();
 	if(res==IDOK || res==ID_WIZFINISH ){
 		al=uap.al;
@@ -935,7 +935,7 @@ afx_msg LRESULT CMainFrame::OnMessageUpdateDol(WPARAM wParam, LPARAM lParam)
 
 	pDoc->UpdateState();
 
-	TRACE("\n%d",pDoc->da.runstate);
+	//TRACE("\n%d",pDoc->da.runstate);
 
 	//::PostMessage(this->GetSafeHwnd(),MESSAGE_CLOSE_SAP_SHEET,NULL,NULL);
 	::SendMessage(this->GetSafeHwnd(),MESSAGE_CLOSE_SAP_SHEET,NULL,NULL);
@@ -949,8 +949,8 @@ afx_msg LRESULT CMainFrame::OnMessageCloseSapSheet(WPARAM wParam, LPARAM lParam)
 
 	CanalyzerViewL *lv=(CanalyzerViewL*)LeftPane();
 	CanalyzerViewR *rv=(CanalyzerViewR*)RightPane();
-	::PostMessage(lv->GetSafeHwnd(),MESSAGE_UPDATE_RAW,NULL,NULL);
-	::PostMessage(rv->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
+	::PostMessage(lv->GetSafeHwnd(),MESSAGE_UPDATE_RAW,PW_INIT,NULL);
+	::PostMessage(rv->GetSafeHwnd(),MESSAGE_UPDATE_TEST,PW_INIT,NULL);
 	::PostMessage(GetOutputWnd()->GetListCtrl()->GetSafeHwnd(),MESSAGE_SHOW_DOL,NULL,NULL);
 
 	CanalyzerDoc *pDoc=(CanalyzerDoc*)GetActiveDocument();
@@ -990,6 +990,7 @@ afx_msg LRESULT CMainFrame::OnMessageCloseSapSheet(WPARAM wParam, LPARAM lParam)
 			str+=strt;
 			pst=pause;
 			ShowWaitDlg(str);
+			//::PostMessage(this->GetSafeHwnd(),WM_COMMAND,ID_ANALYSIS_PAUSE,0);
 		}
 		break;
 	case 6:

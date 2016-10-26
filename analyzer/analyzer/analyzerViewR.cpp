@@ -12,7 +12,7 @@ IMPLEMENT_DYNCREATE(CanalyzerViewR, CanalyzerView)
 		// Standard printing commands
 
 		ON_MESSAGE(MESSAGE_UPDATE_TEST, &CanalyzerViewR::OnMessageUpdateTest)
-		ON_MESSAGE(MESSAGE_COMPUTE_RESULT, &CanalyzerViewR::OnMessageComputeResult)
+		//ON_MESSAGE(MESSAGE_COMPUTE_RESULT, &CanalyzerViewR::OnMessageComputeResult)
 	END_MESSAGE_MAP()
 
 	CanalyzerViewR::CanalyzerViewR(void)
@@ -37,15 +37,20 @@ IMPLEMENT_DYNCREATE(CanalyzerViewR, CanalyzerView)
 		if(singleLock.Lock())
 		{
 			UINT flg=DataOutAList2PlotDataExList(pDoc->da.dol, pDoc->da.p1, pw.GetPlotSpec()->winbkC, pdl,(bool)(lParam));
+			if(flg==2){
+				::PostMessageW(this->GetParentFrame()->GetSafeHwnd(),WM_COMMAND,ID_ANALYSIS_ABORTANALYSIS,0);
+			}
+
 			// Now that we are finished, 
 			// unlock the resource for others.
 			singleLock.Unlock();
 		}
 
+		WPARAM wParamNew=(PW_SHOW_ALL);
 		if(wParam&PW_INIT)
-			wParam=(PW_LAST|PW_SHOW_ALL);
+			wParamNew|=PW_LAST;
 
-		::PostMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_VIEW,wParam,NULL);
+		::PostMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_VIEW,wParamNew,NULL);
 		//::SendMessage(mf->GetCaptionBar()->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)str.GetBuffer(),NULL);
 
 
@@ -53,20 +58,20 @@ IMPLEMENT_DYNCREATE(CanalyzerViewR, CanalyzerView)
 	}
 
 
-	afx_msg LRESULT CanalyzerViewR::OnMessageComputeResult(WPARAM wParam, LPARAM lParam)
-	{
-		CanalyzerDoc* pDoc = GetDocument();
-
-		//CString str=Compute(pDoc->dol,pDoc->p1,pdl,true);
-
-		wParam=(PW_LAST|PW_SHOW_ALL);
-
-		::PostMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_VIEW,wParam,NULL);
-
-		//MessageBox(str);
-
-		return 0;
-	}
+//	afx_msg LRESULT CanalyzerViewR::OnMessageComputeResult(WPARAM wParam, LPARAM lParam)
+//	{
+//		CanalyzerDoc* pDoc = GetDocument();
+//
+//		//CString str=Compute(pDoc->dol,pDoc->p1,pdl,true);
+//
+//		wParam=(PW_LAST|PW_SHOW_ALL);
+//
+//		::PostMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_VIEW,wParam,NULL);
+//
+//		//MessageBox(str);
+//
+//		return 0;
+//	}
 
 
 	void CanalyzerViewR::OnInitialUpdate()

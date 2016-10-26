@@ -60,12 +60,11 @@ IMPLEMENT_DYNCREATE(CanalyzerViewL, CanalyzerView)
 			singleLock.Unlock();
 		}
 
+		WPARAM wParamNew=(PW_SHOW_ALL);
 		if(wParam&PW_INIT)
-			wParam=(PW_LAST|PW_SHOW_ALL);
-		else
-			wParam=(PW_SHOW_ALL);
+			wParamNew|=PW_LAST;		
 
-		::PostMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_VIEW,wParam,NULL);
+		::PostMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_VIEW,wParamNew,NULL);
 
 		return 0;
 	}
