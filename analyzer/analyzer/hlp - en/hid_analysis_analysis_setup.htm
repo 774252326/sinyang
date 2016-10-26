@@ -1,28 +1,231 @@
-<HTML>
-<HEAD>
-<META NAME="GENERATOR" Content="Microsoft Visual Studio 8.0">
-<TITLE></TITLE>
-</HEAD>
-<BODY>
+<html>
+<head>
+    <meta name="GENERATOR" content="Microsoft Visual Studio 8.0">
+    <title></title>
+</head>
+<body>
+    <p>
+        <a name="hid_edit_cut"></a><b>Analysis Setup command (Analysis menu)</b></p>
+    <p>
+        Open analysis setup window with an &#39;analysis parameters&#39; tab, a &#39;CV
+        parameters&#39; tab and a &#39;solution addition patameteers&#39; tab.</p>
+    <p>
+        &#39;analysis parameters&#39; tab:
+    </p>
+    <table cols="2" width="900">
+        <tr valign="top">
+            <td width="20%">
+                analysis type
+            </td>
+            <td width="85%">
+                choose analysis method, corresponding solution addition tips will show in the text box below.
+            </td>
+        </tr>
+        <tr valign="top">
+            <td width="20%">
+                evaluation ratio
+            </td>
+            <td width="85%">
+                range in 0~1 for result computation
+            </td>
+        </tr>
+        <tr valign="top">
+            <td width="20%">
+                calibration curve/calibration factor/intercept value
+            </td>
+            <td width="85%">
+                enter the value of calibration factor/intercept value or the file path of calibration curve data file.
+            </td>
+        </tr>
+    </table>
+    <p>
+        <img src="images/anp.png" alt="" border="0"></p>
+    <p>
+        &#39;CV parameters&#39; tab:</p>
+    <p>
+        parameters for charge computation.</p>
+    <table cols="2" width="900">
+        <tr valign="top">
+            <td width="20%">
+                low E limit/high E limit
+            </td>
+            <td width="85%">
+                upper limit and lower limit of the x value of voltammogram 
+            </td>
+        </tr>
+        <tr valign="top">
+            <td width="20%">
+                scan rate
+            </td>
+            <td width="85%">
+                change rate of scan voltage
+            </td>
+        </tr>
+        <tr valign="top">
+            <td width="20%">
+                rotation rate
+            </td>
+            <td width="85%">
+                rotation rate of electrode
+            </td>
+        </tr>
+        <tr valign="top">
+            <td width="20%">
+                variation tolerance
+            </td>
+            <td width="85%">
+                scan stop when the difference ratio of last charge to second last charge go below variation tolerance.
+            </td>
+        </tr>
+        <tr valign="top">
+            <td width="20%">
+                no. of cycle
+            </td>
+            <td width="85%">
+                maximum number of scanning, input 0=infinity.
+            </td>
+        </tr>
+        <tr valign="top">
+            <td width="20%">
+                end integration E/start integration E
+            </td>
+            <td width="85%">
+                upper and lower limit of integration for charge computation, software will find zero point as the start integration E when you select auto.
+            </td>
+        </tr>
+    </table>
+    <p>
+        <img src="images/cvp.png" alt="" border="0"></p>
+    <p>
+        You must set all the parameters above before you start your analysis process.</p>
+    <p>
+        &#39;solution addition patameteers&#39; tab:</p>
+    <p>
+        fill your solution addition steps in the form:</p>
+    <table cols="2" width="900">
+        <tr valign="top">
+            <td width="15%">
+                no.
+            </td>
+            <td width="85%">
+                no. of step
+            </td>
+        </tr>
+        <tr valign="top">
+            <td width="15%">
+                type
+            </td>
+            <td width="85%">
+                five addition type provided, see below.
+            </td>
+        </tr>
+    </table>
+    <p>
+        solution addition parameters settings:</p>
+    <table cols="6" width="1200" border="2">
+        <tr valign="top">
+            <td width="10%" align="center" valign="middle">
+                type
+            </td>
+            <td width="18%" align="center" valign="middle">
+                S conc.(ml/L)
+            </td>
+            <td width="18%" align="center" valign="middle">
+                A conc.(ml/L)
+            </td>
+            <td width="18%" align="center" valign="middle">
+                L conc.(ml/L)
+            </td>
+            <td width="18%" align="center" valign="middle">
+                vol.(ml)/conc.(ml/L)
+            </td>
+            <td width="18%" align="center" valign="middle">
+                end ratio
+            </td>
+        </tr>
+        <tr valign="top">
+            <td width="10%" align="center" valign="middle">
+                vol. once addition
+            </td>
+            <td align="center" rowspan="4" valign="middle">
+                standrad suppressor concentration
+            </td>
+            <td align="center" rowspan="4" valign="middle">
+                standrad accelerator concentration
+            </td>
+            <td align="center" rowspan="4" valign="middle">
+                standrad leveler concentration
+            </td>
+            <td align="center" rowspan="2" valign="middle">
+               solution volume to add
+            </td>
+            <td width="18%" align="center" valign="middle">
+                not use
+            </td>
+        </tr>
+        <tr valign="top">
+            <td width="10%" align="center" valign="middle">
+                vol. interval
+            </td>
+            <td width="18%" align="center" valign="middle">
+                normalized charge, this step ends when its normalized charge go below/above(according to analysis method in use) specify value.
+            </td>
+        </tr>
+        <tr valign="top">
+            <td width="10%" align="center" valign="middle">
+                conc. once addition
+            </td>
+            <td align="center" valign="middle">
+                S/A/L concentration in plating cell after adding solution
+            </td>
+            <td width="18%" align="center" valign="middle">
+                not use
+            </td>
+        </tr>
+        <tr valign="top">
+            <td width="10%" align="center" valign="middle">
+                conc. interval
+            </td>
+            <td width="18%" align="center" valign="middle">
+                S/A/L concentration increment in the plating cell after adding solution
+            </td>
+            <td width="18%" align="center" valign="middle">
+                normalized charge, this step ends when its normalized charge go below/above(according to analysis method in use) specify value.
+            </td>
+        </tr>
+        <tr valign="top">
+            <td width="10%" align="center" valign="middle">
+                VMS
+            </td>
+            <td width="18%" align="center" valign="middle">
+                not use
+            </td>
+            <td width="18%" align="center" valign="middle">
+                not use
+            </td>
+            <td width="18%" align="center" valign="middle">
+                not use
+            </td>
+            <td width="18%" align="center" valign="middle">
+                solution volume to add
+            </td>
+            <td width="18%" align="center" valign="middle">
+                not use
+            </td>
+        </tr>
+    </table>
+    <p>
+        remark:</p>
+    <p>
+        1.not use: parameter will not be used in computation, you may enter any value.</p>
+    <p>
+        2.S conc.(ml/L), A conc.(ml/L) and L conc.(ml/L) all equal to 0 is an indicator of an unknown solution, or the sample solution to analysis.</p>
+    <p>
+        3.when we choose conc. once addition or conc. interval, the solution to add must be single compound, or in other words, there is one and only one not be zero between S conc.(ml/L), A conc.(ml/L) and L conc.(ml/L). the value of vol.(ml)/conc.(ml/L) is the corresponding compound concentration/concentration increment in the plating cell.</p>
+    <p>
+        4.for any blank cell in the form, software will automatically set it to a default value, default value of type is vol. once addition, and of others are 0.</p>
+    <p>
+        <img src="images/sap.png" alt="" border="0"></p>
 
-
-
-
-
-<P><A NAME="hid_edit_cut"></A><B>Analysis Setup command (Analysis menu)</B></P>
-
-
-
-<P>Open analysis setup window with an &#39;analysis parameters&#39; tab, a &#39;CV parameters&#39; 
-    tab and a &#39;solution addition patameteers&#39; tab.</P>
-
-
-
-<P>You must set all the parameters here before you start your analysis process.</P>
-
-
-
-
-
-</BODY>
-</HTML>
+</body>
+</html>

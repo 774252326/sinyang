@@ -7,6 +7,8 @@
 #include "user\AccountList.hpp"
 //#include "wait\WaitDlg.h"
 #include "property\PropertySheetA1ML.hpp"
+#include "SplitterWndExA.hpp"
+
 
 enum ProcessState{
 	stop,
@@ -25,7 +27,7 @@ protected: // create from serialization only
 
 // Attributes
 protected:
-	CSplitterWnd m_wndSplitter;
+	CSplitterWndExA m_wndSplitter;
 public:
 	ProcessState pst;
 	int userIndex;

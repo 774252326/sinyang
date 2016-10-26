@@ -654,6 +654,9 @@ void CMainFrame::OnApplicationLook(UINT id)
 
 	theApp.WriteInt(_T("ApplicationLook"), theApp.m_nAppLook);
 
+
+	m_wndSplitter.barColor=oc;
+	m_wndSplitter.Invalidate();
 	::SendMessage(((CanalyzerView*)LeftPane())->GetSafeHwnd(),MESSAGE_CHANGE_APPLOOK,(WPARAM)oc,NULL);
 	::SendMessage(((CanalyzerView*)RightPane())->GetSafeHwnd(),MESSAGE_CHANGE_APPLOOK,(WPARAM)oc,NULL);
 
