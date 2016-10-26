@@ -20,6 +20,14 @@ protected:
    BOOL bEnabled 
 );
 
+	virtual void OnDrawText(
+   CDC* pDC,
+   CRect rect,
+   const CString& strText 
+);
+
+
+
 	DECLARE_MESSAGE_MAP()
 public:
 	CEdit ec;
@@ -36,6 +44,9 @@ public:
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	virtual void DoDataExchange(CDataExchange* pDX);
 	double x;
+	void ShowMessageRunning(void);
+	void ShowMessage(CString str);
+	void ShowMessageWithButton(CString str, double xv, bool bFlash);
 };
 
 

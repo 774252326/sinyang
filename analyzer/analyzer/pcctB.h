@@ -30,5 +30,6 @@ public:
 	/*static*/ double totalVolume;
 	/*static*/ int rowCount;
 	/*static*/ double Ar0;
+	double addVolume;
 };
 

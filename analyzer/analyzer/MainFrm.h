@@ -4,15 +4,16 @@
 
 #pragma once
 #include "OutputWnd.h"
-#include "pcct.h"
-#include "pcctA.h"
-#include "pcctB.h"
+//#include "pcct.h"
+//#include "pcctA.h"
+//#include "pcctB.h"
 //#include "typedefine.h"
 #include "MFCCaptionBarA.h"
 #include "ANPara.h"
 #include "SAPara.h"
 #include "VPara.h"
 #include "PlotData.h"
+#include "dlg1.h"
 #include "afxmt.h"
 
 class CMainFrame : public CFrameWndEx
@@ -26,7 +27,7 @@ protected: // create from serialization only
 protected:
 	CSplitterWnd m_wndSplitter;
 public:
-
+	CSplitterWnd* GetSplitter(){return &m_wndSplitter;};
 // Operations
 public:
 
@@ -49,11 +50,12 @@ protected:  // control bar embedded members
 	CMFCToolBar       m_wndToolBar;
 	CMFCStatusBar     m_wndStatusBar;
 	CMFCToolBarImages m_UserImages;
-
-public:
 	COutputWnd        m_wndOutput;
 	//CMFCCaptionBar    m_wndCaptionBar;
 	CMFCCaptionBarA    m_wndCaptionBar;
+public:
+	CMFCCaptionBarA* GetCaptionBar(){ return &m_wndCaptionBar;};
+
 
 
 // Generated message map functions
@@ -81,23 +83,23 @@ public:
 	afx_msg void OnViewFitwindow();
 	afx_msg void OnViewAnalysisProgress();
 	afx_msg void OnUpdateViewAnalysisProgress(CCmdUI *pCmdUI);
-	int timer1;
-	afx_msg void OnTimer(UINT_PTR nIDEvent);
+//	int timer1;
+//	afx_msg void OnTimer(UINT_PTR nIDEvent);
 
 
-	std::vector<pcct> dat;
-	bool finishflag;
-	bool finishflag2;
-	double Ar0;
-	pcctA datt;
-	int stepCount;
-	int rowCount;
-	double totalVolume;
+//	std::vector<pcct> dat;
+//	bool finishflag;
+//	bool finishflag2;
+//	double Ar0;
+//	pcctA datt;
+//	int stepCount;
+//	int rowCount;
+//	double totalVolume;
 	afx_msg void OnViewToolbara();
 	afx_msg void OnUpdateViewToolbara(CCmdUI *pCmdUI);
-	void plot1(const std::vector<double> & x, const std::vector<double> & y, const CString & xlabel, const CString & ylabel);
-	void plot2(const std::vector<double> & x, const std::vector<double> & y, const CString & xlabel, const CString & ylabel, const CString & lineName);
-	int timer2;
+//	void plot1(const std::vector<double> & x, const std::vector<double> & y, const CString & xlabel, const CString & ylabel);
+//	void plot2(const std::vector<double> & x, const std::vector<double> & y, const CString & xlabel, const CString & ylabel, const CString & lineName);
+//	int timer2;
 	afx_msg void OnAnalysisMethodsetup();
 
 	//anp p1;
@@ -111,12 +113,15 @@ public:
 	CString AnalysisSetupINI;
 	
 	afx_msg void OnAnalysisStartanalysis();
-	CString Output1(PlotData & pdat);
-	CString Output2(PlotData & pdat);
-	CString Output3(PlotData & pdat);
-	double Aml;
-	CString Output4(PlotData & pdat);
-	double Qintercept;
+//	CString Output1(PlotData & pdat);
+//	CString Output2(PlotData & pdat);
+//	CString Output3(PlotData & pdat);
+//	double Aml;
+//	CString Output4(PlotData & pdat);
+//	double Qintercept;
+	dlg1 * LeftPlotPointer(void);
+	dlg1 * RightPlotPointer(void);
+	bool waiting;
 };
 
 

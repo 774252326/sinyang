@@ -41,6 +41,10 @@ int pcctB::addXY(std::vector<double> & x, std::vector<double> & y)
 
 			if( xx.back().size()>2 && xx.back().back()==xx.back()[1] /*&& xx.back()[xx.back().size()-2]!=xx.back().front()*/ ){
 				Ar.push_back(intg());
+							if(stepCount==0){
+				Ar0=Ar.back();
+			}
+
 				if( xx.size() >= nCycle ){
 					flag=2;
 					return flag;
@@ -48,6 +52,8 @@ int pcctB::addXY(std::vector<double> & x, std::vector<double> & y)
 				else{
 					flag=1;
 				}
+
+
 			}
 
 			
@@ -65,6 +71,10 @@ int pcctB::addXY(std::vector<double> & x, std::vector<double> & y)
 			//if(xx.size()>=nCycle){
 			//	return 2;
 			//}
+
+			if(xx.empty()){
+				totalVolume+=addVolume;
+			}
 
 			xx.push_back(x);
 			yy.push_back(y);

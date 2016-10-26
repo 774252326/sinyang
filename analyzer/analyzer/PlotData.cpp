@@ -226,8 +226,11 @@ void PlotData::clear(void)
 
 	ll.clear();
 	ps.clear();
-	xlabel.Empty();
-	ylabel.Empty();
+
+	if(!xlabel.IsEmpty())
+		xlabel.Empty();
+	if(!ylabel.IsEmpty())
+		ylabel.Empty();
 }
 
 

@@ -114,6 +114,7 @@
     <ClInclude Include="ANPara.h" />
     <ClInclude Include="CSpline.h" />
     <ClInclude Include="dlg1.h" />
+    <ClInclude Include="func.h" />
     <ClInclude Include="LineSpec.h" />
     <ClInclude Include="LineSpecA.h" />
     <ClInclude Include="MainFrm.h" />
@@ -145,6 +146,7 @@
     <ClCompile Include="ANPara.cpp" />
     <ClCompile Include="CSpline.cpp" />
     <ClCompile Include="dlg1.cpp" />
+    <ClCompile Include="func.cpp" />
     <ClCompile Include="LineSpec.cpp" />
     <ClCompile Include="LineSpecA.cpp" />
     <ClCompile Include="MainFrm.cpp" />

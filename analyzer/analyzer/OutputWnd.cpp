@@ -349,7 +349,7 @@ BOOL COutputWnd::InsertListCtrl(int StepNo, CString StepName, int CycleNo, doubl
 	str.Format(L"%s(%s%d)",StepName,strTemp,CycleNo);
 	m_listCtrlMonitor.SetItemText(StepNo,1,str);
 
-	if(addVol!=0){
+	if(addVol!=0 && CycleNo==1){
 		str.Format(L"%g",addVol);
 		m_listCtrlMonitor.SetItemText(StepNo,2,str);
 

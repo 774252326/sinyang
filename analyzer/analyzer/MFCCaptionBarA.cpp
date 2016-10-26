@@ -51,9 +51,9 @@ int CMFCCaptionBarA::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if( ec.Create( WS_CHILD | WS_TABSTOP | WS_BORDER /*|WS_VISIBLE*/, CRect( 0,0,0,0 ), this, IDS_EDIT_CAPTION_EDIT)==0 )
 		return -1;
 	//if(st.Create( _T("Volume(ml):"), WS_CHILD|SS_CENTER/*|WS_VISIBLE*/, CRect(0, 9, 60, 32), this)==FALSE)
-		//return -1;
+	//return -1;
 
-	
+
 
 	//bn.Create(_T("My button"), WS_CHILD|WS_VISIBLE|BS_PUSHBUTTON, CRect(310,10,400,30), this, 1);
 
@@ -85,7 +85,7 @@ void CMFCCaptionBarA::OnSize(UINT nType, int cx, int cy)
 
 int CMFCCaptionBarA::SetEdit(void)
 {
-	
+
 	//UpdateData(FALSE);
 
 	CRect bRect=this->GetButtonRect();
@@ -145,6 +145,7 @@ int CMFCCaptionBarA::ShowButton(bool bShow)
 
 int CMFCCaptionBarA::SetTextA(CString str, bool bFlash)
 {
+	//UpdateData(FALSE);
 	//this->FlashWindow(bFlash);
 	KillTimer(timer);
 	m_clrBarText=black;
@@ -168,6 +169,7 @@ void CMFCCaptionBarA::OnTimer(UINT_PTR nIDEvent)
 		{
 			bool aa=(m_clrBarText==black);
 			m_clrBarText=aa ? red : black;
+			UpdateData(FALSE);
 			Invalidate();
 		}
 		break;
@@ -183,27 +185,67 @@ void CMFCCaptionBarA::DoDataExchange(CDataExchange* pDX)
 {
 	// TODO: Add your specialized code here and/or call the base class
 
-	DDX_Text(pDX, IDS_EDIT_CAPTION_EDIT, x);
+
 
 	CMFCCaptionBar::DoDataExchange(pDX);
-
+	DDX_Text(pDX, IDS_EDIT_CAPTION_EDIT, x);
 
 }
 
 void CMFCCaptionBarA::OnDrawButton(
-   CDC* pDC,
-   CRect rect,
-   const CString& strButton,
-   BOOL bEnabled 
-)
+	CDC* pDC,
+	CRect rect,
+	const CString& strButton,
+	BOOL bEnabled 
+	)
 {
-	//if(ec.IsWindowVisible()){
-	//	rect.left+=50;
-	//	rect.right+=50;
-	//}
-
 	if(bEnabled)
 		CMFCCaptionBar::OnDrawButton(pDC, rect, strButton, bEnabled);
 	else
 		CMFCCaptionBar::OnDrawButton(pDC, rect, L" ", bEnabled);
+}
+
+void CMFCCaptionBarA::ShowMessageRunning(void)
+{
+	CString strTemp;
+	(strTemp.LoadString(IDS_STRING_RUNNING));
+	ShowMessage(strTemp);
+}
+
+
+void CMFCCaptionBarA::ShowMessage(CString str)
+{
+	SetTextA(str);
+	EnableButton(FALSE);
+	SetEdit();
+	ec.ShowWindow(SW_HIDE);
+	this->ShowWindow(SW_SHOW);
+	//this->GetParentFrame()->RecalcLayout(FALSE);
+}
+
+
+void CMFCCaptionBarA::ShowMessageWithButton(CString str, double xv, bool bFlash)
+{
+	for(int i=0;i<17;i++) str+=" ";
+	x=xv;
+	//UpdateData(FALSE);
+	SetTextA(str,bFlash);
+	EnableButton();
+	SetEdit();
+	ec.ShowWindow(SW_SHOW);
+	this->ShowWindow(SW_SHOW);
+}
+
+
+void CMFCCaptionBarA::OnDrawText(
+	CDC* pDC,
+	CRect rect,
+	const CString& strText 
+	)
+{
+	//rect.right-=50;
+
+
+	CMFCCaptionBar::OnDrawText(pDC, rect, strText);
+
 }
