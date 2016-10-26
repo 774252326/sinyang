@@ -25,7 +25,8 @@
 #define new DEBUG_NEW
 #endif
 
-
+//// MFC临界区类对象
+//CCriticalSection g_clsCriticalSection;
 const double zoomrate=0.8;
 
 // CanalyzerView
@@ -97,13 +98,46 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 
 		// TODO: add draw code for native data here
 
+
+		// MFC临界区类对象
+		CCriticalSection g_clsCriticalSection;
+		// 进入临界区
+		g_clsCriticalSection.Lock();
+
 		int selectIdx=m_spBtn.GetPos32();
 
-		if(selectIdx<0 || selectIdx>=pdl.size())
+		
+
+		if(selectIdx<0 || selectIdx>=pdl.size()){
+PlotData pdtemp(L"",L"",psview);
+
+CRect rect;
+		GetClientRect(&rect);
+		//if(rect.IsRectEmpty()==TRUE)
+		//	return;
+		CSize winsz=rect.Size();
+
+		CDC dcMem;//用于缓冲作图的内存DC
+		dcMem.CreateCompatibleDC(pDC);//依附窗口DC创建兼容内存DC
+
+		CBitmap bmp;//内存中承载临时图象的位图
+		bmp.CreateCompatibleBitmap(pDC,winsz.cx,winsz.cy);//创建兼容位图
+		dcMem.SelectObject(&bmp);  	//将位图选择进内存DC
+
+		DrawData(rect,&dcMem,pdtemp,xmin,xmax,ymin,ymax);
+
+			pDC->BitBlt(0,0,winsz.cx,winsz.cy,&dcMem,0,0,SRCCOPY);//将内存DC上的图象拷贝到前台
+		//pDC->BitBlt(100,100,winsz.cx,winsz.cy,&dcMem,0,0,SRCCOPY);//将内存DC上的图象拷贝到前台
+
+		dcMem.DeleteDC(); //删除DC
+		bmp.DeleteObject(); //删除位图
+
+
+			// 离开临界区
+		g_clsCriticalSection.Unlock();
+
 			return;
-
-
-
+		}
 
 		CRect rect;
 		GetClientRect(&rect);
@@ -118,7 +152,6 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		bmp.CreateCompatibleBitmap(pDC,winsz.cx,winsz.cy);//创建兼容位图
 		dcMem.SelectObject(&bmp);  	//将位图选择进内存DC
 
-
 		DrawData(rect,&dcMem,pdl[selectIdx],xmin,xmax,ymin,ymax);
 
 		if(bMouseCursor && !pdl[selectIdx].ps.empty()
@@ -130,8 +163,8 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 				DrawData1(rect
 					,&dcMem
 					,pdl[selectIdx].xll[selectPIdx]
-				,pdl[selectIdx].yll[selectPIdx]
-				,xmin
+					,pdl[selectIdx].yll[selectPIdx]
+					,xmin
 					,xmax
 					,ymin
 					,ymax
@@ -144,6 +177,9 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		dcMem.DeleteDC(); //删除DC
 		bmp.DeleteObject(); //删除位图
 
+
+			// 离开临界区
+		g_clsCriticalSection.Unlock();
 	}
 
 
@@ -352,8 +388,12 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 
 		int selecti=UpdateSpinButton(pdl.size(),wParam);
 
-		if(selecti<0)
+		if(selecti<0){
+			xmin=ymin=-1;
+			xmax=ymax=1;
+			this->Invalidate(FALSE);	
 			return 1;
+		}
 
 		UpdateRange(pdl[selecti].xll,xmin,xmax,pct,true);
 		UpdateRange(pdl[selecti].yll,ymin,ymax,pct,true);

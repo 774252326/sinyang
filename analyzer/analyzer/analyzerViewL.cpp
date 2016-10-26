@@ -84,6 +84,9 @@ IMPLEMENT_DYNCREATE(CanalyzerViewL, CanalyzerView)
 
 
 		::SendMessage(ol->GetSafeHwnd(),MESSAGE_UPDATE_DOL,(WPARAM)true,NULL);
+
+		CMFCCaptionBar *cba=mf->GetCaptionBar();
+		::SendMessage(cba->GetSafeHwnd(),MESSAGE_READY,NULL,NULL);
 	}
 
 

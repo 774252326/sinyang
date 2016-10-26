@@ -9,6 +9,8 @@
 #include "analyzerViewL.h"
 #include "pcct.h"
 
+#include "windowsversion.hpp"
+
 sapitemA sapitemdummy;
 BYTE bytedummy;
 double doubledummy;
@@ -23,7 +25,7 @@ const size_t nd=500;
 
 
 #ifndef _DEBUG
-	CString folderp=L"data\\d\\";
+	CString folderp=(GetWinVer()==6)? L"data\\d\\" : L"..\\data\\d\\";
 #else
 	CString folderp=L"C:\\Users\\r8anw2x\\Desktop\\data\\d\\";
 //CString folderp=L"D:\\data\\d\\";
@@ -2889,6 +2891,7 @@ UINT PROCESS(LPVOID pParam)
 		//data.clear();
 		pcct data;
 		data.readFile(filelist.front());
+		//data.readFile1(filelist.front());
 		data.TomA();
 
 		std::vector<double> x;

@@ -58,11 +58,10 @@ public:
 	CSize spBtnSize;
 
 	PlotSpec psview;
-
-	CPoint m_mouseDownPoint;
 	CToolTipCtrl m_tool;
+	CPoint m_mouseDownPoint;
 	bool bMouseCursor;
-
+	size_t selectPIdx;
 protected:
 	afx_msg LRESULT OnMessageChangeApplook(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnMessageGetPlotspec(WPARAM wParam, LPARAM lParam);
@@ -84,7 +83,7 @@ public:
 //	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
 
 	void OnDeltaposSpin(NMHDR* pNMHDR, LRESULT* pResult);
-	size_t selectPIdx;
+	
 	virtual void OnPrepareDC(CDC* pDC, CPrintInfo* pInfo = NULL);
 	int UpdateSpinButton(int np, bool bLast);
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);

@@ -125,6 +125,7 @@ public:
 	AccountList al;
 	int userIndex;
 
+	afx_msg void OnUpdateFileOpen(CCmdUI *pCmdUI);
 };
 
 

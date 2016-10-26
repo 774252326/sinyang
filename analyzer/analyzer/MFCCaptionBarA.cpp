@@ -15,7 +15,7 @@ IMPLEMENT_DYNAMIC(CMFCCaptionBarA, CMFCCaptionBar)
 	: timer(0)
 	, x(0)
 	, ecWidth(50)
-	, strblank(_T("                                      "))
+	, strblank(_T("                                                  "))
 	, fontheight(-14)
 	, flashms(500)
 {

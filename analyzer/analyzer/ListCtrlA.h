@@ -21,7 +21,7 @@ public:
 
 protected:
 	DECLARE_MESSAGE_MAP()
-public:
+protected:
 	afx_msg void OnLvnBeginlabeledit(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnLvnEndlabeledit(NMHDR *pNMHDR, LRESULT *pResult);
 	int m_iSubItem;
@@ -46,6 +46,17 @@ public:
 		eColor	
 	};
 
+
+
+	CComboBox * ComboItem( int nItem,  int nSubItem);
+
+
+	afx_msg void OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult);
+	virtual void DoDataExchange(CDataExchange* pDX);
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	double aa;
+	int bb;
+public:
 	std::vector<eType> typelist;
 
 	std::vector< std::vector<CString> > cbstr;
@@ -53,19 +64,8 @@ public:
 	std::vector<double> maxd;
 	std::vector<int> mini;
 	std::vector<int> maxi;
-
-	CComboBox * ComboItem( int nItem,  int nSubItem);
-	int GetChoice(int nItem, int nSubItem);
-
-	afx_msg void OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult);
-	virtual void DoDataExchange(CDataExchange* pDX);
-
-	double aa;
-	int bb;
-
-
 	BOOL SetHeader(const std::vector<CString> & headerstrl);
-	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	int GetChoice(int nItem, int nSubItem);
 	BOOL SetChoice(int nItem, int nSubItem, int choiceIndex);
 };
 

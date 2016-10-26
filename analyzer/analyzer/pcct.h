@@ -14,6 +14,9 @@ typedef struct SEGMENT{
 
 class pcct
 {
+protected:
+
+
 public:
 	pcct(void);
 	~pcct(void);
@@ -24,7 +27,6 @@ public:
 	std::vector<double> current;
 	std::vector<double> charge;
 	std::vector<double> time;
-
 
 	//int readFile(LPCTSTR lpszFileName, LPCTSTR header);
 	int readFile(LPCTSTR lpszFileName);
@@ -55,5 +57,11 @@ public:
 	double intg1();
 
 	double intg2(double xtop);
+
+
+	void SetTimeIntv(double intv=0);
+
+
+
 };
 

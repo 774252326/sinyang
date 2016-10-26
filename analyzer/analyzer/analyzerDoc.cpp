@@ -423,7 +423,7 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 
 			CString fp = se.GetPathName();
 
-			BOOL chk1,chk2,chk3,chk4,chk5,chk6,chk7;
+			BOOL chk1=TRUE,chk2=TRUE,chk3=TRUE,chk4=TRUE,chk5=TRUE,chk6=TRUE,chk7=TRUE;
 			se.GetCheckButtonState(IDS_STRING_ANALYSIS_PARA,chk1);
 			se.GetCheckButtonState(IDS_STRING_CV_PARA,chk2);
 			se.GetCheckButtonState(IDS_STRING_ADDITION_SOLUTION_PARA,chk3);

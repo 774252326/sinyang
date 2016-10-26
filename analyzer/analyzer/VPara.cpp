@@ -15,7 +15,7 @@ CVPara::CVPara()
 	, combochoice(0)
 	, noofcycles(4)
 	, variationtolerance(0.01)
-	, rotationrate(1000)
+	, rotationrate(2000)
 	, endintegratione(1)
 {
 }

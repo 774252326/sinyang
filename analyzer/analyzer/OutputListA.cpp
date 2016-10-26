@@ -3,6 +3,12 @@
 #include "resource.h"
 #include "func.h"
 
+
+// MFC临界区类对象
+CCriticalSection g_clsCriticalSection;
+
+
+
 COutputListA::COutputListA(void)
 {
 }
@@ -41,6 +47,10 @@ int COutputListA::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	(strTemp.LoadString(IDS_STRING_NO));
 	cbstr[6].push_back(strTemp);
 
+	for(int i=0;i<strl.size();i++){		
+		AdjustWidth(this,i,strl[i],30);
+	}
+
 	return 0;
 }
 
@@ -57,6 +67,8 @@ size_t COutputListA::GetDOLRow(void)
 void COutputListA::ShowDOL()
 {
 	//size_t nr=GetDOLRow();
+
+	//int gapp=30;
 
 	size_t StepNo;
 	size_t starti;
@@ -164,7 +176,13 @@ afx_msg LRESULT COutputListA::OnMessageUpdateDol(WPARAM wParam, LPARAM lParam)
 	//	mf->GetCaptionBar()->x=doa.addVolume;
 	//}
 
+	// 进入临界区
+	g_clsCriticalSection.Lock();
+
 	dol.assign(doltmp.begin(),doltmp.end());
+	// 离开临界区
+	g_clsCriticalSection.Unlock();
+
 
 	TRACE(L"%d\n",flg);
 

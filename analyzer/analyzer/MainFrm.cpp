@@ -64,6 +64,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_UPDATE_COMMAND_UI(ID_FILE_SAVE, &CMainFrame::OnUpdateFileSave)
 	ON_UPDATE_COMMAND_UI(ID_FILE_NEW, &CMainFrame::OnUpdateFileNew)
 	ON_COMMAND(ID_HELP_HELPTOPICS, &CMainFrame::OnHelpHelptopics)
+	ON_UPDATE_COMMAND_UI(ID_FILE_OPEN, &CMainFrame::OnUpdateFileOpen)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -776,35 +777,35 @@ void CMainFrame::OnSecurityUseraccounts()
 void CMainFrame::OnUpdateFilePrint(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(al.ual[userIndex].au!=guest);
+	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=guest);
 }
 
 
 void CMainFrame::OnUpdateFilePrintPreview(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(al.ual[userIndex].au!=guest);
+	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=guest);
 }
 
 
 void CMainFrame::OnUpdateFilePrintSetup(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(al.ual[userIndex].au!=guest);
+	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=guest);
 }
 
 
 void CMainFrame::OnUpdateFileSave(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(al.ual[userIndex].au!=guest);
+	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=guest);
 }
 
 
 void CMainFrame::OnUpdateFileNew(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(al.ual[userIndex].au!=guest);
+	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=guest);
 }
 
 
@@ -813,4 +814,11 @@ void CMainFrame::OnHelpHelptopics()
 	// TODO: Add your command handler code here
 
 	AfxMessageBox(L"help");
+}
+
+
+void CMainFrame::OnUpdateFileOpen(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->Enable(pst==stop);
 }

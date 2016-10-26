@@ -7,7 +7,7 @@
 
 int metricGridLong=5;
 int metricGridShort=3;
-int gap0=10;
+//int gap0=10;
 
 inline COLORREF inv(const COLORREF &oc){
 	return (oc^0x00ffffff);
@@ -392,7 +392,8 @@ void DrawSpline( CPoint *lpPoints
 
 void GetPlotRect(CRect & plotRect
 	, int labelSize
-	, int metricSize)
+	, int metricSize
+	, int gap0=10)
 {
 	//GetClientRect(&plotRect);
 	//plotRect.bottom=plotRect.CenterPoint().y;
@@ -925,7 +926,18 @@ void DrawData(CRect &plotrect
 		pDC->DrawEdge(&plotrect,EDGE_BUMP,BF_BOTTOMLEFT);
 
 	}
-
+	else{
+		DrawXYAxis(plotrect
+			,pDC
+			,pd.psp
+			,pd.xlabel
+			,pd.ylabel
+			,xmin
+			,xmax
+			,ymin
+			,ymax);
+		pDC->DrawEdge(&plotrect,EDGE_BUMP,BF_BOTTOMLEFT);
+	}
 
 	//ReleaseSemaphore(semaphoreWrite.m_hObject,1,NULL);
 }
