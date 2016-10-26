@@ -13,3 +13,4 @@ BEGIN_MESSAGE_MAP(StartDlg, CDialogEx)
 END_MESSAGE_MAP()
 
 #endif
+

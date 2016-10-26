@@ -62,7 +62,8 @@ public:
 #else
 		//CString folderp=L"C:\\Users\\r8anw2x\\Desktop\\data\\d\\";
 		//CString folderp=L"D:\\data\\d\\";
-		CString folderp=L"C:\\Users\\j\\Desktop\\data\\d\\";
+		//CString folderp=L"C:\\Users\\j\\Desktop\\data\\d\\";
+		CString folderp=folderpath()+L"\\data\\d\\";
 #endif
 
 		CString DEMOflist=folderp+L"ce.txt";

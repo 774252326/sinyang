@@ -63,15 +63,15 @@ protected:
 		DDV_MinMaxInt(pDX,para.noofcycles,1,50);
 
 		DDX_Text(pDX, IDS_EDIT_END_INTEGRATION_E, para.endintegratione);
-		DDV_MinMaxDouble(pDX,para.endintegratione,para.lowelimit,para.highelimit);
+		DDV_MinMaxDouble(pDX, para.endintegratione, para.lowelimit+para.EInterval(), para.highelimit-para.EInterval());
 
 		DDX_CBIndex(pDX, IDS_EDIT_START_INTEGRATION_E, para.combochoice);
 
 		if(para.combochoice!=0){
 			//strtmp.Format(L"%g",para.startintegratione);
 			DDX_Text(pDX, IDS_EDIT_START_INTEGRATION_E, para.startintegratione);
-			DDV_MinMaxDouble(pDX,para.startintegratione,para.lowelimit,para.endintegratione);
-		}
+			DDV_MinMaxDouble(pDX, para.startintegratione, para.lowelimit+para.EInterval(), para.endintegratione-para.EInterval());
+		} 
 
 		CPropertyPage::DoDataExchange(pDX);
 	};    // DDX/DDV support

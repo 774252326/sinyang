@@ -35,34 +35,11 @@
 
 
 
-#include "standard_definitions_head.h"//
-//#include <iostream>
-////using std::cout;
-////using std::endl;
-//#include <QApplication>
-#include <QMessageBox>
-//#include <QTimer>
-#include "exports.h" // for Libec namespace
-#include "recorder.h"
-#include "runnerBase.h"
-#include "ECDEF.H"
-
 
 
 typedef struct MYPARA{
-	//CanalyzerViewL *leftp;
-	//CanalyzerViewR *rightp;
 	CanalyzerDoc *adoc;
-	//COutputWnd *outw;
-	//COutputListA* ol;
-	//CMFCCaptionBarA *cba;
 	CMainFrame *mf;
-	//pcct *data;
-	//pcctB *dataB;
-	//CVPara *p2;
-	//SAPara *p3;
-	//WaitDlg *wd;
-	//ProcessState *psta;
 } mypara;
 
 
@@ -85,8 +62,141 @@ void WaitSecond(ProcessState &waitflg
 	}	
 }
 
+#ifdef QTT
 
-UINT CMainFrame::PROCESS0(LPVOID pParam)
+UINT CMainFrame::PROCESS(LPVOID pParam)
+{
+	CMainFrame *mf=((mypara*)pParam)->mf;
+	CanalyzerDoc* pDoc=((mypara*)pParam)->adoc;
+
+	delete pParam;
+	////////////////////////////////////////////////////
+
+
+
+
+
+	///////////////////////////////////////////////////////////////
+
+
+	CSingleLock singleLock(&(pDoc->m_CritSection));
+
+	pcct data;
+	std::vector<double> x;
+	std::vector<double> y;
+	size_t rnd;
+
+	while(true){
+		switch(mf->pst){
+		case running:
+			{
+				switch(pDoc->da.runstate){
+				case 9:
+				case 7:	
+				case 3:
+				case 4:
+				case 11:
+					{
+						mf->pst=stop;
+					}
+					break;
+				case 1:
+				case 2:
+				case 6:
+				case 8:
+				case 5:
+				case 0:
+					{
+
+
+						theApp.ar.RecordData(x,y);
+
+						if(!(x.empty()||y.empty()))
+						{
+
+							if(singleLock.Lock())
+							{
+								pDoc->da.raw.AddFollow(x,y);
+								// Now that we are finished, 
+								// unlock the resource for others.
+								singleLock.Unlock();
+							}
+
+							pDoc->UpdateState();
+
+							::SendMessage(mf->GetSafeHwnd(),MESSAGE_UPDATE_DOL,PW_INIT,PW_INIT);
+							::SendMessage(mf->GetSafeHwnd(),MESSAGE_CLOSE_SAP_SHEET,NULL,NULL);
+						}
+					}
+					break;
+				case 12:
+				case 10:
+					{
+						while(theApp.ar.runner->isRunningInWorkerThread())
+						{
+							Sleep(sleepms);
+						}
+
+						theApp.ar.SetAndStart(pDoc->da.p2,2*pDoc->da.p2.noofcycles);
+						Sleep((pDoc->da.p2.quiettime+1)*1000);
+
+						while(true)
+						{
+							theApp.ar.RecordData(x,y);
+							if(x.empty()||y.empty()){
+								Sleep(sleepms);
+							}
+							else{
+								break;
+							}
+						}
+
+
+						if(!(x.empty()||y.empty()))
+						{
+							if(singleLock.Lock())
+							{
+								pDoc->da.raw.AddNew(x,y);
+								// Now that we are finished, 
+								// unlock the resource for others.
+								singleLock.Unlock();
+							}
+
+							pDoc->UpdateState();
+
+							::SendMessage(mf->GetSafeHwnd(),MESSAGE_UPDATE_DOL,PW_INIT,PW_INIT);
+							::SendMessage(mf->GetSafeHwnd(),MESSAGE_CLOSE_SAP_SHEET,NULL,NULL);
+						}
+					}
+					break;
+
+				default:
+					return 2;
+				}
+
+				Sleep(sleepms);
+			}
+			break;
+		case pause:
+			Sleep(sleepms);
+			break;
+		case stop:
+			mf->bWaitForStop=false;
+			return 0;
+		default:
+			return 1;
+		}
+	}
+	mf->pst=stop;
+
+	return 0;
+}
+
+
+
+#else
+
+UINT CMainFrame::PROCESS(LPVOID pParam)
 {
 	CMainFrame *mf=((mypara*)pParam)->mf;
 	CanalyzerDoc* pDoc=((mypara*)pParam)->adoc;
@@ -108,10 +218,11 @@ UINT CMainFrame::PROCESS0(LPVOID pParam)
 		case running:
 			{
 				switch(pDoc->da.runstate){
-				case 0:
+				case 9:
 				case 7:	
 				case 3:
 				case 4:
+				case 11:
 					{
 						mf->pst=stop;
 					}
@@ -120,6 +231,8 @@ UINT CMainFrame::PROCESS0(LPVOID pParam)
 				case 2:
 				case 6:
 				case 8:
+				case 5:
+				case 0:
 					{
 						rnd=data.popData(x,y,nd);
 
@@ -142,8 +255,8 @@ UINT CMainFrame::PROCESS0(LPVOID pParam)
 						::SendMessage(mf->GetSafeHwnd(),MESSAGE_CLOSE_SAP_SHEET,NULL,NULL);
 					}
 					break;
-
-				case 5:
+				case 12:
+				case 10:
 					{
 						if(filelist.empty()){
 							CString strerr;
@@ -201,138 +314,7 @@ UINT CMainFrame::PROCESS0(LPVOID pParam)
 	return 0;
 }
 
-UINT CMainFrame::PROCESS(LPVOID pParam)
-{
-	CMainFrame *mf=((mypara*)pParam)->mf;
-	CanalyzerDoc* pDoc=((mypara*)pParam)->adoc;
-
-	delete pParam;
-	////////////////////////////////////////////////////
-
-
-
-	//int ncnt=0, ncnt2=0;
-
-	//theApp.setsomething(pDoc->da.p2,3);
-
-	theApp.m_nCnt=0;
-
-	///////////////////////////////////////////////////////////////
-
-
-	CSingleLock singleLock(&(pDoc->m_CritSection));
-
-	pcct data;
-	std::vector<double> x;
-	std::vector<double> y;
-	size_t rnd;
-
-	while(true){
-		switch(mf->pst){
-		case running:
-			{
-				switch(pDoc->da.runstate){
-				case 9:
-				case 7:	
-				case 3:
-				case 4:
-				case 11:
-					{
-						mf->pst=stop;
-					}
-					break;
-				case 1:
-				case 2:
-				case 6:
-				case 8:
-				case 5:
-				case 0:
-					{
-
-
-						theApp.dosomething(x,y);
-
-						if(!(x.empty()||y.empty()))
-						{
-
-							if(singleLock.Lock())
-							{
-								pDoc->da.raw.AddFollow(x,y);
-								// Now that we are finished, 
-								// unlock the resource for others.
-								singleLock.Unlock();
-							}
-
-							pDoc->UpdateState();
-
-							::SendMessage(mf->GetSafeHwnd(),MESSAGE_UPDATE_DOL,PW_INIT,PW_INIT);
-							::SendMessage(mf->GetSafeHwnd(),MESSAGE_CLOSE_SAP_SHEET,NULL,NULL);
-						}
-					}
-					break;
-				case 12:
-				case 10:
-					{
-						while(theApp.runner->isRunningInWorkerThread())
-						{
-							Sleep(sleepms);
-						}
-
-						theApp.setsomething(pDoc->da.p2,2*pDoc->da.p2.noofcycles);
-						Sleep((pDoc->da.p2.quiettime+1)*1000);
-
-						while(true)
-						{
-							theApp.dosomething(x,y);
-							if(x.empty()||y.empty()){
-								Sleep(sleepms);
-							}
-							else{
-								break;
-							}
-						}
-
-
-						if(!(x.empty()||y.empty()))
-						{
-							if(singleLock.Lock())
-							{
-								pDoc->da.raw.AddNew(x,y);
-								// Now that we are finished, 
-								// unlock the resource for others.
-								singleLock.Unlock();
-							}
-
-							pDoc->UpdateState();
-
-							::SendMessage(mf->GetSafeHwnd(),MESSAGE_UPDATE_DOL,PW_INIT,PW_INIT);
-							::SendMessage(mf->GetSafeHwnd(),MESSAGE_CLOSE_SAP_SHEET,NULL,NULL);
-						}
-					}
-					break;
-
-				default:
-					return 2;
-				}
-
-				Sleep(sleepms);
-			}
-			break;
-		case pause:
-			Sleep(sleepms);
-			break;
-		case stop:
-			mf->bWaitForStop=false;
-			return 0;
-		default:
-			return 1;
-		}
-	}
-	mf->pst=stop;
-
-	return 0;
-}
-
+#endif
 ///////////////////////////////////////////thread///////////////////////////////////////
 
 
@@ -1067,14 +1049,30 @@ afx_msg LRESULT CMainFrame::OnMessageCloseSapSheet(WPARAM wParam, LPARAM lParam)
 
 	case 3:
 		{
-			AfxMessageBox(IDS_STRING_STEP_ERROR);
-			OnAnalysisAbortanalysis();
+			if(bWaitForStop)
+			{
+				pst=stop;
+				HideWaitDlg();
+			}
+			else
+			{
+				AfxMessageBox(IDS_STRING_STEP_ERROR);
+				OnAnalysisAbortanalysis();
+			}
 		}
 		break;
 	case 4:
 		{
-			AfxMessageBox(IDS_STRING_STEP_ERROR);
-			OnAnalysisAbortanalysis();
+			if(bWaitForStop)
+			{
+				pst=stop;
+				HideWaitDlg();
+			}
+			else
+			{
+				AfxMessageBox(IDS_STRING_STEP_ERROR);
+				OnAnalysisAbortanalysis();
+			}
 		}
 		break;
 
@@ -1193,8 +1191,9 @@ void CMainFrame::OnAnalysisAbortanalysis()
 	//}
 
 
+#ifdef QTT
 
-	if(theApp.runner->isRunningInWorkerThread()){
+	if( theApp.ar.runner->isRunningInWorkerThread() ){
 
 		CString str;
 		str.LoadStringW(IDS_STRING_WAIT_STOP);
@@ -1227,10 +1226,14 @@ void CMainFrame::OnAnalysisAbortanalysis()
 
 
 	}
-	else{
+	else
+#endif
+
+	{
 		pst=stop;
 		HideWaitDlg();
 	}
+
 }
 
 
@@ -1572,7 +1575,7 @@ void CMainFrame::OnUpdateLanguage(CCmdUI *pCmdUI)
 void CMainFrame::OnLanguage(UINT id)
 {
 
-	
+
 
 	LangID=nID2LangID(id);
 	ChangeLang();
