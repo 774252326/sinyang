@@ -73,3 +73,8 @@
 #define MESSAGE_SHOW_DOL		WM_USER+13
 #define MESSAGE_COMPUTE_RESULT	WM_USER+14
 #define MESSAGE_REFRESH_DOL		WM_USER+15
+
+
+
+ //MFC临界区类对象
+//CCriticalSection g_clsCriticalSection;

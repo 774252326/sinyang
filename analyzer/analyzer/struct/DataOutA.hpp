@@ -24,13 +24,13 @@ T Mean(std::vector<T> x)
 template <typename T>
 T Variance(std::vector<T> x, bool bSample=true)
 {
-	T mx=Mean(x);
 	T n=x.size();
+	if(x.size()<2)
+		return 0;
+	T mx=Mean(x);
 	mx=-mx*mx*n;
 	T v=std::inner_product(x.begin(),x.end(),x.begin(),mx);
 	if(bSample){
-		if(x.size()<2)
-			return 0;
 		v/=n-1;
 	}
 	else{
@@ -228,7 +228,7 @@ public:
 		if( Ar.empty())
 			return -100;
 
-		if(UseIndex>=0 && UseIndex<Ar.size())
+		if(UseIndex>=0 && ((size_t)UseIndex)<Ar.size())
 			return Ar[UseIndex];
 
 		return Ar.back();
@@ -290,12 +290,13 @@ public:
 		//}
 	};
 
-	bool EndFlag(int nCycle, double tolarance) const{
+	bool EndFlag(size_t nCycle, double tolarance) const{
 		if( Ar.size()>=nCycle || (Ar.size()>1 && VarianceStd(Ar)<tolarance) ){
-			TRACE("\nv=%g",VarianceStd(Ar));
-			return true;
+			
+			TRACE("\nv=%g\n",VarianceStd(Ar));
+			return true;//step should end
 		}
-		return false;
+		return false;//step should continue
 	};
 
 	///////////////////////////////////set data /////////////////////////////////////////

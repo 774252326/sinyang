@@ -61,7 +61,9 @@ public:
 		}
 	};
 	bool isUnknownComposition(void){
-		return ( Sconc<=0 & Aconc<=0 & Lconc<=0 );
+		if( Sconc<=0 && Aconc<=0 && Lconc<=0 )
+			return true;
+		return false;
 	};
 	bool isStepEnd(double currentRatio,bool bLess=true){
 		if(addType==1||addType==3){

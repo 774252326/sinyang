@@ -117,6 +117,10 @@ BOOL CanalyzerApp::InitInstance()
 	sd->Create(IDD_DIALOG_START);
 	sd->ShowWindow(SW_SHOW);
 
+	int a=-3;
+	size_t aa=a;
+	int b=aa;
+
 	Sleep(500);
 
 	LoginDlg ld;

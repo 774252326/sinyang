@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 //#include "analyzer.h"
 #include "analyzerViewL.h"
-#include "MainFrm.h"
+//#include "MainFrm.h"
 #include "calfunc.h"
 //#include "analyzerViewR.h"
 
@@ -37,9 +37,11 @@ IMPLEMENT_DYNCREATE(CanalyzerViewL, CanalyzerView)
 
 		// TODO: Add your specialized code here and/or call the base class
 
-		CMainFrame *mf=(CMainFrame*)(GetParentFrame());	
+		//CMainFrame *mf=(CMainFrame*)(GetParentFrame());	
 
-		::SendMessage(mf->GetOutputWnd()->GetSafeHwnd(),MESSAGE_UPDATE_DOL,(WPARAM)true,NULL);
+		//::SendMessage(mf->GetOutputWnd()->GetSafeHwnd(),MESSAGE_UPDATE_DOL,(WPARAM)true,NULL);
+
+		::SendMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_RAW,NULL,NULL);
 
 	}
 
@@ -48,10 +50,23 @@ IMPLEMENT_DYNCREATE(CanalyzerViewL, CanalyzerView)
 	{
 		CanalyzerDoc* pDoc = GetDocument();
 
-		CMainFrame *mf=(CMainFrame*)(GetParentFrame());
+				CSingleLock singleLock(&(pDoc->m_CritSection));
+		singleLock.Lock();
+
+		if (singleLock.IsLocked())  // Resource has been locked
+		{
+
+	
+
+		//CMainFrame *mf=(CMainFrame*)(GetParentFrame());
 
 		//pdl.clear();
-		UINT flg=RawData2PlotDataList(pDoc->raw, mf->GetOutputWnd()->dol, pw.GetPlotSpec()->winbkC, pdl);
+		//UINT flg=RawData2PlotDataList(pDoc->raw, mf->GetOutputWnd()->dol, pw.GetPlotSpec()->winbkC, pdl);
+		UINT flg=RawData2PlotDataList(pDoc->raw,pDoc->dol,pw.GetPlotSpec()->winbkC, pdl);
+		// Now that we are finished, 
+			// unlock the resource for others.
+			singleLock.Unlock();
+		}
 
 		::PostMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_VIEW,(WPARAM)true,NULL);
 

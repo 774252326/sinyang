@@ -32,14 +32,11 @@ int FindClosest(double x, double y, const std::vector<double> &xl, const std::ve
 		||yl.empty())
 		return -1;
 
-	int j=0;
+	size_t j=0;
 	double l=abs(xl[j]-x)+abs(yl[j]-y);
-	if(l<=thres){
-		return 0;
-	}
-	double t;
-	for(int i=1;i<xl.size();i++){
-		t=abs(xl[i]-x)+abs(yl[i]-y);
+	if(l>thres){	
+	for(size_t i=1;i<xl.size();i++){
+		double t=abs(xl[i]-x)+abs(yl[i]-y);
 		if(t<l){
 			if(t<=thres){
 				return i;
@@ -48,8 +45,8 @@ int FindClosest(double x, double y, const std::vector<double> &xl, const std::ve
 			j=i;
 		}
 	}
+	}
 	return j;
-	return -1;
 }
 
 

@@ -53,7 +53,7 @@ public:
 	AccountList(const AccountList &src){ operator=(src); };
 
 	bool IsAdmin(int i){
-		if(i>=0 && i<ual.size() && ual[i].au==UserAccount::admin)
+		if(i>=0 && ((size_t)i)<ual.size() && ual[i].au==UserAccount::admin)
 			return true;
 		return false;
 	};

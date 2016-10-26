@@ -68,8 +68,9 @@ T getbmvalue(T **m, long nr, long nc, long m1, long m2, long ri, long ci, bool *
 	//return m[ri][ci] of band diagonal matrix m[1..nr][1..nc], if index (ri,ci) outside diagonal band, zeroflag=true
 	if( ri<1 || ri>nr || ci<1 || ci>nc ){
 		nrerror("out of range");
+		return 0;
 	}
-	else{
+	//else{
 		T value;
 		if( nc>=nr ){
 			if( nr-nc-m2<=ri-ci && ri-ci<=m1 ){
@@ -92,7 +93,7 @@ T getbmvalue(T **m, long nr, long nc, long m1, long m2, long ri, long ci, bool *
 			}
 		}
 		return value;
-	}
+	//}
 
 }
 

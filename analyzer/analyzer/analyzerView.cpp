@@ -462,17 +462,17 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 	}
 
 
-	afx_msg LRESULT CanalyzerView::OnMessageUpdateRaw(WPARAM wParam, LPARAM lParam)
-	{
-		CanalyzerDoc* pDoc = GetDocument();
+	//afx_msg LRESULT CanalyzerView::OnMessageUpdateRaw(WPARAM wParam, LPARAM lParam)
+	//{
+	//	CanalyzerDoc* pDoc = GetDocument();
 
-		CMainFrame *mf=(CMainFrame*)(GetParentFrame());
-		//COutputListA* ol=;
+	//	CMainFrame *mf=(CMainFrame*)(GetParentFrame());
+	//	//COutputListA* ol=;
 
-		pdl.clear();
-		UINT flg=RawData2PlotDataList(pDoc->raw, mf->GetOutputWnd()->dol, pw.GetPlotSpec()->winbkC, pdl);
+	//	pdl.clear();
+	//	UINT flg=RawData2PlotDataList(pDoc->raw, mf->GetOutputWnd()->dol, pw.GetPlotSpec()->winbkC, pdl);
 
-		::PostMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_VIEW,(WPARAM)true,NULL);
+	//	::PostMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_VIEW,(WPARAM)true,NULL);
 
-		return 0;
-	}
+	//	return 0;
+	//}

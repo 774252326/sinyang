@@ -18,6 +18,7 @@ IMPLEMENT_DYNAMIC(PlotWnd, CWnd)
 	, selectPIdx(0)
 	, zoomrate(0.9)
 	, wndPosition(CPoint(0,0))
+	, bShowToolTip(false)
 {
 	td=NULL;
 	pdex=pd;
@@ -189,8 +190,11 @@ void PlotWnd::OnMouseMove(UINT nFlags, CPoint point)
 					, point
 					, this->m_mouseDownPoint
 					, pdex->xmin,pdex->xmax,pdex->ymin,pdex->ymax
-					, str))
+					, str)){
+						if(bShowToolTip){
 					m_tool.UpdateTipText(str,this);
+						}
+				}
 
 			}
 
@@ -244,7 +248,8 @@ BOOL PlotWnd::PreTranslateMessage(MSG* pMsg)
 {
 	// TODO: Add your specialized code here and/or call the base class
 
-	m_tool.RelayEvent(pMsg);
+	if(bShowToolTip)
+		m_tool.RelayEvent(pMsg);
 
 	return CWnd::PreTranslateMessage(pMsg);
 }

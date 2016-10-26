@@ -77,6 +77,7 @@ protected:
 public:
 //	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	PlotSpec * GetPlotSpec(void);
+	bool bShowToolTip;
 };
 
 

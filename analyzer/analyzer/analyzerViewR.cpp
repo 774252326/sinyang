@@ -1,7 +1,10 @@
 #include "StdAfx.h"
 #include "analyzerViewR.h"
 #include "calfunc.h"
-#include "MainFrm.h"
+//#include "MainFrm.h"
+
+
+
 
 IMPLEMENT_DYNCREATE(CanalyzerViewR, CanalyzerView)
 
@@ -25,17 +28,28 @@ IMPLEMENT_DYNCREATE(CanalyzerViewR, CanalyzerView)
 
 	afx_msg LRESULT CanalyzerViewR::OnMessageUpdateTest(WPARAM wParam, LPARAM lParam)
 	{
-		CMainFrame *mf=(CMainFrame*)(GetParentFrame());
+		//CMainFrame *mf=(CMainFrame*)(GetParentFrame());
 		//COutputListA* ol=->GetListCtrl();
+
+
+
 
 		CanalyzerDoc* pDoc = GetDocument();
 
-		//pdl.clear();
+			CSingleLock singleLock(&(pDoc->m_CritSection));
+		singleLock.Lock();
+
+		if (singleLock.IsLocked())  // Resource has been locked
+		{
 
 
-		UINT flg=DataOutAList2PlotDataExList(mf->GetOutputWnd()->dol, pDoc->p1, pw.GetPlotSpec()->winbkC, pdl);
+		UINT flg=DataOutAList2PlotDataExList(pDoc->dol, pDoc->p1, pw.GetPlotSpec()->winbkC, pdl);
 
-		//CString str=Compute(ol->dol,pDoc->p1,pdl,true);
+				// Now that we are finished, 
+			// unlock the resource for others.
+			singleLock.Unlock();
+		}
+
 
 		::PostMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_VIEW,NULL,NULL);
 		//::SendMessage(mf->GetCaptionBar()->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)str.GetBuffer(),NULL);
@@ -47,12 +61,14 @@ IMPLEMENT_DYNCREATE(CanalyzerViewR, CanalyzerView)
 
 	afx_msg LRESULT CanalyzerViewR::OnMessageComputeResult(WPARAM wParam, LPARAM lParam)
 	{
-		CMainFrame *mf=(CMainFrame*)(GetParentFrame());
+		//CMainFrame *mf=(CMainFrame*)(GetParentFrame());
 		//COutputListA* ol=mf->GetOutputWnd()->GetListCtrl();
+
+
 
 		CanalyzerDoc* pDoc = GetDocument();
 
-		CString str=Compute(mf->GetOutputWnd()->dol,pDoc->p1,pdl,true);
+		CString str=Compute(pDoc->dol,pDoc->p1,pdl,true);
 
 		//::SendMessage(mf->GetCaptionBar()->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)str.GetBuffer(),NULL);
 
@@ -63,4 +79,15 @@ IMPLEMENT_DYNCREATE(CanalyzerViewR, CanalyzerView)
 		MessageBox(str);
 
 		return 0;
+	}
+
+
+	void CanalyzerViewR::OnInitialUpdate()
+	{
+		CanalyzerView::OnInitialUpdate();
+
+		// TODO: Add your specialized code here and/or call the base class
+
+
+		::PostMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
 	}

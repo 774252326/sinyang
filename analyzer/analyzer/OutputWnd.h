@@ -13,7 +13,7 @@ public:
 	void UpdateFonts();
 
 // Attributes
-	std::vector<DataOutA> dol;
+	//std::vector<DataOutA> dol;
 
 protected:
 	//CMFCTabCtrl	m_wndTabs;
@@ -31,12 +31,12 @@ protected:
 
 	void AdjustHorzScroll(CListBox& wndListBox);
 
-	afx_msg LRESULT OnMessageUpdateDol(WPARAM wParam, LPARAM lParam);
+	//afx_msg LRESULT OnMessageUpdateDol(WPARAM wParam, LPARAM lParam);
 
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
-	BOOL clear(void);
+	//BOOL clear(void);
 	DECLARE_MESSAGE_MAP()
 
 // Implementation

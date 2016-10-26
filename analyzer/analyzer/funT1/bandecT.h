@@ -18,6 +18,7 @@ void bandec(T **a, unsigned long n, int m1, int m2, T **al,
 	//sets of equations.
 {
 	unsigned long i,j,k,l;
+	//int i,j,k,l;
 	int mm;
 	T dum;
 	mm=m1+m2+1;

@@ -1,13 +1,14 @@
 
 // analyzerDoc.h : interface of the CanalyzerDoc class
 //
+#pragma once
 #include "struct\ANPara.hpp"
 #include "struct\SAPara.hpp"
 #include "struct\VPara.hpp"
 #include "struct1\RawData.hpp"
-
-#pragma once
-
+#include "struct\DataOutA.hpp"
+#include <vector>
+#include "afxmt.h"
 
 class CanalyzerDoc : public CDocument
 {
@@ -21,11 +22,21 @@ public:
 	CVPara p2;
 	SAPara p3;
 	RawData raw;
+
+	std::vector<DataOutA> dol;
+
 // Operations
 public:
 	CanalyzerDoc();
 	void operator=(const CanalyzerDoc &src);
 	CanalyzerDoc(const CanalyzerDoc &src){ operator=(src); };
+
+
+	UINT ComputeStateData(
+	sapitemA &outitem,
+	BYTE &outstep,
+	double &VtoAdd
+	);
 
 // Overrides
 public:
@@ -56,4 +67,7 @@ protected:
 #endif // SHARED_HANDLERS
 
 
+public:
+	void Show(void);
+	CCriticalSection m_CritSection;
 };

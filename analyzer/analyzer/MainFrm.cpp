@@ -16,6 +16,8 @@
 #include "UserAccountPage.h"
 #include "PropertySheetA.h"
 
+#include "filefunc.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -66,6 +68,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_COMMAND(ID_HELP_HELPTOPICS, &CMainFrame::OnHelpHelptopics)
 	ON_UPDATE_COMMAND_UI(ID_FILE_OPEN, &CMainFrame::OnUpdateFileOpen)
 	ON_WM_MOVE()
+	//ON_MESSAGE(MESSAGE_UPDATE_DOL, &CMainFrame::OnMessageUpdateDol)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -580,34 +583,35 @@ void CMainFrame::OnAnalysisStartanalysis()
 {
 	// TODO: Add your command handler code here
 
-	//mypara * pa1=new mypara;
-	//pa1->leftp=(CanalyzerViewL*)m_wndSplitter.GetPane(0,0);
-	//pa1->rightp=(CanalyzerViewR*)m_wndSplitter.GetPane(0,1);
+	mypara * pa1=new mypara;
+	pa1->leftp=(CanalyzerViewL*)m_wndSplitter.GetPane(0,0);
+	pa1->rightp=(CanalyzerViewR*)m_wndSplitter.GetPane(0,1);
 	//pa1->outw=this->GetOutputWnd();
 	//pa1->cba=this->GetCaptionBar();
-	//pa1->psta=&pst;
-	////
+	pa1->ol=this->GetOutputWnd()->GetListCtrl();
+	pa1->psta=&pst;
+	//
 
-	////
-	////	//CWinThread *pWriteA;
-	////
-	////	//HANDLE hThread;
-	////
-	//pWriteA=AfxBeginThread(PROCESS,
-	//	(LPVOID)(pa1),
-	//	THREAD_PRIORITY_NORMAL,
-	//	0,
-	//	CREATE_SUSPENDED);
-	////
-	////	//hThread=pWriteA->m_hThread;
-	////
-	////	//CloseHandle(hThread);
-	//pWriteA->ResumeThread();
-	////
-	////	//PROCESS((LPVOID)(pa1));
-	////
-	////
-	//pst=running;
+	//
+	//	//CWinThread *pWriteA;
+	//
+	//	//HANDLE hThread;
+	//
+	pWriteA=AfxBeginThread(PROCESS,
+		(LPVOID)(pa1),
+		THREAD_PRIORITY_NORMAL,
+		0,
+		CREATE_SUSPENDED);
+	//
+	//	//hThread=pWriteA->m_hThread;
+	//
+	//	//CloseHandle(hThread);
+	pWriteA->ResumeThread();
+	//
+	//	//PROCESS((LPVOID)(pa1));
+	//
+	//
+	pst=running;
 
 }
 
@@ -848,3 +852,40 @@ void CMainFrame::OnMove(int x, int y)
 
 	//}
 }
+
+
+//afx_msg LRESULT CMainFrame::OnMessageUpdateDol(WPARAM wParam, LPARAM lParam)
+//{
+//	CanalyzerViewL* pavl=((CanalyzerViewL*)(m_wndSplitter.GetPane(0,0)));
+//	CanalyzerDoc* pad=pavl->GetDocument();	 
+//
+//	dol.clear();
+//
+//	sapitemA outitem;
+//	BYTE outstep;
+//	double a1;
+//	//std::vector<DataOutA> doltmp;
+//	UINT flg=ComputeStateData(pad->p1.analysistype,pad->p2,pad->p3,pad->raw,dol,outitem,outstep,a1);	
+//
+//	//if(flg==1){
+//	//	DataOutA doa=dol.back();
+//	//	doa.Update(outitem,outstep);
+//	//	mf->GetCaptionBar()->x=doa.addVolume;
+//	//}
+//
+//	// 进入临界区
+//	//g_clsCriticalSection.Lock();
+//
+//	//dol.assign(doltmp.begin(),doltmp.end());
+//	// 离开临界区
+//	//g_clsCriticalSection.Unlock();
+//
+//
+//	TRACE(L"%d\n",flg);
+//
+//	::PostMessage(m_wndSplitter.GetPane(0,1)->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
+//	::PostMessage(m_wndSplitter.GetPane(0,0)->GetSafeHwnd(),MESSAGE_UPDATE_RAW,NULL,NULL);
+//	::PostMessage(m_wndOutput.GetListCtrl()->GetSafeHwnd(),MESSAGE_SHOW_DOL,NULL,(LPARAM)this);
+//
+//	return 0;
+//}

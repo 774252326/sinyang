@@ -19,7 +19,8 @@ void ludcmp(T **a, int n, int *indx, T *d)
 	//or invert a matrix.
 {
 	int i,imax,j,k;
-	T big,dum,sum,temp;T *dump;
+	T big,dum,sum,temp;
+	//T *dump;
 	T *vv; /*vv stores the implicit scaling of each row.*/
 	vv=vector<T>(1,n);
 	*d=1.0; /*No row interchanges yet.*/

@@ -2,10 +2,10 @@
 #include "OutputListA.h"
 #include "../resource.h"
 //#include "../func.h"
-#include "../OutputWnd.h"
+//#include "../OutputWnd.h"
+//#include "../MainFrm.h"
+#include "../analyzerDoc.h"
 
-// MFC临界区类对象
-CCriticalSection g_clsCriticalSection;
 
 
 
@@ -148,53 +148,29 @@ void COutputListA::ShowDOL()
 afx_msg LRESULT COutputListA::OnMessageShowDol(WPARAM wParam, LPARAM lParam)
 {
 
-	COutputWnd *ow=(COutputWnd*)lParam;
+	//MFC临界区类对象
+	//CCriticalSection g_clsCriticalSection;
 
-	dol.assign(ow->dol.begin(),ow->dol.end());
+	//	// 进入临界区
+	//g_clsCriticalSection.Lock();
+	CanalyzerDoc *ow=(CanalyzerDoc*)lParam;
+
+	CSingleLock singleLock(&(ow->m_CritSection));
+	singleLock.Lock();
+	if (singleLock.IsLocked())  // Resource has been locked
+	{
+
+		dol.assign(ow->dol.begin(),ow->dol.end());
+
+		//	// 离开临界区
+		//g_clsCriticalSection.Unlock();
+
+		// Now that we are finished, 
+		// unlock the resource for others.
+		singleLock.Unlock();
+	}
 
 	this->ShowDOL();
 
 	return 0;
 }
-
-
-//afx_msg LRESULT COutputListA::OnMessageUpdateDol(WPARAM wParam, LPARAM lParam)
-//{
-//
-//
-//	//CMainFrame *mf=(CMainFrame*)(GetParentFrame());
-//	//CanalyzerViewL *pavl=((CanalyzerViewL*)(mf->m_wndSplitter.GetPane(0,0)));
-//	//CanalyzerViewR* pavr=((CanalyzerViewR*)(mf->m_wndSplitter.GetPane(0,1)));
-//	//CanalyzerDoc *pad=pavl->GetDocument();	 
-//
-//	//dol.clear();
-//
-//	//sapitemA outitem;
-//	////BYTE outstep;
-//	//double a1;
-//	//std::vector<DataOutA> doltmp;
-//	//UINT flg=ComputeStateData(pad->p1.analysistype,pad->p2,pad->p3,pad->raw,doltmp,outitem,outstep,a1);	
-//
-//	//if(flg==1){
-//	//	DataOutA doa=dol.back();
-//	//	doa.Update(outitem,outstep);
-//	//	mf->GetCaptionBar()->x=doa.addVolume;
-//	//}
-//
-//	// 进入临界区
-//	//g_clsCriticalSection.Lock();
-//
-//	//dol.assign(doltmp.begin(),doltmp.end());
-//	// 离开临界区
-//	//g_clsCriticalSection.Unlock();
-//
-//
-//	//TRACE(L"%d\n",flg);
-//
-//	//::PostMessage(pavr->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
-//	//::PostMessage(pavl->GetSafeHwnd(),MESSAGE_UPDATE_RAW,NULL,NULL);
-//	//::PostMessage(this->GetSafeHwnd(),MESSAGE_SHOW_DOL,NULL,NULL);
-//
-//	return 0;
-//}
-

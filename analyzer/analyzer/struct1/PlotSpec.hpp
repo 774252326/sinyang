@@ -190,10 +190,8 @@ public:
 		gridC=crl[i++];
 	};
 
-	void RefreshWinCr(COLORREF bkc)
+	void RefreshWinCr(COLORREF bkc, const int ndiv=10, const float bias=0.35)
 	{
-		const int ndiv=10;
-		const float bias=0.35;
 		winbkC=bkc;
 		int i=GetPlotBKCrType();		
 		metricC=labelC=ContractCr(winbkC,bias+(float)(i-1)/ndiv);

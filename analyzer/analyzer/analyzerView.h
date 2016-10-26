@@ -61,7 +61,7 @@ protected:
 	afx_msg LRESULT OnMessageUpdateView(WPARAM wParam, LPARAM lParam);
 	void OnDeltaposSpin(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnViewFitwindow();
-	afx_msg LRESULT OnMessageUpdateRaw(WPARAM wParam, LPARAM lParam);
+	//afx_msg LRESULT OnMessageUpdateRaw(WPARAM wParam, LPARAM lParam);
 };
 
 #ifndef _DEBUG  // debug version in analyzerView.cpp

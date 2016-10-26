@@ -21,7 +21,7 @@ void smspl( const std::vector<T> &x, const std::vector<T> &y, T p, std::vector< 
 
 	T *dx=vector<T>(1,n-1);
 
-	long i,j;
+	long i;
 	for( i=1;i<=n-1;i++){
 		//dx[i]=x[i+1]-x[i];
 		dx[i]=x[i]-x[i-1];
@@ -330,7 +330,7 @@ int SolveCubicPP(const std::vector<T> &x, const std::vector< std::vector<T> > &c
 		if(ni<0)
 			return ni;
 
-		for(size_t j=0;j<ni;j++){
+		for(size_t j=0;j<(size_t)ni;j++){
 			if( rtmp[j]>=0 && rtmp[j]<x[i+1]-x[i] ){
 				r.push_back(rtmp[j]+x[i]);
 			}

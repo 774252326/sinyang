@@ -33,7 +33,12 @@ public:
 
 	PlotData(const PlotData &src){ operator=(src); };
 
-	bool CheckData(void){ return (ls.size()==raw.ll.size() & raw.CheckData()); }; 
+	bool CheckData(void)
+	{ 
+		if(ls.size()==raw.ll.size())
+			return raw.CheckData();
+		return false;		
+	}; 
 
 	virtual void Serialize(CArchive& ar)
 	{
@@ -157,9 +162,9 @@ public:
 
 	int AddLineData( const RawData &newraw, const std::vector<CString> &namelist )
 	{	
-		
+
 		size_t oldn=raw.ll.size();
-		
+
 		raw.AppendData(newraw);
 
 		ls.resize(raw.ll.size());
@@ -171,14 +176,22 @@ public:
 	};
 
 	void SetLineColor(int lastN, int dotSize=0, int smoothType=0, int lineType=0)
-	{
-		size_t i=(lastN<ls.size())?ls.size()-lastN:0;
-		for(;i<ls.size();i++){
-			ls[i].colour=genColor(genColorvFromIndex<float>(i));
-			ls[i].dotSize=dotSize;
-			ls[i].lineType=lineType;
-			ls[i].smoothLine=smoothType;
+	{	
+		size_t i=0;
+		if(lastN>=0){
+			size_t ulastN=(size_t)lastN;
+			if(ulastN<ls.size())
+				i=ls.size()-ulastN;
+			for(;i<ls.size();i++){
+				ls[i].colour=genColor(genColorvFromIndex<float>(i));
+				ls[i].dotSize=dotSize;
+				ls[i].lineType=lineType;
+				ls[i].smoothLine=smoothType;
+			}
+
 		}
+
+
 	};
 
 	void SetLineColor(int lastN, COLORREF c1, COLORREF c0, int dotSize=0, int smoothType=0, int lineType=0)
@@ -195,28 +208,39 @@ public:
 			return;
 		}
 
-		size_t si=(lastN<lss)?lss-lastN:0;
+		//size_t si=(lastN<lss)?lss-lastN:0;
 
-		float rgb1[3];
-		float rgb0[3];
+		size_t si=0;
+		if(lastN>=0){
+			size_t ulastN=(size_t)lastN;
+			if(ulastN<lss)
+				si=lss-ulastN;
 
-		Getrgb(c1,rgb1);
-		Getrgb(c0,rgb0);
+			float rgb1[3];
+			float rgb0[3];
 
-		float rgbi[3];		
+			Getrgb(c1,rgb1);
+			Getrgb(c0,rgb0);
 
-		for(size_t i=si;i<lss;i++){
+			float rgbi[3];		
 
-			rgbi[0]=xRescale(i,si,lss,rgb0[0],rgb1[0]);
-			rgbi[1]=xRescale(i,si,lss,rgb0[1],rgb1[1]);
-			rgbi[2]=xRescale(i,si,lss,rgb0[2],rgb1[2]);
+			for(size_t i=si;i<lss;i++){
 
-			ls[i].colour=GetRGB(rgbi);
+				rgbi[0]=xRescale(i,si,lss-1,rgb0[0],rgb1[0]);
+				rgbi[1]=xRescale(i,si,lss-1,rgb0[1],rgb1[1]);
+				rgbi[2]=xRescale(i,si,lss-1,rgb0[2],rgb1[2]);
 
-			ls[i].dotSize=dotSize;
-			ls[i].lineType=lineType;
-			ls[i].smoothLine=smoothType;
+				ls[i].colour=GetRGB(rgbi);
+
+				ls[i].dotSize=dotSize;
+				ls[i].lineType=lineType;
+				ls[i].smoothLine=smoothType;
+			}
+
 		}
+
+
+
 	};
 
 };

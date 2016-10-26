@@ -39,7 +39,7 @@ bool InterpDerivativeX(const std::vector<T> &x, const std::vector<T> &y, T yr, T
 		}
 
 	std::vector<T> r;
-	int ni=SolveCubicPP(x,c,yr,r);
+	int ni=SolveQuadraticPP(x,c,yr,r);
 	if(ni<=0){
 		return false;
 	}

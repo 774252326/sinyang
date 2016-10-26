@@ -202,7 +202,7 @@ public:
 
 			int headertype=-1;
 
-			segment tmp;
+			//segment tmp;
 
 			TRACE("\n--Begin to read file");
 

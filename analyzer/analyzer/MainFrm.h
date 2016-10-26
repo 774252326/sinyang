@@ -14,12 +14,7 @@
 //#include "AccountList.h"
 #include "struct\AccountList.hpp"
 
-
-enum ProcessState{
-	stop,
-	running,
-	pause
-};
+#include "filefunc.h"
 
 
 
@@ -123,7 +118,7 @@ public:
 	AccountList al;
 	int userIndex;
 
-
+	//afx_msg LRESULT OnMessageUpdateDol(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnMove(int x, int y);
 };
 

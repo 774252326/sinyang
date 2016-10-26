@@ -29,7 +29,7 @@ COutputWnd::~COutputWnd()
 BEGIN_MESSAGE_MAP(COutputWnd, CDockablePane)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
-	ON_MESSAGE(MESSAGE_UPDATE_DOL, &COutputWnd::OnMessageUpdateDol)
+	//ON_MESSAGE(MESSAGE_UPDATE_DOL, &COutputWnd::OnMessageUpdateDol)
 END_MESSAGE_MAP()
 
 int COutputWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -144,49 +144,49 @@ void COutputWnd::UpdateFonts()
 }
 
 
-BOOL COutputWnd::clear(void)
-{
-	dol.clear();
-	return m_listCtrlMonitor.DeleteAllItems();
-}
+//BOOL COutputWnd::clear(void)
+//{
+//	//dol.clear();
+//	return m_listCtrlMonitor.DeleteAllItems();
+//}
 
-afx_msg LRESULT COutputWnd::OnMessageUpdateDol(WPARAM wParam, LPARAM lParam)
-{
-
-
-	CMainFrame *mf=(CMainFrame*)(GetParentFrame());
-	CanalyzerViewL* pavl=((CanalyzerViewL*)(mf->m_wndSplitter.GetPane(0,0)));
-	CanalyzerViewR* pavr=((CanalyzerViewR*)(mf->m_wndSplitter.GetPane(0,1)));
-	CanalyzerDoc* pad=pavl->GetDocument();	 
-
-	dol.clear();
-
-	sapitemA outitem;
-	BYTE outstep;
-	double a1;
-	//std::vector<DataOutA> doltmp;
-	UINT flg=ComputeStateData(pad->p1.analysistype,pad->p2,pad->p3,pad->raw,dol,outitem,outstep,a1);	
-
-	//if(flg==1){
-	//	DataOutA doa=dol.back();
-	//	doa.Update(outitem,outstep);
-	//	mf->GetCaptionBar()->x=doa.addVolume;
-	//}
-
-	// 进入临界区
-	//g_clsCriticalSection.Lock();
-
-	//dol.assign(doltmp.begin(),doltmp.end());
-	// 离开临界区
-	//g_clsCriticalSection.Unlock();
-
-
-	TRACE(L"%d\n",flg);
-
-	::PostMessage(pavr->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
-	::PostMessage(pavl->GetSafeHwnd(),MESSAGE_UPDATE_RAW,NULL,NULL);
-	::PostMessage(m_listCtrlMonitor.GetSafeHwnd(),MESSAGE_SHOW_DOL,NULL,(LPARAM)this);
-
-	return 0;
-}
+//afx_msg LRESULT COutputWnd::OnMessageUpdateDol(WPARAM wParam, LPARAM lParam)
+//{
+//
+//
+//	CMainFrame *mf=(CMainFrame*)(GetParentFrame());
+//	CanalyzerViewL* pavl=((CanalyzerViewL*)(mf->m_wndSplitter.GetPane(0,0)));
+//	CanalyzerViewR* pavr=((CanalyzerViewR*)(mf->m_wndSplitter.GetPane(0,1)));
+//	CanalyzerDoc* pad=pavl->GetDocument();	 
+//
+//	dol.clear();
+//
+//	sapitemA outitem;
+//	BYTE outstep;
+//	double a1;
+//	//std::vector<DataOutA> doltmp;
+//	UINT flg=ComputeStateData(pad->p1.analysistype,pad->p2,pad->p3,pad->raw,dol,outitem,outstep,a1);	
+//
+//	//if(flg==1){
+//	//	DataOutA doa=dol.back();
+//	//	doa.Update(outitem,outstep);
+//	//	mf->GetCaptionBar()->x=doa.addVolume;
+//	//}
+//
+//	// 进入临界区
+//	//g_clsCriticalSection.Lock();
+//
+//	//dol.assign(doltmp.begin(),doltmp.end());
+//	// 离开临界区
+//	//g_clsCriticalSection.Unlock();
+//
+//
+//	TRACE(L"%d\n",flg);
+//
+//	::PostMessage(pavr->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
+//	::PostMessage(pavl->GetSafeHwnd(),MESSAGE_UPDATE_RAW,NULL,NULL);
+//	::PostMessage(m_listCtrlMonitor.GetSafeHwnd(),MESSAGE_SHOW_DOL,NULL,(LPARAM)this);
+//
+//	return 0;
+//}
 
