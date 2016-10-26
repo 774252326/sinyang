@@ -97,3 +97,16 @@ BOOL CVParametersDlg::OnInitDialog()
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
+
+
+BOOL CVParametersDlg::OnSetActive()
+{
+	// TODO: Add your specialized code here and/or call the base class
+
+	// 获得父窗口，即属性表CPropertySheet类   
+    CPropertySheet* psheet = (CPropertySheet*) GetParent();   
+
+	psheet->SetWizardButtons(PSWIZB_BACK|PSWIZB_NEXT);
+
+	return CPropertyPage::OnSetActive();
+}

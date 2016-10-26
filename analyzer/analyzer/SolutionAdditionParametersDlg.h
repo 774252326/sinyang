@@ -1,5 +1,6 @@
 #pragma once
 
+#include "nirs2000_src\EditList.h"
 
 // SolutionAdditionParametersDlg dialog
 
@@ -20,6 +21,11 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	virtual BOOL OnSetActive();
-	CListCtrl m_SAPlist;
+	CEditList m_SAPlist;
 	virtual BOOL OnInitDialog();
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	void BuildList(int width);
+	afx_msg void OnItemchangedList(NMHDR* pNMHDR, LRESULT* pResult);
+
+	CStatic stt;
 };

@@ -822,7 +822,7 @@ void CMainFrame::OnAnalysisMethodsetup()
     AnalysisSetupPage sheet(_T("Analysis Setup"));
 	//abc sheet(777);
     // 设置属性对话框为向导对话框   
-    //sheet.SetWizardMode();   
+    sheet.SetWizardMode();   
     // 打开模态向导对话框   
     sheet.DoModal();  
 }

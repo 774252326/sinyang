@@ -114,6 +114,9 @@
     <ClInclude Include="CSpline.h" />
     <ClInclude Include="dlg1.h" />
     <ClInclude Include="MainFrm.h" />
+    <ClInclude Include="nirs2000_src\ComboItem.h" />
+    <ClInclude Include="nirs2000_src\EditItem.h" />
+    <ClInclude Include="nirs2000_src\EditList.h" />
     <ClInclude Include="OutputWnd.h" />
     <ClInclude Include="pcct.h" />
     <ClInclude Include="pcctA.h" />
@@ -133,6 +136,9 @@
     <ClCompile Include="CSpline.cpp" />
     <ClCompile Include="dlg1.cpp" />
     <ClCompile Include="MainFrm.cpp" />
+    <ClCompile Include="nirs2000_src\ComboItem.cpp" />
+    <ClCompile Include="nirs2000_src\EditItem.cpp" />
+    <ClCompile Include="nirs2000_src\EditList.cpp" />
     <ClCompile Include="OutputWnd.cpp" />
     <ClCompile Include="pcct.cpp" />
     <ClCompile Include="pcctA.cpp" />

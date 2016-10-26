@@ -96,6 +96,15 @@
     <ClInclude Include="AnalysisSetupPage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="nirs2000_src\ComboItem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="nirs2000_src\EditItem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="nirs2000_src\EditList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="analyzer.cpp">
@@ -141,6 +150,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="AnalysisSetupPage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="nirs2000_src\ComboItem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="nirs2000_src\EditItem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="nirs2000_src\EditList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

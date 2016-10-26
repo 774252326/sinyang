@@ -150,6 +150,7 @@ BOOL AnalysisParametersDlg::OnInitDialog()
 		L"Edit", 
 		str,
 		ES_LEFT
+		|ES_READONLY
 		|WS_CHILD
 		|WS_VISIBLE,
 		CRect(pt,CPoint(winrect.Size()+gap1)),
