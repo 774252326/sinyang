@@ -12,7 +12,7 @@ public:
 	virtual ~ExportDataDlg();
 
 // Dialog Data
-	enum { IDD = IDD_DIALOG6 };
+	enum { IDD = IDD_DIALOG_LOGIN };
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
@@ -22,8 +22,8 @@ public:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 
 	ListCtrlLine lcl;
-	CListCtrl m_list;
 	virtual BOOL OnInitDialog();
 	virtual void OnOK();
 	CMFCEditBrowseCtrl m_c;
+	CMFCButton m_exp;
 };

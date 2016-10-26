@@ -41,6 +41,69 @@
     <None Include="res\Toolbar256.bmp">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="res\hottoolb.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\menutoolb.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\menu_img.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\Panorama16.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\Panorama24.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\Panorama32.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\messagebar_1.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\messagebar_2.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\astri.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\index_02_01_01.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\qq.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\qq16.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\qq16.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\IMG_20131002_154626_4.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\dtr.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\csp.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\RDE-logo.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\icon2.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\icon3.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\icon4.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\info.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="analyzer.h">

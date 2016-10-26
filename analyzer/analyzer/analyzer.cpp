@@ -116,7 +116,7 @@ BOOL CanalyzerApp::InitInstance()
 
 
 	StartDlg *sd=new StartDlg();
-	sd->Create(IDD_DIALOG_START);
+	sd->Create(StartDlg::IDD);
 	sd->ShowWindow(SW_SHOW);
 
 

@@ -53,6 +53,8 @@ void COutputWnd::OnSize(UINT nType, int cx, int cy)
 	// Tab control should cover the whole client area:
 	m_listCtrlMonitor.MoveWindow(0,0,cx,cy);
 
+	//::SetWindowPos(m_listCtrlMonitor.GetSafeHwnd(),HWND_BOTTOM,0,0,cx,cy,SWP_SHOWWINDOW);
+
 }
 
 void COutputWnd::AdjustHorzScroll(CListBox& wndListBox)

@@ -24,8 +24,7 @@ ExportDataDlg::~ExportDataDlg()
 void ExportDataDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_LIST1, m_list);
-	DDX_Control(pDX, IDC_MFCEDITBROWSE1, m_c);
+	//DDX_Control(pDX, IDC_MFCEDITBROWSE1, m_c);
 }
 
 
@@ -44,29 +43,51 @@ int ExportDataDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	// TODO:  Add your specialized creation code here
 
-	CSize gap1(20,70);
-	CSize gap2(20,20);
-	CSize staticSize(150,22);
+	CRect rc;
+	this->GetParentFrame()->GetWindowRect(&rc);
 
-	CRect winrect;
-	this->GetWindowRect(&winrect);
-	winrect.DeflateRect(gap1);
+	CSize winSize(400,400);
+
+	::SetWindowPos(this->GetSafeHwnd(),
+		HWND_TOPMOST,
+		rc.CenterPoint().x-winSize.cx/2,
+		rc.CenterPoint().y-winSize.cy/2,
+		winSize.cx,
+		winSize.cy,		
+		SWP_SHOWWINDOW);
+
+	CSize gap1(20,20);
+
+	int btnH=22;
+	int listH=250;
+
+	int btnW=winSize.cx-2*gap1.cx;
+
 	CPoint pt(gap1);
 	CStatic *pStatic;
 	CEdit *pEdit;
 	CString str;
 
-	//str.LoadStringW(IDS_STRING_SAP_TIPS);
-	//stt.Create(
-	//	str,
-	//	WS_CHILD
-	//	|WS_VISIBLE, 
-	//	CRect(pt,CSize(winrect.Width(),staticSize.cy)),
-	//	this,
-	//	10000);
+	str.LoadStringW(IDS_STRING_EXPORT_DLG);
+	this->SetWindowTextW(str);
 
-	//pt.y+=gap2.cy+staticSize.cy;
+	str.LoadStringW(IDS_EDIT_LABEL_SIZE);
+	m_c.CreateEx(
+		WS_EX_CLIENTEDGE,
+		L"Edit", 
+		str,
+		//ES_LEFT
+		ES_RIGHT
+		|ES_AUTOHSCROLL   
+		|WS_CHILD
+		|WS_VISIBLE,
+		CRect(pt,CSize(btnW,btnH)),
+		this,
+		IDS_EDIT_LABEL_SIZE);
 
+	m_c.EnableFolderBrowseButton();
+
+	pt.y+=gap1.cy+btnH;
 
 	const DWORD dwStyle = WS_VISIBLE 
 		| WS_CHILD 
@@ -79,12 +100,21 @@ int ExportDataDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		|LVS_EDITLABELS
 		;
 
-	if(!lcl.Create(dwStyle, CRect(pt,winrect.Size()), this, 1444) ){
+	if(!lcl.Create(dwStyle, CRect(pt,CSize(btnW,listH)), this, 1444) ){
 		TRACE0("Failed to create output windows\n");
 		return -1;      // fail to create
 	}
 
+	pt.y+=gap1.cy+listH;
 
+
+	str.LoadStringW(IDS_STRING_EXPORT);
+	if(m_exp.Create(str, WS_CHILD|WS_VISIBLE|BS_PUSHBUTTON, CRect(pt,CSize(btnW,btnH)), this, IDOK)==FALSE){
+		return -1;
+	}
+
+	//this->GetDlgItem(IDOK)->EnableWindow();
+	//this->GetDlgItem(IDOK)->MoveWindow(pt.x,pt.y,btnW,btnH);	
 
 	return 0;
 }
@@ -96,37 +126,13 @@ BOOL ExportDataDlg::OnInitDialog()
 
 	// TODO:  Add extra initialization here
 
-
-	m_list.SetExtendedStyle(m_list.GetExtendedStyle() | LVS_EX_CHECKBOXES /*| LVS_EX_INFOTIP*/);  
-	for(int i = 0; i < 20; i++)  
-	{  
-		if(i % 3 == 0)  
-		{  
-			m_list.InsertItem(i, _T("psmhunanqingshuijiang"));  
-		}  
-		else if(i % 3 == 1)  
-		{  
-			m_list.InsertItem(i, _T("waterliling"));  
-			m_list.SetCheck(i, TRUE);  
-		}  
-		else if(i % 3 == 2)  
-		{  
-			m_list.InsertItem(i, _T("waterliling"));  
-			m_list.SetCheck(i, TRUE);  
-		}  
-	} 
-
-	//lcl.InsertItem(0,L"000000000000000");
-	//lcl.SetCheck(0);
-	//lcl.InsertItem(1,L"1111111111111111");
-	//lcl.SetCheck(1);
-	//lcl.InsertItem(2,L"22222222222222222");
-	//lcl.SetCheck(2);
-
 	lcl.SetList();
 	TCHAR path[MAX_PATH];
 	::GetCurrentDirectory(MAX_PATH,path);
 	m_c.SetWindowTextW(path);
+
+
+	//this->GetDlgItem(IDOK)->ShowWindow(SW_SHOW);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE

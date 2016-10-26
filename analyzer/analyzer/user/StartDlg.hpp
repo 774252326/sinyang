@@ -17,7 +17,7 @@ public:
 
 	// Dialog Data
 	enum { IDD = IDD_DIALOG_START };
-
+	//enum { IDD = IDD_DIALOG4 };
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX)
 	{
@@ -32,6 +32,8 @@ public:
 		CDialogEx::OnInitDialog();
 
 		// TODO:  Add extra initialization here
+
+		this->ModifyStyle(WS_DLGFRAME|WS_SYSMENU|WS_SIZEBOX|WS_CHILD,WS_BORDER|WS_POPUP);
 
 		CImage img;
 		img.LoadFromResource(::GetModuleHandle(NULL),IDB_BITMAP11);

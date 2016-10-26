@@ -314,7 +314,7 @@ void PlotWnd::SetLegend(void)
 		}
 		else{
 			td=new LegendDlg(this);
-			td->Create(IDD_DIALOG1,this);
+			td->Create(IDD_DIALOG4,this);
 		}
 		td->ShowWindow(SW_SHOW);
 	}

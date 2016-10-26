@@ -56,7 +56,7 @@ BOOL PropertySheetA1::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	// TODO: Add your message handler code here and/or call default
 
-	AfxMessageBox(L"help");
+	AfxMessageBox(L"help",MB_ICONSTOP  );
 
 	return CPropertySheet::OnHelpInfo(pHelpInfo);
 }

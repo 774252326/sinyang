@@ -277,6 +277,32 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_COMMAND(ID_ANALYSIS_PAUSE, &CMainFrame::OnAnalysisPause)
 	ON_MESSAGE(MESSAGE_UPDATE_DOL, &CMainFrame::OnMessageUpdateDol)
 	ON_MESSAGE(MESSAGE_CLOSE_SAP_SHEET, &CMainFrame::OnMessageCloseSapSheet)
+	ON_COMMAND(ID_VIEW_ANALYSIS_PROGRESS, &CMainFrame::OnViewAnalysisProgress)
+	ON_COMMAND(ID_VIEW_TOOLBAR_A, &CMainFrame::OnViewToolbarA)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_ANALYSIS_PROGRESS, &CMainFrame::OnUpdateViewAnalysisProgress)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_TOOLBAR_A, &CMainFrame::OnUpdateViewToolbarA)
+
+	ON_UPDATE_COMMAND_UI(ID_ANALYSIS_METHODSETUP, &CMainFrame::OnUpdateAnalysisMethodsetup)
+	ON_UPDATE_COMMAND_UI(ID_ANALYSIS_STARTANALYSIS, &CMainFrame::OnUpdateAnalysisStartanalysis)
+	ON_UPDATE_COMMAND_UI(ID_ANALYSIS_PAUSE, &CMainFrame::OnUpdateAnalysisPause)
+	ON_UPDATE_COMMAND_UI(ID_ANALYSIS_ABORTANALYSIS, &CMainFrame::OnUpdateAnalysisAbortanalysis)
+	ON_UPDATE_COMMAND_UI(ID_ANALYSIS_REPORT, &CMainFrame::OnUpdateAnalysisReport)
+	ON_UPDATE_COMMAND_UI(ID_ANALYSIS_COMPUTE, &CMainFrame::OnUpdateAnalysisCompute)
+	ON_UPDATE_COMMAND_UI(ID_ANALYSIS_EXPORTDATA, &CMainFrame::OnUpdateAnalysisExportdata)
+
+		ON_UPDATE_COMMAND_UI(ID_FILE_PRINT, &CMainFrame::OnUpdateFilePrint)
+	ON_UPDATE_COMMAND_UI(ID_FILE_PRINT_PREVIEW, &CMainFrame::OnUpdateFilePrintPreview)
+	ON_UPDATE_COMMAND_UI(ID_FILE_PRINT_SETUP, &CMainFrame::OnUpdateFilePrintSetup)
+	ON_UPDATE_COMMAND_UI(ID_FILE_SAVE, &CMainFrame::OnUpdateFileSave)
+	ON_UPDATE_COMMAND_UI(ID_FILE_NEW, &CMainFrame::OnUpdateFileNew)
+	ON_UPDATE_COMMAND_UI(ID_FILE_OPEN, &CMainFrame::OnUpdateFileOpen)
+
+
+		ON_UPDATE_COMMAND_UI(ID_VIEW_FITWINDOW, &CMainFrame::OnUpdateViewFitwindow)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_DATACURSOR, &CMainFrame::OnUpdateViewDatacursor)
+	ON_UPDATE_COMMAND_UI(ID_OPTIONS_PLOTSETTINGS, &CMainFrame::OnUpdateOptionsPlotsettings)
+	ON_UPDATE_COMMAND_UI(ID_SECURITY_LOGIN, &CMainFrame::OnUpdateSecurityLogin)
+	ON_UPDATE_COMMAND_UI(ID_SECURITY_USERACCOUNTS, &CMainFrame::OnUpdateSecurityUseraccounts)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -700,7 +726,8 @@ void CMainFrame::OnSecurityLogin()
 		userIndex=ld.usridx;
 		CanalyzerView *pavl=(CanalyzerView*)LeftPane();
 		CanalyzerView *pavr=(CanalyzerView*)RightPane();
-		pavl->pw.bMouseCursor=pavr->pw.bMouseCursor=(al.ual[userIndex].au==UserAccount::authority::admin);
+		pavl->pw.bMouseCursor &= (al.ual[userIndex].au==UserAccount::authority::admin);
+		pavr->pw.bMouseCursor &= (al.ual[userIndex].au==UserAccount::authority::admin);
 	}
 }
 
@@ -881,6 +908,8 @@ afx_msg LRESULT CMainFrame::OnMessageUpdateDol(WPARAM wParam, LPARAM lParam)
 
 	pDoc->UpdateState();
 
+	TRACE("\n%d",pDoc->da.runstate);
+
 	::PostMessage(this->GetSafeHwnd(),MESSAGE_CLOSE_SAP_SHEET,NULL,NULL);
 
 	return 0;
@@ -1044,4 +1073,176 @@ void CMainFrame::OnAnalysisPause()
 		break;
 	}
 
+}
+
+
+void CMainFrame::OnViewAnalysisProgress()
+{
+	// TODO: Add your command handler code here
+	ShowPane((CBasePane*)&m_wndOutput,
+		m_wndOutput.IsVisible() ? FALSE : TRUE, 
+		FALSE, FALSE);
+}
+
+
+void CMainFrame::OnViewToolbarA()
+{
+	// TODO: Add your command handler code here
+	ShowPane((CBasePane*)&m_wndToolBar,
+		m_wndToolBar.IsVisible() ? FALSE : TRUE, 
+		FALSE, FALSE);
+}
+
+
+void CMainFrame::OnUpdateViewAnalysisProgress(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->SetCheck(m_wndOutput.IsVisible());
+}
+
+
+void CMainFrame::OnUpdateViewToolbarA(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+
+	pCmdUI->SetCheck(m_wndToolBar.IsVisible());
+
+}
+
+
+
+void CMainFrame::OnUpdateAnalysisMethodsetup(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->Enable(/*pst==stop &&*/ al.ual[userIndex].au!=UserAccount::authority::guest);
+}
+
+
+void CMainFrame::OnUpdateAnalysisStartanalysis(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=UserAccount::authority::guest);
+}
+
+
+void CMainFrame::OnUpdateAnalysisPause(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->Enable(pst!=stop && al.ual[userIndex].au!=UserAccount::authority::guest);
+}
+
+
+void CMainFrame::OnUpdateAnalysisAbortanalysis(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->Enable(pst!=stop && al.ual[userIndex].au!=UserAccount::authority::guest);
+}
+
+
+void CMainFrame::OnUpdateAnalysisReport(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->Enable( (pst==stop) 
+		& (al.ual[userIndex].au!=UserAccount::authority::guest)
+		);
+}
+
+void CMainFrame::OnUpdateAnalysisCompute(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->Enable(pst!=running 
+		//& au!=guest
+		);
+}
+
+void CMainFrame::OnUpdateAnalysisExportdata(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+
+	pCmdUI->Enable( (pst!=running) 
+		& (al.ual[userIndex].au!=UserAccount::authority::guest)
+		);
+}
+
+
+
+
+void CMainFrame::OnUpdateFilePrint(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=UserAccount::authority::guest);
+}
+
+
+void CMainFrame::OnUpdateFilePrintPreview(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=UserAccount::authority::guest);
+}
+
+
+void CMainFrame::OnUpdateFilePrintSetup(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=UserAccount::authority::guest);
+}
+
+
+void CMainFrame::OnUpdateFileSave(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=UserAccount::authority::guest);
+}
+
+
+void CMainFrame::OnUpdateFileNew(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=UserAccount::authority::guest);
+}
+
+void CMainFrame::OnUpdateFileOpen(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->Enable(pst==stop);
+}
+
+
+void CMainFrame::OnUpdateViewFitwindow(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->Enable(pst!=running && al.ual[userIndex].au!=UserAccount::authority::guest);
+}
+
+
+void CMainFrame::OnUpdateViewDatacursor(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->Enable(pst!=running && al.ual[userIndex].au==UserAccount::authority::admin);
+
+	pCmdUI->SetCheck(((CanalyzerView*)GetActiveView())->pw.bMouseCursor);
+
+}
+
+void CMainFrame::OnUpdateOptionsPlotsettings(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+
+	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=UserAccount::authority::guest);
+}
+
+
+void CMainFrame::OnUpdateSecurityLogin(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->Enable(pst==stop 
+		//&& al.ual[userIndex].au!=UserAccount::authority::guest
+		);
+}
+
+
+void CMainFrame::OnUpdateSecurityUseraccounts(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->Enable(pst==stop && al.ual[userIndex].au==UserAccount::authority::admin);
 }
