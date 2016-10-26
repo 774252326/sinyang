@@ -11,8 +11,33 @@
 #include <algorithm>
 #include "SARCalibCurve.h"
 
-int intv=20;
+int intv=10;
 size_t n1=800;
+
+
+CString DTRsetup=L"data\\dtr\\b.stp.txt";
+CString DTRflist=L"data\\dtr\\b.txt";
+
+CString DTAsetup=L"data\\dta\\c.stp.txt";
+CString DTAflist=L"data\\dta\\c.txt";
+
+CString LATRsetup=L"data\\latr\\d.stp.txt";
+CString LATRflist=L"data\\latr\\d.txt";
+
+CString LATAsetup=L"data\\lata\\e.stp.txt";
+CString LATAflist=L"data\\lata\\e.txt";
+
+CString RCRsetup=L"data\\rcr\\f.stp.txt";
+CString RCRflist=L"data\\rcr\\f.txt";
+
+CString RCAsetup=L"data\\rca\\g.stp.txt";
+CString RCAflist=L"data\\rca\\g.txt";
+
+CString SARRsetup=L"data\\sarr\\h.stp.txt";
+CString SARRflist=L"data\\sarr\\h.txt";
+
+CString SARAsetup=L"data\\sara\\i.stp.txt";
+CString SARAflist=L"data\\sara\\i.txt";
 
 
 bool compless (double c1, double c2) {
@@ -328,7 +353,7 @@ CString Output2(PlotData & pdat
 			ANPara p1t;
 			CVPara p2t;
 			SAPara p3t;
-			readini(p1t,p2t,p3t,L"data\\B.stp.txt");
+			readini(p1t,p2t,p3t,DTRsetup);
 			Sconc=p3t.saplist.back().Sconc;
 			vmsvol=p3t.vmsvol;
 			evor=p1t.evaluationratio;
@@ -598,7 +623,12 @@ CString Output8(PlotData & pdat0
 
 		std::vector<double> sstd;
 		std::vector<double> nqstd;
-		if( scc.GetStandradCalibCurve(sstd,nqstd) ){
+
+		SARCalibCurve sccstd;
+			
+		if( ReadFileCustom(&sccstd, 1, L"data/sarastd/i0.scc") 
+			&& sccstd.GetStandradCalibCurve(sstd, nqstd) ){			
+
 			double Vsam;
 			if( calVsupp(pdat0,pdat0.ps.size()-1, evoR, Vsam) ){
 
@@ -612,8 +642,8 @@ CString Output8(PlotData & pdat0
 
 					//x.erase(x.begin());
 					//y.erase(y.begin());
-					//x.erase(x.begin());
-					//y.erase(y.begin());
+					x.erase(x.begin());
+					y.erase(y.begin());
 
 					//x.pop_back();
 					//y.pop_back();
@@ -643,29 +673,48 @@ CString Output8(PlotData & pdat0
 
 				}
 
-				
+
 				double ca;
 				double cs;
 				double tmp;
 				tmp=0;
 
-				for(int i=0;i<100;i++){
+				//CString stmp;
+				//CString stmp0=L"";
+
+				for(int i=0;i<3;i++){
 					tmp=sccc[1]*tmp+sccc[0];
+					//stmp.Format(L"%g,", tmp);
+					//stmp0+=stmp;
 					cs=tmp*(vmsvol/Vsam+1);
+					//stmp.Format(L"cs=%g,", cs);
+					//stmp0+=stmp;
 					tmp=cs/(vmsvol/VsamLast+1);
+					//stmp.Format(L"%g,", tmp);
+					//stmp0+=stmp;
 					{
 						double aaa=tmp;
 						std::vector<double> y2(nqstd.size());
 						spline(sstd,nqstd,1.0e30,1.0e30,y2);
 						splint(sstd,nqstd,y2,aaa,tmp);
 					}
+					//stmp.Format(L"%g,", tmp);
+					//stmp0+=stmp;
 					tmp=(c[0]-tmp)/c[1];
+					//stmp.Format(L"%g,", tmp);
+					//stmp0+=stmp;
 					ca=tmp*(vmsvol/VsamLast+1);
+					//stmp.Format(L"ca=%g,", ca);
+					//stmp0+=stmp;
 					tmp=ca/(vmsvol/Vsam+1);
+					//stmp.Format(L"%g,\n", tmp);
+					//stmp0+=stmp;
 
-					TRACE(L"ca=%g,cs=%g\n",ca,cs);
+					//TRACE(L"ca=%g,cs=%g\n",ca,cs);
 
 				}
+
+				//AfxMessageBox(stmp0);
 
 				str.Format(L" R=%gA%+g, S=%gA%+g, Vsample=%g ml, Ca=%g ml/L, Cs=%g ml/L @ nQ=%g. ", c[1], c[0], sccc[1], sccc[0], Vsam, ca, cs, evoR);
 
@@ -700,7 +749,7 @@ UINT DTR(dlg1 *leftp,
 
 	//////////////////////////////load data//////////////////////////////////////
 	std::vector<CString> filelist;
-	LoadFileList(L"data\\b.txt",filelist);
+	LoadFileList(DTRflist,filelist);
 	if(filelist.empty()) return 0;
 
 	pcct dt1;
@@ -809,7 +858,7 @@ UINT DTA(dlg1 *leftp,
 
 	//////////////////////////////load data//////////////////////////////////////
 	std::vector<CString> filelist;
-	LoadFileList(L"data\\c.txt",filelist);
+	LoadFileList(DTAflist,filelist);
 	if(filelist.empty()) return 0;
 
 	pcct dt1;
@@ -932,7 +981,7 @@ UINT LATR(dlg1 *leftp,
 	//////////////////////////////load data//////////////////////////////////////
 	std::vector<CString> filelist;
 
-	LoadFileList(L"data\\d.txt",filelist);
+	LoadFileList(LATRflist,filelist);
 	if(filelist.empty()) return 0;
 
 	pcct dt1;
@@ -1044,7 +1093,7 @@ UINT LATA(dlg1 *leftp,
 	//////////////////////////////load data//////////////////////////////////////
 
 	std::vector<CString> filelist;
-	LoadFileList(L"data\\e.txt",filelist);
+	LoadFileList(LATAflist,filelist);
 	if(filelist.empty()) return 0;
 	pcct dt1;
 	pcct *data=&dt1;
@@ -1166,7 +1215,7 @@ UINT RCR(dlg1 *leftp,
 
 	//////////////////////////////load data//////////////////////////////////////
 	std::vector<CString> filelist;
-	LoadFileList(L"data\\f.txt",filelist);
+	LoadFileList(RCRflist,filelist);
 	if(filelist.empty()) return 0;
 
 	pcct dt1;
@@ -1311,7 +1360,7 @@ UINT RCA(dlg1 *leftp,
 
 	//////////////////////////////load data//////////////////////////////////////
 	std::vector<CString> filelist;
-	LoadFileList(L"data\\g.txt",filelist);
+	LoadFileList(RCAflist,filelist);
 	if(filelist.empty()) return 0;
 
 	pcct dt1;
@@ -1429,14 +1478,16 @@ UINT SARR(dlg1 *leftp,
 	ProcessState &pst,
 	const ANPara &p1,
 	const CVPara &p2,
-	const SAPara &p3)
+	const SAPara &p3
+	)
 {
 
 	//////////////////////////////load data//////////////////////////////////////
 	std::vector<CString> filelist;
 
 	//LoadFileList(L"C:\\Users\\r8anw2x\\Dropbox\\W\\4 Mar (2.5S 2.5S3A 2.5S6.5A 2.5S10A 2.5S15A Cali)\\h2.txt",filelist);
-	LoadFileList(L"data\\h2.txt",filelist);
+	LoadFileList(SARRflist,filelist);
+	//LoadFileList(L"data\\SARAstd\\i0.txt",filelist);
 	if(filelist.empty()) return 0;
 
 	pcct dt1;
@@ -1685,7 +1736,7 @@ UINT SARA(dlg1 *leftp,
 	//////////////////////////////load data//////////////////////////////////////
 	std::vector<CString> filelist;
 
-	LoadFileList(L"data\\i.txt",filelist);
+	LoadFileList(SARAflist,filelist);
 	if(filelist.empty()) return 0;
 
 	pcct dt1;
@@ -2033,7 +2084,6 @@ UINT PROCESS(LPVOID pParam)
 
 		leftp->pd.ExtractLastCycle(p2.highelimit,L"data\\hl.fig.txt");
 		rightp->pd.SaveFile(L"data\\hr.fig.txt");
-
 
 		return 0;
 

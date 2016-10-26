@@ -50,6 +50,7 @@ public:
 	afx_msg void OnAnalysisAbortanalysis();
 	afx_msg void OnAnalysisDatalisting();
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+	afx_msg void OnFileSaveAs();
 };
 
 #ifndef _DEBUG  // debug version in analyzerView.cpp

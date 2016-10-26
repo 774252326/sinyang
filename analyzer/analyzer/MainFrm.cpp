@@ -1170,8 +1170,38 @@ void CMainFrame::OnFileSave()
 	//AfxMessageBox(L"sdfas");
 
 
-	//( (dlg1*)m_wndSplitter.GetPane(0,1) )->SaveFile(L"af.txt");
-	//( (dlg1*)m_wndSplitter.GetPane(0,1) )->ReadFile(L"af.txt");
+	//CFileDialog fileDlg(FALSE);
+
+	//fileDlg.m_ofn.lpstrFilter=L"Text File(*.stp.txt)\0*.stp.txt\0Text File(*.fig.txt)\0*.fig.txt\0\0";
+
+	TCHAR szFilter[] = _T("Text File(*.stp.txt)\0*.stp.txt\0Text File(*.fig.txt)\0*.fig.txt\0\0");
+	
+	//TCHAR szFilter[] = _T("文本文件(*.txt)|*.txt|Word文件(*.doc)|*.doc|所有文件(*.*)|*.*||");   
+    // 构造保存文件对话框   
+    CFileDialog fileDlg(FALSE, _T("txt"), _T("my"), OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, szFilter, this);  
+
+	
+
+	if( fileDlg.DoModal()==IDOK)
+	{
+		//////////////////////////////////////////////////////////////////////
+		CString m_filePath=fileDlg.GetPathName();
+
+
+
+		ANPara p1t;
+		CVPara p2t;
+		SAPara p3t;
+
+		readini(p1t,p2t,p3t);
+		writeini(p1t,p2t,p3t,m_filePath);
+
+				CString strTemp;
+		strTemp=L"setup file "+m_filePath+L" saved";
+		m_wndCaptionBar.ShowMessage(strTemp);
+	}
+
+
 }
 
 

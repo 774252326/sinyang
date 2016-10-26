@@ -13,6 +13,12 @@
 #include "analyzerView.h"
 #include "MainFrm.h"
 
+
+#include "ANPara.h"
+#include "SAPara.h"
+#include "VPara.h"
+#include "func.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -34,6 +40,7 @@ BEGIN_MESSAGE_MAP(CanalyzerView, CView)
 	ON_WM_SIZE()
 	ON_COMMAND(ID_ANALYSIS_ABORTANALYSIS, &CanalyzerView::OnAnalysisAbortanalysis)
 	ON_COMMAND(ID_ANALYSIS_DATALISTING, &CanalyzerView::OnAnalysisDatalisting)
+	ON_COMMAND(ID_FILE_SAVE_AS, &CanalyzerView::OnFileSaveAs)
 END_MESSAGE_MAP()
 
 // CanalyzerView construction/destruction
@@ -225,4 +232,27 @@ BOOL CanalyzerView::OnCommand(WPARAM wParam, LPARAM lParam)
 
 
 	return CView::OnCommand(wParam, lParam);
+}
+
+
+void CanalyzerView::OnFileSaveAs()
+{
+	// TODO: Add your command handler code here
+
+
+	//TCHAR szFilter[] = _T("Text File(*.stp.txt)\0*.stp.txt\0Text File(*.fig.txt)\0*.fig.txt\0\0");
+	
+	//TCHAR szFilter[] = _T("(*.txt)|*.txt|(*.doc)|*.doc||");   
+    // 构造保存文件对话框   
+    //CFileDialog fileDlg(TRUE, _T("txt"), _T("my"), OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, szFilter, this);  
+
+	
+	CFileDialog fileDlg(false);
+
+	fileDlg.m_ofn.lpstrFilter=L"Text File(*.stp.txt)\0*.stp.txt\0Text File(*.fig.txt)\0*.fig.txt\0\0";
+
+	if( fileDlg.DoModal()==IDOK)
+	{
+	}
+
 }
