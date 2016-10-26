@@ -162,11 +162,11 @@ IMPLEMENT_DYNCREATE(Cz8View, CFormView)
 
 			//::AfxMessageBox(dt1.segmentinfo);
 
-			Invalidate();
+			//Invalidate();
 
 
 			//SetTimer(1,1,NULL); 
-			//SetTimer(2,80,NULL); 
+			SetTimer(2,20,NULL); 
 
 		}
 
@@ -174,7 +174,7 @@ IMPLEMENT_DYNCREATE(Cz8View, CFormView)
 	}
 
 
-	void Cz8View::OnDraw(CDC* /*pDC*/)
+	void Cz8View::OnDraw(CDC* pDC)
 	{
 		// TODO: Add your specialized code here and/or call the base class
 
@@ -197,6 +197,42 @@ IMPLEMENT_DYNCREATE(Cz8View, CFormView)
 		//	}
 		//}
 		//pen.DeleteObject();
+
+		////////////////////////////////////////////////////////////
+
+		//		CRect rect;
+		//		this->GetWindowRect(&rect);
+		//		int nWidth=rect.Width();
+		//		int nHeight=rect.Height();
+		//		
+		//		CDC MemDC; //首先定义一个显示设备对象
+		//CBitmap MemBitmap;//定义一个位图对象
+		//
+		////随后建立与屏幕显示兼容的内存显示设备
+		//MemDC.CreateCompatibleDC(NULL);
+		////这时还不能绘图，因为没有地方画 ^_^
+		////下面建立一个与屏幕显示兼容的位图，至于位图的大小嘛，可以用窗口的大小
+		//
+		//MemBitmap.CreateCompatibleBitmap(pDC,nWidth,nHeight);
+		////将位图选入到内存显示设备中
+		////只有选入了位图的内存显示设备才有地方绘图，画到指定的位图上
+		//CBitmap *pOldBit=MemDC.SelectObject(&MemBitmap);
+		//
+		////先用背景色将位图清除干净，这里我用的是白色作为背景
+		////你也可以用自己应该用的颜色
+		//MemDC.FillSolidRect(0,0,nWidth,nHeight,RGB(255,255,255));
+		//
+		////绘图
+		//MemDC.MoveTo(100,100);
+		//MemDC.LineTo(100,200);
+		//
+		////将内存中的图拷贝到屏幕上进行显示
+		//pDC->BitBlt(0,0,nWidth,nHeight,&MemDC,0,0,SRCCOPY);
+		//
+		////绘图完成后的清理
+		//MemBitmap.DeleteObject();
+		//MemDC.DeleteDC();
+
 	}
 
 
@@ -205,6 +241,131 @@ IMPLEMENT_DYNCREATE(Cz8View, CFormView)
 		CPaintDC dc(this); // device context for painting
 		// TODO: Add your message handler code here
 		// Do not call CFormView::OnPaint() for painting messages
+
+		////////////////////////////////////////////////////////////////////////
+		//
+		//CRect plotrect;
+		//CSize sz;
+		//this->GetWindowRect(&plotrect);
+
+		////GetDlgItem(IDC_PLOT)->GetWindowRect(&plotrect);
+		//ScreenToClient(&plotrect);
+		//plotrect.DeflateRect(60,60,200,60);
+
+		//CPen pen;
+		//pen.CreatePen(PS_SOLID,1,blue);
+
+		//long i,j;
+		////double *x;
+		////double *y;
+		//dc.SelectObject(pen);
+
+
+
+		////if(isLoad){
+		//if(!dtlist.empty()){
+		//	if(!plotrect.IsRectEmpty()){
+		//		std::vector<CPoint> pointlist;
+		//		for(j=0;j<dtlist.size();j++){
+		//			pointlist=genPointToPlot(dtlist[j].potential,dtlist[j].current,plotrect);
+
+		//			//for(i=0;i<pointlist.size();i++){
+		//				for(i=(0>ci-200)?0:ci-200;i<ci;i++){
+		//				dc.SetPixel(pointlist[i],cllist[j]);					
+		//			}
+		//			//dc.Polyline(pointlist.data(),pointlist.size());
+		//		}
+		//		//DrawXYAxis(plotrect,&dc);
+
+		//		for(j=0;j<dt1.seginfo.size();j++){
+		//		//str=dt1.label[0];
+		//		//pdc->SelectObject(&font);
+		//			sz=dc.GetTextExtent(dt1.seginfo[j]);
+		//			dc.TextOutW(plotrect.right,plotrect.top+sz.cy*j,dt1.seginfo[j]);
+		//		//font.DeleteObject();
+		//		}
+
+
+		//	}
+		//}
+		//pen.DeleteObject();
+
+
+
+
+		//////////////////////////////////////////////////////////////////
+
+
+
+		//		CClientDC pDC(this);
+		//
+		//
+		//				CRect rect;
+		//		this->GetWindowRect(&rect);
+		//		int nWidth=rect.Width();
+		//		int nHeight=rect.Height();
+		//		
+		//		CDC MemDC; //首先定义一个显示设备对象
+		//CBitmap MemBitmap;//定义一个位图对象
+		//
+		////随后建立与屏幕显示兼容的内存显示设备
+		//MemDC.CreateCompatibleDC(NULL);
+		////这时还不能绘图，因为没有地方画 ^_^
+		////下面建立一个与屏幕显示兼容的位图，至于位图的大小嘛，可以用窗口的大小
+		//
+		//MemBitmap.CreateCompatibleBitmap(&pDC,nWidth,nHeight);
+		////将位图选入到内存显示设备中
+		////只有选入了位图的内存显示设备才有地方绘图，画到指定的位图上
+		//CBitmap *pOldBit=MemDC.SelectObject(&MemBitmap);
+		//
+		////先用背景色将位图清除干净，这里我用的是白色作为背景
+		////你也可以用自己应该用的颜色
+		//MemDC.FillSolidRect(0,0,nWidth,nHeight,RGB(255,255,255));
+		//
+		////绘图
+		//MemDC.MoveTo(100,100);
+		//MemDC.LineTo(100,200);
+		//
+		////将内存中的图拷贝到屏幕上进行显示
+		//pDC.BitBlt(0,0,nWidth,nHeight,&MemDC,0,0,SRCCOPY);
+		////pDC->BitBlt(0,0,nWidth,nHeight,&MemDC,0,0,SRCCOPY);
+		////绘图完成后的清理
+		//MemBitmap.DeleteObject();
+		//MemDC.DeleteDC();
+
+		/////////////////////////////////////////////////////////////////////////////
+
+
+
+		CClientDC pDC(this);
+
+
+		CRect winrect;
+		this->GetWindowRect(&winrect);
+		int nWidth=winrect.Width();
+		int nHeight=winrect.Height();
+
+		CDC MemDC; //首先定义一个显示设备对象
+		CBitmap MemBitmap;//定义一个位图对象
+
+		//随后建立与屏幕显示兼容的内存显示设备
+		MemDC.CreateCompatibleDC(NULL);
+		//这时还不能绘图，因为没有地方画 ^_^
+		//下面建立一个与屏幕显示兼容的位图，至于位图的大小嘛，可以用窗口的大小
+
+		MemBitmap.CreateCompatibleBitmap(&pDC,nWidth,nHeight);
+		//将位图选入到内存显示设备中
+		//只有选入了位图的内存显示设备才有地方绘图，画到指定的位图上
+		CBitmap *pOldBit=MemDC.SelectObject(&MemBitmap);
+
+		//先用背景色将位图清除干净，这里我用的是白色作为背景
+		//你也可以用自己应该用的颜色
+		MemDC.FillSolidRect(0,0,nWidth,nHeight,RGB(255,255,255));
+
+		//绘图
+		//MemDC.MoveTo(100,100);
+		//MemDC.LineTo(100,200);
+
 		CRect plotrect;
 		CSize sz;
 		this->GetWindowRect(&plotrect);
@@ -217,9 +378,10 @@ IMPLEMENT_DYNCREATE(Cz8View, CFormView)
 		pen.CreatePen(PS_SOLID,1,blue);
 
 		long i,j;
+		long ll=1000;
 		//double *x;
 		//double *y;
-		dc.SelectObject(pen);
+		MemDC.SelectObject(pen);
 
 
 
@@ -230,30 +392,42 @@ IMPLEMENT_DYNCREATE(Cz8View, CFormView)
 				for(j=0;j<dtlist.size();j++){
 					pointlist=genPointToPlot(dtlist[j].potential,dtlist[j].current,plotrect);
 
-					for(i=0;i<pointlist.size();i++){
-						//for(i=(0>ci-2000)?0:ci-2000;i<ci;i++){
-						dc.SetPixel(pointlist[i],cllist[j]);					
+					//for(i=0;i<pointlist.size();i++){
+					for(i=(0>ci-ll)?0:ci-ll;i<ci;i++){
+						MemDC.SetPixel(pointlist[i],cllist[j]);					
 					}
 					//dc.Polyline(pointlist.data(),pointlist.size());
 				}
-				DrawXYAxis(plotrect,&dc);
+				DrawXYAxis(plotrect,&MemDC);
 
 				for(j=0;j<dt1.seginfo.size();j++){
-				//str=dt1.label[0];
-				//pdc->SelectObject(&font);
+					//str=dt1.label[0];
+					//pdc->SelectObject(&font);
 					sz=dc.GetTextExtent(dt1.seginfo[j]);
-					dc.TextOutW(plotrect.right,plotrect.top+sz.cy*j,dt1.seginfo[j]);
-				//font.DeleteObject();
+					MemDC.TextOutW(plotrect.right,plotrect.top+sz.cy*j,dt1.seginfo[j]);
+					//font.DeleteObject();
 				}
 
 
 			}
 		}
 		pen.DeleteObject();
+		
+
+		//将内存中的图拷贝到屏幕上进行显示
+		pDC.BitBlt(0,0,nWidth,nHeight,&MemDC,0,0,SRCCOPY);
+		//pDC->BitBlt(0,0,nWidth,nHeight,&MemDC,0,0,SRCCOPY);
+		//绘图完成后的清理
+		MemBitmap.DeleteObject();
+		MemDC.DeleteDC();
+
+
+
 	}
 
 
-	CRect Cz8View::DrawXYAxis(CRect rect, CPaintDC* pdc)
+	//CRect Cz8View::DrawXYAxis(CRect rect, CPaintDC* pdc)
+	CRect Cz8View::DrawXYAxis(CRect rect, CDC* pdc)
 	{
 		//if(rect.IsRectEmpty()){
 
@@ -492,7 +666,7 @@ IMPLEMENT_DYNCREATE(Cz8View, CFormView)
 	{
 		// TODO: Add your message handler code here and/or call default
 
-		//return true;
+		return true;
 
 		return CFormView::OnEraseBkgnd(pDC);
 	}

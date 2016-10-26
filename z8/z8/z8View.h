@@ -59,6 +59,7 @@ public:
 	double ymin;
 	double ymax;
 	CRect DrawXYAxis(CRect rect, CPaintDC* pdc);
+	CRect DrawXYAxis(CRect rect, CDC* pdc);
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	long ci;
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
