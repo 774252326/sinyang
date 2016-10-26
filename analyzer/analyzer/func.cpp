@@ -79,7 +79,9 @@ void WaitSecond(ProcessState &waitflg
 	)
 {
 	int interval=1000;
-	while( waitflg!=running && second--!=0 ){
+	while( second<0
+		||(waitflg!=running && second--!=0)
+		){
 		Sleep(interval);
 	}
 	waitflg=running;
@@ -1418,22 +1420,38 @@ UINT OneProcess3(CanalyzerViewL *leftp,
 
 		if( dataB.ReadTask(p3.saplist.front(),step) ){
 
-			if( step&DOA_VMS ){
-				leftp->AddPlot(PlotData());
+			if( step&DOA_VMS ){				
 				CString postr;
 				postr.LoadStringW(IDS_STRING_POTENTIAL);
 				CString custr;
 				custr.LoadStringW(IDS_STRING_CURRENT);
-				pDoc->lp.back().SetSpec(postr,custr,PlotSpec(0,leftp->bkcr));
+				leftp->AddPlot(PlotData(postr,custr,leftp->psview));
+
+				//if(leftp->GetPD()!=NULL){
+				//	//pDoc->lp.back().SetSpec(postr,custr,leftp->GetPD()->psp);
+				//	leftp->AddPlot(PlotData(postr,custr,leftp->psview));
+				//}
+				//else{
+				//	//pDoc->lp.back().SetSpec(postr,custr,PlotSpec(0,leftp->bkcr));
+				//	leftp->AddPlot(PlotData(postr,custr,PlotSpec(0,leftp->bkcr)));
+				//}
 			}
 
 			if(stepControl&SC_NEW_RIGHT_PLOT
 				&&( !(stepControl&SC_STEP_COMPLETE) || !(stepControl&SC_NEW_ONCE) )){
-					rightp->AddPlot(PlotData());
+					//rightp->AddPlot(PlotData());
 					CString xla;
 					CString yla;
 					GetXYLabel(xla,yla,plotFilter);
-					pDoc->rp.back().SetSpec(xla,yla,PlotSpec(0,rightp->bkcr));
+					rightp->AddPlot(PlotData(xla,yla,rightp->psview));
+				//if(rightp->GetPD()!=NULL){
+				//	//pDoc->rp.back().SetSpec(xla,yla,rightp->GetPD()->psp);
+				//	rightp->AddPlot(PlotData(xla,yla,rightp->GetPD()->psp));
+				//}
+				//else{
+				//	//pDoc->rp.back().SetSpec(xla,yla,PlotSpec(0,rightp->bkcr));
+				//	rightp->AddPlot(PlotData(xla,yla,PlotSpec(0,rightp->bkcr)));
+				//}
 			}
 
 			OneStep(outw,leftp,cba,pst,dataB,filelist,p3,!(step&DOA_MORE)/*,!(stepControl&SC_NO_PLOT)*/);
@@ -1562,13 +1580,10 @@ bool GetPlotData(
 			if(stepControl&SC_NEW_RIGHT_PLOT
 				&&( !(stepControl&SC_STEP_COMPLETE) || !(stepControl&SC_NEW_ONCE) )){
 					//rightp->AddPlot(PlotData());
-
-					pdl.push_back(PlotData());
-
 					CString xla;
 					CString yla;
 					GetXYLabel(xla,yla,plotFilter);
-					pdl.back().SetSpec(xla,yla,PlotSpec(0));
+					pdl.push_back(PlotData(xla,yla,PlotSpec(0,0)));
 			}
 
 
@@ -1682,12 +1697,13 @@ bool GetPlotData1(
 				&&( !(stepControl&SC_STEP_COMPLETE) || !(stepControl&SC_NEW_ONCE) )){
 					//rightp->AddPlot(PlotData());
 
-					pdl.push_back(PlotData());
+					//pdl.push_back(PlotData());
 
 					CString xla;
 					CString yla;
 					GetXYLabel(xla,yla,plotFilter);
-					pdl.back().SetSpec(xla,yla,PlotSpec(0));
+					//pdl.back().SetSpec(xla,yla,PlotSpec(0));
+					pdl.push_back(PlotData(xla,yla,PlotSpec(0,0)));
 			}
 
 

@@ -68,7 +68,7 @@ CMainFrame::CMainFrame()
 	, pst(stop)
 {
 	// TODO: add member initialization code here
-	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_OFF_2007_BLUE);
+	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_OFF_2007_BLACK);
 }
 
 CMainFrame::~CMainFrame()
@@ -117,9 +117,9 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 
 	if (!m_wndToolBar.CreateEx(this
-		//, TBSTYLE_FLAT
+		, TBSTYLE_FLAT
 		//| TBSTYLE_TRANSPARENT
-		, TBSTYLE_TRANSPARENT
+		//, TBSTYLE_TRANSPARENT
 		, WS_CHILD 
 		| WS_VISIBLE 
 		| CBRS_TOP 

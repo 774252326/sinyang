@@ -7,6 +7,7 @@
 #include "resource.h"
 #include "analyzerDoc.h"
 #include "atltypes.h"
+#include "plotspec.h"
 
 
 class CanalyzerView : public CView
@@ -106,6 +107,10 @@ public:
 	COLORREF bkcr;
 protected:
 	afx_msg LRESULT OnMessageChangeApplook(WPARAM wParam, LPARAM lParam);
+public:
+	PlotSpec psview;
+protected:
+	afx_msg LRESULT OnMessageGetPoltspec(WPARAM wParam, LPARAM lParam);
 };
 
 #ifndef _DEBUG  // debug version in analyzerView.cpp

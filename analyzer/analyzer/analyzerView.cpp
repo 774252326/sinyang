@@ -51,6 +51,7 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		ON_COMMAND(ID_VIEW_DATACURSOR, &CanalyzerView::OnViewDatacursor)
 		ON_UPDATE_COMMAND_UI(ID_VIEW_DATACURSOR, &CanalyzerView::OnUpdateViewDatacursor)
 		ON_MESSAGE(MESSAGE_CHANGE_APPLOOK, &CanalyzerView::OnMessageChangeApplook)
+		ON_MESSAGE(MESSAGE_GET_PLOTSPEC, &CanalyzerView::OnMessageGetPoltspec)
 	END_MESSAGE_MAP()
 
 	// CanalyzerView construction/destruction
@@ -266,7 +267,11 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 
 		// TODO:  Add your specialized creation code here
 
-		if(m_spBtn.Create(WS_CHILD
+		if(//m_spBtn.Create(
+			m_spBtn.CreateEx(
+			WS_EX_TRANSPARENT
+			//|WS_EX_CLIENTEDGE
+			,WS_CHILD
 			//|WS_VISIBLE
 			|UDS_HORZ
 			|UDS_WRAP
@@ -274,7 +279,9 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 			//|WS_CLIPSIBLINGS
 			, CRect()
 			, this
-			, 1)==FALSE)
+			, 1
+			)==FALSE
+			)
 			return -1;
 
 		m_spBtn.SetRange32(0,0);
@@ -299,6 +306,20 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 
 		// TODO: Add your message handler code here
 		m_spBtn.MoveWindow(CRect(CPoint(cx,cy)-spBtnSize,spBtnSize));
+
+		
+//HRGN hrgn = CreateRectRgn(0,0,0,0);
+//int regionType = m_spBtn.GetWindowRgn(hrgn);
+//if (regionType != ERROR) 
+//{ 
+///* hrgn contains window region */ 
+//
+//}
+////DeleteObject(hrgn); /* finished with region */
+
+
+        
+
 		Invalidate();
 	}
 
@@ -468,6 +489,9 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 				pd->psp=fig1setting.fs;
 				pd->ps.clear();
 				pd->ps.assign(fig1setting.ps.begin(),fig1setting.ps.end());
+
+				::SendMessage(this->GetSafeHwnd(),MESSAGE_GET_PLOTSPEC,NULL,NULL);
+
 				Invalidate(FALSE);
 				//this->UpdateWindow();
 			}
@@ -695,6 +719,9 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		selectIdx=0;
 		bMouseCursor=false;
 		SetSpin(newi);
+
+		::SendMessage(this->GetSafeHwnd(),MESSAGE_GET_PLOTSPEC,NULL,NULL);
+
 		return newi;
 	}
 
@@ -710,11 +737,11 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 	void CanalyzerView::OnDeltaposSpin(NMHDR* pNMHDR, LRESULT* pResult)
 	{
 		NM_UPDOWN* pNMUpDown=(NM_UPDOWN*)pNMHDR;	
+		
+		int newpos=pNMUpDown->iPos+pNMUpDown->iDelta;
 
 		CanalyzerDoc* pDoc=GetDocument();
-
 		int n=pDoc->GetNPD(lri);
-		int newpos=pNMUpDown->iPos+pNMUpDown->iDelta;
 		if(newpos>=n)
 			newpos=0;
 		if(newpos<0)
@@ -735,6 +762,7 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		selectIdx=0;
 		bMouseCursor=false;
 
+		::SendMessage(this->GetSafeHwnd(),MESSAGE_GET_PLOTSPEC,NULL,NULL);
 		Invalidate(FALSE);
 
 		*pResult = 0;
@@ -769,6 +797,7 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		updatePlotRange();
 
 		::SendMessage(this->GetSafeHwnd(),MESSAGE_CHANGE_APPLOOK,(WPARAM)bkcr,NULL);
+		::SendMessage(this->GetSafeHwnd(),MESSAGE_GET_PLOTSPEC,NULL,NULL);
 
 		if(lri==0){
 			CMainFrame *mf=(CMainFrame*)(GetParentFrame());
@@ -902,7 +931,20 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 			pd=GetPD(i);
 		}
 
+		::SendMessage(this->GetSafeHwnd(),MESSAGE_GET_PLOTSPEC,NULL,NULL);
+
 		this->Invalidate(FALSE);
+
+		return 0;
+	}
+
+
+	afx_msg LRESULT CanalyzerView::OnMessageGetPoltspec(WPARAM wParam, LPARAM lParam)
+	{
+		PlotData * pd=GetPD();
+		if(pd!=NULL){
+			psview=pd->psp;
+		}
 
 		return 0;
 	}

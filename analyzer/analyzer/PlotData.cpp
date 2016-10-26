@@ -46,6 +46,15 @@ void PlotData::operator=(const PlotData &src)
 	psp=src.psp;
 }
 
+
+PlotData::PlotData(const CString &xla, const CString &yla, const PlotSpec &p)
+{
+	this->SetSpec(xla,yla,p);
+}
+
+
+
+
 // PlotData member functions
 
 

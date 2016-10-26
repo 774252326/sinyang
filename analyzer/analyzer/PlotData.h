@@ -10,6 +10,7 @@ class PlotData : public CObject
 {
 public:
 	PlotData();
+	PlotData(const CString &xla, const CString &yla, const PlotSpec &p);
 
 	void operator=(const PlotData &src);
 	PlotData(const PlotData &src){ operator=(src); };
