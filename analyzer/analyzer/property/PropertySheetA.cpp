@@ -21,7 +21,6 @@ PropertySheetA1::PropertySheetA1(LPCTSTR pszCaption, CWnd* pParentWnd, UINT iSel
 	:CPropertySheet(pszCaption, pParentWnd, iSelectPage)
 {
 	m_psh.dwFlags &= ~PSH_HASHELP;
-
 	m_psh.dwFlags |= PSH_NOAPPLYNOW;
 }
 
@@ -45,12 +44,6 @@ BOOL PropertySheetA1::OnInitDialog()
 	// TODO:  Add your specialized code here
 
 	ModifyStyleEx(0, WS_EX_CONTEXTHELP); 
-
-	//CPropertyPage* pp=this->GetPage(1);
-	//pp->ShowWindow(SW_HIDE);
-	//CWnd *pWnd = GetDlgItem (ID_APPLY_NOW);
-	//pWnd->ShowWindow(SW_HIDE);
-	//pWnd->SetWindowTextW(L"asdfsa");
 
 	CString str;
 	str.LoadStringW(IDS_STRING_OK);

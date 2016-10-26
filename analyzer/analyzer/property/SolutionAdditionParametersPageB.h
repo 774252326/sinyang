@@ -15,7 +15,7 @@ public:
 	virtual ~SolutionAdditionParametersPageB();
 
 // Dialog Data
-	enum { IDD = IDD_DIALOG4 };
+	enum { IDD = IDD_DIALOG_SAP };
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support

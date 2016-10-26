@@ -113,6 +113,7 @@
 #define IDR_LIST_POPUP                  311
 #define IDR_LISTUA_POPUP                312
 #define IDD_DIALOG4                     313
+#define IDD_DIALOG_UAP                  313
 #define IDB_BITMAP_ASTRI                331
 #define IDB_BITMAP_SINYANG              332
 #define IDD_DIALOG_LOGIN                333
@@ -121,8 +122,17 @@
 #define IDI_ICON4                       342
 #define IDD_DIALOG_START                350
 #define IDB_BITMAP11                    351
+#define IDD_DIALOG_WAIT                 351
+#define IDD_DIALOG_COMPUTE              352
+#define IDD_DIALOG_EXPORT               353
+#define IDD_DIALOG_APP                  354
+#define IDD_DIALOG_CVP                  355
 #define IDB_BITMAP12                    356
+#define IDD_DIALOG_SAP                  356
+#define IDD_DIALOG_PSPB                 357
 #define IDB_BITMAP13                    358
+#define IDD_DIALOG_                     358
+#define IDD_DIALOG_PSPC                 358
 #define IDB_BITMAP14                    359
 #define IDB_BITMAP15                    361
 #define IDB_BITMAP16                    362
@@ -398,6 +408,7 @@
 #define ID_POPUP_REMOVEALL              32792
 #define ID_POPUP_ADDUSER                32793
 #define ID_POPUP_DELETEUSER             32794
+#define ID_32795                        32795
 #define ID_FILE_CLOSE                   0xE102
 
 // Next default values for new objects
@@ -405,7 +416,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        313
-#define _APS_NEXT_COMMAND_VALUE         32795
+#define _APS_NEXT_COMMAND_VALUE         32796
 #define _APS_NEXT_CONTROL_VALUE         1000
 #define _APS_NEXT_SYMED_VALUE           310
 #endif

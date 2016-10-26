@@ -21,7 +21,7 @@ public:
 	virtual ~UserAccountPage();
 
 // Dialog Data
-	enum { IDD = IDD_DIALOG4 };
+	enum { IDD = IDD_DIALOG_UAP };
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support

@@ -30,8 +30,8 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 
 	BEGIN_MESSAGE_MAP(CanalyzerView, CView)
 		// Standard printing commands
-		ON_COMMAND(ID_FILE_PRINT, &CView::OnFilePrint)
-		ON_COMMAND(ID_FILE_PRINT_DIRECT, &CView::OnFilePrint)
+		ON_COMMAND(ID_FILE_PRINT, &CanalyzerView::OnFilePrint)
+		ON_COMMAND(ID_FILE_PRINT_DIRECT, &CanalyzerView::OnFilePrint)
 		ON_COMMAND(ID_FILE_PRINT_PREVIEW, &CanalyzerView::OnFilePrintPreview)
 		ON_WM_CONTEXTMENU()
 		ON_WM_RBUTTONUP()
@@ -80,12 +80,6 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 
 		// TODO: add draw code for native data here
 
-		//if(bPrint && pw.pdex!=NULL){
-			//CRect rect;
-			//this->GetClientRect(&rect);
-			//pw.pdex->DrawEx(rect,pDC);
-			//bPrint=false;
-		//}
 	}
 
 
@@ -94,33 +88,33 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 
 	void CanalyzerView::OnFilePrintPreview()
 	{
+
 #ifndef SHARED_HANDLERS
 		AFXPrintPreview(this);
 #endif
 	}
 
+
+	void CanalyzerView::OnFilePrint()
+	{
+		CView::OnFilePrint();
+	}
+
+
 	BOOL CanalyzerView::OnPreparePrinting(CPrintInfo* pInfo)
 	{
 		// default preparation
-		//return TRUE;
 		return DoPreparePrinting(pInfo);
-
 	}
 
 	void CanalyzerView::OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo)
 	{
 		// TODO: add extra initialization before printing
-		//if(pw.pdex!=NULL){
-		//	pw.pdex->SaveImage(L"a.bmp",CSize(800,600),pDC);
-		//	ShellExecute(NULL, L"print", L"a.bmp", NULL, NULL, SW_SHOW);	
-		//}
-		bPrint=true;
 	}
 
 	void CanalyzerView::OnEndPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
 	{
 		// TODO: add cleanup after printing
-		bPrint=false;
 	}
 
 	void CanalyzerView::OnRButtonUp(UINT /* nFlags */, CPoint point)
@@ -292,13 +286,12 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 
 		if(m_spBtn.IsWindowVisible()){
 			m_spBtn.ShowWindow(SW_HIDE);
-			this->UpdateWindow();
-			CopyWndToClipboard(this);
-			m_spBtn.ShowWindow(SW_SHOW);
+			this->UpdateWindow();				
 		}
-		else{
-			CopyWndToClipboard(this);
-		}
+		
+		CopyWndToClipboard(this);
+		
+		UpdateSpinButton();
 
 	}
 
@@ -335,9 +328,6 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 
 	}
 
-
-
-
 	void CanalyzerView::OnAnalysisExportdata()
 	{
 		// TODO: Add your command handler code here
@@ -362,48 +352,69 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 
 
 
-		pDC->SetMapMode(MM_ANISOTROPIC); //转换坐标映射方式
-		CRect rect;
-		this->GetClientRect(&rect);
-		
-		if(rect.IsRectEmpty()==TRUE)
-			return;
+		//pDC->SetMapMode(MM_ANISOTROPIC); //转换坐标映射方式
+		//CRect rect;
+		//this->GetClientRect(&rect);
 
-		CSize wsize = rect.Size(); 
-		pDC->SetWindowExt(wsize); 
+		//if(rect.IsRectEmpty()==TRUE)
+		//	return;
 
-		HDC hdc=::GetDC(this->GetSafeHwnd());
-		int wmm=::GetDeviceCaps(hdc,HORZSIZE);
-		int hmm=::GetDeviceCaps(hdc,VERTSIZE);
-		int wpxl=::GetDeviceCaps(hdc,HORZRES);
-		int hpxl=::GetDeviceCaps(hdc,VERTRES);
-		int xLogPixPerInch0 = ::GetDeviceCaps(hdc,LOGPIXELSX); 
-		int yLogPixPerInch0 = ::GetDeviceCaps(hdc,LOGPIXELSY); 
-		::ReleaseDC(this->GetSafeHwnd(),hdc);
+		//CSize wsize = rect.Size(); 
+		//pDC->SetWindowExt(wsize); 
 
-		//得到实际设备每逻辑英寸的象素数量
-		int xLogPixPerInch = pDC->GetDeviceCaps(LOGPIXELSX); 
-		int yLogPixPerInch = pDC->GetDeviceCaps(LOGPIXELSY); 
-		//得到设备坐标和逻辑坐标的比例
+		//HDC hdc=::GetDC(this->GetSafeHwnd());
+		//int wmm=::GetDeviceCaps(hdc,HORZSIZE);
+		//int hmm=::GetDeviceCaps(hdc,VERTSIZE);
+		//int wpxl=::GetDeviceCaps(hdc,HORZRES);
+		//int hpxl=::GetDeviceCaps(hdc,VERTRES);
+		//int xLogPixPerInch0 = ::GetDeviceCaps(hdc,LOGPIXELSX); 
+		//int yLogPixPerInch0 = ::GetDeviceCaps(hdc,LOGPIXELSY); 
+		//::ReleaseDC(this->GetSafeHwnd(),hdc);
+
+		////得到实际设备每逻辑英寸的象素数量
+		//int xLogPixPerInch = pDC->GetDeviceCaps(LOGPIXELSX); 
+		//int yLogPixPerInch = pDC->GetDeviceCaps(LOGPIXELSY); 
+		////得到设备坐标和逻辑坐标的比例
 
 
-		CSize vsize(wsize.cx * xLogPixPerInch/xLogPixPerInch0, wsize.cy * yLogPixPerInch/yLogPixPerInch0);
-		pDC->SetViewportExt(vsize); //确定视口大小
+		//CSize vsize(wsize.cx * xLogPixPerInch/xLogPixPerInch0, wsize.cy * yLogPixPerInch/yLogPixPerInch0);
+		//pDC->SetViewportExt(vsize); //确定视口大小
 
 		CView::OnPrepareDC(pDC, pInfo);
 	}
 
-
 	void CanalyzerView::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 	{
 		// TODO: Add your specialized code here and/or call the base class
+		
+		int   nPrintW   =   pDC->GetDeviceCaps(HORZRES); 
+		int   nPrintH   =   pDC->GetDeviceCaps(VERTRES); 
 
-		//if(/*bPrint &&*/ pw.pdex!=NULL){
-		//	CRect rect;
-		//	this->GetClientRect(&rect);
-		//	pw.pdex->DrawEx(rect,pDC);
-		//	//bPrint=false;
-		//}
+		CBitmap bitmap;
+		CClientDC dc(this);
+		//CDC memdc;
+		CRect rect;
+		BOOL bRet = FALSE;
+
+		//memdc.CreateCompatibleDC(&dc);
+		//pDC->CreateCompatibleDC(&dc);
+		GetClientRect(rect);
+		bitmap.CreateCompatibleBitmap(&dc,rect.Width(),rect.Height()); 
+
+		//CBitmap * oldbitmap = memdc.SelectObject(&bitmap);
+		CBitmap * oldbitmap = pDC->SelectObject(&bitmap);
+		//bRet = memdc.BitBlt(0,0,rect.Width(),rect.Height(),&dc,0,0,SRCCOPY); 
+		//bRet = pDC->BitBlt(700-rect.Width(),0,rect.Width(),rect.Height(),&dc,0,0,SRCCOPY); 
+		//bRet = pDC->BitBlt(0,0,nPrintW,nPrintH,&dc,0,0,SRCCOPY);
+		bRet = pDC->StretchBlt(0,0,nPrintW,nPrintH,&dc,0,0,rect.Width(),rect.Height(),SRCCOPY);
+
 
 		CView::OnPrint(pDC, pInfo);
+
+
 	}
+
+
+
+
+

@@ -29,7 +29,7 @@ public:
 	virtual ~ComputeDlg(){};
 
 	// Dialog Data
-	enum { IDD = IDD_DIALOG_LOGIN };
+	enum { IDD = IDD_DIALOG_COMPUTE };
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX)

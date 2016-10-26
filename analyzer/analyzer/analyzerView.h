@@ -39,7 +39,90 @@ public:
 		bitmap.Detach();
 	};
 
+		 void Print()
+	{
+		CDC   PrintDC; 
+		HDC   hPrintDC; 
 
+		CPrintDialog   prtDlg(FALSE,PD_DISABLEPRINTTOFILE); 
+		if   (prtDlg.DoModal()   ==   IDCANCEL)   return   ; 
+
+		hPrintDC   =   prtDlg.GetPrinterDC(); 
+		PrintDC.Attach(hPrintDC); 
+
+		CString strTitle=L"";   //   Get   the   application   title 
+		DOCINFO di;         //   Initialise   print   document   details  
+		//strTitle.Format(_T("%s:%s"),CTextRes::GetInstance()->LoadString(IDS_STRING23592),m_strIndentID);//¥Ú”°∂©µ•
+
+
+		::ZeroMemory(&di,   sizeof   (DOCINFO)); 
+		di.cbSize   =   sizeof   (DOCINFO); 
+		di.lpszDocName   =   strTitle; 
+
+		//   Begin   a   new   print   job 
+		if   FAILED(PrintDC.StartDoc(&di)   ==   -1)   return; 
+
+		PrintDC.StartPage(); 
+
+		int   nScreenW   =   GetDeviceCaps(*GetDC(),   LOGPIXELSX); 
+		int   nScreenH   =   GetDeviceCaps(*GetDC(),   LOGPIXELSY); 
+		int   nPrintW   =   GetDeviceCaps(hPrintDC,   LOGPIXELSX); 
+		int   nPrintH   =   GetDeviceCaps(hPrintDC,   LOGPIXELSY); 
+
+		float   fRateX   =   nPrintW   /   float(nScreenW)   ; 
+		float   fRateY   =   nPrintH   /   float(nScreenH)   ; 
+
+		CBitmap bitmap;
+		CClientDC dc(this);
+		CDC memdc;
+		CRect rect;
+		BOOL bRet = FALSE;
+
+		memdc.CreateCompatibleDC(&dc);
+		GetClientRect(rect);
+		bitmap.CreateCompatibleBitmap(&dc,rect.Width(),rect.Height()); 
+
+		CBitmap * oldbitmap = memdc.SelectObject(&bitmap);
+		bRet = memdc.BitBlt(0,0,rect.Width(),rect.Height(),&dc,0,0,SRCCOPY); 
+
+		CBitmap * Printbitmap;
+		Printbitmap = memdc.SelectObject(oldbitmap); 
+
+
+		BITMAP       bmp;       
+		bitmap.GetBitmap(&bmp);       
+
+		long       nWidth=bmp.bmWidth;       
+		long       nHeight=bmp.bmHeight;   
+
+		VOID   *lpBits=new   BYTE[bmp.bmWidth*bmp.bmHeight*4]; 
+		BITMAPINFO       bmi; 
+		memset(&bmi,0,sizeof(bmi)); 
+		bmi.bmiHeader.biSize=sizeof(BITMAPINFO);       
+		bmi.bmiHeader.biWidth=bmp.bmWidth;       
+		bmi.bmiHeader.biHeight=bmp.bmHeight;       
+		bmi.bmiHeader.biPlanes=1;       
+		bmi.bmiHeader.biBitCount=bmp.bmBitsPixel;       
+		bmi.bmiHeader.biCompression=BI_RGB;       
+		bmi.bmiHeader.biClrUsed=0;       
+
+		GetDIBits(memdc.m_hDC,   (HBITMAP)   bitmap.m_hObject,   0,   bmp.bmHeight,   lpBits,     (LPBITMAPINFO)   &bmi,   DIB_RGB_COLORS); 
+
+		int  nDestWidth = nWidth*fRateX; 
+		int  nDestHeight = nHeight*fRateY; 
+		int  xDest = ( nPrintW * fRateX  -  nDestWidth) * 3 / 4;
+		int  yDest = nPrintH * fRateY - nDestHeight ;
+
+		::StretchDIBits(hPrintDC,xDest,yDest,nDestWidth,nDestHeight,0,0,nWidth,nHeight,lpBits,&bmi,DIB_RGB_COLORS,   SRCCOPY)   ;   
+
+		PrintDC.SelectObject(bitmap); 
+
+		PrintDC.EndPage(); 
+		PrintDC.EndDoc(); 
+		PrintDC.Detach(); 
+
+		delete   lpBits;  
+	};
 
 protected: // create from serialization only
 	CanalyzerView();
@@ -53,12 +136,12 @@ public:
 	CSpinButtonCtrl m_spBtn;
 	CSize spBtnSize;
 	std::vector<PlotDataEx> pdl;
-
+	CCriticalSection m_CritSection;
 	// Operations
 public:
 
-	int UpdateSpinButton(int np, bool bLast);
-
+	int UpdateSpinButton(int np, bool bLast=false);
+	int UpdateSpinButton(){return UpdateSpinButton(pdl.size());};
 	// Overrides
 public:
 	virtual void OnDraw(CDC* pDC);  // overridden to draw this view
@@ -81,6 +164,7 @@ protected:
 	// Generated message map functions
 protected:
 	afx_msg void OnFilePrintPreview();
+	afx_msg void OnFilePrint();
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 protected:

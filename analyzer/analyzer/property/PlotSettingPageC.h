@@ -24,7 +24,7 @@ public:
 	virtual ~PlotSettingPageC();
 
 // Dialog Data
-	enum { IDD = IDD_DIALOG4 };
+	enum { IDD = IDD_DIALOG_PSPC };
 public:
 
 	std::vector<LineSpec> ps;

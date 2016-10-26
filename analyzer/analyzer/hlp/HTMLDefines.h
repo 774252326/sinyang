@@ -44,6 +44,7 @@
 #define HID_POPUP_REMOVEALL                     0x18018
 #define HID_POPUP_ADDUSER                       0x18019
 #define HID_POPUP_DELETEUSER                    0x1801A
+#define HID_32795                               0x1801B
 #define HID_FILE_CLOSE                          0x1E102
  
 // Prompts (IDP_*) 
@@ -63,8 +64,18 @@
 // Dialogs (IDD_*) 
 #define HIDD_ABOUTBOX                           0x20064
 #define HIDD_DIALOG4                            0x20139
+#define HIDD_DIALOG_UAP                         0x20139
 #define HIDD_DIALOG_LOGIN                       0x2014D
 #define HIDD_DIALOG_START                       0x2015E
+#define HIDD_DIALOG_WAIT                        0x2015F
+#define HIDD_DIALOG_COMPUTE                     0x20160
+#define HIDD_DIALOG_EXPORT                      0x20161
+#define HIDD_DIALOG_APP                         0x20162
+#define HIDD_DIALOG_CVP                         0x20163
+#define HIDD_DIALOG_SAP                         0x20164
+#define HIDD_DIALOG_PSPB                        0x20165
+#define HIDD_DIALOG_                            0x20166
+#define HIDD_DIALOG_PSPC                        0x20166
  
 // Frame Controls (IDW_*) 
 // This is a part of the Microsoft Foundation Classes C++ library.

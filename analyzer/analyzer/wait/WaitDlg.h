@@ -17,7 +17,7 @@ public:
 	virtual ~WaitDlg();
 
 // Dialog Data
-	enum { IDD = IDD_DIALOG_LOGIN };
+	enum { IDD = IDD_DIALOG_WAIT };
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support

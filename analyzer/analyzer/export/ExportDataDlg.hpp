@@ -21,7 +21,7 @@ public:
 	virtual ~ExportDataDlg(){};
 
 	// Dialog Data
-	enum { IDD = IDD_DIALOG_LOGIN };
+	enum { IDD = IDD_DIALOG_EXPORT };
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX)

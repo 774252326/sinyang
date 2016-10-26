@@ -22,7 +22,7 @@ public:
 	virtual ~CVParametersPage();
 
 // Dialog Data
-	enum { IDD = IDD_DIALOG4 };
+	enum { IDD = IDD_DIALOG_CVP };
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
