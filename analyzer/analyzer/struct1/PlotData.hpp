@@ -7,12 +7,12 @@
 #include "PlotSpec.hpp"
 #include "RawData.hpp"
 #include <algorithm>
-
+//#include "RawDataEx.hpp"
 
 class PlotData : public CObject
 {
 public:
-
+	
 	static void genPointToPlot(const std::vector<double> &px
 		, const std::vector<double> &py
 		, const CRect &rect

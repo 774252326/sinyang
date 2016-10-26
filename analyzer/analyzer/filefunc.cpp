@@ -17,7 +17,7 @@ double doubledummy;
 
 const DWORD sleepms=100;
 
-const size_t nd=50;
+const size_t nd=1000;
 //const size_t nd=sleepms/10;
 
 
@@ -139,6 +139,35 @@ void LoadFileList(const CString &m_filePath, std::vector<CString> &filelist)
 	}
 }
 
+
+CString ChooseFolderDlg()
+{
+	BROWSEINFO bi;                     //BROWSEINFO结构有很多成员参数可以自己设置
+	ZeroMemory(&bi,sizeof(BROWSEINFO));     //将以&bi为起始地址，大小为sizeof(BROWSEINFO)的内存区域用0填充  
+
+	//bi.ulFlags=BIF_BROWSEINCLUDEFILES;        //设置弹出的对话框属性。此处意思为包含文件。如果不设这个值，默认的是只有文件夹。ulFlags还可   以定义很多别的属性  
+
+	bi.ulFlags=BIF_NEWDIALOGSTYLE;            //窗口可以调整大小，有新建文件夹按钮  
+
+	//bi.lpszTitle=L"指定要处理的文件夹";       //在窗口内显示提示用户的语句 
+	//bi.hwndOwner = m_hWnd;   
+	//bi.pidlRoot = NULL;   
+	//bi.pszDisplayName = szPath;   
+	//bi.lpfn = NULL;   
+	//bi.lParam = 0;   
+	//bi.iImage = 0;
+
+	LPITEMIDLIST pidl = SHBrowseForFolder(&bi);   //Displays a dialog box enabling the user to select a Shell folder.  
+	
+	if(pidl != NULL){ 
+		TCHAR * path = new TCHAR[MAX_PATH];  
+		BOOL flg=SHGetPathFromIDList(pidl,path);      //Converts an item identifier list to a file system path  
+		if(flg==TRUE){
+			return CString(path);
+		}
+	}  
+	return CString();
+}
 
 
 
@@ -365,7 +394,7 @@ UINT PROCESS(LPVOID pParam)
 	while(mf->pst!=stop){
 
 		//if(mf->pst!=running){
-			//Sleep(sleepms);
+		//Sleep(sleepms);
 		//}
 
 		WaitSecond(mf->pst,-1,50);
@@ -434,7 +463,7 @@ UINT PROCESS(LPVOID pParam)
 			mf->SendMessage(MESSAGE_UPDATE_DOL,NULL,NULL);
 			//mf->OnMessageUpdateDol(NULL,NULL);
 
-			Sleep(sleepms);
+			//Sleep(sleepms);
 		}
 
 	}
@@ -450,7 +479,7 @@ UINT PROCESS(LPVOID pParam)
 UINT PROCESS1(LPVOID pParam)
 {
 
-		//CanalyzerDoc* pDoc=(CanalyzerDoc*)pParam;
+	//CanalyzerDoc* pDoc=(CanalyzerDoc*)pParam;
 
 
 	//CanalyzerViewL* lv=((mypara*)pParam)->leftp;
@@ -474,7 +503,7 @@ UINT PROCESS1(LPVOID pParam)
 	CanalyzerDoc* pDoc=((mypara1*)pParam)->adoc;
 
 	SAPara p3todo=*(((mypara1*)pParam)->pp3todo);
-	
+
 
 	delete pParam;
 	////////////////////////////////////////////////////
@@ -485,18 +514,18 @@ UINT PROCESS1(LPVOID pParam)
 
 
 	CSingleLock singleLock(&(pDoc->m_CritSection));
-		while(singleLock.Lock())
-		{
-			if(*pst!=pause){
-				singleLock.Unlock();
-				Sleep(10);
-			}
-			else{
-				pDoc->p3=p3new;
-				singleLock.Unlock();
-				break;
-			}
+	while(singleLock.Lock())
+	{
+		if(*pst!=pause){
+			singleLock.Unlock();
+			Sleep(10);
 		}
+		else{
+			pDoc->p3=p3new;
+			singleLock.Unlock();
+			break;
+		}
+	}
 
 
 	return 0;

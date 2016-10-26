@@ -21,6 +21,8 @@
 #include "filefunc.h"
 #include "calfunc.h"
 
+#include "ExportDataDlg.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -52,6 +54,7 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		ON_COMMAND(ID_EDIT_COPY, &CanalyzerView::OnEditCopy)
 		ON_COMMAND(ID_VIEW_DATACURSOR, &CanalyzerView::OnViewDatacursor)
 		//ON_UPDATE_COMMAND_UI(ID_VIEW_DATACURSOR, &CanalyzerView::OnUpdateViewDatacursor)
+		ON_COMMAND(ID_ANALYSIS_EXPORTDATA, &CanalyzerView::OnAnalysisExportdata)
 	END_MESSAGE_MAP()
 
 	// CanalyzerView construction/destruction
@@ -512,5 +515,33 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		pCmdUI->SetCheck(pw.bMouseCursor);
 
 		::SendMessage(this->GetParentFrame()->GetSafeHwnd(),WM_COMMAND,CN_UPDATE_COMMAND_UI,NULL);
+
+	}
+
+
+	void CanalyzerView::OnAnalysisExportdata()
+	{
+		// TODO: Add your command handler code here
+
+		ExportDataDlg edd;
+
+		for(size_t i=0;i<pdl.size();i++){
+			RawDataEx rdex(pdl[i].pd.raw,L"c",pdl[i].pd.ps.xlabel,pdl[i].pd.ps.ylabel);
+			for(size_t j=0;j<pdl[i].pd.ls.size();j++){
+				rdex.title[j]=pdl[i].pd.ls[j].name;
+			}
+			edd.lcl.rde.AppendData(rdex);
+		}
+
+		edd.DoModal();
+		//if(edd.DoModal()==IDOK){
+
+			//for(int i=0;i<edd.lcl.GetItemCount();i++){
+			//	if(edd.lcl.GetCheck(i)!=FALSE){
+			//		edd.lcl.rde.SaveToText(i);
+			//	}
+			//}
+
+		//}
 
 	}

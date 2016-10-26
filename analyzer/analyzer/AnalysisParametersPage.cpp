@@ -57,7 +57,7 @@ BEGIN_MESSAGE_MAP(AnalysisParametersPage, CPropertyPage)
 
 	//ON_EN_CHANGE(IDS_EDIT_CALIBRATION_FACTOR, &AnalysisParametersPage::editchange)
 
-	ON_BN_CLICKED(IDS_STRING_OPEN_CALIBRATION_FILE, &AnalysisParametersPage::OnBnClickedButton1)
+	//ON_BN_CLICKED(IDS_STRING_OPEN_CALIBRATION_FILE, &AnalysisParametersPage::OnBnClickedButton1)
 	ON_WM_CREATE()
 //	ON_WM_SHOWWINDOW()
 END_MESSAGE_MAP()
@@ -81,17 +81,6 @@ BOOL AnalysisParametersPage::OnSetActive()
 
 void AnalysisParametersPage::ComboSelectChange(void)
 {
-
-
-	//int nSel;     
-	//CComboBox * pcb=(CComboBox*)(this->GetDlgItem(IDS_COMBO_ANALYSIS_TYPE));
-	// 获取组合框控件的列表框中选中项的索引   
-	//nSel = pcb->GetCurSel();  
-	//para.analysistype = pcb->GetCurSel(); 
-	// 根据选中项索引获取该项字符串   
-	//pcb->GetLBText(nSel, strWeb); 
-	//pcb->GetLBText(para.analysistype, strWeb); 
-
 	UpdateData();
 
 	CString strWeb;   
@@ -101,6 +90,7 @@ void AnalysisParametersPage::ComboSelectChange(void)
 	SetDlgItemText(IDS_EDIT_REMARK_ON_ANALYSIS_TYPE, strWeb);   
 
 	switch(para.analysistype){
+	case 0:
 	case 1:
 	case 3:
 	case 5:
@@ -108,20 +98,15 @@ void AnalysisParametersPage::ComboSelectChange(void)
 	case 9:
 	case 11:
 		this->GetDlgItem(IDS_COMBO_CALIBRATION_TYPE)->ShowWindow(SW_HIDE);
-		//this->GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR)->ShowWindow(SW_HIDE);
 
 		this->GetDlgItem(IDS_STRING_CALIBRATION_CURVE_FILE)->ShowWindow(SW_HIDE);
 		this->GetDlgItem(IDS_STRING_INTERCEPT_VALUE)->ShowWindow(SW_HIDE);
 
 		this->GetDlgItem(IDS_COMBO_CALIBRATION_TYPE)->EnableWindow(FALSE);
 
-		//this->GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR)->EnableWindow(FALSE);
-		//this->GetDlgItem(IDS_EDIT_CALIBRATION_CURVE_FILE)->EnableWindow(FALSE);
-		//this->GetDlgItem(IDS_EDIT_INTERCEPT_VALUE)->EnableWindow(FALSE);
 
 		this->GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR)->ShowWindow(SW_HIDE);
 		this->GetDlgItem(IDS_EDIT_CALIBRATION_CURVE_FILE)->ShowWindow(SW_HIDE);
-		this->GetDlgItem(IDS_STRING_OPEN_CALIBRATION_FILE)->ShowWindow(SW_HIDE);
 		this->GetDlgItem(IDS_EDIT_INTERCEPT_VALUE)->ShowWindow(SW_HIDE);
 
 		break;
@@ -144,7 +129,6 @@ void AnalysisParametersPage::ComboSelectChange(void)
 		
 		this->GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR)->ShowWindow(SW_HIDE);
 		this->GetDlgItem(IDS_EDIT_CALIBRATION_CURVE_FILE)->ShowWindow(SW_HIDE);
-		this->GetDlgItem(IDS_STRING_OPEN_CALIBRATION_FILE)->ShowWindow(SW_HIDE);
 		this->GetDlgItem(IDS_EDIT_INTERCEPT_VALUE)->ShowWindow(SW_SHOW);
 
 		break;
@@ -163,11 +147,7 @@ void AnalysisParametersPage::ComboSelectChange(void)
 
 		this->GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR)->ShowWindow(SW_HIDE);
 		this->GetDlgItem(IDS_EDIT_CALIBRATION_CURVE_FILE)->ShowWindow(SW_SHOW);
-		this->GetDlgItem(IDS_STRING_OPEN_CALIBRATION_FILE)->ShowWindow(SW_SHOW);
 		this->GetDlgItem(IDS_EDIT_INTERCEPT_VALUE)->ShowWindow(SW_HIDE);
-		//this->GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR)->ShowWindow(SW_SHOW);
-		//this->GetDlgItem(IDS_EDIT_CALIBRATION_CURVE_FILE)->ShowWindow(SW_SHOW);
-		//this->GetDlgItem(IDS_EDIT_INTERCEPT_VALUE)->ShowWindow(SW_SHOW);
 		break;
 	default:
 		break;
@@ -177,6 +157,7 @@ void AnalysisParametersPage::ComboSelectChange(void)
 
 
 	switch(para.analysistype){
+	case 0:
 	case 3:
 	case 11:
 	case 4:
@@ -234,57 +215,6 @@ BOOL AnalysisParametersPage::OnKillActive()
 		return FALSE;
 	}
 	
-
-
-	// 获取组合框控件的列表框中选中项的索引   
-	//para.analysistype = pcb->GetCurSel();  
-
-	//if(para.analysistype<0){
-	//	AfxMessageBox(IDS_STRING_ERROR);
-	//	CComboBox * pcb=(CComboBox*)(this->GetDlgItem(IDS_COMBO_ANALYSIS_TYPE));
-	//	pcb->SetFocus();
-	//	return FALSE;
-	//}
-
-	//if(UpdateData()==FALSE){
-	//	return FALSE;
-	//}
-
-	//if(GetDlgItem(IDS_EDIT_EVALUATION_RATIO)->IsWindowEnabled()==TRUE)
-	//if(para.evaluationratio<=0){
-	//	AfxMessageBox(IDS_STRING_ERROR);
-	//	CEdit *ped=(CEdit*)(this->GetDlgItem(IDS_EDIT_EVALUATION_RATIO));
-	//	ped->SetFocus();
-	//	return FALSE;
-	//}
-
-	//if(para.endpointratio<=0){
-	//	AfxMessageBox(IDS_STRING_ERROR);
-	//	CEdit *ped=(CEdit*)(this->GetDlgItem(IDS_EDIT_ENDPOINT_RATIO));
-	//	ped->SetFocus();
-	//	return FALSE;
-	//}
-
-	//if( GetDlgItem(IDS_COMBO_CALIBRATION_TYPE)->IsWindowVisible()==TRUE ){
-
-	//	//para.calibrationfactortype=((CComboBox*)GetDlgItem(IDS_COMBO_CALIBRATION_TYPE))->GetCurSel();
-	//	//if(para.calibrationfactortype<0){
-	//	//	AfxMessageBox(IDS_STRING_ERROR);
-	//	//	CComboBox * pcb=(CComboBox*)(this->GetDlgItem(IDS_COMBO_CALIBRATION_TYPE));
-	//	//	pcb->SetFocus();
-	//	//	return FALSE;
-	//	//}
-
-	//	if(para.calibrationfactortype==0){
-	//		if(para.calibrationfactor<=0){
-	//			AfxMessageBox(IDS_STRING_ERROR);
-	//			CEdit *ped=(CEdit*)(this->GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR));
-	//			ped->SetFocus();
-	//			return FALSE;
-	//		}
-	//	}
-
-	//}
 	return CPropertyPage::OnKillActive();
 }
 
@@ -314,7 +244,7 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	CEdit *pEdit;
 	CComboBox *pCombo;
 	CComboBox *pCombo2;
-	CButton *pBtn;
+	//CButton *pBtn;
 
 	CString str;
 
@@ -479,31 +409,53 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 
 	str.LoadStringW(IDS_EDIT_CALIBRATION_CURVE_FILE);
-	pEdit=new CEdit;
+	//pEdit=new CEdit;
 
-	CSize feditSize=editSize;
-	feditSize.cx-=btnSize.cx;
+	//CSize feditSize=editSize;
+	//feditSize.cx-=btnSize.cx;
 
-	pEdit->CreateEx(
+	//pEdit->CreateEx(
+		//WS_EX_CLIENTEDGE,
+		//L"Edit", 
+		//str,
+		//ES_LEFT
+		//|dwStyle,
+		//CRect(pt,feditSize),
+		//this,
+		//IDS_EDIT_CALIBRATION_CURVE_FILE);
+
+	CMFCEditBrowseCtrl *pc=new CMFCEditBrowseCtrl();
+
+	//pc.Create(
+	pc->CreateEx(
 		WS_EX_CLIENTEDGE,
 		L"Edit", 
 		str,
 		ES_LEFT
 		|dwStyle,
-		CRect(pt,feditSize),
+		CRect(pt,editSize),
 		this,
 		IDS_EDIT_CALIBRATION_CURVE_FILE);
 
 
-	pt.x+=feditSize.cx;
-	str.LoadStringW(IDS_STRING_OPEN_CALIBRATION_FILE);
-	pBtn=new CButton;
-	pBtn->Create(str,
-		BS_PUSHBUTTON
-		|dwStyle,
-		CRect(pt,btnSize),
-		this,
-		IDS_STRING_OPEN_CALIBRATION_FILE);
+	TCHAR szFilters[]= _T("Analyzer Files (*.ghb)|*.ghb|All Files (*.*)|*.*||");
+	pc->EnableFileBrowseButton(_T("ghb"),szFilters);
+
+	//pc.ModifyStyleEx(NULL,WS_EX_CLIENTEDGE);
+
+	//pt.x+=feditSize.cx;
+	//str.LoadStringW(IDS_STRING_OPEN_CALIBRATION_FILE);
+	//pBtn=new CButton;
+	//pBtn->Create(str,
+	//	BS_PUSHBUTTON
+	//	|dwStyle,
+	//	CRect(pt,btnSize),
+	//	this,
+	//	IDS_STRING_OPEN_CALIBRATION_FILE);
+
+
+
+	//pc->SetWindowTextW(para.calibrationfilepath);
 
 	UpdateData(FALSE);
 	ComboSelectChange();
@@ -523,13 +475,11 @@ void AnalysisParametersPage::CalibrationComboSelectChange(void)
 	case 0:
 		this->GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR)->ShowWindow(SW_SHOW);
 		this->GetDlgItem(IDS_EDIT_CALIBRATION_CURVE_FILE)->ShowWindow(SW_HIDE);
-		this->GetDlgItem(IDS_STRING_OPEN_CALIBRATION_FILE)->ShowWindow(SW_HIDE);
 		this->GetDlgItem(IDS_EDIT_INTERCEPT_VALUE)->ShowWindow(SW_HIDE);
 		break;
 	case 1:
 		this->GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR)->ShowWindow(SW_HIDE);
 		this->GetDlgItem(IDS_EDIT_CALIBRATION_CURVE_FILE)->ShowWindow(SW_SHOW);
-		this->GetDlgItem(IDS_STRING_OPEN_CALIBRATION_FILE)->ShowWindow(SW_SHOW);
 		this->GetDlgItem(IDS_EDIT_INTERCEPT_VALUE)->ShowWindow(SW_HIDE);
 		break;
 	default:

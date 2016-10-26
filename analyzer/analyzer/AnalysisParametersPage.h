@@ -37,4 +37,6 @@ public:
 	void CalibrationComboSelectChange(void);
 //	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
 	DWORD dwStyle;
+
+	//CMFCEditBrowseCtrl pc;
 };

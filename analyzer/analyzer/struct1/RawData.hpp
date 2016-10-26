@@ -12,11 +12,32 @@
 #include "../funT1/CSplineT.h"
 
 
-template<typename T>
-T myfunction (T x, T y) {return x+y;};
-
 class RawData : public CObject
 {
+
+public:
+	static CString SaveText(
+		std::vector<double> xll,
+		std::vector<double> yll, 
+		CString xlabel=L"x", 
+		CString ylabel=L"y", 
+		CString seg=L"\r\t", 
+		CString endline=L"\r\n"
+		){
+			CString str,strtmp;
+
+			str=xlabel+seg+ylabel+seg+endline;
+
+			for(size_t i=0;i<xll.size()&&i<yll.size();i++){
+				strtmp.Format(L"%g",xll[i]);
+				str+=strtmp+seg;
+				strtmp.Format(L"%g",yll[i]);
+				str+=strtmp+seg+endline;
+			}
+			return str;
+	};
+
+	
 public:
 	std::vector<double> xll;
 	std::vector<double> yll;
@@ -80,20 +101,8 @@ public:
 			y.clear();
 			return;
 		}
-
-		//size_t starti=0;
-		//for(size_t i=0;i<index;i++){
-		//	starti+=ll[i];
-		//}
-		//size_t endi=starti+ll[index];
-
-		std::vector<size_t> acll(index+1);
-		std::partial_sum (ll.begin(), ll.begin()+index+1, acll.begin());
-
-		size_t endi=acll.back();
-		acll.pop_back();
-		size_t starti=acll.empty() ? 0 : acll.back();
-
+		size_t starti=std::accumulate(ll.begin(),ll.begin()+index,0,std::plus<size_t>());
+		size_t endi=starti+ll[index];
 		x.assign(xll.begin()+starti, xll.begin()+endi);
 		y.assign(yll.begin()+starti, yll.begin()+endi);
 	};
@@ -153,15 +162,7 @@ public:
 	size_t ValidPointNumber(void)
 	{
 		DWORD lltotal=0;
-		//std::accumulate(ll.begin(), ll.end(), lltotal, myfunction<DWORD>);
-
-		//std::accumulate(ll.data(),ll.data()+ll.size(),lltotal);
-		//DWORD lls=ll[0]+ll[1];
-
-		for(size_t i=0;i<ll.size();i++){
-			lltotal+=ll[i];
-		}
-
+		lltotal=std::accumulate(ll.begin(), ll.end(), lltotal, std::plus<DWORD>());
 		return (size_t)lltotal;
 	};
 

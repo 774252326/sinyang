@@ -50,6 +50,8 @@ typedef struct MYPARA1{
 	SAPara *pp3todo;
 } mypara1;
 
+
+CString ChooseFolderDlg();
 BOOL ReadFileCustom(CObject * co, size_t n, CString fp);
 BOOL WriteFileCustom(CObject * co, size_t n, CString fp);
 void LoadFileList(const CString &m_filePath, std::vector<CString> &filelist);

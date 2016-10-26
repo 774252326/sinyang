@@ -102,6 +102,7 @@ public:
 	afx_msg void OnEditCopy();
 	afx_msg void OnViewDatacursor();
 	afx_msg void OnUpdateViewDatacursor(CCmdUI *pCmdUI);
+	afx_msg void OnAnalysisExportdata();
 };
 
 #ifndef _DEBUG  // debug version in analyzerView.cpp
