@@ -5,7 +5,7 @@
 #include "analyzer.h"
 #include "UserAccountPage.h"
 #include "afxdialogex.h"
-#include "func.h"
+//#include "func.h"
 
 // UserAccountPage dialog
 

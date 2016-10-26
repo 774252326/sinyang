@@ -1,5 +1,6 @@
 #pragma once
-#include "AccountList.h"
+//#include "AccountList.h"
+#include "struct\AccountList.hpp"
 
 // AccountComboBox
 

@@ -7,12 +7,12 @@
 
 #include "MainFrm.h"
 
-#include "analyzerViewL.h"
-#include "analyzerViewR.h"
-#include "func.h"
-
+//#include "analyzerViewL.h"
+//#include "analyzerViewR.h"
+#include "filefunc.h"
+#include "analyzerView.h"
 #include "LoginDlg.h"
-//#include "UserAccountDlg.h"
+
 #include "UserAccountPage.h"
 #include "PropertySheetA.h"
 
@@ -34,8 +34,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_REGISTERED_MESSAGE(AFX_WM_CREATETOOLBAR, &CMainFrame::OnToolbarCreateNew)
 	ON_COMMAND_RANGE(ID_VIEW_APPLOOK_WIN_2000, ID_VIEW_APPLOOK_WINDOWS_7, &CMainFrame::OnApplicationLook)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_APPLOOK_WIN_2000, ID_VIEW_APPLOOK_WINDOWS_7, &CMainFrame::OnUpdateApplicationLook)
-	ON_COMMAND(ID_VIEW_CAPTION_BAR, &CMainFrame::OnViewCaptionBar)
-	ON_UPDATE_COMMAND_UI(ID_VIEW_CAPTION_BAR, &CMainFrame::OnUpdateViewCaptionBar)
+	//ON_COMMAND(ID_VIEW_CAPTION_BAR, &CMainFrame::OnViewCaptionBar)
+	//ON_UPDATE_COMMAND_UI(ID_VIEW_CAPTION_BAR, &CMainFrame::OnUpdateViewCaptionBar)
 	ON_COMMAND(ID_TOOLS_OPTIONS, &CMainFrame::OnOptions)
 	ON_WM_SETTINGCHANGE()
 	ON_COMMAND(ID_VIEW_TOOLBAR_A, &CMainFrame::OnViewToolbar)
@@ -65,6 +65,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_UPDATE_COMMAND_UI(ID_FILE_NEW, &CMainFrame::OnUpdateFileNew)
 	ON_COMMAND(ID_HELP_HELPTOPICS, &CMainFrame::OnHelpHelptopics)
 	ON_UPDATE_COMMAND_UI(ID_FILE_OPEN, &CMainFrame::OnUpdateFileOpen)
+	ON_WM_MOVE()
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -170,11 +171,11 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	EnableAutoHidePanes(CBRS_ALIGN_ANY);
 
 	// Create a caption bar:
-	if (!CreateCaptionBar())
-	{
-		TRACE0("Failed to create caption bar\n");
-		return -1;      // fail to create
-	}
+	//if (!CreateCaptionBar())
+	//{
+		//TRACE0("Failed to create caption bar\n");
+		//return -1;      // fail to create
+	//}
 
 	// create docking windows
 	if (!CreateDockingWindows())
@@ -204,26 +205,26 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	// enable menu personalization (most-recently used commands)
 	// TODO: define your own basic commands, ensuring that each pulldown menu has at least one basic command.
-	CList<UINT, UINT> lstBasicCommands;
+	//CList<UINT, UINT> lstBasicCommands;
 
-	lstBasicCommands.AddTail(ID_FILE_NEW);
-	lstBasicCommands.AddTail(ID_FILE_OPEN);
-	lstBasicCommands.AddTail(ID_FILE_SAVE);
-	lstBasicCommands.AddTail(ID_FILE_PRINT);
-	lstBasicCommands.AddTail(ID_APP_EXIT);
-	lstBasicCommands.AddTail(ID_EDIT_CUT);
-	lstBasicCommands.AddTail(ID_EDIT_PASTE);
-	lstBasicCommands.AddTail(ID_EDIT_UNDO);
-	lstBasicCommands.AddTail(ID_APP_ABOUT);
-	lstBasicCommands.AddTail(ID_VIEW_STATUS_BAR);
-	lstBasicCommands.AddTail(ID_VIEW_TOOLBAR);
-	lstBasicCommands.AddTail(ID_VIEW_APPLOOK_OFF_2003);
-	lstBasicCommands.AddTail(ID_VIEW_APPLOOK_VS_2005);
-	lstBasicCommands.AddTail(ID_VIEW_APPLOOK_OFF_2007_BLUE);
-	lstBasicCommands.AddTail(ID_VIEW_APPLOOK_OFF_2007_SILVER);
-	lstBasicCommands.AddTail(ID_VIEW_APPLOOK_OFF_2007_BLACK);
-	lstBasicCommands.AddTail(ID_VIEW_APPLOOK_OFF_2007_AQUA);
-	lstBasicCommands.AddTail(ID_VIEW_APPLOOK_WINDOWS_7);
+	//lstBasicCommands.AddTail(ID_FILE_NEW);
+	//lstBasicCommands.AddTail(ID_FILE_OPEN);
+	//lstBasicCommands.AddTail(ID_FILE_SAVE);
+	//lstBasicCommands.AddTail(ID_FILE_PRINT);
+	//lstBasicCommands.AddTail(ID_APP_EXIT);
+	//lstBasicCommands.AddTail(ID_EDIT_CUT);
+	//lstBasicCommands.AddTail(ID_EDIT_PASTE);
+	//lstBasicCommands.AddTail(ID_EDIT_UNDO);
+	//lstBasicCommands.AddTail(ID_APP_ABOUT);
+	//lstBasicCommands.AddTail(ID_VIEW_STATUS_BAR);
+	//lstBasicCommands.AddTail(ID_VIEW_TOOLBAR);
+	//lstBasicCommands.AddTail(ID_VIEW_APPLOOK_OFF_2003);
+	//lstBasicCommands.AddTail(ID_VIEW_APPLOOK_VS_2005);
+	//lstBasicCommands.AddTail(ID_VIEW_APPLOOK_OFF_2007_BLUE);
+	//lstBasicCommands.AddTail(ID_VIEW_APPLOOK_OFF_2007_SILVER);
+	//lstBasicCommands.AddTail(ID_VIEW_APPLOOK_OFF_2007_BLACK);
+	//lstBasicCommands.AddTail(ID_VIEW_APPLOOK_OFF_2007_AQUA);
+	//lstBasicCommands.AddTail(ID_VIEW_APPLOOK_WINDOWS_7);
 
 	//CMFCToolBar::SetBasicCommands(lstBasicCommands);
 
@@ -238,10 +239,10 @@ BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT /*lpcs*/,
 	m_bSplitterCreated = m_wndSplitter.CreateStatic(this, 1, 2);
 	// CMyView and CMyOtherView are user-defined views derived from CView
 	if(m_bSplitterCreated){
-		m_bSplitterCreated = m_wndSplitter.CreateView(0, 0, RUNTIME_CLASS(CanalyzerViewL), CSize(500,500), pContext);
+		m_bSplitterCreated = m_wndSplitter.CreateView(0, 0, RUNTIME_CLASS(CanalyzerView), CSize(500,500), pContext);
 		//this->LeftPlotPointer()->lri=0;
 		if(m_bSplitterCreated){
-			m_bSplitterCreated = m_wndSplitter.CreateView(0, 1, RUNTIME_CLASS(CanalyzerViewR), CSize(500,500), pContext);
+			m_bSplitterCreated = m_wndSplitter.CreateView(0, 1, RUNTIME_CLASS(CanalyzerView), CSize(500,500), pContext);
 			//this->RightPlotPointer()->lri=1;
 		}
 	}
@@ -291,40 +292,40 @@ void CMainFrame::SetDockingWindowIcons(BOOL bHiColorIcons)
 
 }
 
-BOOL CMainFrame::CreateCaptionBar()
-{
-	if (!m_wndCaptionBar.Create(WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS, this, ID_VIEW_CAPTION_BAR, -1, TRUE))
-	{
-		TRACE0("Failed to create caption bar\n");
-		return FALSE;
-	}
-
-	BOOL bNameValid;
-
-	CString strTemp, strTemp2;
-	bNameValid = strTemp.LoadString(IDS_CAPTION_BUTTON);
-	ASSERT(bNameValid);
-	m_wndCaptionBar.SetButton(strTemp, ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_LEFT, FALSE);
-	bNameValid = strTemp.LoadString(IDS_CAPTION_BUTTON_TIP);
-	ASSERT(bNameValid);
-	m_wndCaptionBar.SetButtonToolTip(strTemp);
-
-	m_wndCaptionBar.EnableButton(FALSE);
-
-	bNameValid = strTemp.LoadString(AFX_IDS_IDLEMESSAGE);
-	ASSERT(bNameValid);
-	//m_wndCaptionBar.SetText(strTemp, CMFCCaptionBar::ALIGN_LEFT);
-	m_wndCaptionBar.SetTextA(strTemp);
-
-	m_wndCaptionBar.SetBitmap(IDB_INFO, RGB(255, 255, 255), FALSE, CMFCCaptionBar::ALIGN_LEFT);
-	bNameValid = strTemp.LoadString(IDS_CAPTION_IMAGE_TIP);
-	ASSERT(bNameValid);
-	bNameValid = strTemp2.LoadString(IDS_CAPTION_IMAGE_TEXT);
-	ASSERT(bNameValid);
-	m_wndCaptionBar.SetImageToolTip(strTemp, strTemp2);
-
-	return TRUE;
-}
+//BOOL CMainFrame::CreateCaptionBar()
+//{
+//	if (!m_wndCaptionBar.Create(WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS, this, ID_VIEW_CAPTION_BAR, -1, TRUE))
+//	{
+//		TRACE0("Failed to create caption bar\n");
+//		return FALSE;
+//	}
+//
+//	BOOL bNameValid;
+//
+//	CString strTemp, strTemp2;
+//	bNameValid = strTemp.LoadString(IDS_CAPTION_BUTTON);
+//	ASSERT(bNameValid);
+//	m_wndCaptionBar.SetButton(strTemp, ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_LEFT, FALSE);
+//	bNameValid = strTemp.LoadString(IDS_CAPTION_BUTTON_TIP);
+//	ASSERT(bNameValid);
+//	m_wndCaptionBar.SetButtonToolTip(strTemp);
+//
+//	m_wndCaptionBar.EnableButton(FALSE);
+//
+//	bNameValid = strTemp.LoadString(AFX_IDS_IDLEMESSAGE);
+//	ASSERT(bNameValid);
+//	//m_wndCaptionBar.SetText(strTemp, CMFCCaptionBar::ALIGN_LEFT);
+//	m_wndCaptionBar.SetTextA(strTemp);
+//
+//	m_wndCaptionBar.SetBitmap(IDB_INFO, RGB(255, 255, 255), FALSE, CMFCCaptionBar::ALIGN_LEFT);
+//	bNameValid = strTemp.LoadString(IDS_CAPTION_IMAGE_TIP);
+//	ASSERT(bNameValid);
+//	bNameValid = strTemp2.LoadString(IDS_CAPTION_IMAGE_TEXT);
+//	ASSERT(bNameValid);
+//	m_wndCaptionBar.SetImageToolTip(strTemp, strTemp2);
+//
+//	return TRUE;
+//}
 
 // CMainFrame diagnostics
 
@@ -453,11 +454,14 @@ void CMainFrame::OnApplicationLook(UINT id)
 	theApp.WriteInt(_T("ApplicationLook"), theApp.m_nAppLook);
 
 
-	CanalyzerViewL *pavl=(CanalyzerViewL*)m_wndSplitter.GetPane(0,0);
-	CanalyzerViewR *pavr=(CanalyzerViewR*)m_wndSplitter.GetPane(0,1);
+	//CanalyzerViewL *pavl=(CanalyzerViewL*)m_wndSplitter.GetPane(0,0);
+	//CanalyzerViewR *pavr=(CanalyzerViewR*)m_wndSplitter.GetPane(0,1);
 
-	::SendMessage(pavl->GetSafeHwnd(),MESSAGE_CHANGE_APPLOOK,(WPARAM)oc,NULL);
-	::SendMessage(pavr->GetSafeHwnd(),MESSAGE_CHANGE_APPLOOK,(WPARAM)oc,NULL);
+	CanalyzerView *pavl=(CanalyzerView*)m_wndSplitter.GetPane(0,0);
+	CanalyzerView *pavr=(CanalyzerView*)m_wndSplitter.GetPane(0,1);
+
+	//::SendMessage(pavl->GetSafeHwnd(),MESSAGE_CHANGE_APPLOOK,(WPARAM)oc,NULL);
+	//::SendMessage(pavr->GetSafeHwnd(),MESSAGE_CHANGE_APPLOOK,(WPARAM)oc,NULL);
 	//::SendMessage(m_wndSplitter.GetPane(0,1)->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
 	//::SendMessage(m_wndSplitter.GetPane(0,0)->GetSafeHwnd(),MESSAGE_UPDATE_RAW,NULL,NULL);
 }
@@ -467,16 +471,16 @@ void CMainFrame::OnUpdateApplicationLook(CCmdUI* pCmdUI)
 	pCmdUI->SetRadio(theApp.m_nAppLook == pCmdUI->m_nID);
 }
 
-void CMainFrame::OnViewCaptionBar()
-{
-	m_wndCaptionBar.ShowWindow(m_wndCaptionBar.IsVisible() ? SW_HIDE : SW_SHOW);
-	RecalcLayout(FALSE);
-}
+//void CMainFrame::OnViewCaptionBar()
+//{
+//	m_wndCaptionBar.ShowWindow(m_wndCaptionBar.IsVisible() ? SW_HIDE : SW_SHOW);
+//	RecalcLayout(FALSE);
+//}
 
-void CMainFrame::OnUpdateViewCaptionBar(CCmdUI* pCmdUI)
-{
-	pCmdUI->SetCheck(m_wndCaptionBar.IsVisible());
-}
+//void CMainFrame::OnUpdateViewCaptionBar(CCmdUI* pCmdUI)
+//{
+//	pCmdUI->SetCheck(m_wndCaptionBar.IsVisible());
+//}
 
 void CMainFrame::OnOptions()
 {
@@ -576,34 +580,34 @@ void CMainFrame::OnAnalysisStartanalysis()
 {
 	// TODO: Add your command handler code here
 
-	mypara * pa1=new mypara;
-	pa1->leftp=(CanalyzerViewL*)m_wndSplitter.GetPane(0,0);
-	pa1->rightp=(CanalyzerViewR*)m_wndSplitter.GetPane(0,1);
-	pa1->outw=this->GetOutputWnd();
-	pa1->cba=this->GetCaptionBar();
-	pa1->psta=&pst;
-	//
+	//mypara * pa1=new mypara;
+	//pa1->leftp=(CanalyzerViewL*)m_wndSplitter.GetPane(0,0);
+	//pa1->rightp=(CanalyzerViewR*)m_wndSplitter.GetPane(0,1);
+	//pa1->outw=this->GetOutputWnd();
+	//pa1->cba=this->GetCaptionBar();
+	//pa1->psta=&pst;
+	////
 
-	//
-	//	//CWinThread *pWriteA;
-	//
-	//	//HANDLE hThread;
-	//
-	pWriteA=AfxBeginThread(PROCESS,
-		(LPVOID)(pa1),
-		THREAD_PRIORITY_NORMAL,
-		0,
-		CREATE_SUSPENDED);
-	//
-	//	//hThread=pWriteA->m_hThread;
-	//
-	//	//CloseHandle(hThread);
-	pWriteA->ResumeThread();
-	//
-	//	//PROCESS((LPVOID)(pa1));
-	//
-	//
-	pst=running;
+	////
+	////	//CWinThread *pWriteA;
+	////
+	////	//HANDLE hThread;
+	////
+	//pWriteA=AfxBeginThread(PROCESS,
+	//	(LPVOID)(pa1),
+	//	THREAD_PRIORITY_NORMAL,
+	//	0,
+	//	CREATE_SUSPENDED);
+	////
+	////	//hThread=pWriteA->m_hThread;
+	////
+	////	//CloseHandle(hThread);
+	//pWriteA->ResumeThread();
+	////
+	////	//PROCESS((LPVOID)(pa1));
+	////
+	////
+	//pst=running;
 
 }
 
@@ -614,7 +618,7 @@ void CMainFrame::OnAnalysisAbortanalysis()
 	::TerminateThread(pWriteA->m_hThread,0);
 
 	pst=stop;
-	::SendMessage(this->GetCaptionBar()->GetSafeHwnd(),MESSAGE_OVER,NULL,NULL);
+	//::SendMessage(this->GetCaptionBar()->GetSafeHwnd(),MESSAGE_OVER,NULL,NULL);
 }
 
 
@@ -639,13 +643,13 @@ void CMainFrame::OnAnalysisPause()
 	switch(pst){
 	case running:
 		if(SuspendThread(pWriteA->m_hThread)!=(DWORD)(-1)){
-			::SendMessage(this->GetCaptionBar()->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,NULL,NULL);
+			//::SendMessage(this->GetCaptionBar()->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,NULL,NULL);
 			pst=pause;
 		}
 		break;
 	case pause:
 		if(ResumeThread(pWriteA->m_hThread)!=(DWORD)(-1)){
-			::SendMessage(this->GetCaptionBar()->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
+			//::SendMessage(this->GetCaptionBar()->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
 			pst=running;
 		}
 		break;
@@ -659,49 +663,49 @@ void CMainFrame::OnAnalysisPause()
 void CMainFrame::OnUpdateAnalysisMethodsetup(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=guest);
+	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=UserAccount::authority::guest);
 }
 
 
 void CMainFrame::OnUpdateAnalysisStartanalysis(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=guest);
+	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=UserAccount::authority::guest);
 }
 
 
 void CMainFrame::OnUpdateAnalysisPause(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst!=stop && al.ual[userIndex].au!=guest);
+	pCmdUI->Enable(pst!=stop && al.ual[userIndex].au!=UserAccount::authority::guest);
 }
 
 
 void CMainFrame::OnUpdateAnalysisAbortanalysis(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst!=stop && al.ual[userIndex].au!=guest);
+	pCmdUI->Enable(pst!=stop && al.ual[userIndex].au!=UserAccount::authority::guest);
 }
 
 
 void CMainFrame::OnUpdateAnalysisReport(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=guest);
+	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=UserAccount::authority::guest);
 }
 
 
 void CMainFrame::OnUpdateOptionsPlotsettings(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=guest);
+	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=UserAccount::authority::guest);
 }
 
 
 void CMainFrame::OnUpdateViewFitwindow(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst!=running && al.ual[userIndex].au!=guest);
+	pCmdUI->Enable(pst!=running && al.ual[userIndex].au!=UserAccount::authority::guest);
 }
 
 
@@ -725,9 +729,9 @@ void CMainFrame::OnAnalysisCompute()
 {
 	// TODO: Add your command handler code here
 
-	CanalyzerViewR *pavr=(CanalyzerViewR*)m_wndSplitter.GetPane(0,1);
-	::SendMessage(pavr->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
-	::SendMessage(pavr->GetSafeHwnd(),MESSAGE_COMPUTE_RESULT,NULL,NULL);
+	//CanalyzerViewR *pavr=(CanalyzerViewR*)m_wndSplitter.GetPane(0,1);
+	//::SendMessage(pavr->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
+	//::SendMessage(pavr->GetSafeHwnd(),MESSAGE_COMPUTE_RESULT,NULL,NULL);
 }
 
 
@@ -777,35 +781,35 @@ void CMainFrame::OnSecurityUseraccounts()
 void CMainFrame::OnUpdateFilePrint(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=guest);
+	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=UserAccount::authority::guest);
 }
 
 
 void CMainFrame::OnUpdateFilePrintPreview(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=guest);
+	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=UserAccount::authority::guest);
 }
 
 
 void CMainFrame::OnUpdateFilePrintSetup(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=guest);
+	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=UserAccount::authority::guest);
 }
 
 
 void CMainFrame::OnUpdateFileSave(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=guest);
+	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=UserAccount::authority::guest);
 }
 
 
 void CMainFrame::OnUpdateFileNew(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=guest);
+	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=UserAccount::authority::guest);
 }
 
 
@@ -821,4 +825,25 @@ void CMainFrame::OnUpdateFileOpen(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
 	pCmdUI->Enable(pst==stop);
+}
+
+
+void CMainFrame::OnMove(int x, int y)
+{
+	CFrameWndEx::OnMove(x, y);
+
+	// TODO: Add your message handler code here
+	if(m_bSplitterCreated){
+	CanalyzerView *pavl=(CanalyzerView*)m_wndSplitter.GetPane(0,0);
+	CanalyzerView *pavr=(CanalyzerView*)m_wndSplitter.GetPane(0,1);
+
+	//if(pavl!=NULL){
+	//	pavl->PostMessageW(WM_SIZE,x,y);
+	//}
+	::PostMessage(pavl->GetSafeHwnd(),WM_MOVE,x,y);
+
+	if(pavr!=NULL){
+		pavr->PostMessageW(WM_SIZE,x,y);
+	}
+	}
 }

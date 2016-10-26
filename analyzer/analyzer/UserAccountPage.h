@@ -1,9 +1,14 @@
 #pragma once
 
 //#include "UserAccount.h"
-#include "ListCtrlUA.h"
+//#include "ListCtrlUA.h"
+
 //#include <vector>
-#include "AccountList.h"
+//#include "AccountList.h"
+
+#include "struct\AccountList.hpp"
+#include "list\ListCtrlUA.h"
+
 
 // UserAccountPage dialog
 

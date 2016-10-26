@@ -12,8 +12,8 @@
 #include "analyzerView.h"
 
 #include "LoginDlg.h"
-#include "func.h"
-#include "StartDlg.h"
+#include "filefunc.h"
+#include "StartDlg.hpp"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -117,14 +117,12 @@ BOOL CanalyzerApp::InitInstance()
 	sd->Create(IDD_DIALOG_START);
 	sd->ShowWindow(SW_SHOW);
 
-	Sleep(1000);
+	Sleep(500);
 
 	LoginDlg ld;
 	CString fp=L"ua";
 	ReadFileCustom(&ld.al,1,fp);
-	//ld.al.ual.push_back(UserAccount());
-
-
+	
 	if(ld.al.ual.empty()){
 		AfxMessageBox(L"read account list error");
 		return FALSE;
@@ -135,7 +133,6 @@ BOOL CanalyzerApp::InitInstance()
 		sd->ShowWindow(SW_HIDE);
 		delete sd;
 		sd=NULL;
-
 
 		// Register the application's document templates.  Document templates
 		//  serve as the connection between documents, frame windows and views
@@ -172,14 +169,11 @@ BOOL CanalyzerApp::InitInstance()
 		// Enable drag/drop open
 		m_pMainWnd->DragAcceptFiles();
 
-		//((CMainFrame*)m_pMainWnd)->au=ld.al.ual[ld.usridx].au;
 
 		((CMainFrame*)m_pMainWnd)->userIndex=ld.usridx;
 		((CMainFrame*)m_pMainWnd)->al=ld.al;
 
-
 		return TRUE;
-
 	}
 	else{
 		return FALSE;

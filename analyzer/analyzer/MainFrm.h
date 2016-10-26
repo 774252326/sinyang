@@ -4,14 +4,15 @@
 
 #pragma once
 #include "OutputWnd.h"
-#include "MFCCaptionBarA.h"
-#include "MFCToolBarA.h"
+//#include "MFCCaptionBarA.h"
+//#include "MFCToolBarA.h"
 //#include "analyzerViewR.h"
 //#include "analyzerViewL.h"
 //#include "func.h"
 
 //#include "UserAccount.h"
-#include "AccountList.h"
+//#include "AccountList.h"
+#include "struct\AccountList.hpp"
 
 
 enum ProcessState{
@@ -21,11 +22,6 @@ enum ProcessState{
 };
 
 
-//enum authority{
-//	admin,
-//	user,
-//	guest
-//};
 
 
 class CMainFrame : public CFrameWndEx
@@ -59,11 +55,11 @@ public:
 
 protected:  // control bar embedded members
 	CMFCMenuBar       m_wndMenuBar;
-	CMFCToolBarA       m_wndToolBar;
+	CMFCToolBar       m_wndToolBar;
 	CMFCStatusBar     m_wndStatusBar;
 	CMFCToolBarImages m_UserImages;
 	COutputWnd        m_wndOutput;
-	CMFCCaptionBarA    m_wndCaptionBar;
+	//CMFCCaptionBarA    m_wndCaptionBar;
 
 // Generated message map functions
 protected:
@@ -72,15 +68,15 @@ protected:
 	afx_msg LRESULT OnToolbarCreateNew(WPARAM wp, LPARAM lp);
 	afx_msg void OnApplicationLook(UINT id);
 	afx_msg void OnUpdateApplicationLook(CCmdUI* pCmdUI);
-	afx_msg void OnViewCaptionBar();
-	afx_msg void OnUpdateViewCaptionBar(CCmdUI* pCmdUI);
+	//afx_msg void OnViewCaptionBar();
+	//afx_msg void OnUpdateViewCaptionBar(CCmdUI* pCmdUI);
 	afx_msg void OnOptions();
 	afx_msg void OnSettingChange(UINT uFlags, LPCTSTR lpszSection);
 	DECLARE_MESSAGE_MAP()
 
 	BOOL CreateDockingWindows();
 	void SetDockingWindowIcons(BOOL bHiColorIcons);
-	BOOL CreateCaptionBar();
+//	BOOL CreateCaptionBar();
 
 	afx_msg void OnViewToolbar();
 	afx_msg void OnUpdateViewToolbar(CCmdUI *pCmdUI);
@@ -110,13 +106,15 @@ protected:
 	afx_msg void OnUpdateFilePrintSetup(CCmdUI *pCmdUI);
 	afx_msg void OnUpdateFileSave(CCmdUI *pCmdUI);
 	afx_msg void OnUpdateFileNew(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateFileOpen(CCmdUI *pCmdUI);
+
 	afx_msg void OnHelpHelptopics();
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 
 public:
 
 	COutputWnd* GetOutputWnd(){return &m_wndOutput;};
-	CMFCCaptionBarA* GetCaptionBar(){ return &m_wndCaptionBar;};
+	//CMFCCaptionBarA* GetCaptionBar(){ return &m_wndCaptionBar;};
 
 
 	//bool bWaiting;
@@ -125,7 +123,8 @@ public:
 	AccountList al;
 	int userIndex;
 
-	afx_msg void OnUpdateFileOpen(CCmdUI *pCmdUI);
+
+	afx_msg void OnMove(int x, int y);
 };
 
 

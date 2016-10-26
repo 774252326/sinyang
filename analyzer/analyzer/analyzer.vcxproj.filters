@@ -23,9 +23,6 @@
     <None Include="res\output_wnd_hc.ico">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="res\info.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="UserImages.bmp">
       <Filter>Resource Files</Filter>
     </None>
@@ -74,16 +71,19 @@
     <None Include="res\index_02_01_01.bmp">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\..\..\..\..\Pictures\ico\ThinkCentre.ico">
+    <None Include="res\qq.bmp">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="res\bitmap8.bmp">
+    <None Include="res\qq16.bmp">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="res\u50b18c7bcb6853363.bmp">
+    <None Include="res\qq16.ico">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="res\ThinkCentre.ico">
+    <None Include="res\IMG_20131002_154626_4.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\RDE-logo.ico">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="res\icon2.ico">
@@ -95,25 +95,7 @@
     <None Include="res\icon4.ico">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="res\qq.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="res\icon5.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="res\qq16.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="res\qq16.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="res\icon6.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="res\RDE-logo.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="res\IMG_20131002_154626_4.bmp">
+    <None Include="res\info.bmp">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
@@ -142,139 +124,52 @@
     <ClInclude Include="OutputWnd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MFCCaptionBarA.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="func.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DataOutA.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="sapitemA.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MFCToolBarA.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ANPara.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LineSeg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="linespec.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="pcct.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PlotData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PlotSpec.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Point2d.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SAPara.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="VPara.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AnalysisParametersPage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CVParametersPage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SolutionAdditionParametersPageA.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ComboItem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="EditB.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="EditInt.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="EditNum.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="EditReal.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ListCtrlA.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ListCtrlLS.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ListCtrlSAP.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RawData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PlotSettingPageA.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="analyzerViewL.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="analyzerViewR.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="pdfout.h">
+    <ClInclude Include="AccountComboBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LoginDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="EditC.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="UserAccount.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ListCtrlAA.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ListCtrlUA.h">
+    <ClInclude Include="PropertySheetA.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="UserAccountPage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AccountList.h">
+    <ClInclude Include="list\ListCtrlUA.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ListCtrlSAPB.h">
+    <ClInclude Include="list\ListCtrlA.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="testdlg.h">
+    <ClInclude Include="list\ComboItem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="sapitemF.h">
+    <ClInclude Include="list\EditB.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ListCtrlDOA.h">
+    <ClInclude Include="list\EditInt.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AccountComboBox.h">
+    <ClInclude Include="list\EditNum.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PropertySheetA.h">
+    <ClInclude Include="list\EditReal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OutputListA.h">
+    <ClInclude Include="StartDlg.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="StartDlg.h">
+    <ClInclude Include="filefunc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="plot\drawfunc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="plot\LegendDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="plot\PlotWnd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -297,142 +192,49 @@
     <ClCompile Include="OutputWnd.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MFCCaptionBarA.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="func.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DataOutA.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sapitemA.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MFCToolBarA.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ANPara.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="LineSeg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="linespec.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="pcct.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PlotData.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PlotSpec.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Point2d.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SAPara.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="VPara.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AnalysisParametersPage.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CVParametersPage.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SolutionAdditionParametersPageA.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ComboItem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="EditB.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="EditInt.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="EditNum.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="EditReal.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ListCtrlA.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ListCtrlLS.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ListCtrlSAP.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RawData.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="drawfunc.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PlotSettingPageA.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="analyzerViewL.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="analyzerViewR.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="pdfout.cpp">
+    <ClCompile Include="AccountComboBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="LoginDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="EditC.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="UserAccount.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ListCtrlAA.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ListCtrlUA.cpp">
+    <ClCompile Include="PropertySheetA.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="UserAccountPage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AccountList.cpp">
+    <ClCompile Include="list\ListCtrlUA.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ListCtrlSAPB.cpp">
+    <ClCompile Include="list\ListCtrlA.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="testdlg.cpp">
+    <ClCompile Include="filefunc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="sapitemF.cpp">
+    <ClCompile Include="plot\drawfunc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ListCtrlDOA.cpp">
+    <ClCompile Include="plot\LegendDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AccountComboBox.cpp">
+    <ClCompile Include="plot\PlotWnd.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PropertySheetA.cpp">
+    <ClCompile Include="list\ComboItem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="OutputListA.cpp">
+    <ClCompile Include="list\EditB.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="StartDlg.cpp">
+    <ClCompile Include="list\EditInt.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="list\EditNum.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="list\EditReal.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

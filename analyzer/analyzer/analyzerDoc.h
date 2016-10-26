@@ -5,42 +5,18 @@
 
 #pragma once
 
-#include "ANPara.h"
-#include "SAPara.h"
-#include "VPara.h"
-#include "RawData.h"
 
 class CanalyzerDoc : public CDocument
 {
 protected: // create from serialization only
-	//CanalyzerDoc();
+	CanalyzerDoc();
 	DECLARE_DYNCREATE(CanalyzerDoc)
 
 // Attributes
 public:
-	ANPara p1;
-	CVPara p2;
-	SAPara p3;
-	RawData raw;
-
-	//std::vector<double> xll;
-	////std::vector<double> yll;
-	//std::vector<DWORD> ll;
 
 // Operations
 public:
-	CanalyzerDoc();
-	void operator=(const CanalyzerDoc &src);
-	CanalyzerDoc(const CanalyzerDoc &src){ operator=(src); };
-	int pdfd(CString filepath,
-		bool b1,
-		bool b2,
-		bool b3,
-		bool b4,
-		bool b5,
-		bool b6,
-		bool b7);
-	//RawData* GetRaw(){return &raw;}
 
 // Overrides
 public:
@@ -60,9 +36,6 @@ public:
 #endif
 
 protected:
-	
-
-
 
 // Generated message map functions
 protected:
@@ -72,7 +45,4 @@ protected:
 	// Helper function that sets search content for a Search Handler
 	void SetSearchContent(const CString& value);
 #endif // SHARED_HANDLERS
-public:
-	afx_msg void OnAnalysisMethodsetup();
-	afx_msg void OnAnalysisReport();
 };

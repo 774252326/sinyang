@@ -30,7 +30,7 @@ void LoginDlg::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(LoginDlg, CDialogEx)
 	ON_WM_CREATE()
-	ON_WM_PAINT()
+	//ON_WM_PAINT()
 	ON_WM_CTLCOLOR()
 END_MESSAGE_MAP()
 
@@ -222,203 +222,203 @@ void LoginDlg::OnOK()
 }
 
 
-BOOL LoginDlg::OnInitDialog()
-{
-	CDialogEx::OnInitDialog();
-
-	// TODO:  Add extra initialization here
-
-	//CSize gap1(20,10);
-	//CSize gap2(10,10);
-
-	//CRect winrect;
-	//this->GetClientRect(&winrect);
-	//winrect.DeflateRect(gap1);
-
-	//CSize esz( winrect.Width(), 23 );
-	//CSize bsz( (winrect.Width()-gap2.cx)/2, 23 );
-	//CPoint pt(gap1);
-	//CString str;
-	//
-	////pt.y+=270;
-
-	//str.LoadStringW(IDS_EDIT_USERNAME);
-	//if( suser.Create(
-	//	str,
-	//	WS_CHILD
-	//	|SS_CENTER
-	//	|WS_VISIBLE, 
-	//	CRect(pt,esz),
-	//	this,
-	//	IDS_EDIT_USERNAME)==0
-	//	){
-	//		return FALSE;
-	//}
-
-	//pt.y+=esz.cy;
-
-
-	//if(m_usr.CreateEx(WS_EX_CLIENTEDGE,
-	//	CBS_DROPDOWN
-	//	|CBS_AUTOHSCROLL
-	//	|WS_CHILD
-	//	|WS_VISIBLE,
-	//	CRect(pt,esz),
-	//	this,
-	//	IDS_EDIT_USERNAME
-	//	)==FALSE){
-	//		return FALSE;
-	//}
-
-	//pt.y+=esz.cy;
-
-	//str.LoadStringW(IDS_EDIT_PASSWORD);
-
-	//if( spass.Create(
-	//	str,
-	//	WS_CHILD
-	//	|SS_CENTER
-	//	|WS_VISIBLE, 
-	//	CRect(pt,esz),
-	//	this,
-	//	IDS_EDIT_PASSWORD)
-	//	==0 ){
-	//	return FALSE;
-	//}
-	//pt.y+=esz.cy;
-
-
-	//if( epass.CreateEx(
-	//	WS_EX_CLIENTEDGE,
-	//	L"Edit", 
-	//	L"a",
-	//	ES_LEFT
-	//	|WS_CHILD
-	//	|WS_TABSTOP
-	//	|ES_PASSWORD
-	//	|WS_VISIBLE,
-	//	CRect(pt,esz),
-	//	this,
-	//	IDS_EDIT_PASSWORD)
-	//	==0 )
-	//	return FALSE;
-
-	////pt.x-=esz.cx+gap.cx;
-	//pt.y+=esz.cy+gap2.cy;
-
-	////this->GetDlgItem(IDOK)->MoveWindow(pt.x,pt.y,esz.cx,esz.cy);
-
-	//if(m_login.Create(_T("My button"), WS_CHILD|WS_VISIBLE|BS_PUSHBUTTON, CRect(pt,bsz), this, IDOK)==FALSE){
-	//	return FALSE;
-	//}
-
-
-
-
-	//pt.x+=esz.cx+gap2.cx;
-
-	////this->GetDlgItem(IDCANCEL)->MoveWindow(CRect(pt,esz));
-
-	//if(m_cancel.Create(_T("My button2"), WS_CHILD|WS_VISIBLE|BS_PUSHBUTTON, CRect(pt,bsz), this, IDCANCEL)==FALSE){
-	//	return FALSE;
-	//}
-
-
-
-	//CImage bmp;
-	//bmp.Load(L"C:\\Users\\r8anw2x\\Pictures\\Sample Album\\Pensive Parakeet.jpg");
-
-	//this->SetBackgroundImage((HBITMAP)(bmp));
-	//this->SetBackgroundImage(IDB_BITMAP_BK);
-	//sbmp.SetBitmap((HBITMAP)(bmp));
-
-
-
-	//m_ImageList.Create(16, 16, ILC_COLOR, 3, 3);
-
-	//HICON hIcon1;
-	//hIcon1 = AfxGetApp()->LoadIcon(IDI_ICON2);
-	//m_ImageList.Add(hIcon1);
-
-	//hIcon1 = AfxGetApp()->LoadIcon(IDI_ICON3);
-	//m_ImageList.Add(hIcon1);
-
-	//hIcon1 = AfxGetApp()->LoadIcon(IDI_ICON4);
-	//m_ImageList.Add(hIcon1);
-
-	////关联图像列表和扩展组合框
-
-	////m_pw.SetImageList(&m_ImageList);
-	//m_usr.SetImageList(&m_ImageList);
-
-
-
-	//COMBOBOXEXITEM     cbi;//扩展组合框单元
-	//cbi.mask = CBEIF_IMAGE| CBEIF_INDENT | CBEIF_OVERLAY |CBEIF_SELECTEDIMAGE | CBEIF_TEXT;
-
-
-	//for(size_t i=0;i<al.ual.size();i++){
-	//	cbi.iItem = i;
-	//	cbi.iImage = al.ual[i].au;
-	//	cbi.iSelectedImage = al.ual[i].au;
-	//	cbi.pszText = al.ual[i].userName.GetBuffer();
-	//	cbi.iOverlay = al.ual[i].au+1;
-	//	cbi.iIndent=0;
-	//	m_usr.InsertItem(&cbi);
-
-	//	//m_usr.SetItemHeight(i,20);
-	//}
-
-	//CComboBox *cb=m_usr.GetComboBoxCtrl();
-	//cb->SetCurSel(0);
-	//cb->SetMinVisibleItems(3);
-	//m_usr.SetWindowTextW(al.ual[0].userName);
-
-
-
-	return TRUE;  // return TRUE unless you set the focus to a control
-	// EXCEPTION: OCX Property Pages should return FALSE
-}
-
-
-void LoginDlg::OnPaint()
-{
-	CPaintDC dc(this); // device context for painting
-	// TODO: Add your message handler code here
-	// Do not call CDialogEx::OnPaint() for painting messages
-
-	//CDC *pDC=this->GetDC();
-
-	//CDC dcMem;//用于缓冲作图的内存DC
-	//CBitmap bmp;//内存中承载临时图象的位图
-	//CRect rect;
-	//GetClientRect(&rect);
-	//dcMem.CreateCompatibleDC(&dc);//依附窗口DC创建兼容内存DC
-	//CSize winsz=rect.Size();
-	////bmp.CreateCompatibleBitmap(pDC,winsz.cx,winsz.cy);//创建兼容位图
-	//bmp.LoadBitmapW(IDB_BITMAP_SINYANG);
-	//dcMem.SelectObject(&bmp);  	//将位图选择进内存DC
-
-	////CSize sz=bmp.GetBitmapDimension();
-	//CSize sz(271,92);
-
-	//CPoint pt(rect.CenterPoint().x-sz.cx/2,20);
-
-	//dc.BitBlt(pt.x,pt.y,sz.cx,sz.cy,&dcMem,0,0,SRCCOPY);//将内存DC上的图象拷贝到前台
-	////pDC->BitBlt(100,100,winsz.cx,winsz.cy,&dcMem,0,0,SRCCOPY);//将内存DC上的图象拷贝到前台
-
-	//dcMem.DeleteDC(); //删除DC
-	//bmp.DeleteObject(); //删除位图
-	//////////////////////////////////////////////////////////
-	//CBitmap bmp;//内存中承载临时图象的位图
-	//bmp.LoadBitmapW(IDB_BITMAP_SINYANG);
-
-	//CImage bmp;
-	//bmp.Load(L"C:\\Users\\r8anw2x\\Documents\\Visual Studio 2010\\project1\\u50b18d130687f5535.bmp");
-	//sbmp.SetBitmap((HBITMAP)(bmp));
+//BOOL LoginDlg::OnInitDialog()
+//{
+//	CDialogEx::OnInitDialog();
+//
+//	// TODO:  Add extra initialization here
+//
+//	//CSize gap1(20,10);
+//	//CSize gap2(10,10);
+//
+//	//CRect winrect;
+//	//this->GetClientRect(&winrect);
+//	//winrect.DeflateRect(gap1);
+//
+//	//CSize esz( winrect.Width(), 23 );
+//	//CSize bsz( (winrect.Width()-gap2.cx)/2, 23 );
+//	//CPoint pt(gap1);
+//	//CString str;
+//	//
+//	////pt.y+=270;
+//
+//	//str.LoadStringW(IDS_EDIT_USERNAME);
+//	//if( suser.Create(
+//	//	str,
+//	//	WS_CHILD
+//	//	|SS_CENTER
+//	//	|WS_VISIBLE, 
+//	//	CRect(pt,esz),
+//	//	this,
+//	//	IDS_EDIT_USERNAME)==0
+//	//	){
+//	//		return FALSE;
+//	//}
+//
+//	//pt.y+=esz.cy;
+//
+//
+//	//if(m_usr.CreateEx(WS_EX_CLIENTEDGE,
+//	//	CBS_DROPDOWN
+//	//	|CBS_AUTOHSCROLL
+//	//	|WS_CHILD
+//	//	|WS_VISIBLE,
+//	//	CRect(pt,esz),
+//	//	this,
+//	//	IDS_EDIT_USERNAME
+//	//	)==FALSE){
+//	//		return FALSE;
+//	//}
+//
+//	//pt.y+=esz.cy;
+//
+//	//str.LoadStringW(IDS_EDIT_PASSWORD);
+//
+//	//if( spass.Create(
+//	//	str,
+//	//	WS_CHILD
+//	//	|SS_CENTER
+//	//	|WS_VISIBLE, 
+//	//	CRect(pt,esz),
+//	//	this,
+//	//	IDS_EDIT_PASSWORD)
+//	//	==0 ){
+//	//	return FALSE;
+//	//}
+//	//pt.y+=esz.cy;
+//
+//
+//	//if( epass.CreateEx(
+//	//	WS_EX_CLIENTEDGE,
+//	//	L"Edit", 
+//	//	L"a",
+//	//	ES_LEFT
+//	//	|WS_CHILD
+//	//	|WS_TABSTOP
+//	//	|ES_PASSWORD
+//	//	|WS_VISIBLE,
+//	//	CRect(pt,esz),
+//	//	this,
+//	//	IDS_EDIT_PASSWORD)
+//	//	==0 )
+//	//	return FALSE;
+//
+//	////pt.x-=esz.cx+gap.cx;
+//	//pt.y+=esz.cy+gap2.cy;
+//
+//	////this->GetDlgItem(IDOK)->MoveWindow(pt.x,pt.y,esz.cx,esz.cy);
+//
+//	//if(m_login.Create(_T("My button"), WS_CHILD|WS_VISIBLE|BS_PUSHBUTTON, CRect(pt,bsz), this, IDOK)==FALSE){
+//	//	return FALSE;
+//	//}
+//
+//
+//
+//
+//	//pt.x+=esz.cx+gap2.cx;
+//
+//	////this->GetDlgItem(IDCANCEL)->MoveWindow(CRect(pt,esz));
+//
+//	//if(m_cancel.Create(_T("My button2"), WS_CHILD|WS_VISIBLE|BS_PUSHBUTTON, CRect(pt,bsz), this, IDCANCEL)==FALSE){
+//	//	return FALSE;
+//	//}
+//
+//
+//
+//	//CImage bmp;
+//	//bmp.Load(L"C:\\Users\\r8anw2x\\Pictures\\Sample Album\\Pensive Parakeet.jpg");
+//
+//	//this->SetBackgroundImage((HBITMAP)(bmp));
+//	//this->SetBackgroundImage(IDB_BITMAP_BK);
+//	//sbmp.SetBitmap((HBITMAP)(bmp));
+//
+//
+//
+//	//m_ImageList.Create(16, 16, ILC_COLOR, 3, 3);
+//
+//	//HICON hIcon1;
+//	//hIcon1 = AfxGetApp()->LoadIcon(IDI_ICON2);
+//	//m_ImageList.Add(hIcon1);
+//
+//	//hIcon1 = AfxGetApp()->LoadIcon(IDI_ICON3);
+//	//m_ImageList.Add(hIcon1);
+//
+//	//hIcon1 = AfxGetApp()->LoadIcon(IDI_ICON4);
+//	//m_ImageList.Add(hIcon1);
+//
+//	////关联图像列表和扩展组合框
+//
+//	////m_pw.SetImageList(&m_ImageList);
+//	//m_usr.SetImageList(&m_ImageList);
+//
+//
+//
+//	//COMBOBOXEXITEM     cbi;//扩展组合框单元
+//	//cbi.mask = CBEIF_IMAGE| CBEIF_INDENT | CBEIF_OVERLAY |CBEIF_SELECTEDIMAGE | CBEIF_TEXT;
+//
+//
+//	//for(size_t i=0;i<al.ual.size();i++){
+//	//	cbi.iItem = i;
+//	//	cbi.iImage = al.ual[i].au;
+//	//	cbi.iSelectedImage = al.ual[i].au;
+//	//	cbi.pszText = al.ual[i].userName.GetBuffer();
+//	//	cbi.iOverlay = al.ual[i].au+1;
+//	//	cbi.iIndent=0;
+//	//	m_usr.InsertItem(&cbi);
+//
+//	//	//m_usr.SetItemHeight(i,20);
+//	//}
+//
+//	//CComboBox *cb=m_usr.GetComboBoxCtrl();
+//	//cb->SetCurSel(0);
+//	//cb->SetMinVisibleItems(3);
+//	//m_usr.SetWindowTextW(al.ual[0].userName);
+//
+//
+//
+//	return TRUE;  // return TRUE unless you set the focus to a control
+//	// EXCEPTION: OCX Property Pages should return FALSE
+//}
 
 
-}
+//void LoginDlg::OnPaint()
+//{
+//	CPaintDC dc(this); // device context for painting
+//	// TODO: Add your message handler code here
+//	// Do not call CDialogEx::OnPaint() for painting messages
+//
+//	//CDC *pDC=this->GetDC();
+//
+//	//CDC dcMem;//用于缓冲作图的内存DC
+//	//CBitmap bmp;//内存中承载临时图象的位图
+//	//CRect rect;
+//	//GetClientRect(&rect);
+//	//dcMem.CreateCompatibleDC(&dc);//依附窗口DC创建兼容内存DC
+//	//CSize winsz=rect.Size();
+//	////bmp.CreateCompatibleBitmap(pDC,winsz.cx,winsz.cy);//创建兼容位图
+//	//bmp.LoadBitmapW(IDB_BITMAP_SINYANG);
+//	//dcMem.SelectObject(&bmp);  	//将位图选择进内存DC
+//
+//	////CSize sz=bmp.GetBitmapDimension();
+//	//CSize sz(271,92);
+//
+//	//CPoint pt(rect.CenterPoint().x-sz.cx/2,20);
+//
+//	//dc.BitBlt(pt.x,pt.y,sz.cx,sz.cy,&dcMem,0,0,SRCCOPY);//将内存DC上的图象拷贝到前台
+//	////pDC->BitBlt(100,100,winsz.cx,winsz.cy,&dcMem,0,0,SRCCOPY);//将内存DC上的图象拷贝到前台
+//
+//	//dcMem.DeleteDC(); //删除DC
+//	//bmp.DeleteObject(); //删除位图
+//	//////////////////////////////////////////////////////////
+//	//CBitmap bmp;//内存中承载临时图象的位图
+//	//bmp.LoadBitmapW(IDB_BITMAP_SINYANG);
+//
+//	//CImage bmp;
+//	//bmp.Load(L"C:\\Users\\r8anw2x\\Documents\\Visual Studio 2010\\project1\\u50b18d130687f5535.bmp");
+//	//sbmp.SetBitmap((HBITMAP)(bmp));
+//
+//
+//}
 
 
 HBRUSH LoginDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
@@ -442,7 +442,7 @@ HBRUSH LoginDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 		pDC->SetTextColor(RGB(0,0,0));//设置字体为黄色
 		return (HBRUSH)::GetStockObject(NULL_BRUSH);
 	}
-
+	
 
 	return hbr;
 }

@@ -1,9 +1,13 @@
 #pragma once
 //#include "func.h"
-#include "MainFrm.h"
-#include "EditC.h"
-#include "AccountList.h"
+//#include "MainFrm.h"
+//#include "EditC.h"
+//#include "AccountList.h"
+
+#include "list\EditC.h"
+#include "struct\AccountList.hpp"
 #include "AccountComboBox.h"
+
 // LoginDlg dialog
 
 class LoginDlg : public CDialogEx
@@ -39,8 +43,8 @@ public:
 
 	virtual void OnOK();
 
-	virtual BOOL OnInitDialog();
-	afx_msg void OnPaint();
+//	virtual BOOL OnInitDialog();
+//	afx_msg void OnPaint();
 
 	AccountList al;
 

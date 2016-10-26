@@ -5,8 +5,7 @@
 #pragma once
 
 #include "analyzerDoc.h"
-#include "MainFrm.h"
-#include "PlotData.h"
+#include "plot\PlotWnd.h"
 
 class CanalyzerView : public CView
 {
@@ -17,7 +16,7 @@ protected: // create from serialization only
 // Attributes
 public:
 	CanalyzerDoc* GetDocument() const;
-
+	PlotWnd pw;
 // Operations
 public:
 
@@ -47,47 +46,10 @@ protected:
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	DECLARE_MESSAGE_MAP()
 public:
-	virtual void OnInitialUpdate();
-
-	std::vector<PlotData> pdl;
-
-	double xmin,xmax,ymin,ymax;
-	double pct;
-
-	CSpinButtonCtrl m_spBtn;
-	CSize spBtnSize;
-
-	PlotSpec psview;
-	CToolTipCtrl m_tool;
-	CPoint m_mouseDownPoint;
-	bool bMouseCursor;
-	size_t selectPIdx;
-protected:
-	afx_msg LRESULT OnMessageChangeApplook(WPARAM wParam, LPARAM lParam);
-	afx_msg LRESULT OnMessageGetPlotspec(WPARAM wParam, LPARAM lParam);
-public:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
-protected:
-	afx_msg LRESULT OnMessageUpdateView(WPARAM wParam, LPARAM lParam);
-public:
-	afx_msg void OnOptionsPlotsettings();
-	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
-	afx_msg void OnViewDatacursor();
-	afx_msg void OnUpdateViewDatacursor(CCmdUI *pCmdUI);
-	virtual BOOL PreTranslateMessage(MSG* pMsg);
-	afx_msg void OnViewFitwindow();
-//	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
-
-	void OnDeltaposSpin(NMHDR* pNMHDR, LRESULT* pResult);
-	
-	virtual void OnPrepareDC(CDC* pDC, CPrintInfo* pInfo = NULL);
-	int UpdateSpinButton(int np, bool bLast);
-	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 	afx_msg void OnControls1();
+	afx_msg void OnMove(int x, int y);
 };
 
 #ifndef _DEBUG  // debug version in analyzerView.cpp
