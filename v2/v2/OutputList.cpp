@@ -555,7 +555,7 @@ void COutputList::OnPopupAdd()
 	Cv2View* pavr=((Cv2View*)(mf->GetSplitterWnd()->GetPane(0,1)));
 	Cv2Doc *pad=pavl->GetDocument();	
 
-	int ci=pad->AddRect(CRect(pad->rl.size(),0,0,0));
+	int ci=pad->AddRect(CRect(0,0,0,0));
 
 	ShowRl(pad->rl);
 }

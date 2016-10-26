@@ -131,6 +131,11 @@ int COutputWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	//FillDebugWindow();
 	//FillFindWindow();
 
+	m_listCtrlMonitor.OnPopupAdd();
+	m_listCtrlMonitor.OnPopupAdd();
+	m_listCtrlMonitor.OnPopupAdd();
+	m_listCtrlMonitor.OnPopupAdd();
+
 	return 0;
 }
 

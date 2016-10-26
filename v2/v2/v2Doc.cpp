@@ -21,6 +21,8 @@
 //#include "hetu.h"
 //#include "engine.h"
 
+#include "warpPerspectiveEx.hpp"
+
 //本文来自: 高校自动化网(Www.zdh1909.com) 详细出处参考(转载请保留本链接)：http://www.zdh1909.com/html/matlab/15433.html
 
 #ifdef _DEBUG
@@ -279,79 +281,131 @@ IMPLEMENT_DYNCREATE(Cv2Doc, CDocument)
 	void Cv2Doc::OnEditHetu()
 	{
 
+		////int sizes[CV_MAX_DIM]={9,8,7,6,5,4,3,2,3,4,5};
+
+		////cv::Mat hh(10,sizes,CV_64FC(4));
+		////cv::Mat m(5,sizes,CV_64FC(5));
+
+
+		//////cv::Mat::MSize aaa=hh.size();
+
+		//////cv::Size aaa=hh.size();
+
+		////int i, total = 1;
+		//////CvMat cvimg = hh;
+		//////int dims = cvGetDims(&CvMat(hh), sizes2);
+		////int ddd=hh.size[2];
+
+
+		////int idx[CV_MAX_DIM];
+		////for(idx[0]=0;idx[0]<hh.size[0];idx[0]++){
+		////	for(idx[1]=0;idx[1]<hh.size[1];idx[1]++){
+		////		for(idx[2]=0;idx[2]<hh.size[2];idx[2]++){
+		////			for(idx[3]=0;idx[3]<hh.size[3];idx[3]++){
+		////				for(idx[4]=0;idx[4]<hh.size[4];idx[4]++){
+		////					for(idx[5]=0;idx[5]<hh.size[5];idx[5]++){
+		////						for(idx[6]=0;idx[6]<hh.size[6];idx[6]++){
+		////							for(int ci=0;ci<m.channels();ci++){
+		////								m.at< cv::Vec<double,5> >(idx)[ci]=5;
+		////								printf("%f,",m.at< cv::Vec<double,5> >(idx)[ci]);
+		////							}
+		////						}
+		////					}
+		////				}
+		////			}
+		////		}
+		////	}
+		////}
+
+
+
+
 		cv::Mat srcPoints(rl.size(),1,CV_32FC2);
 		cv::Mat dstPoints(rl.size(),1,CV_32FC2);
 
 		for(size_t i=0;i<rl.size();i++){
-			dstPoints.at<cv::Vec2f>(i,0)[0]=rl[i].left;
-			dstPoints.at<cv::Vec2f>(i,0)[1]=rl[i].top;
-			srcPoints.at<cv::Vec2f>(i,0)[0]=rl[i].right;
-			srcPoints.at<cv::Vec2f>(i,0)[1]=rl[i].bottom;
+			dstPoints.at<cv::Vec2f>(i,0)[0]=rl[i].top;
+			dstPoints.at<cv::Vec2f>(i,0)[1]=rl[i].left;
+			srcPoints.at<cv::Vec2f>(i,0)[0]=rl[i].bottom;
+			srcPoints.at<cv::Vec2f>(i,0)[1]=rl[i].right;
 		}
 
 
 		cv::Mat h=cv::findHomography(srcPoints, dstPoints, 0);
 
-		
-		//for(int j=0;j<h.rows;j++){
-		//	for(int k=0;k<h.cols;k++){
-		//		double a=h.at<cv::Vec<double,1>>(j,k)[0];
-		//		TRACE(L"%g,",a);
-		//	}
-		//	TRACE(L"\n");
-		//}
+//		cv::Mat h = (cv::Mat_<double>(3,3) << 
+//		0.77113,-0.0273435,61.8974,
+//-0.155079,0.73956,327.025,
+//-0.000182791,-0.000190037,1);
 
-		POSITION pos = GetFirstViewPosition();
-		Cv2View* lv=(Cv2View*)GetNextView(pos);
-		Cv2View* rv=(Cv2View*)GetNextView(pos);
-
-		cv::Mat osz(4,1,CV_64FC2,cv::Scalar(0,0));
-		osz.at<cv::Vec2d>(2,0)[1]=rv->imgsz.cy-1;
-		osz.at<cv::Vec2d>(3,0)[1]=rv->imgsz.cy-1;
-		osz.at<cv::Vec2d>(1,0)[0]=rv->imgsz.cx-1;
-		osz.at<cv::Vec2d>(3,0)[0]=rv->imgsz.cx-1;
-		
-		cv::Mat nsz(4,1,CV_64FC2,cv::Scalar(0,0));
-
-		cv::perspectiveTransform(osz,nsz,h);
-
-		cv::Vec2d pt=nsz.at<cv::Vec2d>(0,0);
-
-		cv::Vec2d sz=pt;
-
-		if(nsz.at<cv::Vec2d>(1,0)[0]<pt[0])
-			pt[0]=nsz.at<cv::Vec2d>(1,0)[0];
-		if(nsz.at<cv::Vec2d>(1,0)[0]>sz[0])
-			sz[0]=nsz.at<cv::Vec2d>(1,0)[0];
-		if(nsz.at<cv::Vec2d>(1,0)[1]<pt[1])
-			pt[1]=nsz.at<cv::Vec2d>(1,0)[1];
-		if(nsz.at<cv::Vec2d>(1,0)[1]>sz[1])
-			sz[1]=nsz.at<cv::Vec2d>(1,0)[1];
-
-		if(nsz.at<cv::Vec2d>(2,0)[0]<pt[0])
-			pt[0]=nsz.at<cv::Vec2d>(2,0)[0];
-		if(nsz.at<cv::Vec2d>(2,0)[0]>sz[0])
-			sz[0]=nsz.at<cv::Vec2d>(2,0)[0];
-		if(nsz.at<cv::Vec2d>(2,0)[1]<pt[1])
-			pt[1]=nsz.at<cv::Vec2d>(2,0)[1];
-		if(nsz.at<cv::Vec2d>(2,0)[1]>sz[1])
-			sz[1]=nsz.at<cv::Vec2d>(2,0)[1];
-
-		if(nsz.at<cv::Vec2d>(3,0)[0]<pt[0])
-			pt[0]=nsz.at<cv::Vec2d>(3,0)[0];
-		if(nsz.at<cv::Vec2d>(3,0)[0]>sz[0])
-			sz[0]=nsz.at<cv::Vec2d>(3,0)[0];
-		if(nsz.at<cv::Vec2d>(3,0)[1]<pt[1])
-			pt[1]=nsz.at<cv::Vec2d>(3,0)[1];
-		if(nsz.at<cv::Vec2d>(3,0)[1]>sz[1])
-			sz[1]=nsz.at<cv::Vec2d>(3,0)[1];
+		//int aaa=h.depth();
+		//int ch=h.channels();
 
 
-		CRect nrect;
-		nrect.left=floor(pt[0]);
-		nrect.top=floor(pt[1]);
-		nrect.right=ceil(sz[0]);
-		nrect.bottom=ceil(sz[1]);
+
+
+		////for(int j=0;j<h.rows;j++){
+		////	for(int k=0;k<h.cols;k++){
+		////		double a=h.at<cv::Vec<double,1>>(j,k)[0];
+		////		TRACE(L"%g,",a);
+		////	}
+		////	TRACE(L"\n");
+		////}
+
+		//POSITION pos = GetFirstViewPosition();
+		//Cv2View* lv=(Cv2View*)GetNextView(pos);
+		//Cv2View* rv=(Cv2View*)GetNextView(pos);
+
+		//cv::Mat osz(4,1,CV_64FC2,cv::Scalar(0,0));
+		//osz.at<cv::Vec2d>(2,0)[1]=rv->imgsz.cy-1;
+		//osz.at<cv::Vec2d>(3,0)[1]=rv->imgsz.cy-1;
+		//osz.at<cv::Vec2d>(1,0)[0]=rv->imgsz.cx-1;
+		//osz.at<cv::Vec2d>(3,0)[0]=rv->imgsz.cx-1;
+
+		//cv::Mat nsz(4,1,CV_64FC2,cv::Scalar(0,0));
+
+		//cv::perspectiveTransform(osz,nsz,h);
+
+		//cv::Vec2d pt=nsz.at<cv::Vec2d>(0,0);
+
+		//cv::Vec2d sz=pt;
+
+		//if(nsz.at<cv::Vec2d>(1,0)[0]<pt[0])
+		//	pt[0]=nsz.at<cv::Vec2d>(1,0)[0];
+		//if(nsz.at<cv::Vec2d>(1,0)[0]>sz[0])
+		//	sz[0]=nsz.at<cv::Vec2d>(1,0)[0];
+		//if(nsz.at<cv::Vec2d>(1,0)[1]<pt[1])
+		//	pt[1]=nsz.at<cv::Vec2d>(1,0)[1];
+		//if(nsz.at<cv::Vec2d>(1,0)[1]>sz[1])
+		//	sz[1]=nsz.at<cv::Vec2d>(1,0)[1];
+
+		//if(nsz.at<cv::Vec2d>(2,0)[0]<pt[0])
+		//	pt[0]=nsz.at<cv::Vec2d>(2,0)[0];
+		//if(nsz.at<cv::Vec2d>(2,0)[0]>sz[0])
+		//	sz[0]=nsz.at<cv::Vec2d>(2,0)[0];
+		//if(nsz.at<cv::Vec2d>(2,0)[1]<pt[1])
+		//	pt[1]=nsz.at<cv::Vec2d>(2,0)[1];
+		//if(nsz.at<cv::Vec2d>(2,0)[1]>sz[1])
+		//	sz[1]=nsz.at<cv::Vec2d>(2,0)[1];
+
+		//if(nsz.at<cv::Vec2d>(3,0)[0]<pt[0])
+		//	pt[0]=nsz.at<cv::Vec2d>(3,0)[0];
+		//if(nsz.at<cv::Vec2d>(3,0)[0]>sz[0])
+		//	sz[0]=nsz.at<cv::Vec2d>(3,0)[0];
+		//if(nsz.at<cv::Vec2d>(3,0)[1]<pt[1])
+		//	pt[1]=nsz.at<cv::Vec2d>(3,0)[1];
+		//if(nsz.at<cv::Vec2d>(3,0)[1]>sz[1])
+		//	sz[1]=nsz.at<cv::Vec2d>(3,0)[1];
+
+
+
+
+
+		//CRect nrect;
+		//nrect.left=floor(pt[0]);
+		//nrect.top=floor(pt[1]);
+		//nrect.right=ceil(sz[0]);
+		//nrect.bottom=ceil(sz[1]);
 
 		char * buffer0=new char[imgfp0.GetLength()+1]; 
 		wcstombs(buffer0,imgfp0.GetBuffer(),imgfp0.GetLength()+1);
@@ -365,37 +419,46 @@ IMPLEMENT_DYNCREATE(Cv2Doc, CDocument)
 
 		cv::Mat dstimg;
 
-		cv::warpPerspective(srcimg,
+		cv::Point opt=WarpPerspectiveEx(srcimg,
 			dstimg,
-			h,
-			cv::Size(srcimg1.cols>nrect.right?srcimg1.cols:nrect.right,srcimg1.rows>nrect.bottom?srcimg1.rows:nrect.bottom)
-			//,cv::INTER_LINEAR|cv::WARP_INVERSE_MAP
-			);
-
-		cv::imwrite("pi.bmp",dstimg);
-
-		cv::Mat tempRoi(dstimg,cv::Rect(0,0,srcimg1.cols,srcimg1.rows));
+			h);
 
 
-		
-		//srcimg1.copyTo(tempRoi);
 
-		if(srcimg1.rows<dstimg.rows)
-			srcimg1.resize(dstimg.rows,cv::Scalar());
 
-		if(srcimg1.cols<dstimg.cols){
-			srcimg1=srcimg1.t();
-			srcimg1.resize(dstimg.cols,cv::Scalar());
-			srcimg1=srcimg1.t();
-		}
-
-		cv::Mat dstimg1;
-
-		cv::addWeighted(srcimg1,0.5,dstimg,0.5,0,dstimg1);
+		//cv::warpPerspective(srcimg,
+		//	dstimg,
+		//	h,
+		//	cv::Size(srcimg1.cols>nrect.right?srcimg1.cols:nrect.right,srcimg1.rows>nrect.bottom?srcimg1.rows:nrect.bottom)
+		//	//,cv::INTER_LINEAR|cv::WARP_INVERSE_MAP
+		//	);
 
 		cv::namedWindow("res",CV_WINDOW_NORMAL|CV_WINDOW_KEEPRATIO );
-		cv::imshow("res",dstimg1);
+		cv::imshow("res",dstimg);
+		cv::imwrite("pi.bmp",dstimg);
 
-		cv::imwrite("pi1.bmp",dstimg1);
+		//cv::Mat tempRoi(dstimg,cv::Rect(0,0,srcimg1.cols,srcimg1.rows));
+
+
+
+		////srcimg1.copyTo(tempRoi);
+
+		//if(srcimg1.rows<dstimg.rows)
+		//	srcimg1.resize(dstimg.rows,cv::Scalar());
+
+		//if(srcimg1.cols<dstimg.cols){
+		//	srcimg1=srcimg1.t();
+		//	srcimg1.resize(dstimg.cols,cv::Scalar());
+		//	srcimg1=srcimg1.t();
+		//}
+
+		//cv::Mat dstimg1;
+
+		//cv::addWeighted(srcimg1,0.5,dstimg,0.5,0,dstimg1);
+
+		//cv::namedWindow("res",CV_WINDOW_NORMAL|CV_WINDOW_KEEPRATIO );
+		//cv::imshow("res",dstimg1);
+
+		//cv::imwrite("pi1.bmp",dstimg1);
 
 	}
