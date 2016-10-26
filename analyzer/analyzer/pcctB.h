@@ -4,13 +4,15 @@
 #include "sapitemA.h"
 #include "VPara.h"
 
-
+//one filter BYTE 
 #define PCCTB_VMS 0x01
 #define PCCTB_S 0x02
 #define PCCTB_A 0x04
 #define PCCTB_L 0x08
 #define PCCTB_MORE 0x10
 #define PCCTB_SAMPLE 0x20
+#define PCCTB_RECOUNT 0x40
+#define PCCTB_RESET_SOLUTION_AT_END 0x80
 
 class pcctB
 {

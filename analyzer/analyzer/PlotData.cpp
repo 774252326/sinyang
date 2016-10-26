@@ -302,3 +302,14 @@ PlotData PlotData::ExtractLastCycle(double xmax)
 	}
 	return p1;
 }
+
+
+void PlotData::SetSpec(const CString & xla, const CString & yla, const PlotSpec & psp0)
+{
+	if(!xla.IsEmpty())
+		xlabel=xla;
+	if(!yla.IsEmpty())
+		ylabel=yla;
+
+	psp=psp0;
+}

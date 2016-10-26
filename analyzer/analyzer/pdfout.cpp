@@ -758,6 +758,71 @@ int pdfout2(pdflib::PDFlib &p, const CVPara &para){
 }
 
 
+
+int pdfout3(pdflib::PDFlib &p, const ANPara &para, const CString &resultStr){
+
+	int font;
+	font = p.load_font(L"Helvetica", L"winansi", L"");
+	if (font == -1) {
+		std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
+		return 2;
+	}
+
+	/* Start page 1 */
+	p.begin_page_ext(0, 0, L"width=a4.width height=a4.height");
+	p.setfont(font, 12);
+
+	CString str;
+
+	int hi=800;
+
+	str.LoadStringW(IDS_STRING_AT1+para.analysistype);
+	p.fit_textline((LPCWSTR)str, 20, hi, L"");
+
+	hi-=12;
+	str.LoadStringW(IDS_STRING_EVALUATION_RATIO);
+	{
+		CString str1;			
+		str1.Format(L"=%g",para.evaluationratio);
+		str=str+str1;
+	}
+	p.fit_textline((LPCWSTR)str, 20, hi, L"");
+	hi-=12;
+
+	switch(para.analysistype){
+	case 2:
+	case 6:
+	case 8:
+	case 10:
+		str.LoadStringW(IDS_STRING_CALIBRATION_CURVE_FILE);
+		p.fit_textline((LPCWSTR)str, 20, hi, L"");
+		hi-=12;
+		p.fit_textline((LPCWSTR)para.calibrationfilepath, 20, hi, L"");
+		hi-=12;
+		break;
+	case 4:
+		str.LoadStringW(IDS_STRING_INTERCEPT_VALUE);
+		{
+			CString str1;			
+			str1.Format(L"=%g",para.interceptvalue);
+			str=str+str1;
+		}
+		p.fit_textline((LPCWSTR)str, 20, hi, L"");
+		hi-=12;
+		break;
+	default:
+		break;
+	}
+	p.fit_textline((LPCWSTR)resultStr, 20, hi, L"");
+
+
+	p.end_page_ext(L"");
+
+	return 0;
+}
+
+
+
 int imgout(pdflib::PDFlib &p, const std::wstring imagefile)
 {
 	int font, image;
@@ -804,67 +869,9 @@ int pdfd(CString outfile, CanalyzerDoc *padoc)
 	p.set_info(L"Creator", L"PDFlib starter sample");
 	p.set_info(L"Title", L"starter_table");
 
-	{
-		int font;
-		font = p.load_font(L"Helvetica", L"winansi", L"");
-		if (font == -1) {
-			std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
-			return 2;
-		}
-
-		/* Start page 1 */
-		p.begin_page_ext(0, 0, L"width=a4.width height=a4.height");
-		p.setfont(font, 12);
-
-		CString str;
-
-		int hi=800;
-
-		str.LoadStringW(IDS_STRING_AT1+padoc->p1.analysistype);
-		p.fit_textline((LPCWSTR)str, 20, hi, L"");
-
-		hi-=12;
-		str.LoadStringW(IDS_STRING_EVALUATION_RATIO);
-		{
-			CString str1;			
-			str1.Format(L"=%g",padoc->p1.evaluationratio);
-			str=str+str1;
-		}
-		p.fit_textline((LPCWSTR)str, 20, hi, L"");
-		hi-=12;
-
-		switch(padoc->p1.analysistype){
-		case 2:
-		case 6:
-		case 8:
-			str.LoadStringW(IDS_STRING_CALIBRATION_CURVE_FILE);
-			p.fit_textline((LPCWSTR)str, 20, hi, L"");
-			hi-=12;
-			p.fit_textline((LPCWSTR)padoc->p1.calibrationfilepath, 20, hi, L"");
-			hi-=12;
-			break;
-		case 4:
-			str.LoadStringW(IDS_STRING_INTERCEPT_VALUE);
-			{
-				CString str1;			
-				str1.Format(L"=%g",padoc->p1.interceptvalue);
-				str=str+str1;
-			}
-			p.fit_textline((LPCWSTR)str, 20, hi, L"");
-			hi-=12;
-			break;
-		default:
-
-			break;
-		}
-		p.fit_textline((LPCWSTR)padoc->resultStr, 20, hi, L"");
-
-
-		p.end_page_ext(L"");
-	}
-
 	int a;
 
+	a=pdfout3(p,padoc->p1,padoc->resultStr);
 	a=pdfout(p,padoc->dol);
 	a=pdfout1(p,padoc->p3);
 	a=pdfout2(p,padoc->p2);

@@ -140,6 +140,10 @@ CString TimeString();
 template <typename T>
 void UpdateRange( const std::vector<T> &x, T &xmin, T &xmax, T gapPercent=0, bool bLocalRange=false)
 {
+	if(x.empty()){
+		return;
+	}
+	
 	auto resultx=std::minmax_element(x.begin(),x.end());
 	T tmin=*resultx.first;
 	T tmax=*resultx.second;

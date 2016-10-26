@@ -19,13 +19,14 @@ public:
 
 	CString xlabel;
 	CString ylabel;
+	PlotSpec psp;
 
 	std::vector<double> xll;
 	std::vector<double> yll;
 	std::vector<DWORD> ll;
 	std::vector<LineSpec> ps;
 
-	PlotSpec psp;
+
 
 	bool CheckData(void);
 	void AddNew(const std::vector<double> &x, const std::vector<double> &y, const LineSpec &plotsp, const CString &xla=NULL, const CString &yla=NULL);
@@ -38,6 +39,7 @@ public:
 	void AppendData(const PlotData & pda);
 	void GetDatai(size_t index, std::vector<double> & x, std::vector<double> & y);
 	PlotData ExtractLastCycle(double xmax);
+	void SetSpec(const CString & xla, const CString & yla, const PlotSpec & psp0);
 };
 
 

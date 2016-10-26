@@ -13,6 +13,18 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\data">
+      <UniqueIdentifier>{cb942340-ca80-4ff2-a11e-89f5ad4ec3a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\data">
+      <UniqueIdentifier>{067ce438-7357-4866-ba16-c70d7ed2fb68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\global func">
+      <UniqueIdentifier>{e8f304ec-01f9-4d19-8316-e8303ecc3fb4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\global func">
+      <UniqueIdentifier>{948d3dbc-0b2d-4dab-af13-a170759813d6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -111,28 +123,13 @@
     <ClInclude Include="AnalysisParametersPage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ANPara.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="calgridT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ColorButton.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="colormapT.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ComboItem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CSpline.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="CVParametersPage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DataOut.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="EditItem.h">
@@ -141,49 +138,10 @@
     <ClInclude Include="EditList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="func.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="intgQT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="linespec.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="MFCCaptionBarA.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="pcct.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="pcctB.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PlotData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PlotSpec.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SAPara.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="sapitemA.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SARCalibCurve.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SolutionAdditionParametersPageA.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="typedefine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="VPara.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="xRescaleT.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="analyzerViewR.h">
@@ -195,8 +153,62 @@
     <ClInclude Include="PlotSettingPage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DataOut.h">
+      <Filter>Header Files\data</Filter>
+    </ClInclude>
+    <ClInclude Include="ANPara.h">
+      <Filter>Header Files\data</Filter>
+    </ClInclude>
+    <ClInclude Include="pcct.h">
+      <Filter>Header Files\data</Filter>
+    </ClInclude>
+    <ClInclude Include="pcctB.h">
+      <Filter>Header Files\data</Filter>
+    </ClInclude>
+    <ClInclude Include="PlotData.h">
+      <Filter>Header Files\data</Filter>
+    </ClInclude>
+    <ClInclude Include="PlotSpec.h">
+      <Filter>Header Files\data</Filter>
+    </ClInclude>
+    <ClInclude Include="linespec.h">
+      <Filter>Header Files\data</Filter>
+    </ClInclude>
+    <ClInclude Include="SAPara.h">
+      <Filter>Header Files\data</Filter>
+    </ClInclude>
+    <ClInclude Include="sapitemA.h">
+      <Filter>Header Files\data</Filter>
+    </ClInclude>
+    <ClInclude Include="VPara.h">
+      <Filter>Header Files\data</Filter>
+    </ClInclude>
+    <ClInclude Include="SARCalibCurve.h">
+      <Filter>Header Files\data</Filter>
+    </ClInclude>
+    <ClInclude Include="calgridT.h">
+      <Filter>Header Files\global func</Filter>
+    </ClInclude>
+    <ClInclude Include="colormapT.h">
+      <Filter>Header Files\global func</Filter>
+    </ClInclude>
+    <ClInclude Include="CSpline.h">
+      <Filter>Header Files\global func</Filter>
+    </ClInclude>
+    <ClInclude Include="func.h">
+      <Filter>Header Files\global func</Filter>
+    </ClInclude>
+    <ClInclude Include="intgQT.h">
+      <Filter>Header Files\global func</Filter>
+    </ClInclude>
     <ClInclude Include="pdfout.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\global func</Filter>
+    </ClInclude>
+    <ClInclude Include="typedefine.h">
+      <Filter>Header Files\global func</Filter>
+    </ClInclude>
+    <ClInclude Include="xRescaleT.h">
+      <Filter>Header Files\global func</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -221,9 +233,6 @@
     <ClCompile Include="AnalysisParametersPage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ANPara.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ColorButton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -233,49 +242,16 @@
     <ClCompile Include="CVParametersPage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DataOut.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="EditItem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="EditList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="func.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="linespec.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="MFCCaptionBarA.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="pcct.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="pcctB.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PlotData.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PlotSpec.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SAPara.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sapitemA.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SARCalibCurve.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SolutionAdditionParametersPageA.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="VPara.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="analyzerViewR.cpp">
@@ -287,8 +263,44 @@
     <ClCompile Include="PlotSettingPageA.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="VPara.cpp">
+      <Filter>Source Files\data</Filter>
+    </ClCompile>
+    <ClCompile Include="sapitemA.cpp">
+      <Filter>Source Files\data</Filter>
+    </ClCompile>
+    <ClCompile Include="SAPara.cpp">
+      <Filter>Source Files\data</Filter>
+    </ClCompile>
+    <ClCompile Include="PlotSpec.cpp">
+      <Filter>Source Files\data</Filter>
+    </ClCompile>
+    <ClCompile Include="PlotData.cpp">
+      <Filter>Source Files\data</Filter>
+    </ClCompile>
+    <ClCompile Include="pcctB.cpp">
+      <Filter>Source Files\data</Filter>
+    </ClCompile>
+    <ClCompile Include="pcct.cpp">
+      <Filter>Source Files\data</Filter>
+    </ClCompile>
+    <ClCompile Include="linespec.cpp">
+      <Filter>Source Files\data</Filter>
+    </ClCompile>
+    <ClCompile Include="DataOut.cpp">
+      <Filter>Source Files\data</Filter>
+    </ClCompile>
+    <ClCompile Include="ANPara.cpp">
+      <Filter>Source Files\data</Filter>
+    </ClCompile>
+    <ClCompile Include="SARCalibCurve.cpp">
+      <Filter>Source Files\data</Filter>
+    </ClCompile>
+    <ClCompile Include="func.cpp">
+      <Filter>Source Files\global func</Filter>
+    </ClCompile>
     <ClCompile Include="pdfout.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\global func</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -132,6 +132,14 @@ bool pcctB::ReadTask(sapitemA sapi, BYTE bFlag)
 
 	}
 
+
+	if(bUnknown&&(bFlag&PCCTB_RECOUNT)){
+		bUnknown=false;
+		Aml=0;
+		Lml=0;
+		Sml=0;
+	}
+
 	switch(sapi.addType){
 	case 0:
 		{
