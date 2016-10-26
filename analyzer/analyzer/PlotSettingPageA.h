@@ -1,6 +1,6 @@
 #pragma once
 
-#include "typedefine.h"
+//#include "typedefine.h"
 //#include "EditList.h"
 #include "PlotSpec.h"
 #include "linespec.h"

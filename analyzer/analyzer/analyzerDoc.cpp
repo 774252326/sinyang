@@ -154,6 +154,16 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 			for(size_t i=0;i<rp.size();i++){
 				rp[i].Serialize(ar);
 			}
+			////////////////////////////////////////////////
+
+			//POSITION pos = GetFirstViewPosition();
+			//CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));
+
+			//::SendMessage(lv->GetSafeHwnd(),MESSAGE_CHANGE_APPLOOK,
+
+			//CanalyzerViewR* rv=((CanalyzerViewR*)GetNextView(pos));
+
+
 			///////////////////////////////////////////////
 
 			//if(bUpdateView){
@@ -446,7 +456,7 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		//pd.psp=PlotSpec(0);
 
 		CRect plotrect(0,0,sz.cx,sz.cy);
-		DrawData(plotrect,&dcMem,pd,xmin,xmax,ymin,ymax,lv->bkcr);
+		DrawData(plotrect,&dcMem,pd,xmin,xmax,ymin,ymax);
 
 		CImage img;
 		img.Attach(HBITMAP(bmp));
@@ -554,8 +564,8 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));	
 		CDC* pdc=lv->GetDC();
 
+		//a=imgout2(p,pdc,pdl,nl,CSize(1200,800));
 		a=imgout2(p,pdc,pdl,nl);
-
 
 		//a=imgout2(p,this,pdl,nl);
 

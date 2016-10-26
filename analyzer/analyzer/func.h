@@ -71,7 +71,8 @@ void DrawData(CRect &plotrect
 	, const double &xmax
 	, const double &ymin
 	, const double &ymax
-	, COLORREF winbkcr=0);
+	//, COLORREF winbkcr=0
+	);
 
 bool WheelUpdate(CRect &plotrect
 	, int mtsz
@@ -153,8 +154,8 @@ inline COLORREF inv(const COLORREF &oc);
 
 HCURSOR BigCross(const CRect &rect, const CPoint & pt);
 
-void AdjustWidth(CListCtrl *ls, int nCol, CString str, int gap=12);
-void AdjustWidth(CListCtrl *ls, int nCol, int nRow, int gap=12);
+void AdjustWidth(CListCtrl *ls, int nCol, CString str, int gap=15);
+void AdjustWidth(CListCtrl *ls, int nCol, int nRow, int gap=15);
 
 CString TimeString(bool bSeg=false);
 

@@ -25,8 +25,14 @@ public:
 
 	COLORREF metricC;
 	int metricSize;
+	BYTE legendPos;
+	
+
 	virtual void Serialize(CArchive& ar);
 	int GetCrType(void);
+
+	COLORREF winbkC;
+	void SetCr(int i);
 };
 
 

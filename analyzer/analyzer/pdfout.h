@@ -26,7 +26,7 @@ int imgout2(
 	CDC *pdc,
 	std::vector<PlotData> &imagelist, 
 	std::vector<CString> &namelist, 
-	CSize szimg=CSize(800,600));
+	CSize szimg=CSize(1000,690));
 
 int pdfout(pdflib::PDFlib &p, const std::vector<DataOutA> &dol);
 

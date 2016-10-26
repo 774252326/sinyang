@@ -50,6 +50,7 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 
 		ON_COMMAND(ID_VIEW_DATACURSOR, &CanalyzerView::OnViewDatacursor)
 		ON_UPDATE_COMMAND_UI(ID_VIEW_DATACURSOR, &CanalyzerView::OnUpdateViewDatacursor)
+		ON_MESSAGE(MESSAGE_CHANGE_APPLOOK, &CanalyzerView::OnMessageChangeApplook)
 	END_MESSAGE_MAP()
 
 	// CanalyzerView construction/destruction
@@ -113,16 +114,16 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 
 		PlotData *pd=GetPD();
 		if(pd!=NULL){
-			CDC dcMem;                                                  //用于缓冲作图的内存DC
-			CBitmap bmp;                                                 //内存中承载临时图象的位图
+			CDC dcMem;//用于缓冲作图的内存DC
+			CBitmap bmp;//内存中承载临时图象的位图
 			CRect rect;
 			GetClientRect(&rect);
-			dcMem.CreateCompatibleDC(pDC);               //依附窗口DC创建兼容内存DC
+			dcMem.CreateCompatibleDC(pDC);//依附窗口DC创建兼容内存DC
 			CSize winsz=rect.Size();
 			bmp.CreateCompatibleBitmap(pDC,winsz.cx,winsz.cy);//创建兼容位图
 			dcMem.SelectObject(&bmp);  	//将位图选择进内存DC
 
-			DrawData(rect,&dcMem,*pd,xmin,xmax,ymin,ymax,bkcr);
+			DrawData(rect,&dcMem,*pd,xmin,xmax,ymin,ymax);
 			if(bMouseCursor && !pd->ps.empty()){
 				//CString str;
 				//str.Format(L"%g,%g",pDoc->lp[m_spBtn.GetPos32()].xll[selectIdx],pDoc->lp[m_spBtn.GetPos32()].yll[selectIdx]);
@@ -131,12 +132,17 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 				DrawData1(rect
 					,&dcMem
 					,pd->xll[selectIdx]
-				,pd->yll[selectIdx]
-				,xmin,xmax,ymin,ymax
+					,pd->yll[selectIdx]
+					,xmin
+					,xmax
+					,ymin
+					,ymax
 					,inv(pd->psp.bkgndC));
 			}
 
 			pDC->BitBlt(0,0,winsz.cx,winsz.cy,&dcMem,0,0,SRCCOPY);//将内存DC上的图象拷贝到前台
+				//pDC->BitBlt(100,100,winsz.cx,winsz.cy,&dcMem,0,0,SRCCOPY);//将内存DC上的图象拷贝到前台
+
 			dcMem.DeleteDC(); //删除DC
 			bmp.DeleteObject(); //删除位图
 
@@ -762,6 +768,8 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		SetSpin((this->GetDocument()->GetNPD(lri))-1);
 		updatePlotRange();
 
+		::SendMessage(this->GetSafeHwnd(),MESSAGE_CHANGE_APPLOOK,(WPARAM)bkcr,NULL);
+
 		if(lri==0){
 			CMainFrame *mf=(CMainFrame*)(GetParentFrame());
 			COutputList* ol=mf->GetOutputWnd()->GetListCtrl();
@@ -780,6 +788,7 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 			CString str=Compute(pDoc->dol,pDoc->p1);
 			mf->GetCaptionBar()->ShowMessage(str);
 		}
+
 
 	}
 
@@ -873,4 +882,26 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 
 		}
 		return false;
+	}
+
+
+	afx_msg LRESULT CanalyzerView::OnMessageChangeApplook(WPARAM wParam, LPARAM lParam)
+	{
+		bkcr=(COLORREF)wParam;
+
+		//COLORREF oc=(COLORREF)wParam;
+
+		int i=0;
+		PlotData * pd=GetPD(i);	
+		while(pd!=NULL){
+			//int ci=pd->psp.GetCrType();
+			//pd->psp=PlotSpec(ci,oc);
+			pd->psp.winbkC=bkcr;
+			i++;
+			pd=GetPD(i);
+		}
+
+		this->Invalidate(FALSE);
+
+		return 0;
 	}

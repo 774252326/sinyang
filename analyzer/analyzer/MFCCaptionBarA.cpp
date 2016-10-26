@@ -266,6 +266,7 @@ void CMFCCaptionBarA::OnDrawButton(
 		CMFCCaptionBar::OnDrawButton(pDC, rect, strButton, bEnabled);
 	}
 	else{
+		//pDC->SetBkMode(TRANSPARENT);
 		CMFCCaptionBar::OnDrawButton(pDC, rect, L" ", bEnabled);
 	}
 }

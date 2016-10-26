@@ -68,7 +68,7 @@ CMainFrame::CMainFrame()
 	, pst(stop)
 {
 	// TODO: add member initialization code here
-	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_VS_2008);
+	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_OFF_XP);
 }
 
 CMainFrame::~CMainFrame()
@@ -123,7 +123,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		, WS_CHILD 
 		| WS_VISIBLE 
 		| CBRS_TOP 
-		| CBRS_GRIPPER 
+		//| CBRS_GRIPPER 
 		| CBRS_TOOLTIPS 
 		| CBRS_FLYBY 
 		| CBRS_SIZE_DYNAMIC
@@ -171,6 +171,9 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	ASSERT(bNameValid);
 	//m_wndToolBar.EnableCustomizeButton(TRUE, ID_VIEW_CUSTOMIZE, strCustomize);
 	m_wndToolBar.EnableCustomizeButton(FALSE, ID_VIEW_CUSTOMIZE, strCustomize);
+
+	//m_wndToolBar.SetHotTextColor(RGB(255,255,0));
+
 
 	// Allow user-defined toolbars operations:
 	InitUserToolbars(NULL, uiFirstUserToolBarId, uiLastUserToolBarId);
@@ -404,39 +407,69 @@ void CMainFrame::OnApplicationLook(UINT id)
 
 	theApp.m_nAppLook = id;
 
+	COLORREF oc;
+
 	switch (theApp.m_nAppLook)
 	{
 	case ID_VIEW_APPLOOK_WIN_2000:
 		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManager));
+		oc=
+			//this->LeftPlotPointer()->bkcr=
+			//this->RightPlotPointer()->bkcr=
+		RGB(240,240,240);
 		break;
 
 	case ID_VIEW_APPLOOK_OFF_XP:
 		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerOfficeXP));
+		oc=
+			//this->LeftPlotPointer()->bkcr=
+			//this->RightPlotPointer()->bkcr=
+		RGB(240,240,240);
 		break;
 
 	case ID_VIEW_APPLOOK_WIN_XP:
 		CMFCVisualManagerWindows::m_b3DTabsXPTheme = TRUE;
 		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerWindows));
+		oc=
+			//this->LeftPlotPointer()->bkcr=
+			//this->RightPlotPointer()->bkcr=
+		RGB(211,218,237);
 		break;
 
 	case ID_VIEW_APPLOOK_OFF_2003:
 		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerOffice2003));
 		CDockingManager::SetDockingMode(DT_SMART);
+		oc=
+		//this->LeftPlotPointer()->bkcr=
+		//this->RightPlotPointer()->bkcr=
+		RGB(141,183,226);
 		break;
 
 	case ID_VIEW_APPLOOK_VS_2005:
 		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerVS2005));
 		CDockingManager::SetDockingMode(DT_SMART);
+		oc=
+			//this->LeftPlotPointer()->bkcr=
+			//this->RightPlotPointer()->bkcr=
+			RGB(220,220,220);
 		break;
 
 	case ID_VIEW_APPLOOK_VS_2008:
 		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerVS2008));
 		CDockingManager::SetDockingMode(DT_SMART);
+		oc=
+			//this->LeftPlotPointer()->bkcr=
+			//this->RightPlotPointer()->bkcr=
+			RGB(236,238,252);
 		break;
 
 	case ID_VIEW_APPLOOK_WINDOWS_7:
 		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerWindows7));
 		CDockingManager::SetDockingMode(DT_SMART);
+		oc=
+			//this->LeftPlotPointer()->bkcr=
+			//this->RightPlotPointer()->bkcr=
+			RGB(211,218,237);
 		break;
 
 	default:
@@ -444,22 +477,34 @@ void CMainFrame::OnApplicationLook(UINT id)
 		{
 		case ID_VIEW_APPLOOK_OFF_2007_BLUE:
 			CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_LunaBlue);
-			this->LeftPlotPointer()->bkcr=this->RightPlotPointer()->bkcr=RGB(191,219,255);
+			oc=
+				//this->LeftPlotPointer()->bkcr=
+				//this->RightPlotPointer()->bkcr=
+				RGB(191,219,255);
 			break;
 
 		case ID_VIEW_APPLOOK_OFF_2007_BLACK:
 			CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_ObsidianBlack);
-			this->LeftPlotPointer()->bkcr=this->RightPlotPointer()->bkcr=RGB(83,83,83);
+			oc=
+				//this->LeftPlotPointer()->bkcr=
+				//this->RightPlotPointer()->bkcr=
+				RGB(83,83,83);
 			break;
 
 		case ID_VIEW_APPLOOK_OFF_2007_SILVER:
 			CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_Silver);
-			this->LeftPlotPointer()->bkcr=this->RightPlotPointer()->bkcr=RGB(208,212,221);
+			oc=
+				//this->LeftPlotPointer()->bkcr=
+				//this->RightPlotPointer()->bkcr=
+				RGB(208,212,221);
 			break;
 
 		case ID_VIEW_APPLOOK_OFF_2007_AQUA:
 			CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_Aqua);
-			this->LeftPlotPointer()->bkcr=this->RightPlotPointer()->bkcr=RGB(196,202,217);
+			oc=
+				//this->LeftPlotPointer()->bkcr=
+				//this->RightPlotPointer()->bkcr=
+				RGB(196,202,217);
 			break;
 		}
 
@@ -471,8 +516,13 @@ void CMainFrame::OnApplicationLook(UINT id)
 
 	theApp.WriteInt(_T("ApplicationLook"), theApp.m_nAppLook);
 
-	this->LeftPlotPointer()->Invalidate(FALSE);
-	this->RightPlotPointer()->Invalidate(FALSE);
+	//this->LeftPlotPointer()->Invalidate(FALSE);
+	//this->RightPlotPointer()->Invalidate(FALSE);
+
+	
+		::SendMessage(this->LeftPlotPointer()->GetSafeHwnd(),MESSAGE_CHANGE_APPLOOK,(WPARAM)oc,NULL);
+		::SendMessage(this->RightPlotPointer()->GetSafeHwnd(),MESSAGE_CHANGE_APPLOOK,(WPARAM)oc,NULL);
+
 
 }
 

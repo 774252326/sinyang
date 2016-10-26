@@ -104,6 +104,8 @@ public:
 	PlotData * GetPD(int idx);
 	bool SavePic(CSize sz, CString filename);
 	COLORREF bkcr;
+protected:
+	afx_msg LRESULT OnMessageChangeApplook(WPARAM wParam, LPARAM lParam);
 };
 
 #ifndef _DEBUG  // debug version in analyzerView.cpp

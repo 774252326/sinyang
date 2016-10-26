@@ -73,9 +73,9 @@ CString flistlist[]={
 
 
 void WaitSecond(ProcessState &waitflg
-	,int second=-1
+	//,int second=-1
 	//,int second=2
-	//,int second=0
+	,int second=0
 	)
 {
 	int interval=1000;
@@ -3092,27 +3092,7 @@ CString Compute(const std::vector<DataOutA> &dol, const ANPara &p1, CanalyzerVie
 		break;
 	case 4:
 		//return LATA1(leftp,rightp,cba,outw,*pst,p1,p2,p3);
-
 		{
-
-			//double Ac,SPc,ITQ,k,b,xend;
-
-			//if(Compute4(dol, p1, Ac, SPc, ITQ, k, b, xend)){
-			//	str.Format(L"Ac=%g,SPc=%g",Ac,SPc);
-			//	if(bDraw){
-			//		CanalyzerDoc *pDoc=rightp->GetDocument();
-			//		CString str0;
-			//		str0.LoadStringW(IDS_STRING_FITTING_LINE);
-			//		AddLine(pDoc->rp.back(),-Ac,xend,k,b,str0);
-			//		str0.LoadStringW(IDS_STRING_INTERCEPT_Q);
-			//		AddLine(pDoc->rp.back(),-Ac,0,0,ITQ,str0,2);
-			//		if(rightp->updatePlotRange((int)(pDoc->rp.size())-1))
-			//			rightp->Invalidate(FALSE);
-			//	}
-			//}
-
-
-
 			double Ac,SPc,ITQ;
 			LineSeg lis;
 
@@ -3125,6 +3105,7 @@ CString Compute(const std::vector<DataOutA> &dol, const ANPara &p1, CanalyzerVie
 					AddLine(pDoc->rp.back(),-Ac,lis.p2.x,lis.GetK(),lis.GetB(),str0);
 					str0.LoadStringW(IDS_STRING_INTERCEPT_Q);
 					AddLine(pDoc->rp.back(),-Ac,0,0,ITQ,str0,2);
+					pDoc->rp.back().psp.legendPos=3;
 					if(rightp->updatePlotRange((int)(pDoc->rp.size())-1))
 						rightp->Invalidate(FALSE);
 				}
@@ -3164,61 +3145,6 @@ CString Compute(const std::vector<DataOutA> &dol, const ANPara &p1, CanalyzerVie
 	case 7:
 		//return SARR1(leftp,rightp,cba,outw,*pst,p1,p2,p3);
 		{
-
-			//double k,b;
-			//std::vector<double> Ac;
-			//std::vector<double> Sc;
-			//if(Compute7(dol, p1, Ac, Sc, k, b)){
-			//	str.Format(L"S=%gA%+g",k,b);
-			//	if(bDraw){
-
-			//		CanalyzerDoc *pDoc=rightp->GetDocument();
-
-			//		//if(rightp->updatePlotRange((int)(pDoc->rp.size())-1))
-			//		//rightp->Invalidate(FALSE);
-
-			//		PlotData pdata;
-
-			//		CString xla;
-			//		CString yla;
-			//		{
-			//			CString str;
-			//			str.LoadStringW(IDS_STRING_ACCELERATOR);
-			//			xla=str;
-			//			xla+=L" ";
-			//			str.LoadStringW(IDS_STRING_CONC_);
-			//			xla+=str;
-
-			//			str.LoadStringW(IDS_STRING_SUPPRESSOR);
-			//			yla=str;
-			//			yla+=L" ";
-			//			str.LoadStringW(IDS_STRING_CONC_);
-			//			yla+=str;
-			//		}
-
-			//		pdata.psp=PlotSpec(0);
-
-			//		LineSpec ps1;
-			//		ps1.colour=genColor( genColorvFromIndex<float>( pdata.ps.size() ) ) ;
-			//		ps1.dotSize=3;
-			//		ps1.name.LoadStringW(IDS_STRING_SAR);
-			//		ps1.lineType=5;
-			//		ps1.smoothLine=1;
-			//		ps1.traceLast=false;
-			//		pdata.AddNew(Ac,Sc,ps1,xla,yla);
-
-			//		CString str0;
-			//		str0.LoadStringW(IDS_STRING_FITTING_LINE);
-			//		AddLine(pdata,Ac.front(),Ac.back(),k,b,str0);
-			//		rightp->AddPlot(pdata);
-			//		if(rightp->updatePlotRange((int)(pDoc->rp.size())-1))
-			//			rightp->Invalidate(FALSE);
-
-			//	}
-			//}
-
-
-
 			LineSeg lis;
 			std::vector<double> Ac;
 			std::vector<double> Sc;
@@ -3247,7 +3173,8 @@ CString Compute(const std::vector<DataOutA> &dol, const ANPara &p1, CanalyzerVie
 						yla+=str;
 					}
 
-					pdata.psp=PlotSpec(0);
+					pdata.psp=PlotSpec(0,rightp->bkcr);
+					pdata.psp.legendPos=3;
 
 					LineSpec ps1;
 					ps1.colour=genColor( genColorvFromIndex<float>( pdata.ps.size() ) ) ;
@@ -3273,36 +3200,6 @@ CString Compute(const std::vector<DataOutA> &dol, const ANPara &p1, CanalyzerVie
 	case 8:
 		//return SARA1(leftp,rightp,cba,outw,*pst,p1,p2,p3);
 		{
-
-
-			//double SPv;
-			//double SPvEnd;
-			//double k0;
-			//double b0;
-			//double k;
-			//double b; 
-			//double Sc;
-			//double Ac;
-			//double xs;
-			//double xe;
-
-			//if(Compute8(dol, p1, SPv, SPvEnd, k0, b0, k, b, Sc, Ac,xs,xe)){
-			//	str.Format(L"Sc=%g, Ac=%g",Sc,Ac);
-			//	if(bDraw){
-
-			//		CanalyzerDoc *pDoc=rightp->GetDocument();
-
-			//		pDoc->rp.back().ps.back().lineType=5;
-			//		CString str0;
-			//		str0.LoadStringW(IDS_STRING_FITTING_LINE);
-			//		AddLine(pDoc->rp.back(),xs,xe,k,b,str0);
-			//		if(rightp->updatePlotRange((int)(pDoc->rp.size())-1))
-			//			rightp->Invalidate(FALSE);
-			//	}
-			//}
-
-
-
 			double SPv;
 			double SPvEnd;
 			double Sc;
@@ -3318,6 +3215,7 @@ CString Compute(const std::vector<DataOutA> &dol, const ANPara &p1, CanalyzerVie
 					CString str0;
 					str0.LoadStringW(IDS_STRING_FITTING_LINE);
 					AddLine(pDoc->rp.back(),lis,str0);
+					pDoc->rp.back().psp.legendPos=3;
 					if(rightp->updatePlotRange((int)(pDoc->rp.size())-1))
 						rightp->Invalidate(FALSE);
 				}
@@ -3358,22 +3256,6 @@ CString Compute(const std::vector<DataOutA> &dol, const ANPara &p1, CanalyzerVie
 		//return NER(leftp,rightp,cba,outw,*pst,p1,p2,p3);
 		{
 
-			//double k,b;
-			//if(Compute11(dol, p1, k, b)){
-			//	str.Format(L"nQ=%gL%+g",k,b);
-
-			//	if(bDraw){
-
-			//		CanalyzerDoc *pDoc=rightp->GetDocument();
-
-			//		CString str0;
-			//		str0.LoadStringW(IDS_STRING_FITTING_LINE);
-			//		AddLine(pDoc->rp.back(),pDoc->rp.back().xll.front(),pDoc->rp.back().xll.back(),k,b,str0);
-			//		if(rightp->updatePlotRange((int)(pDoc->rp.size())-1))
-			//			rightp->Invalidate(FALSE);
-			//	}
-			//}
-
 			LineSeg lis;
 			if(Compute11(dol, p1, lis)){
 				str.Format(L"nQ=%gL%+g",lis.GetK(),lis.GetB());
@@ -3393,29 +3275,7 @@ CString Compute(const std::vector<DataOutA> &dol, const ANPara &p1, CanalyzerVie
 		break;
 	case 12:
 		//return NEA(leftp,rightp,cba,outw,*pst,p1,p2,p3);
-
 		{
-
-			//double k,b;
-			//double Lc,SPc;
-			//int nIgnore=3;
-			//if(Compute12(dol, p1, k, b, Lc, SPc,nIgnore)){
-			//	str.Format(L"Lc=%g,SPc=%g",Lc,SPc);
-
-			//	if(bDraw){		
-
-			//		CanalyzerDoc *pDoc=rightp->GetDocument();
-
-			//		CString str0;
-			//		str0.LoadStringW(IDS_STRING_FITTING_LINE);
-			//		AddLine(pDoc->rp.back(),pDoc->rp.back().xll[nIgnore],pDoc->rp.back().xll.back(),k,b,str0);
-
-			//		if(rightp->updatePlotRange((int)(pDoc->rp.size())-1))
-			//			rightp->Invalidate(FALSE);
-			//	}
-			//}
-
-
 			LineSeg lis;
 			double Lc,SPc;
 			//int nIgnore=3;
@@ -3608,8 +3468,10 @@ UINT PROCESS(LPVOID pParam)
 		{
 
 
-			if(p1.calibrationfactortype!=1
-				||!AddCalibrationCurve(p1.calibrationfilepath,rightp)){
+			if(
+			//p1.calibrationfactortype!=1
+				//||
+				!AddCalibrationCurve(p1.calibrationfilepath,rightp)){
 					*pst=stop;
 					return 1;
 			}
@@ -3671,8 +3533,10 @@ UINT PROCESS(LPVOID pParam)
 
 			/////////////////////////plot standrad curve////////////////////////
 
-			if(p1.calibrationfactortype!=1
-				||!AddCalibrationCurve(p1.calibrationfilepath,rightp)){
+			if(
+				//p1.calibrationfactortype!=1
+				//||
+				!AddCalibrationCurve(p1.calibrationfilepath,rightp)){
 					*pst=stop;
 					return 1;
 			}
@@ -3707,8 +3571,10 @@ UINT PROCESS(LPVOID pParam)
 
 			/////////////////////////plot standrad curve////////////////////////
 
-			if(p1.calibrationfactortype!=1
-				||!AddCalibrationCurve(p1.calibrationfilepath,rightp)){
+			if(
+				//p1.calibrationfactortype!=1
+				//||
+				!AddCalibrationCurve(p1.calibrationfilepath,rightp)){
 					*pst=stop;
 					return 1;
 			}
@@ -4259,11 +4125,117 @@ CRect DrawXYAxis(CRect rect
 }
 
 
+CSize GetLegendTextExtent(CDC* pDC
+	, const std::vector<LineSpec> &ps
+	, CFont* pfont)
+{
+
+	CSize rectsz(0,0);
+	CFont *pOldFont;
+	pOldFont=pDC->SelectObject(pfont);	
+
+
+	for(size_t i=0;i<ps.size();i++){
+		CSize sz=pDC->GetTextExtent(ps[i].name);
+		if(sz.cx>rectsz.cx)
+			rectsz.cx=sz.cx;
+		rectsz.cy+=sz.cy;
+	}
+
+	pDC->SelectObject(pOldFont);
+
+	return rectsz;
+}
+
+
+
+CRect GetLegendBorder(CRect rect
+	, CDC* pDC
+	, const std::vector<LineSpec> &ps
+	, CFont *pfont
+	, int lc=25
+	, int gap=2
+	, int Hmax=15
+	, CString fontName=L"Arial"
+	, bool bAlignLeft=false
+	, bool bAlignTop=true
+	)
+{
+	int metricH;
+	//if(rect.Height()>ps.size()){
+	//metricH=rect.Height()/ps.size();
+	//if(metricH>Hmax)
+	metricH=Hmax;
+	//}
+	//else{
+	//metricH=1;
+	//}
+
+
+	CSize rectsz=rect.Size();
+	rectsz.cx-=(lc+gap*3);
+
+	CSize LTsz;
+
+	do{
+
+		pfont->DeleteObject();
+
+		pfont->CreateFont(
+			metricH,                   // nHeight
+			0,                         // nWidth
+			0,                         // nEscapement
+			0,                         // nOrientation
+			FW_NORMAL,                 // nWeight
+			FALSE,                     // bItalic
+			FALSE,                     // bUnderline
+			0,                         // cStrikeOut
+			ANSI_CHARSET,              // nCharSet
+			OUT_DEFAULT_PRECIS,        // nOutPrecision
+			CLIP_DEFAULT_PRECIS,       // nClipPrecision
+			DEFAULT_QUALITY,           // nQuality
+			DEFAULT_PITCH | FF_SWISS,  // nPitchAndFamily
+			fontName);                 // lpszFacename
+
+		LTsz=GetLegendTextExtent(pDC,ps,pfont);
+		metricH--;
+	}while( (LTsz.cx>rectsz.cx || LTsz.cy>rectsz.cy) && metricH>0 );
+
+	LTsz.cx+=lc+gap*3;
+
+
+	CRect borderrect;
+
+	if(bAlignLeft){
+		borderrect.left=rect.left;
+		borderrect.right=borderrect.left+LTsz.cx;
+	}
+	else{
+		borderrect.right=rect.right;
+		borderrect.left=borderrect.right-LTsz.cx;
+	}
+	if(bAlignTop){
+		borderrect.top=rect.top;
+		borderrect.bottom=borderrect.top+LTsz.cy;
+	}
+	else{
+		borderrect.bottom=rect.bottom;
+		borderrect.top=borderrect.bottom-LTsz.cy;
+	}
+
+
+	return borderrect;
+
+}
+
+
 
 CRect DrawLegend(CRect rect
 	, CDC* pDC
 	, const std::vector<LineSpec> &ps
-	, COLORREF bkColor)
+	, COLORREF bkColor
+	, bool bAlignLeft=false
+	, bool bAlignTop=true)
 {
 
 	int lineWidth=1;
@@ -4271,68 +4243,26 @@ CRect DrawLegend(CRect rect
 	int gap=2;
 	int Hmax=15;
 	CString fontName=L"Arial";
-
 	CFont font;
-	CFont *pOldFont;
-	CString str;
-	CPen * pOldPen;
-	CSize sz;
+	CRect borderrect=GetLegendBorder(rect,pDC,ps,&font,lc,gap,Hmax,fontName,bAlignLeft,bAlignTop);
 
-	CSize rectsz(0,0);
-	CPen pen;
-
-	int metricH;
-	if(rect.Height()>ps.size()){
-		metricH=rect.Height()/ps.size();
-		if(metricH>Hmax)
-			metricH=Hmax;
-	}
-	else{
-		metricH=1;
-	}
-
-
-	CPoint textLocate;
-	CPoint topright(rect.right,rect.top);
-	int tmp;
-	COLORREF oc;
-
-
-	font.CreateFont(
-		metricH,                   // nHeight
-		0,                         // nWidth
-		0,                         // nEscapement
-		0,                         // nOrientation
-		FW_NORMAL,                 // nWeight
-		FALSE,                     // bItalic
-		FALSE,                     // bUnderline
-		0,                         // cStrikeOut
-		ANSI_CHARSET,              // nCharSet
-		OUT_DEFAULT_PRECIS,        // nOutPrecision
-		CLIP_DEFAULT_PRECIS,       // nClipPrecision
-		DEFAULT_QUALITY,           // nQuality
-		DEFAULT_PITCH | FF_SWISS,  // nPitchAndFamily
-		fontName);                 // lpszFacename
-
-
-
-	pOldFont=pDC->SelectObject(&font);	
-
-	for(size_t i=0;i<ps.size();i++){
-		sz=pDC->GetTextExtent(ps[i].name);
-		if(sz.cx>rectsz.cx)
-			rectsz.cx=sz.cx;
-		rectsz.cy+=sz.cy;
-	}
-	rectsz.cx+=lc+gap*3;
-
-	CRect borderrect(topright.x-rectsz.cx,topright.y,topright.x,topright.y+rectsz.cy);
 	CRect legendrect(borderrect);
 	legendrect.DeflateRect(gap,0,gap,0);
 
+
+	CFont *pOldFont;
+	CString str;
+	CPen pen;
+	CPen * pOldPen;
+	CSize sz;
+	CPoint textLocate;
+	COLORREF oc;
+
 	////////////////////////////////////////////////////////
 
-	drawRectangle(borderrect,pDC,bkColor,inv(bkColor));
+	//drawRectangle(borderrect,pDC,bkColor,inv(bkColor));
+
+	//pDC->FillSolidRect(legendrect,bkColor);
 
 	textLocate=legendrect.TopLeft();
 	pOldFont=pDC->SelectObject(&font);	
@@ -4518,13 +4448,14 @@ void DrawData(CRect &plotrect
 	, const double &xmax
 	, const double &ymin
 	, const double &ymax
-	, COLORREF winbkcr)
+	//, COLORREF winbkcr
+	)
 {
 
 	//WaitForSingleObject(semaphoreWrite.m_hObject,INFINITE);
 
-
-	pDC->FillSolidRect(plotrect,winbkcr);
+	pDC->FillSolidRect(plotrect,pd.psp.winbkC);
+	//pDC->FillSolidRect(plotrect,winbkcr);
 	//pDC->FillSolidRect(plotrect,RGB(191,219,255));
 	//pDC->FillSolidRect(plotrect,RGB(83,83,83));
 	//pDC->FillSolidRect(plotrect,RGB(208,212,221));
@@ -4569,14 +4500,41 @@ void DrawData(CRect &plotrect
 			,plotrect.left
 			,plotrect.right);
 
+
+		CRect lrect=plotrect;
+		if(pd.psp.legendPos&0x01){
+			lrect.left=plotrect.left;
+			lrect.right=plotrect.CenterPoint().x;
+		}
+		else{
+			lrect.right=plotrect.right;
+			lrect.left=plotrect.CenterPoint().x;
+		}
+		if(pd.psp.legendPos&0x02){
+			lrect.top=plotrect.top;
+			lrect.bottom=plotrect.CenterPoint().y;
+		}
+		else{
+			lrect.bottom=plotrect.bottom;
+			lrect.top=plotrect.CenterPoint().y;
+		}
+
+
 		CRect legendrect=DrawLegend( 
-			CRect(plotrect.right-plotrect.Width()/4
-			,plotrect.top
-			,plotrect.right
-			,plotrect.top+plotrect.Height()/4)
+			//CRect(plotrect.right-plotrect.Width()/4
+			//,plotrect.top
+			////,plotrect.bottom-plotrect.Width()/4
+			//,plotrect.right
+			//,plotrect.top+plotrect.Height()/4
+			////,plotrect.bottom
+			//)
+			//plotrect
+			lrect
 			, pDC
 			, pd.ps
-			, pd.psp.bkgndC);
+			, pd.psp.bkgndC
+			, pd.psp.legendPos&0x01
+			, pd.psp.legendPos&0x02);
 
 		rgn.SetRectRgn(&mainrt);
 		pDC->SelectClipRgn(&rgn);
@@ -4999,11 +4957,12 @@ bool SaveImage(PlotData pd, CSize sz, CString filepath, CDC *pdc, COLORREF bkcr)
 	UpdateRange(pd.xll,xmin,xmax,pct,true);
 	UpdateRange(pd.yll,ymin,ymax,pct,true);
 
-	pd.psp=PlotSpec(0);
-	pd.psp.labelC=black;
+	//pd.psp=PlotSpec(0);
+	pd.psp.labelC=pd.psp.gridC=pd.psp.metricC=black;
+	pd.psp.bkgndC=pd.psp.borderC=pd.psp.winbkC=white;
 
 	CRect plotrect(0,0,sz.cx,sz.cy);
-	DrawData(plotrect,&dcMem,pd,xmin,xmax,ymin,ymax,bkcr);
+	DrawData(plotrect,&dcMem,pd,xmin,xmax,ymin,ymax);
 	dcMem.DeleteDC(); //É¾³ýDC
 
 	CImage img;
