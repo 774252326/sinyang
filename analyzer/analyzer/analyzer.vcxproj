@@ -106,6 +106,8 @@
     <None Include="UserImages.bmp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AnalysisParametersDlg.h" />
+    <ClInclude Include="AnalysisSetupPage.h" />
     <ClInclude Include="analyzer.h" />
     <ClInclude Include="analyzerDoc.h" />
     <ClInclude Include="analyzerView.h" />
@@ -116,11 +118,15 @@
     <ClInclude Include="pcct.h" />
     <ClInclude Include="pcctA.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="SolutionAdditionParametersDlg.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="tipsdlg.h" />
+    <ClInclude Include="VParametersDlg.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AnalysisParametersDlg.cpp" />
+    <ClCompile Include="AnalysisSetupPage.cpp" />
     <ClCompile Include="analyzer.cpp" />
     <ClCompile Include="analyzerDoc.cpp" />
     <ClCompile Include="analyzerView.cpp" />
@@ -130,11 +136,13 @@
     <ClCompile Include="OutputWnd.cpp" />
     <ClCompile Include="pcct.cpp" />
     <ClCompile Include="pcctA.cpp" />
+    <ClCompile Include="SolutionAdditionParametersDlg.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="tipsdlg.cpp" />
+    <ClCompile Include="VParametersDlg.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="analyzer.rc" />

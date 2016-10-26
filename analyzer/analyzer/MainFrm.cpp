@@ -15,6 +15,8 @@
 #include "colormapT.h"
 #include "tipsdlg.h"
 
+#include "AnalysisSetupPage.h"
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -46,6 +48,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_WM_TIMER()
 	ON_COMMAND(ID_VIEW_TOOLBARA, &CMainFrame::OnViewToolbara)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_TOOLBARA, &CMainFrame::OnUpdateViewToolbara)
+	ON_COMMAND(ID_ANALYSIS_METHODSETUP, &CMainFrame::OnAnalysisMethodsetup)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -444,9 +447,10 @@ void CMainFrame::OnOptions()
 	(strTemp.LoadString(IDS_STRING_RUNNING));
 	m_wndCaptionBar.SetText(strTemp, CMFCCaptionBar::ALIGN_LEFT);
 
-
-	m_wndCaptionBar.SetButton(strTemp2, ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_LEFT, FALSE);
+	m_wndCaptionBar.SetButton(L" ", ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_LEFT, FALSE);
 	m_wndCaptionBar.EnableButton(FALSE);
+	m_wndCaptionBar.Invalidate();
+
 
 	timer1=SetTimer(1,10,NULL);
 	KillTimer(timer2);
@@ -656,8 +660,9 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 			(strTemp.LoadString(IDS_STRING_OVER));
 			m_wndCaptionBar.SetText(strTemp, CMFCCaptionBar::ALIGN_LEFT);
 
-			m_wndCaptionBar.SetButton(strTemp2, ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_LEFT, FALSE);
+			m_wndCaptionBar.SetButton(L" ", ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_LEFT, FALSE);
 			m_wndCaptionBar.EnableButton(FALSE);
+			m_wndCaptionBar.Invalidate();
 		}
 		else{
 
@@ -710,12 +715,10 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 				m_wndCaptionBar.SetText(strTemp, CMFCCaptionBar::ALIGN_LEFT);
 				//ASSERT
 				(strTemp.LoadString(IDS_CAPTION_BUTTON));
-
 				m_wndCaptionBar.SetButton(strTemp, ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_LEFT, FALSE);
 				m_wndCaptionBar.EnableButton();
 
 				timer2=SetTimer(2,400,NULL);
-
 
 			}
 
@@ -733,10 +736,7 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 		else{
 			m_wndCaptionBar.m_clrBarText=black;
 		}
-		//ASSERT
-		(strTemp.LoadString(IDS_STRING_WAIT_RESPONSE));
-		m_wndCaptionBar.SetText(strTemp, CMFCCaptionBar::ALIGN_LEFT);
-
+		m_wndCaptionBar.Invalidate();
 		break;
 	default:
 		break;
@@ -808,4 +808,21 @@ void CMainFrame::plot2(const std::vector<double> & x, const std::vector<double> 
 	}
 	//( (dlg1*)m_wndSplitter.GetPane(0,1) )->smoothLine();
 	( (dlg1*)m_wndSplitter.GetPane(0,1) )->showall();
+}
+
+
+void CMainFrame::OnAnalysisMethodsetup()
+{
+	// TODO: Add your command handler code here
+
+	//AfxMessageBox(L"fasd");
+
+
+	// 创建属性表对象   
+    AnalysisSetupPage sheet(_T("Analysis Setup"));
+	//abc sheet(777);
+    // 设置属性对话框为向导对话框   
+    //sheet.SetWizardMode();   
+    // 打开模态向导对话框   
+    sheet.DoModal();  
 }

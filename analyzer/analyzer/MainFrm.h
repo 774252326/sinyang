@@ -87,6 +87,7 @@ public:
 	void plot1(const std::vector<double> & x, const std::vector<double> & y, const CString & xlabel, const CString & ylabel);
 	void plot2(const std::vector<double> & x, const std::vector<double> & y, const CString & xlabel, const CString & ylabel);
 	int timer2;
+	afx_msg void OnAnalysisMethodsetup();
 };
 
 
