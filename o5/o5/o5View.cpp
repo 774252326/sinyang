@@ -374,62 +374,6 @@ IMPLEMENT_DYNCREATE(Co5View, CView)
 		//Create Font Display Lists
 		Create2DTextLists();
 		Create3DTextLists();
-		//////////initial display context///////////////////////////////
-
-		//wchar_t fp[]=L"C:\\Users\\r8anw2x\\Desktop\\test_01.txt";
-		//wchar_t fp[]=L"C:\\Users\\r8anw2x\\Documents\\MATLAB\\byo3d\\mlShadowScan\\models\\man_v1-lr.wrl";
-		//wchar_t fp[]=L"C:\\Users\\r8anw2x\\Documents\\MATLAB\\byo3d\\mlShadowScan\\models\\man_v1.wrl";
-		//wchar_t fp[]=L"C:\\Users\\r8anw2x\\Documents\\MATLAB\\byo3d\\mlStructuredLight\\data\\Gray\\man\\merged.wrl";
-		//wchar_t fp[]=L"C:\\Users\\r8anw2x\\Dropbox\\W\\byo3d\\patate.wrl";
-		//wchar_t fp[]=L"C:\\Users\\r8anw2x\\Documents\\MATLAB\\byo3d\\mlStructuredLight\\ball[1][100][100].wrl";
-		//wchar_t fp[]=L"C:\\Users\\r8anw2x\\Documents\\MATLAB\\byo3d\\mlStructuredLight\\ball[1][500][500].wrl";
-		//wchar_t fp[]=L"C:\\Users\\r8anw2x\\Documents\\MATLAB\\byo3d\\mlStructuredLight\\ball[1][5][5].wrl";
-		//wchar_t fp[]=L"C:\\Users\\G\\Dropbox\\ball[1][100][100].wrl";
-		wchar_t fp[]=L"C:\\Users\\r8anw2x\\Dropbox\\xyz.wrl";
-
-		pc.load(fp);
-
-		//pc.sortlist();
-		//pc.uniquelist();
-
-		//pc.align();
-		//pc.genvoxel(0.1*2);
-		//
-		//long pi1,pi2,pi3;
-		//bool flg=pc.seedtrg(0.1,pi1,pi2,pi3);
-
-		//pc.clist[pi1].pt[0]=pc.clist[pi1].pt[1]=pc.clist[pi1].pt[2]=1;
-		//pc.clist[pi2].pt[0]=pc.clist[pi2].pt[1]=pc.clist[pi2].pt[2]=1;
-		//pc.clist[pi3].pt[0]=pc.clist[pi3].pt[1]=pc.clist[pi3].pt[2]=1;
-
-		for(size_t i=0;i<pc.clist.size();i++){
-			pc.clist[i].pt[0]=1;
-		}
-
-
-
-
-		pc.initialBall(2);
-		pc.gunqiu(2);
-
-		//for(size_t i=0;i<pc.triangleList.size();i++){
-		//			pc.clist[pc.triangleList[i][0]].pt[0]=pc.clist[pc.triangleList[i][0]].pt[1]=pc.clist[pc.triangleList[i][0]].pt[2]=1;
-		//pc.clist[pc.triangleList[i][1]].pt[0]=pc.clist[pc.triangleList[i][1]].pt[1]=pc.clist[pc.triangleList[i][1]].pt[2]=1;
-		//pc.clist[pc.triangleList[i][2]].pt[0]=pc.clist[pc.triangleList[i][2]].pt[1]=pc.clist[pc.triangleList[i][2]].pt[2]=1;
-		//}
-
-
-		//		for(size_t i=0;i<pc.F.size();i++){
-		//			pc.clist[pc.F[i][0]].pt[0]=pc.clist[pc.F[i][0]].pt[1]=pc.clist[pc.F[i][0]].pt[2]=1;
-		//pc.clist[pc.F[i][1]].pt[0]=pc.clist[pc.F[i][1]].pt[1]=pc.clist[pc.F[i][1]].pt[2]=1;
-		////pc.clist[pc.triangleList[i][2]].pt[0]=pc.clist[pc.triangleList[i][2]].pt[1]=pc.clist[pc.triangleList[i][2]].pt[2]=1;
-		//}
-
-		//pc.warp1();
-		//pc.unity(1);
-		//pc.warp(0.025,0.025,1);
-		pc.unity(1);
-
 
 	}
 
@@ -444,30 +388,8 @@ IMPLEMENT_DYNCREATE(Co5View, CView)
 
 		glDisable(GL_LIGHTING);
 
-
-
 		glColor3d(1,1,1);
 		glutWireCube(1);
-
-		char buf[50];
-		int nn;
-		for(size_t i=0;i<pc.plist.size();i++){	
-			glColor3dv(pc.clist[i].pt);	
-			glRasterPos3dv(pc.plist[i].pt);
-			//nn=sprintf(buf,".");
-			nn=sprintf(buf,"%d",i);
-			glListBase(m_2DTextList);
-			glCallLists(nn, GL_UNSIGNED_BYTE ,buf);
-		}
-
-		for(size_t i=0;i<pc.triangleList.size();i++){
-			glBegin (GL_LINE_LOOP);
-			for(size_t j=0;j<pc.triangleList[i].size();j++){
-				glVertex3dv(pc.plist[pc.triangleList[i][j]].pt);
-			}
-			glEnd();
-		}
-
 	}
 
 
@@ -556,9 +478,12 @@ IMPLEMENT_DYNCREATE(Co5View, CView)
 		// TODO: Add your message handler code here and/or call default
 
 		m_zPos *=(zDelta>0) ? 0.8:1.25;
-		//TRACE("%f,",m_zPos);
+
+		TRACE("%f,",m_zPos);
+
 		InvalidateRect(NULL,FALSE);
-		
+
+
 		return CView::OnMouseWheel(nFlags, zDelta, pt);
 	}
 
@@ -569,14 +494,14 @@ IMPLEMENT_DYNCREATE(Co5View, CView)
 
 
 		switch(nChar){
-			//case 'f':
-			//	//raidus*=0.8;
-			//	InvalidateRect(NULL,FALSE);
-			//	break;
-			//case 'd':
-			//	//raidus/=0.8;
-			//	InvalidateRect(NULL,FALSE);
-			//	break;
+		//case 'f':
+		//	//raidus*=0.8;
+		//	InvalidateRect(NULL,FALSE);
+		//	break;
+		//case 'd':
+		//	//raidus/=0.8;
+		//	InvalidateRect(NULL,FALSE);
+		//	break;
 		case 'z':
 			m_xPos=m_yPos=0;m_zPos=-1;
 			m_xAngle=m_yAngle=0;

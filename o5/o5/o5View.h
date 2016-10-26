@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include "pcloud.h"
 
 class Co5View : public CView
 {
@@ -86,9 +85,6 @@ public:
 	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
 	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-
-
-	pcloud pc;
 };
 
 #ifndef _DEBUG  // debug version in o5View.cpp

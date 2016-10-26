@@ -144,8 +144,6 @@
     <ClCompile Include="o5Doc.cpp" />
     <ClCompile Include="o5View.cpp" />
     <ClCompile Include="OutputWnd.cpp" />
-    <ClCompile Include="pcloud.cpp" />
-    <ClCompile Include="point3d.cpp" />
     <ClCompile Include="PropertiesWnd.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
