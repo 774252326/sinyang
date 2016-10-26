@@ -130,4 +130,13 @@ public:
 	void resize(int w, int h);
 	CRect thslrect;
 	CRect smslrect;
+
+
+
+
+		bool DrawXYAxis(CRect plotrect, CDC * pdc);
+	bool DrawXYAxis2(CRect plotrect, CDC * pdc);
+	void DrawPolyline(CRect plotrect, CDC * pdc, CPen * pPen, double * x, double * y, long nd);
+		void DrawVLine(CRect rect, CDC * dc, CPen * pen, double x);
+	void DrawDiff(CRect rect, CDC * dc, CPen * pPen, double x1, double x2);
 };

@@ -262,64 +262,140 @@ void Cz3Dlg::OnPaint()
 	{	
 		//CPaintDC dc(GetDlgItem(IDC_PLOT));
 		CPaintDC dc(this); // device context for painting
-		CPen pen;
 
-		//dc.MoveTo(2,2);
-		//dc.LineTo(40,80);
+		///////////////////////////////////////////
+		//CPen pen;
+
+		////dc.MoveTo(2,2);
+		////dc.LineTo(40,80);
+		//if(isLoad){
+
+		//	if(DrawXYAxis(plotrect,&dc)){
+
+		//		CRect mainrt;
+		//		CRgn rgn;
+		//		rgn.CreateRectRgnIndirect(&plotrect);	
+		//		dc.GetClipBox(&mainrt);
+		//		dc.SelectClipRgn(&rgn);
+
+
+
+		//		pen.CreatePen(PS_SOLID,1,blue);
+
+		//		//CPaintDC qdc(GetDlgItem(IDC_PLOT));
+		//		//DrawPolyline(CRect(CPoint(0,0),plotrect.Size()),&qdc,&pen,x,y,m_n);
+
+		//		DrawPolyline(plotrect,&dc,&pen,x,ys,m_n);
+		//		pen.DeleteObject();
+		//		if(isSmooth){
+		//			pen.CreatePen(PS_SOLID,1,green);
+		//			//DrawPolyline(plotrect,&dc,&pen,plx,ply,plnd);
+		//			DrawPolyline(plotrect,&dc,&pen,xybreak[1],xybreak[2],plnd);
+		//			pen.DeleteObject();
+
+
+		//			int i;
+		//			//pen.CreatePen(PS_DOT,1,black);
+		//			//for(i=1;i<=peaknd;i++){
+		//			//	DrawVLine(plotrect,&dc,&pen,ABSkPeak[1][i]);
+		//			//}
+		//			//pen.DeleteObject();
+		//			//pen.CreatePen(PS_DASH,1,black);
+		//			//for(i=1;i<=peaknd;i++){
+		//			//	DrawVLine(plotrect,&dc,&pen,ABSkPeak[2][i]);
+		//			//}
+		//			//pen.DeleteObject();
+
+		//			pen.CreatePen(PS_DASH,1,black);
+		//			for(i=1;i<=peaknd;i++){
+		//				DrawVLine(plotrect,&dc,&pen,ABSkPeak[1][i]);
+		//				DrawVLine(plotrect,&dc,&pen,ABSkPeak[2][i]);
+		//				DrawDiff(plotrect,&dc,&pen,ABSkPeak[1][i],ABSkPeak[2][i]);
+		//			}
+		//			pen.DeleteObject();
+
+		//		}
+
+		//		rgn.CreateRectRgnIndirect(&mainrt);
+		//		dc.SelectClipRgn(&rgn);
+		//	}		
+		//}
+		/////////////////////////////////////////////////////////////////
+
+				CClientDC pDC(this);
+
+
+		CRect windrect;
+		this->GetWindowRect(&windrect);
+		int nWidth=windrect.Width();
+		int nHeight=windrect.Height();
+
+		CDC MemDC; //首先定义一个显示设备对象
+		CBitmap MemBitmap;//定义一个位图对象
+
+		//随后建立与屏幕显示兼容的内存显示设备
+		MemDC.CreateCompatibleDC(NULL);
+		//这时还不能绘图，因为没有地方画 ^_^
+		//下面建立一个与屏幕显示兼容的位图，至于位图的大小嘛，可以用窗口的大小
+
+		MemBitmap.CreateCompatibleBitmap(&pDC,nWidth,nHeight);
+		//将位图选入到内存显示设备中
+		//只有选入了位图的内存显示设备才有地方绘图，画到指定的位图上
+		CBitmap *pOldBit=MemDC.SelectObject(&MemBitmap);
+
+		//先用背景色将位图清除干净，这里我用的是白色作为背景
+		//你也可以用自己应该用的颜色
+		MemDC.FillSolidRect(0,0,nWidth,nHeight,RGB(255,255,255));
+
+		//绘图
+
+
+				CPen pen;
+
 		if(isLoad){
 
-			if(DrawXYAxis(plotrect,&dc)){
+			if(DrawXYAxis(plotrect,&MemDC)){
 
 				CRect mainrt;
 				CRgn rgn;
 				rgn.CreateRectRgnIndirect(&plotrect);	
-				dc.GetClipBox(&mainrt);
-				dc.SelectClipRgn(&rgn);
-
-
+				MemDC.GetClipBox(&mainrt);
+				MemDC.SelectClipRgn(&rgn);
 
 				pen.CreatePen(PS_SOLID,1,blue);
-
-				//CPaintDC qdc(GetDlgItem(IDC_PLOT));
-				//DrawPolyline(CRect(CPoint(0,0),plotrect.Size()),&qdc,&pen,x,y,m_n);
-
-				DrawPolyline(plotrect,&dc,&pen,x,ys,m_n);
+				DrawPolyline(plotrect,&MemDC,&pen,x,ys,m_n);
 				pen.DeleteObject();
 				if(isSmooth){
 					pen.CreatePen(PS_SOLID,1,green);
 					//DrawPolyline(plotrect,&dc,&pen,plx,ply,plnd);
-					DrawPolyline(plotrect,&dc,&pen,xybreak[1],xybreak[2],plnd);
+					DrawPolyline(plotrect,&MemDC,&pen,xybreak[1],xybreak[2],plnd);
 					pen.DeleteObject();
 
 
 					int i;
-					//pen.CreatePen(PS_DOT,1,black);
-					//for(i=1;i<=peaknd;i++){
-					//	DrawVLine(plotrect,&dc,&pen,ABSkPeak[1][i]);
-					//}
-					//pen.DeleteObject();
-					//pen.CreatePen(PS_DASH,1,black);
-					//for(i=1;i<=peaknd;i++){
-					//	DrawVLine(plotrect,&dc,&pen,ABSkPeak[2][i]);
-					//}
-					//pen.DeleteObject();
-
 					pen.CreatePen(PS_DASH,1,black);
 					for(i=1;i<=peaknd;i++){
-						DrawVLine(plotrect,&dc,&pen,ABSkPeak[1][i]);
-						DrawVLine(plotrect,&dc,&pen,ABSkPeak[2][i]);
-						DrawDiff(plotrect,&dc,&pen,ABSkPeak[1][i],ABSkPeak[2][i]);
+						DrawVLine(plotrect,&MemDC,&pen,ABSkPeak[1][i]);
+						DrawVLine(plotrect,&MemDC,&pen,ABSkPeak[2][i]);
+						DrawDiff(plotrect,&MemDC,&pen,ABSkPeak[1][i],ABSkPeak[2][i]);
 					}
 					pen.DeleteObject();
 
 				}
 
 				rgn.CreateRectRgnIndirect(&mainrt);
-				dc.SelectClipRgn(&rgn);
+				MemDC.SelectClipRgn(&rgn);
 			}		
 		}
 
+		//将内存中的图拷贝到屏幕上进行显示
+		pDC.BitBlt(0,0,nWidth,nHeight,&MemDC,0,0,SRCCOPY);
+		//pDC->BitBlt(0,0,nWidth,nHeight,&MemDC,0,0,SRCCOPY);
+		//绘图完成后的清理
+		MemBitmap.DeleteObject();
+		MemDC.DeleteDC();
 
+		//////////////////////////////////////////////
 		CDialogEx::OnPaint();
 
 
@@ -407,7 +483,8 @@ void Cz3Dlg::PreInitDialog()
 }
 
 
-bool Cz3Dlg::DrawXYAxis(CRect rect, CPaintDC * pdc)
+//bool Cz3Dlg::DrawXYAxis(CRect rect, CPaintDC * pdc)
+	bool Cz3Dlg::DrawXYAxis(CRect rect, CDC * pdc)
 {
 
 	if(rect.IsRectEmpty()){
@@ -450,7 +527,7 @@ bool Cz3Dlg::DrawXYAxis(CRect rect, CPaintDC * pdc)
 			pdc->MoveTo(tmp,rect.bottom);
 			pdc->LineTo(tmp,rect.bottom+lc);
 
-			str.Format(L"%.4f",gridi);
+			str.Format(L"%.1e",gridi);
 
 			pdc->SelectObject(&font);
 
@@ -468,7 +545,7 @@ bool Cz3Dlg::DrawXYAxis(CRect rect, CPaintDC * pdc)
 			tmp=ptRsl(0.0,gridi,rect).y;
 			pdc->MoveTo(rect.left,tmp);
 			pdc->LineTo(rect.left-lc,tmp);
-			str.Format(L"%.4f",gridi);
+			str.Format(L"%.1e",gridi);
 
 			pdc->SelectObject(&font);
 
@@ -501,7 +578,8 @@ bool Cz3Dlg::DrawXYAxis(CRect rect, CPaintDC * pdc)
 	//return false;
 }
 
-bool Cz3Dlg::DrawXYAxis2(CRect rect, CPaintDC * pdc)
+//bool Cz3Dlg::DrawXYAxis2(CRect rect, CPaintDC * pdc)
+	bool Cz3Dlg::DrawXYAxis2(CRect rect, CDC * pdc)
 {
 
 	if(rect.IsRectEmpty()){
@@ -637,7 +715,8 @@ CPoint Cz3Dlg::ptRsl(double x, double y, CRect can)
 }
 
 
-void Cz3Dlg::DrawPolyline(CRect rect, CPaintDC * pdc, CPen * pPen, double * x, double * y, long nd)
+//void Cz3Dlg::DrawPolyline(CRect rect, CPaintDC * pdc, CPen * pPen, double * x, double * y, long nd)
+	void Cz3Dlg::DrawPolyline(CRect rect, CDC * pdc, CPen * pPen, double * x, double * y, long nd)
 {
 
 
@@ -971,7 +1050,8 @@ void Cz3Dlg::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 
 
 // draw a vertical line at x
-void Cz3Dlg::DrawVLine(CRect rect, CPaintDC * dc, CPen * pen, double x)
+//void Cz3Dlg::DrawVLine(CRect rect, CPaintDC * dc, CPen * pen, double x)
+	void Cz3Dlg::DrawVLine(CRect rect, CDC * dc, CPen * pen, double x)
 {
 	CPen* pOldPen=dc->SelectObject(pen);
 	dc->MoveTo(ptRsl(x,0,rect).x,rect.bottom);
@@ -980,7 +1060,8 @@ void Cz3Dlg::DrawVLine(CRect rect, CPaintDC * dc, CPen * pen, double x)
 }
 
 
-void Cz3Dlg::DrawDiff(CRect rect, CPaintDC * dc, CPen * pPen, double x1, double x2)
+//void Cz3Dlg::DrawDiff(CRect rect, CPaintDC * dc, CPen * pPen, double x1, double x2)
+	void Cz3Dlg::DrawDiff(CRect rect, CDC * dc, CPen * pPen, double x1, double x2)
 {
 	CPen* pOldPen=dc->SelectObject(pPen);
 
