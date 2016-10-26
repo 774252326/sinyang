@@ -7,12 +7,17 @@
 
 #include "MainFrm.h"
 
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#endif
+
+
 #include "analyzerViewL.h"
 #include "analyzerViewR.h"
 #include "struct1\pcct.hpp"
 
 
-#include "user\LoginDlg.h"
+#include "user\LoginDlg.hpp"
 #include "property\PropertySheetA.h"
 #include "property\UserAccountPage.h"
 
@@ -254,11 +259,6 @@ UINT CMainFrame::PROCESS(LPVOID pParam)
 
 
 
-
-#ifdef _DEBUG
-#define new DEBUG_NEW
-#endif
-
 // CMainFrame
 
 IMPLEMENT_DYNCREATE(CMainFrame, CFrameWndEx)
@@ -269,11 +269,17 @@ const UINT uiLastUserToolBarId = uiFirstUserToolBarId + iMaxUserToolbars - 1;
 
 BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_WM_CREATE()
+	// Global help commands
+	ON_COMMAND(ID_HELP_FINDER, &CFrameWndEx::OnHelpFinder)
+	ON_COMMAND(ID_HELP, &CFrameWndEx::OnHelp)
+	ON_COMMAND(ID_CONTEXT_HELP, &CFrameWndEx::OnContextHelp)
+	ON_COMMAND(ID_DEFAULT_HELP, &CFrameWndEx::OnHelpFinder)
 	ON_COMMAND(ID_VIEW_CUSTOMIZE, &CMainFrame::OnViewCustomize)
 	ON_REGISTERED_MESSAGE(AFX_WM_CREATETOOLBAR, &CMainFrame::OnToolbarCreateNew)
 	ON_COMMAND_RANGE(ID_VIEW_APPLOOK_WIN_2000, ID_VIEW_APPLOOK_WINDOWS_7, &CMainFrame::OnApplicationLook)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_APPLOOK_WIN_2000, ID_VIEW_APPLOOK_WINDOWS_7, &CMainFrame::OnUpdateApplicationLook)
 	ON_WM_SETTINGCHANGE()
+
 	ON_WM_SIZE()
 
 	ON_COMMAND(ID_SECURITY_LOGIN, &CMainFrame::OnSecurityLogin)
@@ -311,13 +317,6 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_UPDATE_COMMAND_UI(ID_SECURITY_LOGIN, &CMainFrame::OnUpdateSecurityLogin)
 	ON_UPDATE_COMMAND_UI(ID_SECURITY_USERACCOUNTS, &CMainFrame::OnUpdateSecurityUseraccounts)
 
-
-
-	//ON_COMMAND(ID_LANGUAGE_CHINESE, &CMainFrame::OnLanguageChinese)
-	//ON_COMMAND(ID_LANGUAGE_ENGLISH, &CMainFrame::OnLanguageEnglish)
-	//ON_UPDATE_COMMAND_UI(ID_LANGUAGE_CHINESE, &CMainFrame::OnUpdateLanguageChinese)
-	//ON_UPDATE_COMMAND_UI(ID_LANGUAGE_ENGLISH, &CMainFrame::OnUpdateLanguageEnglish)
-
 	ON_COMMAND_RANGE(ID_LANGUAGE_CHINESE, ID_LANGUAGE_ENGLISH, &CMainFrame::OnLanguage)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_LANGUAGE_CHINESE,ID_LANGUAGE_ENGLISH,&CMainFrame::OnUpdateLanguage)
 
@@ -344,7 +343,7 @@ CMainFrame::CMainFrame()
 	, pWriteA(NULL)
 {
 	// TODO: add member initialization code here
-	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), (GetWinVer()==6?ID_VIEW_APPLOOK_OFF_2007_BLACK:ID_VIEW_APPLOOK_WIN_XP) );
+	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), (GetWinVer()==6?ID_VIEW_APPLOOK_OFF_2007_BLACK:ID_VIEW_APPLOOK_WIN_XP));
 }
 
 CMainFrame::~CMainFrame()
@@ -364,8 +363,6 @@ CMainFrame::~CMainFrame()
 		delete (psheetml->GetPage(2));	
 		delete psheetml;
 	}
-	//pWriteA->m_hThread
-
 }
 
 int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -403,7 +400,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	CString strCustomize;
 	bNameValid = strCustomize.LoadString(IDS_TOOLBAR_CUSTOMIZE);
 	ASSERT(bNameValid);
-	m_wndToolBar.EnableCustomizeButton(FALSE, ID_VIEW_CUSTOMIZE, strCustomize);
+	m_wndToolBar.EnableCustomizeButton(TRUE, ID_VIEW_CUSTOMIZE, strCustomize);
 
 	// Allow user-defined toolbars operations:
 	InitUserToolbars(NULL, uiFirstUserToolBarId, uiLastUserToolBarId);
@@ -739,18 +736,34 @@ void CMainFrame::OnSize(UINT nType, int cx, int cy)
 	}
 }
 
-
+BOOL CMainFrame::Login(bool bReadFile, CString fp)
+{	
+	LoginDlg ld;
+	if(bReadFile){
+		ld.al.ReadFile(fp);
+		if(ld.al.ual.empty()){
+			AfxMessageBox(IDS_STRING_USERLIST_ERROR);
+			return FALSE;
+		}
+		al=ld.al;
+	}
+	else{
+		ld.usridx=userIndex;
+		ld.al=al;	
+	}
+	if(ld.DoModal()==IDOK){
+		userIndex=ld.usridx;
+		return TRUE;
+	}
+	return FALSE;
+}
 
 
 void CMainFrame::OnSecurityLogin()
 {
 	// TODO: Add your command handler code here
 
-	LoginDlg ld;
-	ld.usridx=userIndex;
-	ld.al=al;
-	if(ld.DoModal()==IDOK){
-		userIndex=ld.usridx;
+	if(Login()==TRUE){
 		CanalyzerView *pavl=(CanalyzerView*)LeftPane();
 		CanalyzerView *pavr=(CanalyzerView*)RightPane();
 		pavl->pw.bMouseCursor &= (al.ual[userIndex].au==UserAccount::authority::admin);
@@ -907,14 +920,14 @@ void CMainFrame::OnAnalysisMethodsetup()
 			sppage->pDoc=pDoc;
 			//sppage->mf=this;
 
-			////if(psheetml->GetSafeHwnd()){
-			//	//sppage->SetList();			
-			//	//psheetml->ShowWindow(SW_SHOW);
-			////	psheetml->CenterWindow();			
-			////}
-			////else{
-			psheetml->Create();
-			////}
+			if(psheetml->GetSafeHwnd()){
+				sppage->SetList();			
+				psheetml->ShowWindow(SW_SHOW);
+				psheetml->CenterWindow();			
+			}
+			else{
+				psheetml->Create();
+			}
 
 			::SetWindowPos(psheetml->GetSafeHwnd(),
 				//HWND_TOPMOST,

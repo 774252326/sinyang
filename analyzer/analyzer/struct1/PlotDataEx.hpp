@@ -155,6 +155,13 @@ public:
 		}
 	};
 	
+	void DrawEx(CRect &plotrect, CDC* pDC)
+	{
+		Draw(plotrect, pDC);
+		SetLegendSpec(plotrect,pDC);
+		lgs.Draw(pDC, pd.ls, lgs.position);
+	};
+
 	bool SaveImage(CString filepath, CSize sz, CDC* pDC)
 	{
 
@@ -167,9 +174,8 @@ public:
 		dcMem.SelectObject(&bmp);  	//将位图选择进内存DC
 
 		CRect plotrect(0,0,sz.cx,sz.cy);
-		Draw(plotrect, &dcMem);
-		SetLegendSpec(plotrect,&dcMem);
-		lgs.Draw(&dcMem, pd.ls, lgs.position);
+
+		DrawEx(plotrect, &dcMem);
 
 		dcMem.DeleteDC();
 

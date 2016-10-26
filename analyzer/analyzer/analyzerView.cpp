@@ -19,7 +19,7 @@
 #include "property\PlotSettingPageB.h"
 #include "property\PlotSettingPageC.h"
 #include "property\PropertySheetA.h"
-#include "ExportDataDlg.h"
+#include "export\ExportDataDlg.hpp"
 
 
 
@@ -51,6 +51,7 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 
 	CanalyzerView::CanalyzerView()
 		: spBtnSize(CSize(23*2,23))
+		, bPrint(false)
 	{
 		// TODO: add construction code here
 
@@ -70,7 +71,7 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 
 	// CanalyzerView drawing
 
-	void CanalyzerView::OnDraw(CDC* /*pDC*/)
+	void CanalyzerView::OnDraw(CDC* pDC)
 	{
 		CanalyzerDoc* pDoc = GetDocument();
 		ASSERT_VALID(pDoc);
@@ -78,6 +79,13 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 			return;
 
 		// TODO: add draw code for native data here
+
+		if(bPrint && pw.pdex!=NULL){
+			//CRect rect;
+			//this->GetClientRect(&rect);
+			//pw.pdex->DrawEx(rect,pDC);
+			//bPrint=false;
+		}
 	}
 
 
@@ -94,17 +102,25 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 	BOOL CanalyzerView::OnPreparePrinting(CPrintInfo* pInfo)
 	{
 		// default preparation
+		//return TRUE;
 		return DoPreparePrinting(pInfo);
+
 	}
 
-	void CanalyzerView::OnBeginPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
+	void CanalyzerView::OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo)
 	{
 		// TODO: add extra initialization before printing
+		//if(pw.pdex!=NULL){
+		//	pw.pdex->SaveImage(L"a.bmp",CSize(800,600),pDC);
+		//	ShellExecute(NULL, L"print", L"a.bmp", NULL, NULL, SW_SHOW);	
+		//}
+		bPrint=true;
 	}
 
 	void CanalyzerView::OnEndPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
 	{
 		// TODO: add cleanup after printing
+		bPrint=false;
 	}
 
 	void CanalyzerView::OnRButtonUp(UINT /* nFlags */, CPoint point)
@@ -337,4 +353,57 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		}
 
 		edd.DoModal();
+	}
+
+
+	void CanalyzerView::OnPrepareDC(CDC* pDC, CPrintInfo* pInfo)
+	{
+		// TODO: Add your specialized code here and/or call the base class
+
+
+
+		pDC->SetMapMode(MM_ANISOTROPIC); //转换坐标映射方式
+		CRect rect;
+		this->GetClientRect(&rect);
+		
+		if(rect.IsRectEmpty()==TRUE)
+			return;
+
+		CSize wsize = rect.Size(); 
+		pDC->SetWindowExt(wsize); 
+
+		HDC hdc=::GetDC(this->GetSafeHwnd());
+		int wmm=::GetDeviceCaps(hdc,HORZSIZE);
+		int hmm=::GetDeviceCaps(hdc,VERTSIZE);
+		int wpxl=::GetDeviceCaps(hdc,HORZRES);
+		int hpxl=::GetDeviceCaps(hdc,VERTRES);
+		int xLogPixPerInch0 = ::GetDeviceCaps(hdc,LOGPIXELSX); 
+		int yLogPixPerInch0 = ::GetDeviceCaps(hdc,LOGPIXELSY); 
+		::ReleaseDC(this->GetSafeHwnd(),hdc);
+
+		//得到实际设备每逻辑英寸的象素数量
+		int xLogPixPerInch = pDC->GetDeviceCaps(LOGPIXELSX); 
+		int yLogPixPerInch = pDC->GetDeviceCaps(LOGPIXELSY); 
+		//得到设备坐标和逻辑坐标的比例
+
+
+		CSize vsize(wsize.cx * xLogPixPerInch/xLogPixPerInch0, wsize.cy * yLogPixPerInch/yLogPixPerInch0);
+		pDC->SetViewportExt(vsize); //确定视口大小
+
+		CView::OnPrepareDC(pDC, pInfo);
+	}
+
+
+	void CanalyzerView::OnPrint(CDC* pDC, CPrintInfo* pInfo)
+	{
+		// TODO: Add your specialized code here and/or call the base class
+
+		if(/*bPrint &&*/ pw.pdex!=NULL){
+			CRect rect;
+			this->GetClientRect(&rect);
+			pw.pdex->DrawEx(rect,pDC);
+			//bPrint=false;
+		}
+
+		CView::OnPrint(pDC, pInfo);
 	}

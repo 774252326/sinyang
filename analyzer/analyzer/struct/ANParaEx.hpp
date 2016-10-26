@@ -1,6 +1,7 @@
 #pragma once
 #include "ANPara.hpp"
 #include <vector>
+#include "../resource.h"
 // ANParaEx command target
 
 
@@ -28,10 +29,34 @@ public:
 			return 0;
 		}
 	};
+			
+	static UINT GetFormulaImgID(int atype)
+{
+switch(atype){
+	case 2:
+		return IDB_BITMAP14;
+	case 4:
+		return IDB_BITMAP15;
+	case 6:
+		return IDB_BITMAP18;
+	case 8:
+		return IDB_BITMAP19;
+	case 10:
+		return IDB_BITMAP17;
+	case 12:
+		return IDB_BITMAP16;
+	default:
+		return IDB_BITMAP13;
+	}
+
+	return 0;
+};
+
 public:
 	std::vector<double> correction;
 
 	size_t CorrectionNumber() const{ return CorrectionNumber(analysistype); };
+	UINT GetFormulaImgID() const{ return GetFormulaImgID(analysistype); };
 	void ResetCorrection(){ correction.resize(CorrectionNumber(),1); };
 
 	ANParaEx()

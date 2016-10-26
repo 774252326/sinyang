@@ -1,11 +1,5 @@
 #pragma once
-//#include "func.h"
-//#include "MainFrm.h"
-//#include "EditC.h"
-//#include "AccountList.h"
 
-//#include "list\EditC.h"
-//#include "struct\AccountList.hpp"
 #include "AccountComboBox.h"
 #include "../Resource.h"
 

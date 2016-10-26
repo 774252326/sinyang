@@ -31,19 +31,19 @@ AnalysisParametersPage::~AnalysisParametersPage()
 void AnalysisParametersPage::DoDataExchange(CDataExchange* pDX)
 {
 
-	DDX_Text(pDX, IDS_EDIT_EVALUATION_RATIO, para.evaluationratio);
+	DDX_Text(pDX, EditIDS_EDIT_EVALUATION_RATIO.GetDlgCtrlID(), para.evaluationratio);
 	DDV_MinMaxDouble(pDX,para.evaluationratio,0,1);
 
-	DDX_Text(pDX, IDS_EDIT_CALIBRATION_FACTOR, para.calibrationfactor);
+	DDX_Text(pDX, EditIDS_EDIT_CALIBRATION_FACTOR.GetDlgCtrlID(), para.calibrationfactor);
 	DDV_MinMaxDouble(pDX,para.calibrationfactor,0,DBL_MAX);
 
-	DDX_Text(pDX, IDS_EDIT_CALIBRATION_CURVE_FILE, para.calibrationfilepath);
+	DDX_Text(pDX, EditIDS_EDIT_CALIBRATION_CURVE_FILE.GetDlgCtrlID(), para.calibrationfilepath);
 
-	DDX_Text(pDX, IDS_EDIT_INTERCEPT_VALUE, para.interceptvalue);
+	DDX_Text(pDX, EditIDS_EDIT_INTERCEPT_VALUE.GetDlgCtrlID(), para.interceptvalue);
 	DDV_MinMaxDouble(pDX,para.interceptvalue,0,DBL_MAX);
 
-	DDX_CBIndex(pDX, IDS_COMBO_ANALYSIS_TYPE, para.analysistype);
-	DDX_CBIndex(pDX, IDS_COMBO_CALIBRATION_TYPE, para.calibrationfactortype);
+	DDX_CBIndex(pDX, ComboIDS_COMBO_ANALYSIS_TYPE.GetDlgCtrlID(), para.analysistype);
+	DDX_CBIndex(pDX, ComboIDS_COMBO_CALIBRATION_TYPE.GetDlgCtrlID(), para.calibrationfactortype);
 
 	CPropertyPage::DoDataExchange(pDX);
 }
@@ -94,39 +94,37 @@ void AnalysisParametersPage::ComboSelectChange(void)
 	case 7:
 	case 9:
 	case 11:
-		this->GetDlgItem(IDS_COMBO_CALIBRATION_TYPE)->ShowWindow(SW_HIDE);
+		ComboIDS_COMBO_CALIBRATION_TYPE.ShowWindow(SW_HIDE);
+		ComboIDS_COMBO_CALIBRATION_TYPE.EnableWindow(FALSE);
 
-		this->GetDlgItem(IDS_STRING_CALIBRATION_CURVE_FILE)->ShowWindow(SW_HIDE);
-		this->GetDlgItem(IDS_STRING_INTERCEPT_VALUE)->ShowWindow(SW_HIDE);
+		StaticIDS_STRING_CALIBRATION_CURVE_FILE.ShowWindow(SW_HIDE);
+		StaticIDS_STRING_INTERCEPT_VALUE.ShowWindow(SW_HIDE);
 
-		this->GetDlgItem(IDS_COMBO_CALIBRATION_TYPE)->EnableWindow(FALSE);
-
-
-		this->GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR)->ShowWindow(SW_HIDE);
-		this->GetDlgItem(IDS_EDIT_CALIBRATION_CURVE_FILE)->ShowWindow(SW_HIDE);
-		this->GetDlgItem(IDS_EDIT_INTERCEPT_VALUE)->ShowWindow(SW_HIDE);
+		EditIDS_EDIT_CALIBRATION_FACTOR.ShowWindow(SW_HIDE);
+		EditIDS_EDIT_CALIBRATION_CURVE_FILE.ShowWindow(SW_HIDE);
+		EditIDS_EDIT_INTERCEPT_VALUE.ShowWindow(SW_HIDE);
 
 		break;
 	case 2:
-		this->GetDlgItem(IDS_COMBO_CALIBRATION_TYPE)->ShowWindow(SW_SHOW);
-		this->GetDlgItem(IDS_COMBO_CALIBRATION_TYPE)->EnableWindow(TRUE);
+		ComboIDS_COMBO_CALIBRATION_TYPE.ShowWindow(SW_SHOW);
+		ComboIDS_COMBO_CALIBRATION_TYPE.EnableWindow(TRUE);
 
-		this->GetDlgItem(IDS_STRING_CALIBRATION_CURVE_FILE)->ShowWindow(SW_HIDE);
-		this->GetDlgItem(IDS_STRING_INTERCEPT_VALUE)->ShowWindow(SW_HIDE);
+		StaticIDS_STRING_CALIBRATION_CURVE_FILE.ShowWindow(SW_HIDE);
+		StaticIDS_STRING_INTERCEPT_VALUE.ShowWindow(SW_HIDE);
 
 		CalibrationComboSelectChange();
 		break;
 	case 4:
 
-		this->GetDlgItem(IDS_COMBO_CALIBRATION_TYPE)->ShowWindow(SW_HIDE);
-		this->GetDlgItem(IDS_COMBO_CALIBRATION_TYPE)->EnableWindow(FALSE);
+		ComboIDS_COMBO_CALIBRATION_TYPE.ShowWindow(SW_HIDE);
+		ComboIDS_COMBO_CALIBRATION_TYPE.EnableWindow(FALSE);
 
-		this->GetDlgItem(IDS_STRING_CALIBRATION_CURVE_FILE)->ShowWindow(SW_HIDE);
-		this->GetDlgItem(IDS_STRING_INTERCEPT_VALUE)->ShowWindow(SW_SHOW);
+		StaticIDS_STRING_CALIBRATION_CURVE_FILE.ShowWindow(SW_HIDE);
+		StaticIDS_STRING_INTERCEPT_VALUE.ShowWindow(SW_SHOW);
 
-		this->GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR)->ShowWindow(SW_HIDE);
-		this->GetDlgItem(IDS_EDIT_CALIBRATION_CURVE_FILE)->ShowWindow(SW_HIDE);
-		this->GetDlgItem(IDS_EDIT_INTERCEPT_VALUE)->ShowWindow(SW_SHOW);
+		EditIDS_EDIT_CALIBRATION_FACTOR.ShowWindow(SW_HIDE);
+		EditIDS_EDIT_CALIBRATION_CURVE_FILE.ShowWindow(SW_HIDE);
+		EditIDS_EDIT_INTERCEPT_VALUE.ShowWindow(SW_SHOW);
 
 		break;
 	case 6:
@@ -135,16 +133,16 @@ void AnalysisParametersPage::ComboSelectChange(void)
 	case 12:
 
 
-		this->GetDlgItem(IDS_COMBO_CALIBRATION_TYPE)->ShowWindow(SW_HIDE);
-		this->GetDlgItem(IDS_COMBO_CALIBRATION_TYPE)->EnableWindow(FALSE);
+		ComboIDS_COMBO_CALIBRATION_TYPE.ShowWindow(SW_HIDE);
+		ComboIDS_COMBO_CALIBRATION_TYPE.EnableWindow(FALSE);
 
-		this->GetDlgItem(IDS_STRING_CALIBRATION_CURVE_FILE)->ShowWindow(SW_SHOW);
-		this->GetDlgItem(IDS_STRING_INTERCEPT_VALUE)->ShowWindow(SW_HIDE);
+		StaticIDS_STRING_CALIBRATION_CURVE_FILE.ShowWindow(SW_SHOW);
+		StaticIDS_STRING_INTERCEPT_VALUE.ShowWindow(SW_HIDE);
 
 
-		this->GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR)->ShowWindow(SW_HIDE);
-		this->GetDlgItem(IDS_EDIT_CALIBRATION_CURVE_FILE)->ShowWindow(SW_SHOW);
-		this->GetDlgItem(IDS_EDIT_INTERCEPT_VALUE)->ShowWindow(SW_HIDE);
+		EditIDS_EDIT_CALIBRATION_FACTOR.ShowWindow(SW_HIDE);
+		EditIDS_EDIT_CALIBRATION_CURVE_FILE.ShowWindow(SW_SHOW);
+		EditIDS_EDIT_INTERCEPT_VALUE.ShowWindow(SW_HIDE);
 		break;
 	default:
 		break;
@@ -161,16 +159,16 @@ void AnalysisParametersPage::ComboSelectChange(void)
 	case 6:
 	case 10:
 	case 12:
-		this->GetDlgItem(IDS_STRING_EVALUATION_RATIO)->EnableWindow(FALSE);
-		this->GetDlgItem(IDS_EDIT_EVALUATION_RATIO)->EnableWindow(FALSE);
-		this->GetDlgItem(IDS_STRING_EVALUATION_RATIO)->ShowWindow(SW_HIDE);
-		this->GetDlgItem(IDS_EDIT_EVALUATION_RATIO)->ShowWindow(SW_HIDE);
+		StaticIDS_STRING_EVALUATION_RATIO.EnableWindow(FALSE);
+		EditIDS_EDIT_EVALUATION_RATIO.EnableWindow(FALSE);
+		StaticIDS_STRING_EVALUATION_RATIO.ShowWindow(SW_HIDE);
+		EditIDS_EDIT_EVALUATION_RATIO.ShowWindow(SW_HIDE);
 		break;
 	default:
-		this->GetDlgItem(IDS_STRING_EVALUATION_RATIO)->EnableWindow(TRUE);
-		this->GetDlgItem(IDS_EDIT_EVALUATION_RATIO)->EnableWindow(TRUE);
-		this->GetDlgItem(IDS_STRING_EVALUATION_RATIO)->ShowWindow(SW_SHOW);
-		this->GetDlgItem(IDS_EDIT_EVALUATION_RATIO)->ShowWindow(SW_SHOW);
+		StaticIDS_STRING_EVALUATION_RATIO.EnableWindow(TRUE);
+		EditIDS_EDIT_EVALUATION_RATIO.EnableWindow(TRUE);
+		StaticIDS_STRING_EVALUATION_RATIO.ShowWindow(SW_SHOW);
+		EditIDS_EDIT_EVALUATION_RATIO.ShowWindow(SW_SHOW);
 		break;
 	}
 
@@ -408,14 +406,14 @@ void AnalysisParametersPage::CalibrationComboSelectChange(void)
 
 	switch(para.calibrationfactortype){
 	case 0:
-		this->GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR)->ShowWindow(SW_SHOW);
-		this->GetDlgItem(IDS_EDIT_CALIBRATION_CURVE_FILE)->ShowWindow(SW_HIDE);
-		this->GetDlgItem(IDS_EDIT_INTERCEPT_VALUE)->ShowWindow(SW_HIDE);
+		EditIDS_EDIT_CALIBRATION_FACTOR.ShowWindow(SW_SHOW);
+		EditIDS_EDIT_CALIBRATION_CURVE_FILE.ShowWindow(SW_HIDE);
+		EditIDS_EDIT_INTERCEPT_VALUE.ShowWindow(SW_HIDE);
 		break;
 	case 1:
-		this->GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR)->ShowWindow(SW_HIDE);
-		this->GetDlgItem(IDS_EDIT_CALIBRATION_CURVE_FILE)->ShowWindow(SW_SHOW);
-		this->GetDlgItem(IDS_EDIT_INTERCEPT_VALUE)->ShowWindow(SW_HIDE);
+		EditIDS_EDIT_CALIBRATION_FACTOR.ShowWindow(SW_HIDE);
+		EditIDS_EDIT_CALIBRATION_CURVE_FILE.ShowWindow(SW_SHOW);
+		EditIDS_EDIT_INTERCEPT_VALUE.ShowWindow(SW_HIDE);
 		break;
 	default:
 		break;

@@ -5,7 +5,7 @@
 #pragma once
 #include "OutputWnd.h"
 #include "user\AccountList.hpp"
-#include "WaitDlg.h"
+#include "wait\WaitDlg.h"
 #include "property\PropertySheetA1ML.h"
 
 enum ProcessState{
@@ -39,11 +39,12 @@ public:
 public:
 	CWnd * LeftPane(void) const { return m_wndSplitter.GetPane(0,0);};
 	CWnd * RightPane(void) const { return m_wndSplitter.GetPane(0,1);};
+	COutputWnd * GetOutputWnd(void){ return &m_wndOutput; };	
+	UserAccount::authority GetCurAuth(void){ return al.ual[userIndex].au; };
+	BOOL Login(bool bReadFile=false, CString fp=L"ua");
+	void ChangeLang(void);	
 	void ShowWaitDlg(CString tips);
 	void HideWaitDlg(void);
-	COutputWnd * GetOutputWnd(void){ return &m_wndOutput; };
-	void ChangeLang(void);
-	UserAccount::authority GetCurAuth(void){ return al.ual[userIndex].au; };
 // Overrides
 public:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
@@ -123,11 +124,7 @@ protected:
 
 	LANGID nID2LangID(UINT nID);
 	afx_msg void OnLanguage(UINT id);
-	afx_msg void OnUpdateLanguage(CCmdUI *pCmdUI);
-
-public:
-	HANDLE m_hStop;
-	
+	afx_msg void OnUpdateLanguage(CCmdUI *pCmdUI);	
 };
 
 

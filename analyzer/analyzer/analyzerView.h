@@ -100,6 +100,10 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 
+public:
+	virtual void OnPrepareDC(CDC* pDC, CPrintInfo* pInfo = NULL);
+	bool bPrint;
+	virtual void OnPrint(CDC* pDC, CPrintInfo* pInfo);
 };
 
 #ifndef _DEBUG  // debug version in analyzerView.cpp

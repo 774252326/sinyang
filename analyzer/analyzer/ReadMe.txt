@@ -92,6 +92,34 @@ analyzerView.h, analyzerView.cpp - the view of the document
 
 
 
+/////////////////////////////////////////////////////////////////////////////
+
+Help Support:
+
+hlp\analyzer.hhp
+    This file is a help project file. It contains the data needed to
+    compile the help files into a .chm file.
+
+hlp\analyzer.hhc
+    This file lists the contents of the help project.
+
+hlp\analyzer.hhk
+    This file contains an index of the help topics.
+
+hlp\afxcore.htm
+    This file contains the standard help topics for standard MFC
+    commands and screen objects. Add your own help topics to this file.
+
+hlp\afxprint.htm
+    This file contains the help topics for the printing commands.
+
+makehtmlhelp.bat
+    This file is used by the build system to compile the help files.
+
+hlp\Images\*.gif
+    These are bitmap files required by the standard help file topics for
+    Microsoft Foundation Class Library standard commands.
+
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -103,6 +131,9 @@ ActiveX Controls
 Printing and Print Preview support
     The application wizard has generated code to handle the print, print setup, and print preview
     commands by calling member functions in the CView class from the MFC library.
+
+Split Window
+    The application wizard has added support for splitter windows for your application documents.
 
 /////////////////////////////////////////////////////////////////////////////
 

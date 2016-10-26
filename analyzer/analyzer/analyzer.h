@@ -10,7 +10,6 @@
 #include "resource.h"       // main symbols
 
 
-
 // CanalyzerApp:
 // See analyzer.cpp for the implementation of this class
 //

@@ -80,7 +80,6 @@ protected:
 };
 
 //IMPLEMENT_DYNCREATE(LegendDlg, CDialogEx)
-
 BEGIN_MESSAGE_MAP(LegendDlg, CDialogEx)
 	ON_WM_NCHITTEST()
 	ON_WM_PAINT()

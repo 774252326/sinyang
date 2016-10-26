@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "analyzer", "analyzer\analyzer.vcxproj", "{C9FDF4C6-4FE9-4DF8-9D80-C8801EC7A959}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "analyzer", "analyzer\analyzer.vcxproj", "{1C1416DD-ED29-4640-8860-691A6FA2EC93}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -9,10 +9,10 @@ Global
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C9FDF4C6-4FE9-4DF8-9D80-C8801EC7A959}.Debug|Win32.ActiveCfg = Debug|Win32
-		{C9FDF4C6-4FE9-4DF8-9D80-C8801EC7A959}.Debug|Win32.Build.0 = Debug|Win32
-		{C9FDF4C6-4FE9-4DF8-9D80-C8801EC7A959}.Release|Win32.ActiveCfg = Release|Win32
-		{C9FDF4C6-4FE9-4DF8-9D80-C8801EC7A959}.Release|Win32.Build.0 = Release|Win32
+		{1C1416DD-ED29-4640-8860-691A6FA2EC93}.Debug|Win32.ActiveCfg = Debug|Win32
+		{1C1416DD-ED29-4640-8860-691A6FA2EC93}.Debug|Win32.Build.0 = Debug|Win32
+		{1C1416DD-ED29-4640-8860-691A6FA2EC93}.Release|Win32.ActiveCfg = Release|Win32
+		{1C1416DD-ED29-4640-8860-691A6FA2EC93}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

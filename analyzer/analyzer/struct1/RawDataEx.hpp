@@ -1,5 +1,6 @@
 #pragma once
 #include "rawdata.hpp"
+#include <locale.h>
 
 class RawDataEx :
 	public RawData
@@ -10,11 +11,16 @@ public:
 	{
 		CStdioFile file;
 		BOOL flag;
-		flag=file.Open(fp, CFile::modeCreate | CFile::modeWrite | CFile::typeText);
+		flag=file.Open(fp, CFile::modeCreate | CFile::modeWrite /*| CFile::typeText*/);
 
 		if(flag)
 		{	
+			char* old_locale = _strdup( setlocale(LC_CTYPE,NULL) ); 
+			setlocale( LC_CTYPE, "chs" );//设定
 			file.WriteString(str);
+			setlocale( LC_CTYPE, old_locale ); 
+			free( old_locale );//还原区域设定
+
 			file.Close();
 		}
 		return flag;

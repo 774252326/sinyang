@@ -61,31 +61,47 @@ void PlotWnd::OnPaint()
 	this->GetClientRect(&rect);	
 
 	CSize winsz=rect.Size();
-
-	CDC dcMem;//用于缓冲作图的内存DC
-	dcMem.CreateCompatibleDC(&dc);//依附窗口DC创建兼容内存DC
-
-	CBitmap bmp;//内存中承载临时图象的位图
-	bmp.CreateCompatibleBitmap(&dc,winsz.cx,winsz.cy);//创建兼容位图
-	dcMem.SelectObject(&bmp);  	//将位图选择进内存DC
+	//////////////////////////////////1//////////////////////////////////////////
 
 	if(pdex!=NULL){
-		pdex->Draw(rect,&dcMem);
+		pdex->Draw(rect,&dc);
 		if(bMouseCursor){
 			if(selectPIdx<pdex->pd.raw.xll.size() && selectPIdx<pdex->pd.raw.yll.size()){
-				pdex->Draw1(rect,&dcMem,pdex->pd.raw.xll[selectPIdx],pdex->pd.raw.yll[selectPIdx]);
+				pdex->Draw1(rect,&dc,pdex->pd.raw.xll[selectPIdx],pdex->pd.raw.yll[selectPIdx]);
 			}
 		}
 	}
 	else{
 		PlotDataEx dx(blankPS);
-		dx.Draw(rect,&dcMem);
+		dx.Draw(rect,&dc);
 	}
-	dc.BitBlt(0,0,winsz.cx,winsz.cy,&dcMem,0,0,SRCCOPY);//将内存DC上的图象拷贝到前台
-	//pDC->BitBlt(100,100,winsz.cx,winsz.cy,&dcMem,0,0,SRCCOPY);//将内存DC上的图象拷贝到前台
 
-	dcMem.DeleteDC(); //删除DC
-	bmp.DeleteObject(); //删除位图
+
+	/////////////////////////////////////2////////////////////////////////////////
+	//CDC dcMem;//用于缓冲作图的内存DC
+	//dcMem.CreateCompatibleDC(&dc);//依附窗口DC创建兼容内存DC
+
+	//CBitmap bmp;//内存中承载临时图象的位图
+	//bmp.CreateCompatibleBitmap(&dc,winsz.cx,winsz.cy);//创建兼容位图
+	//dcMem.SelectObject(&bmp);  	//将位图选择进内存DC
+
+	//if(pdex!=NULL){
+	//	pdex->Draw(rect,&dcMem);
+	//	if(bMouseCursor){
+	//		if(selectPIdx<pdex->pd.raw.xll.size() && selectPIdx<pdex->pd.raw.yll.size()){
+	//			pdex->Draw1(rect,&dcMem,pdex->pd.raw.xll[selectPIdx],pdex->pd.raw.yll[selectPIdx]);
+	//		}
+	//	}
+	//}
+	//else{
+	//	PlotDataEx dx(blankPS);
+	//	dx.Draw(rect,&dcMem);
+	//}
+	//dc.BitBlt(0,0,winsz.cx,winsz.cy,&dcMem,0,0,SRCCOPY);//将内存DC上的图象拷贝到前台
+	////pDC->BitBlt(100,100,winsz.cx,winsz.cy,&dcMem,0,0,SRCCOPY);//将内存DC上的图象拷贝到前台
+
+	//dcMem.DeleteDC(); //删除DC
+	//bmp.DeleteObject(); //删除位图
 
 
 

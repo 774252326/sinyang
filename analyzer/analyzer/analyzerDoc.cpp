@@ -17,10 +17,13 @@
 #define new DEBUG_NEW
 #endif
 
-#include "MainFrm.h"
-#include "ComputeDlg.h"
 
 #include "PDFPrinter.hpp"
+
+#include "MainFrm.h"
+#include "compute\ComputeDlg.hpp"
+
+
 
 #include "analyzerView.h"
 

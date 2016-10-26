@@ -6,30 +6,18 @@
 #include "afxwinappex.h"
 #include "afxdialogex.h"
 #include "analyzer.h"
-
-
-#ifdef _DEBUG
-#define new DEBUG_NEW
-#endif
-
 #include "MainFrm.h"
 
 #include "analyzerDoc.h"
 #include "analyzerView.h"
 
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#endif
+
 
 #include "user\StartDlg.hpp"
-#include "user\LoginDlg.h"
-
 #include "windowsversion.hpp"
-
-//#ifdef _DEBUG   
-//#ifndef DBG_NEW      
-//#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )      
-//#define new DBG_NEW   
-//#endif
-//#endif  // _DEBUG
-
 
 
 // CanalyzerApp
@@ -48,6 +36,8 @@ END_MESSAGE_MAP()
 
 CanalyzerApp::CanalyzerApp()
 {
+	EnableHtmlHelp();
+
 	m_bHiColorIcons = TRUE;
 
 	// support Restart Manager
@@ -76,11 +66,6 @@ CanalyzerApp theApp;
 
 BOOL CanalyzerApp::InitInstance()
 {
-
-
-	//_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
-	 //_CrtDumpMemoryLeaks(); 
-
 	// InitCommonControlsEx() is required on Windows XP if an application
 	// manifest specifies use of ComCtl32.dll version 6 or later to enable
 	// visual styles.  Otherwise, any window creation will fail.
@@ -91,16 +76,8 @@ BOOL CanalyzerApp::InitInstance()
 	InitCtrls.dwICC = ICC_WIN95_CLASSES;
 	InitCommonControlsEx(&InitCtrls);
 
-
-
-
 	CWinAppEx::InitInstance();
 
-		//_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
-	 //_CrtDumpMemoryLeaks(); 
-
-	LANGID LangID=MAKELANGID(LANG_CHINESE_SIMPLIFIED,SUBLANG_CHINESE_SIMPLIFIED);
-	setLg(LangID);
 
 	// Initialize OLE libraries
 	if (!AfxOleInit())
@@ -112,6 +89,15 @@ BOOL CanalyzerApp::InitInstance()
 	AfxEnableControlContainer();
 
 	EnableTaskbarInteraction(FALSE);
+
+
+	LANGID LangID=MAKELANGID(LANG_CHINESE_SIMPLIFIED,SUBLANG_CHINESE_SIMPLIFIED);
+	setLg(LangID);
+
+	StartDlg *sd=new StartDlg(IDB_BITMAP11);
+	sd->Create(StartDlg::IDD);
+	sd->ShowWindow(SW_SHOW);
+
 
 	// AfxInitRichEdit2() is required to use RichEdit control	
 	// AfxInitRichEdit2();
@@ -136,81 +122,55 @@ BOOL CanalyzerApp::InitInstance()
 	ttParams.m_bVislManagerTheme = TRUE;
 	theApp.GetTooltipManager()->SetTooltipParams(AFX_TOOLTIP_TYPE_ALL,
 		RUNTIME_CLASS(CMFCToolTipCtrl), &ttParams);
-	
-
-	StartDlg *sd=new StartDlg(IDB_BITMAP11);
-	sd->Create(StartDlg::IDD);
-	sd->ShowWindow(SW_SHOW);
 
 
-	Sleep(500);
-
-	LoginDlg ld;
-	CString fp=L"ua";
-	ld.al.ReadFile(fp);
-
-	if(ld.al.ual.empty()){
-		AfxMessageBox(IDS_STRING_USERLIST_ERROR);
+	// Register the application's document templates.  Document templates
+	//  serve as the connection between documents, frame windows and views
+	CSingleDocTemplate* pDocTemplate;
+	pDocTemplate = new CSingleDocTemplate(
+		IDR_MAINFRAME,
+		RUNTIME_CLASS(CanalyzerDoc),
+		RUNTIME_CLASS(CMainFrame),       // main SDI frame window
+		RUNTIME_CLASS(CanalyzerView));
+	if (!pDocTemplate)
 		return FALSE;
-	}
-
-	if(ld.DoModal()==IDOK){
-
-		sd->ShowWindow(SW_HIDE);
-		delete sd;
-		sd=NULL;
+	AddDocTemplate(pDocTemplate);
 
 
+	// Parse command line for standard shell commands, DDE, file open
+	CCommandLineInfo cmdInfo;
+	ParseCommandLine(cmdInfo);
+
+	// Enable DDE Execute open
+	EnableShellOpen();
+	RegisterShellFileTypes(TRUE);
 
 
-		// Register the application's document templates.  Document templates
-		//  serve as the connection between documents, frame windows and views
-		CSingleDocTemplate* pDocTemplate;
-		pDocTemplate = new CSingleDocTemplate(
-			IDR_MAINFRAME,
-			RUNTIME_CLASS(CanalyzerDoc),
-			RUNTIME_CLASS(CMainFrame),       // main SDI frame window
-			RUNTIME_CLASS(CanalyzerView));
-		if (!pDocTemplate)
-			return FALSE;
-		AddDocTemplate(pDocTemplate);
-
-
-		// Parse command line for standard shell commands, DDE, file open
-		CCommandLineInfo cmdInfo;
-		ParseCommandLine(cmdInfo);
-
-		// Enable DDE Execute open
-		EnableShellOpen();
-		RegisterShellFileTypes(TRUE);
-
-
-		// Dispatch commands specified on the command line.  Will return FALSE if
-		// app was launched with /RegServer, /Register, /Unregserver or /Unregister.
-		if (!ProcessShellCommand(cmdInfo))
-			return FALSE;
-
-		// The one and only window has been initialized, so show and update it
-		m_pMainWnd->ShowWindow(SW_SHOW);
-		m_pMainWnd->UpdateWindow();
-		// call DragAcceptFiles only if there's a suffix
-		//  In an SDI app, this should occur after ProcessShellCommand
-		// Enable drag/drop open
-		m_pMainWnd->DragAcceptFiles();
-
-		((CMainFrame*)m_pMainWnd)->userIndex=ld.usridx;
-		((CMainFrame*)m_pMainWnd)->al=ld.al;
-		((CMainFrame*)m_pMainWnd)->LangID=LangID;
-		return TRUE;
-	}
-	else{
-
-		sd->ShowWindow(SW_HIDE);
-		delete sd;
-		sd=NULL;
-
+	// Dispatch commands specified on the command line.  Will return FALSE if
+	// app was launched with /RegServer, /Register, /Unregserver or /Unregister.
+	if (!ProcessShellCommand(cmdInfo))
 		return FALSE;
-	}
+
+
+	sd->ShowWindow(SW_HIDE);
+	delete sd;
+	sd=NULL;
+
+	((CMainFrame*)m_pMainWnd)->LangID=LangID;
+	if( ((CMainFrame*)m_pMainWnd)->Login(true)!=TRUE )
+		return FALSE;
+
+
+
+	// The one and only window has been initialized, so show and update it
+	m_pMainWnd->ShowWindow(SW_SHOW);
+	m_pMainWnd->UpdateWindow();
+	// call DragAcceptFiles only if there's a suffix
+	//  In an SDI app, this should occur after ProcessShellCommand
+	// Enable drag/drop open
+	m_pMainWnd->DragAcceptFiles();
+
+	return TRUE;
 }
 
 int CanalyzerApp::ExitInstance()
@@ -218,11 +178,8 @@ int CanalyzerApp::ExitInstance()
 	//TODO: handle additional resources you may have added
 	AfxOleTerm(FALSE);
 
-
-
 	return CWinAppEx::ExitInstance();
-
-	_CrtDumpMemoryLeaks(); 
+		_CrtDumpMemoryLeaks(); 
 }
 
 // CanalyzerApp message handlers
@@ -235,13 +192,13 @@ class CAboutDlg : public CDialogEx
 public:
 	CAboutDlg();
 
-	// Dialog Data
+// Dialog Data
 	enum { IDD = IDD_ABOUTBOX };
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
-	// Implementation
+// Implementation
 protected:
 	DECLARE_MESSAGE_MAP()
 };
