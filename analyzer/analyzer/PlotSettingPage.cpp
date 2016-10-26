@@ -16,26 +16,19 @@ IMPLEMENT_DYNAMIC(PlotSettingPage, CPropertyPage)
 	, xlabel(_T(""))
 	, ylabel(_T(""))
 {
-	fs.bkgndC=0;
-	fs.borderC=0;
-	fs.gridC=0;
-	fs.gridType=0;
-	fs.labelC=0;
-	fs.labelSize=0;
-	fs.metricC=0;
-	fs.metricSize=0;
+	fs=PlotSpec();
 }
 
 
 PlotSettingPage::PlotSettingPage(const CString & title
-	, const figspec &fspec
-	, const std::vector<plotspec> &pspec
+	, const PlotSpec &fspec
+	, const std::vector<LineSpec> &pspec
 	, const CString & x
 	, const CString & y)
 	: CPropertyPage(PlotSettingPage::IDD)
 {
-	copyfs(fspec,fs);
 
+	fs=fspec;
 	ps.assign(pspec.begin(),pspec.end());
 
 	xlabel=x;

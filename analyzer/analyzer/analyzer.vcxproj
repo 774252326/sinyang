@@ -112,18 +112,22 @@
     <ClInclude Include="analyzer.h" />
     <ClInclude Include="analyzerDoc.h" />
     <ClInclude Include="analyzerView.h" />
+    <ClInclude Include="analyzerViewR.h" />
     <ClInclude Include="ANPara.h" />
-    <ClInclude Include="CanalyzerViewL.h" />
+    <ClInclude Include="ColorButton.h" />
     <ClInclude Include="ComboItem.h" />
     <ClInclude Include="CVParametersPage.h" />
     <ClInclude Include="DataOut.h" />
     <ClInclude Include="EditItem.h" />
     <ClInclude Include="EditList.h" />
+    <ClInclude Include="Header1.h" />
     <ClInclude Include="linespec.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="MFCCaptionBarA.h" />
     <ClInclude Include="OutputWnd.h" />
+    <ClInclude Include="pcct.h" />
     <ClInclude Include="PlotData.h" />
+    <ClInclude Include="PlotSettingPage.h" />
     <ClInclude Include="PlotSpec.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SAPara.h" />
@@ -139,8 +143,9 @@
     <ClCompile Include="analyzer.cpp" />
     <ClCompile Include="analyzerDoc.cpp" />
     <ClCompile Include="analyzerView.cpp" />
+    <ClCompile Include="analyzerViewR.cpp" />
     <ClCompile Include="ANPara.cpp" />
-    <ClCompile Include="CanalyzerViewL.cpp" />
+    <ClCompile Include="ColorButton.cpp" />
     <ClCompile Include="ComboItem.cpp" />
     <ClCompile Include="CVParametersPage.cpp" />
     <ClCompile Include="DataOut.cpp" />
@@ -150,11 +155,14 @@
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="MFCCaptionBarA.cpp" />
     <ClCompile Include="OutputWnd.cpp" />
+    <ClCompile Include="pcct.cpp" />
     <ClCompile Include="PlotData.cpp" />
+    <ClCompile Include="PlotSettingPage.cpp" />
     <ClCompile Include="PlotSpec.cpp" />
     <ClCompile Include="SAPara.cpp" />
     <ClCompile Include="sapitem.cpp" />
     <ClCompile Include="SolutionAdditionParametersPage.cpp" />
+    <ClCompile Include="Source1.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

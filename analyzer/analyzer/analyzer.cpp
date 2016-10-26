@@ -10,6 +10,7 @@
 
 #include "analyzerDoc.h"
 #include "analyzerView.h"
+//#include "CanalyzerView.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

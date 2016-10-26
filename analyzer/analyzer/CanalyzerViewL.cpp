@@ -1,6 +1,14 @@
 #include "StdAfx.h"
-#include "CanalyzerViewL.h"
 
+//// SHARED_HANDLERS can be defined in an ATL project implementing preview, thumbnail
+//// and search filter handlers and allows sharing of document code with that project.
+//#ifndef SHARED_HANDLERS
+//#include "analyzer.h"
+//#endif
+
+#include "CanalyzerViewL.h"
+#include "typedefine.h"
+#include "PlotSettingPage.h"
 
 CanalyzerViewL::CanalyzerViewL(void)
 	: idx(0)
@@ -15,6 +23,8 @@ BEGIN_MESSAGE_MAP(CanalyzerViewL, CanalyzerView)
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSEWHEEL()
 	ON_WM_PAINT()
+	ON_COMMAND(ID_VIEW_FITWINDOW, &CanalyzerViewL::OnViewFitwindow)
+	ON_COMMAND(ID_OPTIONS_PLOTSETTINGS, &CanalyzerViewL::OnOptionsPlotsettings)
 END_MESSAGE_MAP()
 
 
@@ -90,8 +100,9 @@ void CanalyzerViewL::OnPaint()
 		std::vector<CPoint> pointlist;
 		genPointToPlot(pDoc->lp[idx].xll
 			,pDoc->lp[idx].yll
-			,rect
+			,plotrect
 			,pointlist);
+
 		DrawCurve(&dcMem
 			,pointlist
 			,pDoc->lp[idx].ll
@@ -99,7 +110,7 @@ void CanalyzerViewL::OnPaint()
 			,plotrect.left
 			,plotrect.right);
 
-	rgn.SetRectRgn(&mainrt);
+		rgn.SetRectRgn(&mainrt);
 		dcMem.SelectClipRgn(&rgn);
 
 		CRect legendrect=DrawLegend( 
@@ -113,10 +124,128 @@ void CanalyzerViewL::OnPaint()
 
 	}
 
-
-
 	dc.BitBlt(0,0,rect.Width(),rect.Height(),&dcMem,0,0,SRCCOPY);//将内存DC上的图象拷贝到前台
 	dcMem.DeleteDC(); //删除DC
 	bmp.DeleteObject(); //删除位图
 
+}
+
+
+void CanalyzerViewL::OnDeltaposSpin(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	NM_UPDOWN* pNMUpDown=(NM_UPDOWN*)pNMHDR;	
+
+	CanalyzerDoc* pDoc=GetDocument();
+
+	int n=pDoc->lp.size();
+	int newpos=pNMUpDown->iPos+pNMUpDown->iDelta;
+	if(newpos>=n)
+		newpos=0;
+	if(newpos<0)
+		newpos=n-1;
+	//int newpos=pNMUpDown->iPos;
+
+	//if(updatePlotRange(newpos))
+	//if(updatePlotRange())
+	double pct=0.02;
+	UpdateRange(pDoc->lp[newpos].xll,xmin,xmax,pct,true);
+	UpdateRange(pDoc->lp[newpos].yll,ymin,ymax,pct,true);
+	Invalidate();
+	
+	*pResult = 0;
+}
+
+// update xmin,xmax,ymin,ymax
+bool CanalyzerViewL::updatePlotRange(int plotIndex, bool flg)
+{
+	CanalyzerDoc* pDoc=GetDocument();
+	return CanalyzerView::updatePlotRange(plotIndex,pDoc->lp[plotIndex].xll,pDoc->lp[plotIndex].yll,flg);
+}
+
+// update xmin,xmax,ymin,ymax
+bool CanalyzerViewL::updatePlotRange(bool flg)
+{
+	CanalyzerDoc* pDoc=GetDocument();
+	double pct=0.02;
+	int ci=m_spBtn.GetPos32();
+	UpdateRange(pDoc->lp[ci].xll,xmin,xmax,pct,flg);
+	UpdateRange(pDoc->lp[ci].yll,ymin,ymax,pct,flg);
+	return true;
+}
+
+
+int CanalyzerViewL::AddPlot(const PlotData & pda)
+{
+	CanalyzerDoc* pDoc=GetDocument();
+	pDoc->lp.push_back(pda);
+	int newi=pDoc->lp.size()-1;
+	m_spBtn.SetRange32(0,newi);
+	m_spBtn.SetPos32(newi);
+	m_spBtn.ShowWindow( (newi>0 ? SW_SHOW : SW_HIDE) );
+	return newi;
+}
+
+void CanalyzerViewL::OnViewFitwindow()
+{
+	// TODO: Add your command handler code here
+
+	if(this->updatePlotRange())
+		this->Invalidate();
+
+}
+
+
+void CanalyzerViewL::OnOptionsPlotsettings()
+{
+	// TODO: Add your command handler code here
+
+
+	AfxMessageBox(L"dfas");
+
+	// 创建属性表对象   
+	CString str;
+	str.LoadStringW(IDS_STRING_POLT_SETTINGS);
+	CPropertySheet sheet(str);
+	//abc sheet(777);
+	// 设置属性对话框为向导对话框   
+	//sheet.SetWizardMode();   
+	//sheet.SetWindowPos(&CWnd::wndTopMost,10,10,800,600,SWP_SHOWWINDOW);
+
+	CanalyzerDoc* pDoc=GetDocument();
+	int il=m_spBtn.GetPos32();
+	str.LoadStringW(IDS_STRING_FIGURE1);
+	PlotSettingPage fig1setting(str
+		,pDoc->lp[il].psp
+		,pDoc->lp[il].ps
+		,pDoc->lp[il].xlabel
+		,pDoc->lp[il].ylabel);
+
+	//int ir=RightPlotPointer()->m_spBtn.GetPos32();
+	//str.LoadStringW(IDS_STRING_FIGURE2);
+	//PlotSettingPage fig2setting(str
+	//	,RightPlotPointer()->fs
+	//	,RightPlotPointer()->pdl[ir].ps
+	//	,RightPlotPointer()->pdl[ir].xlabel
+	//	,RightPlotPointer()->pdl[ir].ylabel);
+
+	sheet.AddPage(&fig1setting);
+	//sheet.AddPage(&fig2setting);
+
+	// 打开模态向导对话框   
+	if(sheet.DoModal()==IDOK){
+
+		pDoc->lp[il].xlabel=fig1setting.xlabel;
+		pDoc->lp[il].ylabel=fig1setting.ylabel;
+		pDoc->lp[il].psp=fig1setting.fs;
+		pDoc->lp[il].ps.clear();
+		pDoc->lp[il].ps.assign(fig1setting.ps.begin(),fig1setting.ps.end());
+		Invalidate();
+
+		//RightPlotPointer()->pdl[ir].xlabel=fig2setting.xlabel;
+		//RightPlotPointer()->pdl[ir].ylabel=fig2setting.ylabel;
+		//copyfs(fig2setting.fs,RightPlotPointer()->fs);
+		//RightPlotPointer()->pdl[ir].ps.clear();
+		//RightPlotPointer()->pdl[ir].ps.assign(fig2setting.ps.begin(),fig2setting.ps.end());
+		//RightPlotPointer()->Invalidate();
+	}
 }

@@ -1,5 +1,5 @@
 
-// analyzerView.cpp : implementation of the CanalyzerView class
+// analyzerViewR.cpp : implementation of the CanalyzerViewR class
 //
 
 #include "stdafx.h"
@@ -10,7 +10,7 @@
 #endif
 
 #include "analyzerDoc.h"
-#include "analyzerView.h"
+#include "analyzerViewR.h"
 //#include "calgridT.h"
 //#include "xRescaleT.h"
 //#include "CSpline.h"
@@ -25,11 +25,11 @@
 
 COLORREF inv(const COLORREF &oc);
 
-// CanalyzerView
+// CanalyzerViewR
 
-IMPLEMENT_DYNCREATE(CanalyzerView, CFormView)
+IMPLEMENT_DYNCREATE(CanalyzerViewR, CFormView)
 
-	BEGIN_MESSAGE_MAP(CanalyzerView, CFormView)
+	BEGIN_MESSAGE_MAP(CanalyzerViewR, CFormView)
 		ON_WM_CONTEXTMENU()
 		ON_WM_RBUTTONUP()
 		ON_WM_PAINT()
@@ -38,17 +38,17 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CFormView)
 		ON_WM_LBUTTONDOWN()
 		ON_WM_LBUTTONUP()
 		//		ON_WM_MOUSEMOVE()
-		ON_COMMAND(ID_OPTIONS_PLOTSETTINGS, &CanalyzerView::OnOptionsPlotsettings)
+		ON_COMMAND(ID_OPTIONS_PLOTSETTINGS, &CanalyzerViewR::OnOptionsPlotsettings)
 		ON_WM_MOUSEMOVE()
 		ON_WM_MOUSEWHEEL()
-		ON_COMMAND(ID_VIEW_FITWINDOW, &CanalyzerView::OnViewFitwindow)
-		ON_NOTIFY(UDN_DELTAPOS, 1, CanalyzerView::OnDeltaposSpin)
+		ON_COMMAND(ID_VIEW_FITWINDOW, &CanalyzerViewR::OnViewFitwindow)
+		ON_NOTIFY(UDN_DELTAPOS, 1, CanalyzerViewR::OnDeltaposSpin)
 	END_MESSAGE_MAP()
 
-	// CanalyzerView construction/destruction
+	// CanalyzerViewR construction/destruction
 
-	CanalyzerView::CanalyzerView()
-		: CFormView(CanalyzerView::IDD)
+	CanalyzerViewR::CanalyzerViewR()
+		: CFormView(CanalyzerViewR::IDD)
 		, xmin(0)
 		, xmax(0)
 		, ymin(0)
@@ -63,16 +63,16 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CFormView)
 		spBtnSize=CSize(23*2,23);
 	}
 
-	CanalyzerView::~CanalyzerView()
+	CanalyzerViewR::~CanalyzerViewR()
 	{
 	}
 
-	void CanalyzerView::DoDataExchange(CDataExchange* pDX)
+	void CanalyzerViewR::DoDataExchange(CDataExchange* pDX)
 	{
 		CFormView::DoDataExchange(pDX);
 	}
 
-	BOOL CanalyzerView::PreCreateWindow(CREATESTRUCT& cs)
+	BOOL CanalyzerViewR::PreCreateWindow(CREATESTRUCT& cs)
 	{
 		// TODO: Modify the Window class or styles here by modifying
 		//  the CREATESTRUCT cs
@@ -80,7 +80,7 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CFormView)
 		return CFormView::PreCreateWindow(cs);
 	}
 
-	void CanalyzerView::OnInitialUpdate()
+	void CanalyzerViewR::OnInitialUpdate()
 	{
 		CFormView::OnInitialUpdate();
 		GetParentFrame()->RecalcLayout();
@@ -91,13 +91,13 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CFormView)
 
 	}
 
-	void CanalyzerView::OnRButtonUp(UINT /* nFlags */, CPoint point)
+	void CanalyzerViewR::OnRButtonUp(UINT /* nFlags */, CPoint point)
 	{
 		ClientToScreen(&point);
 		OnContextMenu(this, point);
 	}
 
-	void CanalyzerView::OnContextMenu(CWnd* /* pWnd */, CPoint point)
+	void CanalyzerViewR::OnContextMenu(CWnd* /* pWnd */, CPoint point)
 	{
 #ifndef SHARED_HANDLERS
 		theApp.GetContextMenuManager()->ShowPopupMenu(IDR_POPUP_EDIT, point.x, point.y, this, TRUE);
@@ -105,20 +105,20 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CFormView)
 	}
 
 
-	// CanalyzerView diagnostics
+	// CanalyzerViewR diagnostics
 
 #ifdef _DEBUG
-	void CanalyzerView::AssertValid() const
+	void CanalyzerViewR::AssertValid() const
 	{
 		CFormView::AssertValid();
 	}
 
-	void CanalyzerView::Dump(CDumpContext& dc) const
+	void CanalyzerViewR::Dump(CDumpContext& dc) const
 	{
 		CFormView::Dump(dc);
 	}
 
-	CanalyzerDoc* CanalyzerView::GetDocument() const // non-debug version is inline
+	CanalyzerDoc* CanalyzerViewR::GetDocument() const // non-debug version is inline
 	{
 		ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CanalyzerDoc)));
 		return (CanalyzerDoc*)m_pDocument;
@@ -126,17 +126,17 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CFormView)
 #endif //_DEBUG
 
 
-	// CanalyzerView message handlers
+	// CanalyzerViewR message handlers
 
 
-	void CanalyzerView::OnPaint()
+	void CanalyzerViewR::OnPaint()
 	{
 		CPaintDC dc(this); // device context for painting
 		// TODO: Add your message handler code here
 		// Do not call CFormView::OnPaint() for painting messages
 
 		CanalyzerDoc* pDoc=GetDocument();
-		if(!pDoc->lp.empty()){
+		if(!pDoc->rp.empty()){
 			//int ci=m_spBtn.GetPos32();
 			CDC dcMem;                                                  //用于缓冲作图的内存DC
 			CBitmap bmp;                                                 //内存中承载临时图象的位图
@@ -145,10 +145,10 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CFormView)
 			dcMem.CreateCompatibleDC(&dc);               //依附窗口DC创建兼容内存DC
 			bmp.CreateCompatibleBitmap(&dc,rect.Width(),rect.Height());//创建兼容位图
 			dcMem.SelectObject(&bmp);                          //将位图选择进内存DC
-			//dcMem.FillSolidRect(rect,pDoc->lp[ci].psp.bkgndC);//按原来背景填充客户区，不然会是黑色
+			//dcMem.FillSolidRect(rect,pDoc->rp[ci].psp.bkgndC);//按原来背景填充客户区，不然会是黑色
 			CRect plotrect=rect;
 
-			DrawData(plotrect,&dcMem,pDoc->lp[m_spBtn.GetPos32()],xmin,xmax,ymin,ymax);
+			DrawData(plotrect,&dcMem,pDoc->rp[m_spBtn.GetPos32()],xmin,xmax,ymin,ymax);
 
 			dc.BitBlt(0,0,rect.Width(),rect.Height(),&dcMem,0,0,SRCCOPY);//将内存DC上的图象拷贝到前台
 			dcMem.DeleteDC(); //删除DC
@@ -157,7 +157,7 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CFormView)
 	}
 
 
-	int CanalyzerView::OnCreate(LPCREATESTRUCT lpCreateStruct)
+	int CanalyzerViewR::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	{
 		if (CFormView::OnCreate(lpCreateStruct) == -1)
 			return -1;
@@ -179,17 +179,17 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CFormView)
 	}
 
 
-	void CanalyzerView::OnSize(UINT nType, int cx, int cy)
+	void CanalyzerViewR::OnSize(UINT nType, int cx, int cy)
 	{
 		CFormView::OnSize(nType, cx, cy);
 
 		// TODO: Add your message handler code here
 
 		m_spBtn.MoveWindow(CRect(CPoint(cx,cy)-spBtnSize,spBtnSize));
-		Invalidate();
+		Invalidate(FALSE);
 	}
 
-	void CanalyzerView::OnLButtonDown(UINT nFlags, CPoint point)
+	void CanalyzerViewR::OnLButtonDown(UINT nFlags, CPoint point)
 	{
 		// TODO: Add your message handler code here and/or call default
 		m_mouseDownPoint=point;
@@ -199,7 +199,7 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CFormView)
 	}
 
 
-	void CanalyzerView::OnLButtonUp(UINT nFlags, CPoint point)
+	void CanalyzerViewR::OnLButtonUp(UINT nFlags, CPoint point)
 	{
 		// TODO: Add your message handler code here and/or call default
 		m_mouseDownPoint=CPoint(0,0);
@@ -209,7 +209,7 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CFormView)
 	}
 
 
-	void CanalyzerView::clear(void)
+	void CanalyzerViewR::clear(void)
 	{
 		xmin=xmax=ymin=ymax=0;
 		m_spBtn.SetRange32(0,0);
@@ -218,7 +218,7 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CFormView)
 	}
 
 
-	bool CanalyzerView::updatePlotRange(int plotIndex, const std::vector<double> &x, const std::vector<double> &y, bool flg)
+	bool CanalyzerViewR::updatePlotRange(int plotIndex, const std::vector<double> &x, const std::vector<double> &y, bool flg)
 	{
 		if(plotIndex==m_spBtn.GetPos32()){
 			double pct=0.02;
@@ -229,11 +229,11 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CFormView)
 		return false;
 	}
 
-	void CanalyzerView::OnOptionsPlotsettings()
+	void CanalyzerViewR::OnOptionsPlotsettings()
 	{
 		// TODO: Add your command handler code here
 
-		AfxMessageBox(L"left");
+		AfxMessageBox(L"right");
 
 
 		// 创建属性表对象   
@@ -246,44 +246,44 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CFormView)
 		//sheet.SetWindowPos(&CWnd::wndTopMost,10,10,800,600,SWP_SHOWWINDOW);
 
 		CanalyzerDoc* pDoc=GetDocument();
-		if(!pDoc->lp.empty()){
+		if(!pDoc->rp.empty()){
 			int il=m_spBtn.GetPos32();
 			str.LoadStringW(IDS_STRING_FIGURE1);
 			PlotSettingPage fig1setting(str
-				,pDoc->lp[il].psp
-				,pDoc->lp[il].ps
-				,pDoc->lp[il].xlabel
-				,pDoc->lp[il].ylabel);
+				,pDoc->rp[il].psp
+				,pDoc->rp[il].ps
+				,pDoc->rp[il].xlabel
+				,pDoc->rp[il].ylabel);
 
 			sheet.AddPage(&fig1setting);
 
 			// 打开模态向导对话框   
 			if(sheet.DoModal()==IDOK){
 
-				pDoc->lp[il].xlabel=fig1setting.xlabel;
-				pDoc->lp[il].ylabel=fig1setting.ylabel;
-				pDoc->lp[il].psp=fig1setting.fs;
-				pDoc->lp[il].ps.clear();
-				pDoc->lp[il].ps.assign(fig1setting.ps.begin(),fig1setting.ps.end());
+				pDoc->rp[il].xlabel=fig1setting.xlabel;
+				pDoc->rp[il].ylabel=fig1setting.ylabel;
+				pDoc->rp[il].psp=fig1setting.fs;
+				pDoc->rp[il].ps.clear();
+				pDoc->rp[il].ps.assign(fig1setting.ps.begin(),fig1setting.ps.end());
 				Invalidate(FALSE);
 			}
 		}
 	}
 
 
-	void CanalyzerView::OnMouseMove(UINT nFlags, CPoint point)
+	void CanalyzerViewR::OnMouseMove(UINT nFlags, CPoint point)
 	{
 		// TODO: Add your message handler code here and/or call default
 
 		CanalyzerDoc* pDoc=GetDocument();
 		int idx=m_spBtn.GetPos32();
 
-		if (GetCapture()==this && !pDoc->lp.empty() && !pDoc->lp[idx].ps.empty()){
+		if (GetCapture()==this && !pDoc->rp.empty() && !pDoc->rp[idx].ps.empty()){
 			CRect plotrect;
 			this->GetClientRect(&plotrect);
 			if( MoveUpdate(plotrect
-				, pDoc->lp[idx].psp.metricSize
-				, pDoc->lp[idx].psp.labelSize
+				, pDoc->rp[idx].psp.metricSize
+				, pDoc->rp[idx].psp.labelSize
 				, point
 				, this->m_mouseDownPoint
 				,xmin,xmax,ymin,ymax) ){
@@ -296,7 +296,7 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CFormView)
 	}
 
 
-	BOOL CanalyzerView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
+	BOOL CanalyzerViewR::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 	{
 		// TODO: Add your message handler code here and/or call default
 
@@ -304,13 +304,13 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CFormView)
 		CanalyzerDoc* pDoc=GetDocument();
 		int idx=m_spBtn.GetPos32();
 
-		if(!pDoc->lp.empty() && !pDoc->lp[idx].ps.empty()){
+		if(!pDoc->rp.empty() && !pDoc->rp[idx].ps.empty()){
 		ScreenToClient(&pt);
 		CRect plotrect;
 		this->GetClientRect(&plotrect);
 			if( WheelUpdate(plotrect
-				, pDoc->lp[idx].psp.metricSize
-				, pDoc->lp[idx].psp.labelSize
+				, pDoc->rp[idx].psp.metricSize
+				, pDoc->rp[idx].psp.labelSize
 				, pt
 				, ((zDelta>0)?0.8:1.25)
 				,xmin,xmax,ymin,ymax) ){
@@ -324,42 +324,42 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CFormView)
 
 
 	// update xmin,xmax,ymin,ymax
-	bool CanalyzerView::updatePlotRange(int plotIndex, bool flg)
+	bool CanalyzerViewR::updatePlotRange(int plotIndex, bool flg)
 	{
 		CanalyzerDoc* pDoc=GetDocument();
-		if(pDoc->lp.empty())
+		if(pDoc->rp.empty())
 			return false;
 
-		return updatePlotRange(plotIndex,pDoc->lp[plotIndex].xll,pDoc->lp[plotIndex].yll,flg);
+		return updatePlotRange(plotIndex,pDoc->rp[plotIndex].xll,pDoc->rp[plotIndex].yll,flg);
 	}
 
 	// update xmin,xmax,ymin,ymax
-	bool CanalyzerView::updatePlotRange(bool flg)
+	bool CanalyzerViewR::updatePlotRange(bool flg)
 	{
 		CanalyzerDoc* pDoc=GetDocument();
-		if(pDoc->lp.empty())
+		if(pDoc->rp.empty())
 			return false;
 
 		double pct=0.02;
 		int ci=m_spBtn.GetPos32();
-		UpdateRange(pDoc->lp[ci].xll,xmin,xmax,pct,flg);
-		UpdateRange(pDoc->lp[ci].yll,ymin,ymax,pct,flg);
+		UpdateRange(pDoc->rp[ci].xll,xmin,xmax,pct,flg);
+		UpdateRange(pDoc->rp[ci].yll,ymin,ymax,pct,flg);
 		return true;
 	}
 
 
-	int CanalyzerView::AddPlot(const PlotData & pda)
+	int CanalyzerViewR::AddPlot(const PlotData & pda)
 	{
 		CanalyzerDoc* pDoc=GetDocument();
-		pDoc->lp.push_back(pda);
-		int newi=pDoc->lp.size()-1;
+		pDoc->rp.push_back(pda);
+		int newi=pDoc->rp.size()-1;
 		m_spBtn.SetRange32(0,newi);
 		m_spBtn.SetPos32(newi);
 		m_spBtn.ShowWindow( (newi>0 ? SW_SHOW : SW_HIDE) );
 		return newi;
 	}
 
-	void CanalyzerView::OnViewFitwindow()
+	void CanalyzerViewR::OnViewFitwindow()
 	{
 		// TODO: Add your command handler code here
 	
@@ -368,13 +368,13 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CFormView)
 
 	}
 
-	void CanalyzerView::OnDeltaposSpin(NMHDR* pNMHDR, LRESULT* pResult)
+	void CanalyzerViewR::OnDeltaposSpin(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	NM_UPDOWN* pNMUpDown=(NM_UPDOWN*)pNMHDR;	
 
 	CanalyzerDoc* pDoc=GetDocument();
 
-	int n=pDoc->lp.size();
+	int n=pDoc->rp.size();
 	int newpos=pNMUpDown->iPos+pNMUpDown->iDelta;
 	if(newpos>=n)
 		newpos=0;
@@ -385,8 +385,8 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CFormView)
 	//if(updatePlotRange(newpos))
 	//if(updatePlotRange())
 	double pct=0.02;
-	UpdateRange(pDoc->lp[newpos].xll,xmin,xmax,pct,true);
-	UpdateRange(pDoc->lp[newpos].yll,ymin,ymax,pct,true);
+	UpdateRange(pDoc->rp[newpos].xll,xmin,xmax,pct,true);
+	UpdateRange(pDoc->rp[newpos].yll,ymin,ymax,pct,true);
 	Invalidate(FALSE);
 	
 	*pResult = 0;

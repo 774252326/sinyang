@@ -18,6 +18,10 @@
 #include "CVParametersPage.h"
 #include "SolutionAdditionParametersPage.h"
 
+#include "pcct.h"
+#include "colormapT.h"
+#include "analyzerView.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -83,25 +87,69 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		else
 		{
 			// TODO: add loading code here
-			p1.Serialize(ar);
-			p2.Serialize(ar);
-			p3.Serialize(ar);
-			size_t n;
-			ar>>n;
-			dol.assign(n,DataOut());
-			for(size_t i=0;i<dol.size();i++){
-				dol[i].Serialize(ar);
-			}
-			ar>>n;
-			lp.assign(n,PlotData());
-			for(size_t i=0;i<lp.size();i++){
-				lp[i].Serialize(ar);
-			}
-			ar>>n;
-			rp.assign(n,PlotData());
-			for(size_t i=0;i<rp.size();i++){
-				rp[i].Serialize(ar);
-			}
+			//p1.Serialize(ar);
+			//p2.Serialize(ar);
+			//p3.Serialize(ar);
+			//size_t n;
+			//ar>>n;
+			//dol.assign(n,DataOut());
+			//for(size_t i=0;i<dol.size();i++){
+			//	dol[i].Serialize(ar);
+			//}
+			//ar>>n;
+			//lp.assign(n,PlotData());
+			//for(size_t i=0;i<lp.size();i++){
+			//	lp[i].Serialize(ar);
+			//}
+			//ar>>n;
+			//rp.assign(n,PlotData());
+			//for(size_t i=0;i<rp.size();i++){
+			//	rp[i].Serialize(ar);
+			//}
+			//////////////////////////////////////////////
+
+			//CString str=this->GetPathName();
+			POSITION pos = GetFirstViewPosition();
+		CView* pFirstView = GetNextView(pos);
+		{
+			CString str=L"C:\\Users\\r8anw2x\\Desktop\\ss\\analyzer\\analyzer\\data\\DTR\\3360 base 25ml + 8mlcali8-5.txt";
+			pcct dt1;
+			dt1.readFile(str);
+			dt1.TomA();
+			PlotData p1;			
+			LineSpec ps1;
+		ps1.colour=genColor( genColorvFromIndex<float>( 0 ) ) ;
+		ps1.dotSize=-1;
+		ps1.name=str;
+		ps1.lineType=0;
+		ps1.smoothLine=0;
+		ps1.traceLast=false;
+		p1.AddNew(dt1.potential,dt1.current,ps1,dt1.label[0],dt1.label[1]);
+		((CanalyzerView*)pFirstView)->AddPlot(p1);
+		}
+
+
+				{
+			CString str=L"C:\\Users\\r8anw2x\\Desktop\\ss\\analyzer\\analyzer\\data\\DTR\\3360 base 25ml + 2mlcali8-5.txt";
+			pcct dt1;
+			dt1.readFile(str);
+			dt1.TomA();
+			PlotData p1;			
+			LineSpec ps1;
+		ps1.colour=genColor( genColorvFromIndex<float>( 0 ) ) ;
+		ps1.dotSize=-1;
+		ps1.name=str;
+		ps1.lineType=0;
+		ps1.smoothLine=0;
+		ps1.traceLast=false;
+		p1.AddNew(dt1.potential,dt1.current,ps1,dt1.label[0],dt1.label[1]);
+		((CanalyzerView*)pFirstView)->AddPlot(p1);
+		}
+
+		if(((CanalyzerView*)pFirstView)->updatePlotRange())
+			;
+			//((CanalyzerView*)pFirstView)->Invalidate(FALSE);
+
 		}
 	}
 

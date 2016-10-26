@@ -119,7 +119,19 @@
     <ClInclude Include="EditList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CanalyzerViewL.h">
+    <ClInclude Include="PlotSettingPage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorButton.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Header1.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="pcct.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="analyzerViewR.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -187,7 +199,19 @@
     <ClCompile Include="EditList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CanalyzerViewL.cpp">
+    <ClCompile Include="PlotSettingPage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ColorButton.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source1.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="pcct.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="analyzerViewR.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

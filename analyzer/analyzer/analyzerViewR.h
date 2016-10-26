@@ -1,5 +1,5 @@
 
-// analyzerView.h : interface of the CanalyzerView class
+// analyzerViewR.h : interface of the CanalyzerViewR class
 //
 
 #pragma once
@@ -7,11 +7,11 @@
 #include "resource.h"
 #include "analyzerDoc.h"
 
-class CanalyzerView : public CFormView
+class CanalyzerViewR : public CFormView
 {
 protected: // create from serialization only
-	CanalyzerView();
-	DECLARE_DYNCREATE(CanalyzerView)
+	CanalyzerViewR();
+	DECLARE_DYNCREATE(CanalyzerViewR)
 
 public:
 	enum{ IDD = IDD_ANALYZER_FORM };
@@ -32,7 +32,7 @@ protected:
 
 // Implementation
 public:
-	virtual ~CanalyzerView();
+	virtual ~CanalyzerViewR();
 #ifdef _DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
@@ -46,11 +46,9 @@ protected:
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	DECLARE_MESSAGE_MAP()
-public:
+
 	afx_msg void OnPaint();
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-
-	CSpinButtonCtrl m_spBtn;
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 
 	CSize spBtnSize;
@@ -62,13 +60,15 @@ public:
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
+	afx_msg void OnOptionsPlotsettings();
+	afx_msg void OnViewFitwindow();
+	void OnDeltaposSpin(NMHDR* pNMHDR, LRESULT* pResult);
 
+public:
 	void clear(void);
 
-	afx_msg void OnOptionsPlotsettings();
 
-	afx_msg void OnViewFitwindow();
-
+	CSpinButtonCtrl m_spBtn;
 	bool updatePlotRange(int plotIndex, const std::vector<double> &x, const std::vector<double> &y, bool flg=false);
 	bool updatePlotRange(int plotIndex, bool flg=true);
 	bool updatePlotRange(bool flg=true);
@@ -76,11 +76,11 @@ public:
 	int AddPlot(const PlotData & pda);
 
 
-	void OnDeltaposSpin(NMHDR* pNMHDR, LRESULT* pResult);
+
 };
 
 #ifndef _DEBUG  // debug version in analyzerView.cpp
-inline CanalyzerDoc* CanalyzerView::GetDocument() const
+inline CanalyzerDoc* CanalyzerViewR::GetDocument() const
    { return reinterpret_cast<CanalyzerDoc*>(m_pDocument); }
 #endif
 

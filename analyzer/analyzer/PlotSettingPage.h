@@ -2,6 +2,8 @@
 
 #include "typedefine.h"
 #include "EditList.h"
+#include "PlotSpec.h"
+#include "linespec.h"
 // PlotSettingPage dialog
 
 class PlotSettingPage : public CPropertyPage
@@ -11,8 +13,8 @@ class PlotSettingPage : public CPropertyPage
 public:
 	PlotSettingPage();
 	PlotSettingPage(const CString &title
-		, const figspec &fspec
-		, const std::vector<plotspec> &pspec
+		, const PlotSpec &fspec
+		, const std::vector<LineSpec> &pspec
 		, const CString & x
 		, const CString & y);
 	virtual ~PlotSettingPage();
@@ -26,12 +28,12 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 
-	std::vector<plotspec> ps;
+	std::vector<LineSpec> ps;
 	virtual BOOL OnSetActive();
 	virtual BOOL OnKillActive();
 	virtual BOOL Create(LPCTSTR lpszTemplateName, CWnd* pParentWnd = NULL);
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-	figspec fs;
+	PlotSpec fs;
 	void ComboSelectChange(void);
 	CEditList pslist;
 	void BuildList(int width);
