@@ -1101,10 +1101,10 @@ afx_msg LRESULT CMainFrame::OnMessageCloseSapSheet(WPARAM wParam, LPARAM lParam)
 				HideWaitDlg();
 			}
 			else{
-			CString str;
-			str.LoadStringW(IDS_STRING_OVER);
-			pst=pause;
-			ShowWaitDlg(str);
+				CString str;
+				str.LoadStringW(IDS_STRING_OVER);
+				pst=pause;
+				ShowWaitDlg(str);
 			}
 		}
 		break;
@@ -1205,14 +1205,28 @@ void CMainFrame::OnAnalysisAbortanalysis()
 		//	Sleep(sleepms);
 		//}
 
+
+
 		CanalyzerDoc* pdoc=(CanalyzerDoc*)(GetActiveDocument());
-		pdoc->bChangeSAP=true;
-		pdoc->p3todo.saplist.clear();
-		bWaitForStop=true;
+
+		CSingleLock singleLockSAP(&(pdoc->m_CritSectionSAP));
+		if (singleLockSAP.Lock())  // Resource has been locked
+		{
+
+			pdoc->bChangeSAP=true;
+			pdoc->p3todo.saplist.clear();
+			bWaitForStop=true;
+			pst=running;
+
+			// Now that we are finished, 
+			// unlock the resource for others.
+			singleLockSAP.Unlock();
+		}
+
+
 
 
 	}
-
 	else{
 		pst=stop;
 		HideWaitDlg();

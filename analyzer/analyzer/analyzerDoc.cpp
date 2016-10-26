@@ -285,6 +285,21 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		}
 	}
 
+	void CanalyzerDoc::ClearSAPtodo()
+	{
+		CSingleLock singleLockSAP(&m_CritSectionSAP);
+		if (singleLockSAP.Lock())  // Resource has been locked
+		{
+			p3todo.saplist.clear();
+			bChangeSAP=true;
+
+			// Now that we are finished, 
+			// unlock the resource for others.
+			singleLockSAP.Unlock();
+		}
+	}
+
+
 	void CanalyzerDoc::OnAnalysisReport()
 	{
 		// TODO: Add your command handler code here

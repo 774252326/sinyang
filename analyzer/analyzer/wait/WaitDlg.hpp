@@ -27,6 +27,15 @@ public:
 	};   // standard constructor
 	virtual ~WaitDlg(){};
 
+	void ShowTitleAndButton(BOOL bShow=TRUE)
+	{
+		btnIDOK.ShowWindow(bShow);
+		CString str=L"";
+		if(bShow)
+			str.LoadStringW(IDS_STRING_PAUSE);
+		this->SetWindowTextW(str);
+	};
+
 protected:
 
 	virtual void OnOK()
@@ -139,14 +148,7 @@ protected:
 	//};
 
 
-	void ShowTitleAndButton(BOOL bShow=TRUE)
-	{
-		btnIDOK.ShowWindow(bShow);
-		CString str=L"";
-		if(bShow)
-			str.LoadStringW(IDS_STRING_PAUSE);
-		this->SetWindowTextW(str);
-	};
+
 
 	virtual void DoDataExchange(CDataExchange* pDX)
 	{

@@ -30,6 +30,7 @@ public:
 	void ClearExpData(void);
 	UINT UpdateState(void);
 	void SetSAPtodo(const SAPara & ptd);
+	void ClearSAPtodo();
 // Overrides
 public:
 	virtual BOOL OnNewDocument();
