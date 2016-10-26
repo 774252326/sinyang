@@ -336,7 +336,9 @@
 #define IDS_CHECK_FIX_LOCATION          1102
 #define IDS_COMBO_ADJUST                1103
 #define IDS_STRING_W_H                  1104
+#define IDS_STRING_FONT_SIZE            1104
 #define IDS_STRING_FS_LL                1105
+#define IDS_STRING_LINE_LENGTH          1105
 #define IDS_EDIT_WIDTH                  1106
 #define IDS_EDIT_HEIGHT                 1107
 #define IDS_EDIT_FONT_SIZE              1108
@@ -349,11 +351,16 @@
 #define IDS_STRING_AUTO_ADJUST          1115
 #define IDS_STRING_FIXED_SIZE           1116
 #define IDS_STRING_MANUAL               1117
+#define IDS_STRING_ADJUST               1118
+#define IDS_STRING_WIDTH                1119
+#define IDS_STRING_HEIGHT               1120
 #define IDS_COMBO_ALIGNMENT             1130
 #define IDS_STRING_BK_LEGEND            1140
 #define IDS_STRING_CURVE                1141
 #define IDS_CHECK_TWO_COLOR             1150
+#define IDS_STRING_OLD                  1150
 #define IDS_STRING_OLD_NEW              1151
+#define IDS_STRING_NEW                  1151
 #define IDS_STRING_NEW_COLOR            1152
 #define IDS_STRING_OLD_COLOR            1153
 #define IDS_STRING_EP1                  1470

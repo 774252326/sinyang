@@ -80,7 +80,7 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 			singleLockSAP.Unlock();
 		}
 
-
+		//this->SetModifiedFlag();
 
 		return TRUE;
 	}
@@ -113,6 +113,8 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 			Show();
 
 		}
+
+		SetModifiedFlag(FALSE);
 	}
 
 #ifdef SHARED_HANDLERS
@@ -229,6 +231,7 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 							da.p3.AppendData(p3todo);
 							rs=da.ComputeStateData();
 							bChangeSAP=false;
+							SetModifiedFlag();
 							// Now that we are finished, 
 							// unlock the resource for others.
 							singleLockSAP.Unlock();
@@ -261,6 +264,7 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 				if(mf->pst==pause){
 					da.ChangeSAP(ptd);
 					bChangeSAP=false;
+					SetModifiedFlag();
 					::PostMessage(mf->GetSafeHwnd(),MESSAGE_CLOSE_SAP_SHEET,NULL,NULL);
 				}
 				else{
@@ -301,6 +305,9 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		if (singleLock.Lock())  // Resource has been locked
 		{
 			da.raw.Clear();			
+
+			SetModifiedFlag();
+
 			// Now that we are finished, 
 			// unlock the resource for others.
 			singleLock.Unlock();

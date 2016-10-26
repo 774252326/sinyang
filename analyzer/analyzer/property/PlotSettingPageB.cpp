@@ -350,8 +350,22 @@ int PlotSettingPageB::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		IDS_CHECK_SHOW_LEGEND);
 
 	pt.x+=gap2.cx+buttonSize.cx;
+	
+	str.LoadStringW(IDS_CHECK_FIX_LOCATION);
+	//pBtn=new CButton;
+	BtnIDS_CHECK_FIX_LOCATION.Create(str,
+		BS_AUTOCHECKBOX
+		|WS_CHILD
+		|WS_VISIBLE,
+		CRect(pt,buttonSize),
+		this,
+		IDS_CHECK_FIX_LOCATION);
 
-	str.LoadStringW(IDS_STRING_ALIGNMENT);
+	pt.x=gap1.cx;
+	pt.y+=gap2.cy+buttonSize.cy;
+
+
+		str.LoadStringW(IDS_STRING_ALIGNMENT);
 	//pStatic=new CStatic;
 	StaticIDS_STRING_ALIGNMENT.Create(str,
 		WS_CHILD
@@ -361,6 +375,7 @@ int PlotSettingPageB::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		IDS_STRING_ALIGNMENT);
 
 	pt.x+=gap2.cx+buttonSize.cx;
+
 
 	//pCombo=new CComboBox;
 	ComboIDS_COMBO_ALIGNMENT.Create(
@@ -379,18 +394,17 @@ int PlotSettingPageB::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	pt.x+=gap2.cx+buttonSize.cx;
 
-	str.LoadStringW(IDS_CHECK_FIX_LOCATION);
-	//pBtn=new CButton;
-	BtnIDS_CHECK_FIX_LOCATION.Create(str,
-		BS_AUTOCHECKBOX
-		|WS_CHILD
-		|WS_VISIBLE,
+
+	str.LoadStringW(IDS_STRING_ADJUST);
+	//pStatic=new CStatic;
+	StaticIDS_STRING_ADJUST.Create(str,
+		WS_CHILD
+		|WS_VISIBLE, 
 		CRect(pt,buttonSize),
 		this,
-		IDS_CHECK_FIX_LOCATION);
+		IDS_STRING_ADJUST);
 
-	pt.x=gap1.cx;
-	pt.y+=gap2.cy+buttonSize.cy;
+	pt.x+=gap2.cx+buttonSize.cx;
 
 	//pCombo=new CComboBox;
 	ComboIDS_COMBO_ADJUST.Create(
@@ -407,28 +421,31 @@ int PlotSettingPageB::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	pEdit = (CEdit*)(ComboIDS_COMBO_ADJUST.GetWindow(GW_CHILD));
 	pEdit->SetReadOnly();
 
+	pt.x=gap1.cx;
+	pt.y+=gap2.cy+buttonSize.cy;
 
-	pt.x+=gap2.cx+buttonSize.cx;
-
-	str.LoadStringW(IDS_STRING_W_H);
+	str.LoadStringW(IDS_STRING_FONT_SIZE);
 	//pStatic=new CStatic;
-	StaticIDS_STRING_W_H.Create(str,
+	StaticIDS_STRING_FONT_SIZE.Create(str,
 		WS_CHILD,
 		//|WS_VISIBLE, 
 		CRect(pt,buttonSize),
 		this,
-		IDS_STRING_W_H);
+		IDS_STRING_FONT_SIZE);
 
-	str.LoadStringW(IDS_STRING_FS_LL);
+	str.LoadStringW(IDS_STRING_WIDTH);
 	//pStatic=new CStatic;
-	StaticIDS_STRING_FS_LL.Create(str,
+	StaticIDS_STRING_WIDTH.Create(str,
 		WS_CHILD,
 		//|WS_VISIBLE, 
 		CRect(pt,buttonSize),
 		this,
-		IDS_STRING_FS_LL);
+		IDS_STRING_WIDTH);
+
 
 	pt.x+=gap2.cx+buttonSize.cx;
+
+
 
 
 	str.LoadStringW(IDS_EDIT_WIDTH);
@@ -459,6 +476,26 @@ int PlotSettingPageB::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	pt.x+=gap2.cx+buttonSize.cx;
 
+
+	str.LoadStringW(IDS_STRING_LINE_LENGTH);
+	//pStatic=new CStatic;
+	StaticIDS_STRING_LINE_LENGTH.Create(str,
+		WS_CHILD,
+		//|WS_VISIBLE, 
+		CRect(pt,buttonSize),
+		this,
+		IDS_STRING_LINE_LENGTH);
+
+	str.LoadStringW(IDS_STRING_HEIGHT);
+	//pStatic=new CStatic;
+	StaticIDS_STRING_HEIGHT.Create(str,
+		WS_CHILD,
+		//|WS_VISIBLE, 
+		CRect(pt,buttonSize),
+		this,
+		IDS_STRING_HEIGHT);
+
+	pt.x+=gap2.cx+buttonSize.cx;
 
 	str.LoadStringW(IDS_EDIT_HEIGHT);
 	//pEdit=new CEdit;
@@ -501,16 +538,20 @@ void PlotSettingPageB::AdjustComboSelectChange(void)
 
 	if(lgc.legendDpMode&LEGEND_DP_FIT_RECT){
 		if(lgc.legendDpMode&LEGEND_DP_AUTO_RECT){
-			this->GetDlgItem(IDS_STRING_W_H)->ShowWindow(SW_HIDE);
-			this->GetDlgItem(IDS_STRING_FS_LL)->ShowWindow(SW_HIDE);
+			this->GetDlgItem(IDS_STRING_HEIGHT)->ShowWindow(SW_HIDE);
+			this->GetDlgItem(IDS_STRING_WIDTH)->ShowWindow(SW_HIDE);
+			this->GetDlgItem(IDS_STRING_FONT_SIZE)->ShowWindow(SW_HIDE);
+					this->GetDlgItem(IDS_STRING_LINE_LENGTH)->ShowWindow(SW_HIDE);
 			this->GetDlgItem(IDS_EDIT_WIDTH)->ShowWindow(SW_HIDE);
 			this->GetDlgItem(IDS_EDIT_FONT_SIZE)->ShowWindow(SW_HIDE);
 			this->GetDlgItem(IDS_EDIT_HEIGHT)->ShowWindow(SW_HIDE);
 			this->GetDlgItem(IDS_EDIT_LINE_LENGTH)->ShowWindow(SW_HIDE);
 		}
 		else{
-			this->GetDlgItem(IDS_STRING_W_H)->ShowWindow(SW_SHOW);
-			this->GetDlgItem(IDS_STRING_FS_LL)->ShowWindow(SW_HIDE);
+			this->GetDlgItem(IDS_STRING_HEIGHT)->ShowWindow(SW_SHOW);
+			this->GetDlgItem(IDS_STRING_WIDTH)->ShowWindow(SW_SHOW);
+			this->GetDlgItem(IDS_STRING_FONT_SIZE)->ShowWindow(SW_HIDE);
+			this->GetDlgItem(IDS_STRING_LINE_LENGTH)->ShowWindow(SW_HIDE);
 			this->GetDlgItem(IDS_EDIT_WIDTH)->ShowWindow(SW_SHOW);
 			this->GetDlgItem(IDS_EDIT_FONT_SIZE)->ShowWindow(SW_HIDE);
 			this->GetDlgItem(IDS_EDIT_HEIGHT)->ShowWindow(SW_SHOW);
@@ -518,8 +559,10 @@ void PlotSettingPageB::AdjustComboSelectChange(void)
 		}
 	}
 	else{
-		this->GetDlgItem(IDS_STRING_W_H)->ShowWindow(SW_HIDE);
-		this->GetDlgItem(IDS_STRING_FS_LL)->ShowWindow(SW_SHOW);
+		this->GetDlgItem(IDS_STRING_HEIGHT)->ShowWindow(SW_HIDE);
+		this->GetDlgItem(IDS_STRING_WIDTH)->ShowWindow(SW_HIDE);
+		this->GetDlgItem(IDS_STRING_FONT_SIZE)->ShowWindow(SW_SHOW);
+				this->GetDlgItem(IDS_STRING_LINE_LENGTH)->ShowWindow(SW_SHOW);
 		this->GetDlgItem(IDS_EDIT_WIDTH)->ShowWindow(SW_HIDE);
 		this->GetDlgItem(IDS_EDIT_FONT_SIZE)->ShowWindow(SW_SHOW);
 		this->GetDlgItem(IDS_EDIT_HEIGHT)->ShowWindow(SW_HIDE);
@@ -534,8 +577,12 @@ void PlotSettingPageB::OnCheck(void)
 
 	BOOL flg=(lgc.legendDpMode&LEGEND_DP_SHOW)?TRUE:FALSE;
 
-	this->GetDlgItem(IDS_STRING_W_H)->EnableWindow(flg);
-	this->GetDlgItem(IDS_STRING_FS_LL)->EnableWindow(flg);
+	this->GetDlgItem(IDS_STRING_HEIGHT)->EnableWindow(flg);
+	this->GetDlgItem(IDS_STRING_LINE_LENGTH)->EnableWindow(flg);
+
+	this->GetDlgItem(IDS_STRING_WIDTH)->EnableWindow(flg);
+	this->GetDlgItem(IDS_STRING_FONT_SIZE)->EnableWindow(flg);
+
 	this->GetDlgItem(IDS_EDIT_WIDTH)->EnableWindow(flg);
 	this->GetDlgItem(IDS_EDIT_FONT_SIZE)->EnableWindow(flg);
 	this->GetDlgItem(IDS_EDIT_HEIGHT)->EnableWindow(flg);
@@ -544,7 +591,7 @@ void PlotSettingPageB::OnCheck(void)
 	this->GetDlgItem(IDS_CHECK_FIX_LOCATION)->EnableWindow(flg);
 	this->GetDlgItem(IDS_COMBO_ALIGNMENT)->EnableWindow(flg);
 	this->GetDlgItem(IDS_STRING_ALIGNMENT)->EnableWindow(flg);
-
+	StaticIDS_STRING_ADJUST.EnableWindow(flg);
 }
 
 

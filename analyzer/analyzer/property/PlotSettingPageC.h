@@ -51,7 +51,8 @@ public:
 	COLORREF oldC;
 	BOOL bTwo;
 
-	CStatic StaticIDS_STRING_OLD_NEW;
+	CStatic StaticIDS_STRING_OLD;
+	CStatic StaticIDS_STRING_NEW;
 	CMFCColorButton BtnIDS_STRING_OLD_COLOR;
 	CMFCColorButton BtnIDS_STRING_NEW_COLOR;
 

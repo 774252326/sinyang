@@ -367,6 +367,9 @@ echo.
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="hlp\Images\Bullet.gif" />
+    <None Include="hlp\introduction.htm">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
     <None Include="hlp\main_index.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>

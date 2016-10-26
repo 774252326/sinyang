@@ -25,11 +25,11 @@
 			<param name="Name" value="View menu commands">
 			<param name="Local" value="menu_view.htm">
 			</OBJECT>
-								<LI> <OBJECT type="text/sitemap">
+		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="Security menu commands">
 			<param name="Local" value="menu_security.htm">
 			</OBJECT>
-					<LI> <OBJECT type="text/sitemap">
+		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="Language menu commands">
 			<param name="Local" value="menu_language.htm">
 			</OBJECT>
@@ -45,6 +45,10 @@
 	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="toolbar">
 		<param name="Local" value="afx_hidw_toolbar.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="introduction">
+		<param name="Local" value="introduction.htm">
 		</OBJECT>
 </UL>
 </BODY></HTML>

@@ -104,16 +104,15 @@ int PlotSettingPageC::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	if(bTwo!=FALSE){
 
-		pt.x+=gap2.cx+buttonSize.cx;
-
-		str.LoadStringW(IDS_STRING_OLD_NEW);
+		str.LoadStringW(IDS_STRING_OLD);
 		//pStatic=new CStatic;
-		StaticIDS_STRING_OLD_NEW.Create(str,
+		StaticIDS_STRING_OLD.Create(str,
 			WS_CHILD
 			|WS_VISIBLE, 
 			CRect(pt,buttonSize),
 			this,
-			IDS_STRING_OLD_NEW);
+			IDS_STRING_OLD);
+
 
 		pt.x+=gap2.cx+buttonSize.cx;
 
@@ -129,6 +128,17 @@ int PlotSettingPageC::OnCreate(LPCREATESTRUCT lpCreateStruct)
 			IDS_STRING_OLD_COLOR
 			);
 
+
+		pt.x+=gap2.cx+buttonSize.cx;
+
+		str.LoadStringW(IDS_STRING_NEW);
+		//pStatic=new CStatic;
+		StaticIDS_STRING_NEW.Create(str,
+			WS_CHILD
+			|WS_VISIBLE, 
+			CRect(pt,buttonSize),
+			this,
+			IDS_STRING_NEW);
 
 		pt.x+=gap2.cx+buttonSize.cx;
 

@@ -72,6 +72,8 @@ protected:
 			for(size_t i=0;i<m_list.vl.size() && i<doc->da.p1.correction.size(); i++){
 				doc->da.p1.correction[i]=m_list.vl[i].correction;
 			}
+			if(!(doc->da.p1.correction.empty()))
+				doc->SetModifiedFlag();
 
 			::PostMessage((((CMainFrame*)pframe)->RightPane())->GetSafeHwnd(),MESSAGE_UPDATE_TEST,PW_INIT,(LPARAM)true);
 

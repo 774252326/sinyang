@@ -837,7 +837,7 @@ void CMainFrame::OnAnalysisMethodsetup()
 			pDoc->da.p2=cppage.para;
 			pDoc->da.p3=sppage.para;
 
-
+			pDoc->SetModifiedFlag();
 			////////////////////////////////////////////
 
 			//	TCHAR szFilters[]= _T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||");

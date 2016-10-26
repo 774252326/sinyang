@@ -421,6 +421,9 @@
     <None Include="hlp\menu_security.htm">
       <Filter>HTML Help Topics</Filter>
     </None>
+    <None Include="hlp\introduction.htm">
+      <Filter>HTML Help Topics</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="analyzer.h">
