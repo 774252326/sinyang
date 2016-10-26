@@ -1,0 +1,772 @@
+
+// z3Dlg.cpp : implementation file
+//
+
+#include "stdafx.h"
+#include "z3.h"
+#include "z3Dlg.h"
+#include "afxdialogex.h"
+
+#include "funT\readcsvT.h"
+#include "funT\calgridT.h"
+#include "funT\findmT.h"
+#include "funT\nrutilT.h"
+#include "funT\xRescaleT.h"
+#include "gettwoknee.h"
+
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#endif
+
+//color
+#define black RGB(0,0,0)
+#define red RGB(255,0,0)
+#define green RGB(0,255,0)
+#define blue RGB(0,0,255)
+#define yellow RGB(255,255,0)
+#define cyan RGB(0,255,255)
+#define magenta RGB(255,0,255)
+#define white RGB(255,255,255)
+
+
+// Cz3Dlg dialog
+
+
+
+
+
+
+Cz3Dlg::Cz3Dlg(CWnd* pParent /*=NULL*/)
+	: CDialogEx(Cz3Dlg::IDD, pParent)
+	, pBtn(NULL)
+	, pPlot(NULL)
+	, x(NULL)
+	, y(NULL)
+	, nd(0)
+	, m_filePath(_T(""))
+	, isLoad(false)
+	, m_n(0)
+	, m_xmin(0)
+	, m_xmax(0)
+	, m_ymin(0)
+	, m_ymax(0)
+	, isinit(false)
+	, isMove(false)
+	, xMove(0)
+	, yMove(0)
+	, xminMove(0)
+	, yminMove(0)
+	, xmaxMove(0)
+	, ymaxMove(0)
+	, threshold(0.12)
+	, knee1(0)
+	, knee2(0)
+	, plnd(0)
+	, plind(NULL)
+	, plx(NULL)
+	, ply(NULL)
+	, isSmooth(false)
+{
+	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+
+	winrect=CRect(0,0,1200,900);
+	btnrect=CRect(0,0,75,23);
+	towinedge=CSize(26,49);
+	tobtnedge=CSize(7,7);
+
+
+
+}
+
+void Cz3Dlg::DoDataExchange(CDataExchange* pDX)
+{
+	CDialogEx::DoDataExchange(pDX);
+	//CDialog::DoDataExchange(pDX);
+	//  DDX_Control(pDX, IDCANCEL, cancelbtn);
+	//  D//  DX_Control(p//  DX, I//  DOK, okbtn);
+
+	if(isinit){
+		DDX_Text(pDX, IDC_FILEPATH, m_filePath);
+		DDX_Text(pDX, IDC_THRES, threshold);
+		DDX_Text(pDX, IDC_KNEE1, knee1);
+		DDX_Text(pDX, IDC_KNEE2, knee2);
+	}
+}
+
+BEGIN_MESSAGE_MAP(Cz3Dlg, CDialogEx)
+	ON_WM_PAINT()
+	ON_WM_QUERYDRAGICON()
+
+
+	//ON_BN_CLICKED(IDC_BTN1,OnMybut1)
+	ON_BN_CLICKED(IDC_OPEN,&Cz3Dlg::OnBnClickedOpen)
+	ON_BN_CLICKED(IDC_SMOOTH,&Cz3Dlg::OnBnClickedSmooth)
+	ON_WM_LBUTTONDOWN()
+	ON_WM_LBUTTONUP()
+	ON_WM_MOUSEMOVE()
+	ON_WM_MOUSEWHEEL()
+END_MESSAGE_MAP()
+
+
+// Cz3Dlg message handlers
+
+BOOL Cz3Dlg::OnInitDialog()
+{
+	CDialogEx::OnInitDialog();
+
+	// Set the icon for this dialog.  The framework does this automatically
+	//  when the application's main window is not a dialog
+	SetIcon(m_hIcon, TRUE);			// Set big icon
+	SetIcon(m_hIcon, FALSE);		// Set small icon
+
+	// TODO: Add extra initialization here
+
+
+
+
+
+
+	//AfxMessageBox(L"hello");
+	//AfxMessageBox(L"bye");
+	//AfxMessageBox(L"exiting...");
+
+
+
+	CPoint winpos=CPoint(50,50);
+
+
+	this->SetWindowPos(&CWnd::wndTop, winpos.x, winpos.y, winrect.Width(), winrect.Height(), SWP_SHOWWINDOW);
+
+
+	CPoint cancelpos=winrect.BottomRight()-towinedge-btnrect.Size();
+
+	this->GetDlgItem(IDCANCEL)->SetWindowPos(&CWnd::wndTop,cancelpos.x,cancelpos.y,btnrect.Width(),btnrect.Height(),SWP_SHOWWINDOW);
+
+	CPoint okpos=cancelpos-CSize(tobtnedge.cx+btnrect.Width(),0);
+
+	this->GetDlgItem(IDOK)->SetWindowPos(&CWnd::wndTop,okpos.x,okpos.y,btnrect.Width(),btnrect.Height(),SWP_SHOWWINDOW);
+
+
+	CString str;
+
+	CButton *pOpen;
+	pOpen=new CButton;
+	str.LoadStringW(IDC_OPEN);
+
+	openrect=btnrect;
+	openrect.MoveToXY(okpos-CSize(tobtnedge.cx+btnrect.Width(),0));
+	pOpen->Create(str,WS_CHILD|WS_VISIBLE|BS_PUSHBUTTON, openrect, this, IDC_OPEN);
+
+	CEdit *pFilepath;
+	pFilepath=new CEdit;
+
+	fprect=CRect(towinedge.cx,winrect.bottom-towinedge.cy-btnrect.Height(),openrect.left-tobtnedge.cx,winrect.bottom-towinedge.cy);
+
+	pFilepath->Create(ES_LEFT|WS_CHILD|WS_VISIBLE,fprect,this,IDC_FILEPATH);
+
+
+
+	pPlot=new CButton;
+
+	plotrect=winrect;
+	plotrect.DeflateRect(towinedge);
+	plotrect.DeflateRect(0,0,btnrect.Width()+tobtnedge.cx,btnrect.Height()+tobtnedge.cy*2);
+
+	str.LoadStringW(IDC_PLOT);
+	pPlot->Create( str, WS_CHILD/*|WS_VISIBLE*/|BS_GROUPBOX, plotrect, this, IDC_PLOT); 
+
+
+	CEdit *pThres;
+	pThres=new CEdit;
+	threct=btnrect;
+	threct.MoveToXY(winrect.Width()-towinedge.cx-btnrect.Width(),towinedge.cy);
+
+	pThres->Create(ES_LEFT|WS_CHILD|WS_VISIBLE,threct,this,IDC_THRES);
+
+
+	CButton *pSmooth;
+	pSmooth=new CButton;
+	smrect=threct;
+	smrect.OffsetRect(0,tobtnedge.cy+btnrect.Height());
+	str.LoadStringW(IDC_SMOOTH);
+	pSmooth->Create(str,WS_CHILD|WS_VISIBLE|BS_PUSHBUTTON, smrect, this, IDC_SMOOTH);
+
+
+	CEdit *pKnee1;
+	pKnee1=new CEdit;
+	k1rect=smrect;
+	k1rect.OffsetRect(0,tobtnedge.cy+btnrect.Height());
+	pKnee1->Create(ES_LEFT|WS_CHILD|WS_VISIBLE,k1rect,this,IDC_KNEE1);
+
+	CEdit *pKnee2;
+	pKnee2=new CEdit;
+	k2rect=k1rect;
+	k2rect.OffsetRect(0,tobtnedge.cy+btnrect.Height());
+	pKnee2->Create(ES_LEFT|WS_CHILD|WS_VISIBLE,k2rect,this,IDC_KNEE2);
+
+
+	isinit=true;
+
+	return TRUE;  // return TRUE  unless you set the focus to a control
+}
+
+// If you add a minimize button to your dialog, you will need the code below
+//  to draw the icon.  For MFC applications using the document/view model,
+//  this is automatically done for you by the framework.
+
+void Cz3Dlg::OnPaint()
+{
+	if (IsIconic())
+	{
+		CPaintDC dc(this); // device context for painting
+
+		SendMessage(WM_ICONERASEBKGND, reinterpret_cast<WPARAM>(dc.GetSafeHdc()), 0);
+
+		// Center icon in client rectangle
+		int cxIcon = GetSystemMetrics(SM_CXICON);
+		int cyIcon = GetSystemMetrics(SM_CYICON);
+		CRect rect;
+		GetClientRect(&rect);
+		int x = (rect.Width() - cxIcon + 1) / 2;
+		int y = (rect.Height() - cyIcon + 1) / 2;
+
+		// Draw the icon
+		dc.DrawIcon(x, y, m_hIcon);
+	}
+	else
+	{	
+		//CPaintDC dc(GetDlgItem(IDC_PLOT));
+		CPaintDC dc(this); // device context for painting
+		CPen pen;
+
+		//dc.MoveTo(2,2);
+		//dc.LineTo(40,80);
+		if(isLoad){
+
+			if(DrawXYAxis(plotrect,&dc)){
+
+				pen.CreatePen(PS_SOLID,1,blue);
+
+				//CPaintDC qdc(GetDlgItem(IDC_PLOT));
+				//DrawPolyline(CRect(CPoint(0,0),plotrect.Size()),&qdc,&pen,x,y,m_n);
+
+				DrawPolyline(plotrect,&dc,&pen,x,y,m_n);
+				pen.DeleteObject();
+				if(isSmooth){
+					pen.CreatePen(PS_SOLID,1,green);
+					DrawPolyline(plotrect,&dc,&pen,plx,ply,plnd);
+					pen.DeleteObject();
+				}
+			}
+		}
+
+
+
+
+
+		CDialogEx::OnPaint();
+
+
+	}
+}
+
+// The system calls this function to obtain the cursor to display while the user drags
+//  the minimized window.
+HCURSOR Cz3Dlg::OnQueryDragIcon()
+{
+	return static_cast<HCURSOR>(m_hIcon);
+}
+
+
+
+void Cz3Dlg::OnMybut2()
+{
+
+}
+
+
+void Cz3Dlg::OnMybut1(void)
+{
+	AfxMessageBox(L"click");
+}
+
+
+Cz3Dlg::~Cz3Dlg(void)
+{
+	delete pBtn;
+	delete pPlot;
+}
+
+
+void Cz3Dlg::OnBnClickedOpen()
+{
+	//AfxMessageBox(L"click");
+	CFileDialog fileDlg(true);
+
+	fileDlg.m_ofn.lpstrFilter=L"Excel File(*.csv)\0*.csv\0Text File(*.txt)\0*.txt\0\0";
+
+	if( fileDlg.DoModal()==IDOK){
+
+		m_filePath=fileDlg.GetPathName();
+
+
+		free_vector(x,1,m_n);
+		free_vector(plx,1,plnd);
+		free_vector(ply,1,plnd);
+
+		x=readcsv2<double>(&m_n,m_filePath,&isLoad);
+		y=&x[m_n];
+		UpdateData(false);
+
+		if( isLoad ){
+
+			m_xmin=findmin(x,m_n);
+			m_xmax=findmax(x,m_n);
+			m_ymin=findmin(y,m_n);
+			m_ymax=findmax(y,m_n);
+			//m_xbottom=m_xmin;
+			//m_xtop=m_xmax;
+			//UpdateData(false);
+
+		}
+		isSmooth=false;
+		//isFit=false;
+		Invalidate();
+	}
+}
+
+
+void Cz3Dlg::PreInitDialog()
+{
+	// TODO: Add your specialized code here and/or call the base class
+
+
+
+	CDialogEx::PreInitDialog();
+}
+
+
+bool Cz3Dlg::DrawXYAxis(CRect rect, CPaintDC * pdc)
+{
+
+	if(rect.IsRectEmpty()){
+
+		return false;
+	}
+	else{
+
+		CPoint ptOffset1(rect.left,rect.top);
+		CPoint ptOffset2(rect.left,rect.bottom);
+		CPoint ptOffset3(rect.right,rect.top);
+		CPoint ptOffset4(rect.right,rect.bottom);
+
+		//draw axis
+		CPen pen(PS_SOLID, 1, red);
+		CPen * pOldPen=pdc->SelectObject(&pen);
+		pdc->MoveTo(ptOffset1);
+		pdc->LineTo(ptOffset2);
+		pdc->LineTo(ptOffset4);
+
+
+		//draw metric
+
+		CFont font;
+		font.CreatePointFont(75,L"MS Gothic",NULL);
+		int lc=5;
+		double gridi;
+		CString str;
+
+		CSize sz;
+
+		int tmp;
+
+		double resox=pow(10.0,calgrid(m_xmax-m_xmin));
+
+
+		for(gridi=resox*ceil(m_xmin/resox);gridi<=m_xmax;gridi+=resox){
+
+			tmp=ptRsl(gridi,0.0,rect).x;
+			pdc->MoveTo(tmp,rect.bottom);
+			pdc->LineTo(tmp,rect.bottom+lc);
+
+			str.Format(L"%.4f",gridi);
+
+			pdc->SelectObject(&font);
+
+			sz=pdc->GetTextExtent(str);
+
+			pdc->TextOutW(tmp-sz.cx/2,rect.bottom+lc,str);
+		}
+
+
+
+		double resoy=pow(10.0,calgrid(m_ymax-m_ymin));
+
+		for(gridi=resoy*ceil(m_ymin/resoy);gridi<=m_ymax;gridi+=resoy){
+
+			tmp=ptRsl(0.0,gridi,rect).y;
+			pdc->MoveTo(rect.left,tmp);
+			pdc->LineTo(rect.left-lc,tmp);
+			str.Format(L"%.4f",gridi);
+
+			pdc->SelectObject(&font);
+
+			sz=pdc->GetTextExtent(str);
+
+			pdc->TextOutW(rect.left-lc-sz.cx,tmp-sz.cy/2,str);
+		}
+
+		font.DeleteObject();
+
+		//draw axis label
+		font.CreatePointFont(200,L"MS Gothic",NULL);
+		str.Format(L"time(s)");
+		pdc->SelectObject(&font);
+		sz=pdc->GetTextExtent(str);
+		pdc->TextOutW(rect.right-sz.cx,rect.bottom-sz.cy,str);
+		str.Format(L"current(A)");
+		pdc->SelectObject(&font);
+		sz=pdc->GetTextExtent(str);
+		pdc->TextOutW(rect.left,rect.top,str);
+
+		pdc->SelectObject(pOldPen);
+		pen.DeleteObject();
+
+		return true;
+	}
+
+
+
+	//return false;
+}
+
+bool Cz3Dlg::DrawXYAxis2(CRect rect, CPaintDC * pdc)
+{
+
+	if(rect.IsRectEmpty()){
+
+		return false;
+	}
+	else{
+		CPen pen(PS_SOLID, 1, red);
+		CPen * pOldPen=pdc->SelectObject(&pen);
+
+		//draw metric
+
+		CFont font,fonthf;
+		font.CreatePointFont(75,L"MS Gothic",NULL);
+		int lc=5;
+
+		int gridi;
+		CString str;
+
+		CSize sz;
+
+		int tmp;
+
+
+		int lgresox=calgrid(m_xmax-m_xmin);
+		double resox=pow(10.0,lgresox);
+
+
+		for(gridi=ceil(m_xmin/resox);gridi<=floor(m_xmax/resox);gridi++){
+
+			tmp=ptRsl(resox*(double)gridi,0.0,rect).x;
+			pdc->MoveTo(tmp,rect.bottom);
+			pdc->LineTo(tmp,rect.bottom+lc);
+
+			str.Format(L"%d",gridi);
+
+			pdc->SelectObject(&font);
+
+			sz=pdc->GetTextExtent(str);
+
+			pdc->TextOutW(tmp-sz.cx/2,rect.bottom+lc,str);
+		}
+
+
+		int lgresoy=calgrid(m_ymax-m_ymin);
+		double resoy=pow(10.0,lgresoy);
+
+		for(gridi=ceil(m_ymin/resoy);gridi<=floor(m_ymax/resoy);gridi++){
+
+			tmp=ptRsl(0.0,resoy*(double)gridi,rect).y;
+			pdc->MoveTo(rect.left,tmp);
+			pdc->LineTo(rect.left-lc,tmp);
+			str.Format(L"%d",gridi);
+
+			pdc->SelectObject(&font);
+
+			sz=pdc->GetTextExtent(str);
+
+			pdc->TextOutW(rect.left-lc-sz.cx,tmp-sz.cy/2,str);
+		}
+
+		font.DeleteObject();
+
+		//draw axis label
+		font.CreatePointFont(200,L"MS Gothic",NULL);
+		fonthf.CreatePointFont(100,L"MS Gothic",NULL);
+
+		CPoint outlc=rect.BottomRight();
+
+		str.Format(L"s");
+		pdc->SelectObject(&font);
+		sz=pdc->GetTextExtent(str);
+		outlc=outlc-sz;
+		pdc->TextOutW(outlc.x,outlc.y,str);
+
+		str.Format(L"%+d",lgresox);
+		pdc->SelectObject(&fonthf);
+		sz=pdc->GetTextExtent(str);
+		outlc.x=outlc.x-sz.cx;
+		pdc->TextOutW(outlc.x,outlc.y,str);
+
+		str.Format(L"time/10");
+		pdc->SelectObject(&font);
+		sz=pdc->GetTextExtent(str);
+		outlc.x=outlc.x-sz.cx;
+		pdc->TextOutW(outlc.x,outlc.y,str);
+
+
+		outlc=rect.TopLeft();
+		str.Format(L"current/10");
+		pdc->SelectObject(&font);
+		sz=pdc->GetTextExtent(str);
+		pdc->TextOutW(outlc.x,outlc.y,str);
+
+		outlc.x=outlc.x+sz.cx;
+		str.Format(L"%+d",lgresoy);
+		pdc->SelectObject(&fonthf);
+		sz=pdc->GetTextExtent(str);
+		pdc->TextOutW(outlc.x,outlc.y,str);
+
+		outlc.x=outlc.x+sz.cx;
+		str.Format(L"A");
+		pdc->SelectObject(&font);
+		sz=pdc->GetTextExtent(str);
+		pdc->TextOutW(outlc.x,outlc.y,str);
+
+
+
+
+		//draw axis
+		CPoint ptOffset1(rect.left,rect.top);
+		CPoint ptOffset2(rect.left,rect.bottom);
+		CPoint ptOffset3(rect.right,rect.top);
+		CPoint ptOffset4(rect.right,rect.bottom);
+		pdc->MoveTo(ptOffset1);
+		pdc->LineTo(ptOffset2);
+		pdc->LineTo(ptOffset4);
+
+		pdc->SelectObject(pOldPen);
+		pen.DeleteObject();
+
+		return true;
+	}
+}
+
+// convert to window coordinate
+CPoint Cz3Dlg::ptRsl(double x, double y, CRect can)
+{
+	long xt=xRescale(x,m_xmin,m_xmax,can.left,can.right);
+	long yt=xRescale(y,m_ymin,m_ymax,can.bottom,can.top);
+
+	return CPoint(xt,yt);
+}
+
+
+void Cz3Dlg::DrawPolyline(CRect rect, CPaintDC * pdc, CPen * pPen, double * x, double * y, long nd)
+{
+	CPen * pOldPen=pdc->SelectObject(pPen);
+
+	CPoint ptt=ptRsl(x[1],y[1], rect);
+	pdc->MoveTo(ptt);
+	long i;
+
+	for (i=2; i<=nd; i++){
+		ptt=ptRsl(x[i],y[i], rect);
+		pdc->LineTo(ptt);
+	}
+
+	pdc->SelectObject(pOldPen);
+
+}
+
+
+void Cz3Dlg::OnLButtonDown(UINT nFlags, CPoint point)
+{
+	// TODO: Add your message handler code here and/or call default
+	if( plotrect.PtInRect(point)){
+
+		//if( abs(point.x-ptRsl(m_xtop,0,plotrect).x)<=lineWidth ){
+		//	isSelectTop=true;
+		//	Invalidate();
+		//}
+		//else if(abs(point.x-ptRsl(m_xbottom,0,plotrect).x)<=lineWidth){
+		//	isSelectBottom=true;
+		//	Invalidate();
+		//}
+		//else{
+		isMove=true;
+		////ptMove=point;
+		xMove=xRsl(point.x);
+		yMove=yRsl(point.y);
+		xminMove=m_xmin;
+		yminMove=m_ymin;
+		xmaxMove=m_xmax;
+		ymaxMove=m_ymax;
+		//}
+
+	}
+
+
+	CDialogEx::OnLButtonDown(nFlags, point);
+}
+
+
+// convert to actual coordinate
+double Cz3Dlg::xRsl(long x)
+{
+	return xRescale(x, plotrect.left, plotrect.right, m_xmin, m_xmax);
+}
+
+
+// convert to actual coordinate
+double Cz3Dlg::yRsl(long y)
+{
+	return xRescale(y, plotrect.bottom, plotrect.top, m_ymin, m_ymax);
+}
+
+
+void Cz3Dlg::OnLButtonUp(UINT nFlags, CPoint point)
+{
+	// TODO: Add your message handler code here and/or call default
+
+	isMove=false;
+	Invalidate();
+
+
+	CDialogEx::OnLButtonUp(nFlags, point);
+}
+
+
+void Cz3Dlg::OnMouseMove(UINT nFlags, CPoint point)
+{
+	// TODO: Add your message handler code here and/or call default
+	if( plotrect.PtInRect(point)){
+
+		//if(isSelectTop){
+		//	m_xtop=xRsl(point.x);
+		//	UpdateData(false);
+		//	Invalidate();
+		//}
+		//else 
+		//	if(isSelectBottom){
+		//		m_xbottom=xRsl(point.x);
+		//		UpdateData(false);
+		//		Invalidate();
+		//	}
+		//	else 
+		if( isMove ){
+
+			double xmove=xMove-xRescale(point.x, plotrect.left, plotrect.right, xminMove, xmaxMove);
+			double ymove=yMove-xRescale(point.y, plotrect.bottom, plotrect.top, yminMove, ymaxMove);
+			m_xmin=xminMove+xmove;
+			m_xmax=xmaxMove+xmove;
+			m_ymin=yminMove+ymove;
+			m_ymax=ymaxMove+ymove;
+
+			UpdateData(false);
+
+			Invalidate();
+		}
+	}
+	else{
+		//isSelectTop=false;
+		//isSelectBottom=false;
+		isMove=false;
+	}
+
+	CDialogEx::OnMouseMove(nFlags, point);
+}
+
+
+BOOL Cz3Dlg::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
+{
+	// TODO: Add your message handler code here and/or call default
+
+
+	ScreenToClient(&pt);
+
+
+	if(isLoad){
+		double x=xRsl(pt.x);
+		double y=yRsl(pt.y);
+
+		double k1=(zDelta>0)?0.8:1.25;	
+		double k2=1-k1;
+
+		int w=10;
+
+		if(plotrect.PtInRect(pt)){
+			m_xmin=x*k2+m_xmin*k1;
+			m_xmax=x*k2+m_xmax*k1;
+			m_ymin=y*k2+m_ymin*k1;
+			m_ymax=y*k2+m_ymax*k1;
+			UpdateData(false);
+
+			Invalidate();
+		}
+		else 
+			if(plotrect.PtInRect(pt+CSize(w,0))){
+				m_ymin=y*k2+m_ymin*k1;
+				m_ymax=y*k2+m_ymax*k1;
+				UpdateData(false);
+
+				Invalidate();
+			}
+			else 
+				if(plotrect.PtInRect(pt-CSize(0,w))){
+					m_xmin=x*k2+m_xmin*k1;
+					m_xmax=x*k2+m_xmax*k1;
+					UpdateData(false);
+
+					Invalidate();
+				}
+
+	}
+
+	return CDialogEx::OnMouseWheel(nFlags, zDelta, pt);
+}
+
+
+void Cz3Dlg::OnBnClickedSmooth(void)
+{
+	UpdateData();
+	if(isLoad){
+		plind=gettwoknee(x,y,m_n,threshold,&plnd,&knee1,&knee2);
+
+		if(plnd<4){
+			AfxMessageBox(L"no knee point detected\ntry smaller threshold");
+		}
+		else{
+			long i;
+			plx=vector<double>(1,plnd);
+			ply=vector<double>(1,plnd);
+
+			for(i=1;i<=plnd;i++){
+				plx[i]=x[plind[i]];
+				ply[i]=y[plind[i]];
+			}
+			free_vector(plind,1,plnd);
+
+			isSmooth=true;
+			UpdateData(false);
+			Invalidate();
+		}
+	}
+
+
+
+}
