@@ -42,6 +42,9 @@ int pcct::readFile(LPCTSTR lpszFileName)
 
 		FilePath=lpszFileName;
 
+		FileName=wcsrchr(FilePath,L'\\');
+		FileName.Delete(0);
+		//token=token;
 
 		while(file.ReadString(strRead))
 		{	
@@ -217,4 +220,21 @@ double pcct::intg(double xtop)
 	}
 
 	return ar;
+}
+
+
+void pcct::copy(pcct a)
+{
+	segmentList=a.segmentList;
+	potential=a.potential;
+	current=a.current;
+	charge=a.charge;
+	time=a.time;
+	xBreakIndex=a.xBreakIndex;
+	AR=a.AR;
+	segmentinfo=a.segmentinfo;
+	label=a.label;
+		FilePath=a.FilePath;
+		FileName=a.FileName;
+		seginfo=a.seginfo;
 }

@@ -36,8 +36,9 @@ public:
 	CString segmentinfo;
 	std::vector<CString> label;
 	CString FilePath;
-
+	CString FileName;
 	std::vector<CString> seginfo;
-
+	
+	void copy(pcct a);
 };
 

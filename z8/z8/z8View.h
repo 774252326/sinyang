@@ -58,7 +58,7 @@ public:
 	double xmax;
 	double ymin;
 	double ymax;
-	CRect DrawXYAxis(CRect rect, CPaintDC* pdc);
+	//CRect DrawXYAxis(CRect rect, CPaintDC* pdc);
 	CRect DrawXYAxis(CRect rect, CDC* pdc);
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	long ci;
@@ -72,6 +72,9 @@ public:
 	std::vector<pcct> dtlist;
 	std::vector<CPoint> genPointToPlot(const std::vector<double> &px, const std::vector<double> &py, CRect rect);
 	std::vector<COLORREF> cllist;
+	double xmouse;
+	double ymouse;
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 };
 
 #ifndef _DEBUG  // debug version in z8View.cpp

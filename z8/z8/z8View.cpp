@@ -45,6 +45,7 @@ IMPLEMENT_DYNCREATE(Cz8View, CFormView)
 		ON_WM_PAINT()
 		ON_WM_TIMER()
 		ON_WM_ERASEBKGND()
+		ON_WM_MOUSEMOVE()
 	END_MESSAGE_MAP()
 
 	// Cz8View construction/destruction
@@ -61,6 +62,8 @@ IMPLEMENT_DYNCREATE(Cz8View, CFormView)
 		, x(NULL)
 		, y(NULL)
 		, windowTitle(_T("z8"))
+		, xmouse(0)
+		, ymouse(0)
 	{
 		// TODO: add construction code here
 
@@ -148,6 +151,15 @@ IMPLEMENT_DYNCREATE(Cz8View, CFormView)
 			dt1.seperate();
 			dt1.AR=dt1.intg(0.8);
 
+			//pcct dt2;
+			//for(long i=1;i<dt1.xBreakIndex.size();i++){
+			//	dt2.copy(dt1);
+			//	dt2.potential.assign(dt1.potential.begin()+dt1.xBreakIndex[i-1],dt1.potential.begin()+dt1.xBreakIndex[i]);
+			//	dt2.current.assign(dt1.current.begin()+dt1.xBreakIndex[i-1],dt1.current.begin()+dt1.xBreakIndex[i]);
+			//	cllist.push_back(genColor(genColorvFromIndex(dtlist.size())));
+			//	dtlist.push_back(dt2);
+			//}
+
 			cllist.push_back(genColor(genColorvFromIndex(dtlist.size())));
 			dtlist.push_back(dt1);
 
@@ -162,11 +174,11 @@ IMPLEMENT_DYNCREATE(Cz8View, CFormView)
 
 			//::AfxMessageBox(dt1.segmentinfo);
 
-			//Invalidate();
+			Invalidate();
 
 
 			//SetTimer(1,1,NULL); 
-			SetTimer(2,20,NULL); 
+			//SetTimer(2,20,NULL); 
 
 		}
 
@@ -243,7 +255,7 @@ IMPLEMENT_DYNCREATE(Cz8View, CFormView)
 		// Do not call CFormView::OnPaint() for painting messages
 
 		////////////////////////////////////////////////////////////////////////
-		//
+
 		//CRect plotrect;
 		//CSize sz;
 		//this->GetWindowRect(&plotrect);
@@ -275,7 +287,7 @@ IMPLEMENT_DYNCREATE(Cz8View, CFormView)
 		//			}
 		//			//dc.Polyline(pointlist.data(),pointlist.size());
 		//		}
-		//		//DrawXYAxis(plotrect,&dc);
+		//		DrawXYAxis(plotrect,&dc);
 
 		//		for(j=0;j<dt1.seginfo.size();j++){
 		//		//str=dt1.label[0];
@@ -369,19 +381,19 @@ IMPLEMENT_DYNCREATE(Cz8View, CFormView)
 		CRect plotrect;
 		CSize sz;
 		this->GetWindowRect(&plotrect);
-
+		COLORREF oc;
 		//GetDlgItem(IDC_PLOT)->GetWindowRect(&plotrect);
 		ScreenToClient(&plotrect);
-		plotrect.DeflateRect(60,60,200,60);
+		plotrect.DeflateRect(60,60,310,60);
 
 		CPen pen;
-		pen.CreatePen(PS_SOLID,1,blue);
-
+		
+		CString str;
 		long i,j;
 		long ll=1000;
 		//double *x;
 		//double *y;
-		MemDC.SelectObject(pen);
+		
 
 
 
@@ -389,30 +401,44 @@ IMPLEMENT_DYNCREATE(Cz8View, CFormView)
 		if(!dtlist.empty()){
 			if(!plotrect.IsRectEmpty()){
 				std::vector<CPoint> pointlist;
+
+				str.Format(L"x=%f,y=%f",xmouse,ymouse);
+				MemDC.TextOutW(0,0,str);
+
 				for(j=0;j<dtlist.size();j++){
 					pointlist=genPointToPlot(dtlist[j].potential,dtlist[j].current,plotrect);
 
-					//for(i=0;i<pointlist.size();i++){
-					for(i=(0>ci-ll)?0:ci-ll;i<ci;i++){
+					for(i=0;i<pointlist.size();i++){
+						//for(i=(0>ci-ll)?0:ci-ll;i<ci;i++){
 						MemDC.SetPixel(pointlist[i],cllist[j]);					
 					}
-					//dc.Polyline(pointlist.data(),pointlist.size());
+
+					//pen.CreatePen(PS_SOLID,1,cllist[j]);
+					//MemDC.SelectObject(pen);
+					//MemDC.Polyline(pointlist.data(),pointlist.size());
+					//pen.DeleteObject();
+
+					oc=MemDC.SetTextColor(cllist[j]);
+					sz=dc.GetTextExtent(dtlist[j].FileName);
+					MemDC.TextOutW(plotrect.right,plotrect.top+sz.cy*j,dtlist[j].FileName);
+					MemDC.SetTextColor(oc);
+
 				}
 				DrawXYAxis(plotrect,&MemDC);
 
-				for(j=0;j<dt1.seginfo.size();j++){
-					//str=dt1.label[0];
-					//pdc->SelectObject(&font);
-					sz=dc.GetTextExtent(dt1.seginfo[j]);
-					MemDC.TextOutW(plotrect.right,plotrect.top+sz.cy*j,dt1.seginfo[j]);
-					//font.DeleteObject();
-				}
+				//for(j=0;j<dt1.seginfo.size();j++){
+				//	//str=dt1.label[0];
+				//	//pdc->SelectObject(&font);
+				//	sz=dc.GetTextExtent(dt1.seginfo[j]);
+				//	MemDC.TextOutW(plotrect.right,plotrect.top+sz.cy*j,dt1.seginfo[j]);
+				//	//font.DeleteObject();
+				//}
 
 
 			}
 		}
-		pen.DeleteObject();
 		
+
 
 		//将内存中的图拷贝到屏幕上进行显示
 		pDC.BitBlt(0,0,nWidth,nHeight,&MemDC,0,0,SRCCOPY);
@@ -445,13 +471,17 @@ IMPLEMENT_DYNCREATE(Cz8View, CFormView)
 		CPen * pOldPen;
 		CSize sz;
 		CRect newrect=rect;
+		CPoint textLocate;
 		CPen pen;
-		int metricH=10;
+		int metricH=15;
 		int labelH=20;
 		int lc=5;
+		int lcs=lc-2;
 		double gridi,XMAX,XMIN,YMAX,YMIN;
 		int tmp;
 		COLORREF oc;
+		CRect xmrect(rect.left,rect.bottom+lc,rect.left,rect.bottom+lc);
+		CRect ymrect(rect.left-lc,rect.bottom,rect.left-lc,rect.bottom);
 		XMAX=xmax;
 		XMIN=xmin;
 		YMAX=ymax;
@@ -471,7 +501,7 @@ IMPLEMENT_DYNCREATE(Cz8View, CFormView)
 
 		//draw x metric
 
-		double resox=pow(10.0,calgrid(XMAX-XMIN));
+
 		font.CreateFont(
 			metricH,                        // nHeight
 			0,                         // nWidth
@@ -490,16 +520,31 @@ IMPLEMENT_DYNCREATE(Cz8View, CFormView)
 
 		pOldFont=pdc->SelectObject(&font);
 
+		//double resox=pow(10.0,calgrid(XMAX-XMIN));
+
+		double resox=calreso(XMAX-XMIN);
+
 		for(gridi=resox*ceil(XMIN/resox);gridi<=XMAX;gridi+=resox){
 
 			tmp=xRescale(gridi,XMIN,XMAX,rect.left,rect.right);
 			pdc->MoveTo(tmp,rect.bottom);
-			pdc->LineTo(tmp,rect.bottom+lc);
+			pdc->LineTo(tmp,rect.bottom+lcs);
 
 			str.Format(L"%.1e",gridi);
 			sz=pdc->GetTextExtent(str);
-			pdc->TextOutW(tmp-sz.cx/2,rect.bottom+lc,str);
-			TRACE("%d,",sz.cy);
+			textLocate.x=tmp-sz.cx/2;
+			textLocate.y=rect.bottom+lc;
+			if(xmrect.right<textLocate.x){
+				if(textLocate.x+sz.cx<rect.right){
+					pdc->TextOutW(textLocate.x,textLocate.y,str);
+					xmrect.right=textLocate.x+sz.cx;
+					xmrect.bottom=textLocate.y+sz.cy;
+
+					pdc->MoveTo(tmp,rect.bottom);
+					pdc->LineTo(tmp,rect.bottom+lc);
+				}
+				TRACE("%d,",sz.cy);
+			}
 		}
 		newrect.bottom+=lc+sz.cy;
 		pdc->SelectObject(pOldFont);
@@ -526,8 +571,8 @@ IMPLEMENT_DYNCREATE(Cz8View, CFormView)
 			fontName);                 // lpszFacename
 		oc=pdc->SetTextColor(green);
 		//font.CreatePointFont(200,L"MS Gothic",NULL);
-		//str.Format(L"potential(V)");
-		str=dt1.label[0]+L'\n'+dt1.label[2];
+		//str.Format(L"time(s)");
+		str=dt1.label[0];
 		pOldFont=pdc->SelectObject(&font);
 		sz=pdc->GetTextExtent(str);
 		//pdc->SetTextAlign(TA_UPDATECP);
@@ -570,16 +615,34 @@ IMPLEMENT_DYNCREATE(Cz8View, CFormView)
 
 
 		//draw y metric
-		double resoy=pow(10.0,calgrid(YMAX-YMIN));
+		double resoy=calreso(YMAX-YMIN);
+		//double resoy=pow(10.0,calgrid(YMAX-YMIN));
 		pOldFont=pdc->SelectObject(&font);
 		for(gridi=resoy*ceil(YMIN/resoy);gridi<=YMAX;gridi+=resoy){
 			tmp=xRescale(gridi,YMIN,YMAX,rect.bottom,rect.top);
 			pdc->MoveTo(rect.left,tmp);
-			pdc->LineTo(rect.left-lc,tmp);
+			pdc->LineTo(rect.left-lcs,tmp);
 			str.Format(L"%.1e",gridi);
 			sz=pdc->GetTextExtent(str);
-			pdc->TextOutW(rect.left-lc-sz.cy,tmp+sz.cx/2,str);
-			TRACE("%d,",sz.cy);
+			//pdc->TextOutW(rect.left-lc-sz.cy,tmp+sz.cx/2,str);
+			//TRACE("%d,",sz.cy);
+
+
+			textLocate.x=rect.left-lc-sz.cy;
+			textLocate.y=tmp+sz.cx/2;
+			if(ymrect.top>textLocate.y){
+				if(textLocate.y-sz.cx>rect.top){
+					pdc->TextOutW(textLocate.x,textLocate.y,str);
+					ymrect.left=textLocate.x;
+					ymrect.top=textLocate.y-sz.cx;
+
+					pdc->MoveTo(rect.left,tmp);
+					pdc->LineTo(rect.left-lc,tmp);
+				}
+				TRACE("%d,",sz.cy);
+			}
+
+
 		}
 		newrect.left-=lc+sz.cy;
 		pdc->SelectObject(pOldFont);
@@ -726,4 +789,22 @@ IMPLEMENT_DYNCREATE(Cz8View, CFormView)
 		}
 
 		return pointlist;
+	}
+
+
+	void Cz8View::OnMouseMove(UINT nFlags, CPoint point)
+	{
+		// TODO: Add your message handler code here and/or call default
+
+		CRect plotrect;
+		this->GetWindowRect(&plotrect);
+		ScreenToClient(&plotrect);
+		plotrect.DeflateRect(60,60,310,60);
+
+		xmouse=xRescale(point.x,plotrect.left,plotrect.right,xmin,xmax);
+		ymouse=xRescale(point.y,plotrect.top,plotrect.bottom,ymin,ymax);
+
+		Invalidate();
+
+		CFormView::OnMouseMove(nFlags, point);
 	}
