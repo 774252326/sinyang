@@ -31,9 +31,10 @@ IMPLEMENT_DYNCREATE(CanalyzerViewR, CanalyzerView)
 		CanalyzerDoc* pDoc = GetDocument();
 
 		CSingleLock singleLock(&(pDoc->m_CritSection));
-		singleLock.Lock();
+		//singleLock.Lock();
 
-		if (singleLock.IsLocked())  // Resource has been locked
+		//if (singleLock.IsLocked())  // Resource has been locked
+			if(singleLock.Lock())
 		{
 			UINT flg=DataOutAList2PlotDataExList(pDoc->dol, pDoc->p1, pw.GetPlotSpec()->winbkC, pdl);
 			// Now that we are finished, 

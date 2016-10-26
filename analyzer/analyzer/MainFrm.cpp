@@ -68,7 +68,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_COMMAND(ID_HELP_HELPTOPICS, &CMainFrame::OnHelpHelptopics)
 	ON_UPDATE_COMMAND_UI(ID_FILE_OPEN, &CMainFrame::OnUpdateFileOpen)
 	ON_WM_MOVE()
-	//ON_MESSAGE(MESSAGE_UPDATE_DOL, &CMainFrame::OnMessageUpdateDol)
+	ON_MESSAGE(MESSAGE_UPDATE_DOL, &CMainFrame::OnMessageUpdateDol)
 	ON_MESSAGE(MESSAGE_WAIT_RESPONSE, &CMainFrame::OnMessageWaitResponse)
 	ON_COMMAND(ID_CONTROLS_2, &CMainFrame::OnControls2)
 	ON_MESSAGE(MESSAGE_CHANGE_ANP, &CMainFrame::OnMessageChangeAnp)
@@ -91,6 +91,7 @@ CMainFrame::CMainFrame()
 	, pst(stop)
 	, userIndex(-1)
 	, wd(NULL)
+	, runstate(0)
 {
 	// TODO: add member initialization code here
 	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_OFF_2007_BLUE);
@@ -588,7 +589,7 @@ void CMainFrame::OnSize(UINT nType, int cx, int cy)
 void CMainFrame::OnUpdateAnalysisMethodsetup(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=UserAccount::authority::guest);
+	pCmdUI->Enable(/*pst==stop &&*/ al.ual[userIndex].au!=UserAccount::authority::guest);
 }
 
 
@@ -775,41 +776,115 @@ void CMainFrame::OnMove(int x, int y)
 }
 
 
-//afx_msg LRESULT CMainFrame::OnMessageUpdateDol(WPARAM wParam, LPARAM lParam)
-//{
-//	CanalyzerViewL* pavl=((CanalyzerViewL*)(m_wndSplitter.GetPane(0,0)));
-//	CanalyzerDoc* pad=pavl->GetDocument();	 
-//
-//	dol.clear();
-//
-//	sapitemA outitem;
-//	BYTE outstep;
-//	double a1;
-//	//std::vector<DataOutA> doltmp;
-//	UINT flg=ComputeStateData(pad->p1.analysistype,pad->p2,pad->p3,pad->raw,dol,outitem,outstep,a1);	
-//
-//	//if(flg==1){
-//	//	DataOutA doa=dol.back();
-//	//	doa.Update(outitem,outstep);
-//	//	mf->GetCaptionBar()->x=doa.addVolume;
-//	//}
-//
-//	// 进入临界区
-//	//g_clsCriticalSection.Lock();
-//
-//	//dol.assign(doltmp.begin(),doltmp.end());
-//	// 离开临界区
-//	//g_clsCriticalSection.Unlock();
-//
-//
-//	TRACE(L"%d\n",flg);
-//
-//	::PostMessage(m_wndSplitter.GetPane(0,1)->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
-//	::PostMessage(m_wndSplitter.GetPane(0,0)->GetSafeHwnd(),MESSAGE_UPDATE_RAW,NULL,NULL);
-//	::PostMessage(m_wndOutput.GetListCtrl()->GetSafeHwnd(),MESSAGE_SHOW_DOL,NULL,(LPARAM)this);
-//
-//	return 0;
-//}
+afx_msg LRESULT CMainFrame::OnMessageUpdateDol(WPARAM wParam, LPARAM lParam)
+{
+	CanalyzerViewL* pavl=((CanalyzerViewL*)(m_wndSplitter.GetPane(0,0)));
+	CanalyzerDoc* pDoc=pavl->GetDocument();	 
+
+	//double v2a;
+	//BYTE outstep;
+	//size_t nextidx;
+	//size_t nowidx;
+
+	CSingleLock singleLock(&m_CritSection);
+	singleLock.Lock();
+	if (singleLock.IsLocked())  // Resource has been locked
+	{
+		//...use the shared resource...
+
+
+
+		runstate=pDoc->ComputeStateData();
+		// Now that we are finished, 
+		// unlock the resource for others.
+		singleLock.Unlock();
+	}
+
+	TRACE(L"rs=%d,ci=%d,ni=%d\n",runstate,pDoc->currentSAPIndex,pDoc->nextSAPIndex);
+
+	if(runstate==3){
+		CString strerr;
+		strerr.LoadStringW(IDS_STRING_STEP_ERROR);
+		//::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(strerr.GetBuffer()),NULL);
+		//pst=stop;
+		OnAnalysisAbortanalysis();
+		return 1;
+	}
+	if(runstate==4){
+
+		OnAnalysisAbortanalysis();
+
+		//pst=stop;
+		return 4;
+	}
+
+	::PostMessage(m_wndSplitter.GetPane(0,1)->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
+	::PostMessage(m_wndSplitter.GetPane(0,0)->GetSafeHwnd(),MESSAGE_UPDATE_RAW,NULL,NULL);
+	::PostMessage(m_wndOutput.GetListCtrl()->GetSafeHwnd(),MESSAGE_SHOW_DOL,NULL,(LPARAM)pDoc);
+
+	if(runstate==5){
+		CString str;
+		str.Format(L"add solution %g ml",pDoc->VtoAdd);
+
+		OnAnalysisPause();
+
+		//CString str((wchar_t*)wParam);
+
+		wd->m_tips=str;
+		wd->UpdateData(FALSE);
+
+		if(pDoc->bChangeSAP){
+		pDoc->p3=pDoc->p3done;
+		pDoc->p3.AppendData(pDoc->p3todo);
+		}
+
+		//mf->SendMessage(MESSAGE_WAIT_RESPONSE,(WPARAM)(str.GetBuffer()),NULL);
+		//WaitSecond(mf->pst);
+		/////////////////////////////////////////
+		{
+			//TCHAR szFilters[]= _T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||");
+			//CFileDialog fileDlg(TRUE, _T("txt"), _T("*.txt"),
+			//	OFN_FILEMUSTEXIST | OFN_HIDEREADONLY /*| OFN_ALLOWMULTISELECT*/ , szFilters);
+			//if(fileDlg.DoModal() == IDOK)
+			//{ 
+			//	filelist.push_back(fileDlg.GetPathName());
+			//}
+			//else{
+			//	return 9;
+			//}
+		}
+		////////////////////////////////////////
+
+		//filelist.erase(filelist.begin());
+		//break;
+	}
+
+	if(runstate==0){
+		//::PostMessage(rv->GetSafeHwnd(),MESSAGE_COMPUTE_RESULT,NULL,NULL);
+		//filelist.erase(filelist.begin());
+		//mf->pst=stop;
+		//return 0;
+		//break;
+
+		CString str;
+		str.Format(L"complete all");
+
+		OnAnalysisPause();
+
+		//CString str((wchar_t*)wParam);
+
+		wd->m_tips=str;
+		wd->UpdateData(FALSE);
+
+		if(pDoc->bChangeSAP){
+		pDoc->p3=pDoc->p3done;
+		pDoc->p3.AppendData(pDoc->p3todo);
+		}
+
+	}
+
+	return 0;
+}
 
 
 
@@ -860,7 +935,8 @@ void CMainFrame::OnAnalysisAbortanalysis()
 		pst=stop;
 		//::SendMessage(this->GetCaptionBar()->GetSafeHwnd(),MESSAGE_OVER,NULL,NULL);
 		if(wd!=NULL){
-			wd->ShowWindow(SW_HIDE);
+			//wd->ShowWindow(SW_HIDE);
+			wd->DestroyWindow();
 			//wd->OnOK();
 			delete wd;
 			wd=NULL;
@@ -905,7 +981,8 @@ void CMainFrame::OnAnalysisPause()
 
 			pst=running;
 			if(wd!=NULL){
-				wd->ShowWindow(SW_HIDE);
+				//wd->ShowWindow(SW_HIDE);
+				wd->DestroyWindow();
 				//wd->OnOK();
 				delete wd;
 				wd=NULL;
@@ -961,6 +1038,11 @@ void CMainFrame::OnControls2()
 	}
 
 	wd->ShowWindow(SW_SHOW);
+	::SetWindowPos(wd->GetSafeHwnd(),
+		//HWND_TOPMOST,
+		HWND_TOP,
+		0,0,0,0,
+		SWP_NOMOVE|SWP_NOSIZE);
 
 }
 
@@ -968,63 +1050,63 @@ void CMainFrame::OnControls2()
 afx_msg LRESULT CMainFrame::OnMessageChangeAnp(WPARAM wParam, LPARAM lParam)
 {
 
-		CanalyzerViewL* leftp=(CanalyzerViewL*)m_wndSplitter.GetPane(0,0);
-	//pa1->rightp=(CanalyzerViewR*)m_wndSplitter.GetPane(0,1);
+	//CanalyzerViewL* leftp=(CanalyzerViewL*)m_wndSplitter.GetPane(0,0);
+	////pa1->rightp=(CanalyzerViewR*)m_wndSplitter.GetPane(0,1);
 
-		CanalyzerDoc *pDoc=leftp->GetDocument();
+	//CanalyzerDoc *pDoc=leftp->GetDocument();
 
-		//pDoc->OnAnalysisMethodsetup();
-		
-		//::SendMessage(this->afxget->GetSafeHwnd(),WM_COMMAND,0,0);
+	////pDoc->OnAnalysisMethodsetup();
 
-		//::AfxMessageBox(L"dsaf");
-		pDoc->ChangeSAP();
+	////::SendMessage(this->afxget->GetSafeHwnd(),WM_COMMAND,0,0);
 
-			double v2a;
-	//sapitemA outitem;
-	BYTE outstep;
-	size_t nextidx;
-	size_t nowidx;
-					UINT runstate=pDoc->ComputeStateData(nowidx,nextidx,outstep,v2a);
+	////::AfxMessageBox(L"dsaf");
+	//pDoc->ChangeSAP();
 
-			TRACE(L"next step is %d\n",nextidx);
+	//double v2a;
+	////sapitemA outitem;
+	//BYTE outstep;
+	//size_t nextidx;
+	//size_t nowidx;
+	//UINT runstate=pDoc->ComputeStateData(nowidx,nextidx,outstep,v2a);
 
-			if(runstate==3){
-				CString strerr;
-				strerr.LoadStringW(IDS_STRING_STEP_ERROR);
-				//::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(strerr.GetBuffer()),NULL);
-				pst=stop;
-				return 1;
-			}
-			if(runstate==4){
-				OnAnalysisAbortanalysis();
-				return 4;
-			}
-			//::PostMessage(rv->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
-			//::PostMessage(lv->GetSafeHwnd(),MESSAGE_UPDATE_RAW,NULL,NULL);
-			//::PostMessage(ol->GetSafeHwnd(),MESSAGE_SHOW_DOL,NULL,(LPARAM)pDoc);
-			//::SendMessage(ow->GetListCtrl()->GetSafeHwnd(),MESSAGE_SHOW_DOL,NULL,NULL);
-			//Sleep(sleepms);
+	//TRACE(L"next step is %d\n",nextidx);
 
-			if(runstate==5){
-				//::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(v2a),NULL);
-				//mf->pst=pause;
+	//if(runstate==3){
+	//	CString strerr;
+	//	strerr.LoadStringW(IDS_STRING_STEP_ERROR);
+	//	//::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(strerr.GetBuffer()),NULL);
+	//	pst=stop;
+	//	return 1;
+	//}
+	//if(runstate==4){
+	//	OnAnalysisAbortanalysis();
+	//	return 4;
+	//}
+	////::PostMessage(rv->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
+	////::PostMessage(lv->GetSafeHwnd(),MESSAGE_UPDATE_RAW,NULL,NULL);
+	////::PostMessage(ol->GetSafeHwnd(),MESSAGE_SHOW_DOL,NULL,(LPARAM)pDoc);
+	////::SendMessage(ow->GetListCtrl()->GetSafeHwnd(),MESSAGE_SHOW_DOL,NULL,NULL);
+	////Sleep(sleepms);
 
-					CString str;
-					str.Format(L"add solution %g ml",v2a);
+	//if(runstate==5){
+	//	//::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(v2a),NULL);
+	//	//mf->pst=pause;
 
-					wd->m_tips=str;
-					wd->UpdateData(FALSE);
-			}
+	//	CString str;
+	//	str.Format(L"add solution %g ml",v2a);
 
-			if(runstate==0){
-				//::PostMessage(rv->GetSafeHwnd(),MESSAGE_COMPUTE_RESULT,NULL,NULL);
-				//filelist.erase(filelist.begin());
-				//mf->pst=stop;
-				//return 0;
-				////break;
-				OnAnalysisAbortanalysis();
-			}
+	//	wd->m_tips=str;
+	//	wd->UpdateData(FALSE);
+	//}
+
+	//if(runstate==0){
+	//	//::PostMessage(rv->GetSafeHwnd(),MESSAGE_COMPUTE_RESULT,NULL,NULL);
+	//	//filelist.erase(filelist.begin());
+	//	//mf->pst=stop;
+	//	//return 0;
+	//	////break;
+	//	OnAnalysisAbortanalysis();
+	//}
 
 
 

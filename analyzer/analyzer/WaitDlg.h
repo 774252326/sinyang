@@ -37,4 +37,7 @@ public:
 	virtual void OnOK();
 	CString m_tips;
 	afx_msg void OnBnClickedButton1();
+	virtual BOOL OnInitDialog();
+
+	CFont  editfont;
 };

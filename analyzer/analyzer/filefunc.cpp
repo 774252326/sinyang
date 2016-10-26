@@ -17,7 +17,7 @@ double doubledummy;
 
 const DWORD sleepms=100;
 
-const size_t nd=500;
+const size_t nd=50;
 //const size_t nd=sleepms/10;
 
 
@@ -174,16 +174,183 @@ UINT PROCESS(LPVOID pParam)
 
 
 
-	UINT runstate=2;
+	//UINT runstate=2;
+
+	//double v2a;
+	////sapitemA outitem;
+	//BYTE outstep;
+	//size_t nextidx;
+	//size_t nowidx;
+	//CSingleLock singleLock(&(pDoc->m_CritSection));
+	//singleLock.Lock();
+	//if (singleLock.IsLocked())  // Resource has been locked
+	//{
+	//	pDoc->raw.Clear();
+	//	// Now that we are finished, 
+	//	// unlock the resource for others.
+	//	singleLock.Unlock();
+	//}
+
+	//runstate=pDoc->ComputeStateData(nowidx,nextidx,outstep,v2a);
+
+	//TRACE(L"rs=%d,ci=%d,ni=%d\n",runstate,nowidx,nextidx);
+	//if(runstate==3){
+	//	CString strerr;
+	//	strerr.LoadStringW(IDS_STRING_STEP_ERROR);
+	//	//::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(strerr.GetBuffer()),NULL);
+	//	mf->pst=stop;
+	//	return 1;
+	//}
+	////::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(v2a),NULL);
+
+	////mf->pst=pause;
+
+	//CString str;
+	//str.Format(L"add solution %g ml",v2a);
+
+	//mf->SendMessage(MESSAGE_WAIT_RESPONSE,(WPARAM)(str.GetBuffer()),NULL);
+
+	//WaitSecond(mf->pst);
+
+
+	///////////////////////////////////////////
+	//{		
+	//	//TCHAR szFilters[]= _T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||");
+	//	//CFileDialog fileDlg(TRUE, _T("txt"), _T("*.txt"),
+	//	//	OFN_FILEMUSTEXIST | OFN_HIDEREADONLY /*| OFN_ALLOWMULTISELECT*/ , szFilters);
+	//	//if(fileDlg.DoModal() == IDOK)
+	//	//{ 
+	//	//	filelist.assign(1,fileDlg.GetPathName());
+	//	//}
+	//	//else{
+	//	//	return 9;
+	//	//}
+	//}
+	//////////////////////////////////////////
+
+	//lv->pw.bMouseCursor=rv->pw.bMouseCursor=false;
+
+	//while(true){
+
+	//	if(filelist.empty()){
+
+	//		CString strerr;
+	//		strerr.LoadStringW(IDS_STRING_STEP_ERROR);
+	//		//::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(strerr.GetBuffer()),NULL);
+	//		mf->pst=stop;
+	//		return 1;
+
+	//	}
+
+
+
+	//	/////load data from file////////////
+	//	pcct data;
+	//	data.readFile(filelist.front());
+	//	data.TomA();
+
+	//	std::vector<double> x;
+	//	std::vector<double> y;
+	//	size_t rnd;
+	//	pDoc->raw.ll.push_back(0);
+
+	//	while(true){
+	//		rnd=data.popData(x,y,nd);
+
+	//		if(x.empty()||y.empty()){
+	//			TRACE("input empty");
+	//			return 8;
+	//		}
+
+	//		//CSingleLock singleLock(&(pDoc->m_CritSection));
+	//		singleLock.Lock();
+	//		if (singleLock.IsLocked())  // Resource has been locked
+	//		{
+	//			pDoc->raw.AddFollow(x,y);
+	//			// Now that we are finished, 
+	//			// unlock the resource for others.
+	//			singleLock.Unlock();
+	//		}
+
+
+	//		runstate=pDoc->ComputeStateData(nowidx,nextidx,outstep,v2a);
+
+	//		TRACE(L"rs=%d,ci=%d,ni=%d\n",runstate,nowidx,nextidx);
+
+	//		if(runstate==3){
+	//			CString strerr;
+	//			strerr.LoadStringW(IDS_STRING_STEP_ERROR);
+	//			//::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(strerr.GetBuffer()),NULL);
+	//			mf->pst=stop;
+	//			return 1;
+	//		}
+	//		if(runstate==4){
+	//			mf->pst=stop;
+	//			return 4;
+	//		}
+
+	//		::PostMessage(rv->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
+	//		::PostMessage(lv->GetSafeHwnd(),MESSAGE_UPDATE_RAW,NULL,NULL);
+	//		::PostMessage(ol->GetSafeHwnd(),MESSAGE_SHOW_DOL,NULL,(LPARAM)pDoc);
+	//		//::SendMessage(ow->GetListCtrl()->GetSafeHwnd(),MESSAGE_SHOW_DOL,NULL,NULL);
+	//		Sleep(sleepms);
+
+	//		if(runstate==5){
+	//			//::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(v2a),NULL);
+	//			//mf->pst=pause;
+
+	//				str.Format(L"add solution %g ml",v2a);
+
+	//			mf->SendMessage(MESSAGE_WAIT_RESPONSE,(WPARAM)(str.GetBuffer()),NULL);
+	//			WaitSecond(mf->pst);
+	//			/////////////////////////////////////////
+	//			{
+	//				//TCHAR szFilters[]= _T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||");
+	//				//CFileDialog fileDlg(TRUE, _T("txt"), _T("*.txt"),
+	//				//	OFN_FILEMUSTEXIST | OFN_HIDEREADONLY /*| OFN_ALLOWMULTISELECT*/ , szFilters);
+	//				//if(fileDlg.DoModal() == IDOK)
+	//				//{ 
+	//				//	filelist.push_back(fileDlg.GetPathName());
+	//				//}
+	//				//else{
+	//				//	return 9;
+	//				//}
+	//			}
+	//			////////////////////////////////////////
+
+	//			filelist.erase(filelist.begin());
+	//			break;
+	//		}
+
+	//		if(runstate==0){
+	//			::PostMessage(rv->GetSafeHwnd(),MESSAGE_COMPUTE_RESULT,NULL,NULL);
+	//			filelist.erase(filelist.begin());
+	//			mf->pst=stop;
+	//			return 0;
+	//			//break;
+	//		}
+	//	}
+
+	//}
+	/////////////////////////////////////////////////////////////////////////////////////
+
+
 
 	double v2a;
-	//sapitemA outitem;
 	BYTE outstep;
 	size_t nextidx;
 	size_t nowidx;
 	CSingleLock singleLock(&(pDoc->m_CritSection));
-	singleLock.Lock();
-	if (singleLock.IsLocked())  // Resource has been locked
+	lv->pw.bMouseCursor=rv->pw.bMouseCursor=false;
+	CSingleLock singleLock1(&(mf->m_CritSection));
+
+	pcct data;
+	std::vector<double> x;
+	std::vector<double> y;
+	size_t rnd;
+
+
+	if(singleLock.Lock())
 	{
 		pDoc->raw.Clear();
 		// Now that we are finished, 
@@ -191,153 +358,143 @@ UINT PROCESS(LPVOID pParam)
 		singleLock.Unlock();
 	}
 
-	runstate=pDoc->ComputeStateData(nowidx,nextidx,outstep,v2a);
+	mf->SendMessage(MESSAGE_UPDATE_DOL,NULL,NULL);
+	//mf->OnMessageUpdateDol(NULL,NULL);
 
-	TRACE(L"rs=%d,ci=%d,ni=%d\n",runstate,nowidx,nextidx);
-	if(runstate==3){
-		CString strerr;
-		strerr.LoadStringW(IDS_STRING_STEP_ERROR);
-		//::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(strerr.GetBuffer()),NULL);
-		mf->pst=stop;
-		return 1;
-	}
-	//::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(v2a),NULL);
+	while(mf->pst!=stop){
 
-	//mf->pst=pause;
-
-	CString str;
-	str.Format(L"add solution %g ml",v2a);
-
-	mf->SendMessage(MESSAGE_WAIT_RESPONSE,(WPARAM)(str.GetBuffer()),NULL);
-
-	WaitSecond(mf->pst);
-
-
-	/////////////////////////////////////////
-	{		
-		//TCHAR szFilters[]= _T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||");
-		//CFileDialog fileDlg(TRUE, _T("txt"), _T("*.txt"),
-		//	OFN_FILEMUSTEXIST | OFN_HIDEREADONLY /*| OFN_ALLOWMULTISELECT*/ , szFilters);
-		//if(fileDlg.DoModal() == IDOK)
-		//{ 
-		//	filelist.assign(1,fileDlg.GetPathName());
-		//}
-		//else{
-		//	return 9;
-		//}
-	}
-	////////////////////////////////////////
-
-	lv->pw.bMouseCursor=rv->pw.bMouseCursor=false;
-
-	while(true){
-
-		if(filelist.empty()){
-
-			CString strerr;
-			strerr.LoadStringW(IDS_STRING_STEP_ERROR);
-			//::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(strerr.GetBuffer()),NULL);
-			mf->pst=stop;
-			return 1;
-
+		if(mf->pst!=running){
+			Sleep(sleepms);
 		}
 
-
-
-		/////load data from file////////////
-		pcct data;
-		data.readFile(filelist.front());
-		data.TomA();
-
-		std::vector<double> x;
-		std::vector<double> y;
-		size_t rnd;
-		pDoc->raw.ll.push_back(0);
-
-		while(true){
-			rnd=data.popData(x,y,nd);
-
-			if(x.empty()||y.empty()){
-				TRACE("input empty");
-				return 8;
-			}
-
-			//CSingleLock singleLock(&(pDoc->m_CritSection));
-			singleLock.Lock();
-			if (singleLock.IsLocked())  // Resource has been locked
-			{
-				pDoc->raw.AddFollow(x,y);
-				// Now that we are finished, 
-				// unlock the resource for others.
-				singleLock.Unlock();
-			}
-
-
-			runstate=pDoc->ComputeStateData(nowidx,nextidx,outstep,v2a);
-
-			TRACE(L"rs=%d,ci=%d,ni=%d\n",runstate,nowidx,nextidx);
-
-			if(runstate==3){
-				CString strerr;
-				strerr.LoadStringW(IDS_STRING_STEP_ERROR);
-				//::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(strerr.GetBuffer()),NULL);
-				mf->pst=stop;
-				return 1;
-			}
-			if(runstate==4){
-				mf->pst=stop;
-				return 4;
-			}
-
-			::PostMessage(rv->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
-			::PostMessage(lv->GetSafeHwnd(),MESSAGE_UPDATE_RAW,NULL,NULL);
-			::PostMessage(ol->GetSafeHwnd(),MESSAGE_SHOW_DOL,NULL,(LPARAM)pDoc);
-			//::SendMessage(ow->GetListCtrl()->GetSafeHwnd(),MESSAGE_SHOW_DOL,NULL,NULL);
-			Sleep(sleepms);
-
-			if(runstate==5){
-				//::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(v2a),NULL);
-				//mf->pst=pause;
-
-					str.Format(L"add solution %g ml",v2a);
-
-				mf->SendMessage(MESSAGE_WAIT_RESPONSE,(WPARAM)(str.GetBuffer()),NULL);
-				WaitSecond(mf->pst);
-				/////////////////////////////////////////
-				{
-					//TCHAR szFilters[]= _T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||");
-					//CFileDialog fileDlg(TRUE, _T("txt"), _T("*.txt"),
-					//	OFN_FILEMUSTEXIST | OFN_HIDEREADONLY /*| OFN_ALLOWMULTISELECT*/ , szFilters);
-					//if(fileDlg.DoModal() == IDOK)
-					//{ 
-					//	filelist.push_back(fileDlg.GetPathName());
-					//}
-					//else{
-					//	return 9;
-					//}
-				}
-				////////////////////////////////////////
-
-				filelist.erase(filelist.begin());
-				break;
-			}
-
-			if(runstate==0){
-				::PostMessage(rv->GetSafeHwnd(),MESSAGE_COMPUTE_RESULT,NULL,NULL);
-				filelist.erase(filelist.begin());
+		if(singleLock1.Lock())
+		{
+			if(mf->runstate==0){
+				singleLock1.Unlock();
 				mf->pst=stop;
 				return 0;
-				//break;
 			}
+
+
+			if(mf->runstate==5){
+				singleLock1.Unlock();
+
+				if(filelist.empty()){
+					CString strerr;
+					strerr.LoadStringW(IDS_STRING_STEP_ERROR);
+					//::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(strerr.GetBuffer()),NULL);
+					mf->pst=stop;
+					return 1;
+				}
+
+				/////load data from file////////////
+				data.clear();
+				data.readFile(filelist.front());
+				data.TomA();
+				filelist.erase(filelist.begin());
+
+				rnd=data.popData(x,y,nd);
+
+				if(x.empty()||y.empty()){
+					TRACE("input empty");
+					mf->pst=stop;
+					return 8;
+				}
+				if(singleLock.Lock())
+				{
+					pDoc->raw.AddNew(x,y);
+					// Now that we are finished, 
+					// unlock the resource for others.
+					singleLock.Unlock();
+				}
+			}
+			else{
+				singleLock1.Unlock();
+
+				rnd=data.popData(x,y,nd);
+
+				if(x.empty()||y.empty()){
+					TRACE("input empty");
+					mf->pst=stop;
+					return 8;
+				}
+
+				if(singleLock.Lock())
+				{
+					pDoc->raw.AddFollow(x,y);
+					// Now that we are finished, 
+					// unlock the resource for others.
+					singleLock.Unlock();
+				}
+			}
+
+			mf->SendMessage(MESSAGE_UPDATE_DOL,NULL,NULL);
+			//mf->OnMessageUpdateDol(NULL,NULL);
+
+			Sleep(sleepms);
 		}
 
 	}
-
-
 
 
 
 	mf->pst=stop;
+
+	return 0;
+}
+
+
+UINT PROCESS1(LPVOID pParam)
+{
+
+		//CanalyzerDoc* pDoc=(CanalyzerDoc*)pParam;
+
+
+	//CanalyzerViewL* lv=((mypara*)pParam)->leftp;
+	//CanalyzerViewR* rv=((mypara*)pParam)->rightp;
+	//COutputWnd *ow=((mypara*)pParam)->outw;
+	//CMFCCaptionBarA *cba=((mypara*)pParam)->cba;
+
+	ProcessState *pst=((mypara1*)pParam)->psta;
+
+	//WaitDlg *wd=((mypara*)pParam)->wd;
+
+	//COutputListA* ol=ow->GetListCtrl();
+	//ol->DeleteAllItems();
+
+	//CMainFrame *mf=((mypara*)pParam)->mf;
+
+	//COutputListA* ol=((mypara*)pParam)->ol;
+
+
+
+	CanalyzerDoc* pDoc=((mypara1*)pParam)->adoc;
+
+	SAPara p3todo=*(((mypara1*)pParam)->pp3todo);
+	
+
+	delete pParam;
+	////////////////////////////////////////////////////
+
+
+	SAPara p3new=pDoc->p3done;
+	p3new.AppendData(p3todo);
+
+
+	CSingleLock singleLock(&(pDoc->m_CritSection));
+		while(singleLock.Lock())
+		{
+			if(*pst!=pause){
+				singleLock.Unlock();
+				Sleep(10);
+			}
+			else{
+				pDoc->p3=p3new;
+				singleLock.Unlock();
+				break;
+			}
+		}
+
 
 	return 0;
 }

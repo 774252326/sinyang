@@ -35,9 +35,12 @@ int imgout2(
 	CDC *pdc,
 	std::vector<PlotDataEx> &imagelist, 
 	std::vector<CString> &namelist, 
-	CSize szimg=CSize(1000,690));
+	CSize szimg=CSize(1000,690),
+	const std::wstring logofile = L"templogo.bmp");
 
-int pdfout(pdflib::PDFlib &p, const std::vector<DataOutA> &dol);
+int pdfout(pdflib::PDFlib &p, 
+	const std::vector<DataOutA> &dol,
+	const std::wstring logofile = L"templogo.bmp");
 
 int pdfout6(pdflib::PDFlib &p, 
 	const ANPara &para, 
@@ -47,4 +50,5 @@ int pdfout6(pdflib::PDFlib &p,
 	bool b1=true,
 	bool b2=true,
 	bool b3=true,
-	bool b4=true);
+	bool b4=true,
+	const std::wstring logofile = L"templogo.bmp");

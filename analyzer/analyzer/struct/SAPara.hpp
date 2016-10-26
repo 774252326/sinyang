@@ -90,6 +90,11 @@ public:
 		
 	};
 
+	void AppendData(const SAPara & pda)
+	{		
+		saplist.resize(saplist.size()+pda.saplist.size());
+		std::copy_backward(pda.saplist.begin(),pda.saplist.end(),saplist.end());
+	};
 
 };
 

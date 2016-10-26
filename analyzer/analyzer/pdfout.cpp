@@ -15,7 +15,7 @@
 
 //const std::wstring logofile = L"res\\sinyang.bmp";
 //const std::wstring logofile = L"res\\index_02_01_01.jpg";
-const std::wstring logofile = L"templogo.bmp";
+//const std::wstring logofile = L"templogo.bmp";
 
 
 
@@ -113,7 +113,9 @@ int AddPageNumber(const std::wstring fin, const std::wstring fout)
 
 
 
-int pdfout(pdflib::PDFlib &p, const std::vector<DataOutA> &dol){
+int pdfout(pdflib::PDFlib &p, 
+	const std::vector<DataOutA> &dol,
+	const std::wstring logofile){
 
 	//const std::wstring searchpath = L"../data";
 
@@ -1058,7 +1060,8 @@ int pdfout6(
 	bool b1,
 	bool b2,
 	bool b3,
-	bool b4
+	bool b4,
+	const std::wstring logofile
 	){
 
 
@@ -1340,7 +1343,8 @@ int imgout2(
 	CDC *pdc,
 	std::vector<PlotDataEx> &imagelist, 
 	std::vector<CString> &namelist, 
-	CSize szimg)
+	CSize szimg,
+	const std::wstring logofile)
 {
 
 	if(imagelist.empty() || namelist.empty())

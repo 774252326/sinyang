@@ -12,9 +12,14 @@
 //#include "d:\project1\analyzer\analyzer\struct\sapara.hpp"
 
 #include "PropertySheetA1ML.h"
+#include "d:\project1\analyzer\analyzer\struct\sapara.hpp"
 
 class CanalyzerDoc : public CDocument
 {
+
+
+
+
 protected: // create from serialization only
 	//CanalyzerDoc();
 	DECLARE_DYNCREATE(CanalyzerDoc)
@@ -27,6 +32,12 @@ public:
 	RawData raw;
 
 	std::vector<DataOutA> dol;
+public:
+	 UINT runstate;
+	 size_t currentSAPIndex;
+	 size_t nextSAPIndex;
+	 BYTE outstep;
+	 double VtoAdd;
 
 // Operations
 public:
@@ -37,10 +48,10 @@ public:
 
 	UINT ComputeStateData(
 	//sapitemA &outitem,
-	size_t &currentSAPIndex,
-	size_t &nextSAPIndex,
-	BYTE &outstep,
-	double &VtoAdd
+	//size_t &currentSAPIndex,
+	//size_t &nextSAPIndex,
+	//BYTE &outstep,
+	//double &VtoAdd
 	);
 
 // Overrides
@@ -76,7 +87,10 @@ public:
 	void Show(void);
 	CCriticalSection m_CritSection;
 	afx_msg void OnBnClickedButton1();
-	void ChangeSAP(void);
+	//static UINT ChangeSAP(LPVOID pParam);
+
+	void ChangeSAP(SAPara pParam);
+
 	SAPara p3done;
 	afx_msg void OnControlsChangesap();
 
@@ -91,4 +105,10 @@ public:
 		bool b6,
 		bool b7);
 	afx_msg void OnAnalysisReport();
+	afx_msg void OnControls2();
+
+
+
+	SAPara p3todo;
+	bool bChangeSAP;
 };

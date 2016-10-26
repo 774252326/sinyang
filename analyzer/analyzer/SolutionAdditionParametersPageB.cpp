@@ -5,7 +5,7 @@
 #include "analyzer.h"
 #include "SolutionAdditionParametersPageB.h"
 #include "afxdialogex.h"
-
+#include  "filefunc.h"
 
 // SolutionAdditionParametersPageB dialog
 
@@ -44,9 +44,11 @@ void SolutionAdditionParametersPageB::SetList(void)
 
 	//UpdateData(FALSE);
 
-	if(para1.saplist.empty()){
-		return;
-	}
+	//if(para1.saplist.empty()){
+	//	return;
+	//}
+
+	m_SAPlist1.DeleteAllItems();
 
 	for(size_t i=0;i<para1.saplist.size();i++){
 		m_SAPlist1.InsertItemSAP(i,para1.saplist[i]);
@@ -173,4 +175,55 @@ BOOL SolutionAdditionParametersPageB::OnSetActive()
 	psheet->SetWizardButtons(PSWIZB_BACK|PSWIZB_FINISH);
 
 	return CPropertyPage::OnSetActive();
+}
+
+
+BOOL SolutionAdditionParametersPageB::OnApply()
+{
+	// TODO: Add your specialized code here and/or call the base class
+
+
+	//pDoc->ChangeSAP(para1);
+
+	pDoc->bChangeSAP=true;
+	pDoc->p3todo=para1;
+
+	//mypara1 * pa1=new mypara1;
+
+	//pa1->adoc=pDoc;
+	//pa1->pp3todo=&para1;
+
+	//POSITION pos = pDoc->GetFirstViewPosition();
+	//CMainFrame *mf=(CMainFrame*)(pDoc->GetNextView(pos)->GetParentFrame());
+
+	//pa1->psta=&(mf->pst);
+
+	////pa1->leftp=(CanalyzerViewL*)m_wndSplitter.GetPane(0,0);
+	////pa1->rightp=(CanalyzerViewR*)m_wndSplitter.GetPane(0,1);
+	////pa1->outw=this->GetOutputWnd();
+	////pa1->cba=this->GetCaptionBar();
+	////pa1->ol=this->GetOutputWnd()->GetListCtrl();
+	////pa1->psta=&pst;
+	////pa1->wd=wd;
+	////pa1->mf=this;
+	////
+
+	////
+	//	CWinThread *pWriteA;
+	////
+	////	//HANDLE hThread;
+	////
+	//pWriteA=AfxBeginThread(PROCESS1,
+	//	(LPVOID)(pa1),
+	//	THREAD_PRIORITY_NORMAL,
+	//	0,
+	//	CREATE_SUSPENDED);
+	////
+	////	//hThread=pWriteA->m_hThread;
+	////
+	////	//CloseHandle(hThread);
+	//pWriteA->ResumeThread();
+
+
+	return CPropertyPage::OnApply();
 }

@@ -118,7 +118,7 @@ public:
 	AccountList al;
 	int userIndex;
 
-	//afx_msg LRESULT OnMessageUpdateDol(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnMessageUpdateDol(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnMove(int x, int y);
 	WaitDlg *wd;
 protected:
@@ -127,6 +127,9 @@ public:
 	afx_msg void OnControls2();
 protected:
 	afx_msg LRESULT OnMessageChangeAnp(WPARAM wParam, LPARAM lParam);
+public:
+	UINT runstate;
+	CCriticalSection m_CritSection;
 };
 
 

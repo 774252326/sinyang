@@ -1,6 +1,7 @@
 #pragma once
 #include "struct\SAPara.hpp"
 #include "list\ListCtrlSAP.h"
+#include "analyzerDoc.h"
 
 // SolutionAdditionParametersPageB dialog
 
@@ -26,9 +27,12 @@ public:
 	ListCtrlSAP m_SAPlist0;
 	ListCtrlSAP m_SAPlist1;
 
+	CanalyzerDoc *pDoc;
+
 	void SetList(void);
 	void GetList(void);
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	virtual BOOL OnKillActive();
 	virtual BOOL OnSetActive();
+	virtual BOOL OnApply();
 };

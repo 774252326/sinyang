@@ -1144,6 +1144,26 @@ UINT DataOutAList2RawDataList(
 
 		}
 		else{
+
+
+				if(pi0>=0){
+		//int insertN=pdl[pi0].pd.SetLineData(newraw,namelist);
+		//pdl[pi0].pd.SetLineColor(insertN,3,1);
+
+		rdl[pi0]=newraw;
+
+		newraw.Clear();
+		//namelist.clear();
+	}
+
+	pi0++;
+
+	//pdl.resize(pi0);
+	rdl.resize(pi0);
+	xlabellist.resize(pi0);
+	ylabellist.resize(pi0);
+
+
 			return 0;//第i个设定步骤未完成
 		}
 
@@ -1204,32 +1224,45 @@ UINT DataOutAList2RawDataList(
 
 			std::vector<DataOutA> dolcp(dol.begin(),dol.end());
 
-			RawData newraw;
-
-			while(!dolcp.empty()){
+			//RawData newraw;
+			std::vector<RawData> ardl;
+			UINT flg1=0;
+			do{
 				std::vector<RawData> rdltmp;
 				std::vector<size_t> dlidx;
-				UINT flg1=DataOutAList2RawDataList(dolcp,sl,rdltmp,xlabellist,ylabellist,dlidx);
-				if(flg1==1){
-					for(size_t i=0;i<rdltmp.size();i++){
-						newraw.AppendData(rdltmp[i]);
-					}
-					dolcp.erase(dolcp.begin(),dolcp.begin()+dlidx.back()+1);
-					if(!dolastidx.empty()){
+				flg1=DataOutAList2RawDataList(dolcp,sl,rdltmp,xlabellist,ylabellist,dlidx);
+
+				//for(size_t i=0;i<rdltmp.size();i++){
+				//	newraw.AppendData(rdltmp[i]);
+				//}
+
+				ardl.resize(ardl.size()+rdltmp.size());
+				std::copy_backward(rdltmp.begin(),rdltmp.end(),ardl.end());
+
+				if(!dlidx.empty()){
+				dolcp.erase(dolcp.begin(),dolcp.begin()+dlidx.back()+1);
+				if(!dolastidx.empty()){
 						for(size_t i=0;i<dlidx.size();i++){
 							dlidx[i]+=dolastidx.back()+1;
 						}
 					}
-					dolastidx.resize(dolastidx.size()+dlidx.size());
-					std::copy_backward(dlidx.begin(),dlidx.end(),dolastidx.end());
+				dolastidx.resize(dolastidx.size()+dlidx.size());
+				std::copy_backward(dlidx.begin(),dlidx.end(),dolastidx.end());
 				}
-				else
-					return flg1;
+
+			}while(!dolcp.empty() && flg1==1);
+
+			if(ardl.empty()){
+				rdl.clear();
 			}
-
-			rdl.assign(1,newraw);
-
-			return 1;
+			else{
+				rdl.assign(1,ardl.front());
+				for(size_t i=1;i<ardl.size();i++){
+					rdl.front().AppendData(ardl[i]);
+				}
+			}
+			
+			return flg1;
 		}
 	default:
 		return DataOutAList2RawDataList(dol,sl,rdl,xlabellist,ylabellist,dolastidx);
@@ -1368,7 +1401,7 @@ UINT DataOutAList2PlotDataExList(
 
 
 
-	if(ff==1){
+	//if(ff==1){
 		for(size_t i=0;i<rdl.size();i++){
 			if(i>=pdl.size()){
 				pdl.push_back(PlotDataEx(ps));
@@ -1396,7 +1429,7 @@ UINT DataOutAList2PlotDataExList(
 		pdl.resize(rdl.size());
 
 		return 0;
-	}
+	//}
 
 
 
