@@ -14,7 +14,7 @@ public:
 	virtual ~CVParametersDlg();
 
 // Dialog Data
-	enum { IDD = IDD_DIALOG5 };
+	enum { IDD = IDD_DIALOG4 };
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
@@ -30,4 +30,5 @@ public:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	void ComboSelectChange(void);
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
+	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
 };

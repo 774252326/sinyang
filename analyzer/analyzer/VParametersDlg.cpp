@@ -21,15 +21,22 @@ CVParametersDlg::CVParametersDlg()
 	para.rotationrate=1;
 	para.scanrate=1;
 	para.variationtolerance=0;
+
+
+	CString title;
+	title.LoadStringW(IDS_STRING_CV_PARA);
+	m_psp.dwFlags = m_psp.dwFlags | PSP_USETITLE ; 	
+	m_psp.pszTitle = new TCHAR[title.GetLength()+1];
+	_tcscpy((wchar_t*)m_psp.pszTitle, title);
 }
 
 CVParametersDlg::~CVParametersDlg()
 {
+	delete [] m_psp.pszTitle;
 }
 
 void CVParametersDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CPropertyPage::DoDataExchange(pDX);
 	DDX_Text(pDX, IDS_EDIT_LOW_E_LIMIT, para.lowelimit);
 	DDX_Text(pDX, IDS_EDIT_HIGH_E_LIMIT, para.highelimit);
 	DDX_Text(pDX, IDS_EDIT_SCAN_RATE, para.scanrate);
@@ -37,6 +44,7 @@ void CVParametersDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDS_EDIT_VARIATION_TOLERANCE, para.variationtolerance);
 	DDX_Text(pDX, IDS_EDIT_ROTATION_RATE, para.rotationrate);
 	DDX_Text(pDX, IDS_EDIT_END_INTEGRATION_E, para.endintegratione);
+	CPropertyPage::DoDataExchange(pDX);
 }
 
 
@@ -45,6 +53,7 @@ BEGIN_MESSAGE_MAP(CVParametersDlg, CPropertyPage)
 	ON_CBN_SELCHANGE(IDS_COMBO_CYCLE_TYPE, &CVParametersDlg::ComboSelectChange)
 
 	ON_WM_CREATE()
+	ON_WM_SHOWWINDOW()
 END_MESSAGE_MAP()
 
 
@@ -330,4 +339,24 @@ BOOL CVParametersDlg::PreCreateWindow(CREATESTRUCT& cs)
 	//SetWindowTextW(L"asdf");
 
 	return CPropertyPage::PreCreateWindow(cs);
+}
+
+
+void CVParametersDlg::OnShowWindow(BOOL bShow, UINT nStatus)
+{
+	CPropertyPage::OnShowWindow(bShow, nStatus);
+
+	// TODO: Add your message handler code here
+
+	//	RECT rect;
+ //GetParent()->GetWindowRect(&rect);
+ //int nWidth =rect.right-rect.left;
+ //int nHeight =rect.bottom-rect.top;
+ //if(bShow)
+ //{
+ //GetParent()->ShowWindow(SW_HIDE);
+ //GetParent()->SetWindowPos(NULL,0,0,nWidth,nHeight,SWP_NOMOVE|SWP_NOZORDER|SWP_NOACTIVATE);
+ //GetParent()->ShowWindow(SW_SHOW);
+ //}
+
 }

@@ -19,20 +19,31 @@ IMPLEMENT_DYNAMIC(AnalysisParametersDlg, CPropertyPage)
 	para.calibrationfactor=1;
 	para.endpointratio=1;
 	para.evaluationratio=1;
+
+	CString title;
+	title.LoadStringW(IDS_STRING_ANALYSIS_PARA);
+	m_psp.dwFlags = m_psp.dwFlags | PSP_USETITLE ; 	
+	m_psp.pszTitle = new TCHAR[title.GetLength()+1];
+	_tcscpy((wchar_t*)m_psp.pszTitle, title);
+	
 }
 
 
 AnalysisParametersDlg::~AnalysisParametersDlg()
 {
+	delete [] m_psp.pszTitle;
 }
 
 void AnalysisParametersDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CPropertyPage::DoDataExchange(pDX);
+
 	DDX_Text(pDX, IDS_EDIT_EVALUATION_RATIO, para.evaluationratio);
 	DDX_Text(pDX, IDS_EDIT_ENDPOINT_RATIO, para.endpointratio);
 	DDX_Text(pDX, IDS_EDIT_CALIBRATION_FACTOR, para.calibrationfactor);
 	DDX_Text(pDX, IDS_EDIT_CALIBRATION_CURVE_FILE, para.calibrationfilepath);
+	DDX_Text(pDX, IDS_EDIT_INTERCEPT_VALUE, para.interceptvalue);
+
+	CPropertyPage::DoDataExchange(pDX);
 }
 
 
@@ -46,6 +57,7 @@ BEGIN_MESSAGE_MAP(AnalysisParametersDlg, CPropertyPage)
 
 	//ON_BN_CLICKED(IDC_BUTTON1, &AnalysisParametersDlg::OnBnClickedButton1)
 	ON_WM_CREATE()
+	ON_WM_SHOWWINDOW()
 END_MESSAGE_MAP()
 
 
@@ -177,6 +189,8 @@ BOOL AnalysisParametersDlg::OnInitDialog()
 	//CPropertyPage::OnInitDialog();
 
 	//UpdateData(FALSE);
+
+//this->MoveWindow(0,0,600,300);
 
 
 	return TRUE;  // return TRUE unless you set the focus to a control
@@ -397,7 +411,7 @@ int AnalysisParametersDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		this,
 		IDS_COMBO_CALIBRATION_TYPE);
 
-	for(int i=IDS_STRING_CALIBRATION_FACTOR;i<=IDS_STRING_CALIBRATION_CURVE_FILE;i++){
+	for(int i=IDS_STRING_CALIBRATION_FACTOR;i<=IDS_STRING_INTERCEPT_VALUE;i++){
 		str.LoadStringW(i);
 		pCombo2->AddString(str);
 	}
@@ -434,6 +448,22 @@ int AnalysisParametersDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		this,
 		IDS_EDIT_CALIBRATION_CURVE_FILE);
 
+
+	str.LoadStringW(IDS_EDIT_INTERCEPT_VALUE);
+	pEdit=new CEdit;
+	pEdit->CreateEx(
+		WS_EX_CLIENTEDGE,
+		L"Edit", 
+		str,
+		ES_LEFT
+		|WS_CHILD,
+		//|WS_VISIBLE,
+		CRect(pt,editSize),
+		this,
+		IDS_EDIT_INTERCEPT_VALUE);
+
+	
+
 	CalibrationComboSelectChange();
 
 	//pStatic->ShowWindow(SW_SHOW);
@@ -457,7 +487,7 @@ void AnalysisParametersDlg::CalibrationComboSelectChange(void)
 	// 获取组合框控件的列表框中选中项的索引   
 	nSel = pcb->GetCurSel();  
 
-	for(int i=0;i<2;i++){
+	for(int i=0;i<3;i++){
 		if(i==nSel){
 			GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR+i)->ShowWindow(SW_SHOW);
 		}
@@ -466,5 +496,25 @@ void AnalysisParametersDlg::CalibrationComboSelectChange(void)
 		}
 	}
 
+
+}
+
+
+void AnalysisParametersDlg::OnShowWindow(BOOL bShow, UINT nStatus)
+{
+	CPropertyPage::OnShowWindow(bShow, nStatus);
+
+	// TODO: Add your message handler code here
+
+	//RECT rect;
+ //GetParent()->GetWindowRect(&rect);
+ //int nWidth =rect.right-rect.left;
+ //int nHeight =rect.bottom-rect.top;
+ //if(bShow)
+ //{
+ //GetParent()->ShowWindow(SW_HIDE);
+ //GetParent()->SetWindowPos(NULL,0,0,nWidth,nHeight,SWP_NOMOVE|SWP_NOZORDER|SWP_NOACTIVATE);
+ //GetParent()->ShowWindow(SW_SHOW);
+ //}
 
 }

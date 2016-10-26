@@ -27,6 +27,8 @@ public:
 	int SetTextA(CString str, bool bFlash=false);
 	int timer;
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	virtual void DoDataExchange(CDataExchange* pDX);
+	double x;
 };
 
 

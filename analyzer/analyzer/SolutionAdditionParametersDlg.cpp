@@ -28,11 +28,17 @@ SolutionAdditionParametersDlg::SolutionAdditionParametersDlg()
 
 	//paral.push_back(s1);
 
+	CString title;
+	title.LoadStringW(IDS_STRING_ADDITION_SOLUTION_PARA);
+	m_psp.dwFlags = m_psp.dwFlags | PSP_USETITLE ; 	
+	m_psp.pszTitle = new TCHAR[title.GetLength()+1];
+	_tcscpy((wchar_t*)m_psp.pszTitle, title);
 
 }
 
 SolutionAdditionParametersDlg::~SolutionAdditionParametersDlg()
 {
+	delete [] m_psp.pszTitle;
 }
 
 void SolutionAdditionParametersDlg::DoDataExchange(CDataExchange* pDX)
@@ -46,6 +52,7 @@ void SolutionAdditionParametersDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(SolutionAdditionParametersDlg, CPropertyPage)
 	ON_WM_CREATE()
 	//ON_NOTIFY(LVN_ITEMCHANGED, 500, OnItemchangedList)
+	ON_WM_SHOWWINDOW()
 END_MESSAGE_MAP()
 
 
@@ -343,4 +350,24 @@ int SolutionAdditionParametersDlg::GetChoice(int nItem, int nSubItem)
 	}
 
 	return i;
+}
+
+
+void SolutionAdditionParametersDlg::OnShowWindow(BOOL bShow, UINT nStatus)
+{
+	CPropertyPage::OnShowWindow(bShow, nStatus);
+
+	// TODO: Add your message handler code here
+
+	//	RECT rect;
+ //GetParent()->GetWindowRect(&rect);
+ //int nWidth =rect.right-rect.left;
+ //int nHeight =rect.bottom-rect.top;
+ //if(bShow)
+ //{
+ //GetParent()->ShowWindow(SW_HIDE);
+ //GetParent()->SetWindowPos(NULL,0,0,nWidth,nHeight,SWP_NOMOVE|SWP_NOZORDER|SWP_NOACTIVATE);
+ //GetParent()->ShowWindow(SW_SHOW);
+ //}
+
 }

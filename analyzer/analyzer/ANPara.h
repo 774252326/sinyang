@@ -12,6 +12,7 @@ public:
 	double endpointratio;
 	int calibrationfactortype;
 	double calibrationfactor;
+	double interceptvalue;
 	CString calibrationfilepath;
 	virtual void Serialize(CArchive& ar);
 };

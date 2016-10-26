@@ -34,4 +34,5 @@ public:
 	void editchange(void);
 	CString filePath;
 	void CalibrationComboSelectChange(void);
+	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
 };

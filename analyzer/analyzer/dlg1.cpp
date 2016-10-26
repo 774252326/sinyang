@@ -577,6 +577,7 @@ void dlg1::OnPaint()
 		//DrawPoint(plotrect,&dcMem,0);
 		//DrawCurve(plotrect,&dcMem);
 		DrawCurveA(plotrect,&dcMem);
+		//DrawCurveB(plotrect,&dcMem);
 
 		//TRACE("%dms\n",clock()-t);
 		//CString str;
@@ -697,7 +698,7 @@ void dlg1::OnMouseMove(UINT nFlags, CPoint point)
 
 
 	// Check if we have captured the mouse
-	if (GetCapture()==this && !pd.ll.empty())
+	if (GetCapture()==this && !pd.ps.empty())
 	{
 		CRect plotrect;
 		GetPlotRect(plotrect);
@@ -752,7 +753,7 @@ BOOL dlg1::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 	GetPlotRect(plotrect);
 	ScreenToClient(&pt);
 
-	if(!pd.ll.empty()){
+	if(!pd.ps.empty()){
 		double x=xRescale(pt.x, plotrect.left, plotrect.right, xmin, xmax);
 		double y=xRescale(pt.y, plotrect.bottom, plotrect.top, ymin, ymax);
 
@@ -948,7 +949,7 @@ CRect dlg1::DrawLegend1(CRect rect, CDC* pDC)
 
 
 	font.CreateFont(
-		metricH,                        // nHeight
+		metricH,                   // nHeight
 		0,                         // nWidth
 		0,                         // nEscapement
 		0,                         // nOrientation
@@ -1229,6 +1230,92 @@ void dlg1::DrawCurveA(CRect rect, CDC* pDC)
 }
 
 
+void dlg1::DrawCurveB(CRect rect, CDC* pDC)
+{
+	std::vector<CPoint> pointlist;
+	CPen pen;
+	CPen * pOldPen;
+
+
+	//genPointToPlot(pd.xll,pd.yll,rect,pointlist);
+	size_t si=0;
+	
+
+	for(size_t j=0;j<pd.ps.size();j++){
+
+		genPointToPlot(pd.xlist[j],pd.ylist[j],rect,pointlist);
+	CPoint *pp=pointlist.data();
+
+		if(pd.ps[j].showLine){
+
+			pen.CreatePen(PS_SOLID,1,pd.ps[j].colour);
+			pOldPen=pDC->SelectObject(&pen);
+
+			if(pointlist.size()>2){
+				if(pd.ps[j].smoothLine==1){
+					DrawSpline(pp,pointlist.size(),rect,pDC);
+				}
+				if(pd.ps[j].smoothLine==2){
+					pDC->PolyBezier(pp,pointlist.size());
+				}
+				if(pd.ps[j].smoothLine==0){
+					pDC->Polyline(pp,pointlist.size());
+				}
+			}
+			else{
+				if(pointlist.size()==2){
+					pDC->Polyline(pp,pointlist.size());
+				}
+
+			}
+
+			pDC->SelectObject(pOldPen);
+			pen.DeleteObject();
+
+		}
+
+
+		if(pd.ps[j].dotSize==0){
+			for(size_t i=0;i<pointlist.size();i++){
+				pDC->SetPixelV(pointlist[i],pd.ps[j].colour);	
+			}
+			//si+=ll[j];
+		}
+		if(pd.ps[j].dotSize>0){
+			CRect prect(0,0,1,1);
+			CSize ppoc=CSize(pd.ps[j].dotSize,pd.ps[j].dotSize);
+			prect.InflateRect(ppoc);
+			for(size_t i=0;i<pointlist.size();i++){
+				prect.MoveToXY(pointlist[i]-ppoc);
+				drawRectangle(prect,pDC,pd.ps[j].colour,pd.ps[j].colour);
+			}
+			//si+=ll[j];
+		}
+
+		//si+=pd.ll[j];
+
+	}
+
+	//if(pd.ps.back().traceLast){
+	//	CRect prect(0,0,1,1);
+	//	CSize ppoc=CSize(4,4);
+	//	prect.InflateRect(ppoc);			
+	//	prect.MoveToXY(pointlist.back()-ppoc);
+	//	drawRectangle(prect,pDC,pd.ps.back().colour,pd.ps.back().colour);
+	//}
+
+	//////////////////////////////fast///////////////////////////
+	//genPointToPlot(xll,yll,rect,pointlist);
+	//pen.CreatePen(PS_SOLID,1,clist[0]);
+	//pOldPen=pDC->SelectObject(&pen);
+	//pDC->PolyPolyline(pointlist.data(),ll.data(),ll.size());
+	////dc.PolyDraw(pointlist.data(),styl.data(),pointlist.size());
+	//pDC->SelectObject(pOldPen);
+	//pen.DeleteObject();
+	//////////////////////////////////////////////////////////////////
+
+
+}
 
 
 

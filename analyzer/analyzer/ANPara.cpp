@@ -14,6 +14,7 @@ ANPara::ANPara()
 	, endpointratio(0)
 	, calibrationfactortype(0)
 	, calibrationfactor(0)
+	, interceptvalue(0)
 	, calibrationfilepath(_T(""))
 {
 }
@@ -35,7 +36,8 @@ void ANPara::Serialize(CArchive& ar)
 			<<endpointratio
 			<<calibrationfactortype
 			<<calibrationfactor
-			<<calibrationfilepath;
+			<<calibrationfilepath
+			<<interceptvalue;
 	}
 	else
 	{	// loading code
@@ -44,6 +46,7 @@ void ANPara::Serialize(CArchive& ar)
 			>>endpointratio
 			>>calibrationfactortype
 			>>calibrationfactor
-			>>calibrationfilepath;
+			>>calibrationfilepath
+			>>interceptvalue;
 	}
 }

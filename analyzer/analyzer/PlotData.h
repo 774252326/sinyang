@@ -16,8 +16,8 @@ public:
 
 	CString xlabel,ylabel;
 
-	//std::vector< std::vector<double> > xlist;
-	//std::vector< std::vector<double> > ylist;
+	std::vector< std::vector<double> > xlist;
+	std::vector< std::vector<double> > ylist;
 
 	std::vector<double> xll;
 	std::vector<double> yll;
@@ -31,6 +31,7 @@ public:
 	void SaveFile(CString fp);
 	void ReadFile(CString fp);
 	void AppendData(const PlotData & pda);
+	void GetDatai(size_t index, std::vector<double> & x, std::vector<double> & y);
 };
 
 

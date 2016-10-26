@@ -12,6 +12,7 @@ IMPLEMENT_DYNAMIC(CMFCCaptionBarA, CMFCCaptionBar)
 
 	CMFCCaptionBarA::CMFCCaptionBarA()
 	: timer(0)
+	, x(0)
 {
 
 }
@@ -46,7 +47,7 @@ int CMFCCaptionBarA::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	//CRect rect1;
 	//this->GetWindowRect(&rect1);
 
-	if( ec.Create( WS_CHILD | WS_TABSTOP | WS_BORDER /*|WS_VISIBLE*/, CRect(0, 9, 100, 32), this, 1)==0 )
+	if( ec.Create( WS_CHILD | WS_TABSTOP | WS_BORDER /*|WS_VISIBLE*/, CRect(0, 9, 100, 32), this, IDS_EDIT_CAPTION_EDIT)==0 )
 		return -1;
 	//st.Create( _T("my static"), WS_CHILD|WS_VISIBLE|SS_CENTER, CRect(110, 9, 250, 32), this); 
 
@@ -158,4 +159,16 @@ void CMFCCaptionBarA::OnTimer(UINT_PTR nIDEvent)
 	}
 
 	CMFCCaptionBar::OnTimer(nIDEvent);
+}
+
+
+void CMFCCaptionBarA::DoDataExchange(CDataExchange* pDX)
+{
+	// TODO: Add your specialized code here and/or call the base class
+
+	DDX_Text(pDX, IDS_EDIT_CAPTION_EDIT, x);
+
+	CMFCCaptionBar::DoDataExchange(pDX);
+
+
 }

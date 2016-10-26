@@ -57,13 +57,19 @@ void writeini(CString fp, ANPara &p1t, CVPara &p2t, SAPara &p3t)
 	}
 }
 
-bool calVsupp(const PlotData & pdat, double evoR, double &Vsupp)
+bool calVsupp(PlotData & pdat, int idx, double evoR, double &Vsupp)
 {
+	//for(size_t i
+	std::vector<double> x;
+	std::vector<double> y;
+
+	pdat.GetDatai(idx,x,y);
+
 	std::vector<double> c1(4,0);
-	std::vector< std::vector<double> > c(pdat.xll.size()-1,c1);
-	smspl(pdat.xll,pdat.yll,1.0,c);
+	std::vector< std::vector<double> > c(x.size()-1,c1);
+	smspl(x,y,1.0,c);
 	std::vector<double> r;
-	int ni=SolveCubicPP(pdat.xll,c,evoR,r);
+	int ni=SolveCubicPP(x,c,evoR,r);
 	if(ni<=0){
 		return false;
 	}
@@ -667,6 +673,25 @@ void CMainFrame::OnFileOpen()
 		m_wndCaptionBar.SetTextA(strTemp,true);
 		m_wndCaptionBar.ShowWindow(SW_SHOW);
 		RecalcLayout(FALSE);
+
+		////////////////////////////////////////////////////////////////////////////
+
+		//CString m_filePath=fileDlg.GetPathName();
+		//pcct dt1;
+		//dt1.readFile(m_filePath);
+		//dlg1 *p1=( (dlg1*)m_wndSplitter.GetPane(0,1) );
+		//plotspec ps1;
+		//ps1.colour=genColor( genColorvFromIndex<float>( p1->pd.ps.size() ) ) ;
+		//ps1.dotSize=-1;
+		//ps1.name=m_filePath;
+		//ps1.showLine=true;
+		//ps1.smoothLine=0;
+		//ps1.traceLast=false;
+		//p1->pd.AddNew(dt1.potential,dt1.current,ps1,dt1.label[0],dt1.label[1]);
+		//p1->updatePlotRange();
+		//p1->Invalidate();
+
+
 	}
 }
 
@@ -719,112 +744,31 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 				//ASSERT
 				(strTemp.LoadString(IDS_STRING_OVER));
 
-				////////////////////////////Record calibration curve of suppressor///////////////////////////////
-				if(p1.analysistype==1){
-					dlg1 *plotr=( (dlg1*)m_wndSplitter.GetPane(0,1) );
-					double vsupp;
-					if(calVsupp(plotr->pd,p1.evaluationratio,vsupp)){
-						double z=p3.saplist[0].Sconc/(1+p3.vmsvol/vsupp);
-						CString str;
-						str.Format(L" Vsupp=%g ml @ Ar/Ar0=%g, Z=%g ml/L",vsupp, p1.evaluationratio, z);
-						strTemp+=str;
-					}
-					else{
-						CString str;
-						str.Format(L"invalid Vsupp @ Ar/Ar0=%g",p1.evaluationratio);
-						strTemp+=str;
-					}
-				}
-				///////////////////////////////////////end/////////////////////////////////////////////////
+				dlg1 *plotr=( (dlg1*)m_wndSplitter.GetPane(0,1) );
 
-
-				///////////////////////////////////Analyze suppressor by DT method/////////////////////////////////
-				if(p1.analysistype==2){
-
-					dlg1 *plotr=( (dlg1*)m_wndSplitter.GetPane(0,1) );
-
-					double Vsuppbath;
-					/////////////////compute Vsuppbath///////////////////////////
-					if(calVsupp(plotr->pd,p1.evaluationratio,Vsuppbath)){						
-						{
-							CString str;
-							str.Format(L" Vsuppbath=%g ml @ Ar/Ar0=%g",Vsuppbath, p1.evaluationratio);
-							strTemp+=str;
-						}
-						//////////////////////////load standrad suppressor parameters///////////////////////////////
-						double Sconc=8.5;
-						double vmsvol=25;
-						double evor=0.5;
-						{
-							ANPara p1t;
-							CVPara p2t;
-							SAPara p3t;
-							readini(L"../setupB.txt",p1t,p2t,p3t);
-							Sconc=p3t.saplist.back().Sconc;
-							vmsvol=p3t.vmsvol;
-							evor=p1t.evaluationratio;
-						}
-						///////////////////////////////////////end/////////////////////////////////////////////////
-
-						double z;
-						/////////////////////////////////////load calibration factor z///////////////////////////////////			
-						if(p1.calibrationfactortype==0){
-							if(p1.evaluationratio==evor){
-								z=p1.calibrationfactor;
-								CString str;
-								str.Format(L", Z=%g ml/L, Csuppbath=%g ml/L", z, z*(1+p3.vmsvol/Vsuppbath));
-								strTemp+=str;
-							}
-							else{
-								CString str;
-								str.Format(L", invalid evoluation ratio for standrad suppressor");
-								strTemp+=str;
-							}
-						}
-						///////////////////////////////////////end/////////////////////////////////////////////////
-
-						///////////////////////////////////compute calibration factor z from curve//////////////////////////////
-						if(p1.calibrationfactortype==1){
-
-							double Vsuppstd;
-							PlotData pdat;
-							pdat.ReadFile(p1.calibrationfilepath);
-							if(calVsupp(pdat,p1.evaluationratio,Vsuppstd)){
-								z=Sconc/(1+vmsvol/Vsuppstd);
-								/////////////////////////plot standrad curve////////////////////////
-								pdat.ps.back().colour=red;
-								pdat.ps.back().name=L"standrad";
-								plotr->pd.AppendData(pdat);
-								plotr->updatePlotRange();
-								plotr->Invalidate();
-								///////////////////////////////////////end/////////////////////////////////////////////////
-								CString str;
-								str.Format(L", Z=%g ml/L, Csuppbath=%g ml/L", z, z*(1+p3.vmsvol/Vsuppbath));
-								strTemp+=str;
-							}
-							else{
-								CString str;
-								str.Format(L", invalid evoluation ratio for standrad suppressor");
-								strTemp+=str;
-							}
-						}
-						///////////////////////////////////////end/////////////////////////////////////////////////
-
-					}
-					else{
-						CString str;
-						str.Format(L" invalid Vsuppbath @ Ar/Ar0=%g",p1.evaluationratio);
-						strTemp+=str;
-					}
+				switch(p1.analysistype){
+				case 1:
+					////////////////////////////Record calibration curve of suppressor///////////////////////////////
+					strTemp+=Output1(plotr->pd);
 					///////////////////////////////////////end/////////////////////////////////////////////////
-				}
-				///////////////////////////////////////end/////////////////////////////////////////////////
+					break;
+				case 2:
+					///////////////////////////////////Analyze suppressor by DT method/////////////////////////////////
+					strTemp+=Output2(plotr->pd);
+					///////////////////////////////////////end/////////////////////////////////////////////////
+					break;
+				case 3:
+					strTemp+=Output3(plotr->pd);
+					break;
+				case 4:
+					break;
 
+				default:
+					break;
+				}
 
 				m_wndCaptionBar.SetTextA(strTemp);
 				m_wndCaptionBar.ShowButton(false);
-
-
 			}
 			else{
 
@@ -878,16 +822,24 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 						dat.erase(dat.begin());
 
 						KillTimer(timer1);
-						CString strTemp;
-						//ASSERT
-						(strTemp.LoadString(IDS_STRING_WAIT_RESPONSE));
-						m_wndCaptionBar.SetTextA(strTemp,true);
-						m_wndCaptionBar.ShowButton();
-						m_wndCaptionBar.SetEdit();
-						m_wndCaptionBar.ec.ShowWindow(SW_SHOW);
-						m_wndCaptionBar.ShowWindow(SW_SHOW);
-						RecalcLayout(FALSE);
-
+						{
+							CString strTemp;
+							//ASSERT
+							(strTemp.LoadString(IDS_STRING_WAIT_RESPONSE));
+							m_wndCaptionBar.SetTextA(strTemp,true);
+							m_wndCaptionBar.ShowButton();
+							if(stepCount>p3.saplist.size()){
+								m_wndCaptionBar.x=0;
+							}
+							else{
+								m_wndCaptionBar.x=p3.saplist[stepCount-1].volconc;
+							}
+							m_wndCaptionBar.UpdateData(FALSE);
+							m_wndCaptionBar.SetEdit();						
+							m_wndCaptionBar.ec.ShowWindow(SW_SHOW);
+							m_wndCaptionBar.ShowWindow(SW_SHOW);
+							RecalcLayout(FALSE);
+						}
 					}
 				}
 
@@ -967,7 +919,7 @@ void CMainFrame::plot2(const std::vector<double> & x, const std::vector<double> 
 	if(finishflag2){
 		plotspec ps1;
 		//LineSpec ps1;
-		ps1.colour=blue;
+		ps1.colour=genColor( genColorvFromIndex<float>( ( (dlg1*)m_wndSplitter.GetPane(0,1) )->pd.ps.size() ) ) ;
 		ps1.dotSize=3;
 		ps1.name=L"Ar/Ar0";
 		ps1.showLine=true;
@@ -992,16 +944,18 @@ void CMainFrame::OnAnalysisMethodsetup()
 
 
 	// 创建属性表对象   
-	AnalysisSetupPage sheet(_T("Analysis Setup"));
+	CString str;
+	str.LoadStringW(IDS_STRING_ANALYSIS_SETUP);
+	AnalysisSetupPage sheet(str);
 	//abc sheet(777);
 	// 设置属性对话框为向导对话框   
 	//sheet.SetWizardMode();   
 	//sheet.SetWindowPos(&CWnd::wndTopMost,10,10,800,600,SWP_SHOWWINDOW);
 
-		readini(AnalysisSetupINI,sheet.APdlg.para,sheet.CVPdlg.para,sheet.SAPdlg.para);
+	readini(AnalysisSetupINI,sheet.APdlg.para,sheet.CVPdlg.para,sheet.SAPdlg.para);
 	// 打开模态向导对话框   
 	if(sheet.DoModal()==IDOK){
-	writeini(AnalysisSetupINI,sheet.APdlg.para,sheet.CVPdlg.para,sheet.SAPdlg.para);
+		writeini(AnalysisSetupINI,sheet.APdlg.para,sheet.CVPdlg.para,sheet.SAPdlg.para);
 	}
 
 }
@@ -1014,7 +968,6 @@ void CMainFrame::OnFileSave()
 
 
 	//( (dlg1*)m_wndSplitter.GetPane(0,1) )->SaveFile(L"af.txt");
-
 	//( (dlg1*)m_wndSplitter.GetPane(0,1) )->ReadFile(L"af.txt");
 }
 
@@ -1052,18 +1005,21 @@ void CMainFrame::OnAnalysisStartanalysis()
 	//////////////////////////////load data//////////////////////////////////////
 	CString m_filePath;
 
-	if(p1.analysistype==1){
-		//m_filePath=L"C:\\Users\\r8anw2x\\Dropbox\\W\\data\\b.txt";
+	switch(p1.analysistype){
+	case 1:
 		m_filePath=L"data\\b.txt";
-	}
-	else{
-		if(p1.analysistype==2){
-			//m_filePath=L"C:\\Users\\r8anw2x\\Dropbox\\W\\data\\c.txt";
-			m_filePath=L"data\\c.txt";
-		}
-		else{
-			return;
-		}
+		break;
+	case 2:
+		m_filePath=L"data\\c.txt";
+		break;
+	case 3:
+		m_filePath=L"data\\d.txt";
+		break;
+	case 4:
+		m_filePath=L"data\\e.txt";
+		break;
+	default:
+		return;
 	}
 
 	//CString m_filePath=L"C:\\Users\\r8anw2x\\Dropbox\\W\\data\\a.txt";
@@ -1119,8 +1075,130 @@ void CMainFrame::OnAnalysisStartanalysis()
 	stepCount=0;
 	rowCount=0;
 
+	/////////////////////////plot standrad curve////////////////////////
+
+	if(p1.calibrationfactortype==1){
+		//( (dlg1*)m_wndSplitter.GetPane(0,1) )->pd.ReadFile(p1.calibrationfilepath);
+		PlotData *pdat;
+		pdat=&(( (dlg1*)m_wndSplitter.GetPane(0,1) )->pd);
+		pdat->ReadFile(p1.calibrationfilepath);
+		pdat->ps.back().colour=genColor( genColorvFromIndex<float>( pdat->ps.size()-1 ) ) ;
+		pdat->ps.back().name=L"standrad";
+		( (dlg1*)m_wndSplitter.GetPane(0,1) )->updatePlotRange();
+		( (dlg1*)m_wndSplitter.GetPane(0,1) )->Invalidate();
+	}
+	///////////////////////////////////////end/////////////////////////////////////////////////
+
+
 	////////////////////////////start tick///////////////////////////////////
 	this->OnOptions();
 
 
+}
+
+
+CString CMainFrame::Output1(PlotData & pdat)
+{
+	//dlg1 *plotr=( (dlg1*)m_wndSplitter.GetPane(0,1) );
+	double vsupp;
+	if(calVsupp(pdat,0,p1.evaluationratio,vsupp)){
+		double z=p3.saplist[0].Sconc/(1+p3.vmsvol/vsupp);
+		CString str;
+		str.Format(L" Vsupp=%g ml @ Ar/Ar0=%g, Z=%g ml/L",vsupp, p1.evaluationratio, z);
+		return str;
+	}
+	else{
+		CString str;
+		str.Format(L"invalid Vsupp @ Ar/Ar0=%g",p1.evaluationratio);
+		return str;
+	}
+}
+
+
+CString CMainFrame::Output2(PlotData & pdat)
+{
+	CString strTemp;
+	double Vsuppbath;
+	/////////////////compute Vsuppbath///////////////////////////
+	if(calVsupp(pdat,pdat.ps.size()-1,p1.evaluationratio,Vsuppbath)){						
+		{
+			CString str;
+			str.Format(L" Vsuppbath=%g ml @ Ar/Ar0=%g",Vsuppbath, p1.evaluationratio);
+			strTemp+=str;
+		}
+		//////////////////////////load standrad suppressor parameters///////////////////////////////
+		double Sconc=8.5;
+		double vmsvol=25;
+		double evor=0.5;
+		{
+			ANPara p1t;
+			CVPara p2t;
+			SAPara p3t;
+			readini(L"../setupB.txt",p1t,p2t,p3t);
+			Sconc=p3t.saplist.back().Sconc;
+			vmsvol=p3t.vmsvol;
+			evor=p1t.evaluationratio;
+		}
+		///////////////////////////////////////end/////////////////////////////////////////////////
+
+		double z;
+		/////////////////////////////////////load calibration factor z///////////////////////////////////			
+		if(p1.calibrationfactortype==0){
+			if(p1.evaluationratio==evor){
+				z=p1.calibrationfactor;
+				CString str;
+				str.Format(L", Z=%g ml/L, Csuppbath=%g ml/L", z, z*(1+p3.vmsvol/Vsuppbath));
+				strTemp+=str;
+			}
+			else{
+				CString str;
+				str.Format(L", invalid evoluation ratio for standrad suppressor");
+				strTemp+=str;
+			}
+		}
+		///////////////////////////////////////end/////////////////////////////////////////////////
+
+		///////////////////////////////////compute calibration factor z from curve//////////////////////////////
+		if(p1.calibrationfactortype==1){
+
+			double Vsuppstd;
+			if(calVsupp(pdat,0,p1.evaluationratio,Vsuppstd)){
+				z=Sconc/(1+vmsvol/Vsuppstd);
+				/////////////////////////plot standrad curve////////////////////////
+				//pdat.ps.back().colour=red;
+				//pdat.ps.back().name=L"standrad";
+				//plotr->pd.AppendData(pdat);
+				//plotr->updatePlotRange();
+				//plotr->Invalidate();
+				///////////////////////////////////////end/////////////////////////////////////////////////
+				CString str;
+				str.Format(L", Z=%g ml/L, Csuppbath=%g ml/L", z, z*(1+p3.vmsvol/Vsuppbath));
+				strTemp+=str;
+			}
+			else{
+				CString str;
+				str.Format(L", invalid evoluation ratio for standrad suppressor");
+				strTemp+=str;
+			}
+		}
+		///////////////////////////////////////end/////////////////////////////////////////////////
+
+	}
+	else{
+		CString str;
+		str.Format(L" invalid Vsuppbath @ Ar/Ar0=%g",p1.evaluationratio);
+		strTemp+=str;
+	}
+
+	return strTemp;
+}
+
+
+CString CMainFrame::Output3(PlotData & pdat)
+{
+	CString str;
+
+	str.Format(L" intercept value %g mC", pdat.yll.back()*Ar0);
+
+	return str;
 }

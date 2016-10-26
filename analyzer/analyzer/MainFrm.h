@@ -11,6 +11,7 @@
 #include "ANPara.h"
 #include "SAPara.h"
 #include "VPara.h"
+#include "PlotData.h"
 
 class CMainFrame : public CFrameWndEx
 {
@@ -106,6 +107,9 @@ public:
 	CString AnalysisSetupINI;
 	
 	afx_msg void OnAnalysisStartanalysis();
+	CString Output1(PlotData & pdat);
+	CString Output2(PlotData & pdat);
+	CString Output3(PlotData & pdat);
 };
 
 

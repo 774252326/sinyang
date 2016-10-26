@@ -16,7 +16,7 @@ public:
 	virtual ~SolutionAdditionParametersDlg();
 
 // Dialog Data
-	enum { IDD = IDD_DIALOG6 };
+	enum { IDD = IDD_DIALOG4 };
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
@@ -41,4 +41,5 @@ public:
 	//sap para;
 	SAPara para;
 	int GetChoice(int nItem, int nSubItem);
+	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
 };
