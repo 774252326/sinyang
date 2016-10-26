@@ -3,9 +3,13 @@
 class CanalyzerViewR :
 	public CanalyzerView
 {
+protected:
+	DECLARE_DYNCREATE(CanalyzerViewR)
 public:
 	CanalyzerViewR(void);
-	~CanalyzerViewR(void);
-	//int AddPlot(const PlotData & pda);
+	virtual ~CanalyzerViewR(void);
+protected:
+	DECLARE_MESSAGE_MAP()
+	afx_msg LRESULT OnMessageUpdateTest(WPARAM wParam, LPARAM lParam);
 };
 

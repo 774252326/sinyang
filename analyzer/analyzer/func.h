@@ -1,5 +1,9 @@
 #include <afxcmn.h>
 #include <vector>
+#include <algorithm>
+#include "funT\\smsp.h"
+#include "funT\\lspfitT.h"
+
 #include "DataOutA.h"
 #include "ANPara.h"
 #include "VPara.h"
@@ -26,13 +30,69 @@ void AdjustWidth(CListCtrl *ls, int nCol, CString str, int gap=15);
 void AdjustWidth(CListCtrl *ls, int nCol, int nRow, int gap=15);
 
 UINT DataOutAList2PlotDataList(const std::vector<DataOutA> &dol, const ANPara &p1, PlotSpec ps0, std::vector<PlotData> &pdl);
+UINT RawData2PlotDataList(const RawData &raw, const std::vector<DataOutA> &dol, PlotSpec ps0, std::vector<PlotData> &pdl);
 
 UINT ComputeStateData(
 	int ANPType,
 	const CVPara &p2,
-	SAPara &p3,
+	const SAPara &p3,
 	const RawData &raw,
 	std::vector<DataOutA> &dol);
+
+
+void DrawData(CRect &plotrect
+	, CDC* pDC
+	, const PlotData &pd
+	, const double &xmin
+	, const double &xmax
+	, const double &ymin
+	, const double &ymax
+	);
+
+int DownUpdate(CRect &plotrect
+	, int mtsz
+	, int lbsz
+	, const CPoint &point
+	, CPoint &mouseDownPoint
+	, const double &xmin
+	, const double &xmax
+	, const double &ymin
+	, const double &ymax
+	, bool bmouse
+	, const std::vector<double> &xl
+	, const std::vector<double> &yl
+	, size_t &index);
+
+bool MoveUpdateA(CRect &plotrect
+	, int mtsz
+	, int lbsz
+	, const CPoint &point
+	, CPoint &mouseDownPoint
+	, double &xmin
+	, double &xmax
+	, double &ymin
+	, double &ymax);
+
+bool MoveUpdateB(CRect &plotrect
+	, int mtsz
+	, int lbsz
+	, const CPoint &point
+	, CPoint &mouseDownPoint
+	, const double &xmin
+	, const double &xmax
+	, const double &ymin
+	, const double &ymax
+	, CString &str);
+
+bool WheelUpdate(CRect &plotrect
+	, int mtsz
+	, int lbsz
+	, CPoint pt
+	, double k1
+	, double &xmin
+	, double &xmax
+	, double &ymin
+	, double &ymax);
 
 template <typename T>
 UINT Seperate(const std::vector<T> &x, std::vector<size_t> &mini, std::vector<size_t> &maxi)
@@ -96,11 +156,6 @@ UINT Seperate(const std::vector<T> &x, std::vector<size_t> &mini, std::vector<si
 
 }
 
-
-
-
-
-
 template <typename T>
 UINT ComputeQList(const std::vector<T> &u, const std::vector<T> &i, T* QList, size_t nCycle, T upLimit, T scanRate, size_t nPperCycle=4)
 {
@@ -131,14 +186,18 @@ UINT ComputeQList(const std::vector<T> &u, const std::vector<T> &i, T* QList, si
 		if(mini.empty() || maxi.empty())
 			return 3;
 	
-		if(u[mini.front()]>=upLimit)
+		if(u[mini.front()]>=upLimit){
+			mini.erase(mini.begin());
+			maxi.erase(maxi.begin());
 			continue;
+		}
 
 		QList[ci]=0;
 		bool bStart=false;
 		for(size_t j=maxi.front();j>mini.front();j--){			
 			if(bStart){
-				QList[ci]+=i[j]*(u[j]-u[j-1]);
+				QList[ci]+=(i[j]+i[j+1])*(u[j+1]-u[j]);
+				//TRACE(L"\n%g,%g",u[j],i[j]);
 				if(i[j-1]<0)
 					break;
 			}
@@ -146,7 +205,7 @@ UINT ComputeQList(const std::vector<T> &u, const std::vector<T> &i, T* QList, si
 				bStart|=(u[j]<=upLimit);
 			}
 		}
-		QList[ci]/=scanRate;
+		QList[ci]/=scanRate*2;
 
 		ci++;
 		mini.erase(mini.begin());
@@ -156,7 +215,6 @@ UINT ComputeQList(const std::vector<T> &u, const std::vector<T> &i, T* QList, si
 
 	return 0;
 }
-
 
 template <typename T>
 bool InterpX(const std::vector<T> &x, const std::vector<T> &y, T yr, T &xr)
@@ -173,8 +231,27 @@ bool InterpX(const std::vector<T> &x, const std::vector<T> &y, T yr, T &xr)
 	return true;
 }
 
+template <typename T>
+bool FitLine(std::vector<T> &x, std::vector<T> &y, T &k, T &b, size_t nFront=0, size_t nBack=0)
+{
+	if(	x.size()!=y.size()
+		|| x.size()<2+nFront+nBack){
+			return false;
+	}
 
+	x.erase(x.begin(),x.begin()+nFront);
+	x.erase(x.end()-nBack,x.end());
 
+	y.erase(y.begin(),y.begin()+nFront);
+	y.erase(y.end()-nBack,y.end());
+
+	std::vector<T> c;
+	lspfit(x,y,2,c);
+	k=c[1];
+	b=c[0];
+
+	return true;
+}
 
 template <typename T>
 void UpdateRange( const std::vector<T> &x, T &xmin, T &xmax, T gapPercent=0, bool bLocalRange=false)
@@ -202,9 +279,6 @@ void UpdateRange( const std::vector<T> &x, T &xmin, T &xmax, T gapPercent=0, boo
 	}
 
 }
-
-
-
 
 template <typename T>
 bool compless (T c1, T c2) {

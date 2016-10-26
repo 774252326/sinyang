@@ -5,6 +5,8 @@
 #pragma once
 
 #include "analyzerDoc.h"
+#include "MainFrm.h"
+#include "PlotData.h"
 
 class CanalyzerView : public CView
 {
@@ -46,6 +48,39 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	virtual void OnInitialUpdate();
+
+	std::vector<PlotData> pdl;
+
+	double xmin,xmax,ymin,ymax;
+	double pct;
+
+	CSpinButtonCtrl m_spBtn;
+	CSize spBtnSize;
+
+	PlotSpec psview;
+
+	CPoint m_mouseDownPoint;
+	CToolTipCtrl m_tool;
+	bool bMouseCursor;
+
+protected:
+	afx_msg LRESULT OnMessageChangeApplook(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnMessageGetPlotspec(WPARAM wParam, LPARAM lParam);
+public:
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg void OnSize(UINT nType, int cx, int cy);
+protected:
+	afx_msg LRESULT OnMessageUpdateView(WPARAM wParam, LPARAM lParam);
+public:
+	afx_msg void OnOptionsPlotsettings();
+	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
+	afx_msg void OnViewDatacursor();
+	afx_msg void OnUpdateViewDatacursor(CCmdUI *pCmdUI);
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	afx_msg void OnViewFitwindow();
 };
 
 #ifndef _DEBUG  // debug version in analyzerView.cpp

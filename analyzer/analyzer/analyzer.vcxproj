@@ -121,6 +121,8 @@
     <ClInclude Include="analyzer.h" />
     <ClInclude Include="analyzerDoc.h" />
     <ClInclude Include="analyzerView.h" />
+    <ClInclude Include="analyzerViewL.h" />
+    <ClInclude Include="analyzerViewR.h" />
     <ClInclude Include="ANPara.h" />
     <ClInclude Include="ComboItem.h" />
     <ClInclude Include="CVParametersPage.h" />
@@ -143,6 +145,7 @@
     <ClInclude Include="pcct.h" />
     <ClInclude Include="pcctC.h" />
     <ClInclude Include="PlotData.h" />
+    <ClInclude Include="PlotSettingPageA.h" />
     <ClInclude Include="PlotSpec.h" />
     <ClInclude Include="Point2d.h" />
     <ClInclude Include="RawData.h" />
@@ -159,10 +162,13 @@
     <ClCompile Include="analyzer.cpp" />
     <ClCompile Include="analyzerDoc.cpp" />
     <ClCompile Include="analyzerView.cpp" />
+    <ClCompile Include="analyzerViewL.cpp" />
+    <ClCompile Include="analyzerViewR.cpp" />
     <ClCompile Include="ANPara.cpp" />
     <ClCompile Include="ComboItem.cpp" />
     <ClCompile Include="CVParametersPage.cpp" />
     <ClCompile Include="DataOutA.cpp" />
+    <ClCompile Include="drawfunc.cpp" />
     <ClCompile Include="EditB.cpp" />
     <ClCompile Include="EditInt.cpp" />
     <ClCompile Include="EditNum.cpp" />
@@ -181,6 +187,7 @@
     <ClCompile Include="pcct.cpp" />
     <ClCompile Include="pcctC.cpp" />
     <ClCompile Include="PlotData.cpp" />
+    <ClCompile Include="PlotSettingPageA.cpp" />
     <ClCompile Include="PlotSpec.cpp" />
     <ClCompile Include="Point2d.cpp" />
     <ClCompile Include="RawData.cpp" />

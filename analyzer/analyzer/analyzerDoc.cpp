@@ -17,6 +17,9 @@
 #include "SolutionAdditionParametersPageA.h"
 
 #include "pcct.h"
+#include "MainFrm.h"
+#include "analyzerViewL.h"
+#include "analyzerViewR.h"
 
 
 void LoadFileList(const CString &m_filePath, std::vector<CString> &filelist)
@@ -111,7 +114,7 @@ void CanalyzerDoc::Serialize(CArchive& ar)
 	p1.Serialize(ar);
 	p2.Serialize(ar);
 	p3.Serialize(ar);
-	//raw.Serialize(ar);
+	raw.Serialize(ar);
 
 
 
@@ -132,7 +135,7 @@ void CanalyzerDoc::Serialize(CArchive& ar)
 		//	si=ei;
 		//}
 
-	raw.Serialize(ar);
+	//raw.Serialize(ar);
 
 	}
 	else
@@ -159,32 +162,36 @@ void CanalyzerDoc::Serialize(CArchive& ar)
 		//	}
 		//	si=ei;
 		//}
-		raw.Clear();
-	
-	CString folderp=L"C:\\Users\\r8anw2x\\Desktop\\data\\d\\";
-	CString DTRflist=folderp+L"dtr.txt";
 
-	std::vector<CString> filelist;
-	LoadFileList(DTRflist,filelist);
-	pcct data;
+	//	raw.Clear();
+	//
+	//CString folderp=L"C:\\Users\\r8anw2x\\Desktop\\data\\d\\";
+	//CString DTRflist=folderp+L"dtr.txt";
 
-	while(!filelist.empty()){
-	/////load data from file////////////
-	data.clear();
-	data.readFile(filelist.front());
-	data.TomA();
+	//std::vector<CString> filelist;
+	//LoadFileList(DTRflist,filelist);
+	//pcct data;
 
-	raw.xll.resize(raw.xll.size()+data.potential.size());
-	std::copy_backward(data.potential.begin(),data.potential.end(),raw.xll.end());
+	//while(!filelist.empty()){
+	///////load data from file////////////
+	//data.clear();
+	//data.readFile(filelist.front());
+	//data.TomA();
 
-	raw.yll.resize(raw.yll.size()+data.current.size());
-	std::copy_backward(data.current.begin(),data.current.end(),raw.yll.end());
+	//raw.xll.resize(raw.xll.size()+data.potential.size());
+	//std::copy_backward(data.potential.begin(),data.potential.end(),raw.xll.end());
 
-	raw.ll.push_back(data.potential.size());
+	//raw.yll.resize(raw.yll.size()+data.current.size());
+	//std::copy_backward(data.current.begin(),data.current.end(),raw.yll.end());
 
-	filelist.erase(filelist.begin());
+	//raw.ll.push_back(data.potential.size());
 
-	}
+	//filelist.erase(filelist.begin());
+
+	//}
+
+
+
 	}
 }
 
@@ -294,10 +301,20 @@ void CanalyzerDoc::Dump(CDumpContext& dc) const
 			//if(!dol.empty()){			
 
 			//	str=Compute(dol,p1);
-			//	POSITION pos = GetFirstViewPosition();
-			//	//CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));
-			//	CMainFrame *mf=(CMainFrame*)(GetNextView(pos)->GetParentFrame());
+				POSITION pos = GetFirstViewPosition();
+				CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));
+				CMainFrame *mf=(CMainFrame*)(lv->GetParentFrame());
+
+				//CanalyzerViewR* rv=((CanalyzerViewR*)(mf->m_wndSplitter.GetPane(0,1)));
+
+				CanalyzerViewR* rv=((CanalyzerViewR*)GetNextView(pos));
+
 			//	mf->GetCaptionBar()->ShowMessage(str);
+
+				::SendMessage(mf->GetOutputWnd()->GetListCtrl()->GetSafeHwnd(),
+					MESSAGE_UPDATE_DOL,
+					(WPARAM)lv,
+					(LPARAM)rv);
 
 			//}
 

@@ -7,6 +7,9 @@
 
 #include "MainFrm.h"
 
+#include "analyzerViewL.h"
+#include "analyzerViewR.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -33,6 +36,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_TOOLBAR_A, &CMainFrame::OnUpdateViewToolbar)
 	ON_COMMAND(ID_VIEW_ANALYSIS_PROGRESS, &CMainFrame::OnViewAnalysisProgress)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_ANALYSIS_PROGRESS, &CMainFrame::OnUpdateViewAnalysisProgress)
+	ON_WM_SIZE()
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -201,15 +205,15 @@ BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT /*lpcs*/,
 	m_bSplitterCreated = m_wndSplitter.CreateStatic(this, 1, 2);
 	// CMyView and CMyOtherView are user-defined views derived from CView
 	if(m_bSplitterCreated){
-		m_bSplitterCreated = m_wndSplitter.CreateView(0, 0, RUNTIME_CLASS(CanalyzerView), CSize(500,500), pContext);
+		m_bSplitterCreated = m_wndSplitter.CreateView(0, 0, RUNTIME_CLASS(CanalyzerViewL), CSize(500,500), pContext);
 		//this->LeftPlotPointer()->lri=0;
 		if(m_bSplitterCreated){
-			m_bSplitterCreated = m_wndSplitter.CreateView(0, 1, RUNTIME_CLASS(CanalyzerView), CSize(500,500), pContext);
+			m_bSplitterCreated = m_wndSplitter.CreateView(0, 1, RUNTIME_CLASS(CanalyzerViewR), CSize(500,500), pContext);
 			//this->RightPlotPointer()->lri=1;
 		}
 	}
 
-	m_wndSplitter.SetActivePane(0, 0);
+	m_wndSplitter.SetActivePane(0, 1);
 
 	return (m_bSplitterCreated);
 
@@ -335,6 +339,8 @@ LRESULT CMainFrame::OnToolbarCreateNew(WPARAM wp,LPARAM lp)
 
 void CMainFrame::OnApplicationLook(UINT id)
 {
+	COLORREF oc;
+
 	CWaitCursor wait;
 
 	theApp.m_nAppLook = id;
@@ -343,35 +349,42 @@ void CMainFrame::OnApplicationLook(UINT id)
 	{
 	case ID_VIEW_APPLOOK_WIN_2000:
 		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManager));
+		oc=RGB(240,240,240);
 		break;
 
 	case ID_VIEW_APPLOOK_OFF_XP:
 		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerOfficeXP));
+		oc=RGB(240,240,240);
 		break;
 
 	case ID_VIEW_APPLOOK_WIN_XP:
 		CMFCVisualManagerWindows::m_b3DTabsXPTheme = TRUE;
 		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerWindows));
+		oc=RGB(211,218,237);
 		break;
 
 	case ID_VIEW_APPLOOK_OFF_2003:
 		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerOffice2003));
 		CDockingManager::SetDockingMode(DT_SMART);
+		oc=RGB(141,183,226);
 		break;
 
 	case ID_VIEW_APPLOOK_VS_2005:
 		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerVS2005));
 		CDockingManager::SetDockingMode(DT_SMART);
+		oc=RGB(220,220,220);
 		break;
 
 	case ID_VIEW_APPLOOK_VS_2008:
 		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerVS2008));
 		CDockingManager::SetDockingMode(DT_SMART);
+		oc=RGB(236,238,252);
 		break;
 
 	case ID_VIEW_APPLOOK_WINDOWS_7:
 		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerWindows7));
 		CDockingManager::SetDockingMode(DT_SMART);
+		oc=RGB(211,218,237);
 		break;
 
 	default:
@@ -379,18 +392,22 @@ void CMainFrame::OnApplicationLook(UINT id)
 		{
 		case ID_VIEW_APPLOOK_OFF_2007_BLUE:
 			CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_LunaBlue);
+			oc=RGB(191,219,255);
 			break;
 
 		case ID_VIEW_APPLOOK_OFF_2007_BLACK:
 			CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_ObsidianBlack);
+			oc=RGB(83,83,83);
 			break;
 
 		case ID_VIEW_APPLOOK_OFF_2007_SILVER:
 			CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_Silver);
+			oc=RGB(208,212,221);
 			break;
 
 		case ID_VIEW_APPLOOK_OFF_2007_AQUA:
 			CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_Aqua);
+			oc=RGB(196,202,217);
 			break;
 		}
 
@@ -401,6 +418,15 @@ void CMainFrame::OnApplicationLook(UINT id)
 	RedrawWindow(NULL, NULL, RDW_ALLCHILDREN | RDW_INVALIDATE | RDW_UPDATENOW | RDW_FRAME | RDW_ERASE);
 
 	theApp.WriteInt(_T("ApplicationLook"), theApp.m_nAppLook);
+
+
+	CanalyzerViewL *pavl=(CanalyzerViewL*)m_wndSplitter.GetPane(0,0);
+	CanalyzerViewR *pavr=(CanalyzerViewR*)m_wndSplitter.GetPane(0,1);
+
+	::SendMessage(pavl->GetSafeHwnd(),MESSAGE_CHANGE_APPLOOK,(WPARAM)oc,NULL);
+	::SendMessage(pavr->GetSafeHwnd(),MESSAGE_CHANGE_APPLOOK,(WPARAM)oc,NULL);
+	//::SendMessage(m_wndSplitter.GetPane(0,1)->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
+	//::SendMessage(m_wndSplitter.GetPane(0,0)->GetSafeHwnd(),MESSAGE_UPDATE_RAW,NULL,NULL);
 }
 
 void CMainFrame::OnUpdateApplicationLook(CCmdUI* pCmdUI)
@@ -486,4 +512,20 @@ void CMainFrame::OnUpdateViewAnalysisProgress(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
 	pCmdUI->SetCheck(m_wndOutput.IsVisible());
+}
+
+
+void CMainFrame::OnSize(UINT nType, int cx, int cy)
+{
+	CFrameWndEx::OnSize(nType, cx, cy);
+
+	// TODO: Add your message handler code here
+
+	if(m_bSplitterCreated){
+		int lc0,lc1,tmp;
+		m_wndSplitter.GetColumnInfo(0,lc0,tmp);
+		m_wndSplitter.GetColumnInfo(1,lc1,tmp);
+		m_wndSplitter.SetColumnInfo(0,(lc0+lc1)*3/5,10);
+		m_wndSplitter.RecalcLayout();
+	}
 }

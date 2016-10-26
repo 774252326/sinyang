@@ -6,8 +6,7 @@
 #include <algorithm>
 #include "LineSeg.h"
 #include "CSpline.h"
-#include "funT\\smsp.h"
-#include "funT\\lspfitT.h"
+
 
 void AdjustWidth(CListCtrl *ls, int nCol, CString str, int gap)
 {
@@ -197,14 +196,19 @@ bool GetStepList(std::vector<DWORD> &sl, int atype)
 UINT ComputeStateData(
 	int ANPType,
 	const CVPara &p2,
-	SAPara &p3,
+	const SAPara &p3,
 	const RawData &raw,
 	std::vector<DataOutA> &dol
 	){
 
+		if(raw.ll.empty())
+			return 4;
+
 		std::vector<DWORD> sl;
 
 		bool flg=GetStepList(sl,ANPType);
+
+		SAPara p3t=p3;
 
 		////////////////////////////////////////////////////////////////////////////////////////
 
@@ -212,14 +216,14 @@ UINT ComputeStateData(
 
 		size_t rawi=0;
 
-		while( !p3.saplist.empty() && !sl.empty() ){
+		while( !p3t.saplist.empty() && !sl.empty() ){
 
 			BYTE step=nby(sl.front(),0);
 			BYTE stepControl=nby(sl.front(),1);
 			BYTE plotFilter=nby(sl.front(),2);
 
 
-			if( d0.Update(p3.saplist.front(),step) ){
+			if( d0.Update(p3t.saplist.front(),step) ){
 
 				std::vector<double> x;
 				std::vector<double> y;
@@ -258,8 +262,8 @@ UINT ComputeStateData(
 
 				rawi++;
 
-				if(p3.saplist.front().isStepEnd(d0.ArUse()/d0.Ar0,!(step&DOA_MORE))){
-					p3.saplist.erase(p3.saplist.begin());
+				if(p3t.saplist.front().isStepEnd(d0.ArUse()/d0.Ar0,!(step&DOA_MORE))){
+					p3t.saplist.erase(p3t.saplist.begin());
 				}
 				stepControl|=SC_STEP_COMPLETE;
 				sl.front()=stp(step,stepControl,plotFilter);
@@ -298,7 +302,7 @@ UINT ComputeStateData(
 					//::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(strerr.GetBuffer()),NULL);
 					//pst=stop;
 					return 3;
-					p3.saplist.erase(p3.saplist.begin());
+					p3t.saplist.erase(p3t.saplist.begin());
 				}
 			}
 		}
@@ -317,7 +321,7 @@ UINT RawData2PlotDataList(const RawData &raw, const std::vector<DataOutA> &dol, 
 
 		raw.GetDatai(i,x,y);
 
-		if(dol[i].stepFilter|DOA_VMS){
+		if(dol[i].stepFilter&DOA_VMS){
 			CString postr;
 			postr.LoadStringW(IDS_STRING_POTENTIAL);
 			CString custr;
@@ -542,17 +546,17 @@ bool GetPlotData(
 	const std::vector<DWORD> &sl,
 	std::vector<PlotData> &pdl,
 	std::vector<DataOutA> &dolast,
-	LineSpec &lsp=LineSpec()
-	)
+	LineSpec &lsp=LineSpec(),
+	PlotSpec &psa=PlotSpec(0,0))
 {
 
 
 
-	lsp.dotSize=0;
-	lsp.name.LoadStringW(IDS_STRING_TEST_CURVE);
-	lsp.lineType=0;
-	lsp.smoothLine=0;
-	lsp.traceLast=false;
+	//lsp.dotSize=0;
+	//lsp.name.LoadStringW(IDS_STRING_TEST_CURVE);
+	//lsp.lineType=0;
+	//lsp.smoothLine=0;
+	//lsp.traceLast=false;
 
 	size_t i,j;
 	i=0;
@@ -580,7 +584,7 @@ bool GetPlotData(
 					CString xla;
 					CString yla;
 					GetXYLabel(xla,yla,plotFilter);
-					pdl.push_back(PlotData(xla,yla,PlotSpec(0,0)));
+					pdl.push_back(PlotData(xla,yla,psa));
 			}
 
 
@@ -787,6 +791,8 @@ UINT DataOutAList2PlotDataList(const std::vector<DataOutA> &dol, const ANPara &p
 
 	switch(p1.analysistype){
 
+
+
 	case 2:
 
 		{
@@ -902,7 +908,8 @@ UINT DataOutAList2PlotDataList(const std::vector<DataOutA> &dol, const ANPara &p
 		}
 		break;
 	default:
-		return 1;
+		//return 1;
+		break;
 	}
 
 
@@ -955,13 +962,13 @@ UINT DataOutAList2PlotDataList(const std::vector<DataOutA> &dol, const ANPara &p
 
 	std::vector<DataOutA> dolast;
 
-	if(GetPlotData(dol,sl,pdl,dolast,ps1)){
-		return 3;
+	if(GetPlotData(dol,sl,pdl,dolast,ps1,ps0)){
+		return 0;
 	}
 
 
 
-	return 0;
+	return 3;
 
 
 }
@@ -1040,26 +1047,7 @@ void AddLine(PlotData &pdat, LineSeg lis, CString name, int linetype=0)
 }
 
 
-bool FitLine(std::vector<double> &x, std::vector<double> &y, double &k, double &b, int nFront=0, int nBack=0)
-{
-	if(	x.size()!=y.size()
-		|| x.size()<2+nFront+nBack){
-			return false;
-	}
 
-	x.erase(x.begin(),x.begin()+nFront);
-	x.erase(x.end()-nBack,x.end());
-
-	y.erase(y.begin(),y.begin()+nFront);
-	y.erase(y.end()-nBack,y.end());
-
-	std::vector<double> c;
-	lspfit(x,y,2,c);
-	k=c[1];
-	b=c[0];
-
-	return true;
-}
 
 bool FitLine(std::vector<double> &x, std::vector<double> &y, LineSeg &ls, int nFront=0, int nBack=0)
 {

@@ -1,12 +1,19 @@
 #pragma once
 #include "analyzerview.h"
-class CanalyzerViewL :
-	public CanalyzerView
+
+class CanalyzerViewL :	public CanalyzerView
 {
-public:
+
+protected:
 	CanalyzerViewL(void);
-	~CanalyzerViewL(void);
-	//int AddPlot(const PlotData & pda);
+	virtual ~CanalyzerViewL(void);
+	DECLARE_DYNCREATE(CanalyzerViewL)
+public:	
+
 	virtual void OnInitialUpdate();
+protected:
+	DECLARE_MESSAGE_MAP()
+protected:
+	afx_msg LRESULT OnMessageUpdateRaw(WPARAM wParam, LPARAM lParam);
 };
 

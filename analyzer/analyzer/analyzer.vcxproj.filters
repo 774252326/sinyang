@@ -184,6 +184,15 @@
     <ClInclude Include="RawData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PlotSettingPageA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="analyzerViewL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="analyzerViewR.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="analyzer.cpp">
@@ -286,6 +295,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RawData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="drawfunc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PlotSettingPageA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="analyzerViewL.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="analyzerViewR.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

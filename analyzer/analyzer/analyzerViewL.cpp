@@ -1,48 +1,60 @@
 #include "StdAfx.h"
 #include "analyzerViewL.h"
 //#include "MainFrm.h"
-//#include "func.h"
-
-CanalyzerViewL::CanalyzerViewL(void)
-{
-	lri=0;
-}
+#include "func.h"
+#include "analyzerViewR.h"
 
 
-CanalyzerViewL::~CanalyzerViewL(void)
-{
-}
+IMPLEMENT_DYNCREATE(CanalyzerViewL, CanalyzerView)
 
-//int CanalyzerViewL::AddPlot(const PlotData & pda)
-//{
-//	CanalyzerDoc* pDoc=GetDocument();
-//	pDoc->lp.push_back(pda);
-//	int newi=pDoc->lp.size()-1;
-//	SetSpin(newi);
-//	return newi;
-//}
+	BEGIN_MESSAGE_MAP(CanalyzerViewL, CanalyzerView)
+		// Standard printing commands
 
-void CanalyzerViewL::OnInitialUpdate()
-{
-	CanalyzerView::OnInitialUpdate();
+		ON_MESSAGE(MESSAGE_UPDATE_RAW, &CanalyzerViewL::OnMessageUpdateRaw)
+	END_MESSAGE_MAP()
 
-	// TODO: Add your specialized code here and/or call the base class
 
-	//CMainFrame *mf=(CMainFrame*)(GetParentFrame());
-	////			//CMainFrame *mf=(CMainFrame*)(lv->GetParentFrame());
-	//			COutputList* ol=mf->GetOutputWnd()->GetListCtrl();
-	//			ol->DeleteAllItems();
+	CanalyzerViewL::CanalyzerViewL(void)
+	{
+		
+	}
 
-	//			CanalyzerDoc* pDoc=GetDocument();
 
-	//			size_t c=0;
-	//			for(size_t i=0;i<pDoc->dol.size();i++){
-	//				for(size_t j=0;j<pDoc->dol[i].Ar.size();j++){
-	//					ol->InsertListCtrl(c,pDoc->dol[i],i,j);
-	//					c++;
-	//				}
-	//			}
+	CanalyzerViewL::~CanalyzerViewL(void)
+	{
+	}
 
-	//			CString str=Compute(pDoc->dol,pDoc->p1);
-	//			mf->GetCaptionBar()->ShowMessage(str);
-}
+	void CanalyzerViewL::OnInitialUpdate()
+	{
+		CanalyzerView::OnInitialUpdate();
+
+		// TODO: Add your specialized code here and/or call the base class
+
+		CMainFrame *mf=(CMainFrame*)(GetParentFrame());
+		COutputList* ol=mf->GetOutputWnd()->GetListCtrl();
+		//CanalyzerViewR* rv=((CanalyzerViewR*)(mf->m_wndSplitter.GetPane(0,1)));
+		//CanalyzerDoc* pDoc = GetDocument();
+		//POSITION pos = pDoc->GetFirstViewPosition();
+		//		CanalyzerViewL* lv=((CanalyzerViewL*)(pDoc->GetNextView(pos)));
+		//			CanalyzerViewR* rv=((CanalyzerViewR*)(pDoc->GetNextView(pos)));
+
+
+
+		::SendMessage(ol->GetSafeHwnd(),MESSAGE_UPDATE_DOL,(WPARAM)this,NULL);
+	}
+
+
+	afx_msg LRESULT CanalyzerViewL::OnMessageUpdateRaw(WPARAM wParam, LPARAM lParam)
+	{
+		CanalyzerDoc* pDoc = GetDocument();
+
+		CMainFrame *mf=(CMainFrame*)(GetParentFrame());
+		COutputList* ol=mf->GetOutputWnd()->GetListCtrl();
+
+		pdl.clear();
+		UINT flg=RawData2PlotDataList(pDoc->raw, ol->dol, psview, pdl);
+
+		::SendMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_VIEW,NULL,NULL);
+
+		return 0;
+	}

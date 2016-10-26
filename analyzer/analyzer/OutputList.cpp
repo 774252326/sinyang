@@ -7,7 +7,8 @@
 #include "func.h"
 
 //#include "analyzerDoc.h"
-#include "analyzerView.h"
+#include "analyzerViewL.h"
+#include "analyzerViewR.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // COutputList1
@@ -175,13 +176,34 @@ BOOL COutputList::SetLastUse(const DataOutA & doa)
 
 afx_msg LRESULT COutputList::OnMessageUpdateDol(WPARAM wParam, LPARAM lParam)
 {
-	CanalyzerView *pav=(CanalyzerView*)wParam;
+	CanalyzerViewL *pavl=(CanalyzerViewL*)wParam;
+	//CanalyzerViewR *pavr=(CanalyzerViewR*)lParam;
+	CanalyzerDoc *pad=pavl->GetDocument();
+	CMainFrame *mf=(CMainFrame*)(GetParentFrame());
+	CanalyzerViewR* pavr=((CanalyzerViewR*)(mf->m_wndSplitter.GetPane(0,1)));
+	 
+	//HWND hwl=mf->m_wndSplitter.GetPane(0,0)->GetSafeHwnd();
+	//HWND hwr=mf->m_wndSplitter.GetPane(0,1)->GetSafeHwnd();
 
-	CanalyzerDoc *pad=pav->GetDocument();
+
+	dol.clear();
 
 	UINT flg=ComputeStateData(pad->p1.analysistype,pad->p2,pad->p3,pad->raw,dol);	
 	
-	this->ShowDOL();
+	if(flg==0){
+		this->ShowDOL();
+
+		::SendMessage(pavl->GetSafeHwnd(),MESSAGE_UPDATE_RAW,NULL,NULL);
+		::SendMessage(pavr->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
+
+
+		//::SendMessage(hwl,MESSAGE_UPDATE_RAW,NULL,NULL);
+		//::SendMessage(hwr,MESSAGE_UPDATE_TEST,NULL,NULL);
+
+		//::PostMessage(pavr->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
+		//::PostMessage(pavl->GetSafeHwnd(),MESSAGE_UPDATE_RAW,NULL,NULL);
+		//pavr->SendMessage(MESSAGE_UPDATE_TEST,NULL,NULL);
+	}
 
 	return 0;
 }

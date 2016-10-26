@@ -1,23 +1,39 @@
 #include "StdAfx.h"
 #include "analyzerViewR.h"
+#include "func.h"
+
+IMPLEMENT_DYNCREATE(CanalyzerViewR, CanalyzerView)
+
+	BEGIN_MESSAGE_MAP(CanalyzerViewR, CanalyzerView)
+		// Standard printing commands
+
+		ON_MESSAGE(MESSAGE_UPDATE_TEST, &CanalyzerViewR::OnMessageUpdateTest)
+	END_MESSAGE_MAP()
+
+	CanalyzerViewR::CanalyzerViewR(void)
+		: CanalyzerView()
+	{
+	}
 
 
-CanalyzerViewR::CanalyzerViewR(void)
-	: CanalyzerView(1)
-{
-	//lri=1;
-}
+	CanalyzerViewR::~CanalyzerViewR(void)
+	{
+	}
 
 
-CanalyzerViewR::~CanalyzerViewR(void)
-{
-}
+	afx_msg LRESULT CanalyzerViewR::OnMessageUpdateTest(WPARAM wParam, LPARAM lParam)
+	{
+		CMainFrame *mf=(CMainFrame*)(GetParentFrame());
+		COutputList* ol=mf->GetOutputWnd()->GetListCtrl();
 
-//int CanalyzerViewR::AddPlot(const PlotData & pda)
-//{
-//	CanalyzerDoc* pDoc=GetDocument();
-//	pDoc->rp.push_back(pda);
-//	int newi=pDoc->rp.size()-1;
-//	SetSpin(newi);
-//	return newi;
-//}
+		CanalyzerDoc* pDoc = GetDocument();
+
+		pdl.clear();
+
+
+		UINT flg=DataOutAList2PlotDataList(ol->dol, pDoc->p1, psview, pdl);
+
+		::SendMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_VIEW,NULL,NULL);
+
+		return 0;
+	}

@@ -6,7 +6,8 @@
 #include "OutputWnd.h"
 #include "MFCCaptionBarA.h"
 #include "MFCToolBarA.h"
-#include "analyzerView.h"
+//#include "analyzerViewR.h"
+//#include "analyzerViewL.h"
 
 class CMainFrame : public CFrameWndEx
 {
@@ -17,9 +18,9 @@ protected: // create from serialization only
 
 // Attributes
 protected:
-	CSplitterWnd m_wndSplitter;
+	//CSplitterWnd m_wndSplitter;
 public:
-
+	CSplitterWnd m_wndSplitter;
 // Operations
 public:
 
@@ -71,6 +72,7 @@ public:
 
 	COutputWnd* GetOutputWnd(){return &m_wndOutput;}
 	CMFCCaptionBarA* GetCaptionBar(){ return &m_wndCaptionBar;};
+	afx_msg void OnSize(UINT nType, int cx, int cy);
 };
 
 
