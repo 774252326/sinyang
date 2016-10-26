@@ -104,15 +104,8 @@ void CanalyzerView::OnEndPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
 
 void CanalyzerView::OnRButtonUp(UINT /* nFlags */, CPoint point)
 {
-	//ClientToScreen(&point);
-	//OnContextMenu(this, point);
-	if(pw.lgc.legendDpMode&LEGEND_DP_SHOW)
-		pw.lgc.legendDpMode&=~LEGEND_DP_SHOW;
-	else
-		pw.lgc.legendDpMode|=LEGEND_DP_SHOW;
-
-	pw.SetLegend();
-
+	ClientToScreen(&point);
+	OnContextMenu(this, point);
 }
 
 void CanalyzerView::OnContextMenu(CWnd* /* pWnd */, CPoint point)
@@ -154,8 +147,8 @@ int CanalyzerView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	// TODO:  Add your specialized creation code here
 
-			LONG style0=GetWindowLongW(this->GetSafeHwnd(), GWL_EXSTYLE);
-		SetWindowLongW(GetSafeHwnd(), GWL_EXSTYLE, style0|WS_CLIPCHILDREN);
+	LONG style0=GetWindowLongW(this->GetSafeHwnd(), GWL_EXSTYLE);
+	SetWindowLongW(GetSafeHwnd(), GWL_EXSTYLE, style0|WS_CLIPCHILDREN);
 
 	if(pw.Create(_T("STATIC"), _T(""), WS_CHILD | WS_VISIBLE /*| WS_DISABLED*/, CRect(), this, 1234)==FALSE)
 		return -1;
@@ -207,7 +200,7 @@ void CanalyzerView::OnControls1()
 
 		POSITION pos=fileDlg.GetStartPosition();
 		PlotData pd;
-		pd.ps=pw.pd.ps;
+		pd.ps=pw.pdex.pd.ps;
 
 		while(pos!=NULL){
 			CString fp=fileDlg.GetNextPathName(pos);
@@ -226,12 +219,12 @@ void CanalyzerView::OnControls1()
 			pd.AddNew(a.time,a.current,ls,a.label[0],a.label[1]);
 		}
 
-		pw.lgc.legendDpMode=LEGEND_DP_SHOW
+		pw.pdex.lgc.legendDpMode=LEGEND_DP_SHOW
 			|LEGEND_DP_FIT_RECT|LEGEND_DP_AUTO_RECT
 			|LEGEND_DP_ALIGN|LEGEND_DP_TOP
 			;
 
-		pw.pd=pd;
+		pw.pdex.pd=pd;
 		//pw.lgs.bkColor=pw.pd.ps.bkgndC;
 		pw.ResetRange();
 		pw.SetLegend();
@@ -275,10 +268,10 @@ void CanalyzerView::OnOptionsPlotsettings()
 		str.LoadStringW(IDS_STRING_FIGURE1);
 		str=L"";
 
-		PlotSettingPage fig1setting(str,pw.pd.ps,pw.pd.ls);
+		PlotSettingPage fig1setting(str,pw.pdex.pd.ps,pw.pdex.pd.ls);
 
-		fig1setting.lgc=pw.lgc;
-		fig1setting.lgs=pw.lgs;
+		fig1setting.lgc=pw.pdex.lgc;
+		fig1setting.lgs=pw.pdex.lgs;
 
 		//fig1setting.bkcr=pdl[selecti].psp.winbkC;
 
@@ -287,10 +280,10 @@ void CanalyzerView::OnOptionsPlotsettings()
 		// 打开模态向导对话框   
 		if(sheet.DoModal()==IDOK){
 
-			pw.pd.ps=fig1setting.fs;
-			pw.pd.ls.assign(fig1setting.ps.begin(),fig1setting.ps.end());
-			pw.lgc=fig1setting.lgc;
-			pw.lgs=fig1setting.lgs;
+			pw.pdex.pd.ps=fig1setting.fs;
+			pw.pdex.pd.ls.assign(fig1setting.ps.begin(),fig1setting.ps.end());
+			pw.pdex.lgc=fig1setting.lgc;
+			pw.pdex.lgs=fig1setting.lgs;
 
 			//::PostMessage(this->GetSafeHwnd(),MESSAGE_GET_PLOTSPEC,NULL,NULL);
 
@@ -309,8 +302,8 @@ void CanalyzerView::OnOptionsPlotsettings()
 		COLORREF oc=(COLORREF)wParam;
 
 
-		pw.pd.ps.winbkC=oc;
-		pw.lgs.bkColor=pw.pd.ps.bkgndC;
+		pw.pdex.pd.ps.winbkC=oc;
+		pw.pdex.lgs.bkColor=pw.pdex.pd.ps.bkgndC;
 
 		//::SendMessage(this->GetSafeHwnd(),MESSAGE_GET_PLOTSPEC,wParam,NULL);
 

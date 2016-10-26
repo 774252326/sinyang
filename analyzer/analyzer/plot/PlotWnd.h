@@ -1,11 +1,14 @@
 #pragma once
-#include "../struct1\\plotdata.hpp"
+//#include "../struct1\\plotdata.hpp"
 
 //#include "LegendDlg.h"
 #include "atltypes.h"
-#include "../struct1\\legendspec.hpp"
+//#include "../struct1\\legendspec.hpp"
 //#include "LegendDlgB.h"
-#include "../struct1\\LegendCondition.hpp"
+//#include "../struct1\\LegendCondition.hpp"
+
+#include "../struct1/PlotDataEx.hpp"
+
 // PlotWnd
 
 
@@ -22,25 +25,27 @@ public:
 protected:
 	DECLARE_MESSAGE_MAP()
 public:
-	double xmin;
-	double xmax;
-	double ymin;
-	double ymax;
-	double pct;
+	//double xmin;
+	//double xmax;
+	//double ymin;
+	//double ymax;
+	//
+	//PlotData pd;
+	//LegendSpec lgs;
 
-	bool bMouseCursor;
+	//LegendCondition lgc;
+	PlotDataEx pdex;
+
 	size_t selectPIdx;
+	double pct;
+	bool bMouseCursor;	
 	double zoomrate;
-	
-	PlotData pd;
-	LegendSpec lgs;
 
-	LegendCondition lgc;
 
 	void ResetRange(void);
 	void SetLegend(void);
 
-	afx_msg void OnMove(int x, int y);
+	
 
 protected:
 	afx_msg void OnPaint();
@@ -54,7 +59,7 @@ protected:
 	afx_msg LRESULT OnNcHitTest(CPoint point);
 
 	afx_msg void OnSize(UINT nType, int cx, int cy);
-
+	afx_msg void OnMove(int x, int y);
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	virtual BOOL OnWndMsg(UINT message, WPARAM wParam, LPARAM lParam, LRESULT* pResult);

@@ -12,11 +12,11 @@
 IMPLEMENT_DYNAMIC(PlotWnd, CWnd)
 
 	PlotWnd::PlotWnd()
-	: xmin(0)
-	, xmax(0)
-	, ymin(0)
-	, ymax(0)
-	, pct(0.010)
+	//: xmin(0)
+	//, xmax(0)
+	//, ymin(0)
+	//, ymax(0)
+	: pct(0.010)
 	, m_mouseDownPoint(CPoint())
 	, bMouseCursor(false)
 	, selectPIdx(0)
@@ -79,11 +79,11 @@ void PlotWnd::OnPaint()
 	dcMem.SelectObject(&bmp);  	//将位图选择进内存DC
 
 
-	DrawData(rect,&dcMem,pd,xmin,xmax,ymin,ymax);
+	DrawData(rect,&dcMem,pdex.pd,pdex.xmin,pdex.xmax,pdex.ymin,pdex.ymax);
 
-	if(bMouseCursor && !pd.ls.empty()
-		&& selectPIdx>=0 && selectPIdx<pd.raw.xll.size()){
-			DrawData1(rect,&dcMem,pd.raw.xll[selectPIdx],pd.raw.yll[selectPIdx],xmin,xmax,ymin,ymax,inv(pd.ps.bkgndC));
+	if(bMouseCursor && !pdex.pd.ls.empty()
+		&& selectPIdx>=0 && selectPIdx<pdex.pd.raw.xll.size()){
+			DrawData1(rect,&dcMem,pdex.pd.raw.xll[selectPIdx],pdex.pd.raw.yll[selectPIdx],pdex.xmin,pdex.xmax,pdex.ymin,pdex.ymax,inv(pdex.pd.ps.bkgndC));
 	}
 
 	dc.BitBlt(0,0,winsz.cx,winsz.cy,&dcMem,0,0,SRCCOPY);//将内存DC上的图象拷贝到前台
@@ -104,23 +104,23 @@ void PlotWnd::OnLButtonDown(UINT nFlags, CPoint point)
 
 	SetFocus();
 
-	if(!pd.ls.empty()){
+	if(!pdex.pd.ls.empty()){
 
 
 		CRect plotrect;
 		this->GetClientRect(&plotrect);	
 
 		int re=DownUpdate(plotrect
-			, pd.ps.metricSize
-			, pd.ps.labelSize
-			, pd.ps.metricGridLong
-			, pd.ps.gap
+			, pdex.pd.ps.metricSize
+			, pdex.pd.ps.labelSize
+			, pdex.pd.ps.metricGridLong
+			, pdex.pd.ps.gap
 			, point
 			, m_mouseDownPoint
-			, xmin, xmax, ymin, ymax
+			, pdex.xmin, pdex.xmax, pdex.ymin, pdex.ymax
 			, bMouseCursor
-			, pd.raw.xll
-			, pd.raw.yll
+			, pdex.pd.raw.xll
+			, pdex.pd.raw.yll
 			, selectPIdx);
 
 		switch(re){
@@ -164,7 +164,7 @@ void PlotWnd::OnMouseMove(UINT nFlags, CPoint point)
 
 
 	//size_t selectIdx=m_spBtn.GetPos32();
-	if(!pd.ls.empty()){
+	if(!pdex.pd.ls.empty()){
 
 		//if(pd!=NULL && !pd->ps.empty() ){
 		CRect plotrect;
@@ -173,26 +173,26 @@ void PlotWnd::OnMouseMove(UINT nFlags, CPoint point)
 
 		if(GetCapture()==this){
 			if(MoveUpdateA(plotrect
-				, pd.ps.metricSize
-				, pd.ps.labelSize
-				, pd.ps.metricGridLong
-				, pd.ps.gap
+				, pdex.pd.ps.metricSize
+				, pdex.pd.ps.labelSize
+				, pdex.pd.ps.metricGridLong
+				, pdex.pd.ps.gap
 				, point
 				, this->m_mouseDownPoint
-				, xmin,xmax,ymin,ymax))
+				, pdex.xmin,pdex.xmax,pdex.ymin,pdex.ymax))
 				this->Invalidate(/*FALSE*/);
 		}
 		else{
 
 			CString str;
 			if(MoveUpdateB(plotrect
-				, pd.ps.metricSize
-				, pd.ps.labelSize
-				, pd.ps.metricGridLong
-				, pd.ps.gap
+				, pdex.pd.ps.metricSize
+				, pdex.pd.ps.labelSize
+				, pdex.pd.ps.metricGridLong
+				, pdex.pd.ps.gap
 				, point
 				, this->m_mouseDownPoint
-				, xmin,xmax,ymin,ymax
+				, pdex.xmin,pdex.xmax,pdex.ymin,pdex.ymax
 				, str))
 				m_tool.UpdateTipText(str,this);
 
@@ -209,20 +209,20 @@ BOOL PlotWnd::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 {
 	// TODO: Add your message handler code here and/or call default
 
-	if(!pd.ls.empty()){
+	if(!pdex.pd.ls.empty()){
 
 		//if(pd!=NULL && !pd->ps.empty() ){
 		ScreenToClient(&pt);
 		CRect plotrect;
 		this->GetClientRect(&plotrect);
 		if( WheelUpdate(plotrect
-			, pd.ps.metricSize
-			, pd.ps.labelSize
-			, pd.ps.metricGridLong
-			, pd.ps.gap
+			, pdex.pd.ps.metricSize
+			, pdex.pd.ps.labelSize
+			, pdex.pd.ps.metricGridLong
+			, pdex.pd.ps.gap
 			, pt
 			, ((zDelta>0)?zoomrate:1/zoomrate)
-			,xmin,xmax,ymin,ymax) ){
+			,pdex.xmin,pdex.xmax,pdex.ymin,pdex.ymax) ){
 				this->Invalidate(FALSE);
 		}
 
@@ -237,8 +237,8 @@ BOOL PlotWnd::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 
 void PlotWnd::ResetRange(void)
 {
-	UpdateRange(pd.raw.xll,xmin,xmax,pct,true);
-	UpdateRange(pd.raw.yll,ymin,ymax,pct,true);
+	UpdateRange(pdex.pd.raw.xll,pdex.xmin,pdex.xmax,pct,true);
+	UpdateRange(pdex.pd.raw.yll,pdex.ymin,pdex.ymax,pct,true);
 }
 
 
@@ -341,7 +341,7 @@ void PlotWnd::OnSize(UINT nType, int cx, int cy)
 
 void PlotWnd::SetLegend(void)
 {
-	ShowLegend(lgc.legendDpMode&LEGEND_DP_SHOW);
+	ShowLegend(pdex.lgc.legendDpMode&LEGEND_DP_SHOW);
 	//return 0;
 }
 

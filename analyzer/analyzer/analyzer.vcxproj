@@ -142,6 +142,7 @@
     <ClInclude Include="list\ListCtrlLS.h" />
     <ClInclude Include="list\ListCtrlSAP.h" />
     <ClInclude Include="list\ListCtrlUA.h" />
+    <ClInclude Include="list\OutputListA.h" />
     <ClInclude Include="LoginDlg.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="OutputWnd.h" />
@@ -154,6 +155,7 @@
     <ClInclude Include="SolutionAdditionParametersPageA.h" />
     <ClInclude Include="StartDlg.hpp" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="struct1\PlotDataEx.hpp" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="UserAccountPage.h" />
   </ItemGroup>
@@ -175,6 +177,7 @@
     <ClCompile Include="list\ListCtrlLS.cpp" />
     <ClCompile Include="list\ListCtrlSAP.cpp" />
     <ClCompile Include="list\ListCtrlUA.cpp" />
+    <ClCompile Include="list\OutputListA.cpp" />
     <ClCompile Include="LoginDlg.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="OutputWnd.cpp" />
