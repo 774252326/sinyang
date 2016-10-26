@@ -112,4 +112,14 @@ public:
 	double *ply;
 	bool isSmooth;
 	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+	long span;
+	double* ys;
+	double** ABSkPeak;
+	long peaknd;
+
+	void DrawVLine(CRect rect, CPaintDC * dc, CPen * pen, double x);
+	void DrawDiff(CRect rect, CPaintDC * dc, CPen * pPen, double x1, double x2);
+	double **xybreak;
+	// computation part
+	void cmpt(void);
 };

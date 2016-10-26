@@ -12,6 +12,7 @@
 #include "funT\findmT.h"
 #include "funT\nrutilT.h"
 #include "funT\xRescaleT.h"
+#include "funT\avgsmoothT.h"
 #include "gettwoknee.h"
 
 #ifdef _DEBUG
@@ -66,6 +67,11 @@ Cz3Dlg::Cz3Dlg(CWnd* pParent /*=NULL*/)
 	, plx(NULL)
 	, ply(NULL)
 	, isSmooth(false)
+	, span(0)
+	, ys(NULL)
+	, ABSkPeak(NULL)
+	, peaknd(0)
+	, xybreak(NULL)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 
@@ -90,7 +96,8 @@ void Cz3Dlg::DoDataExchange(CDataExchange* pDX)
 		//if(){
 		DDX_Text(pDX, IDC_FILEPATH, m_filePath);
 		DDX_Text(pDX, IDC_THRES, threshold);
-		DDX_Text(pDX, IDC_KNEE1, knee1);
+		//DDX_Text(pDX, IDC_KNEE1, knee1);
+		DDX_Text(pDX, IDC_KNEE1, span);
 		DDX_Text(pDX, IDC_KNEE2, knee2);
 	}
 }
@@ -107,7 +114,9 @@ BEGIN_MESSAGE_MAP(Cz3Dlg, CDialogEx)
 	ON_WM_LBUTTONUP()
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSEWHEEL()
-	ON_WM_VSCROLL(IDC_THRESCTRL,&Cz3Dlg::OnVScroll)
+	//ON_WM_VSCROLL(IDC_THRESCTRL,&Cz3Dlg::OnVScroll)
+	ON_WM_VSCROLL()
+
 
 END_MESSAGE_MAP()
 
@@ -135,59 +144,51 @@ BOOL Cz3Dlg::OnInitDialog()
 	//AfxMessageBox(L"exiting...");
 
 
-
+	//main window
 	CPoint winpos=CPoint(50,50);
-
-
 	this->SetWindowPos(&CWnd::wndTop, winpos.x, winpos.y, winrect.Width(), winrect.Height(), SWP_SHOWWINDOW);
 
-
+	//cancel button
 	CPoint cancelpos=winrect.BottomRight()-towinedge-btnrect.Size();
-
 	this->GetDlgItem(IDCANCEL)->SetWindowPos(&CWnd::wndTop,cancelpos.x,cancelpos.y,btnrect.Width(),btnrect.Height(),SWP_SHOWWINDOW);
 
+	//ok button
 	CPoint okpos=cancelpos-CSize(tobtnedge.cx+btnrect.Width(),0);
-
 	this->GetDlgItem(IDOK)->SetWindowPos(&CWnd::wndTop,okpos.x,okpos.y,btnrect.Width(),btnrect.Height(),SWP_SHOWWINDOW);
 
 
 	CString str;
-
+	//open button
 	CButton *pOpen;
 	pOpen=new CButton;
 	str.LoadStringW(IDC_OPEN);
-
 	openrect=btnrect;
 	openrect.MoveToXY(okpos-CSize(tobtnedge.cx+btnrect.Width(),0));
 	pOpen->Create(str,WS_CHILD|WS_VISIBLE|BS_PUSHBUTTON, openrect, this, IDC_OPEN);
 
+	//file path edit
 	CEdit *pFilepath;
 	pFilepath=new CEdit;
-
 	fprect=CRect(towinedge.cx,winrect.bottom-towinedge.cy-btnrect.Height(),openrect.left-tobtnedge.cx,winrect.bottom-towinedge.cy);
-
 	pFilepath->Create(ES_LEFT|WS_CHILD|WS_VISIBLE,fprect,this,IDC_FILEPATH);
 
 
-
+	//plot region
 	pPlot=new CButton;
-
 	plotrect=winrect;
 	plotrect.DeflateRect(towinedge);
-	plotrect.DeflateRect(0,0,btnrect.Width()+tobtnedge.cx,btnrect.Height()+tobtnedge.cy*2);
-
+	plotrect.DeflateRect(towinedge.cx,0,btnrect.Width()+tobtnedge.cx,btnrect.Height()+tobtnedge.cy*2);
 	str.LoadStringW(IDC_PLOT);
 	pPlot->Create( str, WS_CHILD/*|WS_VISIBLE*/|BS_GROUPBOX, plotrect, this, IDC_PLOT); 
 
-
+	//threshold edit
 	CEdit *pThres;
 	pThres=new CEdit;
 	threct=btnrect;
 	threct.MoveToXY(winrect.Width()-towinedge.cx-btnrect.Width(),towinedge.cy);
-
 	pThres->Create(ES_LEFT|WS_CHILD|WS_VISIBLE,threct,this,IDC_THRES);
 
-
+	//smooth button
 	CButton *pSmooth;
 	pSmooth=new CButton;
 	smrect=threct;
@@ -208,13 +209,19 @@ BOOL Cz3Dlg::OnInitDialog()
 	k2rect.OffsetRect(0,tobtnedge.cy+btnrect.Height());
 	pKnee2->Create(ES_LEFT|WS_CHILD|WS_VISIBLE|ES_READONLY,k2rect,this,IDC_KNEE2);
 
-
+	//threshold slider
 	CSliderCtrl *pThSlider;
 	pThSlider=new CSliderCtrl;
-	pThSlider->Create(TBS_AUTOTICKS|TBS_VERT|WS_CHILD|WS_VISIBLE,CRect(k2rect.left,k2rect.top+tobtnedge.cy+btnrect.Height(),k2rect.right,cancelpos.y-tobtnedge.cy),this,IDC_THRESCTRL);
-
-	pThSlider->SetRange(1,100);
+	pThSlider->Create(TBS_AUTOTICKS|TBS_VERT|WS_CHILD|WS_VISIBLE,CRect(k2rect.left,k2rect.top+tobtnedge.cy+btnrect.Height(),k2rect.CenterPoint().x,cancelpos.y-tobtnedge.cy),this,IDC_THRESCTRL);
+	pThSlider->SetRange(0,100);
 	pThSlider->SetPos(20);
+
+	//smooth slider
+	CSliderCtrl *pSmSlider;
+	pSmSlider=new CSliderCtrl;
+	pSmSlider->Create(TBS_AUTOTICKS|TBS_VERT|WS_CHILD|WS_VISIBLE,CRect(k2rect.CenterPoint().x,k2rect.top+tobtnedge.cy+btnrect.Height(),k2rect.right,cancelpos.y-tobtnedge.cy),this,IDC_SMOOTHSPAN);
+	pSmSlider->SetRange(0,100);
+	pSmSlider->SetPos(0);
 
 
 	isInit=true;
@@ -257,24 +264,55 @@ void Cz3Dlg::OnPaint()
 
 			if(DrawXYAxis(plotrect,&dc)){
 
+				CRect mainrt;
+				CRgn rgn;
+				rgn.CreateRectRgnIndirect(&plotrect);	
+				dc.GetClipBox(&mainrt);
+				dc.SelectClipRgn(&rgn);
+
+
+
 				pen.CreatePen(PS_SOLID,1,blue);
 
 				//CPaintDC qdc(GetDlgItem(IDC_PLOT));
 				//DrawPolyline(CRect(CPoint(0,0),plotrect.Size()),&qdc,&pen,x,y,m_n);
 
-				DrawPolyline(plotrect,&dc,&pen,x,y,m_n);
+				DrawPolyline(plotrect,&dc,&pen,x,ys,m_n);
 				pen.DeleteObject();
 				if(isSmooth){
 					pen.CreatePen(PS_SOLID,1,green);
-					DrawPolyline(plotrect,&dc,&pen,plx,ply,plnd);
+					//DrawPolyline(plotrect,&dc,&pen,plx,ply,plnd);
+					DrawPolyline(plotrect,&dc,&pen,xybreak[1],xybreak[2],plnd);
 					pen.DeleteObject();
+
+
+					int i;
+					//pen.CreatePen(PS_DOT,1,black);
+					//for(i=1;i<=peaknd;i++){
+					//	DrawVLine(plotrect,&dc,&pen,ABSkPeak[1][i]);
+					//}
+					//pen.DeleteObject();
+					//pen.CreatePen(PS_DASH,1,black);
+					//for(i=1;i<=peaknd;i++){
+					//	DrawVLine(plotrect,&dc,&pen,ABSkPeak[2][i]);
+					//}
+					//pen.DeleteObject();
+
+					pen.CreatePen(PS_DASH,1,black);
+					for(i=1;i<=peaknd;i++){
+						DrawVLine(plotrect,&dc,&pen,ABSkPeak[1][i]);
+						DrawVLine(plotrect,&dc,&pen,ABSkPeak[2][i]);
+						DrawDiff(plotrect,&dc,&pen,ABSkPeak[1][i],ABSkPeak[2][i]);
+					}
+					pen.DeleteObject();
+
 				}
-			}
+
+				rgn.CreateRectRgnIndirect(&mainrt);
+				dc.SelectClipRgn(&rgn);
+			}		
 		}
-
-
-
-
+		
 
 		CDialogEx::OnPaint();
 
@@ -323,11 +361,16 @@ void Cz3Dlg::OnBnClickedOpen()
 
 
 		free_vector(x,1,m_n);
+		free_vector(ys,1,m_n);
 		//free_vector(plx,1,plnd);
 		//free_vector(ply,1,plnd);
 
 		x=readcsv2<double>(&m_n,m_filePath,&isLoad);
 		y=&x[m_n];
+
+		ys=vector<double>(1,m_n);
+		copyvt(y,m_n,ys);
+
 		UpdateData(false);
 
 		if( isLoad ){
@@ -590,7 +633,10 @@ CPoint Cz3Dlg::ptRsl(double x, double y, CRect can)
 
 void Cz3Dlg::DrawPolyline(CRect rect, CPaintDC * pdc, CPen * pPen, double * x, double * y, long nd)
 {
+
+
 	CPen * pOldPen=pdc->SelectObject(pPen);
+
 
 	CPoint ptt=ptRsl(x[1],y[1], rect);
 	pdc->MoveTo(ptt);
@@ -602,6 +648,10 @@ void Cz3Dlg::DrawPolyline(CRect rect, CPaintDC * pdc, CPen * pPen, double * x, d
 	}
 
 	pdc->SelectObject(pOldPen);
+
+
+
+
 
 }
 
@@ -756,35 +806,59 @@ BOOL Cz3Dlg::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 void Cz3Dlg::OnBnClickedSmooth(void)
 {
 	UpdateData();
-	if(isLoad){
-		long oldplnd=plnd;
 
-		plind=gettwoknee(x,y,m_n,threshold,&plnd,&knee1,&knee2);
+	//if(isLoad){
+	//	long oldplnd=plnd;
 
-		if(plnd<4){
-			AfxMessageBox(L"no knee point detected\ntry smaller threshold");
-		}
-		else{
-			long i;
+	//	plind=gettwoknee(x,ys,m_n,threshold,&plnd,&knee1,&knee2);
 
-			free_vector(plx,1,oldplnd);
-			free_vector(ply,1,oldplnd);
+	//	if(plnd<4){
+	//		AfxMessageBox(L"no knee point detected\ntry smaller threshold");
+	//	}
+	//	else{
+	//		long i;
 
-			plx=vector<double>(1,plnd);
-			ply=vector<double>(1,plnd);
+	//		free_vector(plx,1,oldplnd);
+	//		free_vector(ply,1,oldplnd);
 
-			for(i=1;i<=plnd;i++){
-				plx[i]=x[plind[i]];
-				ply[i]=y[plind[i]];
-			}
-			free_vector(plind,1,plnd);
+	//		plx=vector<double>(1,plnd);
+	//		ply=vector<double>(1,plnd);
 
-			isSmooth=true;
-			UpdateData(false);
-			Invalidate();
-		}
-	}
+	//		for(i=1;i<=plnd;i++){
+	//			plx[i]=x[plind[i]];
+	//			ply[i]=ys[plind[i]];
+	//		}
+	//		free_vector(plind,1,plnd);
 
+	//		isSmooth=true;
+	//		UpdateData(false);
+	//		Invalidate();
+	//	}
+	//}
+
+	/////////////////////////////////////////////////////////////
+
+	//if(isLoad){
+	//	//long oldplnd=plnd;
+	//	if(plnd>0)
+	//		free_matrix(xybreak,1,2,1,plnd);
+
+	//	xybreak=RDPSmoothXY(x,ys,m_n,threshold,&plnd);
+	//	
+	//	if(plnd<4){
+	//		AfxMessageBox(L"no knee point detected\ntry smaller threshold");
+	//	}
+	//	else{
+	//		ABSkPeak=selectAKPeak(xybreak,plnd,&peaknd);
+
+	//		isSmooth=true;
+	//		//UpdateData(false);
+	//		Invalidate();
+	//	}
+	//}
+
+	///////////////////////////////////////////////////////////
+	cmpt();
 
 
 }
@@ -794,42 +868,175 @@ void Cz3Dlg::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 	// TODO: Add your message handler code here and/or call default
 
-	int max=((CSliderCtrl*)GetDlgItem(IDC_THRESCTRL))->GetRangeMax();
-	int min=((CSliderCtrl*)GetDlgItem(IDC_THRESCTRL))->GetRangeMin();
-	int pos=((CSliderCtrl*)GetDlgItem(IDC_THRESCTRL))->GetPos();
 
-	threshold=0.2*(double)(pos-min)/(double)(max-min)+0.01;
+	if(pScrollBar==(GetDlgItem(IDC_THRESCTRL))){
 
-	UpdateData(false);
+		if(nSBCode==SB_THUMBPOSITION){
 
+
+
+			int max=((CSliderCtrl*)GetDlgItem(IDC_THRESCTRL))->GetRangeMax();
+			int min=((CSliderCtrl*)GetDlgItem(IDC_THRESCTRL))->GetRangeMin();
+			int pos=((CSliderCtrl*)GetDlgItem(IDC_THRESCTRL))->GetPos();
+
+			threshold=0.2*(double)(pos-min)/(double)(max-min)+0.01;
+
+			UpdateData(false);
+
+			//if(isLoad){
+
+			//	long oldplnd=plnd;
+			//	plind=gettwoknee(x,ys,m_n,threshold,&plnd,&knee1,&knee2);
+
+			//	if(plnd<4){
+			//		AfxMessageBox(L"no knee point detected\ntry smaller threshold");
+			//	}
+			//	else{
+			//		long i;
+
+			//		free_vector(plx,1,oldplnd);
+			//		free_vector(ply,1,oldplnd);
+			//		plx=vector<double>(1,plnd);
+			//		ply=vector<double>(1,plnd);
+
+			//		for(i=1;i<=plnd;i++){
+			//			plx[i]=x[plind[i]];
+			//			ply[i]=ys[plind[i]];
+			//		}
+			//		free_vector(plind,1,plnd);
+
+			//		isSmooth=true;
+			//		UpdateData(false);
+			//		Invalidate();
+			//	}
+			//}
+
+
+
+			//if(isLoad){
+			//	if(plnd>0)
+			//		free_matrix(xybreak,1,2,1,plnd);
+
+			//	xybreak=RDPSmoothXY(x,ys,m_n,threshold,&plnd);
+
+			//	if(plnd<4){
+			//		AfxMessageBox(L"no knee point detected\ntry smaller threshold");
+			//	}
+			//	else{
+			//		if(peaknd>0)
+			//			free_matrix(ABSkPeak,1,2,1,peaknd);
+
+			//		ABSkPeak=selectAKPeak(xybreak,plnd,&peaknd);
+			//		isSmooth=true;
+			//		//UpdateData(false);
+			//		Invalidate();
+			//	}
+			//}
+			cmpt();
+
+
+		}
+	}
+
+
+	if(pScrollBar==(GetDlgItem(IDC_SMOOTHSPAN))){
+
+		//int max=((CSliderCtrl*)GetDlgItem(IDC_SMOOTHSPAN))->GetRangeMax();
+		//int min=((CSliderCtrl*)GetDlgItem(IDC_SMOOTHSPAN))->GetRangeMin();
+		int pos=((CSliderCtrl*)GetDlgItem(IDC_SMOOTHSPAN))->GetPos();
+
+		//threshold=0.2*(double)(pos-min)/(double)(max-min)+0.01;
+		span=pos;
+		UpdateData(false);
+
+		avgsmooth(y,m_n,ys,span);
+		Invalidate();
+
+	}
+
+
+	CDialogEx::OnVScroll(nSBCode, nPos, pScrollBar);
+}
+
+
+// draw a vertical line at x
+void Cz3Dlg::DrawVLine(CRect rect, CPaintDC * dc, CPen * pen, double x)
+{
+	CPen* pOldPen=dc->SelectObject(pen);
+	dc->MoveTo(ptRsl(x,0,rect).x,rect.bottom);
+	dc->LineTo(ptRsl(x,0,rect).x,rect.top);
+	dc->SelectObject(pOldPen);
+}
+
+
+void Cz3Dlg::DrawDiff(CRect rect, CPaintDC * dc, CPen * pPen, double x1, double x2)
+{
+	CPen* pOldPen=dc->SelectObject(pPen);
+
+	CPoint cp=rect.CenterPoint();
+
+	long xp1=ptRsl(MIN(x1,x2),0,rect).x;
+	long xp2=ptRsl(MAX(x1,x2),0,rect).x;
+	long leg=4;
+
+	long lp=7;
+
+	dc->MoveTo(xp1+leg,cp.y-leg);
+	dc->LineTo(xp1,cp.y);
+	dc->LineTo(xp1+leg,cp.y+leg);
+
+	dc->MoveTo(xp2-leg,cp.y-leg);
+	dc->LineTo(xp2,cp.y);
+	dc->LineTo(xp2-leg,cp.y+leg);
+
+	CFont font;
+	font.CreatePointFont(300,L"MS Gothic",NULL);
+
+	CString str;
+	CSize sz;
+	str.Format(L"%.1fs",fabs(x2-x1));
+	dc->SelectObject(&font);
+	sz=dc->GetTextExtent(str);
+
+
+	long xl=xp2-xp1-sz.cx;
+	if(xl>=2*lp){
+		dc->MoveTo(xp1,cp.y);
+		dc->LineTo(xp1+xl/2,cp.y);
+		dc->TextOutW(xp1+xl/2,cp.y-sz.cy/2,str);
+		dc->MoveTo(xp2,cp.y);
+		dc->LineTo(xp2-xl/2,cp.y);
+	}
+
+
+	dc->SelectObject(pOldPen);
+
+}
+
+
+
+
+// computation part
+void Cz3Dlg::cmpt(void)
+{
 	if(isLoad){
+		if(plnd>0)
+			free_matrix(xybreak,1,2,1,plnd);
 
-		long oldplnd=plnd;
-		plind=gettwoknee(x,y,m_n,threshold,&plnd,&knee1,&knee2);
+		xybreak=RDPSmoothXY(x,ys,m_n,threshold,&plnd);
 
 		if(plnd<4){
 			AfxMessageBox(L"no knee point detected\ntry smaller threshold");
 		}
 		else{
-			long i;
+			if(peaknd>0)
+				free_matrix(ABSkPeak,1,2,1,peaknd);
 
-			free_vector(plx,1,oldplnd);
-			free_vector(ply,1,oldplnd);
-			plx=vector<double>(1,plnd);
-			ply=vector<double>(1,plnd);
-
-			for(i=1;i<=plnd;i++){
-				plx[i]=x[plind[i]];
-				ply[i]=y[plind[i]];
-			}
-			free_vector(plind,1,plnd);
-
+			ABSkPeak=selectAKPeak(xybreak,plnd,&peaknd);
 			isSmooth=true;
-			UpdateData(false);
+			//UpdateData(false);
 			Invalidate();
 		}
 	}
 
-
-	CDialogEx::OnVScroll(nSBCode, nPos, pScrollBar);
 }
