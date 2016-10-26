@@ -2,6 +2,7 @@
 #include "afxwin.h"
 
 
+#include "../messagemaphpp.h"
 // StaticEdit
 
 class StaticEdit : public CEdit
@@ -30,11 +31,17 @@ protected:
 
 		return 0;
 	};
-	DECLARE_MESSAGE_MAP()
 
-};
+//	DECLARE_MESSAGE_MAP()
+//};
+//
+//BEGIN_MESSAGE_MAP(StaticEdit, CEdit)
+//	ON_CONTROL_REFLECT(EN_SETFOCUS, &StaticEdit::OnEnSetfocus)
+//	ON_WM_CREATE()
+//END_MESSAGE_MAP()
 
-BEGIN_MESSAGE_MAP(StaticEdit, CEdit)
+BEGIN_MESSAGE_MAP_HPP(StaticEdit, CEdit)
 	ON_CONTROL_REFLECT(EN_SETFOCUS, &StaticEdit::OnEnSetfocus)
 	ON_WM_CREATE()
-END_MESSAGE_MAP()
+END_MESSAGE_MAP_HPP()
+};

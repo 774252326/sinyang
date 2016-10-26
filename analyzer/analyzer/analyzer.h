@@ -10,7 +10,7 @@
 #include "resource.h"       // main symbols
 
 
-#define QTT
+//#define QTT
 
 #ifdef QTT
 #include "lib/AnalyzerRunner.h"

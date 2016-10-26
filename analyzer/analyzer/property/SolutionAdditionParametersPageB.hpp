@@ -5,6 +5,8 @@
 #include "../Resource.h"
 #include "afxdialogex.h"
 
+#include "../messagemaphpp.h"
+
 // SolutionAdditionParametersPageB dialog
 
 class SolutionAdditionParametersPageB : public CPropertyPage
@@ -137,12 +139,15 @@ protected:
 		CPropertyPage::DoDataExchange(pDX);
 	};    // DDX/DDV support
 
-	DECLARE_MESSAGE_MAP()
+//	DECLARE_MESSAGE_MAP()
+//};
+//
+//BEGIN_MESSAGE_MAP(SolutionAdditionParametersPageB, CPropertyPage)
+//	ON_WM_CREATE()
+//END_MESSAGE_MAP()
 
-
+BEGIN_MESSAGE_MAP_HPP(SolutionAdditionParametersPageB, CPropertyPage)
+	ON_WM_CREATE()
+END_MESSAGE_MAP_HPP()
 
 };
-
-BEGIN_MESSAGE_MAP(SolutionAdditionParametersPageB, CPropertyPage)
-	ON_WM_CREATE()
-END_MESSAGE_MAP()

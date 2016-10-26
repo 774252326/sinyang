@@ -1,8 +1,10 @@
 #pragma once
-#include "listctrlaa.h"
+#include "listctrlaa.hpp"
 //#include "sapitemA.h"
 #include "../struct/sapitemA.hpp"
 #include "../resource.h"
+
+#include "../messagemaphpp.h"
 
 class ListCtrlSAP :
 	public ListCtrlAA
@@ -177,13 +179,22 @@ protected:
 		}
 
 	};
-	DECLARE_MESSAGE_MAP()
 
-};
+//	DECLARE_MESSAGE_MAP()
+//};
+//
+//BEGIN_MESSAGE_MAP(ListCtrlSAP, ListCtrlAA)
+//	ON_WM_CREATE()
+//	ON_NOTIFY_REFLECT(LVN_KEYDOWN, &ListCtrlSAP::OnLvnKeydown)
+//	ON_COMMAND(32806, &ListCtrlSAP::OnPopupInsert)
+//	ON_COMMAND(32807, &ListCtrlSAP::OnPopupRemove)
+//END_MESSAGE_MAP()
 
-BEGIN_MESSAGE_MAP(ListCtrlSAP, ListCtrlAA)
+
+BEGIN_MESSAGE_MAP_HPP(ListCtrlSAP, ListCtrlAA)
 	ON_WM_CREATE()
 	ON_NOTIFY_REFLECT(LVN_KEYDOWN, &ListCtrlSAP::OnLvnKeydown)
 	ON_COMMAND(32806, &ListCtrlSAP::OnPopupInsert)
 	ON_COMMAND(32807, &ListCtrlSAP::OnPopupRemove)
-END_MESSAGE_MAP()
+END_MESSAGE_MAP_HPP()
+};

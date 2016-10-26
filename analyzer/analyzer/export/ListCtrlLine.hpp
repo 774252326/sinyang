@@ -2,6 +2,7 @@
 //#include "rawdataex.h"
 #include "struct1\RawDataEx.hpp"
 
+#include "../messagemaphpp.h"
 // ListCtrlLine
 
 class ListCtrlLine : public CListCtrl
@@ -64,16 +65,20 @@ protected:
 		*pResult = 0;
 	};
 
-	DECLARE_MESSAGE_MAP()
+//	DECLARE_MESSAGE_MAP()
+//};
+//
+//BEGIN_MESSAGE_MAP(ListCtrlLine, CListCtrl)
+//	ON_WM_CREATE()
+//	ON_NOTIFY_REFLECT(LVN_ENDLABELEDIT, &ListCtrlLine::OnLvnEndlabeledit)
+//	ON_NOTIFY_REFLECT(NM_DBLCLK, &ListCtrlLine::OnNMDblclk)
+//	//ON_WM_CLOSE()
+//END_MESSAGE_MAP()
 
-
-
-};
-
-BEGIN_MESSAGE_MAP(ListCtrlLine, CListCtrl)
+BEGIN_MESSAGE_MAP_HPP(ListCtrlLine, CListCtrl)
 	ON_WM_CREATE()
 	ON_NOTIFY_REFLECT(LVN_ENDLABELEDIT, &ListCtrlLine::OnLvnEndlabeledit)
 	ON_NOTIFY_REFLECT(NM_DBLCLK, &ListCtrlLine::OnNMDblclk)
 	//ON_WM_CLOSE()
-END_MESSAGE_MAP()
-
+END_MESSAGE_MAP_HPP()
+};

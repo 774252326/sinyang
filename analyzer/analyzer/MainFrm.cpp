@@ -14,7 +14,7 @@
 
 #include "analyzerView.h"
 //#include "analyzerViewR.h"
-#include "struct1\pcct.hpp"
+
 
 
 #include "user\LoginDlg.hpp"
@@ -43,9 +43,9 @@ typedef struct MYPARA{
 } mypara;
 
 
-const DWORD sleepms=100;
+const DWORD sleepms=1;
 
-const size_t nd=20;
+const size_t nd=1;
 //const size_t nd=sleepms/10;
 
 void WaitSecond(ProcessState &waitflg
@@ -81,7 +81,6 @@ UINT CMainFrame::PROCESS(LPVOID pParam)
 
 	CSingleLock singleLock(&(pDoc->m_CritSection));
 
-	pcct data;
 	std::vector<double> x;
 	std::vector<double> y;
 	size_t rnd;
@@ -195,6 +194,7 @@ UINT CMainFrame::PROCESS(LPVOID pParam)
 
 
 #else
+#include "struct1\pcct.hpp"
 
 UINT CMainFrame::PROCESS(LPVOID pParam)
 {
@@ -1574,9 +1574,6 @@ void CMainFrame::OnUpdateLanguage(CCmdUI *pCmdUI)
 
 void CMainFrame::OnLanguage(UINT id)
 {
-
-
-
 	LangID=nID2LangID(id);
 	ChangeLang();
 }

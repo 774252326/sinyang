@@ -9,6 +9,8 @@
 // ComboItem.h : header file
 //
 
+#include "../messagemaphpp.h"
+
 /////////////////////////////////////////////////////////////////////////////
 // ComboBoxA window
 
@@ -162,13 +164,24 @@ protected:
 
 	//}}AFX_MSG
 
-	DECLARE_MESSAGE_MAP()
+//	DECLARE_MESSAGE_MAP()
+//
+//};
+//
+///////////////////////////////////////////////////////////////////////////////
+//
+//BEGIN_MESSAGE_MAP(ComboBoxA, CComboBox)
+//	//{{AFX_MSG_MAP(ComboBoxA)
+//	ON_WM_NCDESTROY()
+//	ON_WM_CHAR()
+//	//ON_WM_KILLFOCUS()
+//	ON_CONTROL_REFLECT(CBN_CLOSEUP, OnCloseup)
+//	ON_WM_CREATE()
+//	//}}AFX_MSG_MAP
+//END_MESSAGE_MAP()
 
-};
 
-/////////////////////////////////////////////////////////////////////////////
-
-BEGIN_MESSAGE_MAP(ComboBoxA, CComboBox)
+BEGIN_MESSAGE_MAP_HPP(ComboBoxA, CComboBox)
 	//{{AFX_MSG_MAP(ComboBoxA)
 	ON_WM_NCDESTROY()
 	ON_WM_CHAR()
@@ -176,7 +189,8 @@ BEGIN_MESSAGE_MAP(ComboBoxA, CComboBox)
 	ON_CONTROL_REFLECT(CBN_CLOSEUP, OnCloseup)
 	ON_WM_CREATE()
 	//}}AFX_MSG_MAP
-END_MESSAGE_MAP()
+END_MESSAGE_MAP_HPP()
+};
 
 
 //{{AFX_INSERT_LOCATION}}

@@ -11,6 +11,8 @@
 #include "../Resource.h"
 #include "afxdialogex.h"
 
+#include "../messagemaphpp.h"
+
 // UserAccountPage dialog
 
 class UserAccountPage : public CPropertyPage
@@ -137,10 +139,16 @@ public:
 		return CPropertyPage::OnWizardFinish();
 	};
 
-	DECLARE_MESSAGE_MAP()
+//	DECLARE_MESSAGE_MAP()
+//
+//};
+//
+//BEGIN_MESSAGE_MAP(UserAccountPage, CPropertyPage)
+//	ON_WM_CREATE()
+//END_MESSAGE_MAP()
+
+BEGIN_MESSAGE_MAP_HPP(UserAccountPage, CPropertyPage)
+	ON_WM_CREATE()
+END_MESSAGE_MAP_HPP()
 
 };
-
-BEGIN_MESSAGE_MAP(UserAccountPage, CPropertyPage)
-	ON_WM_CREATE()
-END_MESSAGE_MAP()

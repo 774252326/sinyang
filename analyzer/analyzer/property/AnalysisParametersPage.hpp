@@ -7,6 +7,8 @@
 #include "afxdialogex.h"
 #include <cfloat>
 
+#include "../messagemaphpp.h"
+
 // AnalysisParametersPage dialog
 
 class AnalysisParametersPage : public CPropertyPage
@@ -420,13 +422,22 @@ protected:
 		}
 	};
 
-	DECLARE_MESSAGE_MAP()
+//	DECLARE_MESSAGE_MAP()
+//
+//
+//};
+//
+//BEGIN_MESSAGE_MAP(AnalysisParametersPage, CPropertyPage)
+//	ON_CBN_SELCHANGE(IDS_COMBO_ANALYSIS_TYPE, &AnalysisParametersPage::ComboSelectChange)
+//	ON_CBN_SELCHANGE(IDS_COMBO_CALIBRATION_TYPE, &AnalysisParametersPage::CalibrationComboSelectChange)
+//	ON_WM_CREATE()
+//END_MESSAGE_MAP()
 
 
-};
-
-BEGIN_MESSAGE_MAP(AnalysisParametersPage, CPropertyPage)
+BEGIN_MESSAGE_MAP_HPP(AnalysisParametersPage, CPropertyPage)
 	ON_CBN_SELCHANGE(IDS_COMBO_ANALYSIS_TYPE, &AnalysisParametersPage::ComboSelectChange)
 	ON_CBN_SELCHANGE(IDS_COMBO_CALIBRATION_TYPE, &AnalysisParametersPage::CalibrationComboSelectChange)
 	ON_WM_CREATE()
-END_MESSAGE_MAP()
+END_MESSAGE_MAP_HPP()
+
+};

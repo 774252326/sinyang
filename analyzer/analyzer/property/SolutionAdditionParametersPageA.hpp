@@ -2,6 +2,7 @@
 
 #include "../struct\SAPara.hpp"
 #include "../list\ListCtrlSAP.hpp"
+#include "../messagemaphpp.h"
 
 // SolutionAdditionParametersPageA dialog
 
@@ -122,13 +123,14 @@ protected:
 
 		return 0;
 	};
-	DECLARE_MESSAGE_MAP()
 
+//	DECLARE_MESSAGE_MAP()
+//};
+//BEGIN_MESSAGE_MAP(SolutionAdditionParametersPageA, CPropertyPage)
+//	ON_WM_CREATE()
+//END_MESSAGE_MAP()
 
-
-
-
-};
-BEGIN_MESSAGE_MAP(SolutionAdditionParametersPageA, CPropertyPage)
+BEGIN_MESSAGE_MAP_HPP(SolutionAdditionParametersPageA, CPropertyPage)
 	ON_WM_CREATE()
-END_MESSAGE_MAP()
+END_MESSAGE_MAP_HPP()
+};

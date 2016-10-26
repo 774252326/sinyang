@@ -15,6 +15,8 @@
 #include "afxdialogex.h"
 #include "../analyzerView.h"
 
+#include "../messagemaphpp.h"
+
 // PlotSettingPageC dialog
 
 class PlotSettingPageC : public CPropertyPage
@@ -227,11 +229,17 @@ protected:
 		CPropertyPage::OnOK();
 	};
 
-	DECLARE_MESSAGE_MAP()
+//	DECLARE_MESSAGE_MAP()
+//
+//
+//};
+//
+//BEGIN_MESSAGE_MAP(PlotSettingPageC, CPropertyPage)
+//	ON_WM_CREATE()
+//END_MESSAGE_MAP()
 
+BEGIN_MESSAGE_MAP_HPP(PlotSettingPageC, CPropertyPage)
+	ON_WM_CREATE()
+END_MESSAGE_MAP_HPP()
 
 };
-
-BEGIN_MESSAGE_MAP(PlotSettingPageC, CPropertyPage)
-	ON_WM_CREATE()
-END_MESSAGE_MAP()

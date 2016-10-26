@@ -3,9 +3,9 @@
 //
 
 #pragma once
-#include "OutputWnd.h"
+#include "OutputWnd.hpp"
 #include "user\AccountList.hpp"
-//#include "wait\WaitDlg.h"
+#include "wait\WaitDlg.hpp"
 #include "property\PropertySheetA1ML.hpp"
 #include "SplitterWndExA.hpp"
 
@@ -20,9 +20,6 @@ class CMainFrame : public CFrameWndEx
 {
 public:
 	static UINT PROCESS(LPVOID pParam);
-	//static UINT PROCESS0(LPVOID pParam);
-
-
 
 protected: // create from serialization only
 	CMainFrame();
@@ -37,8 +34,8 @@ public:
 	AccountList al;
 	BOOL m_bSplitterCreated;
 	PropertySheetA1ML *psheetml;
-	//WaitDlg *wd;
-	CDialogEx *wd;
+	WaitDlg *wd;
+	//CDialogEx *wd;
 	CWinThread *pWriteA;
 	LANGID LangID;
 	bool bWaitForStop;

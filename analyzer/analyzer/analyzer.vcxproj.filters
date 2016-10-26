@@ -456,25 +456,7 @@
     <ClInclude Include="analyzerView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OutputWnd.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="list\ListCtrlAA.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="list\OutputListA.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="plot\PlotWnd.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="list\ListCtrlB.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="list\ListCtrlC.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="list\EditB.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -494,25 +476,7 @@
     <ClCompile Include="analyzerView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="OutputWnd.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="list\ListCtrlAA.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="list\OutputListA.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="plot\PlotWnd.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="list\ListCtrlB.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="list\ListCtrlC.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="list\EditB.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

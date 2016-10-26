@@ -3,6 +3,8 @@
 #include "AccountComboBox.hpp"
 #include "../Resource.h"
 
+#include "../messagemaphpp.h"
+
 // LoginDlg dialog
 
 class LoginDlg : public CDialogEx
@@ -244,12 +246,19 @@ protected:
 	};
 
 
-	DECLARE_MESSAGE_MAP()
+//	DECLARE_MESSAGE_MAP()
+//
+//
+//};
+//
+//BEGIN_MESSAGE_MAP(LoginDlg, CDialogEx)
+//	ON_WM_CREATE()
+//	ON_WM_CTLCOLOR()
+//END_MESSAGE_MAP()
 
-
-};
-
-BEGIN_MESSAGE_MAP(LoginDlg, CDialogEx)
+BEGIN_MESSAGE_MAP_HPP(LoginDlg, CDialogEx)
 	ON_WM_CREATE()
 	ON_WM_CTLCOLOR()
-END_MESSAGE_MAP()
+END_MESSAGE_MAP_HPP()
+
+};

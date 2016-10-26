@@ -15,11 +15,13 @@
 #include "afxdialogex.h"
 #include "../analyzerView.h"
 
+#include "../messagemaphpp.h"
+
 // PlotSettingPageB dialog
 
 class PlotSettingPageB : public CPropertyPage
 {
-	//DECLARE_DYNAMIC(PlotSettingPageB)
+
 public:
 
 	PlotSpec fs;
@@ -647,14 +649,20 @@ protected:
 
 		return 0;
 	};
-	DECLARE_MESSAGE_MAP()
 
+//	DECLARE_MESSAGE_MAP()
+//};
+//
+//BEGIN_MESSAGE_MAP(PlotSettingPageB, CPropertyPage)
+//	ON_WM_CREATE()
+//	ON_CBN_SELCHANGE(IDS_COMBO_ADJUST, &PlotSettingPageB::AdjustComboSelectChange)
+//	ON_BN_CLICKED(IDS_CHECK_SHOW_LEGEND, &PlotSettingPageB::OnCheck)
+//END_MESSAGE_MAP()
 
-
-};
-
-BEGIN_MESSAGE_MAP(PlotSettingPageB, CPropertyPage)
+BEGIN_MESSAGE_MAP_HPP(PlotSettingPageB, CPropertyPage)
 	ON_WM_CREATE()
 	ON_CBN_SELCHANGE(IDS_COMBO_ADJUST, &PlotSettingPageB::AdjustComboSelectChange)
 	ON_BN_CLICKED(IDS_CHECK_SHOW_LEGEND, &PlotSettingPageB::OnCheck)
-END_MESSAGE_MAP()
+END_MESSAGE_MAP_HPP()
+
+};

@@ -5,7 +5,7 @@
 // WaitDlg dialog
 
 
-
+#include "../messagemaphpp.h"
 
 
 
@@ -160,12 +160,18 @@ protected:
 		DDX_Text(pDX, IDS_EDIT_TIPS, m_tips);
 	};    // DDX/DDV support
 
-	DECLARE_MESSAGE_MAP()
+
+
+
+	BEGIN_MESSAGE_MAP_HPP(WaitDlg, CDialogEx)
+	ON_WM_CREATE()
+	ON_WM_HELPINFO()
+	END_MESSAGE_MAP_HPP()
+
+
+
 
 };
 
-BEGIN_MESSAGE_MAP(WaitDlg, CDialogEx)
 
-	ON_WM_CREATE()
-	ON_WM_HELPINFO()
-END_MESSAGE_MAP()
+

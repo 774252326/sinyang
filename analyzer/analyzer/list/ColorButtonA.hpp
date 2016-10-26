@@ -1,6 +1,7 @@
 #pragma once
 #include "atltypes.h"
 
+#include "../messagemaphpp.h"
 
 // ColorButtonA
 
@@ -32,7 +33,7 @@ protected:
 
 		//if(flag==3)
 		//{
-			//PostMessage(WM_CLOSE);
+		//PostMessage(WM_CLOSE);
 		//}
 	};
 
@@ -129,75 +130,84 @@ protected:
 
 
 	void OnDraw(CDC* pDC, const CRect& rect, UINT uiState)
-{
-	ASSERT_VALID(pDC);
-
-	if (m_pPalette == NULL)
 	{
-		RebuildPalette(NULL);
-	}
+		ASSERT_VALID(pDC);
 
-	CPalette* pCurPalette = pDC->SelectPalette(m_pPalette, FALSE);
-	pDC->RealizePalette();
-
-	CSize sizeArrow = CMenuImages::Size();
-
-	CRect rectColor = rect;
-	
-	COLORREF color = m_Color;
-	if (color == (COLORREF) -1) // Automatic
-	{
-		//---------------------------
-		// Draw automatic text label:
-		//---------------------------
-		color = m_ColorAutomatic;
-		
-	}
-
-	//----------------
-	// Draw color box:
-	//----------------
-	rectColor.DeflateRect(2, 2);
-	pDC->Draw3dRect(rectColor, afxGlobalData.clrBtnHilite, afxGlobalData.clrBtnHilite);
-	rectColor.DeflateRect(1, 1);
-	pDC->Draw3dRect(rectColor, afxGlobalData.clrBtnDkShadow, afxGlobalData.clrBtnDkShadow);
-	rectColor.DeflateRect(1, 1);
-
-	if (color != (COLORREF)-1 &&(uiState & ODS_DISABLED) == 0)
-	{
-		if (afxGlobalData.m_nBitsPerPixel == 8) // 256 colors
+		if (m_pPalette == NULL)
 		{
-			ASSERT_VALID(m_pPalette);
-			color =  PALETTEINDEX(m_pPalette->GetNearestPaletteIndex(color));
+			RebuildPalette(NULL);
 		}
 
-		CBrush br(color);
-		pDC->FillRect(rectColor, &br);
-	}	
+		CPalette* pCurPalette = pDC->SelectPalette(m_pPalette, FALSE);
+		pDC->RealizePalette();
 
-	if (pCurPalette != NULL)
-	{
-		pDC->SelectPalette(pCurPalette, FALSE);
-	}
-};
+		CSize sizeArrow = CMenuImages::Size();
+
+		CRect rectColor = rect;
+
+		COLORREF color = m_Color;
+		if (color == (COLORREF) -1) // Automatic
+		{
+			//---------------------------
+			// Draw automatic text label:
+			//---------------------------
+			color = m_ColorAutomatic;
+
+		}
+
+		//----------------
+		// Draw color box:
+		//----------------
+		rectColor.DeflateRect(2, 2);
+		pDC->Draw3dRect(rectColor, afxGlobalData.clrBtnHilite, afxGlobalData.clrBtnHilite);
+		rectColor.DeflateRect(1, 1);
+		pDC->Draw3dRect(rectColor, afxGlobalData.clrBtnDkShadow, afxGlobalData.clrBtnDkShadow);
+		rectColor.DeflateRect(1, 1);
+
+		if (color != (COLORREF)-1 &&(uiState & ODS_DISABLED) == 0)
+		{
+			if (afxGlobalData.m_nBitsPerPixel == 8) // 256 colors
+			{
+				ASSERT_VALID(m_pPalette);
+				color =  PALETTEINDEX(m_pPalette->GetNearestPaletteIndex(color));
+			}
+
+			CBrush br(color);
+			pDC->FillRect(rectColor, &br);
+		}	
+
+		if (pCurPalette != NULL)
+		{
+			pDC->SelectPalette(pCurPalette, FALSE);
+		}
+	};
 
 	void OnDrawFocusRect(CDC* pDC, const CRect& rectClient)
-{
-	CSize sizeArrow = CMenuImages::Size();
+	{
+		CSize sizeArrow = CMenuImages::Size();
 
-	CRect rectColor = rectClient;	
+		CRect rectColor = rectClient;	
 
-	CMFCButton::OnDrawFocusRect(pDC, rectColor);
+		CMFCButton::OnDrawFocusRect(pDC, rectColor);
+	};
+
+	//	DECLARE_MESSAGE_MAP()
+	//
+	//};
+	//
+	//BEGIN_MESSAGE_MAP(ColorButtonA, CMFCColorButton)
+	//	ON_WM_KILLFOCUS()
+	//	ON_WM_NCDESTROY()
+	//	ON_WM_CREATE()
+	//	ON_WM_SETFOCUS()
+	//END_MESSAGE_MAP()
+
+
+	BEGIN_MESSAGE_MAP_HPP(ColorButtonA, CMFCColorButton)
+		ON_WM_KILLFOCUS()
+		ON_WM_NCDESTROY()
+		ON_WM_CREATE()
+		ON_WM_SETFOCUS()
+		END_MESSAGE_MAP_HPP()
+
 };
-
-	DECLARE_MESSAGE_MAP()
-
-};
-
-
-BEGIN_MESSAGE_MAP(ColorButtonA, CMFCColorButton)
-	ON_WM_KILLFOCUS()
-	ON_WM_NCDESTROY()
-	ON_WM_CREATE()
-	ON_WM_SETFOCUS()
-END_MESSAGE_MAP()

@@ -1,5 +1,5 @@
 #pragma once
-#include "editb.h"
+#include "editb.hpp"
 
 template <typename T>
 class EditC :

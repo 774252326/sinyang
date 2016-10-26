@@ -1,9 +1,10 @@
 #pragma once
 #include "PlotWnd.h"
+#include "../resource.h"
+
+#include "../messagemaphpp.h"
 
 // LegendDlg dialog
-
-
 
 class LegendDlg : public CDialogEx
 {
@@ -22,7 +23,7 @@ public:
 	virtual ~LegendDlg(){};
 
 	// Dialog Data
-	//enum { IDD = IDD_DIALOG4 };
+	enum { IDD = IDD_DIALOG4 };
 
 protected:
 
@@ -76,41 +77,12 @@ protected:
 	{
 		CDialogEx::DoDataExchange(pDX);
 	};    // DDX/DDV support
+	
 
-	DECLARE_MESSAGE_MAP()
+	BEGIN_MESSAGE_MAP_HPP(LegendDlg, CDialogEx) 
+		ON_WM_NCHITTEST()
+		ON_WM_PAINT()
+		ON_WM_MOVE()
+		END_MESSAGE_MAP_HPP() 
 
-	//PTM_WARNING_DISABLE 
-
-	//virtual const AFX_MSGMAP* GetMessageMap() const;
-
-//	const AFX_MSGMAP* PASCAL LegendDlg::GetThisMessageMap() \
-//	{ \
-//		typedef LegendDlg ThisClass;						   \
-//		typedef CDialogEx TheBaseClass;					   \
-//		static const AFX_MSGMAP_ENTRY _messageEntries[] =  \
-//		{
-//
-//			ON_WM_NCHITTEST()
-//ON_WM_PAINT()
-//ON_WM_MOVE()
-//		{0, 0, 0, 0, AfxSig_end, (AFX_PMSG)0 } \
-//	}; \
-//		static const AFX_MSGMAP messageMap = \
-//		{ &TheBaseClass::GetThisMessageMap, &_messageEntries[0] }; \
-//		return &messageMap; \
-//	};								  
-//
-
-
-	//PTM_WARNING_RESTORE
 };
-
-
-		//const AFX_MSGMAP* LegendDlg::GetMessageMap() const \
-		//{ return GetThisMessageMap(); } ;
-//IMPLEMENT_DYNCREATE(LegendDlg, CDialogEx)
-BEGIN_MESSAGE_MAP(LegendDlg, CDialogEx) 
-ON_WM_NCHITTEST()
-ON_WM_PAINT()
-ON_WM_MOVE()
-END_MESSAGE_MAP() 

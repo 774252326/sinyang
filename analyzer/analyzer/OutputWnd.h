@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "list\OutputListA.h"
+#include "list\OutputListA.hpp"
 
 
 class COutputWnd : public CDockablePane

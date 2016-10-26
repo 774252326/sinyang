@@ -4,6 +4,8 @@
 #include "../struct\Value.hpp"
 #include "../list/EditC.hpp"
 
+#include "../messagemaphpp.h"
+
 // ParaList
 
 class ParaList : public CListCtrl
@@ -260,13 +262,23 @@ protected:
 		CListCtrl::DoDataExchange(pDX);
 	};
 
-	DECLARE_MESSAGE_MAP()
-};
+	
+	//DECLARE_MESSAGE_MAP()
+//};
+//
+//BEGIN_MESSAGE_MAP(ParaList, CListCtrl)
+//	ON_WM_CREATE()
+//	ON_NOTIFY_REFLECT(LVN_BEGINLABELEDIT, &ParaList::OnLvnBeginlabeledit)
+//	ON_NOTIFY_REFLECT(NM_CLICK, &ParaList::OnNMClick)
+//	ON_NOTIFY_REFLECT(LVN_ENDLABELEDIT, &ParaList::OnLvnEndlabeledit)
+//	ON_NOTIFY_REFLECT(NM_DBLCLK, &ParaList::OnNMDblclk)
+//END_MESSAGE_MAP()
 
-BEGIN_MESSAGE_MAP(ParaList, CListCtrl)
+	BEGIN_MESSAGE_MAP_HPP(ParaList, CListCtrl)
 	ON_WM_CREATE()
 	ON_NOTIFY_REFLECT(LVN_BEGINLABELEDIT, &ParaList::OnLvnBeginlabeledit)
 	ON_NOTIFY_REFLECT(NM_CLICK, &ParaList::OnNMClick)
 	ON_NOTIFY_REFLECT(LVN_ENDLABELEDIT, &ParaList::OnLvnEndlabeledit)
 	ON_NOTIFY_REFLECT(NM_DBLCLK, &ParaList::OnNMDblclk)
-END_MESSAGE_MAP()
+	END_MESSAGE_MAP_HPP()
+};

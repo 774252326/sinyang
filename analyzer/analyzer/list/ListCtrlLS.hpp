@@ -1,8 +1,10 @@
 #pragma once
-#include "listctrlc.h"
+#include "listctrlc.hpp"
 //#include "linespec.h"
 #include "../struct1/LineSpec.hpp"
 #include "../resource.h"
+
+#include "../messagemaphpp.h"
 
 class ListCtrlLS :
 	public ListCtrlC
@@ -104,9 +106,15 @@ protected:
 		return 0;
 	};
 
-	DECLARE_MESSAGE_MAP()
-};
+//	DECLARE_MESSAGE_MAP()
+//};
+//
+//BEGIN_MESSAGE_MAP(ListCtrlLS, ListCtrlC)
+//	ON_WM_CREATE()
+//END_MESSAGE_MAP()
 
-BEGIN_MESSAGE_MAP(ListCtrlLS, ListCtrlC)
+BEGIN_MESSAGE_MAP_HPP(ListCtrlLS, ListCtrlC)
 	ON_WM_CREATE()
-END_MESSAGE_MAP()
+END_MESSAGE_MAP_HPP()
+
+};

@@ -1,9 +1,11 @@
 #pragma once
-#include "listctrlc.h"
+#include "listctrlc.hpp"
 //#include "UserAccount.h"
 //#include "../struct/UserAccount.hpp"
 #include "../user/UserAccount.hpp"
 #include "../resource.h"
+
+#include "../messagemaphpp.h"
 
 class ListCtrlUA :
 	public ListCtrlC
@@ -163,13 +165,23 @@ protected:
 
 	};
 
-	DECLARE_MESSAGE_MAP()
-};
+//	DECLARE_MESSAGE_MAP()
+//};
+//
+//BEGIN_MESSAGE_MAP(ListCtrlUA, ListCtrlC)
+//	ON_WM_CREATE()
+//	ON_WM_RBUTTONUP()
+//	ON_WM_CONTEXTMENU()
+//	ON_COMMAND(32810, &ListCtrlUA::OnPopupDeleteuser)
+//	ON_COMMAND(32809, &ListCtrlUA::OnPopupAdduser)
+//END_MESSAGE_MAP()
 
-BEGIN_MESSAGE_MAP(ListCtrlUA, ListCtrlC)
+
+BEGIN_MESSAGE_MAP_HPP(ListCtrlUA, ListCtrlC)
 	ON_WM_CREATE()
 	ON_WM_RBUTTONUP()
 	ON_WM_CONTEXTMENU()
 	ON_COMMAND(32810, &ListCtrlUA::OnPopupDeleteuser)
 	ON_COMMAND(32809, &ListCtrlUA::OnPopupAdduser)
-END_MESSAGE_MAP()
+END_MESSAGE_MAP_HPP()
+};

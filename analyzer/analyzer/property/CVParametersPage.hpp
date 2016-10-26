@@ -8,6 +8,8 @@
 #include "afxdialogex.h"
 #include <cfloat>
 
+#include "../messagemaphpp.h"
+
 // CVParametersPage dialog
 
 class CVParametersPage : public CPropertyPage
@@ -192,11 +194,14 @@ protected:
 	};
 
 
-	DECLARE_MESSAGE_MAP()
+//	DECLARE_MESSAGE_MAP()
+//};
+//
+//BEGIN_MESSAGE_MAP(CVParametersPage, CPropertyPage)	
+//	ON_WM_CREATE()
+//END_MESSAGE_MAP()
 
-
-};
-
-BEGIN_MESSAGE_MAP(CVParametersPage, CPropertyPage)	
+BEGIN_MESSAGE_MAP_HPP(CVParametersPage, CPropertyPage)	
 	ON_WM_CREATE()
-END_MESSAGE_MAP()
+END_MESSAGE_MAP_HPP()
+};

@@ -2,6 +2,9 @@
 
 #include "AccountList.hpp"
 #include "../Resource.h"
+
+#include "../messagemaphpp.h"
+
 // AccountComboBox
 
 class AccountComboBox : public CComboBoxEx
@@ -65,10 +68,15 @@ protected:
 		return 0;
 	};
 
-	DECLARE_MESSAGE_MAP()
-};
+//	DECLARE_MESSAGE_MAP()
+//};
+//
+//BEGIN_MESSAGE_MAP(AccountComboBox, CComboBoxEx)
+//	ON_WM_CREATE()
+//END_MESSAGE_MAP()
 
-BEGIN_MESSAGE_MAP(AccountComboBox, CComboBoxEx)
+BEGIN_MESSAGE_MAP_HPP(AccountComboBox, CComboBoxEx)
 	ON_WM_CREATE()
-END_MESSAGE_MAP()
+END_MESSAGE_MAP_HPP()
+};
 

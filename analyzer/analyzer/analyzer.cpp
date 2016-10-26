@@ -39,9 +39,6 @@ END_MESSAGE_MAP()
 // CanalyzerApp construction
 
 CanalyzerApp::CanalyzerApp()
-#ifdef QTT
-	: ar(Libec::instantiateRunner())
-#endif
 {
 	EnableHtmlHelp();
 
@@ -105,11 +102,9 @@ BOOL CanalyzerApp::InitInstance()
 	LANGID LangID=MAKELANGID(LANG_CHINESE_SIMPLIFIED,SUBLANG_CHINESE_SIMPLIFIED);
 	setLg(LangID);
 
-	StartDlg *sd=new StartDlg(IDB_BITMAP11);
-	sd->Create(StartDlg::IDD);
-	sd->ShowWindow(SW_SHOW);
-
-
+	StartDlg sd(IDB_BITMAP11);
+	sd.Create(StartDlg::IDD);
+	sd.ShowWindow(SW_SHOW);
 
 
 	// AfxInitRichEdit2() is required to use RichEdit control	
@@ -164,10 +159,7 @@ BOOL CanalyzerApp::InitInstance()
 	if (!ProcessShellCommand(cmdInfo))
 		return FALSE;
 
-
-	sd->ShowWindow(SW_HIDE);
-	delete sd;
-	sd=NULL;
+	sd.ShowWindow(SW_HIDE);
 
 	((CMainFrame*)m_pMainWnd)->LangID=LangID;
 	if( ((CMainFrame*)m_pMainWnd)->Login(true)!=TRUE )

@@ -2,6 +2,9 @@
 #include "afxdialogex.h"
 #include "resource.h"
 #include <atlimage.h>
+
+#include "../messagemaphpp.h"
+
 // StartDlg dialog
 
 class StartDlg : public CDialogEx
@@ -62,17 +65,13 @@ protected:
 		// EXCEPTION: OCX Property Pages should return FALSE
 	};
 
-	DECLARE_MESSAGE_MAP()
 
+
+	BEGIN_MESSAGE_MAP_HPP(StartDlg, CDialogEx)
+	ON_WM_NCHITTEST()
+END_MESSAGE_MAP_HPP()
 
 
 };
 
 
-//#ifndef STARTMES
-//#define STARTMES
-//BEGIN_MESSAGE_MAP(StartDlg, CDialogEx)
-//	ON_WM_NCHITTEST()
-//END_MESSAGE_MAP()
-//
-//#endif

@@ -7,6 +7,8 @@
 #include "../MainFrm.h"
 #include "../analyzerView.h"
 
+#include "../messagemaphpp.h"
+
 // ComputeDlg dialog
 
 class ComputeDlg : public CDialogEx
@@ -288,12 +290,20 @@ protected:
 		}
 	};
 
-	DECLARE_MESSAGE_MAP()
+//	DECLARE_MESSAGE_MAP()
+//
+//};
+//
+//BEGIN_MESSAGE_MAP(ComputeDlg, CDialogEx)
+//	ON_WM_CREATE()
+//	ON_BN_CLICKED(IDS_BTN_COMPUTE, &ComputeDlg::ClickCompute)
+//	ON_WM_PAINT()
+//END_MESSAGE_MAP()
 
-};
 
-BEGIN_MESSAGE_MAP(ComputeDlg, CDialogEx)
+BEGIN_MESSAGE_MAP_HPP(ComputeDlg, CDialogEx)
 	ON_WM_CREATE()
 	ON_BN_CLICKED(IDS_BTN_COMPUTE, &ComputeDlg::ClickCompute)
 	ON_WM_PAINT()
-END_MESSAGE_MAP()
+END_MESSAGE_MAP_HPP()
+};

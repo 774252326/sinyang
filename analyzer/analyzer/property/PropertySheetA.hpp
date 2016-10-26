@@ -2,6 +2,8 @@
 
 #include "../resource.h"
 
+
+
 // PropertySheetA
 
 class PropertySheetA1 : public CPropertySheet

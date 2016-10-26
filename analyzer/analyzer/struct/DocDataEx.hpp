@@ -937,7 +937,7 @@ public:
 	bool FinalData(RawData & rd, std::vector<DataOutA> & dolast)
 	{
 		UINT f1=ComputeStateData();
-		if(f1==0){
+		if(f1==0 || f1==9 || f1==11 || f1==7){
 
 			std::vector<RawData> rdl;
 			std::vector<CString> xlabellist;

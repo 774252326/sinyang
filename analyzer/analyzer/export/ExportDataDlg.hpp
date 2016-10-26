@@ -1,6 +1,7 @@
 #pragma once
 #include "ListCtrlLine.hpp"
 
+#include "../messagemaphpp.h"
 // ExportDataDlg dialog
 
 class ExportDataDlg : public CDialogEx
@@ -185,11 +186,18 @@ protected:
 		}
 	};
 
-	DECLARE_MESSAGE_MAP()
+//	DECLARE_MESSAGE_MAP()
+//
+//};
+//
+//BEGIN_MESSAGE_MAP(ExportDataDlg, CDialogEx)
+//	ON_WM_CREATE()
+//	ON_BN_CLICKED(IDS_STRING_SELECT_ALL, &ExportDataDlg::OnCheck)
+//END_MESSAGE_MAP()
 
-};
 
-BEGIN_MESSAGE_MAP(ExportDataDlg, CDialogEx)
+BEGIN_MESSAGE_MAP_HPP(ExportDataDlg, CDialogEx)
 	ON_WM_CREATE()
 	ON_BN_CLICKED(IDS_STRING_SELECT_ALL, &ExportDataDlg::OnCheck)
-END_MESSAGE_MAP()
+END_MESSAGE_MAP_HPP()
+};

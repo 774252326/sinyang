@@ -34,7 +34,7 @@ public:
 	float* fy;
 
 public:
-	
+
 	void Release()
 	{			
 		//delete arrayRecorder;
@@ -45,27 +45,27 @@ public:
 
 	void Initialize()
 	{
-						/////open com for the electrochemical analyzer
-	 Libec::initializeSystemSettings(); 
-	runner = Libec::instantiateRunner();
-    if (!Libec::openCom(runner))
-	{
-		qWarning() << __FUNCTION__ << "could not open com port";
-	//	return FALSE;
-	}
+		/////open com for the electrochemical analyzer
+		Libec::initializeSystemSettings(); 
+		runner = Libec::instantiateRunner();
+		if (!Libec::openCom(runner))
+		{
+			qWarning() << __FUNCTION__ << "could not open com port";
+			//	return FALSE;
+		}
 
-	arrayRecorder = new LabviewRecorder(runner->spectator());
-	
+		arrayRecorder = new LabviewRecorder(runner->spectator());
+
 
 	};
 
 	AnalyzerRunner()		
 	{
-	//Initialize();
+		//Initialize();
 	};
 	~AnalyzerRunner()
-		{
-			//Release();
+	{
+		//Release();
 	};
 
 	void RecordData(std::vector<double> &x, std::vector<double> &y)
@@ -122,7 +122,7 @@ public:
 
 		delete []fx;
 		delete []fy;
-				
+
 		fx=new float[NN];
 		fy=new float[NN];
 
@@ -152,7 +152,7 @@ public:
 	float* fy;
 
 public:
-	
+
 	void Release()
 	{			
 		delete []fx;
@@ -161,16 +161,16 @@ public:
 	};
 
 
-	AnalyzerRecorder(RunnerBase * r)
+	AnalyzerRecorder(RunnerBase * r=Libec::instantiateRunner())
 		: LabviewRecorder(r->spectator())
 	{
 		Libec::initializeSystemSettings(); 
 
 		runner=r;
-		 if (!Libec::openCom(runner))
-	{
-		qWarning() << __FUNCTION__ << "could not open com port";
-	}
+		if (!Libec::openCom(runner))
+		{
+			qWarning() << __FUNCTION__ << "could not open com port";
+		}
 
 	};
 
@@ -181,7 +181,6 @@ public:
 
 	void RecordData(std::vector<double> &x, std::vector<double> &y)
 	{
-
 		int ncnt2=m_nCnt;
 		recordAllSeries();
 		m_nCnt = numRecorded();
@@ -196,7 +195,7 @@ public:
 		for(int i=ncnt2;i<m_nCnt;i++)
 		{
 			x[i-ncnt2]=fx[i];
-			y[i-ncnt2]=-fy[i]*1000;
+			y[i-ncnt2]=-1000*fy[i];
 		}
 	};
 
@@ -233,7 +232,7 @@ public:
 
 		delete []fx;
 		delete []fy;
-				
+
 		fx=new float[NN];
 		fy=new float[NN];
 
