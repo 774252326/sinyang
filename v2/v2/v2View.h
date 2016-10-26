@@ -65,6 +65,12 @@ public:
 	virtual void OnInitialUpdate();
 	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
 	CPoint ptc;
+	int lri;
+//	afx_msg void OnEditOpen1();
+	int crossl;
+	int crossw;
+	COLORREF crosscr;
+	afx_msg void OnViewCrosscolor();
 };
 
 #ifndef _DEBUG  // debug version in v2View.cpp

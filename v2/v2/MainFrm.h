@@ -19,7 +19,8 @@ public:
 
 // Operations
 public:
-
+	COutputWnd* GetOutputWnd(){return &m_wndOutput;};
+	CSplitterWnd* GetSplitterWnd(){return &m_wndSplitter;};
 // Overrides
 public:
 	virtual BOOL OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext);

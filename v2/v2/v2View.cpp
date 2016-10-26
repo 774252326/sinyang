@@ -9,10 +9,12 @@
 #include "v2.h"
 #endif
 
-#include "v2Doc.h"
+//#include "v2Doc.h"
 #include "v2View.h"
 
 #include "xRescaleT.h"
+
+#include "MainFrm.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -36,12 +38,17 @@ IMPLEMENT_DYNCREATE(Cv2View, CView)
 		ON_WM_MOUSEMOVE()
 		ON_WM_MOUSEWHEEL()
 		ON_WM_RBUTTONDOWN()
+//		ON_COMMAND(ID_EDIT_OPEN1, &Cv2View::OnEditOpen1)
+ON_COMMAND(ID_VIEW_CROSSCOLOR, &Cv2View::OnViewCrosscolor)
 	END_MESSAGE_MAP()
 
 	// Cv2View construction/destruction
 
 	Cv2View::Cv2View()
-		: ptc(0)
+		//: ptc(0)
+		: lri(0)
+		, crossl(20)
+		, crossw(2)
 	{
 		// TODO: add construction code here
 
@@ -76,25 +83,25 @@ IMPLEMENT_DYNCREATE(Cv2View, CView)
 		CRect plotrect;
 		GetClientRect(&plotrect);
 
-		//HDC hdc=::GetDC(this->GetSafeHwnd());
-
-
 		img.Draw(pDC->GetSafeHdc(),plotrect,imgrect);
-
-		//img.Draw(hdc,rect,imgrect);
-
-		//::ReleaseDC(this->GetSafeHwnd(),hdc);
 
 		CPoint ptdraw;
 
-		ptdraw.y=xRescale(ptc.y, imgrect.bottom, imgrect.top, plotrect.bottom, plotrect.top);
-		ptdraw.x=xRescale(ptc.x, imgrect.left, imgrect.right, plotrect.left, plotrect.right);
+		ptdraw.y=xRescale(pDoc->SelectPoint(lri).y, imgrect.bottom, imgrect.top, plotrect.bottom, plotrect.top);
+		ptdraw.x=xRescale(pDoc->SelectPoint(lri).x, imgrect.left, imgrect.right, plotrect.left, plotrect.right);
 
 		if(plotrect.PtInRect(ptdraw)){
-			pDC->MoveTo(ptdraw.x-10,ptdraw.y);
-			pDC->LineTo(ptdraw.x+10,ptdraw.y);
-			pDC->MoveTo(ptdraw.x,ptdraw.y-10);
-			pDC->LineTo(ptdraw.x,ptdraw.y+10);
+
+				CPen penBlack;
+	penBlack.CreatePen(PS_SOLID, crossw, crosscr);
+	CPen* pOldPen = pDC->SelectObject(&penBlack);
+
+			pDC->MoveTo(ptdraw.x-crossl,ptdraw.y);
+			pDC->LineTo(ptdraw.x+crossl,ptdraw.y);
+			pDC->MoveTo(ptdraw.x,ptdraw.y-crossl);
+			pDC->LineTo(ptdraw.x,ptdraw.y+crossl);
+
+			pDC->SelectObject(pOldPen);
 		}
 
 	}
@@ -282,7 +289,11 @@ IMPLEMENT_DYNCREATE(Cv2View, CView)
 
 		// TODO: Add your specialized code here and/or call the base class
 
-		img.Load(L"C:\\Users\\r8anw2x\\Documents\\MATLAB\\New Folder (4)\\touying\\photo-0001.jpg");
+
+		Cv2Doc* pDoc = GetDocument();
+
+		
+		img.Load(lri==0?pDoc->imgfp0:pDoc->imgfp1);
 
 		GetClientRect(&imgrect);
 
@@ -298,7 +309,7 @@ IMPLEMENT_DYNCREATE(Cv2View, CView)
 	{
 		// TODO: Add your message handler code here and/or call default
 
-
+		Cv2Doc* pDoc = GetDocument();
 		//ScreenToClient(&point);
 		CRect plotrect;
 		this->GetClientRect(&plotrect);
@@ -306,8 +317,37 @@ IMPLEMENT_DYNCREATE(Cv2View, CView)
 		ptc.y=xRescale(point.y, plotrect.bottom, plotrect.top, imgrect.bottom, imgrect.top);
 		ptc.x=xRescale(point.x, plotrect.left, plotrect.right, imgrect.left, imgrect.right);
 
+		pDoc->SelectPoint(lri)=ptc;
+
+		CMainFrame *mf=(CMainFrame*)(GetParentFrame());
+		COutputList* ol=mf->GetOutputWnd()->GetListCtrl();
+
+		ol->ShowRl(pDoc->rl);
+
 		this->Invalidate(FALSE);
 
 
 		CView::OnRButtonDown(nFlags, point);
+	}
+
+
+//	void Cv2View::OnEditOpen1()
+//	{
+//		// TODO: Add your command handler code here
+//	}
+
+
+	void Cv2View::OnViewCrosscolor()
+	{
+		// TODO: Add your command handler code here
+
+
+		CColorDialog colorDlg(crosscr);  
+			if(IDOK == colorDlg.DoModal()){   
+				crosscr = colorDlg.GetColor();
+				this->Invalidate(FALSE);			
+			}
+
+	
+
 	}

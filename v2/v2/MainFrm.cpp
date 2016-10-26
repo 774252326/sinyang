@@ -174,9 +174,11 @@ BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT /*lpcs*/,
 	if(m_bSplitterCreated){
 		m_bSplitterCreated = m_wndSplitter.CreateView(0, 0, RUNTIME_CLASS(Cv2View), CSize(500,500), pContext);
 		//this->LeftPlotPointer()->lri=0;
+		( (Cv2View*)(m_wndSplitter.GetPane(0,0)) )->lri=0;
 		if(m_bSplitterCreated){
 			m_bSplitterCreated = m_wndSplitter.CreateView(0, 1, RUNTIME_CLASS(Cv2View), CSize(500,500), pContext);
 			//this->RightPlotPointer()->lri=1;
+			( (Cv2View*)(m_wndSplitter.GetPane(0,1)) )->lri=1;
 		}
 	}
 

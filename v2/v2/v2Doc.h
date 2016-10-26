@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <vector>
 
 class Cv2Doc : public CDocument
 {
@@ -45,4 +46,19 @@ protected:
 	// Helper function that sets search content for a Search Handler
 	void SetSearchContent(const CString& value);
 #endif // SHARED_HANDLERS
+public:
+	std::vector<CRect> rl;
+
+	CPoint & SelectPoint(int lri);
+private:
+	int idx;
+public:
+//	afx_msg void OnEditOpen1();
+	CString imgfp0;
+	CString imgfp1;
+//	afx_msg void OnEditAdd();
+	int AddRect(const CRect & rect);
+	int DelRect(int di);
+	int SetSelectIndex(int i);
+	afx_msg void OnEditHetu();
 };
