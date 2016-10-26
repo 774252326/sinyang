@@ -7,12 +7,12 @@
 #include "z3Dlg.h"
 #include "afxdialogex.h"
 
-#include "funT\readcsvT.h"
-#include "funT\calgridT.h"
-#include "funT\findmT.h"
-#include "funT\nrutilT.h"
-#include "funT\xRescaleT.h"
-#include "funT\avgsmoothT.h"
+#include "../../funT\readcsvT.h"
+#include "../../funT\calgridT.h"
+#include "../../funT\findmT.h"
+#include "../../funT\nrutilT.h"
+#include "../../funT\xRescaleT.h"
+#include "../../funT\avgsmoothT.h"
 #include "gettwoknee.h"
 
 #ifdef _DEBUG
@@ -322,7 +322,7 @@ void Cz3Dlg::OnPaint()
 		//}
 		/////////////////////////////////////////////////////////////////
 
-				CClientDC pDC(this);
+		CClientDC pDC(this);
 
 
 		CRect windrect;
@@ -350,7 +350,7 @@ void Cz3Dlg::OnPaint()
 		//»æÍ¼
 
 
-				CPen pen;
+		CPen pen;
 
 		if(isLoad){
 
@@ -484,7 +484,7 @@ void Cz3Dlg::PreInitDialog()
 
 
 //bool Cz3Dlg::DrawXYAxis(CRect rect, CPaintDC * pdc)
-	bool Cz3Dlg::DrawXYAxis(CRect rect, CDC * pdc)
+bool Cz3Dlg::DrawXYAxis(CRect rect, CDC * pdc)
 {
 
 	if(rect.IsRectEmpty()){
@@ -493,83 +493,310 @@ void Cz3Dlg::PreInitDialog()
 	}
 	else{
 
-		CPoint ptOffset1(rect.left,rect.top);
-		CPoint ptOffset2(rect.left,rect.bottom);
-		CPoint ptOffset3(rect.right,rect.top);
-		CPoint ptOffset4(rect.right,rect.bottom);
+		//CPoint ptOffset1(rect.left,rect.top);
+		//CPoint ptOffset2(rect.left,rect.bottom);
+		//CPoint ptOffset3(rect.right,rect.top);
+		//CPoint ptOffset4(rect.right,rect.bottom);
 
-		//draw axis
-		CPen pen(PS_SOLID, 1, red);
-		CPen * pOldPen=pdc->SelectObject(&pen);
-		pdc->MoveTo(ptOffset1);
-		pdc->LineTo(ptOffset2);
+		////draw axis
+		//CPen pen(PS_SOLID, 1, red);
+		//CPen * pOldPen=pdc->SelectObject(&pen);
+		//pdc->MoveTo(ptOffset1);
+		//pdc->LineTo(ptOffset2);
+		//pdc->LineTo(ptOffset4);
+
+
+		////draw metric
+
+		//CFont font;
+		//font.CreatePointFont(75,L"MS Gothic",NULL);
+		//int lc=5;
+		//double gridi;
+		//CString str;
+
+		//CSize sz;
+
+		//int tmp;
+
+		//double resox=pow(10.0,calgrid(m_xmax-m_xmin));
+
+
+		//for(gridi=resox*ceil(m_xmin/resox);gridi<=m_xmax;gridi+=resox){
+
+		//	tmp=ptRsl(gridi,0.0,rect).x;
+		//	pdc->MoveTo(tmp,rect.bottom);
+		//	pdc->LineTo(tmp,rect.bottom+lc);
+
+		//	str.Format(L"%.1e",gridi);
+
+		//	pdc->SelectObject(&font);
+
+		//	sz=pdc->GetTextExtent(str);
+
+		//	pdc->TextOutW(tmp-sz.cx/2,rect.bottom+lc,str);
+		//}
+
+
+
+		//double resoy=pow(10.0,calgrid(m_ymax-m_ymin));
+
+		//for(gridi=resoy*ceil(m_ymin/resoy);gridi<=m_ymax;gridi+=resoy){
+
+		//	tmp=ptRsl(0.0,gridi,rect).y;
+		//	pdc->MoveTo(rect.left,tmp);
+		//	pdc->LineTo(rect.left-lc,tmp);
+		//	str.Format(L"%.1e",gridi);
+
+		//	pdc->SelectObject(&font);
+
+		//	sz=pdc->GetTextExtent(str);
+
+		//	pdc->TextOutW(rect.left-lc-sz.cx,tmp-sz.cy/2,str);
+		//}
+
+		//font.DeleteObject();
+
+		////draw axis label
+		//font.CreatePointFont(200,L"MS Gothic",NULL);
+		//str.Format(L"time(s)");
+		//pdc->SelectObject(&font);
+		//sz=pdc->GetTextExtent(str);
+		//pdc->TextOutW(rect.right-sz.cx,rect.bottom-sz.cy,str);
+		//str.Format(L"current(A)");
+		//pdc->SelectObject(&font);
+		//sz=pdc->GetTextExtent(str);
+		//pdc->TextOutW(rect.left,rect.top,str);
+
+		//pdc->SelectObject(pOldPen);
+		//pen.DeleteObject();
+
+
+		////////////////////////////////////////////////////////////////
+
+
+		CPoint ptOffset1(rect.left,rect.top);//y
+		CPoint ptOffset2(rect.left,rect.bottom);//origin
+		CPoint ptOffset3(rect.right,rect.top);
+		CPoint ptOffset4(rect.right,rect.bottom);//x
+		CFont font;
+		CFont *pOldFont;
+		CString str;
+		CPen * pOldPen;
+		CSize sz;
+		CRect newrect=rect;
+		CPoint textLocate;
+		CPen pen;
+		int metricH=10;
+		int labelH=20;
+		int lc=5;
+		int lcs=lc-2;
+		double gridi,XMAX,XMIN,YMAX,YMIN;
+		int tmp;
+		COLORREF oc;
+		CRect xmrect(rect.left,rect.bottom+lc,rect.left,rect.bottom+lc);
+		CRect ymrect(rect.left-lc,rect.bottom,rect.left-lc,rect.bottom);
+		XMAX=m_xmax;
+		XMIN=m_xmin;
+		YMAX=m_ymax;
+		YMIN=m_ymin;
+
+		CString fontName=L"Arial";
+
+		////////////////////////////////////////////////////////////////////
+
+
+		//draw x axis
+
+		pen.CreatePen(PS_SOLID, 1, red);
+		pOldPen=pdc->SelectObject(&pen);
+		pdc->MoveTo(ptOffset2);
 		pdc->LineTo(ptOffset4);
 
-
-		//draw metric
-
-		CFont font;
-		font.CreatePointFont(75,L"MS Gothic",NULL);
-		int lc=5;
-		double gridi;
-		CString str;
-
-		CSize sz;
-
-		int tmp;
-
-		double resox=pow(10.0,calgrid(m_xmax-m_xmin));
+		//draw x metric
 
 
-		for(gridi=resox*ceil(m_xmin/resox);gridi<=m_xmax;gridi+=resox){
+		font.CreateFont(
+			metricH,                        // nHeight
+			0,                         // nWidth
+			0,                         // nEscapement
+			0,                         // nOrientation
+			FW_NORMAL,                 // nWeight
+			FALSE,                     // bItalic
+			FALSE,                     // bUnderline
+			0,                         // cStrikeOut
+			ANSI_CHARSET,              // nCharSet
+			OUT_DEFAULT_PRECIS,        // nOutPrecision
+			CLIP_DEFAULT_PRECIS,       // nClipPrecision
+			DEFAULT_QUALITY,           // nQuality
+			DEFAULT_PITCH | FF_SWISS,  // nPitchAndFamily
+			fontName);                 // lpszFacename
 
-			tmp=ptRsl(gridi,0.0,rect).x;
+		pOldFont=pdc->SelectObject(&font);
+
+		double resox=pow(10.0,calgrid(XMAX-XMIN));
+
+		//double resox=calreso(XMAX-XMIN);
+
+		for(gridi=resox*ceil(XMIN/resox);gridi<=XMAX;gridi+=resox){
+
+			tmp=xRescale(gridi,XMIN,XMAX,rect.left,rect.right);
 			pdc->MoveTo(tmp,rect.bottom);
-			pdc->LineTo(tmp,rect.bottom+lc);
+			pdc->LineTo(tmp,rect.bottom+lcs);
 
 			str.Format(L"%.1e",gridi);
-
-			pdc->SelectObject(&font);
-
 			sz=pdc->GetTextExtent(str);
+			textLocate.x=tmp-sz.cx/2;
+			textLocate.y=rect.bottom+lc;
+			if(xmrect.right<textLocate.x){
+				if(textLocate.x+sz.cx<rect.right){
+					pdc->TextOutW(textLocate.x,textLocate.y,str);
+					xmrect.right=textLocate.x+sz.cx;
+					xmrect.bottom=textLocate.y+sz.cy;
 
-			pdc->TextOutW(tmp-sz.cx/2,rect.bottom+lc,str);
+					pdc->MoveTo(tmp,rect.bottom);
+					pdc->LineTo(tmp,rect.bottom+lc);
+				}
+				TRACE("%d,",sz.cy);
+			}
 		}
-
-
-
-		double resoy=pow(10.0,calgrid(m_ymax-m_ymin));
-
-		for(gridi=resoy*ceil(m_ymin/resoy);gridi<=m_ymax;gridi+=resoy){
-
-			tmp=ptRsl(0.0,gridi,rect).y;
-			pdc->MoveTo(rect.left,tmp);
-			pdc->LineTo(rect.left-lc,tmp);
-			str.Format(L"%.1e",gridi);
-
-			pdc->SelectObject(&font);
-
-			sz=pdc->GetTextExtent(str);
-
-			pdc->TextOutW(rect.left-lc-sz.cx,tmp-sz.cy/2,str);
-		}
-
+		newrect.bottom+=lc+sz.cy;
+		pdc->SelectObject(pOldFont);
 		font.DeleteObject();
-
-		//draw axis label
-		font.CreatePointFont(200,L"MS Gothic",NULL);
-		str.Format(L"time(s)");
-		pdc->SelectObject(&font);
-		sz=pdc->GetTextExtent(str);
-		pdc->TextOutW(rect.right-sz.cx,rect.bottom-sz.cy,str);
-		str.Format(L"current(A)");
-		pdc->SelectObject(&font);
-		sz=pdc->GetTextExtent(str);
-		pdc->TextOutW(rect.left,rect.top,str);
-
 		pdc->SelectObject(pOldPen);
 		pen.DeleteObject();
 
+
+		//draw x axis label
+		font.CreateFont(
+			labelH,                        // nHeight
+			0,                         // nWidth
+			0,                         // nEscapement
+			0,                         // nOrientation
+			FW_NORMAL,                 // nWeight
+			FALSE,                     // bItalic
+			FALSE,                     // bUnderline
+			0,                         // cStrikeOut
+			ANSI_CHARSET,              // nCharSet
+			OUT_DEFAULT_PRECIS,        // nOutPrecision
+			CLIP_DEFAULT_PRECIS,       // nClipPrecision
+			DEFAULT_QUALITY,           // nQuality
+			DEFAULT_PITCH | FF_SWISS,  // nPitchAndFamily
+			fontName);                 // lpszFacename
+		oc=pdc->SetTextColor(green);
+		//font.CreatePointFont(200,L"MS Gothic",NULL);
+		str.Format(L"time(s)");
+		//str=dt1.label[0];
+		pOldFont=pdc->SelectObject(&font);
+		sz=pdc->GetTextExtent(str);
+		//pdc->SetTextAlign(TA_UPDATECP);
+		pdc->TextOutW(rect.CenterPoint().x-(sz.cx/2),newrect.bottom,str);
+		pdc->SelectObject(pOldFont);
+		font.DeleteObject();
+		pdc->SetTextColor(oc);
+		TRACE("%d,",sz.cy);
+		newrect.bottom+=sz.cy;
+
+		///////////////////////////////////////////////////////
+
+
+
+
+		//draw y axis
+
+		pen.CreatePen(PS_SOLID, 1, red);
+		pOldPen=pdc->SelectObject(&pen);
+		pdc->MoveTo(ptOffset2);
+		pdc->LineTo(ptOffset1);
+
+
+
+		font.CreateFont(
+			metricH,                        // nHeight
+			0,                         // nWidth
+			900,                         // nEscapement
+			0,                         // nOrientation
+			FW_NORMAL,                 // nWeight
+			FALSE,                     // bItalic
+			FALSE,                     // bUnderline
+			0,                         // cStrikeOut
+			ANSI_CHARSET,              // nCharSet
+			OUT_DEFAULT_PRECIS,        // nOutPrecision
+			CLIP_DEFAULT_PRECIS,       // nClipPrecision
+			DEFAULT_QUALITY,           // nQuality
+			DEFAULT_PITCH | FF_SWISS,  // nPitchAndFamily
+			fontName);                 // lpszFacename
+
+
+		//draw y metric
+		//double resoy=calreso(YMAX-YMIN);
+		double resoy=pow(10.0,calgrid(YMAX-YMIN));
+		pOldFont=pdc->SelectObject(&font);
+		for(gridi=resoy*ceil(YMIN/resoy);gridi<=YMAX;gridi+=resoy){
+			tmp=xRescale(gridi,YMIN,YMAX,rect.bottom,rect.top);
+			pdc->MoveTo(rect.left,tmp);
+			pdc->LineTo(rect.left-lcs,tmp);
+			str.Format(L"%.1e",gridi);
+			sz=pdc->GetTextExtent(str);
+			//pdc->TextOutW(rect.left-lc-sz.cy,tmp+sz.cx/2,str);
+			//TRACE("%d,",sz.cy);
+
+
+			textLocate.x=rect.left-lc-sz.cy;
+			textLocate.y=tmp+sz.cx/2;
+			if(ymrect.top>textLocate.y){
+				if(textLocate.y-sz.cx>rect.top){
+					pdc->TextOutW(textLocate.x,textLocate.y,str);
+					ymrect.left=textLocate.x;
+					ymrect.top=textLocate.y-sz.cx;
+
+					pdc->MoveTo(rect.left,tmp);
+					pdc->LineTo(rect.left-lc,tmp);
+				}
+				TRACE("%d,",sz.cy);
+			}
+
+
+		}
+		newrect.left-=lc+sz.cy;
+		pdc->SelectObject(pOldFont);
+		font.DeleteObject();
+		pdc->SelectObject(pOldPen);
+		pen.DeleteObject();
+
+
+
+		//draw y axis label
+		font.CreateFont(
+			labelH,                        // nHeight
+			0,                         // nWidth
+			900,                         // nEscapement
+			0,                         // nOrientation
+			FW_NORMAL,                 // nWeight
+			FALSE,                     // bItalic
+			FALSE,                     // bUnderline
+			0,                         // cStrikeOut
+			ANSI_CHARSET,              // nCharSet
+			OUT_DEFAULT_PRECIS,        // nOutPrecision
+			CLIP_DEFAULT_PRECIS,       // nClipPrecision
+			DEFAULT_QUALITY,           // nQuality
+			DEFAULT_PITCH | FF_SWISS,  // nPitchAndFamily
+			fontName);                 // lpszFacename
+
+		oc=pdc->SetTextColor(green);
+
+		str.Format(L"current(A)");
+		//str=dt1.label[1];
+		pOldFont=pdc->SelectObject(&font);
+		sz=pdc->GetTextExtent(str);
+		pdc->TextOutW(newrect.left-sz.cy,rect.CenterPoint().y+(sz.cx/2),str);
+		pdc->SelectObject(pOldFont);
+		font.DeleteObject();
+		TRACE("%d,",sz.cy);
+		pdc->SetTextColor(oc);
+		newrect.left-=sz.cy;
+
+
+		/////////////////////////////////////////////////////////////////
 		return true;
 	}
 
@@ -579,7 +806,7 @@ void Cz3Dlg::PreInitDialog()
 }
 
 //bool Cz3Dlg::DrawXYAxis2(CRect rect, CPaintDC * pdc)
-	bool Cz3Dlg::DrawXYAxis2(CRect rect, CDC * pdc)
+bool Cz3Dlg::DrawXYAxis2(CRect rect, CDC * pdc)
 {
 
 	if(rect.IsRectEmpty()){
@@ -716,7 +943,7 @@ CPoint Cz3Dlg::ptRsl(double x, double y, CRect can)
 
 
 //void Cz3Dlg::DrawPolyline(CRect rect, CPaintDC * pdc, CPen * pPen, double * x, double * y, long nd)
-	void Cz3Dlg::DrawPolyline(CRect rect, CDC * pdc, CPen * pPen, double * x, double * y, long nd)
+void Cz3Dlg::DrawPolyline(CRect rect, CDC * pdc, CPen * pPen, double * x, double * y, long nd)
 {
 
 
@@ -1051,7 +1278,7 @@ void Cz3Dlg::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 
 // draw a vertical line at x
 //void Cz3Dlg::DrawVLine(CRect rect, CPaintDC * dc, CPen * pen, double x)
-	void Cz3Dlg::DrawVLine(CRect rect, CDC * dc, CPen * pen, double x)
+void Cz3Dlg::DrawVLine(CRect rect, CDC * dc, CPen * pen, double x)
 {
 	CPen* pOldPen=dc->SelectObject(pen);
 	dc->MoveTo(ptRsl(x,0,rect).x,rect.bottom);
@@ -1061,7 +1288,7 @@ void Cz3Dlg::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 
 
 //void Cz3Dlg::DrawDiff(CRect rect, CPaintDC * dc, CPen * pPen, double x1, double x2)
-	void Cz3Dlg::DrawDiff(CRect rect, CDC * dc, CPen * pPen, double x1, double x2)
+void Cz3Dlg::DrawDiff(CRect rect, CDC * dc, CPen * pPen, double x1, double x2)
 {
 	CPen* pOldPen=dc->SelectObject(pPen);
 
@@ -1138,7 +1365,7 @@ BOOL Cz3Dlg::OnEraseBkgnd(CDC* pDC)
 {
 	// TODO: Add your message handler code here and/or call default
 
-	//return true;
+	return true;
 
 	return CDialogEx::OnEraseBkgnd(pDC);
 }
@@ -1150,8 +1377,8 @@ void Cz3Dlg::OnSize(UINT nType, int cx, int cy)
 
 	// TODO: Add your message handler code here
 	if(isInit){
-	resize(cx,cy);
-	Invalidate();
+		resize(cx,cy);
+		Invalidate();
 	}
 
 }
