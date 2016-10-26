@@ -514,3 +514,18 @@ double pcct::intg2(double xtop)
 
 	return 0;
 }
+
+
+void pcct::SetTimeIntv(double intv)
+{
+	if(time.size()>2){	
+		size_t i=1;
+		if(intv==0){
+			intv=time[1]-time[0];
+			i=2;
+		}
+		for(;i<time.size();i++){
+			time[i]=intv+time[i-1];
+		}
+	}
+}

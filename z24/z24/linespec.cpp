@@ -2,7 +2,6 @@
 //
 
 #include "stdafx.h"
-//#include "analyzer.h"
 #include "linespec.h"
 
 
@@ -15,6 +14,7 @@ LineSpec::LineSpec()
 	, smoothLine(0)
 	, traceLast(false)
 	, colour(0)
+	, lineWidth(1)
 {
 }
 
@@ -23,16 +23,6 @@ LineSpec::~LineSpec()
 }
 
 
-//LineSpec::LineSpec(const LineSpec &src)
-//{
-//	colour=src.colour;
-//	name=src.name;
-//	dotSize=src.dotSize;
-//	lineType=src.lineType;
-//	smoothLine=src.smoothLine;
-//	traceLast=src.traceLast;	
-//
-//}
 
 void LineSpec::operator=(const LineSpec &src)
 {
@@ -41,7 +31,8 @@ void LineSpec::operator=(const LineSpec &src)
 	dotSize=src.dotSize;
 	lineType=src.lineType;
 	smoothLine=src.smoothLine;
-	traceLast=src.traceLast;	
+	traceLast=src.traceLast;
+	lineWidth=src.lineWidth;
 }
 
 // linespec member functions
@@ -56,7 +47,8 @@ void LineSpec::Serialize(CArchive& ar)
 			<<dotSize
 			<<lineType
 			<<smoothLine
-			<<traceLast;
+			<<traceLast
+			<<lineWidth;
 	}
 	else
 	{	// loading code
@@ -65,6 +57,7 @@ void LineSpec::Serialize(CArchive& ar)
 			>>dotSize
 			>>lineType
 			>>smoothLine
-			>>traceLast;
+			>>traceLast
+			>>lineWidth;
 	}
 }

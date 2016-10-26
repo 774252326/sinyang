@@ -36,6 +36,7 @@ BEGIN_MESSAGE_MAP(PlotWnd, CWnd)
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSEWHEEL()
 	ON_WM_CREATE()
+	ON_WM_NCHITTEST()
 END_MESSAGE_MAP()
 
 
@@ -260,4 +261,14 @@ int PlotWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	ModifyStyle(0, SS_NOTIFY);
 	//this->SetFocus();
 	return 0;
+}
+
+
+LRESULT PlotWnd::OnNcHitTest(CPoint point)
+{
+	// TODO: Add your message handler code here and/or call default
+
+	//return HTCAPTION;
+
+	return CWnd::OnNcHitTest(point);
 }

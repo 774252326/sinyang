@@ -19,6 +19,8 @@ public:
 	int smoothLine;//0~2
 	bool traceLast;
 	virtual void Serialize(CArchive& ar);
+protected:
+	int lineWidth;
 };
 
 

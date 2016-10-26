@@ -14,6 +14,8 @@
 
 #include "funT\avgsmoothT.h"
 
+#include "tuodlg.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -66,6 +68,7 @@ BEGIN_MESSAGE_MAP(Cz24Dlg, CDialogEx)
 	ON_EN_CHANGE(IDC_EDIT9, &Cz24Dlg::OnEnChangeEdit9)
 	ON_WM_CREATE()
 	ON_WM_LBUTTONDOWN()
+	ON_BN_CLICKED(IDC_BUTTON3, &Cz24Dlg::OnBnClickedButton3)
 END_MESSAGE_MAP()
 
 
@@ -167,11 +170,7 @@ void Cz24Dlg::OnBnClickedButton1()
 		pcct a;
 		a.readFile1(m_fp);
 		a.TomA();
-
-		double intv=a.time[1]-a.time[0];
-		for(size_t i=2;i<a.time.size();i++){
-			a.time[i]=intv+a.time[i-1];
-		}
+		a.SetTimeIntv();
 		
 		LineSpec ls;
 		ls.colour=RGB(255,0,0);
@@ -377,4 +376,17 @@ void Cz24Dlg::OnLButtonDown(UINT nFlags, CPoint point)
 	//pw.SetFocus();
 
 	//CDialogEx::OnLButtonDown(nFlags, point);
+}
+
+
+void Cz24Dlg::OnBnClickedButton3()
+{
+	// TODO: Add your control notification handler code here
+
+	tuodlg *td;
+	//td.DoModal();
+	td=new tuodlg();
+	td->Create(IDD_DIALOG1,this);
+	td->ShowWindow(SW_SHOW);
+
 }

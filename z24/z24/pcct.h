@@ -55,5 +55,8 @@ public:
 	double intg1();
 
 	double intg2(double xtop);
+
+
+	void SetTimeIntv(double intv=0);
 };
 

@@ -54,4 +54,5 @@ public:
 	PlotWnd pw;
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnBnClickedButton3();
 };
