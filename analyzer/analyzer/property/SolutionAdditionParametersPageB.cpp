@@ -21,6 +21,8 @@ SolutionAdditionParametersPageB::SolutionAdditionParametersPageB()
 	m_psp.dwFlags = m_psp.dwFlags | PSP_USETITLE ; 	
 	m_psp.pszTitle = new TCHAR[title.GetLength()+1];
 	_tcscpy((wchar_t*)m_psp.pszTitle, title);
+
+	m_psp.dwFlags &=~PSP_HASHELP;
 }
 
 SolutionAdditionParametersPageB::~SolutionAdditionParametersPageB()

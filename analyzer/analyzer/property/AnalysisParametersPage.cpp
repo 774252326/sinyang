@@ -20,6 +20,8 @@ IMPLEMENT_DYNAMIC(AnalysisParametersPage, CPropertyPage)
 	m_psp.dwFlags = m_psp.dwFlags | PSP_USETITLE ; 	
 	m_psp.pszTitle = new TCHAR[title.GetLength()+1];
 	_tcscpy((wchar_t*)m_psp.pszTitle, title);
+
+	m_psp.dwFlags &=~PSP_HASHELP;
 }
 
 
@@ -57,6 +59,7 @@ BEGIN_MESSAGE_MAP(AnalysisParametersPage, CPropertyPage)
 
 	ON_WM_CREATE()
 
+	ON_WM_HELPINFO()
 END_MESSAGE_MAP()
 
 
@@ -422,3 +425,13 @@ void AnalysisParametersPage::CalibrationComboSelectChange(void)
 
 
 
+
+
+BOOL AnalysisParametersPage::OnHelpInfo(HELPINFO* pHelpInfo)
+{
+	// TODO: Add your message handler code here and/or call default
+
+
+
+	return CPropertyPage::OnHelpInfo(pHelpInfo);
+}

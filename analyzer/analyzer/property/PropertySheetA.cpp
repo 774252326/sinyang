@@ -13,13 +13,16 @@ IMPLEMENT_DYNAMIC(PropertySheetA1, CPropertySheet)
 PropertySheetA1::PropertySheetA1(UINT nIDCaption, CWnd* pParentWnd, UINT iSelectPage)
 	:CPropertySheet(nIDCaption, pParentWnd, iSelectPage)
 {
-
+	m_psh.dwFlags &= ~PSH_HASHELP;
+	m_psh.dwFlags |= PSH_NOAPPLYNOW;
 }
 
 PropertySheetA1::PropertySheetA1(LPCTSTR pszCaption, CWnd* pParentWnd, UINT iSelectPage)
 	:CPropertySheet(pszCaption, pParentWnd, iSelectPage)
 {
+	m_psh.dwFlags &= ~PSH_HASHELP;
 
+	m_psh.dwFlags |= PSH_NOAPPLYNOW;
 }
 
 PropertySheetA1::~PropertySheetA1()
@@ -59,6 +62,9 @@ BOOL PropertySheetA1::OnInitDialog()
 	str.LoadStringW(IDS_STRING_APPLY);
 	GetDlgItem(ID_APPLY_NOW)->SetWindowTextW(str);
 
+	str.LoadStringW(IDS_STRING_HELP);
+	GetDlgItem(IDHELP)->SetWindowTextW(str);
+
 	return bResult;
 }
 
@@ -67,7 +73,7 @@ BOOL PropertySheetA1::OnHelpInfo(HELPINFO* pHelpInfo)
 {
 	// TODO: Add your message handler code here and/or call default
 
-	AfxMessageBox(L"help",MB_ICONSTOP  );
+	//AfxMessageBox(L"help",MB_ICONSTOP  );
 
 	return CPropertySheet::OnHelpInfo(pHelpInfo);
 }

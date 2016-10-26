@@ -24,8 +24,7 @@ SolutionAdditionParametersPageA::SolutionAdditionParametersPageA()
 	m_psp.pszTitle = new TCHAR[title.GetLength()+1];
 	_tcscpy((wchar_t*)m_psp.pszTitle, title);
 
-	//typeidx=1;
-	//totaln=7;
+m_psp.dwFlags &=~PSP_HASHELP;
 }
 
 SolutionAdditionParametersPageA::~SolutionAdditionParametersPageA()

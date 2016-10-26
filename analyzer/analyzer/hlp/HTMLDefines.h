@@ -1,11 +1,70 @@
  
 // Commands (ID_* and IDM_*) 
+#define HID_STATUSBAR_PANE1                     0x10078
+#define HID_STATUSBAR_PANE2                     0x10079
+#define HID_VIEW_CUSTOMIZE                      0x1007E
+#define HID_VIEW_OUTPUTWND                      0x10095
+#define HID_SET_STYLE                           0x100C9
+#define HID_VIEW_APPLOOK_WIN_2000               0x100CD
+#define HID_VIEW_APPLOOK_OFF_XP                 0x100CE
+#define HID_VIEW_APPLOOK_WIN_XP                 0x100CF
+#define HID_VIEW_APPLOOK_OFF_2003               0x100D0
+#define HID_VIEW_APPLOOK_VS_2005                0x100D1
+#define HID_VIEW_APPLOOK_VS_2008                0x100D2
+#define HID_VIEW_APPLOOK_OFF_2007_BLUE          0x100D7
+#define HID_VIEW_APPLOOK_OFF_2007_BLACK         0x100D8
+#define HID_VIEW_APPLOOK_OFF_2007_SILVER        0x100D9
+#define HID_VIEW_APPLOOK_OFF_2007_AQUA          0x100DA
+#define HID_VIEW_APPLOOK_WINDOWS_7              0x100DB
+#define HID_VIEW_CAPTION_BAR                    0x100DD
+#define HID_ANALYSIS_METHODSETUP                0x18003
+#define HID_HELP_HELPTOPICS                     0x18003
+#define HID_ANALYSIS_STARTANALYSIS              0x18004
+#define HID_ANALYSIS_PAUSE                      0x18005
+#define HID_ANALYSIS_ABORTANALYSIS              0x18006
+#define HID_ANALYSIS_COMPUTE                    0x18007
+#define HID_ANALYSIS_REPORT                     0x18008
+#define HID_ANALYSIS_DATALISTING                0x18008
+#define HID_ANALYSIS_EXPORTDATA                 0x18009
+#define HID_CONTROLS_1                          0x1800A
+#define HID_CONTROLS_2                          0x1800B
+#define HID_CONTROLS_CHANGESAP                  0x1800C
+#define HID_OPTIONS_PLOTSETTINGS                0x1800D
+#define HID_VIEW_FITWINDOW                      0x1800E
+#define HID_VIEW_DATACURSOR                     0x1800F
+#define HID_VIEW_ANALYSIS_PROGRESS              0x18010
+#define HID_VIEW_TOOLBAR_A                      0x18011
+#define HID_SECURITY_LOGIN                      0x18012
+#define HID_SECURITY_USERACCOUNTS               0x18013
+#define HID_LANGUAGE_CHINESE                    0x18014
+#define HID_LANGUAGE_ENGLISH                    0x18015
+#define HID_POPUP_INSERT                        0x18016
+#define HID_VIEW_TOOLBARA                       0x18016
+#define HID_POPUP_REMOVE                        0x18017
+#define HID_POPUP_REMOVEALL                     0x18018
+#define HID_POPUP_ADDUSER                       0x18019
+#define HID_POPUP_DELETEUSER                    0x1801A
+#define HID_FILE_CLOSE                          0x1E102
  
 // Prompts (IDP_*) 
+#define HIDP_OLE_INIT_FAILED                    0x30064
  
 // Resources (IDR_*) 
+#define HIDR_HELP_MENU                          0x20076
+#define HIDR_POPUP_EDIT                         0x20077
+#define HIDR_MAINFRAME                          0x20080
+#define HIDR_MAINFRAME_256                      0x20081
+#define HIDR_analyzerTYPE                       0x20082
+#define HIDR_OUTPUT_POPUP                       0x200B6
+#define HIDR_THEME_MENU                         0x200C8
+#define HIDR_LIST_POPUP                         0x20137
+#define HIDR_LISTUA_POPUP                       0x20138
  
 // Dialogs (IDD_*) 
+#define HIDD_ABOUTBOX                           0x20064
+#define HIDD_DIALOG4                            0x20139
+#define HIDD_DIALOG_LOGIN                       0x2014D
+#define HIDD_DIALOG_START                       0x2015E
  
 // Frame Controls (IDW_*) 
 // This is a part of the Microsoft Foundation Classes C++ library.

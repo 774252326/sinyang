@@ -34,6 +34,7 @@ void WaitDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(WaitDlg, CDialogEx)
 
 	ON_WM_CREATE()
+	ON_WM_HELPINFO()
 END_MESSAGE_MAP()
 
 
@@ -148,4 +149,16 @@ int WaitDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	btnIDOK.SetFocus();
 
 	return 0;
+}
+
+
+BOOL WaitDlg::OnHelpInfo(HELPINFO* pHelpInfo)
+{
+	// TODO: Add your message handler code here and/or call default
+
+	//pHelpInfo->iContextType=HELPINFO_MENUITEM;
+	//pHelpInfo->iCtrlId=ID_ANALYSIS_PAUSE;
+	//pHelpInfo->hItemHandle=this->GetParentFrame()->GetSafeHwnd();
+
+	return CDialogEx::OnHelpInfo(pHelpInfo);
 }

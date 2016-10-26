@@ -80,12 +80,12 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 
 		// TODO: add draw code for native data here
 
-		if(bPrint && pw.pdex!=NULL){
+		//if(bPrint && pw.pdex!=NULL){
 			//CRect rect;
 			//this->GetClientRect(&rect);
 			//pw.pdex->DrawEx(rect,pDC);
 			//bPrint=false;
-		}
+		//}
 	}
 
 
@@ -398,12 +398,12 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 	{
 		// TODO: Add your specialized code here and/or call the base class
 
-		if(/*bPrint &&*/ pw.pdex!=NULL){
-			CRect rect;
-			this->GetClientRect(&rect);
-			pw.pdex->DrawEx(rect,pDC);
-			//bPrint=false;
-		}
+		//if(/*bPrint &&*/ pw.pdex!=NULL){
+		//	CRect rect;
+		//	this->GetClientRect(&rect);
+		//	pw.pdex->DrawEx(rect,pDC);
+		//	//bPrint=false;
+		//}
 
 		CView::OnPrint(pDC, pInfo);
 	}

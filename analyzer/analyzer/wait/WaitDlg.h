@@ -32,4 +32,5 @@ public:
 
 	StaticEdit EditIDS_EDIT_TIPS;
 	CButton btnIDOK;
+	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
 };

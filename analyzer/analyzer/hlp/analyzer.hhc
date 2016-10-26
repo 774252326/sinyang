@@ -18,12 +18,20 @@
 			<param name="Local" value="menu_file.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="Edit menu commands">
-			<param name="Local" value="menu_edit.htm">
+			<param name="Name" value="Analysis menu commands">
+			<param name="Local" value="menu_analysis.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="View menu commands">
 			<param name="Local" value="menu_view.htm">
+			</OBJECT>
+								<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Security menu commands">
+			<param name="Local" value="menu_security.htm">
+			</OBJECT>
+					<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Language menu commands">
+			<param name="Local" value="menu_language.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="Help menu commands">

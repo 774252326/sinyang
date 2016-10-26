@@ -84,6 +84,23 @@ hid_file_page_setup.htm
 hid_file_print.htm
 hid_file_print_preview.htm
 hid_file_print_setup.htm
+hid_analysis_abort_analysis.htm
+hid_analysis_analysis_setup.htm
+hid_analysis_compute.htm
+hid_analysis_export_data.htm
+hid_analysis_pause_resume.htm
+hid_analysis_report.htm
+hid_analysis_start_analysis.htm
+hid_view_analysis_progress.htm
+hid_view_application_look.htm
+hid_view_data_cursor.htm
+hid_view_fit_window.htm
+hid_view_plot_settings.htm
+hid_security_login.htm
+hid_security_user_accounts.htm
+menu_analysis.htm
+menu_language.htm
+menu_security.htm
 
 [ALIAS]
 HIDR_MAINFRAME = main_index.htm
@@ -147,11 +164,29 @@ hid_window_tile						= hid_window_tile.htm
 hid_window_tile_horz				= hid_window_tile_horz.htm
 hid_window_tile_vert				= hid_window_tile_vert.htm
 hidr_doc1type						= hidr_doc1type.htm
+hid_analysis_abortanalysis=hid_analysis_abort_analysis.htm
+hid_analysis_methodsetup=hid_analysis_analysis_setup.htm
+hid_analysis_compute=hid_analysis_compute.htm
+hid_analysis_exportdata=hid_analysis_export_data.htm
+hid_analysis_pause=hid_analysis_pause_resume.htm
+hid_analysis_report=hid_analysis_report.htm
+hid_analysis_startanalysis=hid_analysis_start_analysis.htm
+hid_view_analysis_progress=hid_view_analysis_progress.htm
+hid_view_applook_off_2007_blue=hid_view_application_look.htm
+hid_view_datacursor=hid_view_data_cursor.htm
+hid_view_fitwindow=hid_view_fit_window.htm
+hid_options_plotsettings=hid_view_plot_settings.htm
+hid_security_login=hid_security_login.htm
+hid_security_useraccounts=hid_security_user_accounts.htm
+hID_VIEW_TOOLBAR_A=hid_view_toolbar.htm
 menu_edit							= menu_edit.htm
 menu_file							= menu_file.htm
 menu_help							= menu_help.htm
 menu_view							= menu_view.htm
 menu_window							= menu_window.htm
+menu_analysis=menu_analysis.htm
+menu_language=menu_language.htm
+menu_security=menu_security.htm
 scrollbars							= scrollbars.htm
 afx_hidd_print						= afx_hidd_print.htm
 afx_hidd_printdlg					= afx_hidd_printdlg.htm
@@ -162,6 +197,9 @@ hid_file_print						= hid_file_print.htm
 hid_file_print_preview				= hid_file_print_preview.htm
 hid_file_print_setup				= hid_file_print_setup.htm
 HIDD_ABOUTBOX						= HID_APP_ABOUT.htm
+hidd_dialog_login=hid_security_login.htm
+hidd_dialog_start=hid_view_plot_settings.htm
+hidd_dialog4=hid_security_user_accounts.htm
 HID_HT_SIZE							= HID_SC_SIZE.htm
 HID_HT_HSCROLL						= scrollbars.htm
 HID_HT_VSCROLL						= scrollbars.htm
