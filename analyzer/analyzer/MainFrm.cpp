@@ -16,11 +16,61 @@
 #include "tipsdlg.h"
 #include "CSpline.cpp"
 #include "AnalysisSetupPage.h"
-#include "C:\\Users\\G\\Dropbox\\W\\funT\\smsp.h"
+//#include "C:\\Users\\G\\Dropbox\\W\\funT\\smsp.h"
+
+#include "C:\\Users\\r8anw2x\\Dropbox\\W\\funT\\smsp.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+
+
+
+
+void readini(CString fp, ANPara &p1t, CVPara &p2t, SAPara &p3t)
+{
+	CFile theFile;
+	if(theFile.Open(fp, CFile::modeRead)!=FALSE){
+		CArchive archive(&theFile, CArchive::load);
+
+		p1t.Serialize(archive);
+		p2t.Serialize(archive);
+		p3t.Serialize(archive);
+
+		archive.Close();
+		theFile.Close();
+	}
+}
+
+void writeini(CString fp, ANPara &p1t, CVPara &p2t, SAPara &p3t)
+{
+	CFile theFile;
+	if(theFile.Open(fp, CFile::modeCreate | CFile::modeWrite)!=FALSE){
+		CArchive archive(&theFile, CArchive::store);
+
+		p1t.Serialize(archive);
+		p2t.Serialize(archive);
+		p3t.Serialize(archive);
+
+		archive.Close();
+		theFile.Close();
+	}
+}
+
+bool calVsupp(const PlotData & pdat, double evoR, double &Vsupp)
+{
+	std::vector<double> c1(4,0);
+	std::vector< std::vector<double> > c(pdat.xll.size()-1,c1);
+	smspl(pdat.xll,pdat.yll,1.0,c);
+	std::vector<double> r;
+	int ni=SolveCubicPP(pdat.xll,c,evoR,r);
+	if(ni<=0){
+		return false;
+	}
+	Vsupp=r.back();
+	return true;
+
+}
 
 // CMainFrame
 
@@ -50,6 +100,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_TOOLBARA, &CMainFrame::OnUpdateViewToolbara)
 	ON_COMMAND(ID_ANALYSIS_METHODSETUP, &CMainFrame::OnAnalysisMethodsetup)
 	ON_COMMAND(ID_FILE_SAVE, &CMainFrame::OnFileSave)
+	ON_COMMAND(ID_ANALYSIS_STARTANALYSIS, &CMainFrame::OnAnalysisStartanalysis)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -73,6 +124,7 @@ CMainFrame::CMainFrame()
 	, rowCount(0)
 	, totalVolume(0)
 	, timer2(0)
+	, AnalysisSetupINI(_T("as.txt"))
 {
 	// TODO: add member initialization code here
 	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_VS_2008);
@@ -522,67 +574,99 @@ void CMainFrame::OnFileOpen()
 
 	if( fileDlg.DoModal()==IDOK)
 	{
-		dat.clear();
-		( (dlg1*)m_wndSplitter.GetPane(0,0) )->clear();
-		( (dlg1*)m_wndSplitter.GetPane(0,1) )->clear();
-		m_wndOutput.clear();
+		//dat.clear();
+		//( (dlg1*)m_wndSplitter.GetPane(0,0) )->clear();
+		//( (dlg1*)m_wndSplitter.GetPane(0,1) )->clear();
+		//m_wndOutput.clear();
 
 
 
-		//CString m_filePath=L"C:\\Users\\r8anw2x\\Dropbox\\W\\data\\a.txt";
+		////CString m_filePath=L"C:\\Users\\r8anw2x\\Dropbox\\W\\data\\a.txt";
+		//CString m_filePath=fileDlg.GetPathName();
+
+		////CString folderpath=fileDlg.GetFolderPath();
+		//CString folderpath=m_filePath.Left(m_filePath.ReverseFind('\\'));
+		////CString folderpath=L"C:\\Users\\r8anw2x\\Dropbox\\W\\data";
+
+
+		//std::vector<CString> filelist;
+		//CStdioFile file;
+		//BOOL readflag;
+		//readflag=file.Open(m_filePath, CFile::modeRead);
+
+		//if(readflag)
+		//{	
+		//	CString strRead;
+
+		//	//TRACE("\n--Begin to read file");
+		//	while(file.ReadString(strRead)){
+		//		strRead=folderpath+"\\"+strRead;
+		//		filelist.push_back(strRead);
+		//	}
+		//	//TRACE("\n--End reading\n");
+		//	file.Close();
+		//}
+
+		//AnalysisSetupINI=filelist.back();
+		//filelist.pop_back();
+
+		//for(size_t i=0;i<filelist.size();i++){
+		//	pcct dt1;
+		//	dt1.readFile(filelist[i]);
+		//	//dt1.seperate();
+		//	//dt1.AR=dt1.intg(0.8);
+
+		//	dt1.TomA();
+		//	dat.push_back(dt1);
+		//}
+
+
+
+		//finishflag=true;
+		//finishflag2=true;
+		//totalVolume=0;
+		//Ar0=0;	
+		//stepCount=0;
+		//rowCount=0;
+
+		////mreadini(AnalysisSetupINI.GetBuffer(),p1,p2,p3);
+
+		//CFile theFile;
+		//theFile.Open(AnalysisSetupINI, CFile::modeRead);
+		//CArchive archive(&theFile, CArchive::load);
+
+		//p1.Serialize(archive);
+		//p2.Serialize(archive);
+		//p3.Serialize(archive);
+
+		//archive.Close();
+		//theFile.Close();
+
+		//datt.clear();
+		//datt.xmax=p2.highelimit;
+		//datt.xmin=p2.lowelimit;
+		//datt.spv=1/p2.scanrate;
+		//datt.intgUpLim=p2.endintegratione;
+		//datt.nCycle=p2.noofcycles;
+
+		//this->OnOptions();
+		////////////////////////////////////////////////////////////////////////////////
+
+
 		CString m_filePath=fileDlg.GetPathName();
 
-		//CString folderpath=fileDlg.GetFolderPath();
-		CString folderpath=m_filePath.Left(m_filePath.ReverseFind('\\'));
-		//CString folderpath=L"C:\\Users\\r8anw2x\\Dropbox\\W\\data";
+		ANPara p1t;
+		CVPara p2t;
+		SAPara p3t;
 
+		readini(m_filePath,p1t,p2t,p3t);
+		writeini(AnalysisSetupINI,p1t,p2t,p3t);
 
-		std::vector<CString> filelist;
-		CStdioFile file;
-		BOOL readflag;
-		readflag=file.Open(m_filePath, CFile::modeRead);
-
-		if(readflag)
-		{	
-			CString strRead;
-
-			//TRACE("\n--Begin to read file");
-			while(file.ReadString(strRead)){
-				strRead=folderpath+"\\"+strRead;
-				filelist.push_back(strRead);
-			}
-			//TRACE("\n--End reading\n");
-			file.Close();
-		}
-
-		for(size_t i=0;i<filelist.size();i++){
-			pcct dt1;
-			dt1.readFile(filelist[i]);
-			//dt1.seperate();
-			//dt1.AR=dt1.intg(0.8);
-
-			dt1.TomA();
-			dat.push_back(dt1);
-		}
-
-
-
-		finishflag=true;
-		finishflag2=true;
-		totalVolume=0;
-		Ar0=0;	
-		stepCount=0;
-		rowCount=0;
-
-		mreadini(L"pa.txt",p1,p2,p3);
-		datt.clear();
-		datt.xmax=p2.highelimit;
-		datt.xmin=p2.lowelimit;
-		datt.spv=1/p2.scanrate;
-		datt.intgUpLim=p2.endintegratione;
-		datt.nCycle=p2.noofcycles;
-
-		this->OnOptions();
+		CString strTemp;
+		strTemp=L"setup file "+m_filePath+L" loaded";
+		m_wndCaptionBar.SetTextA(strTemp,true);
+		m_wndCaptionBar.ShowWindow(SW_SHOW);
+		RecalcLayout(FALSE);
 	}
 }
 
@@ -591,7 +675,8 @@ void CMainFrame::OnViewFitwindow()
 {
 	// TODO: Add your command handler code here
 
-	( (dlg1*)m_wndSplitter.GetActivePane() )->showall();
+	( (dlg1*)m_wndSplitter.GetActivePane() )->updatePlotRange();
+	( (dlg1*)m_wndSplitter.GetActivePane() )->Invalidate();
 
 }
 
@@ -630,48 +715,120 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 			if( dat.empty() || stepCount>p3.saplist.size() ){
 				finishflag2=true;
 				KillTimer(timer1);
-
-
-
-
-				( (dlg1*)m_wndSplitter.GetPane(0,1) )->SaveFile(L"af.txt");
-				( (dlg1*)m_wndSplitter.GetPane(0,0) )->SaveFile(L"af0.txt");
-
-				//( (dlg1*)m_wndSplitter.GetPane(0,0) )->ReadFile(L"af.txt");
-				//( (dlg1*)m_wndSplitter.GetPane(0,0) )->showall();
-				//( (dlg1*)m_wndSplitter.GetPane(0,1) )->ReadFile(L"af0.txt");
-				//( (dlg1*)m_wndSplitter.GetPane(0,1) )->showall();
-
-				CFile theFile;
-				theFile.Open(L"af.txt", CFile::modeRead);
-				CArchive archive(&theFile, CArchive::load);
-				PlotData pdat;
-				pdat.Serialize(archive);
-				archive.Close();
-				theFile.Close();
-
-
-				std::vector<double> c1(4,0);
-				std::vector< std::vector<double> > c(pdat.xll.size()-1,c1);
-				smspl(pdat.xll,pdat.yll,1.0,c);
-				std::vector<double> r;
-				int ni=SolveCubicPP(pdat.xll,c,p1.evaluationratio,r);
-
-				CString str;
-				str.Format(L" Vsupp=%g ml @ Ar/Ar0=%g Z=%g ml/L",r.back(), p1.evaluationratio, p3.saplist[0].Sconc/(1+p3.vmsvol/r.back()));
-				//AfxMessageBox(str);
-
 				CString strTemp;
 				//ASSERT
 				(strTemp.LoadString(IDS_STRING_OVER));
-				m_wndCaptionBar.SetTextA(strTemp+str);
+
+				////////////////////////////Record calibration curve of suppressor///////////////////////////////
+				if(p1.analysistype==1){
+					dlg1 *plotr=( (dlg1*)m_wndSplitter.GetPane(0,1) );
+					double vsupp;
+					if(calVsupp(plotr->pd,p1.evaluationratio,vsupp)){
+						double z=p3.saplist[0].Sconc/(1+p3.vmsvol/vsupp);
+						CString str;
+						str.Format(L" Vsupp=%g ml @ Ar/Ar0=%g, Z=%g ml/L",vsupp, p1.evaluationratio, z);
+						strTemp+=str;
+					}
+					else{
+						CString str;
+						str.Format(L"invalid Vsupp @ Ar/Ar0=%g",p1.evaluationratio);
+						strTemp+=str;
+					}
+				}
+				///////////////////////////////////////end/////////////////////////////////////////////////
+
+
+				///////////////////////////////////Analyze suppressor by DT method/////////////////////////////////
+				if(p1.analysistype==2){
+
+					dlg1 *plotr=( (dlg1*)m_wndSplitter.GetPane(0,1) );
+
+					double Vsuppbath;
+					/////////////////compute Vsuppbath///////////////////////////
+					if(calVsupp(plotr->pd,p1.evaluationratio,Vsuppbath)){						
+						{
+							CString str;
+							str.Format(L" Vsuppbath=%g ml @ Ar/Ar0=%g",Vsuppbath, p1.evaluationratio);
+							strTemp+=str;
+						}
+						//////////////////////////load standrad suppressor parameters///////////////////////////////
+						double Sconc=8.5;
+						double vmsvol=25;
+						double evor=0.5;
+						{
+							ANPara p1t;
+							CVPara p2t;
+							SAPara p3t;
+							readini(L"../setupB.txt",p1t,p2t,p3t);
+							Sconc=p3t.saplist.back().Sconc;
+							vmsvol=p3t.vmsvol;
+							evor=p1t.evaluationratio;
+						}
+						///////////////////////////////////////end/////////////////////////////////////////////////
+
+						double z;
+						/////////////////////////////////////load calibration factor z///////////////////////////////////			
+						if(p1.calibrationfactortype==0){
+							if(p1.evaluationratio==evor){
+								z=p1.calibrationfactor;
+								CString str;
+								str.Format(L", Z=%g ml/L, Csuppbath=%g ml/L", z, z*(1+p3.vmsvol/Vsuppbath));
+								strTemp+=str;
+							}
+							else{
+								CString str;
+								str.Format(L", invalid evoluation ratio for standrad suppressor");
+								strTemp+=str;
+							}
+						}
+						///////////////////////////////////////end/////////////////////////////////////////////////
+
+						///////////////////////////////////compute calibration factor z from curve//////////////////////////////
+						if(p1.calibrationfactortype==1){
+
+							double Vsuppstd;
+							PlotData pdat;
+							pdat.ReadFile(p1.calibrationfilepath);
+							if(calVsupp(pdat,p1.evaluationratio,Vsuppstd)){
+								z=Sconc/(1+vmsvol/Vsuppstd);
+								/////////////////////////plot standrad curve////////////////////////
+								pdat.ps.back().colour=red;
+								pdat.ps.back().name=L"standrad";
+								plotr->pd.AppendData(pdat);
+								plotr->updatePlotRange();
+								plotr->Invalidate();
+								///////////////////////////////////////end/////////////////////////////////////////////////
+								CString str;
+								str.Format(L", Z=%g ml/L, Csuppbath=%g ml/L", z, z*(1+p3.vmsvol/Vsuppbath));
+								strTemp+=str;
+							}
+							else{
+								CString str;
+								str.Format(L", invalid evoluation ratio for standrad suppressor");
+								strTemp+=str;
+							}
+						}
+						///////////////////////////////////////end/////////////////////////////////////////////////
+
+					}
+					else{
+						CString str;
+						str.Format(L" invalid Vsuppbath @ Ar/Ar0=%g",p1.evaluationratio);
+						strTemp+=str;
+					}
+					///////////////////////////////////////end/////////////////////////////////////////////////
+				}
+				///////////////////////////////////////end/////////////////////////////////////////////////
+
+
+				m_wndCaptionBar.SetTextA(strTemp);
 				m_wndCaptionBar.ShowButton(false);
 
 
 			}
 			else{
 
-				size_t n1=810;
+				size_t n1=800;
 
 				std::vector<double> x;
 				std::vector<double> y;
@@ -741,9 +898,6 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 
 	case 2:
 		{
-			//bool aa=(m_wndCaptionBar.m_clrBarText==black);
-			//m_wndCaptionBar.m_clrBarText=aa ? red : black;
-			//m_wndCaptionBar.Invalidate();
 		}
 		break;
 	default:
@@ -794,11 +948,15 @@ void CMainFrame::plot1(const std::vector<double> & x, const std::vector<double> 
 		ps1.showLine=true;
 		ps1.smoothLine=0;
 		ps1.traceLast=true;
-		( (dlg1*)m_wndSplitter.GetPane(0,0) )->plot2d(x,y,ps1,xlabel,ylabel);
+		( (dlg1*)m_wndSplitter.GetPane(0,0) )->pd.AddNew(x,y,ps1,xlabel,ylabel);
+		( (dlg1*)m_wndSplitter.GetPane(0,0) )->updatePlotRange();
 	}
 	else{
-		( (dlg1*)m_wndSplitter.GetPane(0,0) )->plot2dfollow(x,y);
+		( (dlg1*)m_wndSplitter.GetPane(0,0) )->pd.AddFollow(x,y);
+		( (dlg1*)m_wndSplitter.GetPane(0,0) )->updatePlotRange(x,y);
 	}
+	( (dlg1*)m_wndSplitter.GetPane(0,0) )->Invalidate();
+
 }
 
 
@@ -815,14 +973,14 @@ void CMainFrame::plot2(const std::vector<double> & x, const std::vector<double> 
 		ps1.showLine=true;
 		ps1.smoothLine=1;
 		ps1.traceLast=false;
-		( (dlg1*)m_wndSplitter.GetPane(0,1) )->plot2d(x,y,ps1,xlabel,ylabel);
+		( (dlg1*)m_wndSplitter.GetPane(0,1) )->pd.AddNew(x,y,ps1,xlabel,ylabel);
 		finishflag2=false;
 	}
 	else{
-		( (dlg1*)m_wndSplitter.GetPane(0,1) )->plot2dfollow(x,y);
+		( (dlg1*)m_wndSplitter.GetPane(0,1) )->pd.AddFollow(x,y);
 	}
-	//( (dlg1*)m_wndSplitter.GetPane(0,1) )->smoothLine();
-	( (dlg1*)m_wndSplitter.GetPane(0,1) )->showall();
+	( (dlg1*)m_wndSplitter.GetPane(0,1) )->updatePlotRange();
+	( (dlg1*)m_wndSplitter.GetPane(0,1) )->Invalidate();
 }
 
 
@@ -840,14 +998,10 @@ void CMainFrame::OnAnalysisMethodsetup()
 	//sheet.SetWizardMode();   
 	//sheet.SetWindowPos(&CWnd::wndTopMost,10,10,800,600,SWP_SHOWWINDOW);
 
+		readini(AnalysisSetupINI,sheet.APdlg.para,sheet.CVPdlg.para,sheet.SAPdlg.para);
 	// 打开模态向导对话框   
 	if(sheet.DoModal()==IDOK){
-
-		mwriteini(L"pa.txt", sheet.APdlg.para, sheet.CVPdlg.para, sheet.SAPdlg.para);
-
-		//CString str;
-		//str.Format(L"%g",(double)sheet.APdlg.para.analysistype);
-		//AfxMessageBox(str);
+	writeini(AnalysisSetupINI,sheet.APdlg.para,sheet.CVPdlg.para,sheet.SAPdlg.para);
 	}
 
 }
@@ -862,4 +1016,111 @@ void CMainFrame::OnFileSave()
 	//( (dlg1*)m_wndSplitter.GetPane(0,1) )->SaveFile(L"af.txt");
 
 	//( (dlg1*)m_wndSplitter.GetPane(0,1) )->ReadFile(L"af.txt");
+}
+
+
+
+
+
+void CMainFrame::OnAnalysisStartanalysis()
+{
+	// TODO: Add your command handler code here
+
+	//////////////////////////////////load analysis parameters/////////////////////////////////////
+	CFile theFile;
+	if(theFile.Open(AnalysisSetupINI, CFile::modeRead)==FALSE){
+		AfxMessageBox(L"open setup ini error");
+		return;
+	}
+
+	CArchive archive(&theFile, CArchive::load);
+
+	p1.Serialize(archive);
+	p2.Serialize(archive);
+	p3.Serialize(archive);
+
+	archive.Close();
+	theFile.Close();
+
+	datt.clear();
+	datt.xmax=p2.highelimit;
+	datt.xmin=p2.lowelimit;
+	datt.spv=1/p2.scanrate;
+	datt.intgUpLim=p2.endintegratione;
+	datt.nCycle=p2.noofcycles;
+
+	//////////////////////////////load data//////////////////////////////////////
+	CString m_filePath;
+
+	if(p1.analysistype==1){
+		//m_filePath=L"C:\\Users\\r8anw2x\\Dropbox\\W\\data\\b.txt";
+		m_filePath=L"data\\b.txt";
+	}
+	else{
+		if(p1.analysistype==2){
+			//m_filePath=L"C:\\Users\\r8anw2x\\Dropbox\\W\\data\\c.txt";
+			m_filePath=L"data\\c.txt";
+		}
+		else{
+			return;
+		}
+	}
+
+	//CString m_filePath=L"C:\\Users\\r8anw2x\\Dropbox\\W\\data\\a.txt";
+	//CString m_filePath=fileDlg.GetPathName();
+
+	//CString folderpath=fileDlg.GetFolderPath();
+	CString folderpath=m_filePath.Left(m_filePath.ReverseFind('\\'));
+	//CString folderpath=L"C:\\Users\\r8anw2x\\Dropbox\\W\\data";
+
+
+	dat.clear();
+
+	std::vector<CString> filelist;
+	CStdioFile file;
+	BOOL readflag;
+	readflag=file.Open(m_filePath, CFile::modeRead);
+
+	if(readflag)
+	{	
+		CString strRead;
+
+		//TRACE("\n--Begin to read file");
+		while(file.ReadString(strRead)){
+			strRead=folderpath+"\\"+strRead;
+			filelist.push_back(strRead);
+		}
+		//TRACE("\n--End reading\n");
+		file.Close();
+	}
+
+
+	for(size_t i=0;i<filelist.size();i++){
+		pcct dt1;
+		dt1.readFile(filelist[i]);
+		//dt1.seperate();
+		//dt1.AR=dt1.intg(0.8);
+
+		dt1.TomA();
+		dat.push_back(dt1);
+	}
+
+	//////////////////////////clear window/////////////////////////////////
+
+	( (dlg1*)m_wndSplitter.GetPane(0,0) )->clear();
+	( (dlg1*)m_wndSplitter.GetPane(0,1) )->clear();
+	m_wndOutput.clear();
+
+
+	finishflag=true;
+	finishflag2=true;
+	totalVolume=0;
+	Ar0=0;	
+	stepCount=0;
+	rowCount=0;
+
+	////////////////////////////start tick///////////////////////////////////
+	this->OnOptions();
+
+
 }

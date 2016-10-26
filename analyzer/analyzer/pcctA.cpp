@@ -31,14 +31,14 @@ int pcctA::addXY(std::vector<double> & x, std::vector<double> & y)
 		size_t index=itx-x.begin();
 
 		//if(StartLoad){
-		if(!xx.empty()){
+		if(!xx.empty() && index>0){
 			xx.back().resize(xx.back().size()+index);
 			std::copy_backward(x.begin(),x.begin()+index,xx.back().end());
 
 			yy.back().resize(yy.back().size()+index);
 			std::copy_backward(y.begin(),y.begin()+index,yy.back().end());
 
-			if( xx.back().size()>2 && xx.back().back()==xx.back()[1] ){
+			if( xx.back().size()>2 && xx.back().back()==xx.back()[1] /*&& xx.back()[xx.back().size()-2]!=xx.back().front()*/ ){
 				Ar.push_back(intg());
 				if( xx.size() >= nCycle ){
 					flag=2;

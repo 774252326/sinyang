@@ -69,7 +69,7 @@ int AnalysisSetupPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 
 
-	mreadini(L"pa.txt",APdlg.para,CVPdlg.para,SAPdlg.para);
+	//mreadini(L"pb.txt",APdlg.para,CVPdlg.para,SAPdlg.para);
 
 
 

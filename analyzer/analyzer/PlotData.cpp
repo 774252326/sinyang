@@ -145,7 +145,44 @@ void PlotData::clear(void)
 	yll.clear();
 	ll.clear();
 	ps.clear();
-	//xmin=xmax=ymin=ymax=0;
 	xlabel.Empty();
 	ylabel.Empty();
+}
+
+
+void PlotData::SaveFile(CString fp)
+{
+	CFile theFile;
+	theFile.Open(fp, CFile::modeCreate | CFile::modeWrite);
+	CArchive archive(&theFile, CArchive::store);
+
+	Serialize(archive);
+
+	archive.Close();
+	theFile.Close();
+}
+
+
+void PlotData::ReadFile(CString fp)
+{
+	CFile theFile;
+	theFile.Open(fp, /*CFile::modeCreate |*/ CFile::modeRead);
+	CArchive archive(&theFile, CArchive::load);
+	Serialize(archive);
+	archive.Close();
+	theFile.Close();
+}
+
+void PlotData::AppendData(const PlotData & pda)
+{
+	xll.resize(xll.size()+pda.xll.size());
+	std::copy_backward(pda.xll.begin(),pda.xll.end(),xll.end());
+	yll.resize(yll.size()+pda.yll.size());
+	std::copy_backward(pda.yll.begin(),pda.yll.end(),yll.end());
+	ll.resize(ll.size()+pda.ll.size());
+	std::copy_backward(pda.ll.begin(),pda.ll.end(),ll.end());
+	ps.resize(ps.size()+pda.ps.size());
+	std::copy_backward(pda.ps.begin(),pda.ps.end(),ps.end());
+	xlabel=pda.xlabel;
+	ylabel=pda.ylabel;
 }

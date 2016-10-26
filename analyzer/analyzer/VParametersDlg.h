@@ -1,6 +1,7 @@
 #pragma once
 
-#include "typedefine.h"
+//#include "typedefine.h"
+#include "VPara.h"
 
 // CVParametersDlg dialog
 
@@ -23,7 +24,8 @@ public:
 	virtual BOOL OnInitDialog();
 	virtual BOOL OnSetActive();
 
-	cvp para;
+	//cvp para;
+	CVPara para;
 	virtual BOOL OnKillActive();
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	void ComboSelectChange(void);

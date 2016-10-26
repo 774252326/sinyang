@@ -6,8 +6,11 @@
 #include "OutputWnd.h"
 #include "pcct.h"
 #include "pcctA.h"
-#include "typedefine.h"
+//#include "typedefine.h"
 #include "MFCCaptionBarA.h"
+#include "ANPara.h"
+#include "SAPara.h"
+#include "VPara.h"
 
 class CMainFrame : public CFrameWndEx
 {
@@ -92,10 +95,17 @@ public:
 	int timer2;
 	afx_msg void OnAnalysisMethodsetup();
 
-	anp p1;
-	cvp p2;
-	sap p3;
+	//anp p1;
+	//cvp p2;
+	//sap p3;
+	ANPara p1;
+	CVPara p2;
+	SAPara p3;
+
 	afx_msg void OnFileSave();
+	CString AnalysisSetupINI;
+	
+	afx_msg void OnAnalysisStartanalysis();
 };
 
 

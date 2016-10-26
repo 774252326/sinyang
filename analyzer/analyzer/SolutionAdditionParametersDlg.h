@@ -1,8 +1,9 @@
 #pragma once
 
 #include "nirs2000_src\EditList.h"
-#include "typedefine.h"
+//#include "typedefine.h"
 #include <vector>
+#include "SAPara.h"
 
 // SolutionAdditionParametersDlg dialog
 
@@ -37,6 +38,7 @@ public:
 	void GetList(void);
 	//double vmsvol;
 
-	sap para;
+	//sap para;
+	SAPara para;
 	int GetChoice(int nItem, int nSubItem);
 };

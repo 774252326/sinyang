@@ -120,6 +120,15 @@
     <ClInclude Include="LineSpecA.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="VPara.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ANPara.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SAPara.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="analyzer.cpp">
@@ -189,6 +198,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="LineSpecA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VPara.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ANPara.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SAPara.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

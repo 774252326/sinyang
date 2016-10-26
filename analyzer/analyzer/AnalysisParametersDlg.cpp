@@ -32,7 +32,7 @@ void AnalysisParametersDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDS_EDIT_EVALUATION_RATIO, para.evaluationratio);
 	DDX_Text(pDX, IDS_EDIT_ENDPOINT_RATIO, para.endpointratio);
 	DDX_Text(pDX, IDS_EDIT_CALIBRATION_FACTOR, para.calibrationfactor);
-	DDX_Text(pDX, IDS_EDIT_CALIBRATION_CURVE_FILE, filePath);
+	DDX_Text(pDX, IDS_EDIT_CALIBRATION_CURVE_FILE, para.calibrationfilepath);
 }
 
 

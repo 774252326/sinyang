@@ -238,6 +238,8 @@ CRect dlg1::DrawXYAxis(CRect rect, CDC* pdc)
 		pdc->MoveTo(tmp,rect.bottom);
 		pdc->LineTo(tmp,rect.top);
 
+		if(gridi<resox && -gridi<resox)
+			gridi=0;
 
 		str.Format(L"%g",gridi);
 		sz=pdc->GetTextExtent(str);
@@ -340,6 +342,8 @@ CRect dlg1::DrawXYAxis(CRect rect, CDC* pdc)
 		pdc->MoveTo(rect.left,tmp);
 		pdc->LineTo(rect.right,tmp);
 
+		if(gridi<resoy && -gridi<resoy)
+			gridi=0;
 
 		str.Format(L"%g",gridi);
 		sz=pdc->GetTextExtent(str);
@@ -439,6 +443,51 @@ void dlg1::updatePlotRange(const std::vector<double> &x, const std::vector<doubl
 
 
 	auto resulty=std::minmax_element(y.begin(),y.end());
+	tmin=*resulty.first;
+	tmax=*resulty.second;
+
+	iv=tmax-tmin;
+	tmin-=iv*pct;
+	tmax+=iv*pct;
+
+
+	if(flg||ymin>tmin)
+		ymin=tmin;
+	if(flg||ymax<tmax)
+		ymax=tmax;
+
+	if(ymin==ymax){
+		ymin-=1;
+		ymax+=1;
+	}
+
+}
+
+// update xmin,xmax,ymin,ymax
+void dlg1::updatePlotRange(bool flg)
+{
+
+	double iv,pct=0.02;
+	double tmin,tmax;
+	auto resultx=std::minmax_element(pd.xll.begin(),pd.xll.end());
+	tmin=*resultx.first;
+	tmax=*resultx.second;
+	iv=tmax-tmin;
+	tmin-=iv*pct;
+	tmax+=iv*pct;
+
+	if(flg||xmin>tmin)
+		xmin=tmin;
+	if(flg||xmax<tmax)
+		xmax=tmax;
+
+	if(xmin==xmax){
+		xmin-=1;
+		xmax+=1;
+	}
+
+
+	auto resulty=std::minmax_element(pd.yll.begin(),pd.yll.end());
 	tmin=*resulty.first;
 	tmax=*resulty.second;
 
@@ -635,12 +684,12 @@ void dlg1::OnPaint()
 //}
 
 
-void dlg1::plot2d(const std::vector<double> &x, const std::vector<double> &y, const plotspec &plotsp, const CString &xla, const CString &yla)
-{
-	pd.AddNew(x,y,plotsp,xla,yla);
-	updatePlotRange(x,y,(pd.ll.size()==1));
-	Invalidate();
-}
+//void dlg1::plot2d(const std::vector<double> &x, const std::vector<double> &y, const plotspec &plotsp, const CString &xla, const CString &yla)
+//{
+//	pd.AddNew(x,y,plotsp,xla,yla);
+//	updatePlotRange(x,y,(pd.ll.size()==1));
+//	Invalidate();
+//}
 
 void dlg1::OnMouseMove(UINT nFlags, CPoint point)
 {
@@ -1215,7 +1264,8 @@ void dlg1::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 	switch(nChar){
 	case 'f':
-		showall();
+		updatePlotRange();
+		Invalidate();
 		break;
 	default:
 		break;
@@ -1234,11 +1284,11 @@ BOOL dlg1::OnEraseBkgnd(CDC* pDC)
 }
 
 
-void dlg1::showall(void)
-{
-	this->updatePlotRange(pd.xll,pd.yll,true);
-	Invalidate();
-}
+//void dlg1::showall(void)
+//{
+//	this->updatePlotRange(pd.xll,pd.yll,true);
+//	Invalidate();
+//}
 
 void dlg1::DrawSpline( CPoint *lpPoints, int np, CRect rect, CDC * pDC)
 {
@@ -1277,12 +1327,12 @@ void dlg1::DrawSpline( CPoint *lpPoints, int np, CRect rect, CDC * pDC)
 }
 
 
-void dlg1::plot2dfollow(const std::vector<double> & x, const std::vector<double> & y)
-{
-	pd.AddFollow(x,y);
-	updatePlotRange(x,y,false);
-	Invalidate();
-}
+//void dlg1::plot2dfollow(const std::vector<double> & x, const std::vector<double> & y)
+//{
+//	pd.AddFollow(x,y);
+//	updatePlotRange(x,y,false);
+//	Invalidate();
+//}
 
 
 void dlg1::smoothLine(void)
@@ -1307,56 +1357,4 @@ void dlg1::clear(void)
 }
 
 
-void dlg1::SaveFile(CString fp)
-{
-	//plotsp p1;
-	//p1.pp.colour=ps.back().colour;
-	//p1.pp.dotSize=ps.back().dotSize;
-	//p1.pp.name=ps.back().name;
-	//p1.pp.showLine=ps.back().showLine;
-	//p1.pp.smoothLine=ps.back().smoothLine;
-	//p1.pp.traceLast=ps.back().traceLast;
 
-	//p1.xll.assign(xll.begin(),xll.end());
-	//p1.yll.assign(yll.begin(),yll.end());
-
-	CFile theFile;
-	theFile.Open(fp, CFile::modeCreate | CFile::modeWrite);
-	CArchive archive(&theFile, CArchive::store);
-
-
-	pd.Serialize(archive);
-
-	archive.Close();
-	theFile.Close();
-
-
-}
-
-
-void dlg1::ReadFile(CString fp)
-{
-	//plotsp p1;
-	//p1.pp.colour=ps.back().colour;
-	//p1.pp.dotSize=ps.back().dotSize;
-	//p1.pp.name=ps.back().name;
-	//p1.pp.showLine=ps.back().showLine;
-	//p1.pp.smoothLine=ps.back().smoothLine;
-	//p1.pp.traceLast=ps.back().traceLast;
-
-	CFile theFile;
-	theFile.Open(fp, /*CFile::modeCreate |*/ CFile::modeRead);
-	//theFile.SeekToBegin();
-
-	CArchive archive(&theFile, CArchive::load);
-
-
-	pd.Serialize(archive);
-
-	archive.Close();
-	theFile.Close();
-
-	//CString str;
-	//str.Format(L"%d\n%d\n%s\n%d\n%d\n%d\n",p1.pp.colour,p1.pp.dotSize,p1.pp.name,p1.pp.showLine,p1.pp.smoothLine,p1.pp.traceLast);
-	//AfxMessageBox(str);
-}

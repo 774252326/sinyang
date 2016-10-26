@@ -45,7 +45,7 @@ public:
 	//void plot2d(const std::vector<double> &x, const std::vector<double> &y, const CString &xla, const CString &yla );
 	////void plot2d(const std::vector<double> &x, const std::vector<double> &y, const CString &xla, const CString &yla, const CString &title );
 	//void plot2d(const std::vector<double> &x, const std::vector<double> &y, const CString &xla, const CString &yla, const CString &title, const int &LineStl );
-	void plot2d(const std::vector<double> &x, const std::vector<double> &y, const plotspec &plotsp, const CString &xla, const CString &yla);
+	//void plot2d(const std::vector<double> &x, const std::vector<double> &y, const plotspec &plotsp, const CString &xla, const CString &yla);
 
 private:
 	double xmin,xmax,ymin,ymax;
@@ -59,13 +59,12 @@ private:
 	//std::vector<DWORD> ll;
 	//std::vector<plotspec> ps;
 
-	PlotData pd;
+
 
 
 	void genPointToPlot(const std::vector<double> &px, const std::vector<double> &py, const CRect &rect, std::vector<CPoint> &pointlist);
 	void drawRectangle(const CRect &rect, CDC * pDC, COLORREF insidecolor, COLORREF bordercolor);
-	CRect DrawXYAxis(CRect rect, CDC* pdc);
-	void updatePlotRange(const std::vector<double> &x, const std::vector<double> &y, bool flg=false);
+	CRect DrawXYAxis(CRect rect, CDC* pdc);	
 
 	CRect DrawLegend(CRect rect, CDC* pDC);
 	CRect DrawLegend1(CRect rect, CDC* pDC);
@@ -79,12 +78,13 @@ private:
 	void DrawSpline( CPoint * lpPoints, int np, CRect rect, CDC * pDC);
 
 public:
-	void showall(void);
-	void plot2dfollow(const std::vector<double> & x, const std::vector<double> & y);
+	PlotData pd;
+	//void showall(void);
+	//void plot2dfollow(const std::vector<double> & x, const std::vector<double> & y);
 	void smoothLine(void);
 	void clear(void);
-	void SaveFile(CString fp);
-	void ReadFile(CString fp);
+	void updatePlotRange(const std::vector<double> &x, const std::vector<double> &y, bool flg=false);
+	void updatePlotRange(bool flg=true);
 };
 
 

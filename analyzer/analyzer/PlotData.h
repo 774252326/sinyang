@@ -28,6 +28,9 @@ public:
 	void AddNew(const std::vector<double> &x, const std::vector<double> &y, const plotspec &plotsp, const CString &xla, const CString &yla);
 	void AddFollow(const std::vector<double> &x, const std::vector<double> &y);
 	void clear(void);
+	void SaveFile(CString fp);
+	void ReadFile(CString fp);
+	void AppendData(const PlotData & pda);
 };
 
 
