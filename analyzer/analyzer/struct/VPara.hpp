@@ -17,6 +17,7 @@ public:
 	double variationtolerance;
 	double rotationrate;
 	double endintegratione;
+	double startintegratione;
 
 	CVPara()
 		: lowelimit(-0.23)
@@ -24,9 +25,10 @@ public:
 		, scanrate(0.1)
 		, combochoice(0)
 		, noofcycles(4)
-		, variationtolerance(0.01)
+		, variationtolerance(0)
 		, rotationrate(2000)
 		, endintegratione(1)
+		, startintegratione(0)
 	{
 	};
 
@@ -41,6 +43,7 @@ public:
 		variationtolerance=src.variationtolerance;
 		rotationrate=src.rotationrate;
 		endintegratione=src.endintegratione;
+		startintegratione=src.startintegratione;
 	};
 
 	CVPara(const CVPara &src){ operator=(src); };
@@ -55,7 +58,8 @@ public:
 				<<noofcycles
 				<<variationtolerance
 				<<rotationrate
-				<<endintegratione;
+				<<endintegratione
+				<<startintegratione;
 		}
 		else
 		{	// loading code
@@ -66,7 +70,8 @@ public:
 				>>noofcycles
 				>>variationtolerance
 				>>rotationrate
-				>>endintegratione;
+				>>endintegratione
+				>>startintegratione;
 		}
 	};
 };

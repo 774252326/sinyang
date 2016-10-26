@@ -6,7 +6,6 @@
 #include "AnalysisParametersPage.h"
 #include "afxdialogex.h"
 
-
 // AnalysisParametersPage dialog
 
 IMPLEMENT_DYNAMIC(AnalysisParametersPage, CPropertyPage)
@@ -15,17 +14,11 @@ IMPLEMENT_DYNAMIC(AnalysisParametersPage, CPropertyPage)
 	: CPropertyPage(AnalysisParametersPage::IDD)
 	//, filePath(_T(""))
 {
-	para.analysistype=0;
-	para.calibrationfactor=1;
-	para.endpointratio=1;
-	para.evaluationratio=1;
-
 	CString title;
 	title.LoadStringW(IDS_STRING_ANALYSIS_PARA);
 	m_psp.dwFlags = m_psp.dwFlags | PSP_USETITLE ; 	
 	m_psp.pszTitle = new TCHAR[title.GetLength()+1];
 	_tcscpy((wchar_t*)m_psp.pszTitle, title);
-
 }
 
 
@@ -38,10 +31,18 @@ void AnalysisParametersPage::DoDataExchange(CDataExchange* pDX)
 {
 
 	DDX_Text(pDX, IDS_EDIT_EVALUATION_RATIO, para.evaluationratio);
+	DDV_MinMaxDouble(pDX,para.evaluationratio,0,1);
 	//DDX_Text(pDX, IDS_EDIT_ENDPOINT_RATIO, para.endpointratio);
 	DDX_Text(pDX, IDS_EDIT_CALIBRATION_FACTOR, para.calibrationfactor);
+	DDV_MinMaxDouble(pDX,para.calibrationfactor,0,DBL_MAX);
+
 	DDX_Text(pDX, IDS_EDIT_CALIBRATION_CURVE_FILE, para.calibrationfilepath);
+
 	DDX_Text(pDX, IDS_EDIT_INTERCEPT_VALUE, para.interceptvalue);
+	DDV_MinMaxDouble(pDX,para.interceptvalue,0,DBL_MAX);
+
+	DDX_CBIndex(pDX, IDS_COMBO_ANALYSIS_TYPE, para.analysistype);
+	DDX_CBIndex(pDX, IDS_COMBO_CALIBRATION_TYPE, para.calibrationfactortype);
 
 	CPropertyPage::DoDataExchange(pDX);
 }
@@ -57,7 +58,7 @@ BEGIN_MESSAGE_MAP(AnalysisParametersPage, CPropertyPage)
 
 	//ON_BN_CLICKED(IDC_BUTTON1, &AnalysisParametersPage::OnBnClickedButton1)
 	ON_WM_CREATE()
-	ON_WM_SHOWWINDOW()
+//	ON_WM_SHOWWINDOW()
 END_MESSAGE_MAP()
 
 
@@ -77,140 +78,22 @@ BOOL AnalysisParametersPage::OnSetActive()
 }
 
 
-BOOL AnalysisParametersPage::OnInitDialog()
-{
-	CPropertyPage::OnInitDialog();
-
-	// TODO:  Add extra initialization here
-
-
-	//CSize gap1(20,20);
-	//CSize gap2(20,20);
-	//CSize staticSize(150,22);
-
-	//CRect winrect;
-	//this->GetWindowRect(&winrect);
-	//winrect.DeflateRect(gap1);
-
-	//CPoint pt(gap1);
-	//CSize editSize(winrect.Width()-staticSize.cx-gap2.cx,staticSize.cy);
-	//CStatic *pStatic;
-	//CEdit *pEdit;
-	//CComboBox *pCombo;
-
-	//CString str;
-
-	//str.LoadStringW(IDS_STRING_ANALYSIS_TYPE);
-	//pStatic=new CStatic;
-	//pStatic->Create(
-	//	str,
-	//	WS_CHILD
-	//	|WS_VISIBLE, 
-	//	CRect(pt,staticSize),
-	//	this,
-	//	IDS_STRING_ANALYSIS_TYPE);
-
-	//pt.x+=staticSize.cx+gap2.cx;
-
-	//str.LoadStringW(IDS_COMBO_ANALYSIS_TYPE);
-
-	//pCombo=new CComboBox;
-	//pCombo->Create(
-	//	CBS_DROPDOWN
-	//	|WS_CHILD
-	//	|WS_VISIBLE, 
-	//	CRect(pt,editSize),
-	//	this,
-	//	IDS_COMBO_ANALYSIS_TYPE);
-
-
-	//for(int i=IDS_STRING_AT1;i<=IDS_STRING_AT9;i++){
-	//	str.LoadStringW(i);
-	//	pCombo->AddString(str);
-	//}
-
-	//pCombo->SetCurSel(-1);
-
-	//pt.x-=staticSize.cx+gap2.cx;
-	//pt.y+=staticSize.cy+gap2.cy;
-
-
-	//for(int i=0;i<3;i++){
-
-	//	str.LoadStringW(IDS_STRING_EVALUATION_RATIO+i);
-	//	pStatic=new CStatic;
-	//	pStatic->Create(
-	//		str,
-	//		WS_CHILD
-	//		|WS_VISIBLE, 
-	//		CRect(pt,staticSize),
-	//		this,
-	//		IDS_STRING_EVALUATION_RATIO+i);
-
-	//	pt.x+=gap2.cx+staticSize.cx;
-
-	//	str.LoadStringW(IDS_EDIT_EVALUATION_RATIO+i);
-	//	pEdit=new CEdit;
-	//	pEdit->CreateEx(
-	//		WS_EX_CLIENTEDGE,
-	//		L"Edit", 
-	//		str,
-	//		ES_LEFT
-	//		|WS_CHILD
-	//		|WS_VISIBLE,
-	//		CRect(pt,editSize),
-	//		this,
-	//		IDS_EDIT_EVALUATION_RATIO+i);
-
-	//	pt.y+=staticSize.cy+gap2.cy;
-	//	pt.x-=gap2.cx+staticSize.cx;
-
-	//}
-
-
-	//str.LoadStringW(IDS_EDIT_REMARK_ON_ANALYSIS_TYPE);
-	//pEdit=new CEdit;
-	//pEdit->CreateEx(
-	//	WS_EX_CLIENTEDGE,
-	//	L"Edit", 
-	//	str,
-	//	ES_LEFT
-	//	|ES_READONLY
-	//	|WS_CHILD
-	//	|WS_VISIBLE,
-	//	CRect(pt,CPoint(winrect.Size()+gap1)),
-	//	this,
-	//	IDS_EDIT_REMARK_ON_ANALYSIS_TYPE);
-
-	//pStatic->ShowWindow(SW_SHOW);
-	//pEdit->ShowWindow(SW_SHOW);
-
-
-	//CPropertyPage::OnInitDialog();
-
-	//UpdateData(FALSE);
-
-	//this->MoveWindow(0,0,600,300);
-
-
-	return TRUE;  // return TRUE unless you set the focus to a control
-	// EXCEPTION: OCX Property Pages should return FALSE
-}
-
-
 void AnalysisParametersPage::ComboSelectChange(void)
 {
 
-	CString strWeb;   
+
 	//int nSel;     
-	CComboBox * pcb=(CComboBox*)(this->GetDlgItem(IDS_COMBO_ANALYSIS_TYPE));
+	//CComboBox * pcb=(CComboBox*)(this->GetDlgItem(IDS_COMBO_ANALYSIS_TYPE));
 	// 获取组合框控件的列表框中选中项的索引   
 	//nSel = pcb->GetCurSel();  
-	para.analysistype = pcb->GetCurSel(); 
+	//para.analysistype = pcb->GetCurSel(); 
 	// 根据选中项索引获取该项字符串   
 	//pcb->GetLBText(nSel, strWeb); 
 	//pcb->GetLBText(para.analysistype, strWeb); 
 
+	UpdateData();
+
+	CString strWeb;   
 	strWeb.LoadStringW(para.analysistype+IDS_STRING_EP1);
 
 	// 将组合框中选中的字符串显示到IDC_SEL_WEB_EDIT编辑框中   
@@ -275,7 +158,7 @@ void AnalysisParametersPage::ComboSelectChange(void)
 		this->GetDlgItem(IDS_STRING_INTERCEPT_VALUE)->ShowWindow(SW_HIDE);
 
 
-				this->GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR)->ShowWindow(SW_HIDE);
+		this->GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR)->ShowWindow(SW_HIDE);
 		this->GetDlgItem(IDS_EDIT_CALIBRATION_CURVE_FILE)->ShowWindow(SW_SHOW);
 		this->GetDlgItem(IDS_EDIT_INTERCEPT_VALUE)->ShowWindow(SW_HIDE);
 		//this->GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR)->ShowWindow(SW_SHOW);
@@ -313,39 +196,41 @@ void AnalysisParametersPage::ComboSelectChange(void)
 }
 
 
-//void AnalysisParametersPage::OnBnClickedButton1()
-//{
-//	// TODO: Add your control notification handler code here
-//}
 
 
 BOOL AnalysisParametersPage::OnKillActive()
 {
 	// TODO: Add your specialized code here and/or call the base class
 
+	BOOL flg=UpdateData();
+
+	if(flg==FALSE){
+		return FALSE;
+	}
+	
 
 
 	// 获取组合框控件的列表框中选中项的索引   
 	//para.analysistype = pcb->GetCurSel();  
 
-	if(para.analysistype<0){
-		AfxMessageBox(IDS_STRING_ERROR);
-		CComboBox * pcb=(CComboBox*)(this->GetDlgItem(IDS_COMBO_ANALYSIS_TYPE));
-		pcb->SetFocus();
-		return FALSE;
-	}
+	//if(para.analysistype<0){
+	//	AfxMessageBox(IDS_STRING_ERROR);
+	//	CComboBox * pcb=(CComboBox*)(this->GetDlgItem(IDS_COMBO_ANALYSIS_TYPE));
+	//	pcb->SetFocus();
+	//	return FALSE;
+	//}
 
-	if(UpdateData()==FALSE){
-		return FALSE;
-	}
+	//if(UpdateData()==FALSE){
+	//	return FALSE;
+	//}
 
-	if(GetDlgItem(IDS_EDIT_EVALUATION_RATIO)->IsWindowEnabled()==TRUE)
-	if(para.evaluationratio<=0){
-		AfxMessageBox(IDS_STRING_ERROR);
-		CEdit *ped=(CEdit*)(this->GetDlgItem(IDS_EDIT_EVALUATION_RATIO));
-		ped->SetFocus();
-		return FALSE;
-	}
+	//if(GetDlgItem(IDS_EDIT_EVALUATION_RATIO)->IsWindowEnabled()==TRUE)
+	//if(para.evaluationratio<=0){
+	//	AfxMessageBox(IDS_STRING_ERROR);
+	//	CEdit *ped=(CEdit*)(this->GetDlgItem(IDS_EDIT_EVALUATION_RATIO));
+	//	ped->SetFocus();
+	//	return FALSE;
+	//}
 
 	//if(para.endpointratio<=0){
 	//	AfxMessageBox(IDS_STRING_ERROR);
@@ -354,26 +239,26 @@ BOOL AnalysisParametersPage::OnKillActive()
 	//	return FALSE;
 	//}
 
-	if( GetDlgItem(IDS_COMBO_CALIBRATION_TYPE)->IsWindowVisible()==TRUE ){
+	//if( GetDlgItem(IDS_COMBO_CALIBRATION_TYPE)->IsWindowVisible()==TRUE ){
 
-		para.calibrationfactortype=((CComboBox*)GetDlgItem(IDS_COMBO_CALIBRATION_TYPE))->GetCurSel();
-		if(para.calibrationfactortype<0){
-			AfxMessageBox(IDS_STRING_ERROR);
-			CComboBox * pcb=(CComboBox*)(this->GetDlgItem(IDS_COMBO_CALIBRATION_TYPE));
-			pcb->SetFocus();
-			return FALSE;
-		}
+	//	//para.calibrationfactortype=((CComboBox*)GetDlgItem(IDS_COMBO_CALIBRATION_TYPE))->GetCurSel();
+	//	//if(para.calibrationfactortype<0){
+	//	//	AfxMessageBox(IDS_STRING_ERROR);
+	//	//	CComboBox * pcb=(CComboBox*)(this->GetDlgItem(IDS_COMBO_CALIBRATION_TYPE));
+	//	//	pcb->SetFocus();
+	//	//	return FALSE;
+	//	//}
 
-		if(para.calibrationfactortype==0){
-			if(para.calibrationfactor<=0){
-				AfxMessageBox(IDS_STRING_ERROR);
-				CEdit *ped=(CEdit*)(this->GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR));
-				ped->SetFocus();
-				return FALSE;
-			}
-		}
+	//	if(para.calibrationfactortype==0){
+	//		if(para.calibrationfactor<=0){
+	//			AfxMessageBox(IDS_STRING_ERROR);
+	//			CEdit *ped=(CEdit*)(this->GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR));
+	//			ped->SetFocus();
+	//			return FALSE;
+	//		}
+	//	}
 
-	}
+	//}
 	return CPropertyPage::OnKillActive();
 }
 
@@ -587,7 +472,7 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		this,
 		IDS_EDIT_INTERCEPT_VALUE);
 
-
+	UpdateData(FALSE);
 	ComboSelectChange();
 	//CalibrationComboSelectChange();
 
@@ -783,64 +668,27 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 }
 
 
-void AnalysisParametersPage::editchange(void)
-{
-	UpdateData();
-}
 
 
 void AnalysisParametersPage::CalibrationComboSelectChange(void)
 {
-	//CString strWeb;   
+	UpdateData();
 
-	CComboBox * pcb=(CComboBox*)(this->GetDlgItem(IDS_COMBO_CALIBRATION_TYPE));
-
-
-	for(int i=0;i<3;i++){
-		this->GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR+i)->ShowWindow(SW_HIDE);
-		//this->GetDlgItem(IDS_EDIT_CALIBRATION_CURVE_FILE)->ShowWindow(SW_HIDE);
-		//this->GetDlgItem(IDS_EDIT_INTERCEPT_VALUE)->ShowWindow(SW_HIDE);
+	switch(para.calibrationfactortype){
+	case 0:
+		this->GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR)->ShowWindow(SW_SHOW);
+		this->GetDlgItem(IDS_EDIT_CALIBRATION_CURVE_FILE)->ShowWindow(SW_HIDE);
+		this->GetDlgItem(IDS_EDIT_INTERCEPT_VALUE)->ShowWindow(SW_HIDE);
+		break;
+	case 1:
+		this->GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR)->ShowWindow(SW_HIDE);
+		this->GetDlgItem(IDS_EDIT_CALIBRATION_CURVE_FILE)->ShowWindow(SW_SHOW);
+		this->GetDlgItem(IDS_EDIT_INTERCEPT_VALUE)->ShowWindow(SW_HIDE);
+		break;
+	default:
+		break;
 	}
-
-
-	if(pcb->IsWindowEnabled()==TRUE)
-	{
-
-		// 获取组合框控件的列表框中选中项的索引   
-		int nSel;     
-		nSel = pcb->GetCurSel();  
-		GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR+nSel)->ShowWindow(SW_SHOW);
-		//for(int i=0;i<3;i++){
-		//if(i==nSel){
-
-		//}
-		//else{
-		//GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR+i)->ShowWindow(SW_HIDE);
-		//}
-		//}
-
-
-
-	}
-
 }
 
 
-void AnalysisParametersPage::OnShowWindow(BOOL bShow, UINT nStatus)
-{
-	CPropertyPage::OnShowWindow(bShow, nStatus);
 
-	// TODO: Add your message handler code here
-
-	//RECT rect;
-	//GetParent()->GetWindowRect(&rect);
-	//int nWidth =rect.right-rect.left;
-	//int nHeight =rect.bottom-rect.top;
-	//if(bShow)
-	//{
-	//GetParent()->ShowWindow(SW_HIDE);
-	//GetParent()->SetWindowPos(NULL,0,0,nWidth,nHeight,SWP_NOMOVE|SWP_NOZORDER|SWP_NOACTIVATE);
-	//GetParent()->ShowWindow(SW_SHOW);
-	//}
-
-}

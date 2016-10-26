@@ -50,6 +50,10 @@ public:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnControls1();
 	afx_msg void OnMove(int x, int y);
+	afx_msg void OnOptionsPlotsettings();
+protected:
+	afx_msg LRESULT OnMessageChangeApplook(WPARAM wParam, LPARAM lParam);
+
 };
 
 #ifndef _DEBUG  // debug version in analyzerView.cpp

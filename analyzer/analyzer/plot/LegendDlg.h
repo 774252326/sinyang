@@ -24,7 +24,7 @@ public:
 	//int minFsz;
 	//int axisW;
 	////float ratio;
-
+	CPoint GetPos(void);
 
 protected:
 
@@ -32,7 +32,7 @@ protected:
 	afx_msg void OnPaint();
 	CSize GetExtent(void);
 	int GetAutoFontSize(CSize limitsz, int maxFontSize=15, int minFontSize=1);
-	CPoint GetPos(void);
+
 	afx_msg void OnMove(int x, int y);
 	PlotWnd * ppw;
 	virtual BOOL OnInitDialog();

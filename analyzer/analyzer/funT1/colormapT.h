@@ -176,4 +176,34 @@ COLORREF genColorGray(T colorv){
 	return RGB(gray,gray,gray);
 }
 
+
+template <typename T>
+COLORREF ContractCr(COLORREF oc, T hbias){
+	T rgb[3];
+	GetrgbT(oc,rgb);
+	T hsv[3];
+	rgb2hsv(hsv,rgb);
+
+	//float ni=bias+(float)(i-1)/ndiv;
+	hsv[0]+=hbias;
+
+	hsv[0]-=floor(hsv[0]);
+
+	hsv[1]=1;
+
+	if(hsv[2]>0.5){
+		hsv[2]-=0.5;
+	}
+	else{
+		hsv[2]+=0.5;
+	}
+	
+	hsv2rgb(hsv,rgb);
+
+	COLORREF nc=RGB(255*rgb[0],255*rgb[1],255*rgb[2]);
+
+	return nc;
+}
+
+
 #endif

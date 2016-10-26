@@ -55,6 +55,20 @@ public:
 		}
 	};
 
+
+	void operator=(const LegendCondition &src)
+	{	
+		legendDpMode=src.legendDpMode;
+		limitSize=src.limitSize;
+		maxFsz=src.maxFsz;
+		minFsz=src.minFsz;
+		axisW=src.axisW;
+		ratio=src.ratio;
+	};
+
+	LegendCondition(const LegendCondition &src){ operator=(src); };
+
+
 	CPoint CalAlignPos(CRect plotrect, CSize lgsz)
 	{
 		plotrect.DeflateRect(axisW,0,0,axisW);

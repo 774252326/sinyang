@@ -172,6 +172,27 @@
     <ClInclude Include="plot\PlotWnd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PlotSettingPageA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="list\ListCtrlLS.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AnalysisParametersPage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CVParametersPage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SolutionAdditionParametersPageA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="list\ListCtrlSAP.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="list\ListCtrlAA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="analyzer.cpp">
@@ -235,6 +256,27 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="list\EditReal.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PlotSettingPageA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="list\ListCtrlLS.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AnalysisParametersPage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CVParametersPage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SolutionAdditionParametersPageA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="list\ListCtrlSAP.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="list\ListCtrlAA.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,10 +1,12 @@
 #pragma once
 
+#include "../funT1/colormapT.h"
 // PlotSpec command target
 
 class PlotSpec : public CObject
 {
 public:
+
 	COLORREF bkgndC;
 	COLORREF borderC;
 
@@ -130,6 +132,74 @@ public:
 			gap0+=metricGridLong+metricSize;
 		}
 		wndRect.DeflateRect(gap0,gap,gap,gap0);
+	};
+
+
+
+	PlotSpec::PlotSpec(int i, COLORREF ic)
+	{
+		gridType=5;
+		labelSize=20;
+		metricSize=20;
+		winbkC=ic;
+		SetCr(i);
+	}
+
+
+
+	int GetCrType(void)
+	{
+
+		const int ndiv=10;
+		const float bias=0.35;
+		const int ncr=3;
+		const int ncritm=5;
+		const COLORREF crl[]={
+
+			RGB(255,255,255),RGB(255,255,255),RGB(0,0,0),RGB(255,255,0),RGB(255,0,0),
+			RGB(200,200,200),RGB(200,200,200),RGB(20,20,20),RGB(20,20,20),RGB(20,20,20),
+			RGB(60,60,60),RGB(60,60,60),RGB(150,150,150),RGB(0,0,0),RGB(0,0,0),
+			RGB(0,0,0)
+		};
+
+
+
+		for(int i=0;i<ncr;i++){
+			int j=i*ncritm;
+			if(	
+				bkgndC==crl[j++]
+			&& borderC==crl[j++]
+			&& gridC==crl[j++]
+			)
+				return i;
+		}
+		return -1;
+	};
+
+	void PlotSpec::SetCr(int i)
+	{
+
+		const int ndiv=10;
+		const float bias=0.35;
+		const int ncr=3;
+		const int ncritm=5;
+		const COLORREF crl[]={
+
+			RGB(255,255,255),RGB(255,255,255),RGB(0,0,0),RGB(255,255,0),RGB(255,0,0),
+			RGB(200,200,200),RGB(200,200,200),RGB(20,20,20),RGB(20,20,20),RGB(20,20,20),
+			RGB(60,60,60),RGB(60,60,60),RGB(150,150,150),RGB(0,0,0),RGB(0,0,0),
+			RGB(0,0,0)
+		};
+
+
+		COLORREF nc=ContractCr(winbkC,bias+(float)(i-1)/ndiv);
+		metricC=labelC=nc;
+		if(i<0 || i>=ncr)
+			i=0;
+		i*=ncritm;
+		bkgndC=crl[i++];
+		borderC=crl[i++];
+		gridC=crl[i++];
 	};
 
 };

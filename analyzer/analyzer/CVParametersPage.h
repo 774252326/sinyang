@@ -1,7 +1,8 @@
 #pragma once
 
 //#include "typedefine.h"
-#include "VPara.h"
+//#include "VPara.h"
+#include "struct\VPara.hpp"
 
 // CVParametersPage dialog
 
@@ -21,7 +22,7 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 public:
-	virtual BOOL OnInitDialog();
+//	virtual BOOL OnInitDialog();
 	virtual BOOL OnSetActive();
 
 	//cvp para;
@@ -29,6 +30,7 @@ public:
 	virtual BOOL OnKillActive();
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	void ComboSelectChange(void);
-	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
-	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
+//	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
+//	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
+	CString strtmp;
 };

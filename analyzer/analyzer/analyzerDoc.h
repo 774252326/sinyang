@@ -1,7 +1,10 @@
 
 // analyzerDoc.h : interface of the CanalyzerDoc class
 //
-
+#include "struct\ANPara.hpp"
+#include "struct\SAPara.hpp"
+#include "struct\VPara.hpp"
+#include "struct1\RawData.hpp"
 
 #pragma once
 
@@ -14,9 +17,14 @@ protected: // create from serialization only
 
 // Attributes
 public:
-
+	ANPara p1;
+	CVPara p2;
+	SAPara p3;
+	RawData raw;
 // Operations
 public:
+	void operator=(const CanalyzerDoc &src);
+	CanalyzerDoc(const CanalyzerDoc &src){ operator=(src); };
 
 // Overrides
 public:
@@ -36,7 +44,7 @@ public:
 #endif
 
 protected:
-
+	afx_msg void OnAnalysisMethodsetup();
 // Generated message map functions
 protected:
 	DECLARE_MESSAGE_MAP()
@@ -45,4 +53,6 @@ protected:
 	// Helper function that sets search content for a Search Handler
 	void SetSearchContent(const CString& value);
 #endif // SHARED_HANDLERS
+
+
 };

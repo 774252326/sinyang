@@ -1,9 +1,12 @@
 #pragma once
 
-#include "SAPara.h"
+//#include "SAPara.h"
 //#include "EditList.h"
 
-#include "ListCtrlSAP.h"
+//#include "ListCtrlSAP.h"
+
+#include "struct\SAPara.hpp"
+#include "list\ListCtrlSAP.h"
 
 // SolutionAdditionParametersPageA dialog
 
@@ -43,6 +46,7 @@ public:
 	virtual BOOL OnKillActive();
 	virtual BOOL OnSetActive();
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-	int typeidx;
-	int totaln;
+	//int typeidx;
+	//int totaln;
+	//CString strtmp;
 };

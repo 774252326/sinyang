@@ -92,7 +92,8 @@ CPoint LegendDlg::GetPos(void)
 {
 	CRect rc;
 	GetWindowRect(&rc);
-	ppw->ScreenToClient(&rc);
+	ppw->ScreenToClient(&rc);	
+
 	ppw->lgs.position=rc.TopLeft();
 
 	return rc.TopLeft();
@@ -138,7 +139,7 @@ void LegendDlg::PositionWnd(void)
 
 	CRect legendrect(ppw->lgs.position,sz);
 
-	ppw->ClientToScreen(&legendrect);
+	//ppw->ClientToScreen(&legendrect);//for dlg only
 
 	this->MoveWindow(&legendrect);
 

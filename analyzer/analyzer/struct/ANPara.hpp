@@ -11,7 +11,7 @@ public:
 
 	int analysistype;
 	double evaluationratio;
-	double endpointratio;
+	//double endpointratio;
 	int calibrationfactortype;
 	double calibrationfactor;
 	double interceptvalue;
@@ -20,7 +20,7 @@ public:
 	ANPara()
 		: analysistype(0)
 		, evaluationratio(0.8)
-		, endpointratio(1)
+		//, endpointratio(1)
 		, calibrationfactortype(0)
 		, calibrationfactor(1)
 		, interceptvalue(1)
@@ -32,7 +32,7 @@ public:
 	void operator=(const ANPara &src){
 		analysistype=src.analysistype;
 		evaluationratio=src.evaluationratio;
-		endpointratio=src.endpointratio;
+		//endpointratio=src.endpointratio;
 		calibrationfactortype=src.calibrationfactortype;
 		calibrationfactor=src.calibrationfactor;
 		interceptvalue=src.interceptvalue;
@@ -46,7 +46,7 @@ public:
 		{	// storing code
 			ar<<analysistype
 				<<evaluationratio
-				<<endpointratio
+				//<<endpointratio
 				<<calibrationfactortype
 				<<calibrationfactor
 				<<calibrationfilepath
@@ -56,7 +56,7 @@ public:
 		{	// loading code
 			ar>>analysistype
 				>>evaluationratio
-				>>endpointratio
+				//>>endpointratio
 				>>calibrationfactortype
 				>>calibrationfactor
 				>>calibrationfilepath

@@ -1,7 +1,8 @@
 #pragma once
 
 //#include "typedefine.h"
-#include "ANPara.h"
+//#include "ANPara.h"
+#include "struct\ANPara.hpp"
 
 // AnalysisParametersPage dialog
 
@@ -22,7 +23,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	virtual BOOL OnSetActive();
-	virtual BOOL OnInitDialog();
+//	virtual BOOL OnInitDialog();
 	afx_msg void ComboSelectChange(void);
 	//afx_msg void OnBnClickedButton1();
 
@@ -31,8 +32,8 @@ public:
 	virtual BOOL OnKillActive();
 	//virtual BOOL Create(LPCTSTR lpszTemplateName, CWnd* pParentWnd = NULL);
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-	void editchange(void);
+//	void editchange(void);
 	//CString filePath;
 	void CalibrationComboSelectChange(void);
-	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
+//	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
 };

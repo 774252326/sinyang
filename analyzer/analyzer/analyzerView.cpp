@@ -14,6 +14,11 @@
 
 #include "struct1\pcct.hpp"
 
+#include "PropertySheetA.h"
+#include "PlotSettingPageA.h"
+
+#include "MainFrm.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -34,6 +39,8 @@ BEGIN_MESSAGE_MAP(CanalyzerView, CView)
 	ON_WM_SIZE()
 	ON_COMMAND(ID_CONTROLS_1, &CanalyzerView::OnControls1)
 	ON_WM_MOVE()
+	ON_COMMAND(ID_OPTIONS_PLOTSETTINGS, &CanalyzerView::OnOptionsPlotsettings)
+	ON_MESSAGE(MESSAGE_CHANGE_APPLOOK, &CanalyzerView::OnMessageChangeApplook)
 END_MESSAGE_MAP()
 
 // CanalyzerView construction/destruction
@@ -97,8 +104,15 @@ void CanalyzerView::OnEndPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
 
 void CanalyzerView::OnRButtonUp(UINT /* nFlags */, CPoint point)
 {
-	ClientToScreen(&point);
-	OnContextMenu(this, point);
+	//ClientToScreen(&point);
+	//OnContextMenu(this, point);
+	if(pw.lgc.legendDpMode&LEGEND_DP_SHOW)
+		pw.lgc.legendDpMode&=~LEGEND_DP_SHOW;
+	else
+		pw.lgc.legendDpMode|=LEGEND_DP_SHOW;
+
+	pw.SetLegend();
+
 }
 
 void CanalyzerView::OnContextMenu(CWnd* /* pWnd */, CPoint point)
@@ -140,9 +154,12 @@ int CanalyzerView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	// TODO:  Add your specialized creation code here
 
+			LONG style0=GetWindowLongW(this->GetSafeHwnd(), GWL_EXSTYLE);
+		SetWindowLongW(GetSafeHwnd(), GWL_EXSTYLE, style0|WS_CLIPCHILDREN);
 
 	if(pw.Create(_T("STATIC"), _T(""), WS_CHILD | WS_VISIBLE /*| WS_DISABLED*/, CRect(), this, 1234)==FALSE)
 		return -1;
+
 
 
 	return 0;
@@ -164,7 +181,7 @@ void CanalyzerView::OnSize(UINT nType, int cx, int cy)
 
 	pw.MoveWindow(&rc);
 
-	pw.Invalidate();
+	//pw.Invalidate(FALSE);
 
 }
 
@@ -190,12 +207,13 @@ void CanalyzerView::OnControls1()
 
 		POSITION pos=fileDlg.GetStartPosition();
 		PlotData pd;
+		pd.ps=pw.pd.ps;
+
 		while(pos!=NULL){
 			CString fp=fileDlg.GetNextPathName(pos);
 
 			//m_fp=fileDlg.GetPathName();
-
-
+			
 			pcct a;
 			a.readFile(fp);
 			a.TomA();
@@ -208,13 +226,17 @@ void CanalyzerView::OnControls1()
 			pd.AddNew(a.time,a.current,ls,a.label[0],a.label[1]);
 		}
 
-		pw.lgc.legendDpMode=LEGEND_DP_SHOW|LEGEND_DP_FIT_RECT|LEGEND_DP_AUTO_RECT|LEGEND_DP_ALIGN|LEGEND_DP_TOP;
+		pw.lgc.legendDpMode=LEGEND_DP_SHOW
+			|LEGEND_DP_FIT_RECT|LEGEND_DP_AUTO_RECT
+			|LEGEND_DP_ALIGN|LEGEND_DP_TOP
+			;
 
 		pw.pd=pd;
+		//pw.lgs.bkColor=pw.pd.ps.bkgndC;
 		pw.ResetRange();
 		pw.SetLegend();
 
-		this->Invalidate();
+		this->Invalidate(FALSE);
 	}
 
 
@@ -227,5 +249,72 @@ void CanalyzerView::OnMove(int x, int y)
 
 	// TODO: Add your message handler code here
 
-	::PostMessage(pw.GetSafeHwnd(),WM_MOVE,x,y);
+	//LPARAM pt=MAKELPARAM((short)(x),(short)(y));
+	//::PostMessage(pw.GetSafeHwnd(),WM_MOVE,NULL,pt);
+
 }
+
+
+void CanalyzerView::OnOptionsPlotsettings()
+{
+	// TODO: Add your command handler code here
+
+
+	//if(pdl.empty())
+	//		return;
+
+
+	
+
+		// 创建属性表对象   
+		CString str;
+
+
+		PropertySheetA1 sheet(IDS_STRING_POLT_SETTINGS);
+
+		str.LoadStringW(IDS_STRING_FIGURE1);
+		str=L"";
+
+		PlotSettingPage fig1setting(str,pw.pd.ps,pw.pd.ls);
+
+		fig1setting.lgc=pw.lgc;
+		fig1setting.lgs=pw.lgs;
+
+		//fig1setting.bkcr=pdl[selecti].psp.winbkC;
+
+		sheet.AddPage(&fig1setting);
+
+		// 打开模态向导对话框   
+		if(sheet.DoModal()==IDOK){
+
+			pw.pd.ps=fig1setting.fs;
+			pw.pd.ls.assign(fig1setting.ps.begin(),fig1setting.ps.end());
+			pw.lgc=fig1setting.lgc;
+			pw.lgs=fig1setting.lgs;
+
+			//::PostMessage(this->GetSafeHwnd(),MESSAGE_GET_PLOTSPEC,NULL,NULL);
+
+			pw.SetLegend();
+			Invalidate(FALSE);
+
+		}
+
+}
+
+	afx_msg LRESULT CanalyzerView::OnMessageChangeApplook(WPARAM wParam, LPARAM lParam)
+	{
+
+		//bkcr=(COLORREF)wParam;
+
+		COLORREF oc=(COLORREF)wParam;
+
+
+		pw.pd.ps.winbkC=oc;
+		pw.lgs.bkColor=pw.pd.ps.bkgndC;
+
+		//::SendMessage(this->GetSafeHwnd(),MESSAGE_GET_PLOTSPEC,wParam,NULL);
+
+		this->Invalidate(FALSE);
+
+		return 0;
+	}

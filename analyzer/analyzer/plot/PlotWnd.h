@@ -68,6 +68,8 @@ protected:
 	void ShowLegend(bool bShow);
 	
 
+public:
+//	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 };
 
 

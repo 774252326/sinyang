@@ -1,7 +1,7 @@
 #pragma once
 #include "listctrla.h"
 //#include "linespec.h"
-#include "../linespec.h"
+#include "../struct1/LineSpec.hpp"
 
 class ListCtrlLS :
 	public ListCtrlA

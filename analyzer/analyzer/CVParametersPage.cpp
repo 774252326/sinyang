@@ -13,15 +13,15 @@ IMPLEMENT_DYNAMIC(CVParametersPage, CPropertyPage)
 
 CVParametersPage::CVParametersPage()
 	: CPropertyPage(CVParametersPage::IDD)
+	, strtmp(_T(""))
 {
-	para.endintegratione=1;
-	para.highelimit=1;
-	para.lowelimit=0;
-	para.noofcycles=1;
-	para.rotationrate=1;
-	para.scanrate=1;
-	para.variationtolerance=0;
-
+	//para.endintegratione=1;
+	//para.highelimit=1;
+	//para.lowelimit=0;
+	//para.noofcycles=1;
+	//para.rotationrate=1;
+	//para.scanrate=1;
+	//para.variationtolerance=0;
 
 	CString title;
 	title.LoadStringW(IDS_STRING_CV_PARA);
@@ -38,12 +38,30 @@ CVParametersPage::~CVParametersPage()
 void CVParametersPage::DoDataExchange(CDataExchange* pDX)
 {
 	DDX_Text(pDX, IDS_EDIT_LOW_E_LIMIT, para.lowelimit);
+
 	DDX_Text(pDX, IDS_EDIT_HIGH_E_LIMIT, para.highelimit);
+	DDV_MinMaxDouble(pDX,para.highelimit,para.lowelimit,DBL_MAX);
+
 	DDX_Text(pDX, IDS_EDIT_SCAN_RATE, para.scanrate);
+	DDV_MinMaxDouble(pDX,para.scanrate,0,DBL_MAX);
+
 	DDX_Text(pDX, IDS_EDIT_NO_OF_CYCLES, para.noofcycles);
+	DDV_MinMaxInt(pDX,para.noofcycles,1,50);
+
 	DDX_Text(pDX, IDS_EDIT_VARIATION_TOLERANCE, para.variationtolerance);
+
 	DDX_Text(pDX, IDS_EDIT_ROTATION_RATE, para.rotationrate);
+	DDV_MinMaxDouble(pDX,para.rotationrate,0,DBL_MAX);
+
 	DDX_Text(pDX, IDS_EDIT_END_INTEGRATION_E, para.endintegratione);
+
+	DDX_CBIndex(pDX, IDS_EDIT_START_INTEGRATION_E, para.combochoice);
+
+	if(para.combochoice!=0){
+		strtmp.Format(L"%g",para.startintegratione);
+		DDX_Text(pDX, IDS_EDIT_START_INTEGRATION_E, strtmp);
+	}
+
 	CPropertyPage::DoDataExchange(pDX);
 }
 
@@ -53,28 +71,12 @@ BEGIN_MESSAGE_MAP(CVParametersPage, CPropertyPage)
 	ON_CBN_SELCHANGE(IDS_COMBO_CYCLE_TYPE, &CVParametersPage::ComboSelectChange)
 
 	ON_WM_CREATE()
-	ON_WM_SHOWWINDOW()
+//	ON_WM_SHOWWINDOW()
 END_MESSAGE_MAP()
 
 
 // CVParametersPage message handlers
 
-
-BOOL CVParametersPage::OnInitDialog()
-{
-	CPropertyPage::OnInitDialog();
-
-	// TODO:  Add extra initialization here
-
-
-
-
-	//CPropertyPage::OnInitDialog();
-
-
-	return TRUE;  // return TRUE unless you set the focus to a control
-	// EXCEPTION: OCX Property Pages should return FALSE
-}
 
 
 BOOL CVParametersPage::OnSetActive()
@@ -98,52 +100,15 @@ BOOL CVParametersPage::OnKillActive()
 		return FALSE;
 	}
 
-	if(para.highelimit<=para.lowelimit){
-		AfxMessageBox(IDS_STRING_ERROR);
-		CEdit *ped=(CEdit*)(this->GetDlgItem(IDS_EDIT_HIGH_E_LIMIT));
-		ped->SetFocus();
-		return FALSE;
-	}
+	if(para.combochoice!=0){
+		para.startintegratione=_wtof(strtmp.GetBuffer());
 
-	if(para.scanrate<=0){
-		AfxMessageBox(IDS_STRING_ERROR);
-		CEdit *ped=(CEdit*)(this->GetDlgItem(IDS_EDIT_SCAN_RATE));
-		ped->SetFocus();
-		return FALSE;
-	}
-
-	para.combochoice=((CComboBox*)GetDlgItem(IDS_COMBO_CYCLE_TYPE))->GetCurSel();
-
-	if(para.combochoice<0){
-		AfxMessageBox(IDS_STRING_ERROR);
-		CComboBox * pcb=(CComboBox*)(this->GetDlgItem(IDS_COMBO_CYCLE_TYPE));
-		pcb->SetFocus();
-		return FALSE;
-	}
-
-	if(para.combochoice==0){
-		if(para.noofcycles<=0){
-			AfxMessageBox(IDS_STRING_ERROR);
-			CEdit *ped=(CEdit*)(this->GetDlgItem(IDS_EDIT_NO_OF_CYCLES));
-			ped->SetFocus();
+		if(para.startintegratione>=para.endintegratione){
+			AfxMessageBox(IDS_STRING_ERROR);			
+			CComboBox * pCombo=(CComboBox*)(this->GetDlgItem(IDS_EDIT_START_INTEGRATION_E));		
+			pCombo->SetFocus();
 			return FALSE;
 		}
-	}
-
-	if(para.combochoice==1){
-		if(para.variationtolerance<=0 || para.variationtolerance>1){
-			AfxMessageBox(IDS_STRING_ERROR);
-			CEdit *ped=(CEdit*)(this->GetDlgItem(IDS_EDIT_VARIATION_TOLERANCE));
-			ped->SetFocus();
-			return FALSE;
-		}
-	}
-
-	if(para.rotationrate<=0){
-		AfxMessageBox(IDS_STRING_ERROR);
-		CEdit *ped=(CEdit*)(this->GetDlgItem(IDS_EDIT_ROTATION_RATE));
-		ped->SetFocus();
-		return FALSE;
 	}
 
 	return CPropertyPage::OnKillActive();
@@ -176,7 +141,7 @@ int CVParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	CComboBox *pCombo;
 	CString str;
 
-	for(int i=0;i<3;i++){
+	for(int i=0;i<7;i++){
 
 		str.LoadStringW(IDS_STRING_LOW_E_LIMIT+i);
 		pStatic=new CStatic;
@@ -211,109 +176,35 @@ int CVParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 
 
-
-
-	pCombo=new CComboBox;
-	pCombo->Create(
-		//CBS_DROPDOWN
-		CBS_DROPDOWNLIST
-		//|WS_TILED
-		|WS_CHILD
-		|WS_VISIBLE, 
-		CRect(pt,staticSize),
-		this,
-		IDS_COMBO_CYCLE_TYPE);
-
-	for(int i=IDS_STRING_NO_OF_CYCLES;i<=IDS_STRING_VARIATION_TOLERANCE;i++){
-		str.LoadStringW(i);
-		pCombo->AddString(str);
-	}
-	pCombo->SetCurSel(para.combochoice);
-
-	//pCombo->ModifyStyle(WS_BORDER,NULL);
-	//pCombo->ModifyStyleEx(WS_EX_CLIENTEDGE|WS_EX_STATICEDGE, NULL);
-
-
-	//pEdit = (CEdit*)pCombo->GetWindow(GW_CHILD);
-	//pEdit->SetReadOnly();
-
-	pt.x+=gap2.cx+staticSize.cx;
-
-	str.LoadStringW(IDS_EDIT_NO_OF_CYCLES);
-	pEdit=new CEdit;
-	pEdit->CreateEx(
-		WS_EX_CLIENTEDGE,
-		L"Edit", 
-		str,
-		ES_LEFT
-		|WS_CHILD
-		|WS_VISIBLE,
-		CRect(pt,editSize),
-		this,
-		IDS_EDIT_NO_OF_CYCLES);
-	
-	str.LoadStringW(IDS_EDIT_VARIATION_TOLERANCE);
-	pEdit=new CEdit;
-	pEdit->CreateEx(
-		WS_EX_CLIENTEDGE,
-		L"Edit", 
-		str,
-		ES_LEFT
-		|WS_CHILD,
-		//|WS_VISIBLE,
-		CRect(pt,editSize),
-		this,
-		IDS_EDIT_VARIATION_TOLERANCE);
-
-	ComboSelectChange();
-
-	pt.y+=staticSize.cy+gap2.cy;
-	pt.x-=gap2.cx+staticSize.cx;
-
-
-
-
-	for(int i=0;i<2;i++){
-
-		str.LoadStringW(IDS_STRING_ROTATION_RATE+i);
-		pStatic=new CStatic;
-		pStatic->Create(
+	str.LoadStringW(IDS_STRING_START_INTEGRATION_E);
+	pStatic=new CStatic;
+	pStatic->Create(
 			str,
 			WS_CHILD
 			|WS_VISIBLE, 
 			CRect(pt,staticSize),
 			this,
-			IDS_STRING_ROTATION_RATE+i);
+			IDS_STRING_START_INTEGRATION_E);
 
 		pt.x+=gap2.cx+staticSize.cx;
 
-		str.LoadStringW(IDS_EDIT_ROTATION_RATE+i);
-		//str=L"0";
-		pEdit=new CEdit;
-		pEdit->CreateEx(
-			WS_EX_CLIENTEDGE,
-			L"Edit", 
-			str,
-			ES_LEFT
-			|WS_CHILD
-			|WS_VISIBLE,
-			CRect(pt,editSize),
-			this,
-			IDS_EDIT_ROTATION_RATE+i);
-
-		pt.y+=staticSize.cy+gap2.cy;
-		pt.x-=gap2.cx+staticSize.cx;
-
-	}
 
 
 
-	//pStatic->ShowWindow(SW_SHOW);
-	//pEdit->ShowWindow(SW_SHOW);
+	pCombo=new CComboBox;
+	pCombo->Create(
+		CBS_DROPDOWN
+		//CBS_DROPDOWNLIST
+		//|WS_TILED
+		|WS_CHILD
+		|WS_VISIBLE, 
+		CRect(pt,editSize),
+		this,
+		IDS_EDIT_START_INTEGRATION_E);
 
-	//SetWindowTextW(L"asdf");
 
-	//GetWindowTextW(str);
+	str.LoadStringW(IDS_STRING_AUTO);
+	pCombo->AddString(str);
 
 	return 0;
 }
@@ -335,34 +226,4 @@ void CVParametersPage::ComboSelectChange(void)
 			GetDlgItem(IDS_EDIT_NO_OF_CYCLES+i)->ShowWindow(SW_HIDE);
 		}
 	}
-}
-
-
-BOOL CVParametersPage::PreCreateWindow(CREATESTRUCT& cs)
-{
-	// TODO: Add your specialized code here and/or call the base class
-
-	//SetWindowTextW(L"asdf");
-
-	return CPropertyPage::PreCreateWindow(cs);
-}
-
-
-void CVParametersPage::OnShowWindow(BOOL bShow, UINT nStatus)
-{
-	CPropertyPage::OnShowWindow(bShow, nStatus);
-
-	// TODO: Add your message handler code here
-
-	//	RECT rect;
- //GetParent()->GetWindowRect(&rect);
- //int nWidth =rect.right-rect.left;
- //int nHeight =rect.bottom-rect.top;
- //if(bShow)
- //{
- //GetParent()->ShowWindow(SW_HIDE);
- //GetParent()->SetWindowPos(NULL,0,0,nWidth,nHeight,SWP_NOMOVE|SWP_NOZORDER|SWP_NOACTIVATE);
- //GetParent()->ShowWindow(SW_SHOW);
- //}
-
 }

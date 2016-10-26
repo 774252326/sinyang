@@ -11,7 +11,14 @@
 
 #include "analyzerDoc.h"
 
+
 #include <propkey.h>
+
+#include "PropertySheetA.h"
+#include "AnalysisParametersPage.h"
+#include "CVParametersPage.h"
+#include "SolutionAdditionParametersPageA.h"
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -22,6 +29,7 @@
 IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 
 BEGIN_MESSAGE_MAP(CanalyzerDoc, CDocument)
+	ON_COMMAND(ID_ANALYSIS_METHODSETUP, &CanalyzerDoc::OnAnalysisMethodsetup)
 END_MESSAGE_MAP()
 
 
@@ -45,16 +53,34 @@ BOOL CanalyzerDoc::OnNewDocument()
 	// TODO: add reinitialization code here
 	// (SDI documents will reuse this document)
 
+	p1=ANPara();
+	p2=CVPara();
+	p3=SAPara();
+	raw=RawData();
+
+
 	return TRUE;
 }
 
 
+	void CanalyzerDoc::operator=(const CanalyzerDoc &src)
+	{
+		p1=src.p1;
+		p2=src.p2;
+		p3=src.p3;
+		raw=src.raw;
+	}
 
 
 // CanalyzerDoc serialization
 
 void CanalyzerDoc::Serialize(CArchive& ar)
 {
+		p1.Serialize(ar);
+		p2.Serialize(ar);
+		p3.Serialize(ar);
+		raw.Serialize(ar);
+
 	if (ar.IsStoring())
 	{
 		// TODO: add storing code here
@@ -135,3 +161,50 @@ void CanalyzerDoc::Dump(CDumpContext& dc) const
 
 
 // CanalyzerDoc commands
+
+
+	void CanalyzerDoc::OnAnalysisMethodsetup()
+	{
+		// TODO: Add your command handler code here
+
+		// 创建属性表对象   
+		CString str;
+		str.LoadStringW(IDS_STRING_ANALYSIS_SETUP);
+		//CPropertySheet sheet(str);
+			PropertySheetA1 sheet(str);
+
+		AnalysisParametersPage appage;
+		appage.para=p1;
+		sheet.AddPage(&appage);
+
+		CVParametersPage cppage;
+		cppage.para=p2;
+		sheet.AddPage(&cppage);
+
+		SolutionAdditionParametersPageA sppage;
+		sppage.para=p3;
+		sheet.AddPage(&sppage);
+
+		// 打开模态向导对话框   
+		if(sheet.DoModal()==IDOK){
+			p1=appage.para;
+			p2=cppage.para;
+			p3=sppage.para;
+
+			//POSITION pos = GetFirstViewPosition();
+			//CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));
+			//CMainFrame *mf=(CMainFrame*)(lv->GetParentFrame());
+
+			//CanalyzerViewR* rv=((CanalyzerViewR*)GetNextView(pos));
+
+			//::SendMessage(mf->GetOutputWnd()->GetListCtrl()->GetSafeHwnd(),
+			//	MESSAGE_UPDATE_DOL,
+			//	NULL,
+			//	NULL);
+
+			//str.LoadString(IDS_STRING_PARA_CHANGED);
+			//mf->GetCaptionBar()->ShowMessage(str);
+
+
+		}
+	}

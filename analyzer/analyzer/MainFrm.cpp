@@ -247,7 +247,7 @@ BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT /*lpcs*/,
 		}
 	}
 
-	m_wndSplitter.SetActivePane(0, 1);
+	m_wndSplitter.SetActivePane(0, 0);
 
 	return (m_bSplitterCreated);
 
@@ -460,8 +460,8 @@ void CMainFrame::OnApplicationLook(UINT id)
 	CanalyzerView *pavl=(CanalyzerView*)m_wndSplitter.GetPane(0,0);
 	CanalyzerView *pavr=(CanalyzerView*)m_wndSplitter.GetPane(0,1);
 
-	//::SendMessage(pavl->GetSafeHwnd(),MESSAGE_CHANGE_APPLOOK,(WPARAM)oc,NULL);
-	//::SendMessage(pavr->GetSafeHwnd(),MESSAGE_CHANGE_APPLOOK,(WPARAM)oc,NULL);
+	::SendMessage(pavl->GetSafeHwnd(),MESSAGE_CHANGE_APPLOOK,(WPARAM)oc,NULL);
+	::SendMessage(pavr->GetSafeHwnd(),MESSAGE_CHANGE_APPLOOK,(WPARAM)oc,NULL);
 	//::SendMessage(m_wndSplitter.GetPane(0,1)->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
 	//::SendMessage(m_wndSplitter.GetPane(0,0)->GetSafeHwnd(),MESSAGE_UPDATE_RAW,NULL,NULL);
 }
@@ -833,17 +833,18 @@ void CMainFrame::OnMove(int x, int y)
 	CFrameWndEx::OnMove(x, y);
 
 	// TODO: Add your message handler code here
-	if(m_bSplitterCreated){
-	CanalyzerView *pavl=(CanalyzerView*)m_wndSplitter.GetPane(0,0);
-	CanalyzerView *pavr=(CanalyzerView*)m_wndSplitter.GetPane(0,1);
+	//if(m_bSplitterCreated){
+	//CanalyzerView *pavl=(CanalyzerView*)m_wndSplitter.GetPane(0,0);
+	//CanalyzerView *pavr=(CanalyzerView*)m_wndSplitter.GetPane(0,1);
 
-	//if(pavl!=NULL){
-	//	pavl->PostMessageW(WM_SIZE,x,y);
+	////if(pavl!=NULL){
+	////	pavl->PostMessageW(WM_SIZE,x,y);
+	////}
+
+	//LPARAM pt=MAKELPARAM((short)(x),(short)(y));
+	//::PostMessage(pavl->GetSafeHwnd(),WM_MOVE,NULL,pt);
+
+	//::PostMessage(pavr->GetSafeHwnd(),WM_MOVE,NULL,pt);
+
 	//}
-	::PostMessage(pavl->GetSafeHwnd(),WM_MOVE,x,y);
-
-	if(pavr!=NULL){
-		pavr->PostMessageW(WM_SIZE,x,y);
-	}
-	}
 }

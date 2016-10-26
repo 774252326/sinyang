@@ -126,9 +126,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AccountComboBox.h" />
+    <ClInclude Include="AnalysisParametersPage.h" />
     <ClInclude Include="analyzer.h" />
     <ClInclude Include="analyzerDoc.h" />
     <ClInclude Include="analyzerView.h" />
+    <ClInclude Include="CVParametersPage.h" />
     <ClInclude Include="filefunc.h" />
     <ClInclude Include="list\ComboItem.h" />
     <ClInclude Include="list\EditB.h" />
@@ -136,15 +138,20 @@
     <ClInclude Include="list\EditNum.h" />
     <ClInclude Include="list\EditReal.h" />
     <ClInclude Include="list\ListCtrlA.h" />
+    <ClInclude Include="list\ListCtrlAA.h" />
+    <ClInclude Include="list\ListCtrlLS.h" />
+    <ClInclude Include="list\ListCtrlSAP.h" />
     <ClInclude Include="list\ListCtrlUA.h" />
     <ClInclude Include="LoginDlg.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="OutputWnd.h" />
+    <ClInclude Include="PlotSettingPageA.h" />
     <ClInclude Include="plot\drawfunc.h" />
     <ClInclude Include="plot\LegendDlg.h" />
     <ClInclude Include="plot\PlotWnd.h" />
     <ClInclude Include="PropertySheetA.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="SolutionAdditionParametersPageA.h" />
     <ClInclude Include="StartDlg.hpp" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -152,9 +159,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AccountComboBox.cpp" />
+    <ClCompile Include="AnalysisParametersPage.cpp" />
     <ClCompile Include="analyzer.cpp" />
     <ClCompile Include="analyzerDoc.cpp" />
     <ClCompile Include="analyzerView.cpp" />
+    <ClCompile Include="CVParametersPage.cpp" />
     <ClCompile Include="filefunc.cpp" />
     <ClCompile Include="list\ComboItem.cpp" />
     <ClCompile Include="list\EditB.cpp" />
@@ -162,14 +171,19 @@
     <ClCompile Include="list\EditNum.cpp" />
     <ClCompile Include="list\EditReal.cpp" />
     <ClCompile Include="list\ListCtrlA.cpp" />
+    <ClCompile Include="list\ListCtrlAA.cpp" />
+    <ClCompile Include="list\ListCtrlLS.cpp" />
+    <ClCompile Include="list\ListCtrlSAP.cpp" />
     <ClCompile Include="list\ListCtrlUA.cpp" />
     <ClCompile Include="LoginDlg.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="OutputWnd.cpp" />
+    <ClCompile Include="PlotSettingPageA.cpp" />
     <ClCompile Include="plot\drawfunc.cpp" />
     <ClCompile Include="plot\LegendDlg.cpp" />
     <ClCompile Include="plot\PlotWnd.cpp" />
     <ClCompile Include="PropertySheetA.cpp" />
+    <ClCompile Include="SolutionAdditionParametersPageA.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

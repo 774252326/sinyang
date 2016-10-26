@@ -21,7 +21,7 @@ IMPLEMENT_DYNAMIC(PlotWnd, CWnd)
 	, bMouseCursor(false)
 	, selectPIdx(0)
 	, zoomrate(0.9)
-	, wndPosition(0)
+	, wndPosition(CPoint(0,0))
 	//, legendDpMode(0)
 {
 	td=NULL;
@@ -43,6 +43,7 @@ BEGIN_MESSAGE_MAP(PlotWnd, CWnd)
 	ON_WM_NCHITTEST()
 	ON_WM_MOVE()
 	ON_WM_SIZE()
+//	ON_WM_ERASEBKGND()
 END_MESSAGE_MAP()
 
 
@@ -179,7 +180,7 @@ void PlotWnd::OnMouseMove(UINT nFlags, CPoint point)
 				, point
 				, this->m_mouseDownPoint
 				, xmin,xmax,ymin,ymax))
-				this->Invalidate(FALSE);
+				this->Invalidate(/*FALSE*/);
 		}
 		else{
 
@@ -299,8 +300,23 @@ void PlotWnd::OnMove(int x, int y)
 	if(td!=NULL){
 		CRect rc;
 		td->GetWindowRect(&rc);
+		
+
+
 		rc.OffsetRect(x-wndPosition.x,y-wndPosition.y);
+		
+		TRACE("[%d,%d,%d,%d,%d,%d]\n",rc.left,rc.top,rc.right,rc.bottom,x-wndPosition.x,y-wndPosition.y);
+
+		//this->ScreenToClient(&rc);//for view only
+
 		td->MoveWindow(&rc);
+
+		//lgs.position=rc.TopLeft();
+
+			//LPARAM pt=MAKELPARAM((short)(x),(short)(y));
+	//::PostMessage(td->GetSafeHwnd(),WM_MOVE,NULL,pt);
+
+		//((LegendDlg*)td)->GetPos();
 	}
 
 	wndPosition=CPoint(x,y);
@@ -315,7 +331,7 @@ void PlotWnd::OnSize(UINT nType, int cx, int cy)
 
 	if(td!=NULL){
 		((LegendDlg*)td)->PositionWnd();
-		((LegendDlg*)td)->Invalidate();
+		((LegendDlg*)td)->Invalidate(FALSE);
 		//td->Invalidate();
 	}
 
@@ -341,7 +357,7 @@ void PlotWnd::ShowLegend(bool bShow)
 		}
 		else{
 			((LegendDlg*)td)->PositionWnd();
-			((LegendDlg*)td)->Invalidate();
+			((LegendDlg*)td)->Invalidate(FALSE);
 			//td->Invalidate();
 		}
 		td->ShowWindow(SW_SHOW);
@@ -370,4 +386,14 @@ void PlotWnd::ShowLegend(bool bShow)
 //	pd.ps.CalPlotRect(plotrect);
 //
 //	return plotrect;
+//}
+
+
+//BOOL PlotWnd::OnEraseBkgnd(CDC* pDC)
+//{
+//	// TODO: Add your message handler code here and/or call default
+//
+//	return TRUE;
+//
+//	return CWnd::OnEraseBkgnd(pDC);
 //}

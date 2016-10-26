@@ -7,7 +7,7 @@
 #include "afxdialogex.h"
 //#include "ColorButton.h"
 
-#include "func.h"
+//#include "func.h"
 
 // PlotSettingPage dialog
 
@@ -53,8 +53,108 @@ void PlotSettingPage::DoDataExchange(CDataExchange* pDX)
 	DDV_MinMaxInt(pDX,fs.labelSize,0,50);
 	DDX_Text(pDX, IDS_EDIT_METRIC_SIZE, fs.metricSize);
 	DDV_MinMaxInt(pDX,fs.metricSize,0,50);
-	//DDX_Text(pDX, IDS_EDIT_XLABEL, xlabel);
-	//DDX_Text(pDX, IDS_EDIT_YLABEL, ylabel);
+
+
+	DDX_Text(pDX, IDS_EDIT_HEIGHT, lgc.limitSize.cy);
+	DDV_MinMaxInt(pDX,lgc.limitSize.cy,0,500);
+	DDX_Text(pDX, IDS_EDIT_LINE_LENGTH, lgs.lineLength);
+	DDV_MinMaxInt(pDX,lgs.lineLength,10,50);
+	DDX_Text(pDX, IDS_EDIT_WIDTH, lgc.limitSize.cx);
+	DDV_MinMaxInt(pDX,lgc.limitSize.cx,0,500);
+	DDX_Text(pDX, IDS_EDIT_FONT_SIZE, lgs.fontSize);
+	DDV_MinMaxInt(pDX,lgs.fontSize,1,50);
+
+	BOOL m_dock=lgs.bDock?TRUE:FALSE;
+	DDX_Check(pDX, IDS_CHECK_FIX_LOCATION, m_dock);
+	lgs.bDock=(m_dock==TRUE);
+
+	BOOL m_dock2=(lgc.legendDpMode&LEGEND_DP_SHOW)?TRUE:FALSE;
+	DDX_Check(pDX, IDS_CHECK_SHOW_LEGEND, m_dock2);
+	if(m_dock2==FALSE)
+		lgc.legendDpMode&=~LEGEND_DP_SHOW;
+	else
+		lgc.legendDpMode|=LEGEND_DP_SHOW;
+
+	DDX_CBIndex(pDX, IDS_COMBO_GRID_LINE_TYPE, fs.gridType);
+
+	int ci=0;
+	if(lgc.legendDpMode&LEGEND_DP_ALIGN){
+		if(lgc.legendDpMode&LEGEND_DP_TOP){		
+			ci+=1;
+		}
+		ci*=2;
+		if(lgc.legendDpMode&LEGEND_DP_LEFT){
+			ci+=1;
+		}
+		ci+=1;
+	}
+	DDX_CBIndex(pDX, IDS_COMBO_ALIGNMENT, ci);
+
+	switch(ci){
+	case 0:
+		lgc.legendDpMode&=~LEGEND_DP_ALIGN;
+		break;
+	case 1:
+		lgc.legendDpMode|=LEGEND_DP_ALIGN;
+		lgc.legendDpMode&=~LEGEND_DP_TOP;
+		lgc.legendDpMode&=~LEGEND_DP_LEFT;
+		break;
+	case 2:
+		lgc.legendDpMode|=LEGEND_DP_ALIGN;
+		lgc.legendDpMode&=~LEGEND_DP_TOP;
+		lgc.legendDpMode|=LEGEND_DP_LEFT;
+		break;
+	case 3:
+		lgc.legendDpMode|=LEGEND_DP_ALIGN;
+		lgc.legendDpMode|=LEGEND_DP_TOP;
+		lgc.legendDpMode&=~LEGEND_DP_LEFT;
+		break;
+	case 4:
+		lgc.legendDpMode|=LEGEND_DP_ALIGN;
+		lgc.legendDpMode|=LEGEND_DP_TOP;
+		lgc.legendDpMode|=LEGEND_DP_LEFT;
+		break;
+	default:
+		break;
+	}
+
+	int ci2=0;
+	if(lgc.legendDpMode&LEGEND_DP_FIT_RECT){
+		if(lgc.legendDpMode&LEGEND_DP_AUTO_RECT){
+			ci2=0;
+		}
+		else{
+			ci2=1;
+		}
+	}
+	else{
+		ci2=2;
+	}
+
+	DDX_CBIndex(pDX, IDS_COMBO_ADJUST, ci2);
+
+	switch(ci2){
+	case 0:
+		lgc.legendDpMode|=LEGEND_DP_FIT_RECT;
+		lgc.legendDpMode|=LEGEND_DP_AUTO_RECT;
+		break;
+	case 1:
+		lgc.legendDpMode|=LEGEND_DP_FIT_RECT;
+		lgc.legendDpMode&=~LEGEND_DP_AUTO_RECT;
+		break;
+	case 2:
+		lgc.legendDpMode&=~LEGEND_DP_FIT_RECT;
+		break;
+	default:
+		break;
+	}
+
+
+
+	int ci3=fs.GetCrType();
+	DDX_CBIndex(pDX, IDS_COMBO_COLOR_STYLE, ci3);
+	fs.SetCr(ci3);
+	lgs.bkColor=fs.bkgndC;
 
 	CPropertyPage::DoDataExchange(pDX);
 }
@@ -63,6 +163,8 @@ void PlotSettingPage::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(PlotSettingPage, CPropertyPage)
 	ON_WM_CREATE()
 	ON_CBN_SELCHANGE(IDS_COMBO_FIGURE_SPEC, &PlotSettingPage::ComboSelectChange)
+	ON_CBN_SELCHANGE(IDS_COMBO_ADJUST, &PlotSettingPage::AdjustComboSelectChange)
+	ON_BN_CLICKED(IDS_CHECK_SHOW_LEGEND, &PlotSettingPage::OnCheck)
 END_MESSAGE_MAP()
 
 
@@ -117,6 +219,8 @@ int PlotSettingPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	CStatic *pStatic;
 	CEdit *pEdit;
 	//CColorButton *pColorButton;
+
+	CButton *pBtn;
 	CString str;
 
 
@@ -187,7 +291,7 @@ int PlotSettingPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	pEdit = (CEdit*)pCombo->GetWindow(GW_CHILD);
 	pEdit->SetReadOnly();
 
-	
+
 	pt.x=gap1.cx;
 	pt.y+=gap2.cy+buttonSize.cy;
 
@@ -246,12 +350,160 @@ int PlotSettingPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	pt.y+=gap2.cy+buttonSize.cy;
 
 
+	str.LoadStringW(IDS_CHECK_SHOW_LEGEND);
+	pBtn=new CButton;
+	pBtn->Create(str,
+		BS_AUTOCHECKBOX
+		|WS_CHILD
+		|WS_VISIBLE,
+		CRect(pt,buttonSize),
+		this,
+		IDS_CHECK_SHOW_LEGEND);
 
+	pt.x+=gap2.cx+buttonSize.cx;
+
+	str.LoadStringW(IDS_STRING_ALIGNMENT);
+	pStatic=new CStatic;
+	pStatic->Create(str,
+		WS_CHILD
+		|WS_VISIBLE, 
+		CRect(pt,buttonSize),
+		this,
+		IDS_STRING_ALIGNMENT);
+
+	pt.x+=gap2.cx+buttonSize.cx;
+
+	pCombo=new CComboBox;
+	pCombo->Create(
+		CBS_DROPDOWN
+		|WS_VISIBLE
+		|WS_CHILD, 
+		CRect(pt,buttonSize),
+		this,
+		IDS_COMBO_ALIGNMENT);
+	for(int i=IDS_STRING_FREE;i<=IDS_STRING1114;i++){
+		str.LoadStringW(i);
+		pCombo->AddString(str);
+	}
+	pEdit = (CEdit*)pCombo->GetWindow(GW_CHILD);
+	pEdit->SetReadOnly();
+
+	pt.x+=gap2.cx+buttonSize.cx;
+
+	str.LoadStringW(IDS_CHECK_FIX_LOCATION);
+	pBtn=new CButton;
+	pBtn->Create(str,
+		BS_AUTOCHECKBOX
+		|WS_CHILD
+		|WS_VISIBLE,
+		CRect(pt,buttonSize),
+		this,
+		IDS_CHECK_FIX_LOCATION);
+
+	pt.x=gap1.cx;
+	pt.y+=gap2.cy+buttonSize.cy;
+
+	pCombo=new CComboBox;
+	pCombo->Create(
+		CBS_DROPDOWN
+		|WS_VISIBLE
+		|WS_CHILD, 
+		CRect(pt,buttonSize),
+		this,
+		IDS_COMBO_ADJUST);
+	for(int i=IDS_STRING_AUTO_ADJUST;i<=IDS_STRING_MANUAL;i++){
+		str.LoadStringW(i);
+		pCombo->AddString(str);
+	}
+	pEdit = (CEdit*)pCombo->GetWindow(GW_CHILD);
+	pEdit->SetReadOnly();
+
+
+	pt.x+=gap2.cx+buttonSize.cx;
+
+	str.LoadStringW(IDS_STRING_W_H);
+	pStatic=new CStatic;
+	pStatic->Create(str,
+		WS_CHILD,
+		//|WS_VISIBLE, 
+		CRect(pt,buttonSize),
+		this,
+		IDS_STRING_W_H);
+
+	str.LoadStringW(IDS_STRING_FS_LL);
+	pStatic=new CStatic;
+	pStatic->Create(str,
+		WS_CHILD,
+		//|WS_VISIBLE, 
+		CRect(pt,buttonSize),
+		this,
+		IDS_STRING_FS_LL);
+
+	pt.x+=gap2.cx+buttonSize.cx;
+
+
+	str.LoadStringW(IDS_EDIT_WIDTH);
+	pEdit=new CEdit;
+	pEdit->CreateEx(
+		WS_EX_CLIENTEDGE,
+		L"Edit", 
+		str,
+		ES_LEFT
+		|WS_CHILD,
+		//|WS_VISIBLE,
+		CRect(pt,buttonSize),
+		this,
+		IDS_EDIT_WIDTH);
+
+	str.LoadStringW(IDS_EDIT_FONT_SIZE);
+	pEdit=new CEdit;
+	pEdit->CreateEx(
+		WS_EX_CLIENTEDGE,
+		L"Edit", 
+		str,
+		ES_LEFT
+		|WS_CHILD,
+		//|WS_VISIBLE,
+		CRect(pt,buttonSize),
+		this,
+		IDS_EDIT_FONT_SIZE);
+
+	pt.x+=gap2.cx+buttonSize.cx;
+
+
+	str.LoadStringW(IDS_EDIT_HEIGHT);
+	pEdit=new CEdit;
+	pEdit->CreateEx(
+		WS_EX_CLIENTEDGE,
+		L"Edit", 
+		str,
+		ES_LEFT
+		|WS_CHILD,
+		//|WS_VISIBLE,
+		CRect(pt,buttonSize),
+		this,
+		IDS_EDIT_HEIGHT);
+
+	str.LoadStringW(IDS_EDIT_LINE_LENGTH);
+	pEdit=new CEdit;
+	pEdit->CreateEx(
+		WS_EX_CLIENTEDGE,
+		L"Edit", 
+		str,
+		ES_LEFT
+		|WS_CHILD,
+		//|WS_VISIBLE,
+		CRect(pt,buttonSize),
+		this,
+		IDS_EDIT_LINE_LENGTH);
+
+	pt.x=gap1.cx;
+	pt.y+=gap2.cy+buttonSize.cy;
 
 	//ComboSelectChange();
 
 	winrect.top=pt.y;
-	
+
 	const DWORD dwStyle = WS_VISIBLE 
 		| WS_CHILD 
 		| WS_BORDER
@@ -263,8 +515,6 @@ int PlotSettingPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		TRACE0("Failed to create output windows\n");
 		return -1;      // fail to create
 	}
-
-	//BuildList(winrect.Width());
 
 	SetList();
 
@@ -292,142 +542,73 @@ void PlotSettingPage::ComboSelectChange(void)
 
 }
 
-//// this function is sent to CEditList 
-//// there it is used to determine which type of ctrl to create 
-//// when cell is being edited
-//static int _List_Type( int col )
-//{
-//	if ( col == 2 )
-//		return CEditList::eLast;
-//
-//	if ( col >= 4 )
-//		return CEditList::eCombo;
-//	// else :
-//	return CEditList::eEdit;
-//}
+
+void PlotSettingPage::AdjustComboSelectChange(void)
+{
+	UpdateData();
+
+	if(lgc.legendDpMode&LEGEND_DP_FIT_RECT){
+		if(lgc.legendDpMode&LEGEND_DP_AUTO_RECT){
+			this->GetDlgItem(IDS_STRING_W_H)->ShowWindow(SW_HIDE);
+			this->GetDlgItem(IDS_STRING_FS_LL)->ShowWindow(SW_HIDE);
+			this->GetDlgItem(IDS_EDIT_WIDTH)->ShowWindow(SW_HIDE);
+			this->GetDlgItem(IDS_EDIT_FONT_SIZE)->ShowWindow(SW_HIDE);
+			this->GetDlgItem(IDS_EDIT_HEIGHT)->ShowWindow(SW_HIDE);
+			this->GetDlgItem(IDS_EDIT_LINE_LENGTH)->ShowWindow(SW_HIDE);
+		}
+		else{
+			this->GetDlgItem(IDS_STRING_W_H)->ShowWindow(SW_SHOW);
+			this->GetDlgItem(IDS_STRING_FS_LL)->ShowWindow(SW_HIDE);
+			this->GetDlgItem(IDS_EDIT_WIDTH)->ShowWindow(SW_SHOW);
+			this->GetDlgItem(IDS_EDIT_FONT_SIZE)->ShowWindow(SW_HIDE);
+			this->GetDlgItem(IDS_EDIT_HEIGHT)->ShowWindow(SW_SHOW);
+			this->GetDlgItem(IDS_EDIT_LINE_LENGTH)->ShowWindow(SW_HIDE);
+		}
+	}
+	else{
+		this->GetDlgItem(IDS_STRING_W_H)->ShowWindow(SW_HIDE);
+		this->GetDlgItem(IDS_STRING_FS_LL)->ShowWindow(SW_SHOW);
+		this->GetDlgItem(IDS_EDIT_WIDTH)->ShowWindow(SW_HIDE);
+		this->GetDlgItem(IDS_EDIT_FONT_SIZE)->ShowWindow(SW_SHOW);
+		this->GetDlgItem(IDS_EDIT_HEIGHT)->ShowWindow(SW_HIDE);
+		this->GetDlgItem(IDS_EDIT_LINE_LENGTH)->ShowWindow(SW_SHOW);
+	}
+}
 
 
-//void PlotSettingPage::BuildList(int width)
-//{
-//	//pslist.ModifyStyle(0,LVS_REPORT|LVS_SHOWSELALWAYS);
-//	//LONG IStyle;
-//	//IStyle=GetWindowLong(pslist.m_hWnd, GWL_STYLE);//获取当前窗口style
-//	//IStyle&= ~LVS_TYPEMASK; //清除显示方式位
-//	//IStyle|= LVS_REPORT; //set style
-//	//SetWindowLong(pslist.m_hWnd, GWL_STYLE, IStyle);//设置style
-//	//DWORD dwStyle1;
-//	//dwStyle1 = pslist.GetExtendedStyle();
-//	//dwStyle1 |= LVS_EX_FULLROWSELECT;//选中某行使整行高亮（只适用与report风格的listctrl）
-//	//dwStyle1 |= LVS_EX_GRIDLINES;//网格线（只适用与report风格的listctrl）
-//	////dwStyle1 |= LVS_EX_CHECKBOXES;//item前生成checkbox控件
-//	//pslist.SetExtendedStyle(dwStyle1); //设置扩展风格
-//
-//	////int wi[7]={33,150,70,60,90,85,100};
-//
-//
-//	//CString strTemp;
-//	//for(int i=0;i<7;i++){
-//	//	strTemp.LoadStringW(IDS_STRING720+i);
-//	//	pslist.InsertColumn(i, strTemp, LVCFMT_LEFT);
-//	//	AdjustWidth(&pslist,i,strTemp);
-//
-//	//	if(i==4){
-//	//		for ( int j=IDS_STRING_GRID_LINE_SOLID ; j <= IDS_STRING_GRID_LINE_HIDE ; j++){
-//	//			strTemp.LoadStringW(j);
-//	//			pslist.allComboStr.AddTail( strTemp );
-//	//			AdjustWidth(&pslist,i,strTemp);
-//	//		}
-//	//	}
-//
-//	//	if(i==5){
-//	//		for ( int j=IDS_STRING_NO_SMOOTH ; j <= IDS_STRING_BEZIER ; j++){
-//	//			strTemp.LoadStringW(j);
-//	//			pslist.allComboStr.AddTail( strTemp );
-//	//			AdjustWidth(&pslist,i,strTemp);
-//	//		}
-//	//	}
-//
-//	//	if(i==6){
-//	//		for ( int j=IDS_STRING_YES ; j <= IDS_STRING_NO ; j++){
-//	//			strTemp.LoadStringW(j);
-//	//			pslist.allComboStr.AddTail( strTemp );
-//	//			AdjustWidth(&pslist,i,strTemp);
-//	//		}
-//	//	}
-//
-//
-//	//	pslist.cols.push_back(pslist.allComboStr.GetCount());
-//
-//
-//
-//	//}
-//
-//	//pslist.typelimit.assign(7,0);
-//	//pslist.typelimit[3]=2;
-//
-//	//// set functionality of list according to column
-//	//pslist.SetColumnType ( (fGetType)_List_Type );	
-//
-//
-//	//// insert a dummy row
-//	////InsertEmpty();
-//
-//	//SetList();
-//}
+void PlotSettingPage::OnCheck(void)
+{
+	UpdateData();
+
+	BOOL flg=(lgc.legendDpMode&LEGEND_DP_SHOW)?TRUE:FALSE;
+	
+	this->GetDlgItem(IDS_STRING_W_H)->EnableWindow(flg);
+	this->GetDlgItem(IDS_STRING_FS_LL)->EnableWindow(flg);
+	this->GetDlgItem(IDS_EDIT_WIDTH)->EnableWindow(flg);
+	this->GetDlgItem(IDS_EDIT_FONT_SIZE)->EnableWindow(flg);
+	this->GetDlgItem(IDS_EDIT_HEIGHT)->EnableWindow(flg);
+	this->GetDlgItem(IDS_EDIT_LINE_LENGTH)->EnableWindow(flg);
+	this->GetDlgItem(IDS_COMBO_ADJUST)->EnableWindow(flg);
+	this->GetDlgItem(IDS_CHECK_FIX_LOCATION)->EnableWindow(flg);
+	this->GetDlgItem(IDS_COMBO_ALIGNMENT)->EnableWindow(flg);
+	this->GetDlgItem(IDS_STRING_ALIGNMENT)->EnableWindow(flg);
+
+}
 
 
 void PlotSettingPage::SetList(void)
 {
 	UpdateData(FALSE);
 
-	//( (CColorButton*)GetDlgItem(IDS_COLOR_BKGND) )->color=fs.bkgndC;
-	//( (CColorButton*)GetDlgItem(IDS_COLOR_BORDER) )->color=fs.borderC;
-	//( (CColorButton*)GetDlgItem(IDS_COLOR_GRID_LINE) )->color=fs.gridC;
-	//( (CColorButton*)GetDlgItem(IDS_COLOR_LABEL) )->color=fs.labelC;
-	//( (CColorButton*)GetDlgItem(IDS_COLOR_METRIC) )->color=fs.metricC;
-
-
-	((CComboBox*)GetDlgItem(IDS_COMBO_COLOR_STYLE))->SetCurSel(fs.GetCrType());
-
-	((CComboBox*)GetDlgItem(IDS_COMBO_GRID_LINE_TYPE))->SetCurSel(fs.gridType);
+	AdjustComboSelectChange();
+	OnCheck();
 
 	if(ps.empty()){
 		return;
 	}
 
-
-
 	for(size_t i=0;i<ps.size();i++){
-		//CString strTemp;
-		//strTemp.Format(L"%d",i+1);
-		//pslist.InsertItem( i, strTemp );
-	
-		//pslist.SetItemText(i,1,ps[i].name);
-
-		//strTemp.Format(L"%d",ps[i].colour);
-		//pslist.SetItemText(i, 2, strTemp);
-
-		//strTemp.Format(L"%d",ps[i].dotSize);
-		//pslist.SetItemText(i,3,strTemp);
-
-
-		//strTemp.LoadStringW(IDS_STRING_GRID_LINE_SOLID+ps[i].lineType);
-		//pslist.SetItemText(i,4,strTemp);
-		//
-
-		//strTemp.LoadStringW(IDS_STRING_NO_SMOOTH+ps[i].smoothLine);
-		//pslist.SetItemText(i,5,strTemp);
-		//
-
-		//strTemp.LoadStringW( (ps[i].traceLast?IDS_STRING_YES:IDS_STRING_NO) );
-		//pslist.SetItemText(i,6,strTemp);
-		//
-		//for(int j=0;j<7;j++){
-		//	AdjustWidth(&pslist,j,i);
-		//}
-
 		pslist.InsertItemLS(i,ps[i]);
-
 	}
 
 }
@@ -435,64 +616,18 @@ void PlotSettingPage::SetList(void)
 
 void PlotSettingPage::GetList(void)
 {
-	//fs=PlotSpec( ((CComboBox*)GetDlgItem(IDS_COMBO_COLOR_STYLE))->GetCurSel() );
-
-	BYTE lpos=fs.legendPos;
-
-	fs=PlotSpec( ((CComboBox*)GetDlgItem(IDS_COMBO_COLOR_STYLE))->GetCurSel(), bkcr );
-
-	//fs.bkgndC=( (CColorButton*)GetDlgItem(IDS_COLOR_BKGND) )->color;
-	//fs.borderC=( (CColorButton*)GetDlgItem(IDS_COLOR_BORDER) )->color;
-	//fs.gridC=( (CColorButton*)GetDlgItem(IDS_COLOR_GRID_LINE) )->color;
-	//fs.labelC=( (CColorButton*)GetDlgItem(IDS_COLOR_LABEL) )->color;
-	//fs.metricC=( (CColorButton*)GetDlgItem(IDS_COLOR_METRIC) )->color;
-
-	fs.legendPos=lpos;
-
-	fs.gridType=((CComboBox*)GetDlgItem(IDS_COMBO_GRID_LINE_TYPE))->GetCurSel();
 	UpdateData();
 
 	if(ps.empty()){
 		return;
 	}
 
-	
-
 	int nItem=pslist.GetItemCount();
 
-
 	for(size_t i=0;i<nItem;i++){
-
-		//ps[i].name=pslist.GetItemText(i,1);
-
-		//CString strTemp;
-		//strTemp=pslist.GetItemText(i,2);
-		//ps[i].colour=_wtoi(strTemp.GetBuffer());
-
-		//strTemp=pslist.GetItemText(i,3);
-		//ps[i].dotSize=_wtoi(strTemp.GetBuffer());
-		//ps[i].lineType=pslist.GetChoice(i,4);
-		//ps[i].smoothLine=pslist.GetChoice(i,5);
-		//ps[i].traceLast=(pslist.GetChoice(i,6)==0);
-
 		pslist.GetItemLS(i,ps[i]);
 	}
 
 }
 
 
-//int PlotSettingPage::GetChoice(int nItem, int nSubItem)
-//{
-//	CString strTemp, strTemp2;
-//	strTemp=pslist.GetItemText(nItem,nSubItem);
-//
-//	int firsti= (nSubItem>0) ? pslist.cols[nSubItem-1] : 0;	
-//
-//	for(int i=firsti;i<pslist.cols[nSubItem];i++){
-//		strTemp2=pslist.allComboStr.GetAt(pslist.allComboStr.FindIndex(i));
-//		if(strTemp2==strTemp)
-//			return i-firsti;
-//	}
-//	return -1;
-//
-//}
