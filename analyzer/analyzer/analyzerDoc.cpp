@@ -36,7 +36,7 @@
 IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 
 	BEGIN_MESSAGE_MAP(CanalyzerDoc, CDocument)
-		ON_COMMAND(ID_ANALYSIS_METHODSETUP, &CanalyzerDoc::OnAnalysisMethodsetup)
+		//ON_COMMAND(ID_ANALYSIS_METHODSETUP, &CanalyzerDoc::OnAnalysisMethodsetup)
 		ON_BN_CLICKED(IDC_BUTTON1, &CanalyzerDoc::OnBnClickedButton1)
 		ON_COMMAND(ID_CONTROLS_CHANGESAP, &CanalyzerDoc::OnControlsChangesap)
 		ON_COMMAND(ID_ANALYSIS_REPORT, &CanalyzerDoc::OnAnalysisReport)
@@ -292,46 +292,46 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		}
 		else{
 
-			CSingleLock singleLock(&(mf->m_CritSection));
-			if(singleLock.Lock())			{
+			//CSingleLock singleLock(&(mf->m_CritSection));
+			//if(singleLock.Lock())			{
 
-				singleLock.Unlock();
-				SolutionAdditionParametersPageB *sppage;
-				if(psheetml==NULL){
-					psheetml=new PropertySheetA1ML();
-					sppage=new SolutionAdditionParametersPageB();	
-					sppage->para1.saplist.assign(p3.saplist.begin()+nextSAPIndex,p3.saplist.end());
-					//sppage->para1=p3todo;
-					sppage->para0=p3done;
-					sppage->pDoc=this;
+			//	singleLock.Unlock();
+			//	SolutionAdditionParametersPageB *sppage;
+			//	if(psheetml==NULL){
+			//		psheetml=new PropertySheetA1ML(IDS_STRING_ANALYSIS_SETUP);
+			//		sppage=new SolutionAdditionParametersPageB();	
+			//		sppage->para1.saplist.assign(p3.saplist.begin()+nextSAPIndex,p3.saplist.end());
+			//		//sppage->para1=p3todo;
+			//		sppage->para0=p3done;
+			//		sppage->pDoc=this;
 
-					psheetml->AddPage(sppage);			
+			//		psheetml->AddPage(sppage);			
 
-				}
-				else{
-					sppage=(SolutionAdditionParametersPageB*)(psheetml->GetPage(0));
-					sppage->para1.saplist.assign(p3.saplist.begin()+nextSAPIndex,p3.saplist.end());
-					//sppage->para1=p3todo;
-					sppage->para0=p3done;
-					sppage->pDoc=this;
-				}
+			//	}
+			//	else{
+			//		sppage=(SolutionAdditionParametersPageB*)(psheetml->GetPage(0));
+			//		sppage->para1.saplist.assign(p3.saplist.begin()+nextSAPIndex,p3.saplist.end());
+			//		//sppage->para1=p3todo;
+			//		sppage->para0=p3done;
+			//		sppage->pDoc=this;
+			//	}
 
-				if(psheetml->GetSafeHwnd()){
-					sppage->SetList();			
-					psheetml->ShowWindow(SW_SHOW);
-					psheetml->CenterWindow();			
-				}
-				else{
-					psheetml->Create();
-				}
+			//	if(psheetml->GetSafeHwnd()){
+			//		sppage->SetList();			
+			//		psheetml->ShowWindow(SW_SHOW);
+			//		psheetml->CenterWindow();			
+			//	}
+			//	else{
+			//		psheetml->Create();
+			//	}
 
-				::SetWindowPos(psheetml->GetSafeHwnd(),
-					//HWND_TOPMOST,
-					HWND_TOP,
-					0,0,0,0,
-					SWP_NOMOVE|SWP_NOSIZE); 
+			//	::SetWindowPos(psheetml->GetSafeHwnd(),
+			//		//HWND_TOPMOST,
+			//		HWND_TOP,
+			//		0,0,0,0,
+			//		SWP_NOMOVE|SWP_NOSIZE); 
 
-			}
+			//}
 		}
 
 
@@ -375,49 +375,19 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 
 	void CanalyzerDoc::Show(void)
 	{
-		if(!dol.empty()){
-			POSITION pos = GetFirstViewPosition();
-			if(pos!=NULL){
-				CMainFrame *mf=(CMainFrame*)(GetNextView(pos)->GetParentFrame());
-				//CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));
-				//CMainFrame *mf=(CMainFrame*)(lv->GetParentFrame());
-				::SendMessage(mf->GetOutputWnd()->GetListCtrl()->GetSafeHwnd(),
-					MESSAGE_SHOW_DOL,
-					NULL,
-					(LPARAM)this);
-			}
+		//if(!dol.empty()){
+		POSITION pos = GetFirstViewPosition();
+		if(pos!=NULL){
+			CMainFrame *mf=(CMainFrame*)(GetNextView(pos)->GetParentFrame());
+			//CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));
+			//CMainFrame *mf=(CMainFrame*)(lv->GetParentFrame());
+			::SendMessage(mf->GetOutputWnd()->GetListCtrl()->GetSafeHwnd(),
+				MESSAGE_SHOW_DOL,
+				NULL,
+				(LPARAM)this);
 		}
+		//}
 	}
-
-
-
-
-	void CopyWndToClipboard( CWnd *pWnd )
-	{
-		CBitmap  bitmap;
-		CClientDC dc(pWnd);
-		CDC  memDC;
-		CRect rect;
-
-		memDC.CreateCompatibleDC(&dc); 
-
-		pWnd->GetWindowRect(rect);
-
-		bitmap.CreateCompatibleBitmap(&dc, rect.Width(),rect.Height() );
-
-		CBitmap* pOldBitmap = memDC.SelectObject(&bitmap);
-		memDC.BitBlt(0, 0, rect.Width(),rect.Height(), &dc, 0, 0, SRCCOPY); 
-
-		pWnd->OpenClipboard() ;
-		EmptyClipboard() ;
-		SetClipboardData (CF_BITMAP, bitmap.GetSafeHandle() ) ;
-		CloseClipboard () ;
-
-		memDC.SelectObject(pOldBitmap);
-		bitmap.Detach();
-	}
-
-
 
 	void CanalyzerDoc::OnBnClickedButton1()
 	{
@@ -427,32 +397,58 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 	}
 
 
-	void CanalyzerDoc::ChangeSAP(SAPara p3todo)
+	UINT CanalyzerDoc::ChangeSAP()
 	{
 
 
-	//SAPara p3new=p3done;
-	//p3new.AppendData(p3todo);
+		//SAPara p3new=p3done;
+		//p3new.AppendData(p3todo);
 
-	//POSITION pos = GetFirstViewPosition();
-	//CMainFrame *mf=(CMainFrame*)(GetNextView(pos)->GetParentFrame());
+		//POSITION pos = GetFirstViewPosition();
+		//CMainFrame *mf=(CMainFrame*)(GetNextView(pos)->GetParentFrame());
 
-	//CSingleLock singleLock(&m_CritSection);
-	//	while(singleLock.Lock())
-	//	{
-	//		if(mf->pst!=pause){
-	//			singleLock.Unlock();
-	//		}
-	//		else{
-	//			p3=p3new;
-	//			singleLock.Unlock();
-	//			break;
-	//		}
-	//	}
+		//CSingleLock singleLock(&m_CritSection);
+		//	while(singleLock.Lock())
+		//	{
+		//		if(mf->pst!=pause){
+		//			singleLock.Unlock();
+		//		}
+		//		else{
+		//			p3=p3new;
+		//			singleLock.Unlock();
+		//			break;
+		//		}
+		//	}
+		if(bChangeSAP){
+
+			CSingleLock singleLock(&m_CritSection);
+			if(singleLock.Lock())
+			{
+
+				p3=p3done;
+				p3.AppendData(p3todo);
+
+				dol.clear();
+				SAPara p3d;
+
+				runstate=::ComputeStateData(p1.analysistype,p2,p3,raw,dol,p3d,currentSAPIndex,nextSAPIndex,outstep,VtoAdd);
+
+				p3done=p3d;
+
+				this->bChangeSAP=false;
+
+				// Now that we are finished, 
+				// unlock the resource for others.
+				singleLock.Unlock();
 
 
+			}
 
 
+		}
+
+
+		return runstate;
 
 
 	}
@@ -690,8 +686,106 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 	void CanalyzerDoc::OnControls2()
 	{
 		// TODO: Add your command handler code here
+		//POSITION pos = GetFirstViewPosition();
+		//CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));
+
+		//CopyWndToClipboard(lv);
+	}
+
+
+	UINT CanalyzerDoc::UpdateALL(void)
+	{
+
 		POSITION pos = GetFirstViewPosition();
 		CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));
+		//CMainFrame *mf=(CMainFrame*)(lv->GetParentFrame());
+		//COutputListA *ol=mf->GetOutputWnd()->GetListCtrl();
 
-		CopyWndToClipboard(lv);
+		CanalyzerViewR* rv=((CanalyzerViewR*)GetNextView(pos));
+
+		switch(runstate){
+		case 0:
+			{
+
+				UINT rstmp=ChangeSAP();
+				if(rstmp==0){
+					::PostMessage(rv->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
+					::PostMessage(lv->GetSafeHwnd(),MESSAGE_UPDATE_RAW,NULL,NULL);
+					Show();
+					return 0;
+				}
+				else{
+					return UpdateALL();
+				}
+
+			}
+		case 1:
+			{
+				::PostMessage(rv->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
+				::PostMessage(lv->GetSafeHwnd(),MESSAGE_UPDATE_RAW,NULL,NULL);
+				Show();
+				return 1;
+			}
+		case 2:
+			{
+				::PostMessage(rv->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
+				::PostMessage(lv->GetSafeHwnd(),MESSAGE_UPDATE_RAW,NULL,NULL);
+				Show();
+				return 2;
+			}
+		case 3:
+			{
+				//AfxMessageBox(IDS_STRING_STEP_ERROR);
+				//OnAnalysisAbortanalysis();
+				return 3;
+			}
+		case 4:
+			{
+				//AfxMessageBox(IDS_STRING_STEP_ERROR);
+				//OnAnalysisAbortanalysis();
+				::PostMessage(rv->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
+				::PostMessage(lv->GetSafeHwnd(),MESSAGE_UPDATE_RAW,NULL,NULL);
+				Show();
+				return 4;
+			}
+		case 5:
+			{
+				UINT rstmp=ChangeSAP();
+				if(rstmp==5){
+					::PostMessage(rv->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
+					::PostMessage(lv->GetSafeHwnd(),MESSAGE_UPDATE_RAW,NULL,NULL);
+					Show();
+					return 5;
+				}
+				else{
+					return UpdateALL();
+				}
+			}
+		case 6:
+			{
+				::PostMessage(rv->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
+				::PostMessage(lv->GetSafeHwnd(),MESSAGE_UPDATE_RAW,NULL,NULL);
+				Show();
+				return 6;
+			}
+		case 7:
+			{
+				UINT rstmp=ChangeSAP();
+				if(rstmp==7){
+					::PostMessage(rv->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
+					::PostMessage(lv->GetSafeHwnd(),MESSAGE_UPDATE_RAW,NULL,NULL);
+					Show();
+					return 7;
+				}
+				else{
+					return UpdateALL();
+				}
+			}
+		default:
+			return 100;
+		}
+
+
+
+		//return 0;
 	}

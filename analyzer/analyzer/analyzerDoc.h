@@ -12,7 +12,7 @@
 //#include "d:\project1\analyzer\analyzer\struct\sapara.hpp"
 
 #include "PropertySheetA1ML.h"
-#include "d:\project1\analyzer\analyzer\struct\sapara.hpp"
+//#include "d:\project1\analyzer\analyzer\struct\sapara.hpp"
 
 class CanalyzerDoc : public CDocument
 {
@@ -89,7 +89,7 @@ public:
 	afx_msg void OnBnClickedButton1();
 	//static UINT ChangeSAP(LPVOID pParam);
 
-	void ChangeSAP(SAPara pParam);
+	UINT ChangeSAP();
 
 	SAPara p3done;
 	afx_msg void OnControlsChangesap();
@@ -111,4 +111,5 @@ public:
 
 	SAPara p3todo;
 	bool bChangeSAP;
+	UINT UpdateALL(void);
 };

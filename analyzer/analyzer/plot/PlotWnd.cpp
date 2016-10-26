@@ -21,7 +21,7 @@ IMPLEMENT_DYNAMIC(PlotWnd, CWnd)
 	, selectPIdx(0)
 	, zoomrate(0.9)
 	, wndPosition(CPoint(0,0))
-	, bShowToolTip(false)
+	, bShowToolTip(true)
 {
 	td=NULL;
 	pdex=pd;
@@ -43,6 +43,7 @@ BEGIN_MESSAGE_MAP(PlotWnd, CWnd)
 	ON_WM_MOVE()
 	ON_WM_SIZE()
 	//	ON_WM_ERASEBKGND()
+	ON_WM_LBUTTONDBLCLK()
 END_MESSAGE_MAP()
 
 
@@ -80,9 +81,12 @@ void PlotWnd::OnPaint()
 	if(pdex!=NULL){
 		//DrawDataEx(rect,&dcMem,*pdex);
 		pdex->Draw(rect,&dcMem);
-		if(bMouseCursor)
+		if(bMouseCursor){
 			//DrawData1Ex(rect,&dcMem,*pdex,selectPIdx);
-		pdex->Draw1(rect,&dcMem,pdex->pd.raw.xll[selectPIdx],pdex->pd.raw.yll[selectPIdx]);
+			if(selectPIdx<pdex->pd.raw.xll.size() && selectPIdx<pdex->pd.raw.yll.size()){
+				pdex->Draw1(rect,&dcMem,pdex->pd.raw.xll[selectPIdx],pdex->pd.raw.yll[selectPIdx]);
+			}
+		}
 	}
 	else{
 		PlotDataEx dx(blankPS);
@@ -114,28 +118,32 @@ void PlotWnd::OnLButtonDown(UINT nFlags, CPoint point)
 			this->GetClientRect(&plotrect);	
 			pdex->pd.ps.CalPlotRect(plotrect);
 
-			int re=DownUpdate(plotrect
-				//, pdex->pd.ps.metricSize
-				//, pdex->pd.ps.labelSize
-				//, pdex->pd.ps.metricGridLong
-				//, pdex->pd.ps.gap
+			//int re=DownUpdate(plotrect
+			//, pdex->pd.ps.metricSize
+			//, pdex->pd.ps.labelSize
+			//, pdex->pd.ps.metricGridLong
+			//, pdex->pd.ps.gap
+			//, point
+			//, m_mouseDownPoint
+			//, pdex->xmin, pdex->xmax, pdex->ymin, pdex->ymax
+			//, bMouseCursor
+			//, pdex->pd.raw.xll
+			//, pdex->pd.raw.yll
+			//, selectPIdx);
+
+			int re=DownUpdateB(plotrect
 				, point
-				, m_mouseDownPoint
-				, pdex->xmin, pdex->xmax, pdex->ymin, pdex->ymax
-				, bMouseCursor
-				, pdex->pd.raw.xll
-				, pdex->pd.raw.yll
-				, selectPIdx);
+				, m_mouseDownPoint);
 
 			switch(re){
 			case 1:
 				SetCapture();
 				break;
-			case 2:
-				this->ClientToScreen(&m_mouseDownPoint);
-				::SetCursorPos(m_mouseDownPoint.x,m_mouseDownPoint.y);
-				Invalidate(FALSE);
-				break;
+				//case 2:
+				//	this->ClientToScreen(&m_mouseDownPoint);
+				//	::SetCursorPos(m_mouseDownPoint.x,m_mouseDownPoint.y);
+				//	Invalidate(FALSE);
+				//	break;
 			default:
 				break;
 			}
@@ -173,35 +181,25 @@ void PlotWnd::OnMouseMove(UINT nFlags, CPoint point)
 			//if(pd!=NULL && !pd->ps.empty() ){
 			CRect plotrect;
 			this->GetClientRect(&plotrect);	
-			//ScreenToClient(&point);
 			pdex->pd.ps.CalPlotRect(plotrect);
 
 			if(GetCapture()==this){
 				if(MoveUpdateA(plotrect
-					//, pdex->pd.ps.metricSize
-					//, pdex->pd.ps.labelSize
-					//, pdex->pd.ps.metricGridLong
-					//, pdex->pd.ps.gap
 					, point
 					, this->m_mouseDownPoint
 					, pdex->xmin,pdex->xmax,pdex->ymin,pdex->ymax))
 					this->Invalidate(/*FALSE*/);
 			}
 			else{
-
-				CString str;
-				if(MoveUpdateB(plotrect
-					//, pdex->pd.ps.metricSize
-					//, pdex->pd.ps.labelSize
-					//, pdex->pd.ps.metricGridLong
-					//, pdex->pd.ps.gap
-					, point
-					, this->m_mouseDownPoint
-					, pdex->xmin,pdex->xmax,pdex->ymin,pdex->ymax
-					, str)){
-						if(bShowToolTip){
-					m_tool.UpdateTipText(str,this);
-						}
+				if(bShowToolTip){
+					CString str;
+					if(MoveUpdateB(plotrect
+						, point
+						, this->m_mouseDownPoint
+						, pdex->xmin,pdex->xmax,pdex->ymin,pdex->ymax
+						, str)){						
+							m_tool.UpdateTipText(str,this);
+					}
 				}
 
 			}
@@ -226,10 +224,6 @@ BOOL PlotWnd::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 			pdex->pd.ps.CalPlotRect(plotrect);
 
 			if( WheelUpdate(plotrect
-				//, pdex->pd.ps.metricSize
-				//, pdex->pd.ps.labelSize
-				//, pdex->pd.ps.metricGridLong
-				//, pdex->pd.ps.gap
 				, pdex->pd.ps.metricGridLong+pdex->pd.ps.metricSize
 				, pt
 				, ((zDelta>0)?zoomrate:1/zoomrate)
@@ -258,7 +252,7 @@ BOOL PlotWnd::PreTranslateMessage(MSG* pMsg)
 {
 	// TODO: Add your specialized code here and/or call the base class
 
-	if(bShowToolTip)
+	if(bShowToolTip && bMouseCursor)
 		m_tool.RelayEvent(pMsg);
 
 	return CWnd::PreTranslateMessage(pMsg);
@@ -367,7 +361,7 @@ void PlotWnd::SetLegend(void)
 			td=NULL;
 		}
 	}
-		
+
 
 
 }
@@ -380,4 +374,47 @@ PlotSpec * PlotWnd::GetPlotSpec(void)
 	}
 
 	return &blankPS;
+}
+
+void PlotWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
+{
+	// TODO: Add your message handler code here and/or call default
+
+
+	if(bMouseCursor){
+		if(pdex!=NULL){
+			if(!pdex->pd.ls.empty()){
+
+
+				CRect plotrect;
+				this->GetClientRect(&plotrect);	
+				pdex->pd.ps.CalPlotRect(plotrect);
+
+				int re=DownUpdateA(plotrect
+					, point
+					, m_mouseDownPoint
+					, pdex->xmin, pdex->xmax, pdex->ymin, pdex->ymax
+					, pdex->pd.raw.xll
+					, pdex->pd.raw.yll
+					, selectPIdx);
+
+				switch(re){
+				case 2:
+					{
+						this->ClientToScreen(&m_mouseDownPoint);
+						::SetCursorPos(m_mouseDownPoint.x,m_mouseDownPoint.y);
+						//HCURSOR hCur  =  LoadCursor( NULL  , IDC_ARROW ) ;
+						//::SetCursor(hCur);
+						Invalidate(FALSE);
+					}
+					break;
+				default:
+					break;
+				}
+
+			}
+		}
+	}
+
+	CWnd::OnLButtonDblClk(nFlags, point);
 }

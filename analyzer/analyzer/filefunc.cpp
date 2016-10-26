@@ -67,9 +67,10 @@ void WaitSecond(ProcessState &waitflg
 	,int second=-1
 	//,int second=3
 	//,int second=0
+	,int interval=1000
 	)
 {
-	int interval=1000;
+	;
 	while( waitflg!=running
 		&& ( second<0 || second--!=0 )
 		){
@@ -363,21 +364,23 @@ UINT PROCESS(LPVOID pParam)
 
 	while(mf->pst!=stop){
 
-		if(mf->pst!=running){
-			Sleep(sleepms);
-		}
+		//if(mf->pst!=running){
+			//Sleep(sleepms);
+		//}
 
-		if(singleLock1.Lock())
+		WaitSecond(mf->pst,-1,50);
+
+		//if(singleLock1.Lock())
 		{
-			if(mf->runstate==0){
-				singleLock1.Unlock();
+			if(pDoc->runstate==0){
+				//singleLock1.Unlock();
 				mf->pst=stop;
 				return 0;
 			}
 
 
-			if(mf->runstate==5){
-				singleLock1.Unlock();
+			if(pDoc->runstate==5){
+				//singleLock1.Unlock();
 
 				if(filelist.empty()){
 					CString strerr;
@@ -409,7 +412,7 @@ UINT PROCESS(LPVOID pParam)
 				}
 			}
 			else{
-				singleLock1.Unlock();
+				//singleLock1.Unlock();
 
 				rnd=data.popData(x,y,nd);
 

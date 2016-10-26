@@ -19,6 +19,33 @@
 
 class CanalyzerView : public CView
 {
+public:
+	static void CopyWndToClipboard( CWnd *pWnd )
+	{
+		CBitmap  bitmap;
+		CClientDC dc(pWnd);
+		CDC  memDC;
+		CRect rect;
+
+		memDC.CreateCompatibleDC(&dc); 
+
+		pWnd->GetWindowRect(rect);
+
+		bitmap.CreateCompatibleBitmap(&dc, rect.Width(),rect.Height() );
+
+		CBitmap* pOldBitmap = memDC.SelectObject(&bitmap);
+		memDC.BitBlt(0, 0, rect.Width(),rect.Height(), &dc, 0, 0, SRCCOPY); 
+
+		pWnd->OpenClipboard() ;
+		EmptyClipboard() ;
+		SetClipboardData (CF_BITMAP, bitmap.GetSafeHandle() ) ;
+		CloseClipboard () ;
+
+		memDC.SelectObject(pOldBitmap);
+		bitmap.Detach();
+	};
+
+
 protected: // create from serialization only
 	CanalyzerView();
 	DECLARE_DYNCREATE(CanalyzerView)
@@ -71,6 +98,10 @@ protected:
 	void OnDeltaposSpin(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnViewFitwindow();
 	//afx_msg LRESULT OnMessageUpdateRaw(WPARAM wParam, LPARAM lParam);
+public:
+	afx_msg void OnEditCopy();
+	afx_msg void OnViewDatacursor();
+	afx_msg void OnUpdateViewDatacursor(CCmdUI *pCmdUI);
 };
 
 #ifndef _DEBUG  // debug version in analyzerView.cpp

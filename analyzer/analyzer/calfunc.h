@@ -35,12 +35,12 @@ UINT DataOutAList2PlotDataExList(
 	bool bReadCb=true
 	);
 
-UINT RawData2PlotDataList(
-	const RawData &raw, 
-	const std::vector<DataOutA> dol, 
-	COLORREF bkc, 
-	std::vector<PlotDataEx> &pdl
-	);
+//UINT RawData2PlotDataList(
+//	const RawData &raw, 
+//	const std::vector<DataOutA> dol, 
+//	COLORREF bkc, 
+//	std::vector<PlotDataEx> &pdl
+//	);
 
 
 CString Compute( 

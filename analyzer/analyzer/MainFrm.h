@@ -17,6 +17,7 @@
 //#include "filefunc.h"
 
 #include "WaitDlg.h"
+#include "PropertySheetA1ML.h"
 
 
 class CMainFrame : public CFrameWndEx
@@ -128,8 +129,16 @@ public:
 protected:
 	afx_msg LRESULT OnMessageChangeAnp(WPARAM wParam, LPARAM lParam);
 public:
-	UINT runstate;
+//	UINT runstate;
 	CCriticalSection m_CritSection;
+	afx_msg void OnAnalysisMethodsetup();
+
+		PropertySheetA1ML *psheetml;
+protected:
+	afx_msg LRESULT OnMessageCloseSapSheet(WPARAM wParam, LPARAM lParam);
+public:
+	void ShowWaitDlg(CString tips);
+	void HideWaitDlg(void);
 };
 
 

@@ -49,6 +49,9 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		ON_NOTIFY(UDN_DELTAPOS, SPIN_ID, &CanalyzerView::OnDeltaposSpin)
 
 		//ON_MESSAGE(MESSAGE_UPDATE_RAW, &CanalyzerView::OnMessageUpdateRaw)
+		ON_COMMAND(ID_EDIT_COPY, &CanalyzerView::OnEditCopy)
+		ON_COMMAND(ID_VIEW_DATACURSOR, &CanalyzerView::OnViewDatacursor)
+		//ON_UPDATE_COMMAND_UI(ID_VIEW_DATACURSOR, &CanalyzerView::OnUpdateViewDatacursor)
 	END_MESSAGE_MAP()
 
 	// CanalyzerView construction/destruction
@@ -162,9 +165,7 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		//pw.pdex=NULL;
 		if(pw.Create(_T("STATIC"), _T(""), WS_CHILD | WS_VISIBLE /*| WS_DISABLED*/, CRect(), this, 1234)==FALSE)
 			return -1;
-
-
-
+		
 		if(	m_spBtn.CreateEx(
 			WS_EX_TOPMOST			
 			//|WS_EX_TRANSPARENT
@@ -480,3 +481,36 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 
 	//	return 0;
 	//}
+
+	void CanalyzerView::OnEditCopy()
+	{
+		// TODO: Add your command handler code here
+
+		if(m_spBtn.IsWindowVisible()){
+			m_spBtn.ShowWindow(SW_HIDE);
+			this->UpdateWindow();
+			CopyWndToClipboard(this);
+			m_spBtn.ShowWindow(SW_SHOW);
+		}
+		else{
+			CopyWndToClipboard(this);
+		}
+
+	}
+
+
+	void CanalyzerView::OnViewDatacursor()
+	{
+		// TODO: Add your command handler code here
+		pw.bMouseCursor=!pw.bMouseCursor;
+	}
+
+
+	void CanalyzerView::OnUpdateViewDatacursor(CCmdUI *pCmdUI)
+	{
+		// TODO: Add your command update UI handler code here
+		pCmdUI->SetCheck(pw.bMouseCursor);
+
+		::SendMessage(this->GetParentFrame()->GetSafeHwnd(),WM_COMMAND,CN_UPDATE_COMMAND_UI,NULL);
+
+	}

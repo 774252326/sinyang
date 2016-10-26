@@ -14,6 +14,8 @@ IMPLEMENT_DYNAMIC(CVParametersPage, CPropertyPage)
 CVParametersPage::CVParametersPage()
 	: CPropertyPage(CVParametersPage::IDD)
 	//, strtmp(_T(""))
+	, dwStyle(WS_CHILD|WS_VISIBLE)
+	//, enabled(false)
 {
 	//para.endintegratione=1;
 	//para.highelimit=1;
@@ -44,15 +46,15 @@ void CVParametersPage::DoDataExchange(CDataExchange* pDX)
 
 	DDX_Text(pDX, IDS_EDIT_SCAN_RATE, para.scanrate);
 	DDV_MinMaxDouble(pDX,para.scanrate,0,DBL_MAX);
+	DDX_Text(pDX, IDS_EDIT_ROTATION_RATE, para.rotationrate);
+	DDV_MinMaxDouble(pDX,para.rotationrate,0,DBL_MAX);
 
-	DDX_Text(pDX, IDS_EDIT_NO_OF_CYCLES, para.noofcycles);
-	DDV_MinMaxInt(pDX,para.noofcycles,0,50);
 
 	DDX_Text(pDX, IDS_EDIT_VARIATION_TOLERANCE, para.variationtolerance);
 	DDV_MinMaxDouble(pDX,para.rotationrate,0,DBL_MAX);
 
-	DDX_Text(pDX, IDS_EDIT_ROTATION_RATE, para.rotationrate);
-	DDV_MinMaxDouble(pDX,para.rotationrate,0,DBL_MAX);
+	DDX_Text(pDX, IDS_EDIT_NO_OF_CYCLES, para.noofcycles);
+	DDV_MinMaxInt(pDX,para.noofcycles,0,50);
 
 	DDX_Text(pDX, IDS_EDIT_END_INTEGRATION_E, para.endintegratione);
 	DDV_MinMaxDouble(pDX,para.endintegratione,para.lowelimit,para.highelimit);
@@ -64,7 +66,7 @@ void CVParametersPage::DoDataExchange(CDataExchange* pDX)
 		DDX_Text(pDX, IDS_EDIT_START_INTEGRATION_E, para.startintegratione);
 		DDV_MinMaxDouble(pDX,para.startintegratione,para.lowelimit,para.endintegratione);
 	}
-
+	
 	CPropertyPage::DoDataExchange(pDX);
 }
 
@@ -150,8 +152,7 @@ int CVParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		pStatic=new CStatic;
 		pStatic->Create(
 			str,
-			WS_CHILD
-			|WS_VISIBLE, 
+			dwStyle,
 			CRect(pt,staticSize),
 			this,
 			IDS_STRING_LOW_E_LIMIT+i);
@@ -166,8 +167,7 @@ int CVParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 			L"Edit", 
 			str,
 			ES_LEFT
-			|WS_CHILD
-			|WS_VISIBLE,
+			|dwStyle,
 			CRect(pt,editSize),
 			this,
 			IDS_EDIT_LOW_E_LIMIT+i);
@@ -183,8 +183,7 @@ int CVParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	pStatic=new CStatic;
 	pStatic->Create(
 			str,
-			WS_CHILD
-			|WS_VISIBLE, 
+			dwStyle, 
 			CRect(pt,staticSize),
 			this,
 			IDS_STRING_START_INTEGRATION_E);
@@ -199,8 +198,7 @@ int CVParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		CBS_DROPDOWN
 		//CBS_DROPDOWNLIST
 		//|WS_TILED
-		|WS_CHILD
-		|WS_VISIBLE, 
+		|dwStyle, 
 		CRect(pt,editSize),
 		this,
 		IDS_EDIT_START_INTEGRATION_E);
@@ -208,6 +206,10 @@ int CVParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	str.LoadStringW(IDS_STRING_AUTO);
 	pCombo->AddString(str);
+
+		//for(int i=IDS_EDIT_LOW_E_LIMIT;i<=IDS_EDIT_START_INTEGRATION_E;i++){
+			//this->GetDlgItem(i)->EnableWindow(enabled);
+		//}	
 
 	return 0;
 }

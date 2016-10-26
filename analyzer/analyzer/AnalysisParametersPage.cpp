@@ -13,6 +13,7 @@ IMPLEMENT_DYNAMIC(AnalysisParametersPage, CPropertyPage)
 	AnalysisParametersPage::AnalysisParametersPage()
 	: CPropertyPage(AnalysisParametersPage::IDD)
 	//, filePath(_T(""))
+	, dwStyle(WS_CHILD|WS_VISIBLE)
 {
 	CString title;
 	title.LoadStringW(IDS_STRING_ANALYSIS_PARA);
@@ -321,8 +322,7 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	pStatic=new CStatic;
 	pStatic->Create(
 		str,
-		WS_CHILD
-		|WS_VISIBLE, 
+		dwStyle, 
 		CRect(pt,staticSize),
 		this,
 		IDS_STRING_ANALYSIS_TYPE);
@@ -334,8 +334,7 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	pCombo=new CComboBox;
 	pCombo->Create(
 		CBS_DROPDOWN
-		|WS_CHILD
-		|WS_VISIBLE, 
+		|dwStyle,
 		CRect(pt,editSize),
 		this,
 		IDS_COMBO_ANALYSIS_TYPE);
@@ -373,8 +372,7 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		|ES_MULTILINE
 		|ES_WANTRETURN
 		|WS_VSCROLL
-		|WS_CHILD
-		|WS_VISIBLE,
+		|dwStyle,
 		CRect(pt,CSize(winrect.Width(),h)),
 		this,
 		IDS_EDIT_REMARK_ON_ANALYSIS_TYPE);
@@ -388,8 +386,7 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	pStatic=new CStatic;
 	pStatic->Create(
 		str,
-		WS_CHILD
-		|WS_VISIBLE, 
+		dwStyle, 
 		CRect(pt,staticSize),
 		this,
 		IDS_STRING_EVALUATION_RATIO);
@@ -404,8 +401,7 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		L"Edit", 
 		str,
 		ES_LEFT
-		|WS_CHILD
-		|WS_VISIBLE,
+		|dwStyle,
 		CRect(pt,editSize),
 		this,
 		IDS_EDIT_EVALUATION_RATIO);
@@ -422,8 +418,7 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	pStatic=new CStatic;
 	pStatic->Create(
 		str,
-		//WS_VISIBLE|
-		WS_CHILD, 
+		dwStyle,
 		CRect(pt,staticSize),
 		this,
 		IDS_STRING_INTERCEPT_VALUE);
@@ -432,8 +427,7 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	pStatic=new CStatic;
 	pStatic->Create(
 		str,
-		//WS_VISIBLE|
-		WS_CHILD, 
+		dwStyle, 
 		CRect(pt,staticSize),
 		this,
 		IDS_STRING_CALIBRATION_CURVE_FILE);
@@ -442,8 +436,7 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	pCombo2->Create(
 		//CBS_DROPDOWN|
 		CBS_DROPDOWNLIST|
-		//WS_VISIBLE|
-		WS_CHILD, 
+		dwStyle,
 		CRect(pt,staticSize),
 		this,
 		IDS_COMBO_CALIBRATION_TYPE);
@@ -466,8 +459,7 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		L"Edit", 
 		str,
 		ES_LEFT
-		|WS_CHILD,
-		//|WS_VISIBLE,
+		|dwStyle,
 		CRect(pt,editSize),
 		this,
 		IDS_EDIT_CALIBRATION_FACTOR);
@@ -480,8 +472,7 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		L"Edit", 
 		str,
 		ES_LEFT
-		|WS_CHILD,
-		//|WS_VISIBLE,
+		|dwStyle,
 		CRect(pt,editSize),
 		this,
 		IDS_EDIT_INTERCEPT_VALUE);
@@ -498,8 +489,7 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		L"Edit", 
 		str,
 		ES_LEFT
-		|WS_CHILD,
-		//|WS_VISIBLE,
+		|dwStyle,
 		CRect(pt,feditSize),
 		this,
 		IDS_EDIT_CALIBRATION_CURVE_FILE);
@@ -509,8 +499,8 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	str.LoadStringW(IDS_STRING_OPEN_CALIBRATION_FILE);
 	pBtn=new CButton;
 	pBtn->Create(str,
-		WS_CHILD
-		|BS_PUSHBUTTON,
+		BS_PUSHBUTTON
+		|dwStyle,
 		CRect(pt,btnSize),
 		this,
 		IDS_STRING_OPEN_CALIBRATION_FILE);

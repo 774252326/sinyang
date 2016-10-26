@@ -33,4 +33,6 @@ public:
 //	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 //	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
 	//CString strtmp;
+	DWORD dwStyle;
+	//bool enabled;
 };

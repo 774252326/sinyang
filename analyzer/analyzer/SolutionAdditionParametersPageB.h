@@ -2,6 +2,7 @@
 #include "struct\SAPara.hpp"
 #include "list\ListCtrlSAP.h"
 #include "analyzerDoc.h"
+#include "MainFrm.h"
 
 // SolutionAdditionParametersPageB dialog
 
@@ -21,13 +22,18 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 public:
-	SAPara para0;
-	SAPara para1;
+	//SAPara para0;
+	//SAPara para1;
 
-	ListCtrlSAP m_SAPlist0;
-	ListCtrlSAP m_SAPlist1;
+	//ListCtrlSAP m_SAPlist0;
+	//ListCtrlSAP m_SAPlist1;
 
+
+	SAPara para;
+	ListCtrlSAP m_SAPlist;
+	CStatic stt;
 	CanalyzerDoc *pDoc;
+	CMainFrame *mf;
 
 	void SetList(void);
 	void GetList(void);
@@ -35,4 +41,6 @@ public:
 	virtual BOOL OnKillActive();
 	virtual BOOL OnSetActive();
 	virtual BOOL OnApply();
+	virtual void OnCancel();
+
 };

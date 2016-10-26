@@ -15,6 +15,11 @@
 
 #include "UserAccountPage.h"
 #include "PropertySheetA.h"
+#include "PropertySheetA.h"
+#include "AnalysisParametersPage.h"
+#include "CVParametersPage.h"
+#include "SolutionAdditionParametersPageA.h"
+#include "SolutionAdditionParametersPageB.h"
 
 #include "filefunc.h"
 
@@ -72,6 +77,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_MESSAGE(MESSAGE_WAIT_RESPONSE, &CMainFrame::OnMessageWaitResponse)
 	ON_COMMAND(ID_CONTROLS_2, &CMainFrame::OnControls2)
 	ON_MESSAGE(MESSAGE_CHANGE_ANP, &CMainFrame::OnMessageChangeAnp)
+	ON_COMMAND(ID_ANALYSIS_METHODSETUP, &CMainFrame::OnAnalysisMethodsetup)
+	ON_MESSAGE(MESSAGE_CLOSE_SAP_SHEET, &CMainFrame::OnMessageCloseSapSheet)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -91,7 +98,8 @@ CMainFrame::CMainFrame()
 	, pst(stop)
 	, userIndex(-1)
 	, wd(NULL)
-	, runstate(0)
+	//, runstate(0)
+	, psheetml(NULL)
 {
 	// TODO: add member initialization code here
 	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_OFF_2007_BLUE);
@@ -638,7 +646,10 @@ void CMainFrame::OnUpdateViewFitwindow(CCmdUI *pCmdUI)
 void CMainFrame::OnUpdateViewDatacursor(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	//pCmdUI->Enable(au==admin);
+	pCmdUI->Enable(pst!=running && al.ual[userIndex].au==UserAccount::authority::admin);
+
+	pCmdUI->SetCheck(((CanalyzerView*)GetActiveView())->pw.bMouseCursor);
+
 }
 
 
@@ -672,6 +683,10 @@ void CMainFrame::OnSecurityLogin()
 		userIndex=ld.usridx;
 		//al=ld.al;
 		//au=ld.al.ual[ld.usridx].au;
+		CanalyzerView *pavl=(CanalyzerView*)m_wndSplitter.GetPane(0,0);
+		CanalyzerView *pavr=(CanalyzerView*)m_wndSplitter.GetPane(0,1);
+		pavl->pw.bMouseCursor=pavr->pw.bMouseCursor=(al.ual[userIndex].au==UserAccount::authority::admin);
+
 	}
 
 }
@@ -791,97 +806,82 @@ afx_msg LRESULT CMainFrame::OnMessageUpdateDol(WPARAM wParam, LPARAM lParam)
 	if (singleLock.IsLocked())  // Resource has been locked
 	{
 		//...use the shared resource...
-
-
-
-		runstate=pDoc->ComputeStateData();
+		pDoc->ComputeStateData();
 		// Now that we are finished, 
 		// unlock the resource for others.
 		singleLock.Unlock();
 	}
 
-	TRACE(L"rs=%d,ci=%d,ni=%d\n",runstate,pDoc->currentSAPIndex,pDoc->nextSAPIndex);
+	TRACE(L"rs=%d,ci=%d,ni=%d\n",pDoc->runstate,pDoc->currentSAPIndex,pDoc->nextSAPIndex);
 
-	if(runstate==3){
-		CString strerr;
-		strerr.LoadStringW(IDS_STRING_STEP_ERROR);
-		//::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(strerr.GetBuffer()),NULL);
-		//pst=stop;
-		OnAnalysisAbortanalysis();
-		return 1;
-	}
-	if(runstate==4){
 
-		OnAnalysisAbortanalysis();
+	OnMessageCloseSapSheet(NULL,NULL);
 
-		//pst=stop;
-		return 4;
-	}
 
-	::PostMessage(m_wndSplitter.GetPane(0,1)->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
-	::PostMessage(m_wndSplitter.GetPane(0,0)->GetSafeHwnd(),MESSAGE_UPDATE_RAW,NULL,NULL);
-	::PostMessage(m_wndOutput.GetListCtrl()->GetSafeHwnd(),MESSAGE_SHOW_DOL,NULL,(LPARAM)pDoc);
+	//pDoc->UpdateALL();
 
-	if(runstate==5){
-		CString str;
-		str.Format(L"add solution %g ml",pDoc->VtoAdd);
+	//
 
-		OnAnalysisPause();
+	//switch(pDoc->runstate){
+	//case 0:
+	//	{
+	//		CString str;
+	//		str.Format(L"complete all");
+	//					pst=pause;
+	//		ShowWaitDlg(str);
+	//		//OnAnalysisPause();
+	//		//wd->m_tips=str;
+	//		//wd->UpdateData(FALSE);		
+	//	}
+	//	break;
+	//case 1:
+	//	break;
+	//case 2:
+	//	break;
+	//case 3:
+	//	{
+	//		AfxMessageBox(IDS_STRING_STEP_ERROR);
+	//		OnAnalysisAbortanalysis();
+	//	}
+	//	break;
+	//case 4:
+	//	{
+	//		AfxMessageBox(IDS_STRING_STEP_ERROR);
+	//		OnAnalysisAbortanalysis();
+	//	}
+	//	break;
+	//case 5:
+	//	{		
+	//		CString str;
+	//		str.Format(L"add solution %g ml",pDoc->VtoAdd);
 
-		//CString str((wchar_t*)wParam);
+	//					pst=pause;
+	//		ShowWaitDlg(str);
+	//		//OnAnalysisPause();
 
-		wd->m_tips=str;
-		wd->UpdateData(FALSE);
+	//		//wd->m_tips=str;
+	//		//wd->UpdateData(FALSE);
+	//	}
+	//	break;
+	//case 6:
+	//	break;
 
-		if(pDoc->bChangeSAP){
-		pDoc->p3=pDoc->p3done;
-		pDoc->p3.AppendData(pDoc->p3todo);
-		}
+	//case 7:
+	//	{
+	//		CString str;
+	//		str.Format(L"complete all");
+	//		//OnAnalysisPause();
 
-		//mf->SendMessage(MESSAGE_WAIT_RESPONSE,(WPARAM)(str.GetBuffer()),NULL);
-		//WaitSecond(mf->pst);
-		/////////////////////////////////////////
-		{
-			//TCHAR szFilters[]= _T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||");
-			//CFileDialog fileDlg(TRUE, _T("txt"), _T("*.txt"),
-			//	OFN_FILEMUSTEXIST | OFN_HIDEREADONLY /*| OFN_ALLOWMULTISELECT*/ , szFilters);
-			//if(fileDlg.DoModal() == IDOK)
-			//{ 
-			//	filelist.push_back(fileDlg.GetPathName());
-			//}
-			//else{
-			//	return 9;
-			//}
-		}
-		////////////////////////////////////////
+	//		pst=pause;
+	//		ShowWaitDlg(str);
 
-		//filelist.erase(filelist.begin());
-		//break;
-	}
-
-	if(runstate==0){
-		//::PostMessage(rv->GetSafeHwnd(),MESSAGE_COMPUTE_RESULT,NULL,NULL);
-		//filelist.erase(filelist.begin());
-		//mf->pst=stop;
-		//return 0;
-		//break;
-
-		CString str;
-		str.Format(L"complete all");
-
-		OnAnalysisPause();
-
-		//CString str((wchar_t*)wParam);
-
-		wd->m_tips=str;
-		wd->UpdateData(FALSE);
-
-		if(pDoc->bChangeSAP){
-		pDoc->p3=pDoc->p3done;
-		pDoc->p3.AppendData(pDoc->p3todo);
-		}
-
-	}
+	//		//wd->m_tips=str;
+	//		//wd->UpdateData(FALSE);		
+	//	}
+	//	break;
+	//default:
+	//	return 100;
+	//}
 
 	return 0;
 }
@@ -934,13 +934,7 @@ void CMainFrame::OnAnalysisAbortanalysis()
 
 		pst=stop;
 		//::SendMessage(this->GetCaptionBar()->GetSafeHwnd(),MESSAGE_OVER,NULL,NULL);
-		if(wd!=NULL){
-			//wd->ShowWindow(SW_HIDE);
-			wd->DestroyWindow();
-			//wd->OnOK();
-			delete wd;
-			wd=NULL;
-		}
+		HideWaitDlg();
 	}
 
 }
@@ -980,16 +974,7 @@ void CMainFrame::OnAnalysisPause()
 			//::SendMessage(this->GetCaptionBar()->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
 
 			pst=running;
-			if(wd!=NULL){
-				//wd->ShowWindow(SW_HIDE);
-				wd->DestroyWindow();
-				//wd->OnOK();
-				delete wd;
-				wd=NULL;
-			}
-			//else{
-			//	pst=running;
-			//}
+			HideWaitDlg();
 
 		}
 
@@ -1017,9 +1002,7 @@ afx_msg LRESULT CMainFrame::OnMessageWaitResponse(WPARAM wParam, LPARAM lParam)
 
 	CString str((wchar_t*)wParam);
 
-	wd->m_tips=str;
-	wd->UpdateData(FALSE);
-	//wd->GetDlgItem(IDC_BUTTON1)->EnableWindow();
+	ShowWaitDlg(str);
 
 	return 0;
 }
@@ -1050,66 +1033,202 @@ void CMainFrame::OnControls2()
 afx_msg LRESULT CMainFrame::OnMessageChangeAnp(WPARAM wParam, LPARAM lParam)
 {
 
-	//CanalyzerViewL* leftp=(CanalyzerViewL*)m_wndSplitter.GetPane(0,0);
-	////pa1->rightp=(CanalyzerViewR*)m_wndSplitter.GetPane(0,1);
-
-	//CanalyzerDoc *pDoc=leftp->GetDocument();
-
-	////pDoc->OnAnalysisMethodsetup();
-
-	////::SendMessage(this->afxget->GetSafeHwnd(),WM_COMMAND,0,0);
-
-	////::AfxMessageBox(L"dsaf");
-	//pDoc->ChangeSAP();
-
-	//double v2a;
-	////sapitemA outitem;
-	//BYTE outstep;
-	//size_t nextidx;
-	//size_t nowidx;
-	//UINT runstate=pDoc->ComputeStateData(nowidx,nextidx,outstep,v2a);
-
-	//TRACE(L"next step is %d\n",nextidx);
-
-	//if(runstate==3){
-	//	CString strerr;
-	//	strerr.LoadStringW(IDS_STRING_STEP_ERROR);
-	//	//::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(strerr.GetBuffer()),NULL);
-	//	pst=stop;
-	//	return 1;
-	//}
-	//if(runstate==4){
-	//	OnAnalysisAbortanalysis();
-	//	return 4;
-	//}
-	////::PostMessage(rv->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
-	////::PostMessage(lv->GetSafeHwnd(),MESSAGE_UPDATE_RAW,NULL,NULL);
-	////::PostMessage(ol->GetSafeHwnd(),MESSAGE_SHOW_DOL,NULL,(LPARAM)pDoc);
-	////::SendMessage(ow->GetListCtrl()->GetSafeHwnd(),MESSAGE_SHOW_DOL,NULL,NULL);
-	////Sleep(sleepms);
-
-	//if(runstate==5){
-	//	//::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(v2a),NULL);
-	//	//mf->pst=pause;
-
-	//	CString str;
-	//	str.Format(L"add solution %g ml",v2a);
-
-	//	wd->m_tips=str;
-	//	wd->UpdateData(FALSE);
-	//}
-
-	//if(runstate==0){
-	//	//::PostMessage(rv->GetSafeHwnd(),MESSAGE_COMPUTE_RESULT,NULL,NULL);
-	//	//filelist.erase(filelist.begin());
-	//	//mf->pst=stop;
-	//	//return 0;
-	//	////break;
-	//	OnAnalysisAbortanalysis();
-	//}
-
-
-
 
 	return 0;
+}
+
+
+void CMainFrame::OnAnalysisMethodsetup()
+{
+	// TODO: Add your command handler code here
+
+	//POSITION pos = GetFirstViewPosition();
+	//CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));
+	//CMainFrame *mf=(CMainFrame*)(lv->GetParentFrame());
+
+	CanalyzerDoc *pDoc=(CanalyzerDoc*)GetActiveDocument();
+
+	if(pst==stop){
+
+
+		// 创建属性表对象   
+		CString str;
+		str.LoadStringW(IDS_STRING_ANALYSIS_SETUP);
+		//CPropertySheet sheet(str);
+		PropertySheetA1 sheet(str);
+
+		AnalysisParametersPage appage;
+		appage.para=pDoc->p1;
+		sheet.AddPage(&appage);
+
+		CVParametersPage cppage;
+		cppage.para=pDoc->p2;
+		sheet.AddPage(&cppage);
+
+		SolutionAdditionParametersPageA sppage;		
+		sppage.para=pDoc->p3;
+		sheet.AddPage(&sppage);
+
+
+
+		// 打开模态向导对话框   
+		if(sheet.DoModal()==IDOK){
+			pDoc->p1=appage.para;
+			pDoc->p2=cppage.para;
+			pDoc->p3=sppage.para;
+
+		}
+
+	}
+	else{
+
+		CSingleLock singleLock(&(m_CritSection));
+		if(singleLock.Lock())
+		{
+
+			singleLock.Unlock();
+			SolutionAdditionParametersPageB *sppage;
+					AnalysisParametersPage *appage;
+		//appage.para=pDoc->p1;
+		//sheet.AddPage(&appage);
+
+		CVParametersPage *cppage;
+		//cppage.para=pDoc->p2;
+		//sheet.AddPage(&cppage);
+			if(psheetml==NULL){
+				psheetml=new PropertySheetA1ML(IDS_STRING_ANALYSIS_SETUP,this,2);
+				sppage=new SolutionAdditionParametersPageB();
+				appage=new AnalysisParametersPage();
+				cppage=new CVParametersPage();
+				//appage->dwStyle|=WS_DISABLED;
+				//cppage->dwStyle|=WS_DISABLED;
+				psheetml->AddPage(appage);
+				psheetml->AddPage(cppage);
+				psheetml->AddPage(sppage);
+				//psheetml->Create();
+			}
+			//else{
+			sppage=(SolutionAdditionParametersPageB*)(psheetml->GetPage(2));
+			//	sppage->para1.saplist.assign(p3.saplist.begin()+nextSAPIndex,p3.saplist.end());
+			//	//sppage->para1=p3todo;
+			//	sppage->para0=p3done;
+			//	sppage->pDoc=this;
+			//}
+
+			if(pDoc->bChangeSAP){
+				sppage->para=pDoc->p3todo;
+			}
+			else{
+				sppage->para.saplist.assign(pDoc->p3.saplist.begin()+pDoc->nextSAPIndex,pDoc->p3.saplist.end());
+			}
+			//sppage->para0=pDoc->p3done;
+			sppage->pDoc=pDoc;
+			sppage->mf=this;
+
+			////if(psheetml->GetSafeHwnd()){
+			//	//sppage->SetList();			
+			//	//psheetml->ShowWindow(SW_SHOW);
+			////	psheetml->CenterWindow();			
+			////}
+			////else{
+			psheetml->Create();
+			////}
+
+			::SetWindowPos(psheetml->GetSafeHwnd(),
+				//HWND_TOPMOST,
+				HWND_TOP,
+				0,0,0,0,
+				SWP_NOMOVE|SWP_NOSIZE); 
+
+		}
+	}
+}
+
+
+afx_msg LRESULT CMainFrame::OnMessageCloseSapSheet(WPARAM wParam, LPARAM lParam)
+{
+
+	CanalyzerDoc *pDoc=(CanalyzerDoc*)GetActiveDocument();
+
+	pDoc->UpdateALL();
+
+	switch(pDoc->runstate){
+	case 0:
+		{
+			CString str;
+			str.Format(L"complete all");
+			pst=pause;
+			ShowWaitDlg(str);
+		}
+		break;
+	case 1:
+		break;
+	case 2:
+		break;
+	case 3:
+		{
+			AfxMessageBox(IDS_STRING_STEP_ERROR);
+			OnAnalysisAbortanalysis();
+		}
+		break;
+	case 4:
+		{
+			AfxMessageBox(IDS_STRING_STEP_ERROR);
+			OnAnalysisAbortanalysis();
+		}
+		break;
+	case 5:
+		{		
+			CString str;
+			str.Format(L"add solution %g ml",pDoc->VtoAdd);
+			pst=pause;
+			ShowWaitDlg(str);
+		}
+		break;
+	case 6:
+		break;
+
+	case 7:
+		{
+			CString str;
+			str.Format(L"complete all");
+			pst=pause;
+			ShowWaitDlg(str);
+		}
+		break;
+	default:
+		return 100;
+	}
+
+	return 0;
+}
+
+
+void CMainFrame::ShowWaitDlg(CString tips)
+{
+	if(wd==NULL){
+		wd=new WaitDlg();
+		wd->Create(IDD_DIALOG_WAIT);
+	}
+
+	wd->ShowWindow(SW_SHOW);
+	::SetWindowPos(wd->GetSafeHwnd(),
+		//HWND_TOPMOST,
+		HWND_TOP,
+		0,0,0,0,
+		SWP_NOMOVE|SWP_NOSIZE);
+
+	wd->m_tips=tips;
+	wd->UpdateData(FALSE);
+}
+
+
+void CMainFrame::HideWaitDlg(void)
+{
+	if(wd!=NULL){
+		//wd->ShowWindow(SW_HIDE);
+		wd->DestroyWindow();
+		delete wd;
+		wd=NULL;
+	}
 }

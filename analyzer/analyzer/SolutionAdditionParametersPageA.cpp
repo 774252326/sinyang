@@ -48,9 +48,7 @@ void SolutionAdditionParametersPageA::SetList(void)
 
 	//UpdateData(FALSE);
 
-	if(para.saplist.empty()){
-		return;
-	}
+	m_SAPlist.DeleteAllItems();
 
 	for(size_t i=0;i<para.saplist.size();i++){
 		m_SAPlist.InsertItemSAP(i,para.saplist[i]);
@@ -65,7 +63,6 @@ void SolutionAdditionParametersPageA::GetList(void)
 	int nItem=m_SAPlist.GetItemCount();
 
 	para.saplist.resize(nItem);
-
 
 	for(size_t i=0;i<nItem;i++){
 		m_SAPlist.GetItemSAP(i,para.saplist[i]);
@@ -141,8 +138,6 @@ int SolutionAdditionParametersPageA::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		TRACE0("Failed to create output windows\n");
 		return -1;      // fail to create
 	}
-
-	//BuildList(winrect.Width());
 
 	SetList();
 

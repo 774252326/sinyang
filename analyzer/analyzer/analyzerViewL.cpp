@@ -2,7 +2,7 @@
 //#include "analyzer.h"
 #include "analyzerViewL.h"
 //#include "MainFrm.h"
-#include "calfunc.h"
+//#include "calfunc.h"
 //#include "analyzerViewR.h"
 
 
@@ -17,11 +17,14 @@ IMPLEMENT_DYNCREATE(CanalyzerViewL, CanalyzerView)
 		ON_MESSAGE(MESSAGE_UPDATE_RAW, &CanalyzerViewL::OnMessageUpdateRaw)
 		//		ON_WM_TIMER()
 		//		ON_COMMAND(ID_ANALYSIS_STARTANALYSIS, &CanalyzerViewL::OnAnalysisStartanalysis)
+		ON_COMMAND(ID_OPTIONS_PLOTSETTINGS, &CanalyzerViewL::OnOptionsPlotsettings)
 	END_MESSAGE_MAP()
 
 
 	CanalyzerViewL::CanalyzerViewL(void)
 		//: timer(0)
+		: newCr(RGB(255,0,0))
+		, oldCr(RGB(80,80,100))
 	{
 
 	}
@@ -52,7 +55,7 @@ IMPLEMENT_DYNCREATE(CanalyzerViewL, CanalyzerView)
 		//if (singleLock.IsLocked())  // Resource has been locked
 		if(singleLock.Lock())
 		{
-			UINT flg=RawData2PlotDataList(pDoc->raw,pDoc->dol,pw.GetPlotSpec()->winbkC, pdl);
+			UINT flg=RawData2PlotDataList(pDoc->raw,pDoc->dol,pw.GetPlotSpec()->winbkC, newCr, oldCr, pdl);
 			// Now that we are finished, 
 			// unlock the resource for others.
 			singleLock.Unlock();
@@ -66,3 +69,14 @@ IMPLEMENT_DYNCREATE(CanalyzerViewL, CanalyzerView)
 		return 0;
 	}
 
+
+
+	void CanalyzerViewL::OnOptionsPlotsettings()
+	{
+		// TODO: Add your command handler code here
+
+		//::AfxMessageBox(L"ll");
+
+
+
+	}

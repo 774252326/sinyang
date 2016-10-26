@@ -49,6 +49,34 @@ public:
 		return flg;
 	};
 
+	static bool MoveUpdateA(CRect &plotrect
+		, const CPoint &point
+		, CPoint &mouseDownPoint
+		, double &xmin
+		, double &xmax
+		, double &ymin
+		, double &ymax)
+	{
+		//CRect plotrect;
+		//GetPlotRect(plotrect,lbsz,mtsz,metricGridLong,gap);
+
+		if(plotrect.PtInRect(point)){
+
+			double kx=(double)(point.x-mouseDownPoint.x)*(xmax-xmin)/(double)plotrect.Width();
+			double ky=(double)(point.y-mouseDownPoint.y)*(ymax-ymin)/(double)plotrect.Height();
+
+			xmin-=kx;
+			xmax-=kx;
+			ymin+=ky;
+			ymax+=ky;
+			mouseDownPoint=point;
+			return true;
+		}
+
+
+		mouseDownPoint=point;
+		return false;
+	};
 
 	static bool MoveUpdateB(CRect &plotrect
 		, const CPoint &point
@@ -107,14 +135,14 @@ public:
 		return j;
 	};
 
-	static int DownUpdate(CRect &plotrect
+	static int DownUpdateA(CRect &plotrect
 		, const CPoint &point
 		, CPoint &mouseDownPoint
 		, const double &xmin
 		, const double &xmax
 		, const double &ymin
 		, const double &ymax
-		, bool bmouse
+		//, bool bmouse
 		, const std::vector<double> &xl
 		, const std::vector<double> &yl
 		, size_t &index)
@@ -122,7 +150,7 @@ public:
 		//GetPlotRect(plotrect,lbsz,mtsz,metricGridLong,gap);
 		if(plotrect.PtInRect(point)){
 
-			if(bmouse){
+			//if(bmouse){
 
 
 				double x=xRescale(point.x, plotrect.left, plotrect.right, xmin, xmax);
@@ -139,15 +167,15 @@ public:
 					index=fi;
 					return 2;
 				}
-				return 0;
-			}
-			else{
-				mouseDownPoint=point;		
+				//return 0;
+			//}
+			//else{
+				//mouseDownPoint=point;		
 
-				HCURSOR hCur  =  LoadCursor( NULL  , IDC_SIZEALL ) ;
-				::SetCursor(hCur);
-				return 1;
-			}
+				//HCURSOR hCur  =  LoadCursor( NULL  , IDC_SIZEALL ) ;
+				//::SetCursor(hCur);
+				//return 1;
+			//}
 
 
 		}
@@ -158,36 +186,18 @@ public:
 	};
 
 
-
-
-	static bool MoveUpdateA(CRect &plotrect
+	static int DownUpdateB(CRect &plotrect
 		, const CPoint &point
-		, CPoint &mouseDownPoint
-		, double &xmin
-		, double &xmax
-		, double &ymin
-		, double &ymax)
+		, CPoint &mouseDownPoint)
 	{
-		//CRect plotrect;
 		//GetPlotRect(plotrect,lbsz,mtsz,metricGridLong,gap);
-
 		if(plotrect.PtInRect(point)){
-
-			double kx=(double)(point.x-mouseDownPoint.x)*(xmax-xmin)/(double)plotrect.Width();
-			double ky=(double)(point.y-mouseDownPoint.y)*(ymax-ymin)/(double)plotrect.Height();
-
-			//Increment the object rotation angles
-			xmin-=kx;
-			xmax-=kx;
-			ymin+=ky;
-			ymax+=ky;
-			mouseDownPoint=point;
-			return true;
+				mouseDownPoint=point;		
+				HCURSOR hCur  =  LoadCursor( NULL  , IDC_SIZEALL ) ;
+				::SetCursor(hCur);
+				return 1;
 		}
-
-
-		mouseDownPoint=point;
-		return false;
+		return 0;
 	};
 
 
@@ -219,7 +229,8 @@ public:
 
 	void ResetRange(void);
 	void SetLegend(void);
-
+	//	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	PlotSpec * GetPlotSpec(void);
 
 
 protected:
@@ -244,14 +255,10 @@ protected:
 	CDialogEx *td;
 	CPoint wndPosition;
 	CPoint m_mouseDownPoint;
-
-	//void ShowLegend(bool bShow);
-
+	bool bShowToolTip;
 
 public:
-	//	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
-	PlotSpec * GetPlotSpec(void);
-	bool bShowToolTip;
+	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 };
 
 
