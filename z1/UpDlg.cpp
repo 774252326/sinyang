@@ -409,31 +409,31 @@ void CUpDlg::OnBnClickedButton2()
 	//Invalidate();
 
 
-		UpdateData();
+	UpdateData();
 
-			if(isLoad){
-				//UpdateData();
+	if(isLoad){
+		//UpdateData();
 
-				long startind=findbottomidx(x,m_n,m_xbottom);
-				long endind=findtopidx(x, m_n,m_xtop );
+		long startind=findbottomidx(x,m_n,m_xbottom);
+		long endind=findtopidx(x, m_n,m_xtop );
 
-				m_xbottom=x[startind];
-				m_xtop=x[endind];
-				//UpdateData(false);
+		m_xbottom=x[startind];
+		m_xtop=x[endind];
+		//UpdateData(false);
 
-				//long nd;
-				//nd=m_n;
-				nd=endind-startind+1;
+		//long nd;
+		//nd=m_n;
+		nd=endind-startind+1;
 
-				if(isSmooth)
-					chisq=x[startind-1+kptind(&x[startind-1],&ys[startind-1],nd)];
-				else
-					chisq=x[startind-1+kptind(&x[startind-1],&y[startind-1],nd)];
-				UpdateData(false);
-			}
+		if(isSmooth)
+			chisq=x[startind-1+kptind(&x[startind-1],&ys[startind-1],nd)];
+		else
+			chisq=x[startind-1+kptind(&x[startind-1],&y[startind-1],nd)];
+		UpdateData(false);
+	}
 
 
-			Invalidate();
+	Invalidate();
 
 
 }
@@ -452,41 +452,41 @@ void CUpDlg::OnBnClickedButton3()
 
 		long i;
 		long *lidx;
-	long lnd;
-	lidx=RDP(nx,ny,m_n,m_m,&lnd);
+		long lnd;
+		lidx=RDP(nx,ny,m_n,m_m,&lnd);
 
 
-	double *dk=vector<double>(1,lnd-2);
-	double k1,k2;
-	k1=(ny[lidx[2]]-ny[lidx[1]])/(nx[lidx[2]]-nx[lidx[1]]);
+		double *dk=vector<double>(1,lnd-2);
+		double k1,k2;
+		k1=(ny[lidx[2]]-ny[lidx[1]])/(nx[lidx[2]]-nx[lidx[1]]);
 
-	for(i=1;i<=lnd-2;i++){
-		k2=(ny[lidx[i+2]]-ny[lidx[i+1]])/(nx[lidx[i+2]]-nx[lidx[i+1]]);
-		dk[i]=ABS(k2-k1);
-		k1=k2;
-	}
+		for(i=1;i<=lnd-2;i++){
+			k2=(ny[lidx[i+2]]-ny[lidx[i+1]])/(nx[lidx[i+2]]-nx[lidx[i+1]]);
+			dk[i]=ABS(k2-k1);
+			k1=k2;
+		}
 
-	double *ang=vector<double>(1,lnd-2);
-	for(i=1;i<=lnd-2;i++){
-		ang[i]=triangleAngle(nx[lidx[i+1]],ny[lidx[i+1]],nx[lidx[i]],ny[lidx[i]],nx[lidx[i+2]],ny[lidx[i+2]]);
-	}
+		double *ang=vector<double>(1,lnd-2);
+		for(i=1;i<=lnd-2;i++){
+			ang[i]=triangleAngle(nx[lidx[i+1]],ny[lidx[i+1]],nx[lidx[i]],ny[lidx[i]],nx[lidx[i+2]],ny[lidx[i+2]]);
+		}
 
-	nknee=lnd;
-	xknee=vector<double>(1,nknee);
-	yknee=vector<double>(1,nknee);
-	for(i=1;i<=nknee;i++){
-		xknee[i]=x[lidx[i]];
-		yknee[i]=y[lidx[i]];
-	}
+		nknee=lnd;
+		xknee=vector<double>(1,nknee);
+		yknee=vector<double>(1,nknee);
+		for(i=1;i<=nknee;i++){
+			xknee[i]=x[lidx[i]];
+			yknee[i]=y[lidx[i]];
+		}
 
 
-	piksr2(lnd-2,ang,&lidx[1]);
-		chisq=x[lidx[2]];
-	chisqpp=x[lidx[3]];
+		//piksr2(lnd-2,ang,&lidx[1]);
+		//chisq=x[lidx[2]];
+		//chisqpp=x[lidx[3]];
 
-	//piksr2(lnd-2,dk,&lidx[1]);
-	//chisq=x[lidx[lnd-2]];
-	//chisqpp=x[lidx[lnd-3]];
+		piksr2(lnd-2,dk,&lidx[1]);
+		chisq=x[lidx[lnd-1]];
+		chisqpp=x[lidx[lnd-2]];
 
 
 
@@ -510,31 +510,31 @@ void CUpDlg::OnChangeEdit3()
 	// TODO:  Add your control notification handler code here
 
 
-		//UpdateData();
+	//UpdateData();
 
-		//	if(isLoad){
-		//		//UpdateData();
+	//	if(isLoad){
+	//		//UpdateData();
 
-		//		long startind=findbottomidx(x,m_n,m_xbottom);
-		//		long endind=findtopidx(x, m_n,m_xtop );
+	//		long startind=findbottomidx(x,m_n,m_xbottom);
+	//		long endind=findtopidx(x, m_n,m_xtop );
 
-		//		m_xbottom=x[startind];
-		//		m_xtop=x[endind];
-		//		//UpdateData(false);
+	//		m_xbottom=x[startind];
+	//		m_xtop=x[endind];
+	//		//UpdateData(false);
 
-		//		//long nd;
-		//		//nd=m_n;
-		//		nd=endind-startind+1;
+	//		//long nd;
+	//		//nd=m_n;
+	//		nd=endind-startind+1;
 
-		//		if(isSmooth)
-		//			chisq=x[startind-1+kptind(&x[startind-1],&ys[startind-1],nd)];
-		//		else
-		//			chisq=x[startind-1+kptind(&x[startind-1],&y[startind-1],nd)];
-		//		UpdateData(false);
-		//	}
+	//		if(isSmooth)
+	//			chisq=x[startind-1+kptind(&x[startind-1],&ys[startind-1],nd)];
+	//		else
+	//			chisq=x[startind-1+kptind(&x[startind-1],&y[startind-1],nd)];
+	//		UpdateData(false);
+	//	}
 
 
-		//	Invalidate();
+	//	Invalidate();
 
 
 	Invalidate();
@@ -553,31 +553,31 @@ void CUpDlg::OnChangeEdit2()
 
 
 
-		//UpdateData();
+	//UpdateData();
 
-		//	if(isLoad){
-		//		//UpdateData();
+	//	if(isLoad){
+	//		//UpdateData();
 
-		//		long startind=findbottomidx(x,m_n,m_xbottom);
-		//		long endind=findtopidx(x, m_n,m_xtop );
+	//		long startind=findbottomidx(x,m_n,m_xbottom);
+	//		long endind=findtopidx(x, m_n,m_xtop );
 
-		//		m_xbottom=x[startind];
-		//		m_xtop=x[endind];
-		//		//UpdateData(false);
+	//		m_xbottom=x[startind];
+	//		m_xtop=x[endind];
+	//		//UpdateData(false);
 
-		//		//long nd;
-		//		//nd=m_n;
-		//		nd=endind-startind+1;
+	//		//long nd;
+	//		//nd=m_n;
+	//		nd=endind-startind+1;
 
-		//		if(isSmooth)
-		//			chisq=x[startind-1+kptind(&x[startind-1],&ys[startind-1],nd)];
-		//		else
-		//			chisq=x[startind-1+kptind(&x[startind-1],&y[startind-1],nd)];
-		//		UpdateData(false);
-		//	}
+	//		if(isSmooth)
+	//			chisq=x[startind-1+kptind(&x[startind-1],&ys[startind-1],nd)];
+	//		else
+	//			chisq=x[startind-1+kptind(&x[startind-1],&y[startind-1],nd)];
+	//		UpdateData(false);
+	//	}
 
 
-		//	Invalidate();
+	//	Invalidate();
 }
 
 void CUpDlg::OnChangeEdit4()
@@ -1306,6 +1306,8 @@ BOOL CUpDlg::OnInitDialog()
 
 	//AfxMessageBox(L"hello");
 
+	this->SetWindowPos(&CWnd::wndTop, 50, 50, 1200, 900, SWP_SHOWWINDOW);
+
 	CRect pr;
 
 	GetDlgItem(IDC_PLOT)->GetWindowRect(&pr);
@@ -1316,8 +1318,7 @@ BOOL CUpDlg::OnInitDialog()
 
 
 
-	GetDlgItem(IDC_PLOT)->SetWindowPos(&CWnd::wndBottom, pr.left, pr.top, leng, leng,
-      SWP_SHOWWINDOW);
+	GetDlgItem(IDC_PLOT)->SetWindowPos(&CWnd::wndBottom, pr.left, pr.top, leng, leng, SWP_HIDEWINDOW);
 
 
 	return TRUE;  // return TRUE unless you set the focus to a control
