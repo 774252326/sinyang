@@ -225,7 +225,7 @@ void PlotData::AppendData(const PlotData & pda)
 
 }
 
-void PlotData::GetDatai(size_t index, std::vector<double> & x, std::vector<double> & y)
+void PlotData::GetDatai(size_t index, std::vector<double> & x, std::vector<double> & y) const 
 {
 	if(index<0 || index>=ll.size()){
 		x.clear();

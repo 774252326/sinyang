@@ -16,6 +16,36 @@
 #include "CVParametersPage.h"
 #include "SolutionAdditionParametersPageA.h"
 
+#include "pcct.h"
+
+
+void LoadFileList(const CString &m_filePath, std::vector<CString> &filelist)
+{
+
+	CString folderpath=m_filePath.Left(m_filePath.ReverseFind('\\'));
+
+	filelist.clear();
+	CStdioFile file;
+	BOOL readflag;
+	readflag=file.Open(m_filePath, CFile::modeRead);
+
+	if(readflag)
+	{	
+		CString strRead;
+		//TRACE("\n--Begin to read file");
+		while(file.ReadString(strRead)){
+			strRead=folderpath+"\\"+strRead;
+			filelist.push_back(strRead);
+		}
+		//TRACE("\n--End reading\n");
+		file.Close();
+	}
+}
+
+
+
+
+
 #include <propkey.h>
 
 #ifdef _DEBUG
@@ -81,7 +111,10 @@ void CanalyzerDoc::Serialize(CArchive& ar)
 	p1.Serialize(ar);
 	p2.Serialize(ar);
 	p3.Serialize(ar);
-	raw.Serialize(ar);
+	//raw.Serialize(ar);
+
+
+
 
 	if (ar.IsStoring())
 	{
@@ -98,6 +131,8 @@ void CanalyzerDoc::Serialize(CArchive& ar)
 		//	}
 		//	si=ei;
 		//}
+
+	raw.Serialize(ar);
 
 	}
 	else
@@ -124,7 +159,32 @@ void CanalyzerDoc::Serialize(CArchive& ar)
 		//	}
 		//	si=ei;
 		//}
+		raw.Clear();
+	
+	CString folderp=L"C:\\Users\\r8anw2x\\Desktop\\data\\d\\";
+	CString DTRflist=folderp+L"dtr.txt";
 
+	std::vector<CString> filelist;
+	LoadFileList(DTRflist,filelist);
+	pcct data;
+
+	while(!filelist.empty()){
+	/////load data from file////////////
+	data.clear();
+	data.readFile(filelist.front());
+	data.TomA();
+
+	raw.xll.resize(raw.xll.size()+data.potential.size());
+	std::copy_backward(data.potential.begin(),data.potential.end(),raw.xll.end());
+
+	raw.yll.resize(raw.yll.size()+data.current.size());
+	std::copy_backward(data.current.begin(),data.current.end(),raw.yll.end());
+
+	raw.ll.push_back(data.potential.size());
+
+	filelist.erase(filelist.begin());
+
+	}
 	}
 }
 

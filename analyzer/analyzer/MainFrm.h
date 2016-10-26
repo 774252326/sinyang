@@ -68,6 +68,9 @@ public:
 	afx_msg void OnViewAnalysisProgress();
 	afx_msg void OnUpdateViewAnalysisProgress(CCmdUI *pCmdUI);
 	BOOL m_bSplitterCreated;
+
+	COutputWnd* GetOutputWnd(){return &m_wndOutput;}
+	CMFCCaptionBarA* GetCaptionBar(){ return &m_wndCaptionBar;};
 };
 
 

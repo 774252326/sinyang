@@ -37,4 +37,8 @@ public:
 
 	std::vector<DataOutA> dol;
 
+protected:
+	afx_msg LRESULT OnMessageUpdateDol(WPARAM wParam, LPARAM lParam);
+public:
+	void ShowDOL(void);
 };

@@ -93,13 +93,13 @@ void DataOutA::Serialize(CArchive& ar)
 }
 
 
-double DataOutA::TotalVolume(void)
+double DataOutA::TotalVolume(void) const
 {
 	return VMSVolume+additiveVolume;
 }
 
 
-double DataOutA::AConc(void)
+double DataOutA::AConc(void) const
 {
 	if(bUnknown)
 		return -1;
@@ -107,7 +107,7 @@ double DataOutA::AConc(void)
 	return Aml/TotalVolume();
 }
 
-double DataOutA::SConc(void)
+double DataOutA::SConc(void) const
 {
 	if(bUnknown)
 		return -1;
@@ -115,7 +115,7 @@ double DataOutA::SConc(void)
 	return Sml/TotalVolume();
 }
 
-double DataOutA::LConc(void)
+double DataOutA::LConc(void) const
 {
 	if(bUnknown)
 		return -1;
@@ -184,7 +184,7 @@ bool DataOutA::Update(sapitemA sapi, BYTE bFlag)
 
 	case 1:
 		{
-			if( (Ar.back()/Ar0>sapi.endRatio)^(bFlag&DOA_MORE) ){
+			if( (ArUse()/Ar0>sapi.endRatio)^(bFlag&DOA_MORE) ){
 				if(VolOnce(sapi)){
 					stepFilter=bFlag;
 					stepName=GetStepName();					
@@ -216,7 +216,7 @@ bool DataOutA::Update(sapitemA sapi, BYTE bFlag)
 
 	case 3:
 
-		if( (Ar.back()/Ar0>sapi.endRatio)^(bFlag&DOA_MORE) ){
+		if( (ArUse()/Ar0>sapi.endRatio)^(bFlag&DOA_MORE) ){
 
 			if( bUnknown || sapi.isMixedComposition() || sapi.isUnknownComposition() )
 				return false;
@@ -302,7 +302,7 @@ bool DataOutA::ConcIntv(double &ml, double intvConc, double addConc)
 }
 
 
-CString DataOutA::GetStepName(int i)
+CString DataOutA::GetStepName(int i) const
 {
 	CString str,strt;
 
@@ -352,14 +352,23 @@ void DataOutA::ResetCompound(void)
 
 bool DataOutA::Update(sapitemA sapi, BYTE bFlag, const std::vector<double> &ArList)
 {
-	if(Update(sapi,bFlag)){
-		Ar.assign(ArList.begin(),ArList.end());
-		UseIndex=Ar.size()-1;
-		if(sapi.addType==4){
-			Ar0=Ar[UseIndex];
-		}
-		return true;
-	}
+	//if(Update(sapi,bFlag)){
+	//	Ar.assign(ArList.begin(),ArList.end());
+	//	UseIndex=Ar.size()-1;
+	//	if(sapi.addType==4){
+	//		Ar0=Ar[UseIndex];
+	//	}
+	//	return true;
+	//}
 
 	return false;
+}
+
+double DataOutA::ArUse(void) const
+{
+
+	if(UseIndex>=0 && UseIndex<Ar.size())
+		return Ar[UseIndex];
+
+	return Ar.back();
 }

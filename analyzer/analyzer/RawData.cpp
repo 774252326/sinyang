@@ -69,7 +69,7 @@ void RawData::Serialize(CArchive& ar)
 }
 
 
-void RawData::GetDatai(size_t index, std::vector<double> & x, std::vector<double> & y)
+void RawData::GetDatai(size_t index, std::vector<double> & x, std::vector<double> & y) const
 {
 	if(index>=ll.size()){
 		x.clear();
@@ -85,4 +85,11 @@ void RawData::GetDatai(size_t index, std::vector<double> & x, std::vector<double
 
 	x.assign(xll.begin()+starti, xll.begin()+endi);
 	y.assign(yll.begin()+starti, yll.begin()+endi);
+}
+
+void RawData::Clear(void)
+{
+	xll.clear();
+	yll.clear();
+	ll.clear();
 }

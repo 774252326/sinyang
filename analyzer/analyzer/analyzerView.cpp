@@ -12,6 +12,8 @@
 #include "analyzerDoc.h"
 #include "analyzerView.h"
 
+#include "MainFrm.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -125,3 +127,16 @@ CanalyzerDoc* CanalyzerView::GetDocument() const // non-debug version is inline
 
 
 // CanalyzerView message handlers
+
+
+void CanalyzerView::OnInitialUpdate()
+{
+	CView::OnInitialUpdate();
+
+	// TODO: Add your specialized code here and/or call the base class
+
+	CMainFrame *mf=(CMainFrame*)(GetParentFrame());
+	COutputList* ol=mf->GetOutputWnd()->GetListCtrl();
+
+	::SendMessage(ol->GetSafeHwnd(),MESSAGE_UPDATE_DOL,(WPARAM)this,NULL);
+}

@@ -18,7 +18,8 @@ public:
 	std::vector<double> yll;
 	std::vector<DWORD> ll;
 
-	void GetDatai(size_t index, std::vector<double> & x, std::vector<double> & y);
+	void GetDatai(size_t index, std::vector<double> & x, std::vector<double> & y) const;
+	void Clear(void);
 };
 
 

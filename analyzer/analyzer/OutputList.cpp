@@ -6,7 +6,8 @@
 //#include "MainFrm.h"
 #include "func.h"
 
-
+//#include "analyzerDoc.h"
+#include "analyzerView.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // COutputList1
@@ -26,6 +27,7 @@ BEGIN_MESSAGE_MAP(COutputList, CListBox)
 	ON_COMMAND(ID_EDIT_CLEAR, OnEditClear)
 	ON_COMMAND(ID_VIEW_OUTPUTWND, OnViewOutput)
 	ON_WM_WINDOWPOSCHANGING()
+	ON_MESSAGE(MESSAGE_UPDATE_DOL, &COutputList::OnMessageUpdateDol)
 END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // COutputList message handlers
@@ -168,4 +170,33 @@ BOOL COutputList::SetLastUse(const DataOutA & doa)
 	}
 
 	return TRUE;
+}
+
+
+afx_msg LRESULT COutputList::OnMessageUpdateDol(WPARAM wParam, LPARAM lParam)
+{
+	CanalyzerView *pav=(CanalyzerView*)wParam;
+
+	CanalyzerDoc *pad=pav->GetDocument();
+
+	UINT flg=ComputeStateData(pad->p1.analysistype,pad->p2,pad->p3,pad->raw,dol);	
+	
+	this->ShowDOL();
+
+	return 0;
+}
+
+
+void COutputList::ShowDOL(void)
+{
+
+	this->DeleteAllItems();
+	size_t ci=0;
+	for(size_t i=0;i<dol.size();i++){
+		for(size_t ari=0;ari<dol[i].Ar.size();ari++){
+			this->InsertListCtrl(ci,dol[i],i,ari);
+			ci++;
+		}
+	}
+
 }

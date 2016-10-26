@@ -38,7 +38,7 @@ public:
 	BOOL SaveFile(CString fp);
 	BOOL ReadFile(CString fp);
 	void AppendData(const PlotData & pda);
-	void GetDatai(size_t index, std::vector<double> & x, std::vector<double> & y);
+	void GetDatai(size_t index, std::vector<double> & x, std::vector<double> & y) const;
 	PlotData ExtractLastCycle(double xmax);
 	void SetSpec(const CString & xla, const CString & yla, const PlotSpec & psp0);
 };

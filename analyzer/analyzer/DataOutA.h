@@ -39,10 +39,10 @@ public:
 	int UseIndex;
 	//////////////////////////////////
 
-	double TotalVolume(void);
-	double AConc(void);
-	double SConc(void);
-	double LConc(void);
+	double TotalVolume(void) const;
+	double AConc(void) const;
+	double SConc(void) const;
+	double LConc(void) const;
 
 	bool Update(sapitemA sapi, BYTE bFlag=DOA_VMS);
 
@@ -50,13 +50,14 @@ public:
 	bool VolOnce(sapitemA sapi);
 	bool ConcOnce(double &ml, double endConc, double addConc);
 	bool ConcIntv(double &ml, double intvConc, double addConc);
-	CString GetStepName(int i=-1);
+	CString GetStepName(int i=-1) const;
 	void ResetCompound(void);
 
 	bool Update(sapitemA sapi, BYTE bFlag, const std::vector<double> &ArList);
 
 	virtual void Serialize(CArchive& ar);
 
+	double ArUse(void) const;
 };
 
 

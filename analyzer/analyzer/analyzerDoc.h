@@ -13,7 +13,7 @@
 class CanalyzerDoc : public CDocument
 {
 protected: // create from serialization only
-	CanalyzerDoc();
+	//CanalyzerDoc();
 	DECLARE_DYNCREATE(CanalyzerDoc)
 
 // Attributes
@@ -30,6 +30,7 @@ public:
 
 // Operations
 public:
+	CanalyzerDoc();
 	void operator=(const CanalyzerDoc &src);
 	CanalyzerDoc(const CanalyzerDoc &src){ operator=(src); };
 
