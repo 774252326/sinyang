@@ -140,7 +140,14 @@ public:
 		RawDataEx rdetmp;
 		GetDatai(index,rdetmp);
 		CString str=RawData::SaveText(rdetmp.xll,rdetmp.yll,rdetmp.xlabel[0],rdetmp.ylabel[0]);
-		return SaveString(rdetmp.title[0]+L".txt",str);
+
+		CFileFind finder;
+		BOOL bWorking = finder.FindFile(rdetmp.title[0]+L".txt");
+		if(bWorking==FALSE){
+			return SaveString(rdetmp.title[0]+L".txt",str);
+		}
+
+		return FALSE;
 	};
 
 

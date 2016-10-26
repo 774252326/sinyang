@@ -95,7 +95,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="analyzer.reg" />
-    <None Include="ClassDiagram1.cd" />
     <None Include="hlp\data_file.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>

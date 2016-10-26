@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="ListCtrlB" Collapsed="true">
-    <Position X="2.75" Y="0.5" Width="1.5" />
+    <Position X="2.75" Y="2.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAABQAAACAAAgAAEAQAABAAAAiAQAAAAEAIQgAAAAAA=</HashCode>
       <FileName>list\ListCtrlB.h</FileName>
@@ -10,22 +10,8 @@
       <Field Name="m_itemEdit" />
     </ShowAsAssociation>
   </Class>
-  <Class Name="ListCtrlA" Collapsed="true">
-    <Position X="0.5" Y="0.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAQAQAAAAAgAAAAAAABAAAAAAAAAAAAAEAAAAAAAA=</HashCode>
-      <FileName>list\listctrla.hpp</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="ListCtrlC" Collapsed="true">
-    <Position X="6.25" Y="0.5" Width="1.5" />
-    <NestedTypes>
-      <Enum Name="ListCtrlC::eType" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>list\ListCtrlC.h</NewMemberFileName>
-        </TypeIdentifier>
-      </Enum>
-    </NestedTypes>
+    <Position X="6.25" Y="2.5" Width="1.5" />
     <AssociationLine Name="m_itemEditInt" Type="EditC&lt;T&gt;">
       <MemberNameLabel ManuallyPlaced="true">
         <Position X="0.1" Y="0.425" />
@@ -46,21 +32,21 @@
     </ShowAsAssociation>
   </Class>
   <Class Name="ListCtrlAA" Collapsed="true">
-    <Position X="9" Y="0.5" Width="1.5" />
+    <Position X="10.75" Y="1.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAgIAAAAAAAAAChAAAAAABAAAAABAAAAAAA=</HashCode>
       <FileName>list\ListCtrlAA.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="EditB" Collapsed="true">
-    <Position X="2.75" Y="2.75" Width="1.5" />
+    <Position X="2.75" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAIQAAAAAABAAAAAAAIAAAAABAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>list\EditB.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="EditC&lt;T&gt;" Collapsed="true">
-    <Position X="6.25" Y="2.75" Width="1.5" />
+    <Position X="6.25" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAEAAAAAAQBAAAABAAQAAAAAAAAAAAAABAAAAgAAA=</HashCode>
       <FileName>list\editc.hpp</FileName>
@@ -73,16 +59,9 @@
       <FileName>plot\PlotWnd.h</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Field Name="blankPS" />
       <Field Name="pdex" />
+      <Field Name="blankPS" />
     </ShowAsAssociation>
-  </Class>
-  <Class Name="PlotSpec" Collapsed="true">
-    <Position X="6.75" Y="6.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAHACAIIAIIAApADAAAAAUAAADRgFACAABQoAAABAAA=</HashCode>
-      <FileName>struct1\plotspec.hpp</FileName>
-    </TypeIdentifier>
   </Class>
   <Class Name="PlotDataEx" Collapsed="true">
     <Position X="9.5" Y="6.25" Width="1.5" />
@@ -91,45 +70,13 @@
       <FileName>struct1\plotdataex.hpp</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Field Name="lgc" />
-      <Field Name="lgs" />
       <Field Name="pd" />
+      <Field Name="lgs" />
+      <Field Name="lgc" />
     </ShowAsAssociation>
-  </Class>
-  <Class Name="LegendCondition" Collapsed="true">
-    <Position X="11.75" Y="4.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>ACAAAAAAgAAAAAAAAACACAAAgCAAAECAAAAgAAAAAAE=</HashCode>
-      <FileName>struct1\legendcondition.hpp</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="LegendSpec" Collapsed="true">
-    <Position X="11.75" Y="6.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AABAABIAAAAQAgICACQgIAAAASAAAAAAAAAkEBAAAAA=</HashCode>
-      <FileName>struct1\legendspec.hpp</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="PlotData" Collapsed="true">
-    <Position X="9.5" Y="7.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>EEgAAAQIAkAQAoAEEAAAAIAAEGAAAAAiAAIiAAFAAAA=</HashCode>
-      <FileName>struct1\plotdata.hpp</FileName>
-    </TypeIdentifier>
-    <ShowAsAssociation>
-      <Field Name="ps" />
-      <Field Name="raw" />
-    </ShowAsAssociation>
-  </Class>
-  <Class Name="RawData" Collapsed="true">
-    <Position X="9.5" Y="9" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>EIAAAAgIAEACAIAkAAASAABgACAAQAAAAADgAABkAAA=</HashCode>
-      <FileName>struct1\rawdata.hpp</FileName>
-    </TypeIdentifier>
   </Class>
   <Class Name="COutputListA" Collapsed="true">
-    <Position X="0.5" Y="2.75" Width="1.5" />
+    <Position X="0.5" Y="4" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAEAAABAAACAAIAAIgAAQACAAAAAAAAAACAAAAAA=</HashCode>
       <FileName>list\OutputListA.h</FileName>
@@ -166,13 +113,6 @@
       <Field Name="p3done" />
     </ShowAsAssociation>
   </Class>
-  <Class Name="SAPara" Collapsed="true">
-    <Position X="4.75" Y="9" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAkAAAAKAAAACAAAAAAAAAgAAAAAgA=</HashCode>
-      <FileName>struct\sapara.hpp</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="DocData" Collapsed="true">
     <Position X="7" Y="10.25" Width="1.5" />
     <TypeIdentifier>
@@ -180,18 +120,9 @@
       <FileName>struct\docdata.hpp</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Field Name="p1" />
       <Field Name="p2" />
       <Field Name="p3" />
-      <Field Name="raw" />
     </ShowAsAssociation>
-  </Class>
-  <Class Name="ANParaEx" Collapsed="true">
-    <Position X="9.5" Y="10.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAQAAAAAAAAAAAAAABAAAACAACAAAAAAAAAgACAAACA=</HashCode>
-      <FileName>struct\anparaex.hpp</FileName>
-    </TypeIdentifier>
   </Class>
   <Class Name="CVPara" Collapsed="true">
     <Position X="7" Y="11.75" Width="1.5" />
@@ -214,8 +145,8 @@
       <FileName>MainFrm.h</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Field Name="psheetml" />
       <Field Name="pst" />
+      <Field Name="psheetml" />
       <Field Name="m_wndOutput" />
     </ShowAsAssociation>
   </Class>
@@ -234,6 +165,114 @@
     </TypeIdentifier>
     <ShowAsAssociation>
       <Field Name="m_listCtrlMonitor" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="ListCtrlA" Collapsed="true">
+    <Position X="0.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAQAAAAAgAAAAAAABAAAAAAAAAAAAAEAAAAAAAA=</HashCode>
+      <FileName>list\listctrla.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PlotSpec" Collapsed="true">
+    <Position X="6.75" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAHACAIIAIIAApADAAAAAUAAADRgFACAABQoAAABAAA=</HashCode>
+      <FileName>struct1\plotspec.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LegendCondition" Collapsed="true">
+    <Position X="11.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAgAAAAAAAAACACAAAgCAAAECAAAAgAAAAAAE=</HashCode>
+      <FileName>struct1\legendcondition.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LegendSpec" Collapsed="true">
+    <Position X="11.75" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAABIAAAAQAgICACQgIAAAASAAAAAAAAAkEBAAAAA=</HashCode>
+      <FileName>struct1\legendspec.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PlotData" Collapsed="true">
+    <Position X="9.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EEgAAAQIAkAQAoAEEAAAAIAAEGAAAAAiAAIiAAFAAAA=</HashCode>
+      <FileName>struct1\plotdata.hpp</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="ps" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="SAPara" Collapsed="true">
+    <Position X="4.75" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAkAAAAKAAAACAAAAAAAAAgAAAAAgA=</HashCode>
+      <FileName>struct\sapara.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RawData" Collapsed="true">
+    <Position X="9.5" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EIAAAAgIAEACAIAkAAASAABgACAAQAAAAADgAABkAAA=</HashCode>
+      <FileName>struct1\rawdata.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ANParaEx" Collapsed="true">
+    <Position X="9.5" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAABAAAACAACAAAAAAAAAgACAAACA=</HashCode>
+      <FileName>struct\anparaex.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ListCtrlUA" Collapsed="true">
+    <Position X="10.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgCAAAAAAYAAAAAIQAAABAACAAAAAAIAABAAAIAAA=</HashCode>
+      <FileName>list\listctrlua.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LoginDlg" Collapsed="true">
+    <Position X="17" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAgACAAYABBAQBIABAABACAAAAAIAAAAAACAAAA=</HashCode>
+      <FileName>user\logindlg.hpp</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="m_usr" />
+      <Field Name="al" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="ListCtrlSAP" Collapsed="true">
+    <Position X="14" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAACAgAAAAgAIAgACAAACAAIAAAAAAAAgAgAAA=</HashCode>
+      <FileName>list\listctrlsap.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ListCtrlLS" Collapsed="true">
+    <Position X="10.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAIAAAAAAAAAAAAAAAACAAAAAAAAAEAAAAAEA=</HashCode>
+      <FileName>list\listctrlls.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AccountList" Collapsed="true">
+    <Position X="20.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAADAAAAAAAAAACAAAAAAACCAAACAAAAAgAAAAAAA=</HashCode>
+      <FileName>user\accountlist.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AccountComboBox" Collapsed="true">
+    <Position X="20.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAEAABAAAAAAAAAACAAAAAAAgAAAACAAAA=</HashCode>
+      <FileName>user\accountcombobox.hpp</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="al" />
     </ShowAsAssociation>
   </Class>
   <Enum Name="ProcessState" Collapsed="true">

@@ -149,7 +149,16 @@ protected:
 		for(int i=0;i<lcl.GetItemCount();i++){
 			if(lcl.GetCheck(i)!=FALSE){
 				lcl.rde.title[i]=str+L"\\"+lcl.rde.title[i];
-				lcl.rde.SaveToText(i);
+				BOOL flg=lcl.rde.SaveToText(i);
+				if(flg==FALSE){
+					::AfxMessageBox(IDS_STRING_RENAME_TIPS);
+					lcl.SetFocus();
+					lcl.EnsureVisible(i,FALSE);
+					//lcl.SetItemState(i, LVIS_SELECTED|LVIS_FOCUSED, LVIS_SELECTED|LVIS_FOCUSED);
+					lcl.EditLabel(i);
+					return;
+				}
+				lcl.SetCheck(i,FALSE);				
 			}
 		}
 

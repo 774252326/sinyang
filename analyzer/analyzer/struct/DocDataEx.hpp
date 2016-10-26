@@ -16,7 +16,7 @@
 #define SC_NEW_LINE 0x10
 #define SC_NEW_ONCE 0x20
 
-
+//docdata extention, add function for analysis and data convertion
 class DocDataEx : public DocData
 {
 public:
