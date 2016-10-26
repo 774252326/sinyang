@@ -126,7 +126,7 @@ void dlg1::genPointToPlot(const std::vector<double> &px, const std::vector<doubl
 }
 
 
-void dlg1::drawRectangle(CRect rect, CDC * pDC, COLORREF insidecolor, COLORREF bordercolor)
+void dlg1::drawRectangle(const CRect &rect, CDC * pDC, COLORREF insidecolor, COLORREF bordercolor)
 {
 	// create and select a solid blue brush
 
@@ -516,8 +516,6 @@ void dlg1::OnPaint()
 	dcMem.SelectObject(&bmp);                          //将位图选择进内存DC
 	dcMem.FillSolidRect(rect,dc.GetBkColor());//按原来背景填充客户区，不然会是黑色
 
-
-
 	CRect plotrect;
 	GetPlotRect(plotrect);
 
@@ -533,7 +531,7 @@ void dlg1::OnPaint()
 			dcMem.SelectClipRgn(&rgn);
 			//clock_t t=clock();
 
-			//DrawPoint(plotrect,&dc,0);
+			//DrawPoint(plotrect,&dcMem,0);
 			DrawCurve(plotrect,&dcMem);
 
 			//TRACE("%dms\n",clock()-t);
@@ -544,10 +542,6 @@ void dlg1::OnPaint()
 			dcMem.SelectClipRgn(&rgn);
 
 			CRect legendrect=DrawLegend1( CRect(plotrect.right-plotrect.Width()/4,plotrect.top,plotrect.right,plotrect.top+plotrect.Height()/4), &dcMem);
-
-			//legendrect.InflateRect(0,0,1,0);
-			//drawRectangle(legendrect,&dc,white,black);
-			//legendrect=DrawLegend(plotrect, &dc);
 
 		}
 	}
@@ -1133,9 +1127,10 @@ void dlg1::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 	// TODO: Add your message handler code here and/or call default
 
 	switch(nChar){
-	case 'q':
-		this->updatePlotRange(xll,yll,true);
-		Invalidate();
+	case 'f':
+		//this->updatePlotRange(xll,yll,true);
+		//Invalidate();
+		showall();
 		break;
 	default:
 		break;
@@ -1151,4 +1146,11 @@ BOOL dlg1::OnEraseBkgnd(CDC* pDC)
 	// TODO: Add your message handler code here and/or call default
 	return TRUE;
 	return CFormView::OnEraseBkgnd(pDC);
+}
+
+
+void dlg1::showall(void)
+{
+	this->updatePlotRange(xll,yll,true);
+	Invalidate();
 }

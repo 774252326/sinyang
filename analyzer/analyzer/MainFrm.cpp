@@ -37,6 +37,13 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_WM_SETTINGCHANGE()
 	ON_WM_SIZE()
 	ON_COMMAND(ID_FILE_OPEN, &CMainFrame::OnFileOpen)
+	ON_COMMAND(ID_VIEW_FITWINDOW, &CMainFrame::OnViewFitwindow)
+	ON_COMMAND(ID_VIEW_TOOLBAR32787, &CMainFrame::OnViewToolbar32787)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_TOOLBAR32787, &CMainFrame::OnUpdateViewToolbar32787)
+	ON_COMMAND(ID_VIEW_PRO, &CMainFrame::OnViewPro)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_PRO, &CMainFrame::OnUpdateViewPro)
+	ON_COMMAND(ID_VIEW_ANALYSIS_PROGRESS, &CMainFrame::OnViewAnalysisProgress)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_ANALYSIS_PROGRESS, &CMainFrame::OnUpdateViewAnalysisProgress)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -51,6 +58,7 @@ static UINT indicators[] =
 
 CMainFrame::CMainFrame()
 	: m_bSplitterCreated(FALSE)
+	, tflg(false)
 {
 	// TODO: add member initialization code here
 	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_VS_2008);
@@ -137,10 +145,14 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndOutput.EnableDocking(CBRS_ALIGN_ANY);
 	DockPane(&m_wndOutput);
 
+	
+			//////////////////////////////////////////////
+	this->ShowPane((CBasePane*)&m_wndOutput,tflg,false,false);
+	/////////////////////////////////////////////
 
 
 	// Enable toolbar and docking window menu replacement
-	EnablePaneMenu(TRUE, ID_VIEW_CUSTOMIZE, strCustomize, ID_VIEW_TOOLBAR);
+	//EnablePaneMenu(TRUE, ID_VIEW_CUSTOMIZE, strCustomize, ID_VIEW_TOOLBAR);
 
 	// enable quick (Alt+drag) toolbar customization
 	CMFCToolBar::EnableQuickCustomization();
@@ -177,11 +189,13 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	lstBasicCommands.AddTail(ID_VIEW_APPLOOK_OFF_2007_AQUA);
 	lstBasicCommands.AddTail(ID_VIEW_APPLOOK_WINDOWS_7);
 
-	CMFCToolBar::SetBasicCommands(lstBasicCommands);
+	//CMFCToolBar::SetBasicCommands(lstBasicCommands);
 
 
 	//if(m_wndOutput.GetSafeHwnd())
 	//	m_wndOutput.SetWindowTextW(L"Analysis Progress");
+
+
 
 
 	return 0;
@@ -198,6 +212,8 @@ BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT /*lpcs*/,
 			m_bSplitterCreated = m_wndSplitter.CreateView(0, 1, RUNTIME_CLASS(dlg1), CSize(500, 100), pContext);
 		}
 	}
+
+
 
 	return (m_bSplitterCreated);
 
@@ -237,6 +253,7 @@ BOOL CMainFrame::CreateDockingWindows()
 	}
 
 	SetDockingWindowIcons(theApp.m_bHiColorIcons);
+
 	return TRUE;
 }
 
@@ -462,8 +479,8 @@ void CMainFrame::OnSize(UINT nType, int cx, int cy)
 	//CRect vrect;
 	//if(pView->GetSafeHwnd())
 	//	pView->GetWindowRect(&vrect);
-
-
+	if(m_wndOutput.GetSafeHwnd())
+		tflg=m_wndOutput.IsVisible();
 
 	//int h;
 
@@ -479,7 +496,7 @@ void CMainFrame::OnSize(UINT nType, int cx, int cy)
 		//m_wndSplitter.SetRowInfo(0,(lr0+lr1)*2/3,10);
 		//m_wndSplitter.RecalcLayout() ;  
 
-		m_wndSplitter.SetColumnInfo(0,(lc0+lc1)*3/5,10);
+		m_wndSplitter.SetColumnInfo(0,(lc0+lc1)*0.6,10);
 		m_wndSplitter.RecalcLayout();
 		//m_wndSplitter.SetRowInfo(0,cy*2/3,10);
 		//m_wndSplitter.RecalcLayout();
@@ -487,16 +504,16 @@ void CMainFrame::OnSize(UINT nType, int cx, int cy)
 
 	//if(m_wndOutput.GetSafeHwnd()){
 
-		//m_wndStatusBar.GetClientRect(&vrect);
-		//GetClientRect(&vrect);
-		//ScreenToClient(&vrect);
+	//m_wndStatusBar.GetClientRect(&vrect);
+	//GetClientRect(&vrect);
+	//ScreenToClient(&vrect);
 	//	vrect.top=vrect.bottom-(vrect.Height()+h)/3;
 	//	m_wndOutput.SetWindowPos(&CWnd::wndBottom, 0, vrect.top, cx, vrect.Height(), SWP_SHOWWINDOW);
 
-		//m_wndOutput.SetWindowPos(&CWnd::wndBottom, 0, vrect.Height()/2, cx, vrect.Height()/2, SWP_SHOWWINDOW);
-		//m_wndOutput.MovePane(CRect(0,cy/2,cx,cy),true,);
+	//m_wndOutput.SetWindowPos(&CWnd::wndBottom, 0, vrect.Height()/2, cx, vrect.Height()/2, SWP_SHOWWINDOW);
+	//m_wndOutput.MovePane(CRect(0,cy/2,cx,cy),true,);
 	//	m_wndOutput.MoveWindow(CRect(0,cy/2,cx,cy-vrect.Height()));
-		//m_wndOutput.AdjustSizeImmediate();
+	//m_wndOutput.AdjustSizeImmediate();
 	//}
 
 }
@@ -510,62 +527,124 @@ void CMainFrame::OnFileOpen()
 
 	fileDlg.m_ofn.lpstrFilter=L"Text File(*.txt)\0*.txt\0\0";
 
-	if( fileDlg.DoModal()==IDOK){
+	if( fileDlg.DoModal()==IDOK)
+	{
 
-	CString m_filePath=fileDlg.GetPathName();
-	CString folderpath=fileDlg.GetFolderPath();
+		CString m_filePath=fileDlg.GetPathName();
+		CString folderpath=fileDlg.GetFolderPath();
 
-	//CString m_filePath=L"C:\\Users\\r8anw2x\\Dropbox\\W\\data\\a.txt";
-	//CString folderpath=L"C:\\Users\\r8anw2x\\Dropbox\\W\\data";
+		//CString m_filePath=L"C:\\Users\\r8anw2x\\Dropbox\\W\\data\\a.txt";
+		//CString folderpath=L"C:\\Users\\r8anw2x\\Dropbox\\W\\data";
 
 
-	std::vector<CString> filelist;
-	CStdioFile file;
-	BOOL readflag;
-	readflag=file.Open(m_filePath, CFile::modeRead);
+		std::vector<CString> filelist;
+		CStdioFile file;
+		BOOL readflag;
+		readflag=file.Open(m_filePath, CFile::modeRead);
 
-	if(readflag)
-	{	
-		CString strRead;
+		if(readflag)
+		{	
+			CString strRead;
 
-		//TRACE("\n--Begin to read file");
-		while(file.ReadString(strRead)){
-			strRead=folderpath+"\\"+strRead;
-			filelist.push_back(strRead);
+			//TRACE("\n--Begin to read file");
+			while(file.ReadString(strRead)){
+				strRead=folderpath+"\\"+strRead;
+				filelist.push_back(strRead);
+			}
+			//TRACE("\n--End reading\n");
+			file.Close();
 		}
-		//TRACE("\n--End reading\n");
-		file.Close();
-	}
 
-	std::vector<double> ar;
+		std::vector<double> ar;
 
-	for(size_t i=0;i<filelist.size();i++){
-		pcct dt1;
-		dt1.readFile(filelist[i]);
-		dt1.seperate();
-		dt1.AR=dt1.intg(0.8);
-		ar.push_back(dt1.AR);
+		for(size_t i=0;i<filelist.size();i++){
+			pcct dt1;
+			dt1.readFile(filelist[i]);
+			dt1.seperate();
+			dt1.AR=dt1.intg(0.8);
+			ar.push_back(dt1.AR);
 
-		( (dlg1*)m_wndSplitter.GetPane(0,0) )->plot2d(dt1.potential,dt1.current,dt1.label[0],dt1.label[1],dt1.FileName);
+			( (dlg1*)m_wndSplitter.GetPane(0,0) )->plot2d(dt1.potential,dt1.current,dt1.label[0],dt1.label[1],dt1.FileName);
 
-		m_wndOutput.InsertListCtrl(i,dt1.FileName,dt1.AR,true);
+			m_wndOutput.InsertListCtrl(i,dt1.FileName,dt1.AR,true);
 
-	}
+		}
 
 
-	//CString sstr;
+		//CString sstr;
 
-	std::vector<double> spr;
+		std::vector<double> spr;
 
-	double ar0=ar[0];
-	for(size_t i=0;i<ar.size();i++){
-		ar[i]/=ar0;
-		spr.push_back(i/8.0);
-		//sstr.Format(L"%f",i/8.0);
-		//pppty.nl.push_back(sstr);
-	}			
+		double ar0=ar[0];
+		for(size_t i=0;i<ar.size();i++){
+			ar[i]/=ar0;
+			spr.push_back(i/8.0);
+			//sstr.Format(L"%f",i/8.0);
+			//pppty.nl.push_back(sstr);
+		}			
 
-	( (dlg1*)m_wndSplitter.GetPane(0,1) )->plot2d(spr,ar,L"suppressor(ml)",L"Ratio of Charge",L"Ar/Ar0");
+		( (dlg1*)m_wndSplitter.GetPane(0,1) )->plot2d(spr,ar,L"suppressor(ml)",L"Ratio of Charge",L"Ar/Ar0");
 
 	}
+}
+
+
+void CMainFrame::OnViewFitwindow()
+{
+	// TODO: Add your command handler code here
+
+	( (dlg1*)m_wndSplitter.GetActivePane() )->showall();
+
+}
+
+
+void CMainFrame::OnViewToolbar32787()
+{
+	// TODO: Add your command handler code here
+	//m_wndToolBar.ShowWindow(SW_SHOW);
+	//
+	//m_wndToolBar.RedrawWindow();
+	//tflg=!tflg;	
+	//ShowControlBar((CControlBar*)&m_wndToolBar,tflg,false);
+	//m_wndToolBar.RecalcLayout();
+
+}
+
+
+void CMainFrame::OnUpdateViewToolbar32787(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	//pCmdUI->SetCheck(tflg);
+}
+
+
+void CMainFrame::OnViewPro()
+{
+	// TODO: Add your command handler code here
+
+	//tflg=!tflg;		
+	//this->ShowPane((CBasePane*)&m_wndOutput,tflg,false,false);
+
+}
+
+
+void CMainFrame::OnUpdateViewPro(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+
+}
+
+
+void CMainFrame::OnViewAnalysisProgress()
+{
+	// TODO: Add your command handler code here
+		tflg=!tflg;		
+	this->ShowPane((CBasePane*)&m_wndOutput,tflg,false,false);
+}
+
+
+void CMainFrame::OnUpdateViewAnalysisProgress(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->SetCheck(tflg);
 }

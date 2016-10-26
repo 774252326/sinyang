@@ -64,6 +64,14 @@ public:
 	afx_msg void OnFileOpen();
 
 	COutputWnd* GetOutputWnd(){return &m_wndOutput;}
+	afx_msg void OnViewFitwindow();
+	afx_msg void OnViewToolbar32787();
+	afx_msg void OnUpdateViewToolbar32787(CCmdUI *pCmdUI);
+	bool tflg;
+	afx_msg void OnViewPro();
+	afx_msg void OnUpdateViewPro(CCmdUI *pCmdUI);
+	afx_msg void OnViewAnalysisProgress();
+	afx_msg void OnUpdateViewAnalysisProgress(CCmdUI *pCmdUI);
 };
 
 
