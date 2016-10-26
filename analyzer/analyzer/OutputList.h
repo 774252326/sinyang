@@ -40,5 +40,8 @@ public:
 protected:
 	afx_msg LRESULT OnMessageUpdateDol(WPARAM wParam, LPARAM lParam);
 public:
-	void ShowDOL(void);
+	void ShowDOL(bool bRefreshAll);
+	size_t GetDOLRow(void);
+protected:
+	afx_msg LRESULT OnMessageShowDol(WPARAM wParam, LPARAM lParam);
 };

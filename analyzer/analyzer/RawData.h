@@ -1,7 +1,8 @@
 #pragma once
 
 // RawData command target
-
+//#include "analyzerDoc.h"
+//#include "analyzerViewL.h"
 #include <vector>
 
 class RawData : public CObject
@@ -21,6 +22,8 @@ public:
 	void GetDatai(size_t index, std::vector<double> & x, std::vector<double> & y) const;
 	void Clear(void);
 	int LoadFromFileList(CString fp);
+	int LoadFromFileList(CString fp, HWND olhw, size_t nd, DWORD sleepms);
+	
 };
 
 

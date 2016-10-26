@@ -2,10 +2,11 @@
 //
 
 #include "stdafx.h"
-//#include "analyzer.h"
+#include "analyzer.h"
 #include "RawData.h"
 //#include "func.h"
 #include "pcct.h"
+#include "analyzerViewL.h"
 
 
 void LoadFileList(const CString &m_filePath, std::vector<CString> &filelist)
@@ -146,6 +147,72 @@ int RawData::LoadFromFileList(CString fp)
 		filelist.erase(filelist.begin());
 
 	}
-	
+
+	return 0;
+}
+
+
+
+int RawData::LoadFromFileList(CString fp, HWND olhw, size_t nd, DWORD sleepms)
+{
+	Clear();
+
+
+	//CMainFrame *mf=(CMainFrame*)( ((CanalyzerViewL*)lv)->GetParentFrame() );
+	//COutputList* ol=mf->GetOutputWnd()->GetListCtrl();
+
+	std::vector<CString> filelist;
+	LoadFileList(fp,filelist);
+	pcct data;
+
+
+
+	while(!filelist.empty()){
+		/////load data from file////////////
+		data.clear();
+		data.readFile(filelist.front());
+		data.TomA();
+		
+	//	/////////////////prompt add solution//////////////////////////////
+	//::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dataC.doa.addVolume),NULL);
+	///////////////////wait response/////////////////////////
+	//pst=pause;
+	//WaitSecond(pst);
+	/////////////////////refresh analysis class///////////////////////
+	////dataC.clear();
+	//////////////////////prompt running////////////////////////////////
+	//::SendMessage(cba->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
+
+		std::vector<double> x;
+		std::vector<double> y;
+		size_t rnd;
+		ll.push_back(0);
+
+		do{
+			rnd=data.popData(x,y,nd);
+			xll.resize(xll.size()+x.size());
+			std::copy_backward(x.begin(),x.end(),xll.end());
+
+			yll.resize(yll.size()+y.size());
+			std::copy_backward(y.begin(),y.end(),yll.end());
+
+			ll.back()+=x.size();
+
+			//::SendMessage(ol->GetSafeHwnd(),MESSAGE_UPDATE_DOL,(WPARAM)lv,NULL);
+			::PostMessage(olhw,MESSAGE_UPDATE_DOL,NULL,NULL);
+
+			Sleep(sleepms);
+
+		}while(rnd>0);
+
+		//if(rnd==0)
+		//ll.push_back(data.potential.size());
+
+		filelist.erase(filelist.begin());
+
+
+
+	}
+
 	return 0;
 }

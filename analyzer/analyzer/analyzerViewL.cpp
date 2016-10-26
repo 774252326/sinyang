@@ -1,8 +1,48 @@
 #include "StdAfx.h"
+#include "analyzer.h"
 #include "analyzerViewL.h"
 //#include "MainFrm.h"
 #include "func.h"
 #include "analyzerViewR.h"
+
+
+
+			//CString folderp=L"C:\\Users\\r8anw2x\\Desktop\\data\\d\\";
+			////CString folderp=L"data\\d\\";
+			////CString folderp=L"C:\\Users\\G\\Desktop\\data\\d\\";
+
+			//CString DEMOflist=folderp+L"fl1.txt";
+			//CString DTRflist=folderp+L"dtr.txt";
+			//CString DTAflist=folderp+L"dta.txt";
+			//CString LATRflist=folderp+L"latr.txt";
+			//CString LATAflist=folderp+L"lata.txt";
+			//CString RCRflist=folderp+L"rcr.txt";
+			//CString RCAflist=folderp+L"rca.txt";
+			//CString SARRflist=folderp+L"sarr.txt";
+			//CString SARAflist=folderp+L"sara.txt";
+			//CString NEWRflist=folderp+L"j.txt";
+			//CString NEWAflist=folderp+L"k.txt";
+			//CString NERflist=folderp+L"l.txt";
+			//CString NEAflist=folderp+L"m.txt";
+
+
+			//CString flistlist[]={
+			//	DEMOflist,
+			//	DTRflist,
+			//	DTAflist,
+			//	LATRflist,
+			//	LATAflist,
+			//	RCRflist,
+			//	RCAflist,
+			//	SARRflist,
+			//	SARAflist,
+			//	NEWRflist,
+			//	NEWAflist,
+			//	NERflist,
+			//	NEAflist
+			//};
+
+
 
 
 IMPLEMENT_DYNCREATE(CanalyzerViewL, CanalyzerView)
@@ -11,10 +51,13 @@ IMPLEMENT_DYNCREATE(CanalyzerViewL, CanalyzerView)
 		// Standard printing commands
 
 		ON_MESSAGE(MESSAGE_UPDATE_RAW, &CanalyzerViewL::OnMessageUpdateRaw)
+		ON_WM_TIMER()
+		ON_COMMAND(ID_ANALYSIS_STARTANALYSIS, &CanalyzerViewL::OnAnalysisStartanalysis)
 	END_MESSAGE_MAP()
 
 
 	CanalyzerViewL::CanalyzerViewL(void)
+		: timer(0)
 	{
 		
 	}
@@ -40,7 +83,7 @@ IMPLEMENT_DYNCREATE(CanalyzerViewL, CanalyzerView)
 
 
 
-		::SendMessage(ol->GetSafeHwnd(),MESSAGE_UPDATE_DOL,(WPARAM)this,NULL);
+		::SendMessage(ol->GetSafeHwnd(),MESSAGE_UPDATE_DOL,(WPARAM)true,NULL);
 	}
 
 
@@ -57,4 +100,69 @@ IMPLEMENT_DYNCREATE(CanalyzerViewL, CanalyzerView)
 		::SendMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_VIEW,NULL,NULL);
 
 		return 0;
+	}
+
+
+	void CanalyzerViewL::OnTimer(UINT_PTR nIDEvent)
+	{
+		// TODO: Add your message handler code here and/or call default
+
+
+	switch(nIDEvent){
+	case 1:
+		{
+			CMainFrame *mf=(CMainFrame*)(GetParentFrame());
+			COutputList* ol=mf->GetOutputWnd()->GetListCtrl();
+			::SendMessage(ol->GetSafeHwnd(),MESSAGE_UPDATE_DOL,NULL,NULL);
+		}
+		break;
+	default:
+		break;
+	}
+
+
+		CanalyzerView::OnTimer(nIDEvent);
+	}
+
+
+	void CanalyzerViewL::OnAnalysisStartanalysis()
+	{
+		// TODO: Add your command handler code here
+
+		CanalyzerDoc* pDoc = GetDocument();
+		//pDoc->raw.Clear();
+		//timer=SetTimer(1,1000,NULL);
+
+		//pDoc->raw.LoadFromFileList(flistlist[pDoc->p1.analysistype],100,20);
+
+		//KillTimer(timer);
+
+			mypara * pa1=new mypara;
+	//pa1->leftp=this->LeftPlotPointer();
+	//pa1->rightp=this->RightPlotPointer();
+	//pa1->outw=this->GetOutputWnd();
+	//pa1->cba=this->GetCaptionBar();
+	//pa1->psta=&pst;
+
+			pa1->leftp=this;
+
+			CMainFrame *mf=(CMainFrame*)( GetParentFrame() );
+	pa1->outw=mf->GetOutputWnd();			
+
+
+	//CWinThread *pWriteA;
+
+	//HANDLE hThread;
+
+	pWriteA=AfxBeginThread(PROCESS,
+		(LPVOID)(pa1),
+		THREAD_PRIORITY_NORMAL,
+		0,
+		CREATE_SUSPENDED);
+
+	//hThread=pWriteA->m_hThread;
+
+	//CloseHandle(hThread);
+	pWriteA->ResumeThread();
+
 	}

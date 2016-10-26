@@ -1,3 +1,5 @@
+#pragma once
+
 #include <afxcmn.h>
 #include <vector>
 #include <algorithm>
@@ -10,6 +12,9 @@
 #include "SAPara.h"
 #include "RawData.h"
 #include "PlotData.h"
+#include "analyzerViewL.h"
+#include "analyzerViewR.h"
+#include "OutputWnd.h"
 
 #define SC_STEP_COMPLETE 0x01
 #define SC_NEW_RIGHT_PLOT 0x02
@@ -25,6 +30,68 @@
 #define PF_A 0x20
 #define PF_L 0x40
 #define PF_SAMPLE 0x80
+
+
+			//CString folderp=L"C:\\Users\\r8anw2x\\Desktop\\data\\d\\";
+			////CString folderp=L"data\\d\\";
+			////CString folderp=L"C:\\Users\\G\\Desktop\\data\\d\\";
+
+			//CString DEMOflist=folderp+L"fl1.txt";
+			//CString DTRflist=folderp+L"dtr.txt";
+			//CString DTAflist=folderp+L"dta.txt";
+			//CString LATRflist=folderp+L"latr.txt";
+			//CString LATAflist=folderp+L"lata.txt";
+			//CString RCRflist=folderp+L"rcr.txt";
+			//CString RCAflist=folderp+L"rca.txt";
+			//CString SARRflist=folderp+L"sarr.txt";
+			//CString SARAflist=folderp+L"sara.txt";
+			//CString NEWRflist=folderp+L"j.txt";
+			//CString NEWAflist=folderp+L"k.txt";
+			//CString NERflist=folderp+L"l.txt";
+			//CString NEAflist=folderp+L"m.txt";
+
+
+			//CString flistlist[]={
+			//	DEMOflist,
+			//	DTRflist,
+			//	DTAflist,
+			//	LATRflist,
+			//	LATAflist,
+			//	RCRflist,
+			//	RCAflist,
+			//	SARRflist,
+			//	SARAflist,
+			//	NEWRflist,
+			//	NEWAflist,
+			//	NERflist,
+			//	NEAflist
+			//};
+
+
+enum ProcessState{
+	stop,
+	running,
+	pause
+};
+
+typedef struct MYPARA{
+	CanalyzerViewL *leftp;
+	CanalyzerViewR *rightp;
+	CanalyzerDoc *adoc;
+	COutputWnd *outw;
+	CMFCCaptionBarA *cba;
+	//CMainFrame *mf;
+	//pcct *data;
+	//pcctB *dataB;
+	//CVPara *p2;
+	//SAPara *p3;
+	ProcessState *psta;
+} mypara;
+
+
+
+
+UINT PROCESS(LPVOID pParam);
 
 void AdjustWidth(CListCtrl *ls, int nCol, CString str, int gap=15);
 void AdjustWidth(CListCtrl *ls, int nCol, int nRow, int gap=15);

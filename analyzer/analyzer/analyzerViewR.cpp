@@ -33,10 +33,10 @@ IMPLEMENT_DYNCREATE(CanalyzerViewR, CanalyzerView)
 
 		UINT flg=DataOutAList2PlotDataList(ol->dol, pDoc->p1, psview, pdl);
 
-		CString str=Compute(ol->dol,pDoc->p1,pdl,true);
+		//CString str=Compute(ol->dol,pDoc->p1,pdl,true);
 
 		::SendMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_VIEW,NULL,NULL);
-		::SendMessage(mf->GetCaptionBar()->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)str.GetBuffer(),NULL);
+		//::SendMessage(mf->GetCaptionBar()->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)str.GetBuffer(),NULL);
 
 		return 0;
 	}

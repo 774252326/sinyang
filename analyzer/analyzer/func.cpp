@@ -6,9 +6,43 @@
 #include <algorithm>
 #include "LineSeg.h"
 #include "CSpline.h"
+#include "analyzerViewL.h"
 
 
+CString folderp=L"C:\\Users\\r8anw2x\\Desktop\\data\\d\\";
+//CString folderp=L"data\\d\\";
+//CString folderp=L"C:\\Users\\G\\Desktop\\data\\d\\";
 
+CString DEMOflist=folderp+L"fl1.txt";
+CString DTRflist=folderp+L"dtr.txt";
+CString DTAflist=folderp+L"dta.txt";
+CString LATRflist=folderp+L"latr.txt";
+CString LATAflist=folderp+L"lata.txt";
+CString RCRflist=folderp+L"rcr.txt";
+CString RCAflist=folderp+L"rca.txt";
+CString SARRflist=folderp+L"sarr.txt";
+CString SARAflist=folderp+L"sara.txt";
+CString NEWRflist=folderp+L"j.txt";
+CString NEWAflist=folderp+L"k.txt";
+CString NERflist=folderp+L"l.txt";
+CString NEAflist=folderp+L"m.txt";
+
+
+CString flistlist[]={
+	DEMOflist,
+	DTRflist,
+	DTAflist,
+	LATRflist,
+	LATAflist,
+	RCRflist,
+	RCAflist,
+	SARRflist,
+	SARAflist,
+	NEWRflist,
+	NEWAflist,
+	NERflist,
+	NEAflist
+};
 
 
 
@@ -255,7 +289,7 @@ UINT ComputeStateData(
 
 				raw.GetDatai(rawi,x,y);
 
-				if(x.empty()){
+				if(x.empty() || y.empty()){
 					return 1;
 				}
 
@@ -265,6 +299,9 @@ UINT ComputeStateData(
 
 				//if(tmp1!=0 && tmp1!=3){
 				if(tmp1<=0){
+					d0.Ar.clear();
+					d0.UseIndex=-1;
+					dol.push_back(d0);
 					return 2;
 				}
 
@@ -620,16 +657,19 @@ bool GetPlotData(
 
 			if(!(stepControl&SC_NO_PLOT)){
 				if(!(stepControl&SC_PLOT_LAST)){
-					SetData(x[0],y[0],plotFilter,dol[j]);
 
-					if( (stepControl&SC_NEW_LINE)
-						&&!(stepControl&SC_STEP_COMPLETE)){
-							LineSpec ps1=lsp;
-							ps1.colour=genColor( genColorvFromIndex<float>( pdl.back().ps.size() ) ) ;
-							pdl.back().AddNew(x,y,ps1);
-					}
-					else{
-						pdl.back().AddFollow(x,y);
+					if(!dol[j].Ar.empty()){
+						SetData(x[0],y[0],plotFilter,dol[j]);
+
+						if( (stepControl&SC_NEW_LINE)
+							&&!(stepControl&SC_STEP_COMPLETE)){
+								LineSpec ps1=lsp;
+								ps1.colour=genColor( genColorvFromIndex<float>( pdl.back().ps.size() ) ) ;
+								pdl.back().AddNew(x,y,ps1);
+						}
+						else{
+							pdl.back().AddFollow(x,y);
+						}
 					}
 				}
 			}
@@ -657,14 +697,16 @@ bool GetPlotData(
 
 			if(!(stepControl&SC_NO_PLOT)){
 				if( stepControl&SC_PLOT_LAST ){
-					SetData(x[0],y[0],plotFilter,doa);
-					if(stepControl&SC_NEW_LINE){
-						LineSpec ps1=lsp;
-						ps1.colour=genColor( genColorvFromIndex<float>( pdl.back().ps.size() ) ) ;
-						pdl.back().AddNew(x,y,ps1);
-					}
-					else{
-						pdl.back().AddFollow(x,y);
+					if(!doa.Ar.empty()){
+						SetData(x[0],y[0],plotFilter,doa);
+						if(stepControl&SC_NEW_LINE){
+							LineSpec ps1=lsp;
+							ps1.colour=genColor( genColorvFromIndex<float>( pdl.back().ps.size() ) ) ;
+							pdl.back().AddNew(x,y,ps1);
+						}
+						else{
+							pdl.back().AddFollow(x,y);
+						}
 					}
 				}
 			}
@@ -741,16 +783,18 @@ bool GetPlotData1(
 
 			if(!(stepControl&SC_NO_PLOT)){
 				if(!(stepControl&SC_PLOT_LAST)){
-					SetData(x[0],y[0],plotFilter,dol[j]);
+					if(!dol[j].Ar.empty()){
+						SetData(x[0],y[0],plotFilter,dol[j]);
 
-					if( (stepControl&SC_NEW_LINE)
-						&&!(stepControl&SC_STEP_COMPLETE)){
-							LineSpec ps1=lsp;
-							ps1.colour=genColor( genColorvFromIndex<float>( pdl.back().ps.size() ) ) ;
-							pdl.back().AddNew(x,y,ps1);
-					}
-					else{
-						pdl.back().AddFollow(x,y);
+						if( (stepControl&SC_NEW_LINE)
+							&&!(stepControl&SC_STEP_COMPLETE)){
+								LineSpec ps1=lsp;
+								ps1.colour=genColor( genColorvFromIndex<float>( pdl.back().ps.size() ) ) ;
+								pdl.back().AddNew(x,y,ps1);
+						}
+						else{
+							pdl.back().AddFollow(x,y);
+						}
 					}
 				}
 			}
@@ -775,14 +819,16 @@ bool GetPlotData1(
 
 			if(!(stepControl&SC_NO_PLOT)){
 				if( stepControl&SC_PLOT_LAST ){
-					SetData(x[0],y[0],plotFilter,dol[j-1]);
-					if(stepControl&SC_NEW_LINE){
-						LineSpec ps1=lsp;
-						ps1.colour=genColor( genColorvFromIndex<float>( pdl.back().ps.size() ) ) ;
-						pdl.back().AddNew(x,y,ps1);
-					}
-					else{
-						pdl.back().AddFollow(x,y);
+					if(!dol[j-1].Ar.empty()){
+						SetData(x[0],y[0],plotFilter,dol[j-1]);
+						if(stepControl&SC_NEW_LINE){
+							LineSpec ps1=lsp;
+							ps1.colour=genColor( genColorvFromIndex<float>( pdl.back().ps.size() ) ) ;
+							pdl.back().AddNew(x,y,ps1);
+						}
+						else{
+							pdl.back().AddFollow(x,y);
+						}
 					}
 				}
 			}
@@ -1208,7 +1254,7 @@ bool Compute3(const std::vector<DataOutA> &dol, /*PlotData & pdat, */const ANPar
 	pdl.back().GetDatai(0,x,y);
 
 	if(x.size()>3){
-		
+
 		if( !(nby(sl[0],2)&PF_Q_NORMALIZED) ){
 			double y0=y.front();
 			slopeThreshold*=y0;
@@ -2125,7 +2171,7 @@ CString Compute( const std::vector<DataOutA> &dol, const ANPara &p1, std::vector
 					AddLine(pdl.back(),-Ac,0,0,ITQ,str0,2);
 					pdl.back().psp.legendPos=3;
 					//if(rightp->updatePlotRange((int)(pdl.size())-1))
-						//rightp->Invalidate(FALSE);
+					//rightp->Invalidate(FALSE);
 				}
 			}
 
@@ -2155,7 +2201,7 @@ CString Compute( const std::vector<DataOutA> &dol, const ANPara &p1, std::vector
 					//CanalyzerDoc *pDoc=rightp->GetDocument();
 					AddPoint(pdl.back(),Lc,Q);
 					//if(rightp->updatePlotRange((int)(pDoc->rp.size())-1))
-						//rightp->Invalidate(FALSE);
+					//rightp->Invalidate(FALSE);
 				}
 			}
 		}
@@ -2212,7 +2258,7 @@ CString Compute( const std::vector<DataOutA> &dol, const ANPara &p1, std::vector
 
 					////rightp->AddPlot(pdata);
 					//if(rightp->updatePlotRange((int)(pDoc->rp.size())-1))
-						//rightp->Invalidate(FALSE);
+					//rightp->Invalidate(FALSE);
 
 				}
 			}
@@ -2239,7 +2285,7 @@ CString Compute( const std::vector<DataOutA> &dol, const ANPara &p1, std::vector
 					AddLine(pdl.back(),lis,str0);
 					pdl.back().psp.legendPos=3;
 					//if(rightp->updatePlotRange((int)(pDoc->rp.size())-1))
-						//rightp->Invalidate(FALSE);
+					//rightp->Invalidate(FALSE);
 				}
 			}
 
@@ -2268,7 +2314,7 @@ CString Compute( const std::vector<DataOutA> &dol, const ANPara &p1, std::vector
 					//CanalyzerDoc *pDoc=rightp->GetDocument();
 					AddPoint(pdl.back(),Lc,nQ);
 					//if(rightp->updatePlotRange((int)(pDoc->rp.size())-1))
-						//rightp->Invalidate(FALSE);
+					//rightp->Invalidate(FALSE);
 				}
 			}
 
@@ -2290,7 +2336,7 @@ CString Compute( const std::vector<DataOutA> &dol, const ANPara &p1, std::vector
 					str0.LoadStringW(IDS_STRING_FITTING_LINE);
 					AddLine(pdl.back(),lis,str0);
 					//if(rightp->updatePlotRange((int)(pDoc->rp.size())-1))
-						//rightp->Invalidate(FALSE);
+					//rightp->Invalidate(FALSE);
 				}
 			}
 		}
@@ -2310,7 +2356,7 @@ CString Compute( const std::vector<DataOutA> &dol, const ANPara &p1, std::vector
 					str0.LoadStringW(IDS_STRING_FITTING_LINE);
 					AddLine(pdl.back(),lis,str0);
 					//if(rightp->updatePlotRange((int)(pDoc->rp.size())-1))
-						//rightp->Invalidate(FALSE);
+					//rightp->Invalidate(FALSE);
 				}
 			}
 
@@ -2333,3 +2379,101 @@ CString Compute( const std::vector<DataOutA> &dol, const ANPara &p1, std::vector
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+UINT PROCESS(LPVOID pParam)
+{
+	//CanalyzerDoc* pDoc=(CanalyzerDoc*)pParam;
+
+
+	CanalyzerViewL* lv=((mypara*)pParam)->leftp;
+	COutputWnd *ow=((mypara*)pParam)->outw;
+	CMFCCaptionBarA *cba=((mypara*)pParam)->cba;
+
+	COutputList* ol=ow->GetListCtrl();
+	//ol->DeleteAllItems();
+
+	HWND olhw=ol->GetSafeHwnd();	
+
+	CanalyzerDoc* pDoc=lv->GetDocument();
+
+	//POSITION pos = pDoc->GetFirstViewPosition();
+	//CanalyzerViewL* lv=(CanalyzerViewL*)(pDoc->GetNextView(pos));
+	//CMainFrame *mf=(CMainFrame*)( lv->GetParentFrame() );
+
+	delete pParam;
+
+	pDoc->raw.LoadFromFileList(flistlist[pDoc->p1.analysistype],olhw,1000,100);
+
+
+
+
+
+		pDoc->raw.Clear();
+
+
+	//CMainFrame *mf=(CMainFrame*)( ((CanalyzerViewL*)lv)->GetParentFrame() );
+	//COutputList* ol=mf->GetOutputWnd()->GetListCtrl();
+
+	std::vector<CString> filelist;
+	LoadFileList(flistlist[pDoc->p1.analysistype],filelist);
+	pcct data;
+
+
+
+	while(!filelist.empty()){
+		/////load data from file////////////
+		data.clear();
+		data.readFile(filelist.front());
+		data.TomA();
+		
+		DataOutA d0=ol->dol.back();
+		d0.Update(
+
+	//	/////////////////prompt add solution//////////////////////////////
+	::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dataC.doa.addVolume),NULL);
+	///////////////////wait response/////////////////////////
+	//pst=pause;
+	//WaitSecond(pst);
+	/////////////////////refresh analysis class///////////////////////
+	////dataC.clear();
+	//////////////////////prompt running////////////////////////////////
+	//::SendMessage(cba->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
+
+		std::vector<double> x;
+		std::vector<double> y;
+		size_t rnd;
+		pDoc->raw.ll.push_back(0);
+
+		do{
+			rnd=data.popData(x,y,nd);
+			pDoc->raw.xll.resize(pDoc->raw.xll.size()+x.size());
+			std::copy_backward(x.begin(),x.end(),pDoc->raw.xll.end());
+
+			pDoc->raw.yll.resize(pDoc->raw.yll.size()+y.size());
+			std::copy_backward(y.begin(),y.end(),pDoc->raw.yll.end());
+
+			pDoc->raw.ll.back()+=x.size();
+
+			::SendMessage(ol->GetSafeHwnd(),MESSAGE_UPDATE_DOL,NULL,NULL);
+			//::PostMessage(olhw,MESSAGE_UPDATE_DOL,NULL,NULL);
+
+			Sleep(sleepms);
+
+		}while(rnd>0);
+
+		//if(rnd==0)
+		//ll.push_back(data.potential.size());
+
+		filelist.erase(filelist.begin());
+
+
+
+	}
+
+
+
+
+
+
+
+	return 0;
+}

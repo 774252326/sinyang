@@ -21,7 +21,6 @@ public:
 	ANPara p1;
 	CVPara p2;
 	SAPara p3;
-
 	RawData raw;
 
 	//std::vector<double> xll;
@@ -41,7 +40,7 @@ public:
 		bool b5,
 		bool b6,
 		bool b7);
-
+	//RawData* GetRaw(){return &raw;}
 
 // Overrides
 public:

@@ -48,40 +48,7 @@
 //}
 
 
-			CString folderp=L"C:\\Users\\r8anw2x\\Desktop\\data\\d\\";
-			//CString folderp=L"data\\d\\";
-			//CString folderp=L"C:\\Users\\G\\Desktop\\data\\d\\";
 
-			CString DEMOflist=folderp+L"fl1.txt";
-			CString DTRflist=folderp+L"dtr.txt";
-			CString DTAflist=folderp+L"dta.txt";
-			CString LATRflist=folderp+L"latr.txt";
-			CString LATAflist=folderp+L"lata.txt";
-			CString RCRflist=folderp+L"rcr.txt";
-			CString RCAflist=folderp+L"rca.txt";
-			CString SARRflist=folderp+L"sarr.txt";
-			CString SARAflist=folderp+L"sara.txt";
-			CString NEWRflist=folderp+L"j.txt";
-			CString NEWAflist=folderp+L"k.txt";
-			CString NERflist=folderp+L"l.txt";
-			CString NEAflist=folderp+L"m.txt";
-
-
-			CString flistlist[]={
-				DEMOflist,
-				DTRflist,
-				DTAflist,
-				LATRflist,
-				LATAflist,
-				RCRflist,
-				RCAflist,
-				SARRflist,
-				SARAflist,
-				NEWRflist,
-				NEWAflist,
-				NERflist,
-				NEAflist
-			};
 
 #include <propkey.h>
 
@@ -149,7 +116,7 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		p1.Serialize(ar);
 		p2.Serialize(ar);
 		p3.Serialize(ar);
-		//raw.Serialize(ar);
+		raw.Serialize(ar);
 
 
 
@@ -159,20 +126,26 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 			// TODO: add storing code here
 
 
-			raw.Serialize(ar);
+			//raw.Serialize(ar);
 
 		}
 		else
 		{
 			// TODO: add loading code here
 
-			raw.Serialize(ar);
+			//raw.Serialize(ar);
 			//raw.LoadFromFileList(flistlist[p1.analysistype]);
 
-			size_t wo=2500;
-			raw.ll.back()-=wo;
-			raw.xll.erase(raw.xll.end()-wo,raw.xll.end());
-			raw.yll.erase(raw.yll.end()-wo,raw.yll.end());
+			//size_t wo=15500;
+			//
+			//raw.xll.erase(raw.xll.end()-wo,raw.xll.end());
+			//raw.yll.erase(raw.yll.end()-wo,raw.yll.end());
+			//
+			//while(raw.ll.back()<=wo){
+			//	wo-=raw.ll.back();
+			//	raw.ll.pop_back();
+			//}
+			//raw.ll.back()-=wo;
 		}
 	}
 
