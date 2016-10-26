@@ -14,13 +14,11 @@ IMPLEMENT_DYNAMIC(PlotSettingPageB, CPropertyPage)
 
 	PlotSettingPageB::PlotSettingPageB()
 	: CPropertyPage(PlotSettingPageB::IDD)
-	//, xlabel(_T(""))
-	//, ylabel(_T(""))
 {
 	fs=PlotSpec();
 	CString title;
 	title.LoadStringW(IDS_STRING_BK_LEGEND);
-		m_psp.dwFlags = m_psp.dwFlags | PSP_USETITLE ; 	
+	m_psp.dwFlags = m_psp.dwFlags | PSP_USETITLE ; 	
 	m_psp.pszTitle = new TCHAR[title.GetLength()+1];
 	_tcscpy((wchar_t*)m_psp.pszTitle, title);
 }
@@ -31,7 +29,6 @@ PlotSettingPageB::PlotSettingPageB(const CString & title
 	)
 	: CPropertyPage(PlotSettingPageB::IDD)
 {
-
 	fs=fspec;
 	m_psp.dwFlags = m_psp.dwFlags | PSP_USETITLE ; 	
 	m_psp.pszTitle = new TCHAR[title.GetLength()+1];
@@ -156,7 +153,6 @@ void PlotSettingPageB::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(PlotSettingPageB, CPropertyPage)
 	ON_WM_CREATE()
-	//ON_CBN_SELCHANGE(IDS_COMBO_FIGURE_SPEC, &PlotSettingPageB::ComboSelectChange)
 	ON_CBN_SELCHANGE(IDS_COMBO_ADJUST, &PlotSettingPageB::AdjustComboSelectChange)
 	ON_BN_CLICKED(IDS_CHECK_SHOW_LEGEND, &PlotSettingPageB::OnCheck)
 END_MESSAGE_MAP()
@@ -208,20 +204,20 @@ int PlotSettingPageB::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	//CSize comboSize(winrect.Width()/2-gap2.cx, 22);
 	CSize buttonSize((winrect.Width()-gap2.cx*3)/4,22);
-	CComboBox *pCombo;
-	CStatic *pStatic;
+	//CComboBox *pCombo;
+	//CStatic *pStatic;
 	CEdit *pEdit;
 	//CColorButton *pColorButton;
 
-	CButton *pBtn;
+	//CButton *pBtn;
 	CString str;
 
 
 
 
 	str.LoadStringW(IDS_STRING_COLOR_STYLE);
-	pStatic=new CStatic;
-	pStatic->Create(str,
+	//pStatic=new CStatic;
+	StaticIDS_STRING_COLOR_STYLE.Create(str,
 		WS_CHILD
 		|WS_VISIBLE, 
 		CRect(pt,buttonSize),
@@ -230,8 +226,8 @@ int PlotSettingPageB::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	pt.x+=gap2.cx+buttonSize.cx;
 
-	pCombo=new CComboBox;
-	pCombo->Create(
+	//pCombo=new CComboBox;
+	ComboIDS_COMBO_COLOR_STYLE.Create(
 		//CBS_DROPDOWNLIST
 		CBS_DROPDOWN
 		|WS_VSCROLL   
@@ -245,12 +241,12 @@ int PlotSettingPageB::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	for(int i=IDS_STRING_COLOR_TYPE_0;i<=IDS_STRING_COLOR_TYPE_0+2;i++){
 		//str.Format(L"%d",i);
 		str.LoadStringW(i);
-		pCombo->AddString(str);
+		ComboIDS_COMBO_COLOR_STYLE.AddString(str);
 	}
 
-	pEdit = (CEdit*)pCombo->GetWindow(GW_CHILD);
+	pEdit = (CEdit*)(ComboIDS_COMBO_COLOR_STYLE.GetWindow(GW_CHILD));
 	pEdit->SetReadOnly();
-	pCombo->SetCurSel(0);
+	ComboIDS_COMBO_COLOR_STYLE.SetCurSel(0);
 
 
 	pt.x+=gap2.cx+buttonSize.cx;
@@ -258,8 +254,8 @@ int PlotSettingPageB::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 
 	str.LoadStringW(IDS_STRING_GRID_LINE_TYPE);
-	pStatic=new CStatic;
-	pStatic->Create(str,
+	//pStatic=new CStatic;
+	StaticIDS_STRING_GRID_LINE_TYPE.Create(str,
 		WS_CHILD
 		|WS_VISIBLE, 
 		CRect(pt,buttonSize),
@@ -269,8 +265,8 @@ int PlotSettingPageB::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	pt.x+=gap2.cx+buttonSize.cx;
 
 
-	pCombo=new CComboBox;
-	pCombo->Create(
+	//pCombo=new CComboBox;
+	ComboIDS_COMBO_GRID_LINE_TYPE.Create(
 		CBS_DROPDOWN
 		|WS_VISIBLE
 		|WS_CHILD, 
@@ -279,9 +275,9 @@ int PlotSettingPageB::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		IDS_COMBO_GRID_LINE_TYPE);
 	for(int i=IDS_STRING_GRID_LINE_SOLID;i<=IDS_STRING_GRID_LINE_HIDE;i++){
 		str.LoadStringW(i);
-		pCombo->AddString(str);
+		ComboIDS_COMBO_GRID_LINE_TYPE.AddString(str);
 	}
-	pEdit = (CEdit*)pCombo->GetWindow(GW_CHILD);
+	pEdit = (CEdit*)(ComboIDS_COMBO_GRID_LINE_TYPE.GetWindow(GW_CHILD));
 	pEdit->SetReadOnly();
 
 
@@ -289,8 +285,8 @@ int PlotSettingPageB::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	pt.y+=gap2.cy+buttonSize.cy;
 
 	str.LoadStringW(IDS_STRING_LABEL_SIZE);
-	pStatic=new CStatic;
-	pStatic->Create(str,
+	//pStatic=new CStatic;
+	StaticIDS_STRING_LABEL_SIZE.Create(str,
 		WS_CHILD
 		|WS_VISIBLE, 
 		CRect(pt,buttonSize),
@@ -301,8 +297,8 @@ int PlotSettingPageB::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 
 	str.LoadStringW(IDS_EDIT_LABEL_SIZE);
-	pEdit=new CEdit;
-	pEdit->CreateEx(
+	//pEdit=new CEdit;
+	EditIDS_EDIT_LABEL_SIZE.CreateEx(
 		WS_EX_CLIENTEDGE,
 		L"Edit", 
 		str,
@@ -316,8 +312,8 @@ int PlotSettingPageB::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	pt.x+=gap2.cx+buttonSize.cx;
 
 	str.LoadStringW(IDS_STRING_METRIC_SIZE);
-	pStatic=new CStatic;
-	pStatic->Create(str,
+	//pStatic=new CStatic;
+	StaticIDS_STRING_METRIC_SIZE.Create(str,
 		WS_CHILD
 		|WS_VISIBLE, 
 		CRect(pt,buttonSize),
@@ -327,8 +323,8 @@ int PlotSettingPageB::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	pt.x+=gap2.cx+buttonSize.cx;
 
 	str.LoadStringW(IDS_EDIT_METRIC_SIZE);
-	pEdit=new CEdit;
-	pEdit->CreateEx(
+	//pEdit=new CEdit;
+	EditIDS_EDIT_METRIC_SIZE.CreateEx(
 		WS_EX_CLIENTEDGE,
 		L"Edit", 
 		str,
@@ -344,8 +340,8 @@ int PlotSettingPageB::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 
 	str.LoadStringW(IDS_CHECK_SHOW_LEGEND);
-	pBtn=new CButton;
-	pBtn->Create(str,
+	//pBtn=new CButton;
+	BtnIDS_CHECK_SHOW_LEGEND.Create(str,
 		BS_AUTOCHECKBOX
 		|WS_CHILD
 		|WS_VISIBLE,
@@ -356,8 +352,8 @@ int PlotSettingPageB::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	pt.x+=gap2.cx+buttonSize.cx;
 
 	str.LoadStringW(IDS_STRING_ALIGNMENT);
-	pStatic=new CStatic;
-	pStatic->Create(str,
+	//pStatic=new CStatic;
+	StaticIDS_STRING_ALIGNMENT.Create(str,
 		WS_CHILD
 		|WS_VISIBLE, 
 		CRect(pt,buttonSize),
@@ -366,8 +362,8 @@ int PlotSettingPageB::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	pt.x+=gap2.cx+buttonSize.cx;
 
-	pCombo=new CComboBox;
-	pCombo->Create(
+	//pCombo=new CComboBox;
+	ComboIDS_COMBO_ALIGNMENT.Create(
 		CBS_DROPDOWN
 		|WS_VISIBLE
 		|WS_CHILD, 
@@ -376,16 +372,16 @@ int PlotSettingPageB::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		IDS_COMBO_ALIGNMENT);
 	for(int i=IDS_STRING_FREE;i<=IDS_STRING1114;i++){
 		str.LoadStringW(i);
-		pCombo->AddString(str);
+		ComboIDS_COMBO_ALIGNMENT.AddString(str);
 	}
-	pEdit = (CEdit*)pCombo->GetWindow(GW_CHILD);
+	pEdit = (CEdit*)(ComboIDS_COMBO_ALIGNMENT.GetWindow(GW_CHILD));
 	pEdit->SetReadOnly();
 
 	pt.x+=gap2.cx+buttonSize.cx;
 
 	str.LoadStringW(IDS_CHECK_FIX_LOCATION);
-	pBtn=new CButton;
-	pBtn->Create(str,
+	//pBtn=new CButton;
+	BtnIDS_CHECK_FIX_LOCATION.Create(str,
 		BS_AUTOCHECKBOX
 		|WS_CHILD
 		|WS_VISIBLE,
@@ -396,8 +392,8 @@ int PlotSettingPageB::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	pt.x=gap1.cx;
 	pt.y+=gap2.cy+buttonSize.cy;
 
-	pCombo=new CComboBox;
-	pCombo->Create(
+	//pCombo=new CComboBox;
+	ComboIDS_COMBO_ADJUST.Create(
 		CBS_DROPDOWN
 		|WS_VISIBLE
 		|WS_CHILD, 
@@ -406,17 +402,17 @@ int PlotSettingPageB::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		IDS_COMBO_ADJUST);
 	for(int i=IDS_STRING_AUTO_ADJUST;i<=IDS_STRING_MANUAL;i++){
 		str.LoadStringW(i);
-		pCombo->AddString(str);
+		ComboIDS_COMBO_ADJUST.AddString(str);
 	}
-	pEdit = (CEdit*)pCombo->GetWindow(GW_CHILD);
+	pEdit = (CEdit*)(ComboIDS_COMBO_ADJUST.GetWindow(GW_CHILD));
 	pEdit->SetReadOnly();
 
 
 	pt.x+=gap2.cx+buttonSize.cx;
 
 	str.LoadStringW(IDS_STRING_W_H);
-	pStatic=new CStatic;
-	pStatic->Create(str,
+	//pStatic=new CStatic;
+	StaticIDS_STRING_W_H.Create(str,
 		WS_CHILD,
 		//|WS_VISIBLE, 
 		CRect(pt,buttonSize),
@@ -424,8 +420,8 @@ int PlotSettingPageB::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		IDS_STRING_W_H);
 
 	str.LoadStringW(IDS_STRING_FS_LL);
-	pStatic=new CStatic;
-	pStatic->Create(str,
+	//pStatic=new CStatic;
+	StaticIDS_STRING_FS_LL.Create(str,
 		WS_CHILD,
 		//|WS_VISIBLE, 
 		CRect(pt,buttonSize),
@@ -436,8 +432,8 @@ int PlotSettingPageB::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 
 	str.LoadStringW(IDS_EDIT_WIDTH);
-	pEdit=new CEdit;
-	pEdit->CreateEx(
+	//pEdit=new CEdit;
+	EditIDS_EDIT_WIDTH.CreateEx(
 		WS_EX_CLIENTEDGE,
 		L"Edit", 
 		str,
@@ -449,8 +445,8 @@ int PlotSettingPageB::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		IDS_EDIT_WIDTH);
 
 	str.LoadStringW(IDS_EDIT_FONT_SIZE);
-	pEdit=new CEdit;
-	pEdit->CreateEx(
+	//pEdit=new CEdit;
+	EditIDS_EDIT_FONT_SIZE.CreateEx(
 		WS_EX_CLIENTEDGE,
 		L"Edit", 
 		str,
@@ -465,8 +461,8 @@ int PlotSettingPageB::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 
 	str.LoadStringW(IDS_EDIT_HEIGHT);
-	pEdit=new CEdit;
-	pEdit->CreateEx(
+	//pEdit=new CEdit;
+	EditIDS_EDIT_HEIGHT.CreateEx(
 		WS_EX_CLIENTEDGE,
 		L"Edit", 
 		str,
@@ -478,8 +474,8 @@ int PlotSettingPageB::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		IDS_EDIT_HEIGHT);
 
 	str.LoadStringW(IDS_EDIT_LINE_LENGTH);
-	pEdit=new CEdit;
-	pEdit->CreateEx(
+	//pEdit=new CEdit;
+	EditIDS_EDIT_LINE_LENGTH.CreateEx(
 		WS_EX_CLIENTEDGE,
 		L"Edit", 
 		str,
@@ -490,50 +486,13 @@ int PlotSettingPageB::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		this,
 		IDS_EDIT_LINE_LENGTH);
 
-	//pt.x=gap1.cx;
-	//pt.y+=gap2.cy+buttonSize.cy;
 
-	////ComboSelectChange();
-
-	//winrect.top=pt.y;
-
-	//const DWORD dwStyle = WS_VISIBLE 
-	//	| WS_CHILD 
-	//	| WS_BORDER
-	//	| WS_HSCROLL 
-	//	| WS_VSCROLL 
-	//	| LBS_NOINTEGRALHEIGHT;
-
-	//if(!pslist.Create(dwStyle, winrect, this, IDS_LISTCTRL_SAP) ){
-	//	TRACE0("Failed to create output windows\n");
-	//	return -1;      // fail to create
-	//}
-
-	//SetList();
 
 	return 0;
 }
 
 
-//void PlotSettingPageB::ComboSelectChange(void)
-//{
-//	int nSel;     
-//	CComboBox * pcb=(CComboBox*)(this->GetDlgItem(IDS_COMBO_FIGURE_SPEC));
-//	nSel = pcb->GetCurSel();
-//
-//	for(int i=0;i<5;i++){
-//		if(i==nSel){
-//			GetDlgItem(IDS_COLOR_BORDER+i)->ShowWindow(SW_SHOW);
-//			GetDlgItem(IDS_COLOR_BKGND+i)->ShowWindow(SW_SHOW);
-//		}
-//		else{
-//			GetDlgItem(IDS_COLOR_BORDER+i)->ShowWindow(SW_HIDE);
-//			GetDlgItem(IDS_COLOR_BKGND+i)->ShowWindow(SW_HIDE);
-//		}
-//	}
-//
-//
-//}
+
 
 
 void PlotSettingPageB::AdjustComboSelectChange(void)
@@ -574,7 +533,7 @@ void PlotSettingPageB::OnCheck(void)
 	UpdateData();
 
 	BOOL flg=(lgc.legendDpMode&LEGEND_DP_SHOW)?TRUE:FALSE;
-	
+
 	this->GetDlgItem(IDS_STRING_W_H)->EnableWindow(flg);
 	this->GetDlgItem(IDS_STRING_FS_LL)->EnableWindow(flg);
 	this->GetDlgItem(IDS_EDIT_WIDTH)->EnableWindow(flg);
@@ -589,39 +548,7 @@ void PlotSettingPageB::OnCheck(void)
 }
 
 
-//void PlotSettingPageB::SetList(void)
-//{
-//	UpdateData(FALSE);
-//
-//	AdjustComboSelectChange();
-//	OnCheck();
-//
-//	if(ps.empty()){
-//		return;
-//	}
-//
-//	for(size_t i=0;i<ps.size();i++){
-//		pslist.InsertItemLS(i,ps[i]);
-//	}
-//
-//}
-//
-//
-//void PlotSettingPageB::GetList(void)
-//{
-//	UpdateData();
-//
-//	if(ps.empty()){
-//		return;
-//	}
-//
-//	int nItem=pslist.GetItemCount();
-//
-//	for(size_t i=0;i<nItem;i++){
-//		pslist.GetItemLS(i,ps[i]);
-//	}
-//
-//}
+
 
 
 
@@ -630,25 +557,25 @@ void PlotSettingPageB::OnOK()
 {
 	// TODO: Add your specialized code here and/or call the base class
 
-   CFrameWndEx* pframe = (CFrameWndEx*) AfxGetMainWnd();
-   //CMDIChildWnd* pchild = pframe->MDIGetActive();
-   //CPSheetDoc* doc = (CPSheetDoc*) pchild->GetActiveDocument();
-   //doc->m_Color = m_Color;
+	CFrameWndEx* pframe = (CFrameWndEx*) AfxGetMainWnd();
+	//CMDIChildWnd* pchild = pframe->MDIGetActive();
+	//CPSheetDoc* doc = (CPSheetDoc*) pchild->GetActiveDocument();
+	//doc->m_Color = m_Color;
 
-   // Tell the view to paint with the new selected color.
-   CanalyzerView* view = (CanalyzerView*)(pframe->GetActiveView());
+	// Tell the view to paint with the new selected color.
+	CanalyzerView* view = (CanalyzerView*)(pframe->GetActiveView());
 
-   *(view->pw.GetPlotSpec())=fs;
+	*(view->pw.GetPlotSpec())=fs;
 
-   if(view->pw.pdex!=NULL){
-	   //view->pw.pdex->pd.ls.assign(ps.begin(),ps.end());
-	view->pw.pdex->lgc=lgc;
-	view->pw.pdex->lgs=lgs;
-	view->pw.SetLegend();
-   }
+	if(view->pw.pdex!=NULL){
+		//view->pw.pdex->pd.ls.assign(ps.begin(),ps.end());
+		view->pw.pdex->lgc=lgc;
+		view->pw.pdex->lgs=lgs;
+		view->pw.SetLegend();
+	}
 
 
-   view->Invalidate();
+	view->Invalidate();
 
 	CPropertyPage::OnOK();
 }

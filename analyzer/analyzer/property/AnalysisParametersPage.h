@@ -23,20 +23,28 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	virtual BOOL OnSetActive();
-//	virtual BOOL OnInitDialog();
 	afx_msg void ComboSelectChange(void);
-	afx_msg void OnBnClickedButton1();
-
-	//anp para;
 	ANPara para;
 	virtual BOOL OnKillActive();
-	//virtual BOOL Create(LPCTSTR lpszTemplateName, CWnd* pParentWnd = NULL);
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-//	void editchange(void);
-	//CString filePath;
 	void CalibrationComboSelectChange(void);
-//	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
 	DWORD dwStyle;
 
-	//CMFCEditBrowseCtrl pc;
+	
+
+	CStatic StaticIDS_STRING_ANALYSIS_TYPE;
+	CComboBox ComboIDS_COMBO_ANALYSIS_TYPE;
+
+	CEdit EditIDS_EDIT_REMARK_ON_ANALYSIS_TYPE;
+
+	CStatic StaticIDS_STRING_EVALUATION_RATIO;
+	CEdit EditIDS_EDIT_EVALUATION_RATIO;
+
+	CStatic StaticIDS_STRING_INTERCEPT_VALUE;
+	CStatic StaticIDS_STRING_CALIBRATION_CURVE_FILE;
+	CComboBox ComboIDS_COMBO_CALIBRATION_TYPE;
+
+	CEdit EditIDS_EDIT_CALIBRATION_FACTOR;
+	CEdit EditIDS_EDIT_INTERCEPT_VALUE;
+	CMFCEditBrowseCtrl EditIDS_EDIT_CALIBRATION_CURVE_FILE;
 };

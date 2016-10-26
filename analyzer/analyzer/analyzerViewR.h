@@ -63,6 +63,7 @@ public:
 						UINT ff1=ddex0.ComputeStateData();
 						if(ff1==0||ff1==7)
 							bShowCb=DocDataEx::GetResultData(ddex0.dol,ddex0.p1,cbrdl,cbxlabellist,cbylabellist,cbnlist,true);
+							//bShowCb=false;
 					}
 				}
 				break;

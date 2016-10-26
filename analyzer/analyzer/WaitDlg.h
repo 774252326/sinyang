@@ -30,4 +30,7 @@ public:
 
 	CFont  editfont;
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+
+	CEdit EditIDS_EDIT_TIPS;
+	CButton btnIDOK;
 };

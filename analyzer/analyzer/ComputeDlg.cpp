@@ -11,7 +11,7 @@
 #include "analyzerViewR.h"
 #include "user\StartDlg.hpp"
 
-void ScaleBitmap(CBitmap *pSrc, CBitmap *pDst, int dstW, int dstH);
+//void ScaleBitmap(CBitmap *pSrc, CBitmap *pDst, int dstW, int dstH);
 //bool FitLine(std::vector<double> &x, std::vector<double> &y, LineSeg &ls, int nFront=0, int nBack=0);
 
 // ComputeDlg dialog
@@ -20,7 +20,7 @@ IMPLEMENT_DYNAMIC(ComputeDlg, CDialogEx)
 
 	ComputeDlg::ComputeDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(ComputeDlg::IDD, pParent)
-	, fd(NULL)
+	//, fd(NULL)
 {
 
 }
@@ -40,7 +40,8 @@ void ComputeDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(ComputeDlg, CDialogEx)
 	ON_WM_CREATE()
 	ON_BN_CLICKED(IDS_BTN_COMPUTE, &ComputeDlg::ClickCompute)
-	ON_BN_CLICKED(IDS_CHECK_SHOW_FORMULA, &ComputeDlg::Showfml)
+	//ON_BN_CLICKED(IDS_CHECK_SHOW_FORMULA, &ComputeDlg::Showfml)
+	ON_WM_PAINT()
 END_MESSAGE_MAP()
 
 
@@ -86,81 +87,30 @@ BOOL ComputeDlg::OnInitDialog()
 
 	CSize winSize(400,500);
 
-	::SetWindowPos(this->GetSafeHwnd(),
-		HWND_TOP,
-		rc.CenterPoint().x-winSize.cx/2,
-		rc.CenterPoint().y-winSize.cy/2,
-		winSize.cx,
-		winSize.cy,		
-		SWP_SHOWWINDOW);
-
-
-
 	CSize gap1(20,20);
 	CSize gap2(20,20);
 
 	int editH=50;
-	int btnH=22;
-	int listH=300;
+
+	int offset=30;
 
 	CPoint pt(gap1);
 	int w=winSize.cx-2*gap1.cx;
-	CSize btnSz((w-gap2.cx)/2,btnH);
+	//CSize btnSz((w-gap2.cx)/2,btnH);
 
-				CString str;
+	CString str;
 
 	CButton *pBtn;
 
 	str.LoadStringW(IDS_STRING_RESULT);
 	this->SetWindowTextW(str);
 
-	//m_btn1.MoveWindow(CRect(pt,btnSz));
-	//m_btn1.EnableFullTextTooltip(FALSE);
-	//m_btn1.SetTooltip(L"sdjalsajdslfka;kkkkkkkkkkkkkkkkkksld;;;;;;;;;;;;;;;;;;;;;jffffffffffffffffffffffffffffffffffffffffffa;l\r\n\
-	//				   sadjklllllllllllllllllllllllllllfdsaaaaaaaaaaafasdfdafdasdsaaaaaaaaaaaaaaaaaaaaaaaaaaaaalllllllllllllll\r\n\
-	//				   123142421");
 
-
-	////CMFCButton *pbtn;
-
-	////pbtn=new CMFCButton();
-
-	////pbtn->Create(L"",WS_CHILD|WS_VISIBLE|/*BS_PUSHBUTTON|BS_FLAT|BS_NOTIFY|*/BS_BITMAP,CRect(pt,btnSz),this,1278);
-	////pbtn->EnableWindowsTheming(true);
-
-	////pbtn->EnableFullTextTooltip(true);
-	//// pbtn->SetTooltip(_T("this is a button!"));
-
-	//CBitmap * pBmp = NULL;
-
-	//CBitmap * dst=NULL;
-
-	//pBmp = new CBitmap();
-	//pBmp->LoadBitmapW(IDB_BITMAP12);
-	//dst=new CBitmap();
-	//ScaleBitmap(pBmp,dst,btnSz.cx,btnSz.cy);
-
-	//BITMAP bm;
-	//dst->GetBitmap(&bm); 
-
-	//HBITMAP hb=(HBITMAP)(*dst);
-	//////pbtn->SetImage(hb);
-	//m_btn1.SetImage(hb);
-
-	//m_btn1.ShowWindow(SW_SHOW);
-
-	////pbtn->SetImage(IDB_BITMAP12);
-	////	//delete dst;
-	////	delete pBmp;
-
-	////	pbtn->SizeToContent();
-
-	//pt.x+=gap2.cx+btnSz.cx;
 
 	CEdit *pEdit;
 
-	pEdit=new CEdit;
-	pEdit->CreateEx(
+	//pEdit=new CEdit;
+	EditEDRS_ID.CreateEx(
 		NULL,
 		//WS_EX_CLIENTEDGE,
 		L"Edit", 
@@ -176,6 +126,8 @@ BOOL ComputeDlg::OnInitDialog()
 		this,
 		EDRS_ID);
 
+	pt.y+=editH;
+
 	switch(doc->da.p1.analysistype){
 	case 2:
 	case 4:
@@ -184,34 +136,34 @@ BOOL ComputeDlg::OnInitDialog()
 	case 10:
 	case 12:
 		{
+			if(!(doc->da.GetVL(m_list.vl))){
+				return FALSE;
+			}
+
+			formulaImg.LoadBitmapW(GetFormulaImgID());
+			BITMAP bm;
+			formulaImg.GetBitmap(&bm);
+			int imgH=winSize.cx*bm.bmHeight/bm.bmWidth;
+
+			imgrc=CRect(pt,CSize(w,imgH));
+
+			int btnH=22;
+			int listH=(m_list.rowH+2)*m_list.vl.size()+24;
+
+			winSize.cy=editH+imgH+gap2.cy*2+listH+btnH+gap1.cy*2+offset;
 
 
-			pt.y+=gap2.cy+editH;
+			::SetWindowPos(this->GetSafeHwnd(),
+				HWND_TOP,
+				rc.CenterPoint().x-winSize.cx/2,
+				rc.CenterPoint().y-winSize.cy/2,
+				winSize.cx,
+				winSize.cy,		
+				SWP_SHOWWINDOW);
 
-			str.LoadStringW(IDS_CHECK_SHOW_FORMULA);
-			pBtn=new CButton;
-			pBtn->Create(str,
-				BS_AUTOCHECKBOX
-				|WS_CHILD
-				|WS_VISIBLE,
-				CRect(pt,btnSz),
-				this,
-				IDS_CHECK_SHOW_FORMULA);
 
-			pt.x+=btnSz.cx+gap2.cx;
+			pt.y+=gap2.cy+imgH;
 
-			str.LoadStringW(IDS_BTN_COMPUTE);
-			pBtn=new CButton;
-			pBtn->Create(str,
-				BS_PUSHBUTTON
-				|WS_CHILD
-				|WS_VISIBLE,
-				CRect(pt,btnSz),
-				this,
-				IDS_BTN_COMPUTE);
-
-			pt.x=gap1.cx;
-			pt.y+=gap2.cy+btnSz.cy;
 
 			const DWORD dwStyle = WS_VISIBLE 
 				| WS_CHILD 
@@ -225,15 +177,28 @@ BOOL ComputeDlg::OnInitDialog()
 				return -1;      // fail to create
 			}
 
+			pt.y+=gap2.cy+listH;
 
-			if(doc->da.GetVL(m_list.vl)){
-				m_list.Refresh();
-				break;
-			}
-			return FALSE;
+
+			m_list.Refresh();
+
+
+			str.LoadStringW(IDS_BTN_COMPUTE);
+			//pBtn=new CButton;
+			BtnIDS_BTN_COMPUTE.Create(str,
+				BS_PUSHBUTTON
+				|WS_CHILD
+				|WS_VISIBLE,
+				CRect(pt,CSize(w,btnH)),
+				this,
+				IDS_BTN_COMPUTE);
+
+			break;
+
+
 		}
 	default:
-		winSize.cy=100;
+		winSize.cy=offset+editH+gap1.cy*2;
 		::SetWindowPos(this->GetSafeHwnd(),
 			HWND_TOP,
 			rc.CenterPoint().x-winSize.cx/2,
@@ -307,8 +272,8 @@ void ComputeDlg::ClickCompute(void)
 		for(size_t i=0;i<namel.size();i++){
 			str+=namel[i]+L" "+valuel[i]+L"\r\n";
 		}
-		((CEdit*)GetDlgItem(EDRS_ID))->SetWindowTextW(str);
-
+		//((CEdit*)GetDlgItem(EDRS_ID))->SetWindowTextW(str);
+		EditEDRS_ID.SetWindowTextW(str);
 		for(size_t i=0;i<m_list.vl.size() && i<doc->da.p1.correction.size(); i++){
 			doc->da.p1.correction[i]=m_list.vl[i].correction;
 		}
@@ -322,30 +287,30 @@ void ComputeDlg::ClickCompute(void)
 
 void ComputeDlg::Showfml(void)
 {
-	int bChk=((CButton*)GetDlgItem(IDS_CHECK_SHOW_FORMULA))->GetCheck();
+	//int bChk=((CButton*)GetDlgItem(IDS_CHECK_SHOW_FORMULA))->GetCheck();
 
-	switch(bChk){
-	case BST_UNCHECKED:
-		{
-			if(fd!=NULL){
-				fd->ShowWindow(SW_HIDE);
-				delete fd;
-				fd=NULL;
-			}
-		}
-		break;
-	case BST_CHECKED:
-		{
-			if(fd==NULL){
-				fd=new StartDlg(GetFormulaImgID());
-				fd->Create(StartDlg::IDD);
-			}
-			fd->ShowWindow(SW_SHOW);
-		}
-		break;
-	default:
-		break;
-	}
+	//switch(bChk){
+	//case BST_UNCHECKED:
+	//	{
+	//		if(fd!=NULL){
+	//			fd->ShowWindow(SW_HIDE);
+	//			delete fd;
+	//			fd=NULL;
+	//		}
+	//	}
+	//	break;
+	//case BST_CHECKED:
+	//	{
+	//		if(fd==NULL){
+	//			fd=new StartDlg(GetFormulaImgID());
+	//			fd->Create(StartDlg::IDD);
+	//		}
+	//		fd->ShowWindow(SW_SHOW);
+	//	}
+	//	break;
+	//default:
+	//	break;
+	//}
 
 }
 
@@ -354,11 +319,11 @@ void ComputeDlg::OnCancel()
 {
 	// TODO: Add your specialized code here and/or call the base class
 
-	if(fd!=NULL){
-		fd->ShowWindow(SW_HIDE);
-		delete fd;
-		fd=NULL;
-	}
+	//if(fd!=NULL){
+	//	fd->ShowWindow(SW_HIDE);
+	//	delete fd;
+	//	fd=NULL;
+	//}
 
 	CDialogEx::OnCancel();
 }
@@ -367,7 +332,7 @@ void ComputeDlg::OnCancel()
 UINT ComputeDlg::GetFormulaImgID(void)
 {
 
-	
+
 	CFrameWndEx* pframe = (CFrameWndEx*) AfxGetMainWnd();
 	//CMDIChildWnd* pchild = pframe->MDIGetActive();
 	CanalyzerDoc* doc = (CanalyzerDoc*)(pframe->GetActiveDocument());
@@ -390,4 +355,23 @@ UINT ComputeDlg::GetFormulaImgID(void)
 	}
 
 	return 0;
+}
+
+
+void ComputeDlg::OnPaint()
+{
+	CPaintDC dc(this); // device context for painting
+	// TODO: Add your message handler code here
+	// Do not call CDialogEx::OnPaint() for painting messages
+
+	if(formulaImg.GetSafeHandle()!=NULL){
+		CDC srcDC;
+		srcDC.CreateCompatibleDC(&dc); 
+		srcDC.SelectObject(&formulaImg);
+
+		BITMAP bm;
+		formulaImg.GetBitmap(&bm); 
+
+		dc.StretchBlt(imgrc.left,imgrc.top,imgrc.Size().cx,imgrc.Size().cy,&srcDC,0,0,bm.bmWidth,bm.bmHeight,SRCCOPY);
+	}
 }

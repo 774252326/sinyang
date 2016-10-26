@@ -160,7 +160,9 @@ COLORREF genColor(T colorv){
 	T rgb[3];
 	hsv2rgb(hsv,rgb);
 
-	return GetRGB(rgb);
+	COLORREF oc=GetRGB(rgb);
+
+	return oc;
 }
 
 template <typename T>

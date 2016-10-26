@@ -19,10 +19,7 @@ class PlotSettingPageC : public CPropertyPage
 public:
 	PlotSettingPageC();
 	PlotSettingPageC(const CString &title
-		//, const PlotSpec &fspec
 		, const std::vector<LineSpec> &pspec
-		//, const CString & x
-		//, const CString & y
 		);
 	virtual ~PlotSettingPageC();
 
@@ -33,10 +30,7 @@ public:
 	std::vector<LineSpec> ps;
 	virtual BOOL OnSetActive();
 	virtual BOOL OnKillActive();
-//	virtual BOOL Create(LPCTSTR lpszTemplateName, CWnd* pParentWnd = NULL);
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-	//PlotSpec fs;
-	//void ComboSelectChange(void);
 
 	ListCtrlLS pslist;
 
@@ -44,12 +38,6 @@ public:
 	void SetList(void);
 	void GetList(void);
 
-	//LegendSpec lgs;
-
-	//LegendCondition lgc;
-
-	//void AdjustComboSelectChange(void);
-	void OnCheck(void);
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
@@ -62,6 +50,11 @@ public:
 	COLORREF newC;
 	COLORREF oldC;
 	BOOL bTwo;
+
+	CStatic StaticIDS_STRING_OLD_NEW;
+	CMFCColorButton BtnIDS_STRING_OLD_COLOR;
+	CMFCColorButton BtnIDS_STRING_NEW_COLOR;
+
 };
 
 	

@@ -22,7 +22,20 @@
 #include "property\SolutionAdditionParametersPageA.h"
 #include "property\SolutionAdditionParametersPageB.h"
 
+#include "windowsversion.hpp"
 //////////////////////////////////////////////////thread///////////////////////////////////////////
+
+CString folderpath()
+{
+		CString  strdir,tmpdir; 
+	TCHAR szPath[MAX_PATH] = {0};
+	::GetModuleFileName(NULL, szPath, MAX_PATH);
+	 tmpdir=szPath; 
+    strdir=tmpdir.Left(tmpdir.ReverseFind('\\'));
+	return strdir;
+}
+
+
 
 typedef struct MYPARA{
 	//CanalyzerViewL *leftp;
@@ -49,8 +62,8 @@ const size_t nd=1000;
 
 
 #ifndef _DEBUG
-//CString folderp=(GetWinVer()==6)? L"data\\d\\" : L"..\\data\\d\\";
-CString folderp=L"C:\\Users\\r8anw2x\\Desktop\\data\\d\\";
+CString folderp=folderpath()+L"\\data\\d\\";
+//CString folderp=L"C:\\Users\\r8anw2x\\Desktop\\data\\d\\";
 //CString folderp=L"D:\\data\\d\\";
 //CString folderp=L"C:\\Users\\G\\Desktop\\data\\d\\";
 #else
@@ -266,7 +279,7 @@ UINT CMainFrame::PROCESS(LPVOID pParam)
 							singleLock.Unlock();
 						}
 						mf->SendMessage(MESSAGE_UPDATE_DOL,NULL,NULL);
-						
+
 					}
 					break;
 
@@ -375,7 +388,7 @@ static UINT indicators[] =
 // CMainFrame construction/destruction
 
 CMainFrame::CMainFrame()
-	: LangID(0)
+	: LangID(1)
 	, userIndex(-1)
 	, m_bSplitterCreated(FALSE)
 	, pst(stop)
@@ -515,7 +528,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	//CMFCToolBar::SetBasicCommands(lstBasicCommands);
 
-	//::PostMessage(this->GetSafeHwnd(),MESSAGE_CHANGE_LANG,NULL,NULL);
+	::PostMessage(this->GetSafeHwnd(),MESSAGE_CHANGE_LANG,NULL,NULL);
 
 	return 0;
 }
@@ -1370,34 +1383,60 @@ void CMainFrame::ChangeLang(void)
 
 	COutputListA *ol=this->GetOutputWnd()->GetListCtrl();
 
-	if(ol->GetSafeHwnd()!=NULL && ol->IsWindowVisible()==TRUE ){
-		ol->cbstr[6][0].LoadString(IDS_STRING_YES);
-ol->cbstr[6][1].LoadString(IDS_STRING_NO);
+	ol->ResetHeader();
 
-	CHeaderCtrl* pha=ol->GetHeaderCtrl();
+	//m_wndStatusBar.UpdateVirtualRect();
 
-	int    i, nCount = pha->GetItemCount();
-HDITEM hdi;
-enum   { sizeOfBuffer = 256 };
-TCHAR  lpBuffer[sizeOfBuffer];
-bool   fFound = false;
+	strOutputWnd.LoadStringW(AFX_IDS_IDLEMESSAGE);
 
-hdi.mask = HDI_TEXT;
-hdi.pszText = lpBuffer;
-hdi.cchTextMax = sizeOfBuffer;
-
-for (i=0; i < nCount; i++)
-{
-   pha->GetItem(i, &hdi); 
-   CString str;  
-   str.LoadStringW(i+IDS_STRING111);
-   hdi.pszText=str.GetBuffer();
-   pha->SetItem(i, &hdi);
-}
+	m_wndStatusBar.SetWindowTextW(strOutputWnd);
+	//	LVCOLUMN col;
+	//	col.mask = LVCF_TEXT;
+	//	col.cchTextMax=256;
+	//	col.pszText=new TCHAR[col.cchTextMax];
 
 
-	}
+	//if(ol->GetSafeHwnd()!=NULL && ol->IsWindowVisible()==TRUE ){
 
+
+
+	//	ol->GetColumn(5,&col);
+
+	//			   CString str;  
+	//	   str.LoadStringW(5+IDS_STRING111);
+
+	//	   CString::CopyChars(col.pszText,str.GetBuffer(),str.GetLength()+1);
+
+	//	   ol->SetColumn(5,&col);
+
+	//	//ol->cbstr[6][0].LoadString(IDS_STRING_YES);
+	//	//ol->cbstr[6][1].LoadString(IDS_STRING_NO);
+
+	//	//	CHeaderCtrl* pha=ol->GetHeaderCtrl();
+	//	//
+	//	//	int    i, nCount = pha->GetItemCount();
+	//	//HDITEM hdi;
+	//	//enum   { sizeOfBuffer = 256 };
+	//	//TCHAR  lpBuffer[sizeOfBuffer];
+	//	//bool   fFound = false;
+	//	//
+	//	//hdi.mask = HDI_TEXT;
+	//	//hdi.pszText = lpBuffer;
+	//	//hdi.cchTextMax = sizeOfBuffer;
+	//	//
+	//	//for (i=0; i < nCount; i++)
+	//	//{
+	//	//   pha->GetItem(i, &hdi); 
+	//	//   CString str;  
+	//	//   str.LoadStringW(i+IDS_STRING111);
+	//	//   hdi.pszText=str.GetBuffer();
+	//	//   pha->SetItem(i, &hdi);
+	//	//}
+
+
+	//}
+
+	//delete col.pszText;
 
 }
 

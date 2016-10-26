@@ -26,6 +26,7 @@ IMPLEMENT_DYNAMIC(PlotWnd, CWnd)
 
 PlotWnd::~PlotWnd()
 {
+	delete td;
 }
 
 

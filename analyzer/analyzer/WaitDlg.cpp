@@ -57,41 +57,6 @@ BOOL WaitDlg::OnInitDialog()
 
 	// TODO:  Add extra initialization here
 
-	//CEdit *pEdit=(CEdit*)GetDlgItem(IDC_EDIT1);
-	//CFont * pFont = new CFont; 
-	//pFont->CreateFont(16, // nHeight
-	//	0, // nWidth 
-	//	0, // nEscapement 
-	//	0, // nOrientation 
-	//	FW_BOLD, // nWeight 
-	//	TRUE, // bItalic 
-	//	FALSE, // bUnderline 
-	//	0, // cStrikeOut 
-	//	ANSI_CHARSET, // nCharSet 
-	//	OUT_DEFAULT_PRECIS, // nOutPrecision 
-	//	CLIP_DEFAULT_PRECIS, // nClipPrecision 
-	//	DEFAULT_QUALITY, // nQuality 
-	//	DEFAULT_PITCH | FF_SWISS, // nPitchAndFamily 
-	//	_T("Arial")); // lpszFac 
-	//pEdit->SetFont(pFont,TRUE);
-
-
-	//CRect rc;
-	//this->GetParentFrame()->GetWindowRect(&rc);
-
-	//CRect wrc;
-	//this->GetWindowRect(&wrc);
-	//CSize winSize(wrc.Size());
-
-	//::SetWindowPos(this->GetSafeHwnd(),
-	//	HWND_TOPMOST,
-	//	rc.CenterPoint().x-winSize.cx/2,
-	//	rc.CenterPoint().y-winSize.cy/2,
-	//	winSize.cx,
-	//	winSize.cy,		
-	//	SWP_SHOWWINDOW);
-
-	//this->GetDlgItem(IDCANCEL)->EnableWindow(FALSE);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
@@ -137,8 +102,8 @@ int WaitDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 
 
-	pEdit=new CEdit;
-	pEdit->CreateEx(
+	//pEdit=new CEdit;
+	EditIDS_EDIT_TIPS.CreateEx(
 		//WS_EX_CLIENTEDGE,
 		NULL,
 		L"Edit", 
@@ -154,8 +119,8 @@ int WaitDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		this,
 		IDS_EDIT_TIPS);
 
-	CFont * pFont = new CFont; 
-	pFont->CreateFont(26, // nHeight
+	//CFont * pFont = new CFont; 
+	editfont.CreateFont(26, // nHeight
 		0, // nWidth 
 		0, // nEscapement 
 		0, // nOrientation 
@@ -169,19 +134,19 @@ int WaitDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		DEFAULT_QUALITY, // nQuality 
 		DEFAULT_PITCH | FF_SWISS, // nPitchAndFamily 
 		_T("Arial")); // lpszFac 
-	pEdit->SetFont(pFont,TRUE);
+	EditIDS_EDIT_TIPS.SetFont(&editfont,TRUE);
 
 	pt.y+=btnH+gap1.cy;
 	pt.x+=(winSize.cx-btnW)/2-gap1.cx;
 
 	str.LoadStringW(IDS_STRING_RESUME);
-	pButton=new CButton;
+	//pButton=new CButton;
 
-	if(pButton->Create(str, WS_CHILD|WS_VISIBLE|BS_PUSHBUTTON, CRect(pt,CSize(btnW,btnH)), this, IDOK)==FALSE){
+	if(btnIDOK.Create(str, WS_CHILD|WS_VISIBLE|BS_PUSHBUTTON, CRect(pt,CSize(btnW,btnH)), this, IDOK)==FALSE){
 		return -1;
 	}
 
-	pButton->SetFocus();
+	btnIDOK.SetFocus();
 
 	return 0;
 }

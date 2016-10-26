@@ -27,7 +27,13 @@ public:
 
 	void ClickCompute(void);
 	void Showfml(void);
-	CDialogEx *fd;
+	//CDialogEx *fd;
 	virtual void OnCancel();
 	UINT GetFormulaImgID(void);
+	afx_msg void OnPaint();
+
+	CEdit EditEDRS_ID;
+	CBitmap formulaImg;
+	CButton BtnIDS_BTN_COMPUTE;
+	CRect imgrc;
 };

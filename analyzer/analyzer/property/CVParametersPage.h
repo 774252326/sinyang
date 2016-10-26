@@ -22,17 +22,17 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 public:
-//	virtual BOOL OnInitDialog();
-	virtual BOOL OnSetActive();
 
-	//cvp para;
+	virtual BOOL OnSetActive();
 	CVPara para;
 	virtual BOOL OnKillActive();
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-	void ComboSelectChange(void);
-//	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
-//	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
-	//CString strtmp;
+
 	DWORD dwStyle;
-	//bool enabled;
+
+	CStatic StaticCVP[7];
+	CEdit EditCVP[7];
+
+	CStatic StaticIDS_STRING_START_INTEGRATION_E;
+	CComboBox ComboIDS_EDIT_START_INTEGRATION_E;
 };

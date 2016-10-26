@@ -21,5 +21,8 @@ protected:
 	afx_msg LRESULT OnMessageShowDol(WPARAM wParam, LPARAM lParam);
 	//afx_msg LRESULT OnMessageUpdateDol(WPARAM wParam, LPARAM lParam);
 	//afx_msg void OnViewOutput();
+public:
+	void BuildList(void);
+	void ResetHeader(void);
 };
 

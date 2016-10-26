@@ -193,11 +193,13 @@ public:
 			str.LoadStringW(IDS_STRING_VMS);
 		}
 		else{
+			str.LoadStringW(IDS_STRING_STEPNAME1);
+			//str+=L" ";
 			if(stepFilter&DOA_SAMPLE){
-				str.LoadStringW(IDS_STRING_SAMPLE);
+				strt.LoadStringW(IDS_STRING_SAMPLE);
+				str+=strt;
 			}
-			else{
-				str=L"";
+			else{				
 				if(stepFilter&DOA_S){
 					strt.LoadStringW(IDS_STRING_S);
 					str+=strt;
@@ -211,8 +213,7 @@ public:
 					str+=strt;
 				}
 			}
-			strt.LoadStringW(IDS_STRING_STEPNAME1);
-			str+=L" "+strt;
+					
 
 			if(i>0){
 				strt.Format(L" %d",i);

@@ -77,6 +77,20 @@ BOOL CanalyzerApp::InitInstance()
 
 	CWinAppEx::InitInstance();
 
+	UINT LangID=0;
+	switch(LangID) // 判断并设置当前界面语言
+	{
+	case  0: 
+		SetThreadUILanguage(MAKELANGID(
+			LANG_CHINESE_SIMPLIFIED,SUBLANG_CHINESE_SIMPLIFIED));
+		break;
+	case  1: 
+		SetThreadUILanguage(MAKELANGID(
+			LANG_ENGLISH,SUBLANG_ENGLISH_US));
+		break;
+	default: 
+		break;
+	}
 
 	// Initialize OLE libraries
 	if (!AfxOleInit())
@@ -112,9 +126,7 @@ BOOL CanalyzerApp::InitInstance()
 	ttParams.m_bVislManagerTheme = TRUE;
 	theApp.GetTooltipManager()->SetTooltipParams(AFX_TOOLTIP_TYPE_ALL,
 		RUNTIME_CLASS(CMFCToolTipCtrl), &ttParams);
-
-
-
+	
 
 	StartDlg *sd=new StartDlg(IDB_BITMAP11);
 	sd->Create(StartDlg::IDD);
@@ -178,7 +190,7 @@ BOOL CanalyzerApp::InitInstance()
 
 		((CMainFrame*)m_pMainWnd)->userIndex=ld.usridx;
 		((CMainFrame*)m_pMainWnd)->al=ld.al;
-
+		((CMainFrame*)m_pMainWnd)->LangID=LangID;
 		return TRUE;
 	}
 	else{

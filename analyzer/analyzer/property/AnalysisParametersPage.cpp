@@ -13,7 +13,6 @@ IMPLEMENT_DYNAMIC(AnalysisParametersPage, CPropertyPage)
 
 	AnalysisParametersPage::AnalysisParametersPage()
 	: CPropertyPage(AnalysisParametersPage::IDD)
-	//, filePath(_T(""))
 	, dwStyle(WS_CHILD|WS_VISIBLE)
 {
 	CString title;
@@ -34,7 +33,7 @@ void AnalysisParametersPage::DoDataExchange(CDataExchange* pDX)
 
 	DDX_Text(pDX, IDS_EDIT_EVALUATION_RATIO, para.evaluationratio);
 	DDV_MinMaxDouble(pDX,para.evaluationratio,0,1);
-	//DDX_Text(pDX, IDS_EDIT_ENDPOINT_RATIO, para.endpointratio);
+
 	DDX_Text(pDX, IDS_EDIT_CALIBRATION_FACTOR, para.calibrationfactor);
 	DDV_MinMaxDouble(pDX,para.calibrationfactor,0,DBL_MAX);
 
@@ -56,11 +55,8 @@ BEGIN_MESSAGE_MAP(AnalysisParametersPage, CPropertyPage)
 
 	ON_CBN_SELCHANGE(IDS_COMBO_CALIBRATION_TYPE, &AnalysisParametersPage::CalibrationComboSelectChange)
 
-	//ON_EN_CHANGE(IDS_EDIT_CALIBRATION_FACTOR, &AnalysisParametersPage::editchange)
-
-	//ON_BN_CLICKED(IDS_STRING_OPEN_CALIBRATION_FILE, &AnalysisParametersPage::OnBnClickedButton1)
 	ON_WM_CREATE()
-//	ON_WM_SHOWWINDOW()
+
 END_MESSAGE_MAP()
 
 
@@ -127,7 +123,7 @@ void AnalysisParametersPage::ComboSelectChange(void)
 
 		this->GetDlgItem(IDS_STRING_CALIBRATION_CURVE_FILE)->ShowWindow(SW_HIDE);
 		this->GetDlgItem(IDS_STRING_INTERCEPT_VALUE)->ShowWindow(SW_SHOW);
-		
+
 		this->GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR)->ShowWindow(SW_HIDE);
 		this->GetDlgItem(IDS_EDIT_CALIBRATION_CURVE_FILE)->ShowWindow(SW_HIDE);
 		this->GetDlgItem(IDS_EDIT_INTERCEPT_VALUE)->ShowWindow(SW_SHOW);
@@ -154,7 +150,7 @@ void AnalysisParametersPage::ComboSelectChange(void)
 		break;
 	}
 
-	
+
 
 
 	switch(para.analysistype){
@@ -182,34 +178,6 @@ void AnalysisParametersPage::ComboSelectChange(void)
 }
 
 
-void AnalysisParametersPage::OnBnClickedButton1()
-{
-	//TCHAR szFilters[]= _T("Analyzer Files (*.ghb)|*.ghb|All Files (*.*)|*.*||");
-
-		CString szFilters;
-		szFilters.LoadStringW(IDS_FILTER_GHB);
-		szFilters+=L"|";
-
-		// Create an Open dialog; the default file name extension is ".my".
-
-		CFileDialog fileDlg(TRUE, _T("ghb"), _T("*.ghb"),
-			OFN_FILEMUSTEXIST | OFN_HIDEREADONLY /*| OFN_ALLOWMULTISELECT*/ , szFilters);
-
-		// Display the file dialog. When user clicks OK, fileDlg.DoModal() 
-
-		// returns IDOK.
-
-		if(fileDlg.DoModal() == IDOK)
-		{   
-			para.calibrationfilepath=fileDlg.GetPathName();
-			UpdateData(FALSE);
-		}
-
-	
-}
-
-
-
 BOOL AnalysisParametersPage::OnKillActive()
 {
 	// TODO: Add your specialized code here and/or call the base class
@@ -219,7 +187,7 @@ BOOL AnalysisParametersPage::OnKillActive()
 	if(flg==FALSE){
 		return FALSE;
 	}
-	
+
 	return CPropertyPage::OnKillActive();
 }
 
@@ -245,17 +213,16 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	CPoint pt(gap1);
 	CSize editSize(winrect.Width()-staticSize.cx-gap2.cx,staticSize.cy);
-	CStatic *pStatic;
-	CEdit *pEdit;
-	CComboBox *pCombo;
-	CComboBox *pCombo2;
-	//CButton *pBtn;
+	//CStatic *pStatic;
+	//CEdit *pEdit;
+	//CComboBox *pCombo;
+	//CComboBox *pCombo2;
 
 	CString str;
 
 	str.LoadStringW(IDS_STRING_ANALYSIS_TYPE);
-	pStatic=new CStatic;
-	pStatic->Create(
+	//pStatic=new CStatic;
+	StaticIDS_STRING_ANALYSIS_TYPE.Create(
 		str,
 		dwStyle, 
 		CRect(pt,staticSize),
@@ -266,8 +233,8 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	str.LoadStringW(IDS_COMBO_ANALYSIS_TYPE);
 
-	pCombo=new CComboBox;
-	pCombo->Create(
+	//pCombo=new CComboBox;
+	ComboIDS_COMBO_ANALYSIS_TYPE.Create(
 		CBS_DROPDOWN
 		|dwStyle,
 		CRect(pt,editSize),
@@ -277,28 +244,26 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	for(int i=IDS_STRING_AT1;i<=IDS_STRING_AT13;i++){
 		str.LoadStringW(i);
-		pCombo->AddString(str);
+		ComboIDS_COMBO_ANALYSIS_TYPE.AddString(str);
 	}
 	if(para.analysistype<0 || para.analysistype>12){
-		pCombo->SetCurSel(-1);
+		ComboIDS_COMBO_ANALYSIS_TYPE.SetCurSel(0);
 	}
 	else{
-		pCombo->SetCurSel(para.analysistype);
+		ComboIDS_COMBO_ANALYSIS_TYPE.SetCurSel(para.analysistype);
 	}
 
-	pEdit = (CEdit*)pCombo->GetWindow(GW_CHILD);
-	pEdit->SetReadOnly();
+	((CEdit*)(ComboIDS_COMBO_ANALYSIS_TYPE.GetWindow(GW_CHILD)))->SetReadOnly();
+
 
 	pt.x-=staticSize.cx+gap2.cx;
 	pt.y+=staticSize.cy+gap2.cy;
 
-	//double x[3]={0,0,0};
-
 	int h=winrect.Height()-3*(gap2.cy+staticSize.cy);
 
-	str.LoadStringW( IDS_STRING_EP1+(pCombo->GetCurSel()) );
-	pEdit=new CEdit;
-	pEdit->CreateEx(
+	str.LoadStringW( IDS_STRING_EP1+(ComboIDS_COMBO_ANALYSIS_TYPE.GetCurSel()) );
+	//pEdit=new CEdit;
+	EditIDS_EDIT_REMARK_ON_ANALYSIS_TYPE.CreateEx(
 		WS_EX_CLIENTEDGE,
 		L"Edit", 
 		str,
@@ -315,11 +280,9 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	pt.y+=h+gap2.cy;
 
 
-	//for(int i=0;i<2;i++){
-
 	str.LoadStringW(IDS_STRING_EVALUATION_RATIO);
-	pStatic=new CStatic;
-	pStatic->Create(
+	//pStatic=new CStatic;
+	StaticIDS_STRING_EVALUATION_RATIO.Create(
 		str,
 		dwStyle, 
 		CRect(pt,staticSize),
@@ -329,9 +292,9 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	pt.x+=gap2.cx+staticSize.cx;
 
 	str.LoadStringW(IDS_EDIT_EVALUATION_RATIO);
-	//str.Format(L"%g",x[i]);
-	pEdit=new CEdit;
-	pEdit->CreateEx(
+
+	//pEdit=new CEdit;
+	EditIDS_EDIT_EVALUATION_RATIO.CreateEx(
 		WS_EX_CLIENTEDGE,
 		L"Edit", 
 		str,
@@ -343,15 +306,10 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	pt.y+=staticSize.cy+gap2.cy;
 	pt.x-=gap2.cx+staticSize.cx;
-
-	//}
-
-
-
-
+	
 	str.LoadStringW(IDS_EDIT_INTERCEPT_VALUE);
-	pStatic=new CStatic;
-	pStatic->Create(
+	//pStatic=new CStatic;
+	StaticIDS_STRING_INTERCEPT_VALUE.Create(
 		str,
 		dwStyle,
 		CRect(pt,staticSize),
@@ -359,16 +317,16 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		IDS_STRING_INTERCEPT_VALUE);
 
 	str.LoadStringW(IDS_STRING_CALIBRATION_CURVE_FILE);
-	pStatic=new CStatic;
-	pStatic->Create(
+	//pStatic=new CStatic;
+	StaticIDS_STRING_CALIBRATION_CURVE_FILE.Create(
 		str,
 		dwStyle, 
 		CRect(pt,staticSize),
 		this,
 		IDS_STRING_CALIBRATION_CURVE_FILE);
 
-	pCombo2=new CComboBox;
-	pCombo2->Create(
+	//pCombo2=new CComboBox;
+	ComboIDS_COMBO_CALIBRATION_TYPE.Create(
 		//CBS_DROPDOWN|
 		CBS_DROPDOWNLIST|
 		dwStyle,
@@ -378,9 +336,9 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	for(int i=IDS_EDIT_CALIBRATION_FACTOR;i<=IDS_EDIT_CALIBRATION_CURVE_FILE;i++){
 		str.LoadStringW(i);
-		pCombo2->AddString(str);
+		ComboIDS_COMBO_CALIBRATION_TYPE.AddString(str);
 	}
-	pCombo2->SetCurSel(para.calibrationfactortype);
+	ComboIDS_COMBO_CALIBRATION_TYPE.SetCurSel(para.calibrationfactortype);
 
 	//pEdit = (CEdit*)pCombo2->GetWindow(GW_CHILD);
 	//pEdit->SetReadOnly();
@@ -388,8 +346,8 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	pt.x+=gap2.cx+staticSize.cx;
 
 	str.LoadStringW(IDS_EDIT_CALIBRATION_FACTOR);
-	pEdit=new CEdit;
-	pEdit->CreateEx(
+	//pEdit=new CEdit;
+	EditIDS_EDIT_CALIBRATION_FACTOR.CreateEx(
 		WS_EX_CLIENTEDGE,
 		L"Edit", 
 		str,
@@ -401,8 +359,8 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 
 	str.LoadStringW(IDS_EDIT_INTERCEPT_VALUE);
-	pEdit=new CEdit;
-	pEdit->CreateEx(
+	//pEdit=new CEdit;
+	EditIDS_EDIT_INTERCEPT_VALUE.CreateEx(
 		WS_EX_CLIENTEDGE,
 		L"Edit", 
 		str,
@@ -414,25 +372,10 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 
 	str.LoadStringW(IDS_EDIT_CALIBRATION_CURVE_FILE);
-	//pEdit=new CEdit;
 
-	//CSize feditSize=editSize;
-	//feditSize.cx-=btnSize.cx;
+	//CMFCEditBrowseCtrl *pc=new CMFCEditBrowseCtrl();
 
-	//pEdit->CreateEx(
-		//WS_EX_CLIENTEDGE,
-		//L"Edit", 
-		//str,
-		//ES_LEFT
-		//|dwStyle,
-		//CRect(pt,feditSize),
-		//this,
-		//IDS_EDIT_CALIBRATION_CURVE_FILE);
-
-	CMFCEditBrowseCtrl *pc=new CMFCEditBrowseCtrl();
-
-	//pc.Create(
-	pc->CreateEx(
+	EditIDS_EDIT_CALIBRATION_CURVE_FILE.CreateEx(
 		WS_EX_CLIENTEDGE,
 		L"Edit", 
 		str,
@@ -442,28 +385,12 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		this,
 		IDS_EDIT_CALIBRATION_CURVE_FILE);
 
-
-	//TCHAR szFilters[]= _T("Analyzer Files (*.ghb)|*.ghb|All Files (*.*)|*.*||");
-		CString szFilters;
-		szFilters.LoadStringW(IDS_FILTER_GHB);
-		szFilters+=L"|";
-	pc->EnableFileBrowseButton(_T("ghb"),szFilters);
-
-	//pc.ModifyStyleEx(NULL,WS_EX_CLIENTEDGE);
-
-	//pt.x+=feditSize.cx;
-	//str.LoadStringW(IDS_STRING_OPEN_CALIBRATION_FILE);
-	//pBtn=new CButton;
-	//pBtn->Create(str,
-	//	BS_PUSHBUTTON
-	//	|dwStyle,
-	//	CRect(pt,btnSize),
-	//	this,
-	//	IDS_STRING_OPEN_CALIBRATION_FILE);
+	CString szFilters;
+	szFilters.LoadStringW(IDS_FILTER_GHB);
+	szFilters+=L"|";
+	EditIDS_EDIT_CALIBRATION_CURVE_FILE.EnableFileBrowseButton(_T("ghb"),szFilters);
 
 
-
-	//pc->SetWindowTextW(para.calibrationfilepath);
 
 	UpdateData(FALSE);
 	ComboSelectChange();

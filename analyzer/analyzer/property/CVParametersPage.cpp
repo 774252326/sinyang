@@ -12,20 +12,10 @@
 
 IMPLEMENT_DYNAMIC(CVParametersPage, CPropertyPage)
 
-CVParametersPage::CVParametersPage()
+	CVParametersPage::CVParametersPage()
 	: CPropertyPage(CVParametersPage::IDD)
-	//, strtmp(_T(""))
 	, dwStyle(WS_CHILD|WS_VISIBLE)
-	//, enabled(false)
 {
-	//para.endintegratione=1;
-	//para.highelimit=1;
-	//para.lowelimit=0;
-	//para.noofcycles=1;
-	//para.rotationrate=1;
-	//para.scanrate=1;
-	//para.variationtolerance=0;
-
 	CString title;
 	title.LoadStringW(IDS_STRING_CV_PARA);
 	m_psp.dwFlags = m_psp.dwFlags | PSP_USETITLE | PSH_HASHELP ; 	
@@ -67,17 +57,13 @@ void CVParametersPage::DoDataExchange(CDataExchange* pDX)
 		DDX_Text(pDX, IDS_EDIT_START_INTEGRATION_E, para.startintegratione);
 		DDV_MinMaxDouble(pDX,para.startintegratione,para.lowelimit,para.endintegratione);
 	}
-	
+
 	CPropertyPage::DoDataExchange(pDX);
 }
 
 
-BEGIN_MESSAGE_MAP(CVParametersPage, CPropertyPage)
-
-	ON_CBN_SELCHANGE(IDS_COMBO_CYCLE_TYPE, &CVParametersPage::ComboSelectChange)
-
+BEGIN_MESSAGE_MAP(CVParametersPage, CPropertyPage)	
 	ON_WM_CREATE()
-//	ON_WM_SHOWWINDOW()
 END_MESSAGE_MAP()
 
 
@@ -106,17 +92,6 @@ BOOL CVParametersPage::OnKillActive()
 		return FALSE;
 	}
 
-	//if(para.combochoice!=0){
-	//	para.startintegratione=_wtof(strtmp.GetBuffer());
-
-	//	if(para.startintegratione>=para.endintegratione){
-	//		AfxMessageBox(IDS_STRING_ERROR);			
-	//		CComboBox * pCombo=(CComboBox*)(this->GetDlgItem(IDS_EDIT_START_INTEGRATION_E));		
-	//		pCombo->SetFocus();
-	//		return FALSE;
-	//	}
-	//}
-
 	return CPropertyPage::OnKillActive();
 }
 
@@ -141,18 +116,14 @@ int CVParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	CSize editSize((winrect.Width()-3*gap2.cx)/2-staticSize.cx,staticSize.cy);
 
-
-	CStatic *pStatic;
-	CEdit *pEdit;
-	CComboBox *pCombo;
 	CString str;
 
 	int i=0;
 	for(;i<7;){
 
 		str.LoadStringW(IDS_STRING_LOW_E_LIMIT+i);
-		pStatic=new CStatic;
-		pStatic->Create(
+		//pStatic=new CStatic;
+		StaticCVP[i].Create(
 			str,
 			dwStyle,
 			CRect(pt,staticSize),
@@ -163,8 +134,8 @@ int CVParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 		str.LoadStringW(IDS_EDIT_LOW_E_LIMIT+i);
 		//str=L"0";
-		pEdit=new CEdit;
-		pEdit->CreateEx(
+		//pEdit=new CEdit;
+		EditCVP[i].CreateEx(
 			WS_EX_CLIENTEDGE,
 			L"Edit", 
 			str,
@@ -174,11 +145,11 @@ int CVParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 			this,
 			IDS_EDIT_LOW_E_LIMIT+i);
 		if(i%2==0){
-		pt.x+=gap2.cx+editSize.cx;
+			pt.x+=gap2.cx+editSize.cx;
 		}
 		else{
-		pt.y+=staticSize.cy+gap2.cy;
-		pt.x=gap1.cx;
+			pt.y+=staticSize.cy+gap2.cy;
+			pt.x=gap1.cx;
 		}
 
 		i++;
@@ -187,21 +158,21 @@ int CVParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 
 	str.LoadStringW(IDS_STRING_START_INTEGRATION_E);
-	pStatic=new CStatic;
-	pStatic->Create(
-			str,
-			dwStyle, 
-			CRect(pt,staticSize),
-			this,
-			IDS_STRING_START_INTEGRATION_E);
+	//pStatic=new CStatic;
+	StaticIDS_STRING_START_INTEGRATION_E.Create(
+		str,
+		dwStyle, 
+		CRect(pt,staticSize),
+		this,
+		IDS_STRING_START_INTEGRATION_E);
 
-		pt.x+=gap2.cx+staticSize.cx;
-
-
+	pt.x+=gap2.cx+staticSize.cx;
 
 
-	pCombo=new CComboBox;
-	pCombo->Create(
+
+
+	//pCombo=new CComboBox;
+	ComboIDS_EDIT_START_INTEGRATION_E.Create(
 		CBS_DROPDOWN
 		//CBS_DROPDOWNLIST
 		//|WS_TILED
@@ -212,30 +183,9 @@ int CVParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 
 	str.LoadStringW(IDS_STRING_AUTO);
-	pCombo->AddString(str);
-
-		//for(int i=IDS_EDIT_LOW_E_LIMIT;i<=IDS_EDIT_START_INTEGRATION_E;i++){
-			//this->GetDlgItem(i)->EnableWindow(enabled);
-		//}	
+	ComboIDS_EDIT_START_INTEGRATION_E.AddString(str);
 
 	return 0;
 }
 
 
-void CVParametersPage::ComboSelectChange(void)
-{
-	CString strWeb;   
-	int nSel;     
-	CComboBox * pcb=(CComboBox*)(this->GetDlgItem(IDS_COMBO_CYCLE_TYPE));
-	// 获取组合框控件的列表框中选中项的索引   
-	nSel = pcb->GetCurSel();  
-
-	for(int i=0;i<2;i++){
-		if(i==nSel){
-			GetDlgItem(IDS_EDIT_NO_OF_CYCLES+i)->ShowWindow(SW_SHOW);
-		}
-		else{
-			GetDlgItem(IDS_EDIT_NO_OF_CYCLES+i)->ShowWindow(SW_HIDE);
-		}
-	}
-}
