@@ -11,5 +11,6 @@ public:
 protected:
 	DECLARE_MESSAGE_MAP()
 	afx_msg LRESULT OnMessageUpdateTest(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnMessageComputeResult(WPARAM wParam, LPARAM lParam);
 };
 

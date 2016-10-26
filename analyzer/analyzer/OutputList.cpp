@@ -31,6 +31,7 @@ BEGIN_MESSAGE_MAP(COutputList, CListBox)
 	ON_WM_WINDOWPOSCHANGING()
 	ON_MESSAGE(MESSAGE_UPDATE_DOL, &COutputList::OnMessageUpdateDol)
 	ON_MESSAGE(MESSAGE_SHOW_DOL, &COutputList::OnMessageShowDol)
+	ON_MESSAGE(MESSAGE_REFRESH_DOL, &COutputList::OnMessageRefreshDol)
 END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // COutputList message handlers
@@ -176,22 +177,25 @@ BOOL COutputList::SetLastUse(const DataOutA & doa)
 
 afx_msg LRESULT COutputList::OnMessageUpdateDol(WPARAM wParam, LPARAM lParam)
 {
-	//CanalyzerViewL *pavl=(CanalyzerViewL*)wParam;
-	//CanalyzerViewR *pavr=(CanalyzerViewR*)lParam;
-
+	
 	CMainFrame *mf=(CMainFrame*)(GetParentFrame());
 	CanalyzerViewL *pavl=((CanalyzerViewL*)(mf->m_wndSplitter.GetPane(0,0)));
 	CanalyzerViewR* pavr=((CanalyzerViewR*)(mf->m_wndSplitter.GetPane(0,1)));
 	CanalyzerDoc *pad=pavl->GetDocument();	 
 
-	//HWND hwl=mf->m_wndSplitter.GetPane(0,0)->GetSafeHwnd();
-	//HWND hwr=mf->m_wndSplitter.GetPane(0,1)->GetSafeHwnd();
-
-
 	dol.clear();
 
-	UINT flg=ComputeStateData(pad->p1.analysistype,pad->p2,pad->p3,pad->raw,dol);	
+	sapitemA outitem;
+	BYTE outstep;
+	UINT flg=ComputeStateData(pad->p1.analysistype,pad->p2,pad->p3,pad->raw,dol,outitem,outstep);	
 
+	if(flg==1){
+		DataOutA doa=dol.back();
+		doa.Update(outitem,outstep);
+		mf->GetCaptionBar()->x=doa.addVolume;
+	}
+
+	TRACE(L"%d\n",flg);
 	//if(flg==0){
 	//this->ShowDOL(true);
 
@@ -291,54 +295,57 @@ afx_msg LRESULT COutputList::OnMessageShowDol(WPARAM wParam, LPARAM lParam)
 
 
 
-	for(size_t i=starti;i<dol.size();i++){
+		for(size_t i=starti;i<dol.size();i++){
 
-		CString StepName=dol[i].GetStepName(i);
+			CString StepName=dol[i].GetStepName(i);
 
-		for(size_t ari=0;ari<dol[i].Ar.size();ari++){
+			for(size_t ari=0;ari<dol[i].Ar.size();ari++){
 
-			CString str;
+				CString str;
 
-			str.Format(L"%d",StepNo);
-			InsertItem(StepNo,str);
-			AdjustWidth(this,0,str);
+				str.Format(L"%d",StepNo);
+				InsertItem(StepNo,str);
+				AdjustWidth(this,0,str);
 
-			str.Format(L"%s(%s%d)",StepName,strcycle,ari+1);
-			SetItemText(StepNo,1,str);
-			AdjustWidth(this,1,str);
+				str.Format(L"%s(%s%d)",StepName,strcycle,ari+1);
+				SetItemText(StepNo,1,str);
+				AdjustWidth(this,1,str);
 
-			if(ari==0){
-				str.Format(L"%g",dol[i].addVolume);
-				SetItemText(StepNo,2,str);
-				AdjustWidth(this,2,str);
+				if(ari==0){
+					str.Format(L"%g",dol[i].addVolume);
+					SetItemText(StepNo,2,str);
+					AdjustWidth(this,2,str);
+				}
+
+				str.Format(L"%g",dol[i].TotalVolume());
+				SetItemText(StepNo,3,str);
+				AdjustWidth(this,3,str);
+
+				str.Format(L"%g",dol[i].Ar[ari]);
+				SetItemText(StepNo,4,str);
+				AdjustWidth(this,4,str);
+
+				if(ari==dol[i].UseIndex){
+					str.Format(L"%g",dol[i].Ar[ari]/dol[i].Ar0);
+					SetItemText(StepNo,5,str);
+					AdjustWidth(this,5,str);
+					//ASSERT
+					(str.LoadString(IDS_STRING_YES));
+				}
+				else{
+					//ASSERT
+					(str.LoadString(IDS_STRING_NO));
+				}
+				SetItemText(StepNo,6,str);
+				AdjustWidth(this,6,str);
+
+
+				StepNo++;
 			}
-
-			str.Format(L"%g",dol[i].TotalVolume());
-			SetItemText(StepNo,3,str);
-			AdjustWidth(this,3,str);
-
-			str.Format(L"%g",dol[i].Ar[ari]);
-			SetItemText(StepNo,4,str);
-			AdjustWidth(this,4,str);
-
-			if(ari==dol[i].UseIndex){
-				str.Format(L"%g",dol[i].Ar[ari]/dol[i].Ar0);
-				SetItemText(StepNo,5,str);
-				AdjustWidth(this,5,str);
-				//ASSERT
-				(str.LoadString(IDS_STRING_YES));
-			}
-			else{
-				//ASSERT
-				(str.LoadString(IDS_STRING_NO));
-			}
-			SetItemText(StepNo,6,str);
-			AdjustWidth(this,6,str);
-
-			EnsureVisible(StepNo, FALSE);
-			StepNo++;
 		}
-	}
+
+		StepNo--;
+		EnsureVisible(StepNo, FALSE);
 
 	}
 	else{
@@ -354,59 +361,87 @@ afx_msg LRESULT COutputList::OnMessageShowDol(WPARAM wParam, LPARAM lParam)
 
 		CString str;
 
-			str.Format(L"%d",StepNo);
-			InsertItem(StepNo,str);
-			AdjustWidth(this,0,str);
+		str.Format(L"%d",StepNo);
+		InsertItem(StepNo,str);
+		AdjustWidth(this,0,str);
 
 
-			size_t ari=dol.back().Ar.size();
-			str.Format(L"%s(%s%d)",StepName,strcycle,ari);
-			SetItemText(StepNo,1,str);
-			AdjustWidth(this,1,str);
+		size_t ari=dol.back().Ar.size();
+		str.Format(L"%s(%s%d)",StepName,strcycle,ari);
+		SetItemText(StepNo,1,str);
+		AdjustWidth(this,1,str);
 
-			ari--;
+		ari--;
 
-			if(ari==0){
-				str.Format(L"%g",dol.back().addVolume);
-				SetItemText(StepNo,2,str);
-				AdjustWidth(this,2,str);
-			}
+		if(ari==0){
+			str.Format(L"%g",dol.back().addVolume);
+			SetItemText(StepNo,2,str);
+			AdjustWidth(this,2,str);
+		}
 
-			str.Format(L"%g",dol.back().TotalVolume());
-			SetItemText(StepNo,3,str);
-			AdjustWidth(this,3,str);
+		str.Format(L"%g",dol.back().TotalVolume());
+		SetItemText(StepNo,3,str);
+		AdjustWidth(this,3,str);
 
-			str.Format(L"%g",dol.back().Ar[ari]);
-			SetItemText(StepNo,4,str);
-			AdjustWidth(this,4,str);
+		str.Format(L"%g",dol.back().Ar[ari]);
+		SetItemText(StepNo,4,str);
+		AdjustWidth(this,4,str);
 
-			if(ari==dol.back().UseIndex){
-				str.Format(L"%g",dol.back().Ar[ari]/dol.back().Ar0);
-				SetItemText(StepNo,5,str);
-				AdjustWidth(this,5,str);
-				//ASSERT
-				(str.LoadString(IDS_STRING_YES));
-			}
-			else{
-				//ASSERT
-				(str.LoadString(IDS_STRING_NO));
-			}
-			SetItemText(StepNo,6,str);
-			AdjustWidth(this,6,str);
+		if(ari==dol.back().UseIndex){
+			str.Format(L"%g",dol.back().Ar[ari]/dol.back().Ar0);
+			SetItemText(StepNo,5,str);
+			AdjustWidth(this,5,str);
+			//ASSERT
+			(str.LoadString(IDS_STRING_YES));
+		}
+		else{
+			//ASSERT
+			(str.LoadString(IDS_STRING_NO));
+		}
+		SetItemText(StepNo,6,str);
+		AdjustWidth(this,6,str);
 
-			EnsureVisible(StepNo, FALSE);
+		EnsureVisible(StepNo, FALSE);
 
 	}
-		//starti=dol.size()-1;
-
-		//for(int j=StepNo;j<ti;j++){
-			//this->DeleteItem(j);
-		//}
-
-	//}
 
 
+	return 0;
+}
 
+
+afx_msg LRESULT COutputList::OnMessageRefreshDol(WPARAM wParam, LPARAM lParam)
+{
+
+	CMainFrame *mf=(CMainFrame*)(GetParentFrame());
+	CanalyzerViewL *pavl=((CanalyzerViewL*)(mf->m_wndSplitter.GetPane(0,0)));
+	CanalyzerViewR* pavr=((CanalyzerViewR*)(mf->m_wndSplitter.GetPane(0,1)));
+	CanalyzerDoc *pad=pavl->GetDocument();	 
+
+	UINT flg=OneProcess(
+	doalast, 
+	p3.saplist, 
+	sl, 
+	pad->raw, 
+	dol, 
+	mf->GetCaptionBar(),
+	mf->pst,
+	pad->p2
+	);
+
+	if(flg==0){
+		dol.push_back(DataOutA());
+	}
+
+	int ti=this->GetItemCount();
+	size_t nr=GetDOLRow();
+	if(ti==nr || nr==0){
+		return 1;
+	}
+
+	::PostMessage(pavr->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
+	::PostMessage(pavl->GetSafeHwnd(),MESSAGE_UPDATE_RAW,NULL,NULL);
+	::PostMessage(this->GetSafeHwnd(),MESSAGE_SHOW_DOL,wParam,NULL);
 
 	return 0;
 }

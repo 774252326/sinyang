@@ -4,33 +4,10 @@
 #include "stdafx.h"
 #include "analyzer.h"
 #include "RawData.h"
-//#include "func.h"
+#include "func.h"
 #include "pcct.h"
 #include "analyzerViewL.h"
 
-
-void LoadFileList(const CString &m_filePath, std::vector<CString> &filelist)
-{
-
-	CString folderpath=m_filePath.Left(m_filePath.ReverseFind('\\'));
-
-	filelist.clear();
-	CStdioFile file;
-	BOOL readflag;
-	readflag=file.Open(m_filePath, CFile::modeRead);
-
-	if(readflag)
-	{	
-		CString strRead;
-		//TRACE("\n--Begin to read file");
-		while(file.ReadString(strRead)){
-			strRead=folderpath+"\\"+strRead;
-			filelist.push_back(strRead);
-		}
-		//TRACE("\n--End reading\n");
-		file.Close();
-	}
-}
 
 
 // RawData

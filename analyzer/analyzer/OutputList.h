@@ -3,6 +3,7 @@
 
 //#include "DataOut.h"
 #include "DataOutA.h"
+#include "SAPara.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // COutputList window
@@ -44,4 +45,9 @@ public:
 	size_t GetDOLRow(void);
 protected:
 	afx_msg LRESULT OnMessageShowDol(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnMessageRefreshDol(WPARAM wParam, LPARAM lParam);
+public:
+	DataOutA doalast;
+	std::vector<DWORD> sl;
+	SAPara p3;
 };

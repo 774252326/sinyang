@@ -147,7 +147,9 @@ IMPLEMENT_DYNCREATE(CanalyzerViewL, CanalyzerView)
 			pa1->leftp=this;
 
 			CMainFrame *mf=(CMainFrame*)( GetParentFrame() );
-	pa1->outw=mf->GetOutputWnd();			
+	pa1->outw=mf->GetOutputWnd();
+	pa1->cba=mf->GetCaptionBar();
+	pa1->psta=&(mf->pst);
 
 
 	//CWinThread *pWriteA;
@@ -164,5 +166,7 @@ IMPLEMENT_DYNCREATE(CanalyzerViewL, CanalyzerView)
 
 	//CloseHandle(hThread);
 	pWriteA->ResumeThread();
+
+	mf->pst=running;
 
 	}

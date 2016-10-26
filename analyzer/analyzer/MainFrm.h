@@ -8,6 +8,14 @@
 #include "MFCToolBarA.h"
 //#include "analyzerViewR.h"
 //#include "analyzerViewL.h"
+//#include "func.h"
+
+enum ProcessState{
+	stop,
+	running,
+	pause
+};
+
 
 class CMainFrame : public CFrameWndEx
 {
@@ -73,6 +81,9 @@ public:
 	COutputWnd* GetOutputWnd(){return &m_wndOutput;}
 	CMFCCaptionBarA* GetCaptionBar(){ return &m_wndCaptionBar;};
 	afx_msg void OnSize(UINT nType, int cx, int cy);
+
+	bool bWaiting;
+	ProcessState pst;
 };
 
 

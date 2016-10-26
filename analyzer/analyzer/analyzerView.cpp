@@ -322,10 +322,12 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 
 		int selecti=m_spBtn.GetPos32();
 		if(selecti<0 || selecti>=pdl.size()){
-			selecti=0;
+			selecti=0;			
 			m_spBtn.SetPos32(selecti);
 		}
-		
+		//int selecti=pdl.size()-1;
+		//m_spBtn.SetPos32(selecti);
+
 		UpdateRange(pdl[selecti].xll,xmin,xmax,pct,true);
 		UpdateRange(pdl[selecti].yll,ymin,ymax,pct,true);
 

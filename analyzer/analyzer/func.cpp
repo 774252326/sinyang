@@ -7,10 +7,17 @@
 #include "LineSeg.h"
 #include "CSpline.h"
 #include "analyzerViewL.h"
+#include "pcct.h"
 
+sapitemA sapitemdummy;
+BYTE bytedummy;
 
-CString folderp=L"C:\\Users\\r8anw2x\\Desktop\\data\\d\\";
-//CString folderp=L"data\\d\\";
+const size_t nd=1000;
+
+const DWORD sleepms=1000;
+
+//CString folderp=L"C:\\Users\\r8anw2x\\Desktop\\data\\d\\";
+CString folderp=L"D:\\data\\d\\";
 //CString folderp=L"C:\\Users\\G\\Desktop\\data\\d\\";
 
 CString DEMOflist=folderp+L"fl1.txt";
@@ -44,9 +51,44 @@ CString flistlist[]={
 	NEAflist
 };
 
+void WaitSecond(ProcessState &waitflg
+	//,int second=-1
+	,int second=2
+	//,int second=0
+	)
+{
+	int interval=1000;
+	while( //second<0||
+		(waitflg!=running && second--!=0)
+		){
+			Sleep(interval);
+	}
+	waitflg=running;
+}
 
 
+void LoadFileList(const CString &m_filePath, std::vector<CString> &filelist)
+{
 
+	CString folderpath=m_filePath.Left(m_filePath.ReverseFind('\\'));
+
+	filelist.clear();
+	CStdioFile file;
+	BOOL readflag;
+	readflag=file.Open(m_filePath, CFile::modeRead);
+
+	if(readflag)
+	{	
+		CString strRead;
+		//TRACE("\n--Begin to read file");
+		while(file.ReadString(strRead)){
+			strRead=folderpath+"\\"+strRead;
+			filelist.push_back(strRead);
+		}
+		//TRACE("\n--End reading\n");
+		file.Close();
+	}
+}
 
 
 void AdjustWidth(CListCtrl *ls, int nCol, CString str, int gap)
@@ -236,6 +278,139 @@ bool GetStepList(std::vector<DWORD> &sl, int atype)
 }
 
 
+UINT OneProcess(
+	DataOutA &doalast, 
+	std::vector<sapitemA> &saplist, 
+	std::vector<DWORD> &sl, 
+	const RawData &raw, 
+	std::vector<DataOutA> &dol, 
+	CMFCCaptionBarA *cba,
+	ProcessState &pst,
+	const CVPara &p2
+	){
+
+		if(sl.empty()){
+			::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,NULL,NULL);
+			pst=stop;
+			return 5;
+		}
+
+
+		if(saplist.empty() 
+			//|| sl.empty() 
+			//|| dol.empty()
+			){
+				return 1;
+		}
+
+
+		BYTE step=nby(sl.front(),0);
+		BYTE stepControl=nby(sl.front(),1);
+		BYTE plotFilter=nby(sl.front(),2);
+
+
+		if(doalast.Update(saplist.front(),step)){
+			::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(doalast.addVolume),NULL);
+			WaitSecond(pst);
+			::SendMessage(cba->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
+		}
+		else{
+			CString strerr;
+			strerr.LoadStringW(IDS_STRING_STEP_ERROR);
+			::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(strerr.GetBuffer()),NULL);
+			pst=stop;
+			return 2;
+		}
+
+		if(raw.ll.empty()){
+			return 3;
+		}
+		size_t rawi=raw.ll.size()-1;
+		std::vector<double> x;
+		std::vector<double> y;
+		raw.GetDatai(rawi,x,y);
+
+		std::vector<double> Ql(p2.noofcycles,0);
+		int tmp1=ComputeQList(x,y,Ql.data(),Ql.size(),p2.endintegratione,p2.scanrate,p2.lowelimit*.9,p2.highelimit*.9);
+
+		if(tmp1<=0){
+			doalast.Ar.clear();
+			doalast.UseIndex=-1;
+			dol.back()=doalast;
+			return 4;
+		}
+
+		doalast.Ar.assign(Ql.begin(),Ql.begin()+tmp1);
+
+		if( (!(stepControl&SC_NO_PLOT))&&
+			(!(stepControl&SC_PLOT_LAST)) ){
+				doalast.UseIndex=doalast.Ar.size()-1;
+		}
+		else{
+			doalast.UseIndex=-1;
+		}
+
+		if( step&DOA_VMS ){	
+			doalast.Ar0=doalast.ArUse();
+		}
+
+		if( (!(stepControl&SC_NO_PLOT))&&
+			(!(stepControl&SC_PLOT_LAST)) ){
+				dol.back()=doalast;
+		}
+
+
+		if( doalast.Ar.size()>=p2.noofcycles
+			&& saplist.front().isStepEnd(doalast.ArUse()/doalast.Ar0,!(step&DOA_MORE))){
+			saplist.erase(saplist.begin());
+
+			DataOutA doalast0=doalast;
+			if(!doalast0.Update(saplist.front(),step)){
+
+				if(step&DOA_RESET_SOLUTION_AT_END){		
+					doalast.ResetCompound();
+					//dol.back().ResetCompound();
+				}
+
+				if(!(stepControl&SC_NO_PLOT)){
+					if( stepControl&SC_PLOT_LAST ){
+						doalast.UseIndex=doalast.Ar.size()-1;
+						//dol.back().UseIndex=dol.back().Ar.size()-1;
+					}	
+				}
+				else{
+					doalast.UseIndex=-1;
+					//dol.back().UseIndex=-1;
+				}
+
+				if( step&DOA_VMS ){	
+					doalast.Ar0=doalast.ArUse();
+					//dol.back().Ar0=dol.back().ArUse();
+				}
+
+				if( (stepControl&SC_NO_PLOT)||
+					(stepControl&SC_PLOT_LAST) ){
+						dol.back()=doalast;
+				}
+
+
+				sl.erase(sl.begin());
+
+			}
+
+
+
+		}
+		
+		if(doalast.Ar.size()<p2.noofcycles){
+			return 6;
+		}
+		else{
+			return 0;
+		}
+
+}
+
 
 
 UINT ComputeStateData(
@@ -243,10 +418,12 @@ UINT ComputeStateData(
 	const CVPara &p2,
 	const SAPara &p3,
 	const RawData &raw,
-	std::vector<DataOutA> &dol
+	std::vector<DataOutA> &dol,
+	sapitemA &outitem,
+	BYTE &outstep
 	){
 
-		if(raw.ll.empty())
+		if(raw.ll.empty())//无数据
 			return 4;
 
 		std::vector<DWORD> sl;
@@ -289,8 +466,14 @@ UINT ComputeStateData(
 
 				raw.GetDatai(rawi,x,y);
 
-				if(x.empty() || y.empty()){
-					return 1;
+				if(x.empty() || y.empty()){//第rawi－1步已完成第一圈数据，而第rawi步无数据
+					outitem=p3t.saplist.front();
+					outstep=step;
+
+					if(dol[rawi-1].Ar.size()<p2.noofcycles)
+						return 1;
+
+					return 5;
 				}
 
 				std::vector<double> Ql(p2.noofcycles,0);
@@ -298,10 +481,12 @@ UINT ComputeStateData(
 				int tmp1=ComputeQList(x,y,Ql.data(),Ql.size(),p2.endintegratione,p2.scanrate,p2.lowelimit*.9,p2.highelimit*.9);
 
 				//if(tmp1!=0 && tmp1!=3){
-				if(tmp1<=0){
+				if(tmp1<=0){//第rawi步数据不足，即第rawi步未完成第一圈数据时，无法计算积分
 					d0.Ar.clear();
 					d0.UseIndex=-1;
 					dol.push_back(d0);
+					outitem=p3t.saplist.front();
+					outstep=step;
 					return 2;
 				}
 
@@ -312,7 +497,6 @@ UINT ComputeStateData(
 					(!(stepControl&SC_PLOT_LAST)) ){
 
 						d0.UseIndex=d0.Ar.size()-1;
-
 				}
 				else{
 					d0.UseIndex=-1;
@@ -365,14 +549,16 @@ UINT ComputeStateData(
 					//strerr.LoadStringW(IDS_STRING_STEP_ERROR);
 					//::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(strerr.GetBuffer()),NULL);
 					//pst=stop;
-					return 3;
+					return 3;//第rawi－1步已完成第一圈数据，而第rawi步加液设置出错
 					p3t.saplist.erase(p3t.saplist.begin());
 				}
 			}
 		}
 
+		if(dol.back().Ar.size()<p2.noofcycles)
+			return 6;
 
-		return 0;
+		return 0;//最后一个加液步骤完成，注意此时最后一步的转圈计数未必到达预设值p2.noofcycles
 
 }
 
@@ -435,7 +621,7 @@ bool AddCalibrationCurve(CString calibrationfilepath, PlotData &pda)
 	if(ReadFileCustom(&tmp,1,calibrationfilepath)){
 
 		std::vector<DataOutA> dol;
-		UINT flg=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol);
+		UINT flg=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol,sapitemdummy,bytedummy);
 
 		if(flg!=0)
 			return false;
@@ -1218,7 +1404,7 @@ bool Compute2(const std::vector<DataOutA> &dol, const ANPara &p1, double &SPv, d
 					double Sv;
 
 					std::vector<DataOutA> dol1;
-					UINT f1=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol1);
+					UINT f1=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol1,sapitemdummy,bytedummy);
 					if(f1==0){
 						if(Compute1(dol1,tmp.p1,Sv,z)){
 							SPc=z*(1+Vv/SPv);
@@ -1361,7 +1547,7 @@ bool Compute6(const std::vector<DataOutA> &dol, /*PlotData & pdat,*/ const ANPar
 	if(ReadFileCustom(&tmp,1,p1.calibrationfilepath)){
 
 		std::vector<DataOutA> dol1;
-		UINT f1=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol1);
+		UINT f1=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol1,sapitemdummy,bytedummy);
 		if(f1==0){
 
 			tmp.p1.evaluationratio=Q/dol1.back().Ar0;
@@ -1478,7 +1664,7 @@ bool Compute8(
 		//size_t i=tmp.rp.size()-2;
 
 		std::vector<DataOutA> dol1;
-		UINT f1=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol1);
+		UINT f1=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol1,sapitemdummy,bytedummy);
 		if(f1==0){
 
 
@@ -1573,7 +1759,7 @@ bool Compute10(
 		tmp.p1.evaluationratio=nQ;
 
 		std::vector<DataOutA> dol1;
-		UINT f1=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol1);
+		UINT f1=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol1,sapitemdummy,bytedummy);
 		if(f1==0){
 
 			if(Compute9(dol1,tmp.p1,Lc)){
@@ -1639,7 +1825,7 @@ bool Compute12(
 
 
 		std::vector<DataOutA> dol1;
-		UINT f1=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol1);
+		UINT f1=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol1,sapitemdummy,bytedummy);
 		if(f1==0){
 
 
@@ -2388,6 +2574,8 @@ UINT PROCESS(LPVOID pParam)
 	COutputWnd *ow=((mypara*)pParam)->outw;
 	CMFCCaptionBarA *cba=((mypara*)pParam)->cba;
 
+	ProcessState *pst=((mypara*)pParam)->psta;
+
 	COutputList* ol=ow->GetListCtrl();
 	//ol->DeleteAllItems();
 
@@ -2401,13 +2589,13 @@ UINT PROCESS(LPVOID pParam)
 
 	delete pParam;
 
-	pDoc->raw.LoadFromFileList(flistlist[pDoc->p1.analysistype],olhw,1000,100);
+	//pDoc->raw.LoadFromFileList(flistlist[pDoc->p1.analysistype],olhw,1000,100);
 
 
 
 
 
-		pDoc->raw.Clear();
+	pDoc->raw.Clear();
 
 
 	//CMainFrame *mf=(CMainFrame*)( ((CanalyzerViewL*)lv)->GetParentFrame() );
@@ -2415,28 +2603,21 @@ UINT PROCESS(LPVOID pParam)
 
 	std::vector<CString> filelist;
 	LoadFileList(flistlist[pDoc->p1.analysistype],filelist);
-	pcct data;
+	
 
+	::SendMessage(ol->GetSafeHwnd(),MESSAGE_UPDATE_DOL,NULL,NULL);
 
+	//ol->doalast=DataOutA();
+	//ol->dol.assign(1,DataOutA());
+	//ol->p3=pDoc->p3;
+	//GetStepList(ol->sl,pDoc->p1.analysistype);
 
 	while(!filelist.empty()){
 		/////load data from file////////////
-		data.clear();
+		//data.clear();
+		pcct data;
 		data.readFile(filelist.front());
 		data.TomA();
-		
-		DataOutA d0=ol->dol.back();
-		d0.Update(
-
-	//	/////////////////prompt add solution//////////////////////////////
-	::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dataC.doa.addVolume),NULL);
-	///////////////////wait response/////////////////////////
-	//pst=pause;
-	//WaitSecond(pst);
-	/////////////////////refresh analysis class///////////////////////
-	////dataC.clear();
-	//////////////////////prompt running////////////////////////////////
-	//::SendMessage(cba->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
 
 		std::vector<double> x;
 		std::vector<double> y;
@@ -2453,8 +2634,10 @@ UINT PROCESS(LPVOID pParam)
 
 			pDoc->raw.ll.back()+=x.size();
 
-			::SendMessage(ol->GetSafeHwnd(),MESSAGE_UPDATE_DOL,NULL,NULL);
+			//::SendMessage(ol->GetSafeHwnd(),MESSAGE_REFRESH_DOL,NULL,NULL);
 			//::PostMessage(olhw,MESSAGE_UPDATE_DOL,NULL,NULL);
+
+			::SendMessage(ol->GetSafeHwnd(),MESSAGE_UPDATE_DOL,NULL,NULL);
 
 			Sleep(sleepms);
 
@@ -2469,7 +2652,7 @@ UINT PROCESS(LPVOID pParam)
 
 	}
 
-
+	*pst=stop;
 
 
 

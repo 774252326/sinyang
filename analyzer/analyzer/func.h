@@ -68,11 +68,7 @@
 			//};
 
 
-enum ProcessState{
-	stop,
-	running,
-	pause
-};
+
 
 typedef struct MYPARA{
 	CanalyzerViewL *leftp;
@@ -90,7 +86,7 @@ typedef struct MYPARA{
 
 
 
-
+void LoadFileList(const CString &m_filePath, std::vector<CString> &filelist);
 UINT PROCESS(LPVOID pParam);
 
 void AdjustWidth(CListCtrl *ls, int nCol, CString str, int gap=15);
@@ -101,12 +97,27 @@ UINT RawData2PlotDataList(const RawData &raw, const std::vector<DataOutA> &dol, 
 CString Compute( const std::vector<DataOutA> &dol, const ANPara &p1, std::vector<PlotData> &pdl, bool bDraw );
 bool Compute(const std::vector<DataOutA> &dol, const ANPara &p1, std::vector<CString> &res);
 
+UINT OneProcess(
+	DataOutA &doalast, 
+	std::vector<sapitemA> &saplist, 
+	std::vector<DWORD> &sl, 
+	const RawData &raw, 
+	std::vector<DataOutA> &dol, 
+	CMFCCaptionBarA *cba,
+	ProcessState &pst,
+	const CVPara &p2
+	);
+
+
 UINT ComputeStateData(
 	int ANPType,
 	const CVPara &p2,
 	const SAPara &p3,
 	const RawData &raw,
-	std::vector<DataOutA> &dol);
+	std::vector<DataOutA> &dol,	
+	sapitemA &outitem,
+	BYTE &outstep
+	);
 
 void DrawData1(CRect &plotrect
 	, CDC* pDC
