@@ -1,20 +1,19 @@
 
-// analyzerViewR.h : interface of the CanalyzerViewR class
+// analyzerView.h : interface of the CanalyzerViewR class
 //
 
 #pragma once
 
 #include "resource.h"
 #include "analyzerDoc.h"
+#include "atltypes.h"
 
-class CanalyzerViewR : public CFormView
+
+class CanalyzerViewR : public CView
 {
 protected: // create from serialization only
 	CanalyzerViewR();
 	DECLARE_DYNCREATE(CanalyzerViewR)
-
-public:
-	enum{ IDD = IDD_ANALYZER_FORM };
 
 // Attributes
 public:
@@ -25,10 +24,12 @@ public:
 
 // Overrides
 public:
+	virtual void OnDraw(CDC* pDC);  // overridden to draw this view
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual void OnInitialUpdate(); // called first time after construct
+	virtual BOOL OnPreparePrinting(CPrintInfo* pInfo);
+	virtual void OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo);
+	virtual void OnEndPrinting(CDC* pDC, CPrintInfo* pInfo);
 
 // Implementation
 public:
@@ -47,8 +48,14 @@ protected:
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	DECLARE_MESSAGE_MAP()
 
-	afx_msg void OnPaint();
+
+
+
+public:
+	//afx_msg void OnPaint();
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+
+	CSpinButtonCtrl m_spBtn;
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 
 	CSize spBtnSize;
@@ -60,23 +67,32 @@ protected:
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
-	afx_msg void OnOptionsPlotsettings();
-	afx_msg void OnViewFitwindow();
-	void OnDeltaposSpin(NMHDR* pNMHDR, LRESULT* pResult);
 
-public:
 	void clear(void);
 
+	afx_msg void OnOptionsPlotsettings();
 
-	CSpinButtonCtrl m_spBtn;
+	afx_msg void OnViewFitwindow();
+
 	bool updatePlotRange(int plotIndex, const std::vector<double> &x, const std::vector<double> &y, bool flg=false);
 	bool updatePlotRange(int plotIndex, bool flg=true);
 	bool updatePlotRange(bool flg=true);
 
 	int AddPlot(const PlotData & pda);
+
+
+	void OnDeltaposSpin(NMHDR* pNMHDR, LRESULT* pResult);
 	void SetSpin(int i);
 
 
+	CToolTipCtrl m_tool;
+
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
+
+
+	//afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	//afx_msg void OnSize(UINT nType, int cx, int cy);
+	virtual void OnPrepareDC(CDC* pDC, CPrintInfo* pInfo = NULL);
 };
 
 #ifndef _DEBUG  // debug version in analyzerView.cpp

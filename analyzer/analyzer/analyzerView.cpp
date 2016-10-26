@@ -11,48 +11,50 @@
 
 #include "analyzerDoc.h"
 #include "analyzerView.h"
+
+
 #include "Header1.h"
 #include "PlotSettingPage.h"
+#include <math.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
-COLORREF inv(const COLORREF &oc);
+
 
 // CanalyzerView
 
-IMPLEMENT_DYNCREATE(CanalyzerView, CFormView)
+IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 
-	BEGIN_MESSAGE_MAP(CanalyzerView, CFormView)
+	BEGIN_MESSAGE_MAP(CanalyzerView, CView)
+		// Standard printing commands
+		ON_COMMAND(ID_FILE_PRINT, &CView::OnFilePrint)
+		ON_COMMAND(ID_FILE_PRINT_DIRECT, &CView::OnFilePrint)
+		ON_COMMAND(ID_FILE_PRINT_PREVIEW, &CanalyzerView::OnFilePrintPreview)
 		ON_WM_CONTEXTMENU()
 		ON_WM_RBUTTONUP()
-		ON_WM_PAINT()
+
 		ON_WM_CREATE()
 		ON_WM_SIZE()
 		ON_WM_LBUTTONDOWN()
 		ON_WM_LBUTTONUP()
-		//		ON_WM_MOUSEMOVE()
 		ON_COMMAND(ID_OPTIONS_PLOTSETTINGS, &CanalyzerView::OnOptionsPlotsettings)
 		ON_WM_MOUSEMOVE()
 		ON_WM_MOUSEWHEEL()
 		ON_COMMAND(ID_VIEW_FITWINDOW, &CanalyzerView::OnViewFitwindow)
-		ON_NOTIFY(UDN_DELTAPOS, 1, CanalyzerView::OnDeltaposSpin)
+		ON_NOTIFY(UDN_DELTAPOS, 1, &CanalyzerView::OnDeltaposSpin)
+
 	END_MESSAGE_MAP()
 
 	// CanalyzerView construction/destruction
 
 	CanalyzerView::CanalyzerView()
-		: CFormView(CanalyzerView::IDD)
-		, xmin(0)
+		: xmin(0)
 		, xmax(0)
 		, ymin(0)
 		, ymax(0)
 		, m_mouseDownPoint(0)
-		//, metricGridLong(5)
-		//, metricGridShort(3)
-		//, gap0(10)
-		//, lidx(0)
 	{
 		// TODO: add construction code here
 		spBtnSize=CSize(23*2,23);
@@ -62,28 +64,77 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CFormView)
 	{
 	}
 
-	void CanalyzerView::DoDataExchange(CDataExchange* pDX)
-	{
-		CFormView::DoDataExchange(pDX);
-	}
-
 	BOOL CanalyzerView::PreCreateWindow(CREATESTRUCT& cs)
 	{
 		// TODO: Modify the Window class or styles here by modifying
 		//  the CREATESTRUCT cs
 
-		return CFormView::PreCreateWindow(cs);
+		return CView::PreCreateWindow(cs);
 	}
 
-	void CanalyzerView::OnInitialUpdate()
+	// CanalyzerView drawing
+
+	void CanalyzerView::OnDraw(CDC* pDC)
 	{
-		CFormView::OnInitialUpdate();
-		//GetParentFrame()->RecalcLayout();
-		//ResizeParentToFit();
+		CanalyzerDoc* pDoc = GetDocument();
+		ASSERT_VALID(pDoc);
+		if (!pDoc)
+			return;
 
-		LONG style0=GetWindowLongW(m_hWnd, GWL_EXSTYLE);
-		SetWindowLongW(GetSafeHwnd(), GWL_EXSTYLE, style0|WS_CLIPCHILDREN);
+		// TODO: add draw code for native data here
 
+		if(!pDoc->lp.empty()){
+
+			CDC dcMem;                                                  //用于缓冲作图的内存DC
+			CBitmap bmp;                                                 //内存中承载临时图象的位图
+			CRect rect;
+			GetClientRect(&rect);
+			dcMem.CreateCompatibleDC(pDC);               //依附窗口DC创建兼容内存DC
+			bmp.CreateCompatibleBitmap(pDC,rect.Width(),rect.Height());//创建兼容位图
+			dcMem.SelectObject(&bmp);  	//将位图选择进内存DC
+			CRect plotrect=rect;
+
+			DrawData(plotrect,&dcMem,pDoc->lp[m_spBtn.GetPos32()],xmin,xmax,ymin,ymax);
+
+			pDC->BitBlt(0,0,rect.Width(),rect.Height(),&dcMem,0,0,SRCCOPY);//将内存DC上的图象拷贝到前台
+			dcMem.DeleteDC(); //删除DC
+			bmp.DeleteObject(); //删除位图
+
+			//////////////////////////////////////////////
+			//CRect rect;
+			//GetClientRect(&rect);
+			//CRect plotrect=rect;
+			//DrawData(plotrect,pDC,pDoc->lp[m_spBtn.GetPos32()],xmin,xmax,ymin,ymax);
+
+
+		}
+	}
+
+
+	// CanalyzerView printing
+
+
+	void CanalyzerView::OnFilePrintPreview()
+	{
+#ifndef SHARED_HANDLERS
+		AFXPrintPreview(this);
+#endif
+	}
+
+	BOOL CanalyzerView::OnPreparePrinting(CPrintInfo* pInfo)
+	{
+		// default preparation
+		return DoPreparePrinting(pInfo);
+	}
+
+	void CanalyzerView::OnBeginPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
+	{
+		// TODO: add extra initialization before printing
+	}
+
+	void CanalyzerView::OnEndPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
+	{
+		// TODO: add cleanup after printing
 	}
 
 	void CanalyzerView::OnRButtonUp(UINT /* nFlags */, CPoint point)
@@ -105,12 +156,12 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CFormView)
 #ifdef _DEBUG
 	void CanalyzerView::AssertValid() const
 	{
-		CFormView::AssertValid();
+		CView::AssertValid();
 	}
 
 	void CanalyzerView::Dump(CDumpContext& dc) const
 	{
-		CFormView::Dump(dc);
+		CView::Dump(dc);
 	}
 
 	CanalyzerDoc* CanalyzerView::GetDocument() const // non-debug version is inline
@@ -124,40 +175,13 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CFormView)
 	// CanalyzerView message handlers
 
 
-	void CanalyzerView::OnPaint()
-	{
-		CPaintDC dc(this); // device context for painting
-		// TODO: Add your message handler code here
-		// Do not call CFormView::OnPaint() for painting messages
-
-		CanalyzerDoc* pDoc=GetDocument();
-		if(!pDoc->lp.empty()){
-			//int ci=m_spBtn.GetPos32();
-			CDC dcMem;                                                  //用于缓冲作图的内存DC
-			CBitmap bmp;                                                 //内存中承载临时图象的位图
-			CRect rect;
-			GetClientRect(&rect);
-			dcMem.CreateCompatibleDC(&dc);               //依附窗口DC创建兼容内存DC
-			bmp.CreateCompatibleBitmap(&dc,rect.Width(),rect.Height());//创建兼容位图
-			dcMem.SelectObject(&bmp);                          //将位图选择进内存DC
-			//dcMem.FillSolidRect(rect,pDoc->lp[ci].psp.bkgndC);//按原来背景填充客户区，不然会是黑色
-			CRect plotrect=rect;
-
-			DrawData(plotrect,&dcMem,pDoc->lp[m_spBtn.GetPos32()],xmin,xmax,ymin,ymax);
-
-			dc.BitBlt(0,0,rect.Width(),rect.Height(),&dcMem,0,0,SRCCOPY);//将内存DC上的图象拷贝到前台
-			dcMem.DeleteDC(); //删除DC
-			bmp.DeleteObject(); //删除位图
-		}
-	}
-
-
 	int CanalyzerView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	{
-		if (CFormView::OnCreate(lpCreateStruct) == -1)
+		if (CView::OnCreate(lpCreateStruct) == -1)
 			return -1;
 
 		// TODO:  Add your specialized creation code here
+
 		if(m_spBtn.Create(WS_CHILD
 			//|WS_VISIBLE
 			|UDS_HORZ
@@ -170,37 +194,66 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CFormView)
 			return -1;
 
 		m_spBtn.SetRange32(0,0);
+
+
+		m_tool.Create(this);
+		m_tool.AddTool(this);
+		//m_tool.SetDelayTime(1);
+		m_tool.Activate(true);
+
+
+		LONG style0=GetWindowLongW(m_hWnd, GWL_EXSTYLE);
+		SetWindowLongW(GetSafeHwnd(), GWL_EXSTYLE, style0|WS_CLIPCHILDREN);
+
 		return 0;
 	}
 
 
 	void CanalyzerView::OnSize(UINT nType, int cx, int cy)
 	{
-		CFormView::OnSize(nType, cx, cy);
+		CView::OnSize(nType, cx, cy);
 
 		// TODO: Add your message handler code here
-
 		m_spBtn.MoveWindow(CRect(CPoint(cx,cy)-spBtnSize,spBtnSize));
 		Invalidate();
 	}
 
+
 	void CanalyzerView::OnLButtonDown(UINT nFlags, CPoint point)
 	{
 		// TODO: Add your message handler code here and/or call default
-		m_mouseDownPoint=point;
-		SetCapture();
 
-		CFormView::OnLButtonDown(nFlags, point);
+		CanalyzerDoc* pDoc=GetDocument();
+		int idx=m_spBtn.GetPos32();
+
+		if (!pDoc->lp.empty() && !pDoc->lp[idx].ps.empty()){
+			CRect plotrect;
+			this->GetClientRect(&plotrect);	
+			GetPlotRect(plotrect, pDoc->lp[idx].psp.labelSize, pDoc->lp[idx].psp.metricSize);
+
+			if(plotrect.PtInRect(point)){
+				m_mouseDownPoint=point;
+				SetCapture();
+
+				HCURSOR hCur  =  LoadCursor( NULL  , IDC_SIZEALL ) ;
+				::SetCursor(hCur);
+			}
+		}
+
+		CView::OnLButtonDown(nFlags, point);
 	}
 
 
 	void CanalyzerView::OnLButtonUp(UINT nFlags, CPoint point)
 	{
 		// TODO: Add your message handler code here and/or call default
-		m_mouseDownPoint=CPoint(0,0);
+		//m_mouseDownPoint=CPoint(0,0);
 		ReleaseCapture();
 
-		CFormView::OnLButtonUp(nFlags, point);
+		HCURSOR hCur  =  LoadCursor( NULL  , IDC_ARROW ) ;
+		::SetCursor(hCur);
+
+		CView::OnLButtonUp(nFlags, point);
 	}
 
 
@@ -275,21 +328,60 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CFormView)
 		CanalyzerDoc* pDoc=GetDocument();
 		int idx=m_spBtn.GetPos32();
 
-		if (GetCapture()==this && !pDoc->lp.empty() && !pDoc->lp[idx].ps.empty()){
+		if (!pDoc->lp.empty() && !pDoc->lp[idx].ps.empty()){
 			CRect plotrect;
-			this->GetClientRect(&plotrect);
-			if( MoveUpdate(plotrect
-				, pDoc->lp[idx].psp.metricSize
-				, pDoc->lp[idx].psp.labelSize
-				, point
-				, this->m_mouseDownPoint
-				,xmin,xmax,ymin,ymax) ){
+			this->GetClientRect(&plotrect);	
+			//ScreenToClient(&point);
+
+			if(GetCapture()==this){
+				if(MoveUpdateA(plotrect
+					, pDoc->lp[idx].psp.metricSize
+					, pDoc->lp[idx].psp.labelSize
+					, point
+					, this->m_mouseDownPoint
+					, xmin,xmax,ymin,ymax))
 					this->Invalidate(FALSE);
 			}
+			else{
+
+				CString str;
+				//if(MoveUpdateB(plotrect
+				//	, pDoc->lp[idx].psp.metricSize
+				//	, pDoc->lp[idx].psp.labelSize
+				//	, point
+				//	, this->m_mouseDownPoint
+				//	, xmin,xmax,ymin,ymax
+				//	, str))
+				//	m_tool.UpdateTipText(str,this);
+
+				//str.Format(L"%d,%d",point.x,point.y);
+				//m_tool.UpdateTipText(str,this);
+
+				CPoint pt;
+				int flg=MoveUpdateC(plotrect
+					, pDoc->lp[idx].psp.metricSize
+					, pDoc->lp[idx].psp.labelSize
+					, point
+					, this->m_mouseDownPoint
+					, xmin,xmax,ymin,ymax
+					, str
+					, pDoc->lp[idx].xll
+					, pDoc->lp[idx].yll
+					, pt);
+				if(flg==2){
+					//this->ClientToScreen(&pt);
+					//::SetCursorPos(pt.x,pt.y);
+					m_tool.UpdateTipText(str,this);
+				}
+				if(flg==1){
+					m_tool.UpdateTipText(str,this);
+				}
+
+			}
+
 		}
 
-
-		CFormView::OnMouseMove(nFlags, point);
+		CView::OnMouseMove(nFlags, point);
 	}
 
 
@@ -302,9 +394,9 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CFormView)
 		int idx=m_spBtn.GetPos32();
 
 		if(!pDoc->lp.empty() && !pDoc->lp[idx].ps.empty()){
-		ScreenToClient(&pt);
-		CRect plotrect;
-		this->GetClientRect(&plotrect);
+			ScreenToClient(&pt);
+			CRect plotrect;
+			this->GetClientRect(&plotrect);
 			if( WheelUpdate(plotrect
 				, pDoc->lp[idx].psp.metricSize
 				, pDoc->lp[idx].psp.labelSize
@@ -316,7 +408,7 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CFormView)
 
 		}
 
-		return CFormView::OnMouseWheel(nFlags, zDelta, pt);
+		return CView::OnMouseWheel(nFlags, zDelta, pt);
 	}
 
 
@@ -357,34 +449,34 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CFormView)
 	void CanalyzerView::OnViewFitwindow()
 	{
 		// TODO: Add your command handler code here
-	
+
 		if(this->updatePlotRange())
 			this->Invalidate(FALSE);
 
 	}
 
 	void CanalyzerView::OnDeltaposSpin(NMHDR* pNMHDR, LRESULT* pResult)
-{
-	NM_UPDOWN* pNMUpDown=(NM_UPDOWN*)pNMHDR;	
+	{
+		NM_UPDOWN* pNMUpDown=(NM_UPDOWN*)pNMHDR;	
 
-	CanalyzerDoc* pDoc=GetDocument();
+		CanalyzerDoc* pDoc=GetDocument();
 
-	int n=pDoc->lp.size();
-	int newpos=pNMUpDown->iPos+pNMUpDown->iDelta;
-	if(newpos>=n)
-		newpos=0;
-	if(newpos<0)
-		newpos=n-1;
-	//int newpos=pNMUpDown->iPos;
+		int n=pDoc->lp.size();
+		int newpos=pNMUpDown->iPos+pNMUpDown->iDelta;
+		if(newpos>=n)
+			newpos=0;
+		if(newpos<0)
+			newpos=n-1;
+		//int newpos=pNMUpDown->iPos;
 
-	//if(updatePlotRange(newpos))
-	//if(updatePlotRange())
-	double pct=0.02;
-	UpdateRange(pDoc->lp[newpos].xll,xmin,xmax,pct,true);
-	UpdateRange(pDoc->lp[newpos].yll,ymin,ymax,pct,true);
-	Invalidate(FALSE);
-	
-	*pResult = 0;
+		//if(updatePlotRange(newpos))
+		//if(updatePlotRange())
+		double pct=0.02;
+		UpdateRange(pDoc->lp[newpos].xll,xmin,xmax,pct,true);
+		UpdateRange(pDoc->lp[newpos].yll,ymin,ymax,pct,true);
+		Invalidate(FALSE);
+
+		*pResult = 0;
 	}
 
 	void CanalyzerView::SetSpin(int newi)
@@ -392,4 +484,67 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CFormView)
 		m_spBtn.SetRange32(0,newi);
 		m_spBtn.SetPos32(newi);
 		m_spBtn.ShowWindow( (newi>0 ? SW_SHOW : SW_HIDE) );
+	}
+
+
+	BOOL CanalyzerView::PreTranslateMessage(MSG* pMsg)
+	{
+		// TODO: Add your specialized code here and/or call the base class
+
+		m_tool.RelayEvent(pMsg);
+
+
+		return CView::PreTranslateMessage(pMsg);
+	}
+
+	void CanalyzerView::OnInitialUpdate()
+	{
+		CView::OnInitialUpdate();
+
+		// TODO: Add your specialized code here and/or call the base class
+
+
+	}
+
+
+	void CanalyzerView::OnPrepareDC(CDC* pDC, CPrintInfo* pInfo)
+	{
+		// TODO: Add your specialized code here and/or call the base class
+
+		pDC->SetMapMode(MM_ANISOTROPIC); //转换坐标映射方式
+
+		CRect rect;
+		this->GetClientRect(&rect);
+
+		CSize size = rect.Size(); 
+
+		//size.cx=96*11;
+
+		pDC->SetWindowExt(size);  
+
+		//确定窗口大小
+
+
+
+		//得到实际设备每逻辑英寸的象素数量
+
+
+
+		int xLogPixPerInch = pDC->GetDeviceCaps(LOGPIXELSX); 
+		int yLogPixPerInch = pDC->GetDeviceCaps(LOGPIXELSY); 
+		//得到设备坐标和逻辑坐标的比例
+		long xExt = (long)size.cx * xLogPixPerInch/96;  
+		long yExt = (long)size.cy * yLogPixPerInch/96; 
+
+		//long xExt = (long)(11/sqrt(2.0) * xLogPixPerInch);  
+		//long yExt = (long)(11 * yLogPixPerInch); 
+		pDC->SetViewportExt((int)xExt, (int)yExt); 
+
+
+		//pDC->SetViewportExt(size);
+		//确定视口大小
+
+
+
+		CView::OnPrepareDC(pDC, pInfo);
 	}

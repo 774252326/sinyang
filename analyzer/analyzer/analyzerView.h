@@ -6,15 +6,14 @@
 
 #include "resource.h"
 #include "analyzerDoc.h"
+#include "atltypes.h"
 
-class CanalyzerView : public CFormView
+
+class CanalyzerView : public CView
 {
 protected: // create from serialization only
 	CanalyzerView();
 	DECLARE_DYNCREATE(CanalyzerView)
-
-public:
-	enum{ IDD = IDD_ANALYZER_FORM };
 
 // Attributes
 public:
@@ -25,10 +24,12 @@ public:
 
 // Overrides
 public:
+	virtual void OnDraw(CDC* pDC);  // overridden to draw this view
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual void OnInitialUpdate(); // called first time after construct
+	virtual BOOL OnPreparePrinting(CPrintInfo* pInfo);
+	virtual void OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo);
+	virtual void OnEndPrinting(CDC* pDC, CPrintInfo* pInfo);
 
 // Implementation
 public:
@@ -46,8 +47,12 @@ protected:
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	DECLARE_MESSAGE_MAP()
+
+
+
+
 public:
-	afx_msg void OnPaint();
+	//afx_msg void OnPaint();
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 
 	CSpinButtonCtrl m_spBtn;
@@ -78,6 +83,17 @@ public:
 
 	void OnDeltaposSpin(NMHDR* pNMHDR, LRESULT* pResult);
 	void SetSpin(int i);
+
+
+	CToolTipCtrl m_tool;
+
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
+
+
+	//afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	//afx_msg void OnSize(UINT nType, int cx, int cy);
+	virtual void OnInitialUpdate();
+	virtual void OnPrepareDC(CDC* pDC, CPrintInfo* pInfo = NULL);
 };
 
 #ifndef _DEBUG  // debug version in analyzerView.cpp

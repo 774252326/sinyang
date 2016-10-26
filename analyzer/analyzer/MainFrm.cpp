@@ -101,6 +101,18 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;      // fail to create
 	}
 
+
+	//CImageList img;
+	//Img.Create(22, 22, ILC_COLOR8|ILC_MASK,2,2); 
+ //   Img.SetBkColor(::GetSysColor(COLOR_BTNFACE)); 
+ //   img.Add(AfxGetApp()->LoadIcon(IDI_ICON1)); 
+ //   img.Add(AfxGetApp()->LoadIcon(IDI_ICON2)); 
+
+	// m_wndToolBar.GetToolBarCtrl().SetHotImageList(&img); 
+ //   img.Detach(); 
+
+
+
 	CString strToolBarName;
 	bNameValid = strToolBarName.LoadString(IDS_TOOLBAR_STANDARD);
 	ASSERT(bNameValid);

@@ -361,6 +361,9 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		str,
 		ES_LEFT
 		|ES_READONLY
+		|ES_MULTILINE
+		|ES_WANTRETURN
+		|WS_VSCROLL
 		|WS_CHILD
 		|WS_VISIBLE,
 		CRect(pt,CSize(winrect.Width(),h)),

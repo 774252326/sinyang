@@ -19,6 +19,37 @@ COLORREF inv(const COLORREF &oc){
 	return (oc^0x00ffffff);
 }
 
+
+
+int FindClosest(double x, double y, const std::vector<double> &xl, const std::vector<double> &yl, double thres)
+{
+	if(xl.size()!=yl.size()
+		||xl.empty()
+		||yl.empty())
+		return -1;
+
+	int j=0;
+	double l=abs(xl[j]-x)+abs(yl[j]-y);
+	if(l<=thres){
+		return 0;
+	}
+	double t;
+	for(int i=1;i<xl.size();i++){
+		t=abs(xl[i]-x)+abs(yl[i]-y);
+		if(t<l){
+			if(t<=thres){
+				return i;
+			}
+			l=t;
+			j=i;
+		}
+	}
+	//return j;
+	return -1;
+}
+
+
+
 void drawRectangle(const CRect &rect
 	, CDC * pDC
 	, COLORREF insidecolor
@@ -754,22 +785,20 @@ bool WheelUpdate(CRect &plotrect
 	GetPlotRect(plotrect,lbsz,mtsz);
 	//ScreenToClient(&pt);
 
-	double x=xRescale(pt.x, plotrect.left, plotrect.right, xmin, xmax);
-	double y=xRescale(pt.y, plotrect.bottom, plotrect.top, ymin, ymax);
-
 	double k2=1-k1;
-
 	int w=metricGridLong+mtsz;
 
 	bool flg=false;
 	plotrect.InflateRect(w,0,0,0);
 	if( plotrect.PtInRect(pt) ){
+		double y=xRescale(pt.y, plotrect.bottom, plotrect.top, ymin, ymax);
 		ymin=y*k2+ymin*k1;
 		ymax=y*k2+ymax*k1;
 		flg=true;
 	}
 	plotrect.InflateRect(-w,0,0,w);
 	if( plotrect.PtInRect(pt) ){
+		double x=xRescale(pt.x, plotrect.left, plotrect.right, xmin, xmax);
 		xmin=x*k2+xmin*k1;
 		xmax=x*k2+xmax*k1;
 		flg=true;
@@ -781,7 +810,96 @@ bool WheelUpdate(CRect &plotrect
 }
 
 
-bool MoveUpdate(CRect &plotrect
+bool MoveUpdateB(CRect &plotrect
+	, int mtsz
+	, int lbsz
+	, const CPoint &point
+	, CPoint &mouseDownPoint
+	, const double &xmin
+	, const double &xmax
+	, const double &ymin
+	, const double &ymax
+	, CString &str)
+{
+	GetPlotRect(plotrect,lbsz,mtsz);
+	if(plotrect.PtInRect(point)){
+		HCURSOR hCur  =  LoadCursor( NULL, IDC_CROSS ) ;
+		::SetCursor(hCur);
+		if(mouseDownPoint!=point){
+			double x=xRescale(point.x, plotrect.left, plotrect.right, xmin, xmax);
+			double y=xRescale(point.y, plotrect.bottom, plotrect.top, ymin, ymax);
+			str.Format(L"%g,%g",x,y);
+			mouseDownPoint=point;
+			return true;
+		}
+		return false;
+	}
+
+	HCURSOR hCur  =  LoadCursor( NULL, IDC_ARROW ) ;
+	::SetCursor(hCur);
+
+	mouseDownPoint=point;
+
+	return false;
+
+
+}
+
+
+int MoveUpdateC(CRect &plotrect
+	, int mtsz
+	, int lbsz
+	, const CPoint &point
+	, CPoint &mouseDownPoint
+	, const double &xmin
+	, const double &xmax
+	, const double &ymin
+	, const double &ymax
+	, CString &str
+	, const std::vector<double> &xl
+	, const std::vector<double> &yl
+	, CPoint &pt)
+{
+	GetPlotRect(plotrect,lbsz,mtsz);
+	if(plotrect.PtInRect(point)){
+		HCURSOR hCur  =  LoadCursor( NULL, IDC_CROSS ) ;
+		::SetCursor(hCur);
+		if(mouseDownPoint!=point){
+			double x=xRescale(point.x, plotrect.left, plotrect.right, xmin, xmax);
+			double y=xRescale(point.y, plotrect.bottom, plotrect.top, ymin, ymax);
+			double thres=(xmax-xmin)/plotrect.Width()+(ymax-ymin)/plotrect.Height();
+			int fi=FindClosest(x,y,xl,yl,thres*10);
+			if(fi>=0){
+				pt.x=xRescale(xl[fi], xmin, xmax, plotrect.left, plotrect.right);
+				pt.y=xRescale(yl[fi], ymin, ymax, plotrect.bottom, plotrect.top);	
+				
+				str.Format(L"%g,%g,2",xl[fi],yl[fi]);
+				mouseDownPoint=point;
+				return 2;
+			}
+			else{
+				str.Format(L"%g,%g,1",x,y);
+				mouseDownPoint=point;
+				return 1;
+			}
+			
+			//return true;
+		}
+		//return false;
+	}
+	else{
+	HCURSOR hCur  =  LoadCursor( NULL, IDC_ARROW ) ;
+	::SetCursor(hCur);
+	mouseDownPoint=point;
+	}
+	return 0;
+
+
+}
+
+
+
+bool MoveUpdateA(CRect &plotrect
 	, int mtsz
 	, int lbsz
 	, const CPoint &point
@@ -794,20 +912,173 @@ bool MoveUpdate(CRect &plotrect
 	//CRect plotrect;
 	GetPlotRect(plotrect,lbsz,mtsz);
 
-	double kx=(double)(point.x-mouseDownPoint.x)*(xmax-xmin)/(double)plotrect.Width();
-	double ky=(double)(point.y-mouseDownPoint.y)*(ymax-ymin)/(double)plotrect.Height();
+	if(plotrect.PtInRect(point)){
 
-	//Increment the object rotation angles
-	xmin-=kx;
-	xmax-=kx;
-	ymin+=ky;
-	ymax+=ky;
+		double kx=(double)(point.x-mouseDownPoint.x)*(xmax-xmin)/(double)plotrect.Width();
+		double ky=(double)(point.y-mouseDownPoint.y)*(ymax-ymin)/(double)plotrect.Height();
 
-	//Redraw the view
-	//InvalidateRect(NULL,FALSE);
-	//Invalidate();
-	//Set the mouse point
+		//Increment the object rotation angles
+		xmin-=kx;
+		xmax-=kx;
+		ymin+=ky;
+		ymax+=ky;
+		mouseDownPoint=point;
+		return true;
+	}
+
+
 	mouseDownPoint=point;
-
-	return true;
+	return false;
 }
+
+
+
+
+HCURSOR BigCross(const CRect &rect, const CPoint & pt)
+{
+
+	int h=rect.Height();
+	int w=rect.Width();
+	div_t dr;
+	dr = div (w,8);
+	w-=dr.rem;
+
+	std::vector<BYTE> ANDmaskCursor(h*dr.quot,0xFF);
+	int g1=dr.rem/2;
+	int g2=dr.rem-g1;
+	int x=pt.x-rect.left-g1;
+	int y=pt.y-rect.top;
+
+	div_t dr2;
+	dr2 = div (x,8);
+
+	BYTE b1=0x80>>dr2.rem;
+	std::vector<BYTE> XORmaskCursorRow(dr.quot,0);
+	//std::vector<BYTE> XORmaskCursorRow1(dr.quot,0xFF);
+	XORmaskCursorRow[dr2.quot]=b1;
+
+	std::vector<BYTE> XORmaskCursor;
+	for(int i=0;i<y;i++){
+		XORmaskCursor.resize(XORmaskCursor.size()+dr.quot);
+		std::copy_backward ( XORmaskCursorRow.begin(), XORmaskCursorRow.begin()+dr.quot, XORmaskCursor.end() );
+	}
+	XORmaskCursor.resize(XORmaskCursor.size()+dr.quot,0xFF);
+	//std::copy_backward ( XORmaskCursorRow1.begin(), XORmaskCursorRow1.end(), XORmaskCursor.end() );
+	for(int i=y+1;i<h;i++){
+		XORmaskCursor.resize(XORmaskCursor.size()+dr.quot);
+		std::copy_backward ( XORmaskCursorRow.begin(), XORmaskCursorRow.begin()+dr.quot, XORmaskCursor.end() );
+	}
+
+
+
+	HINSTANCE hinst;            // handle to current instance  
+	HCURSOR hCurs1, hCurs2;     // cursor handles 
+
+	HCURSOR hCurs3;             // cursor handle 
+
+	//// Yin-shaped cursor AND mask 
+	// 
+	//BYTE ANDmaskCursor[] = 
+	//{ 
+	//    0xFF, 0xFC, 0x3F, 0xFF,   // line 1 
+	//    0xFF, 0xC0, 0x1F, 0xFF,   // line 2 
+	//    0xFF, 0x00, 0x3F, 0xFF,   // line 3 
+	//    0xFE, 0x00, 0xFF, 0xFF,   // line 4 
+	// 
+	//    0xF7, 0x01, 0xFF, 0xFF,   // line 5 
+	//    0xF0, 0x03, 0xFF, 0xFF,   // line 6 
+	//    0xF0, 0x03, 0xFF, 0xFF,   // line 7 
+	//    0xE0, 0x07, 0xFF, 0xFF,   // line 8 
+	// 
+	//    0xC0, 0x07, 0xFF, 0xFF,   // line 9 
+	//    0xC0, 0x0F, 0xFF, 0xFF,   // line 10 
+	//    0x80, 0x0F, 0xFF, 0xFF,   // line 11 
+	//    0x80, 0x0F, 0xFF, 0xFF,   // line 12 
+	// 
+	//    0x80, 0x07, 0xFF, 0xFF,   // line 13 
+	//    0x00, 0x07, 0xFF, 0xFF,   // line 14 
+	//    0x00, 0x03, 0xFF, 0xFF,   // line 15 
+	//    0x00, 0x00, 0xFF, 0xFF,   // line 16 
+	// 
+	//    0x00, 0x00, 0x7F, 0xFF,   // line 17 
+	//    0x00, 0x00, 0x1F, 0xFF,   // line 18 
+	//    0x00, 0x00, 0x0F, 0xFF,   // line 19 
+	//    0x80, 0x00, 0x0F, 0xFF,   // line 20 
+	// 
+	//    0x80, 0x00, 0x07, 0xFF,   // line 21 
+	//    0x80, 0x00, 0x07, 0xFF,   // line 22 
+	//    0xC0, 0x00, 0x07, 0xFF,   // line 23 
+	//    0xC0, 0x00, 0x0F, 0xFF,   // line 24 
+	// 
+	//    0xE0, 0x00, 0x0F, 0xFF,   // line 25 
+	//    0xF0, 0x00, 0x1F, 0xFF,   // line 26 
+	//    0xF0, 0x00, 0x1F, 0xFF,   // line 27 
+	//    0xF8, 0x00, 0x3F, 0xFF,   // line 28 
+	// 
+	//    0xFE, 0x00, 0x7F, 0xFF,   // line 29 
+	//    0xFF, 0x00, 0xFF, 0xFF,   // line 30 
+	//    0xFF, 0xC3, 0xFF, 0xFF,   // line 31 
+	//    0xFF, 0xFF, 0xFF, 0xFF    // line 32 
+	//};
+	// 
+	//// Yin-shaped cursor XOR mask 
+	// 
+	//BYTE XORmaskCursor[] = 
+	//{ 
+	//    0x00, 0x00, 0x00, 0x00,   // line 1 
+	//    0x00, 0x03, 0xC0, 0x00,   // line 2 
+	//    0x00, 0x3F, 0x00, 0x00,   // line 3 
+	//    0x00, 0xFE, 0x00, 0x00,   // line 4 
+	// 
+	//    0x0E, 0xFC, 0x00, 0x00,   // line 5 
+	//    0x07, 0xF8, 0x00, 0x00,   // line 6 
+	//    0x07, 0xF8, 0x00, 0x00,   // line 7 
+	//    0x0F, 0xF0, 0x00, 0x00,   // line 8 
+	// 
+	//    0x1F, 0xF0, 0x00, 0x00,   // line 9 
+	//    0x1F, 0xE0, 0x00, 0x00,   // line 10 
+	//    0x3F, 0xE0, 0x00, 0x00,   // line 11 
+	//    0x3F, 0xE0, 0x00, 0x00,   // line 12 
+	// 
+	//    0x3F, 0xF0, 0x00, 0x00,   // line 13 
+	//    0x7F, 0xF0, 0x00, 0x00,   // line 14 
+	//    0x7F, 0xF8, 0x00, 0x00,   // line 15 
+	//    0x7F, 0xFC, 0x00, 0x00,   // line 16 
+	// 
+	//    0x7F, 0xFF, 0x00, 0x00,   // line 17 
+	//    0x7F, 0xFF, 0x80, 0x00,   // line 18 
+	//    0x7F, 0xFF, 0xE0, 0x00,   // line 19 
+	//    0x3F, 0xFF, 0xE0, 0x00,   // line 20 
+	// 
+	//    0x3F, 0xC7, 0xF0, 0x00,   // line 21 
+	//    0x3F, 0x83, 0xF0, 0x00,   // line 22 
+	//    0x1F, 0x83, 0xF0, 0x00,   // line 23 
+	//    0x1F, 0x83, 0xE0, 0x00,   // line 24 
+	// 
+	//    0x0F, 0xC7, 0xE0, 0x00,   // line 25 
+	//    0x07, 0xFF, 0xC0, 0x00,   // line 26 
+	//    0x07, 0xFF, 0xC0, 0x00,   // line 27 
+	//    0x01, 0xFF, 0x80, 0x00,   // line 28 
+	// 
+	//    0x00, 0xFF, 0x00, 0x00,   // line 29 
+	//    0x00, 0x3C, 0x00, 0x00,   // line 30 
+	//    0x00, 0x00, 0x00, 0x00,   // line 31 
+	//    0x00, 0x00, 0x00, 0x00    // line 32 
+	//};
+	// 
+	// Create a custom cursor at run time. 
+
+	hCurs3 = CreateCursor( hinst,   // app. instance 
+		x,                // horizontal position of hot spot 
+		y,                 // vertical position of hot spot 
+		w,                // cursor width 
+		h,                // cursor height 
+		ANDmaskCursor.data(),     // AND mask 
+		XORmaskCursor.data() );   // XOR mask 
+
+
+	return hCurs3;
+
+}
+
+

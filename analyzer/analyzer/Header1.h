@@ -5,6 +5,7 @@
 #include <atltypes.h>
 #include <vector>
 #include <algorithm>
+#include <afxcmn.h>
 
 void DrawData(CRect &plotrect
 	, CDC* pDC
@@ -24,7 +25,7 @@ bool WheelUpdate(CRect &plotrect
 	, double &ymin
 	, double &ymax);
 
-bool MoveUpdate(CRect &plotrect
+bool MoveUpdateA(CRect &plotrect
 	, int mtsz
 	, int lbsz
 	, const CPoint &point
@@ -34,6 +35,37 @@ bool MoveUpdate(CRect &plotrect
 	, double &ymin
 	, double &ymax);
 
+bool MoveUpdateB(CRect &plotrect
+	, int mtsz
+	, int lbsz
+	, const CPoint &point
+	, CPoint &mouseDownPoint
+	, const double &xmin
+	, const double &xmax
+	, const double &ymin
+	, const double &ymax
+	, CString &str);
+
+int MoveUpdateC(CRect &plotrect
+	, int mtsz
+	, int lbsz
+	, const CPoint &point
+	, CPoint &mouseDownPoint
+	, const double &xmin
+	, const double &xmax
+	, const double &ymin
+	, const double &ymax
+	, CString &str
+	, const std::vector<double> &xl
+	, const std::vector<double> &yl
+	, CPoint &pt);
+
+void GetPlotRect(CRect & plotRect
+	, int labelSize
+	, int metricSize);
+
+
+HCURSOR BigCross(const CRect &rect, const CPoint & pt);
 
 template <typename T>
 void UpdateRange( const std::vector<T> &x, T &xmin, T &xmax, T gapPercent=0, bool bLocalRange=false)

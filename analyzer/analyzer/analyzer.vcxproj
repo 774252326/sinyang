@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{AF2947B0-6884-453C-85D3-170C574660B3}</ProjectGuid>
+    <ProjectGuid>{D757DEA2-676D-4040-8A3F-B00B53186544}</ProjectGuid>
     <RootNamespace>analyzer</RootNamespace>
     <Keyword>MFCProj</Keyword>
   </PropertyGroup>
@@ -94,8 +94,6 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="analyzer.reg" />
-    <None Include="ClassDiagram1.cd" />
     <None Include="ReadMe.txt" />
     <None Include="res\analyzer.ico" />
     <None Include="res\analyzer.rc2" />
@@ -114,8 +112,11 @@
     <ClInclude Include="analyzerView.h" />
     <ClInclude Include="analyzerViewR.h" />
     <ClInclude Include="ANPara.h" />
+    <ClInclude Include="calgridT.h" />
     <ClInclude Include="ColorButton.h" />
+    <ClInclude Include="colormapT.h" />
     <ClInclude Include="ComboItem.h" />
+    <ClInclude Include="CSpline.h" />
     <ClInclude Include="CVParametersPage.h" />
     <ClInclude Include="DataOut.h" />
     <ClInclude Include="EditItem.h" />
@@ -141,6 +142,7 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="typedefine.h" />
     <ClInclude Include="VPara.h" />
+    <ClInclude Include="xRescaleT.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnalysisParametersPage.cpp" />
@@ -182,9 +184,4 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
-  <ProjectExtensions>
-    <VisualStudio>
-      <UserProperties RESOURCE_FILE="analyzer.rc" />
-    </VisualStudio>
-  </ProjectExtensions>
 </Project>
