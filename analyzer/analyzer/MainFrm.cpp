@@ -459,6 +459,7 @@ void CMainFrame::OnSize(UINT nType, int cx, int cy)
 		//m_wndSplitter.RecalcLayout() ;  
 
 		m_wndSplitter.SetColumnInfo(0,(lc0+lc1)*2/3,10);
+		//m_wndSplitter.SetRowInfo(0,cy*2/3,10);
 		m_wndSplitter.RecalcLayout();
 	} 
 }
@@ -472,13 +473,13 @@ void CMainFrame::OnFileOpen()
 
 	fileDlg.m_ofn.lpstrFilter=L"Text File(*.txt)\0*.txt\0\0";
 
-	if( fileDlg.DoModal()==IDOK){
+	//if( fileDlg.DoModal()==IDOK){
 
-		CString m_filePath=fileDlg.GetPathName();
-		CString folderpath=fileDlg.GetFolderPath();
+		//CString m_filePath=fileDlg.GetPathName();
+		//CString folderpath=fileDlg.GetFolderPath();
 
-		//CString m_filePath=L"C:\\Users\\r8anw2x\\Dropbox\\W\\data\\a.txt";
-		//CString folderpath=L"C:\\Users\\r8anw2x\\Dropbox\\W\\data";
+		CString m_filePath=L"C:\\Users\\r8anw2x\\Dropbox\\W\\data\\a.txt";
+		CString folderpath=L"C:\\Users\\r8anw2x\\Dropbox\\W\\data";
 
 
 		std::vector<CString> filelist;
@@ -508,9 +509,9 @@ void CMainFrame::OnFileOpen()
 			dt1.AR=dt1.intg(0.8);
 			ar.push_back(dt1.AR);
 
-			( (dlg1*)m_wndSplitter.GetPane(0,0) )->plot2d(dt1.potential,dt1.current,dt1.label[0],dt1.label[1]);
+			( (dlg1*)m_wndSplitter.GetPane(0,0) )->plot2d(dt1.potential,dt1.current,dt1.label[0],dt1.label[1],dt1.FileName);
 
-			m_wndOutput.InsertListCtrl(i,filelist[i],ar[i],true);
+			m_wndOutput.InsertListCtrl(i,dt1.FileName,dt1.AR,true);
 
 		}
 
@@ -527,7 +528,7 @@ void CMainFrame::OnFileOpen()
 			//pppty.nl.push_back(sstr);
 		}			
 
-		( (dlg1*)m_wndSplitter.GetPane(0,1) )->plot2d(spr,ar,L"suppressor(ml)",L"Ratio of Charge");
+		( (dlg1*)m_wndSplitter.GetPane(0,1) )->plot2d(spr,ar,L"suppressor(ml)",L"Ratio of Charge",L"Ar/Ar0");
 
-	}
+	//}
 }

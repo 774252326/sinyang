@@ -4,6 +4,7 @@
 #include "OutputWnd.h"
 #include "Resource.h"
 #include "MainFrm.h"
+#include <vector>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -55,7 +56,7 @@ int COutputWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 
 
-		/************************************************************************/
+	/************************************************************************/
 	/*                                                                      */
 	/************************************************************************/
 	m_listCtrlMonitor.ModifyStyle(0,LVS_REPORT|LVS_SHOWSELALWAYS);
@@ -71,10 +72,19 @@ int COutputWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	//dwStyle1 |= LVS_EX_CHECKBOXES;//item前生成checkbox控件
 	m_listCtrlMonitor.SetExtendedStyle(dwStyle1); //设置扩展风格
 
-	m_listCtrlMonitor.InsertColumn(0, _T("No."), LVCFMT_LEFT, 0);
-	m_listCtrlMonitor.InsertColumn(1, _T("Step name"), LVCFMT_LEFT, 0);
-	m_listCtrlMonitor.InsertColumn(2, _T("Ar value(mc)"), LVCFMT_LEFT, 0);
-	m_listCtrlMonitor.InsertColumn(3, _T("Use"), LVCFMT_LEFT, 0);
+
+	std::vector<CString> strl(6);
+
+	strl[0]=_T("No.");
+	strl[1]=_T("Step No.");
+	strl[2]=_T("Step name");
+	strl[3]=_T("Cycle No.");
+	strl[4]=_T("Ar value(mc)");
+	strl[5]=_T("Use");
+
+	for(size_t i=0;i<strl.size();i++){
+		m_listCtrlMonitor.InsertColumn(i, strl[i], LVCFMT_LEFT, 0);
+	}
 
 	if ( !m_listCtrlMonitor.GetSafeHwnd() )
 	{
@@ -100,23 +110,23 @@ int COutputWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	/////////////////////////////////////////////////////////////////////////
 
 	// Attach list windows to tab:
-	bNameValid = strTabName.LoadString(IDS_BUILD_TAB);
-	ASSERT(bNameValid);
-	m_wndTabs.AddTab(&m_wndOutputBuild, strTabName, (UINT)0);
-	bNameValid = strTabName.LoadString(IDS_DEBUG_TAB);
-	ASSERT(bNameValid);
-	m_wndTabs.AddTab(&m_wndOutputDebug, strTabName, (UINT)1);
-	bNameValid = strTabName.LoadString(IDS_FIND_TAB);
-	ASSERT(bNameValid);
-	m_wndTabs.AddTab(&m_wndOutputFind, strTabName, (UINT)2);
+	//bNameValid = strTabName.LoadString(IDS_BUILD_TAB);
+	//ASSERT(bNameValid);
+	//m_wndTabs.AddTab(&m_wndOutputBuild, strTabName, (UINT)0);
+	//bNameValid = strTabName.LoadString(IDS_DEBUG_TAB);
+	//ASSERT(bNameValid);
+	//m_wndTabs.AddTab(&m_wndOutputDebug, strTabName, (UINT)1);
+	//bNameValid = strTabName.LoadString(IDS_FIND_TAB);
+	//ASSERT(bNameValid);
+	//m_wndTabs.AddTab(&m_wndOutputFind, strTabName, (UINT)2);
 
 
 
 
 	// Fill output tabs with some dummy text (nothing magic here)
-	FillBuildWindow();
-	FillDebugWindow();
-	FillFindWindow();
+	//FillBuildWindow();
+	//FillDebugWindow();
+	//FillFindWindow();
 
 	return 0;
 }
@@ -129,11 +139,19 @@ void COutputWnd::OnSize(UINT nType, int cx, int cy)
 	m_wndTabs.SetWindowPos (NULL, -1, -1, cx, cy, SWP_NOMOVE | SWP_NOACTIVATE | SWP_NOZORDER);
 
 	//resize list bar
-	//CRect rect;
-	//this->GetClientRect(&rect);
-	int nColInterval = (cx-3)/4;
-	for(int i=0;i<4;i++){
-		m_listCtrlMonitor.SetColumnWidth(i,nColInterval);
+	//CRect rt1,rt2;
+	//this->GetTabArea(rt1,rt2);
+	int nCol=m_listCtrlMonitor.GetHeaderCtrl()->GetItemCount();
+
+	//int nColInterval = (cx-5)/nCol;
+	//std::vector<int> nColInterval(nCol,rt2.Width()/10);
+	//nColInterval[2]=rt2.Width()-(nCol-1)*(rt2.Width()/10);
+
+	std::vector<int> nColInterval(nCol,cx/10);
+	nColInterval[2]=cx-nCol-(nCol-1)*(cx/10);
+
+	for(int i=0;i<nCol;i++){
+		m_listCtrlMonitor.SetColumnWidth(i,nColInterval[i]);
 	}
 }
 
@@ -179,9 +197,9 @@ void COutputWnd::FillFindWindow()
 
 void COutputWnd::UpdateFonts()
 {
-	m_wndOutputBuild.SetFont(&afxGlobalData.fontRegular);
-	m_wndOutputDebug.SetFont(&afxGlobalData.fontRegular);
-	m_wndOutputFind.SetFont(&afxGlobalData.fontRegular);
+	//m_wndOutputBuild.SetFont(&afxGlobalData.fontRegular);
+	//m_wndOutputDebug.SetFont(&afxGlobalData.fontRegular);
+	//m_wndOutputFind.SetFont(&afxGlobalData.fontRegular);
 
 	m_listCtrlMonitor.SetFont(&afxGlobalData.fontRegular);
 }
@@ -231,9 +249,11 @@ BOOL COutputWnd::InsertListCtrl(int StepNo, LPCTSTR StepName, double ArValue, bo
 	str3=( Use? (L"yes"):(L"no") );
 
 	m_listCtrlMonitor.InsertItem(StepNo,str0);
-	m_listCtrlMonitor.SetItemText(StepNo,1,StepName);
-	m_listCtrlMonitor.SetItemText(StepNo,2,str2);
-	m_listCtrlMonitor.SetItemText(StepNo,3,str3);
+	m_listCtrlMonitor.SetItemText(StepNo,2,StepName);
+	m_listCtrlMonitor.SetItemText(StepNo,1,str0);
+	m_listCtrlMonitor.SetItemText(StepNo,3,str0);
+	m_listCtrlMonitor.SetItemText(StepNo,4,str2);
+	m_listCtrlMonitor.SetItemText(StepNo,5,str3);
 
 	return TRUE;
 

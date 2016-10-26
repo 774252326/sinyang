@@ -33,6 +33,11 @@ public:
 	CString xlabel,ylabel;
 	std::vector< std::vector<double> > xlist;
 	std::vector< std::vector<double> > ylist;
+
+	std::vector<double> xll;
+	std::vector<double> yll;
+	std::vector<DWORD> ll;
+
 	std::vector<COLORREF> clist;
 
 	void genPointToPlot(const std::vector<double> &px, const std::vector<double> &py, const CRect &rect, std::vector<CPoint> &pointlist);
@@ -42,6 +47,7 @@ public:
 	afx_msg void OnPaint();
 
 	void plot2d(const std::vector<double> &x, const std::vector<double> &y, const CString &xla, const CString &yla );
+	void plot2d(const std::vector<double> &x, const std::vector<double> &y, const CString &xla, const CString &yla, const CString &title );
 
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	CPoint m_mouseDownPoint;
@@ -53,6 +59,10 @@ public:
 
 
 	CRect DrawLegend(CRect rect, CDC* pDC);
+	CRect DrawLegend1(CRect rect, CDC* pDC);
+	void DrawPoint(CRect rect, CDC * pDC, int d);
+	void DrawCurve(CRect rect, CDC* pDC);
+	virtual void OnInitialUpdate();
 };
 
 
