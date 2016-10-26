@@ -13,7 +13,9 @@ int intv=20;
 size_t n1=800;
 
 
-void WaitSecond(ProcessState &waitflg, int second=-1)
+void WaitSecond(ProcessState &waitflg
+	,int second=0
+	)
 {
 	int interval=1000;
 	while( waitflg!=running && second--!=0 ){
@@ -62,17 +64,18 @@ void RefreshData(const CString &currentFile, const std::vector<sapitem> &saplist
 	dt1.stepName.Format(L"Solution Addition %d",dataB.stepCount);
 }
 
-void InitialData(const CString &currentFile, double vmsvol, const CVPara &p2, pcct &dt1, pcctB &dataB)
+void InitialData(const CString &currentFile
+	, double vmsvol
+	, const CVPara &p2
+	, pcct &dt1
+	, pcctB &dataB
+	)
 {
-	//pcct dt1;
 	dt1.clear();
 	dt1.readFile(currentFile);
 	dt1.TomA();
 	dt1.addVolume=vmsvol;
 	dt1.stepName=L"VMS";
-
-	//pcct *data=&dt1;
-	//pcctB dataB;
 
 	dataB.clear();
 	dataB.xmax=p2.highelimit;
@@ -141,7 +144,16 @@ bool calVsupp(PlotData & pdat, int idx, double evoR, double &Vsupp)
 
 }
 
-void OneStep( COutputWnd * ow, dlg1 * leftp, pcct * data, pcctB &dataB, bool bShowRight=true )
+
+
+
+
+void OneStep( COutputWnd * ow
+	, dlg1 * leftp
+	, pcct * data
+	, pcctB &dataB
+	, bool bShowRight=true
+	)
 {
 	int nflg;
 
@@ -220,15 +232,17 @@ void OneStep( COutputWnd * ow, dlg1 * leftp, pcct * data, pcctB &dataB, bool bSh
 	}
 }
 
-CString Output1(PlotData & pdat, double evalR, double Sconc, double vmsvol)
+CString Output1(PlotData & pdat
+	, double evalR
+	, double Sconc
+	, double vmsvol
+	)
 {
-	//dlg1 *plotr=( (dlg1*)m_wndSplitter.GetPane(0,1) );
 	double vsupp;
 	if(calVsupp(pdat,0,evalR,vsupp)){
 		double z=Sconc/(1+vmsvol/vsupp);
 		CString str;
 		str.Format(L" Vsupp=%g ml @ Ar/Ar0=%g, Z=%g ml/L",vsupp, evalR, z);
-		//pdat.SaveFile(L"figbr.txt");
 		return str;
 	}
 	else{
@@ -238,7 +252,12 @@ CString Output1(PlotData & pdat, double evalR, double Sconc, double vmsvol)
 	}
 }
 
-CString Output2(PlotData & pdat, double evaluationratio, int calibrationfactortype, double calibrationfactor, double vmsvol)
+CString Output2(PlotData & pdat
+	, double evaluationratio
+	, int calibrationfactortype
+	, double calibrationfactor
+	, double vmsvol
+	)
 {
 	CString strTemp;
 	double Vsuppbath;
@@ -258,7 +277,7 @@ CString Output2(PlotData & pdat, double evaluationratio, int calibrationfactorty
 			ANPara p1t;
 			CVPara p2t;
 			SAPara p3t;
-			readini(p1t,p2t,p3t,L"../setupB.txt");
+			readini(p1t,p2t,p3t,L"data/setupB.stp.txt");
 			Sconc=p3t.saplist.back().Sconc;
 			vmsvol=p3t.vmsvol;
 			evor=p1t.evaluationratio;
@@ -317,7 +336,53 @@ CString Output2(PlotData & pdat, double evaluationratio, int calibrationfactorty
 	return strTemp;
 }
 
-CString Output4(PlotData & pdat, dlg1 *p1, double vmsvol, double Avol)
+CString Output3(PlotData & pdat
+	, dlg1 *p1
+	, double slopeThreshold=-0.05
+	)
+{
+	std::vector<double> x;
+	std::vector<double> y;
+
+	pdat.GetDatai(0,x,y);
+
+	double y0=y.front();
+	//for(size_t i=0;i<y.size();i++){
+	//	y[i]/=y0;
+	//}
+
+	std::vector<double> c1(4,0);
+	std::vector< std::vector<double> > c(x.size()-1,c1);
+	smspl(x,y,1.0,c);
+
+	for(size_t i=0;i<c.size();i++){
+		c[i][0]*=3;
+		c[i][1]*=2;
+		c[i].pop_back();
+	}
+
+	std::vector<double> r;
+	int ni=SolveQuadraticPP(x,c,slopeThreshold*y0,r);	
+
+	if(ni>0){
+		CString str;
+		str.Format(L" intercept value=%g ml/L",r.back());
+		return str;
+	}
+	else{
+		CString str;
+		str.Format(L" invalid intercept value");
+		return str;
+	}
+
+}
+
+
+
+CString Output4(PlotData & pdat, dlg1 *p1
+	, double vmsvol
+	, double Avol
+	)
 {
 	std::vector<double> x;
 	std::vector<double> y;
@@ -374,7 +439,12 @@ CString Output4(PlotData & pdat, dlg1 *p1, double vmsvol, double Avol)
 	return str;
 }
 
-CString Output6(PlotData & pdat, dlg1 *p1, double Q, double totalVol, double Lvol)
+CString Output6(PlotData & pdat
+	, dlg1 *p1
+	, double Q
+	, double totalVol
+	, double Lvol
+	)
 {
 	CString str;	
 	double LConc;
@@ -411,7 +481,7 @@ CString Output6(PlotData & pdat, dlg1 *p1, double Q, double totalVol, double Lvo
 
 
 
-UINT RCCS(dlg1 *leftp,
+UINT DTR(dlg1 *leftp,
 	dlg1 *rightp,
 	CMFCCaptionBarA *cba,
 	COutputWnd *outw,
@@ -420,14 +490,7 @@ UINT RCCS(dlg1 *leftp,
 	const CVPara &p2,
 	const SAPara &p3)
 {
-	//dlg1 *leftp=((mypara*)pParam)->leftp;
-	//dlg1 *rightp=((mypara*)pParam)->rightp;
-	//CMainFrame *mf=((mypara*)pParam)->mf;
-	//CMFCCaptionBarA *cba=((mypara*)pParam)->cba;
 
-	//COutputWnd *outw=((mypara*)pParam)->outw;
-
-	//delete pParam;
 	//////////////////////////////load data//////////////////////////////////////
 	std::vector<CString> filelist;
 	LoadFileList(L"data\\b.txt",filelist);
@@ -531,7 +594,6 @@ UINT RCCS(dlg1 *leftp,
 
 	//ReleaseSemaphore(semaphoreWrite.m_hObject,1,NULL);
 
-	rightp->pd.SaveFile(L"figbr.txt");
 
 	TRACE(L"rccs ends\n");
 
@@ -542,7 +604,7 @@ UINT RCCS(dlg1 *leftp,
 }
 
 
-UINT ASDTM(dlg1 *leftp,
+UINT DTA(dlg1 *leftp,
 	dlg1 *rightp,
 	CMFCCaptionBarA *cba,
 	COutputWnd *outw,
@@ -663,7 +725,6 @@ UINT ASDTM(dlg1 *leftp,
 	::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)strTemp.GetBuffer(),NULL);
 
 
-	rightp->pd.SaveFile(L"figcr.txt");
 	TRACE(L"asdtm ends\n");
 
 	pst=stop;
@@ -674,7 +735,7 @@ UINT ASDTM(dlg1 *leftp,
 
 
 
-UINT RIVLATM(dlg1 *leftp,
+UINT LATR(dlg1 *leftp,
 	dlg1 *rightp,
 	CMFCCaptionBarA *cba,
 	COutputWnd *outw,
@@ -782,11 +843,12 @@ UINT RIVLATM(dlg1 *leftp,
 	filelist.erase(filelist.begin());
 
 	CString str;
-	str.Format(L" intercept value %g ml/L", Aml/dataB.totalVolume);
+	//str.Format(L" intercept value %g ml/L", Aml/dataB.totalVolume);
+
+	str=Output3(rightp->pd,rightp);
 
 	::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)str.GetBuffer(),NULL);
 
-	rightp->pd.SaveFile(L"figdr.txt");
 	TRACE(L"rivlatm ends\n");
 
 	pst=stop;
@@ -794,7 +856,7 @@ UINT RIVLATM(dlg1 *leftp,
 	return 0;
 }
 
-UINT AALATM(dlg1 *leftp,
+UINT LATA(dlg1 *leftp,
 	dlg1 *rightp,
 	CMFCCaptionBarA *cba,
 	COutputWnd *outw,
@@ -907,7 +969,7 @@ UINT AALATM(dlg1 *leftp,
 	strTemp=Output4(rightp->pd,rightp,p3.vmsvol,p3.saplist[1].volconc);
 	::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)strTemp.GetBuffer(),NULL);
 
-	rightp->pd.SaveFile(L"figer.txt");
+
 	TRACE(L"aalatm ends\n");
 
 	pst=stop;
@@ -915,7 +977,7 @@ UINT AALATM(dlg1 *leftp,
 	return 0;
 }
 
-UINT CRCL(dlg1 *leftp,
+UINT RCR(dlg1 *leftp,
 	dlg1 *rightp,
 	CMFCCaptionBarA *cba,
 	COutputWnd *outw,
@@ -1046,18 +1108,11 @@ UINT CRCL(dlg1 *leftp,
 
 	filelist.erase(filelist.begin());
 
-	//CString strTemp;
-	//strTemp=Output1(rightp->pd,
-	//	p1.evaluationratio,
-	//	p3.saplist.front().Sconc,
-	//	p3.vmsvol);
-
-	//::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)strTemp.GetBuffer(),NULL);
 	::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,NULL,NULL);
 
 	//ReleaseSemaphore(semaphoreWrite.m_hObject,1,NULL);
 
-	rightp->pd.SaveFile(L"figfr.txt");
+
 
 	TRACE(L"crcl ends\n");
 
@@ -1066,7 +1121,7 @@ UINT CRCL(dlg1 *leftp,
 	return 0;
 }
 
-UINT ALRCM(dlg1 *leftp,
+UINT RCA(dlg1 *leftp,
 	dlg1 *rightp,
 	CMFCCaptionBarA *cba,
 	COutputWnd *outw,
@@ -1078,7 +1133,7 @@ UINT ALRCM(dlg1 *leftp,
 
 	//////////////////////////////load data//////////////////////////////////////
 	std::vector<CString> filelist;
-	LoadFileList(L"data\\h.txt",filelist);
+	LoadFileList(L"data\\g.txt",filelist);
 	if(filelist.empty()) return 0;
 
 	pcct dt1;
@@ -1166,18 +1221,13 @@ UINT ALRCM(dlg1 *leftp,
 
 	::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)strTemp.GetBuffer(),NULL);
 
+
+
 	pst=stop;
 
 
 	return 0;
 }
-
-
-
-
-
-
-
 
 
 
@@ -1213,22 +1263,46 @@ UINT PROCESS(LPVOID pParam)
 
 	switch(p1.analysistype){
 	case 1:
-		RCCS(leftp,rightp,cba,outw,*pst,p1,p2,p3);
+		DTR(leftp,rightp,cba,outw,*pst,p1,p2,p3);
+
+		leftp->pd.ExtractLastCycle(p2.highelimit,L"data\\bl.fig.txt");
+		rightp->pd.SaveFile(L"data\\br.fig.txt");
+
 		return 0;
 	case 2:
-		ASDTM(leftp,rightp,cba,outw,*pst,p1,p2,p3);
+		DTA(leftp,rightp,cba,outw,*pst,p1,p2,p3);
+
+				leftp->pd.ExtractLastCycle(p2.highelimit,L"data\\cl.fig.txt");
+		rightp->pd.SaveFile(L"data\\cr.fig.txt");
+
 		return 0;
 	case 3:
-		RIVLATM(leftp,rightp,cba,outw,*pst,p1,p2,p3);
+		LATR(leftp,rightp,cba,outw,*pst,p1,p2,p3);
+
+				leftp->pd.ExtractLastCycle(p2.highelimit,L"data\\dl.fig.txt");
+		rightp->pd.SaveFile(L"data\\dr.fig.txt");
+
 		return 0;
 	case 4:
-		AALATM(leftp,rightp,cba,outw,*pst,p1,p2,p3);
+		LATA(leftp,rightp,cba,outw,*pst,p1,p2,p3);
+
+				leftp->pd.ExtractLastCycle(p2.highelimit,L"data\\el.fig.txt");
+		rightp->pd.SaveFile(L"data\\er.fig.txt");
+
 		return 0;
 	case 5:
-		CRCL(leftp,rightp,cba,outw,*pst,p1,p2,p3);
+		RCR(leftp,rightp,cba,outw,*pst,p1,p2,p3);
+
+				leftp->pd.ExtractLastCycle(p2.highelimit,L"data\\fl.fig.txt");
+		rightp->pd.SaveFile(L"data\\fr.fig.txt");
+
 		return 0;
 	case 6:
-		ALRCM(leftp,rightp,cba,outw,*pst,p1,p2,p3);
+		RCA(leftp,rightp,cba,outw,*pst,p1,p2,p3);
+
+				leftp->pd.ExtractLastCycle(p2.highelimit,L"data\\gl.fig.txt");
+		rightp->pd.SaveFile(L"data\\gr.fig.txt");
+
 		return 0;
 	case 7:
 

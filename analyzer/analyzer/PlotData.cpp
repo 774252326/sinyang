@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include "analyzer.h"
 #include "PlotData.h"
-
+#include <algorithm>
 
 // PlotData
 
@@ -310,4 +310,77 @@ void PlotData::GetDatai(size_t index, std::vector<double> & x, std::vector<doubl
 
 	x.assign(xll.begin()+starti, xll.begin()+endi);
 	y.assign(yll.begin()+starti, yll.begin()+endi);
+}
+
+
+void PlotData::ExtractLastCycle(double xmax, CString fp)
+{
+
+	PlotData p1;
+
+	p1.xlabel=xlabel;
+	p1.ylabel=ylabel;
+	p1.ps.assign(ps.begin(),ps.end());
+
+	std::vector<double> xseg(1,xmax);
+
+
+	for(size_t i=0;i<ll.size();i++){
+		std::vector<double> x;
+		std::vector<double> y;
+		GetDatai(i,x,y);
+
+		std::vector<double>::iterator itb;
+		itb = std::find_end (x.begin(), x.end(), xseg.begin(), xseg.end());
+
+		if(itb!=x.end()){
+
+			size_t ib=itb-x.begin();
+			size_t tailLen=x.end()-itb;
+
+			std::vector<double>::iterator ita;
+			ita = std::find_end (x.begin(), itb, xseg.begin(), xseg.end());
+			if(ita!=itb){
+				size_t ia=ita-x.begin();
+
+				size_t cycleLen=ib-ia;
+
+				if(tailLen>=cycleLen){
+					p1.xll.resize(p1.xll.size()+tailLen);
+					std::copy_backward(x.begin()+ib,x.end(),p1.xll.end());
+					p1.yll.resize(p1.yll.size()+tailLen);
+					std::copy_backward(y.begin()+ib,y.end(),p1.yll.end());
+					p1.ll.push_back(tailLen);
+				}
+				else{
+					p1.xll.resize(p1.xll.size()+cycleLen);
+					std::copy_backward(x.begin()+ia,x.begin()+ib,p1.xll.end());
+					p1.yll.resize(p1.yll.size()+cycleLen);
+					std::copy_backward(y.begin()+ia,y.begin()+ib,p1.yll.end());
+					p1.ll.push_back(cycleLen);
+				}
+			}
+			else{
+				p1.xll.resize(p1.xll.size()+tailLen);
+				std::copy_backward(x.begin()+ib,x.end(),p1.xll.end());
+				p1.yll.resize(p1.yll.size()+tailLen);
+				std::copy_backward(y.begin()+ib,y.end(),p1.yll.end());
+				p1.ll.push_back(tailLen);
+			}
+
+		}
+		else{
+			p1.xll.resize(p1.xll.size()+x.size());
+			std::copy_backward(x.begin(),x.end(),p1.xll.end());
+			p1.yll.resize(p1.yll.size()+y.size());
+			std::copy_backward(y.begin(),y.end(),p1.yll.end());
+			p1.ll.push_back(x.size());
+		}
+	}
+
+
+	//return PlotData();
+	//return p1;
+
+	p1.SaveFile(fp);
 }

@@ -150,6 +150,8 @@ void dlg1::drawRectangle(const CRect &rect, CDC * pDC, COLORREF insidecolor, COL
 
 	// draw a thick black rectangle filled with blue
 
+	pDC->SetBkMode(TRANSPARENT);
+
 	pDC->Rectangle(rect);
 
 	// put back the old objects
@@ -160,277 +162,277 @@ void dlg1::drawRectangle(const CRect &rect, CDC * pDC, COLORREF insidecolor, COL
 }
 
 
-
-CRect dlg1::DrawXYAxis(CRect rect, CDC* pdc)
-{
-	//if(rect.IsRectEmpty()){
-
-	//	return false;
-	//}
-	//else{
-
-	//CPoint ptOffset1(rect.left,rect.top);//y
-	//CPoint ptOffset2(rect.left,rect.bottom);//origin
-	//CPoint ptOffset3(rect.right,rect.top);
-	//CPoint ptOffset4(rect.right,rect.bottom);//x
-	CFont font;
-	CFont *pOldFont;
-	CString str;
-	CPen * pOldPen;
-	CSize sz,szt;
-	CRect newrect=rect;
-	CPoint textLocate;
-	CPen pen;
-	int metricH=fs.metricSize;
-	int labelH=fs.labelSize;
-	int lc=5;
-	int lcs=lc-2;
-	double gridi,XMAX,XMIN,YMAX,YMIN;
-	int tmp;
-	COLORREF oc;
-	CRect xmrect(rect.left,rect.bottom+lc,rect.left,rect.bottom+lc);
-	CRect ymrect(rect.left-lc,rect.bottom,rect.left-lc,rect.bottom);
-	XMAX=xmax;
-	XMIN=xmin;
-	YMAX=ymax;
-	YMIN=ymin;
-
-	CString fontName=L"Arial";
-
-	COLORREF bkgndC=fs.bkgndC;
-	COLORREF axisC=fs.gridC;
-	COLORREF labelC=fs.labelC;
-
-	drawRectangle(rect,pdc,fs.bkgndC,fs.borderC);
-
-	////////////////////////////////////////////////////////////////////
-
-
-	//draw x axis
-
-	pen.CreatePen(PS_SOLID, 1, axisC);
-	pOldPen=pdc->SelectObject(&pen);
-	//pdc->MoveTo(ptOffset2);
-	//pdc->LineTo(ptOffset4);
-
-	//draw x metric
-
-
-	font.CreateFont(
-		metricH,                        // nHeight
-		0,                         // nWidth
-		0,                         // nEscapement
-		0,                         // nOrientation
-		FW_NORMAL,                 // nWeight
-		FALSE,                     // bItalic
-		FALSE,                     // bUnderline
-		0,                         // cStrikeOut
-		ANSI_CHARSET,              // nCharSet
-		OUT_DEFAULT_PRECIS,        // nOutPrecision
-		CLIP_DEFAULT_PRECIS,       // nClipPrecision
-		DEFAULT_QUALITY,           // nQuality
-		DEFAULT_PITCH | FF_SWISS,  // nPitchAndFamily
-		fontName);                 // lpszFacename
-
-	pOldFont=pdc->SelectObject(&font);
-
-	//double resox=pow(10.0,calgrid(XMAX-XMIN));
-	oc=pdc->SetTextColor(fs.metricC);
-
-	double resox=calreso(XMAX-XMIN);
-
-	for(gridi=resox*ceil(XMIN/resox);gridi<=XMAX;gridi+=resox){
-
-		tmp=xRescale(gridi,XMIN,XMAX,rect.left,rect.right);
-
-		pdc->MoveTo(tmp,rect.bottom);
-		pdc->LineTo(tmp,rect.top);
-
-
-		if(fs.metricSize>=0){
-			if(gridi<resox && -gridi<resox)
-				gridi=0;
-
-			str.Format(L"%g",gridi);
-			sz=pdc->GetTextExtent(str);
-
-
-			textLocate.x=tmp-sz.cx/2;
-			textLocate.y=rect.bottom+lc;
-			if(xmrect.right<textLocate.x){
-				if(textLocate.x+sz.cx<rect.right){
-					pdc->TextOutW(textLocate.x,textLocate.y,str);
-					xmrect.right=textLocate.x+sz.cx;
-					xmrect.bottom=textLocate.y+sz.cy;
-
-					pdc->MoveTo(tmp,rect.bottom);
-					pdc->LineTo(tmp,rect.bottom+lc);
-
-				}
-			}
-			else{
-				pdc->MoveTo(tmp,rect.bottom);
-				pdc->LineTo(tmp,rect.bottom+lcs);
-			}
-		}
-
-	}
-	newrect.bottom+=lc+sz.cy;
-	pdc->SelectObject(pOldFont);
-	font.DeleteObject();
-	pdc->SetTextColor(oc);
-	pdc->SelectObject(pOldPen);
-	pen.DeleteObject();
-
-	if(labelH>=0){
-		//draw x axis label
-		font.CreateFont(
-			labelH,                        // nHeight
-			0,                         // nWidth
-			0,                         // nEscapement
-			0,                         // nOrientation
-			FW_NORMAL,                 // nWeight
-			FALSE,                     // bItalic
-			FALSE,                     // bUnderline
-			0,                         // cStrikeOut
-			ANSI_CHARSET,              // nCharSet
-			OUT_DEFAULT_PRECIS,        // nOutPrecision
-			CLIP_DEFAULT_PRECIS,       // nClipPrecision
-			DEFAULT_QUALITY,           // nQuality
-			DEFAULT_PITCH | FF_SWISS,  // nPitchAndFamily
-			fontName);                 // lpszFacename
-		oc=pdc->SetTextColor(labelC);
-		//font.CreatePointFont(200,L"MS Gothic",NULL);
-		//str.Format(L"time(s)");
-		str.Format(pd.xlabel);
-		//str=dtlist.back().label[0];
-		pOldFont=pdc->SelectObject(&font);
-		sz=pdc->GetTextExtent(str);
-		//pdc->SetTextAlign(TA_UPDATECP);
-		pdc->TextOutW(rect.CenterPoint().x-(sz.cx/2),newrect.bottom,str);
-		pdc->SelectObject(pOldFont);
-		font.DeleteObject();
-		pdc->SetTextColor(oc);
-		//TRACE("%d,",sz.cy);
-		newrect.bottom+=sz.cy;
-	}
-	///////////////////////////////////////////////////////
-
-
-
-
-	//draw y axis
-
-	pen.CreatePen(PS_SOLID, 1, axisC);
-	pOldPen=pdc->SelectObject(&pen);
-	//pdc->MoveTo(ptOffset2);
-	//pdc->LineTo(ptOffset1);
-
-
-
-	font.CreateFont(
-		metricH,                        // nHeight
-		0,                         // nWidth
-		900,                         // nEscapement
-		0,                         // nOrientation
-		FW_NORMAL,                 // nWeight
-		FALSE,                     // bItalic
-		FALSE,                     // bUnderline
-		0,                         // cStrikeOut
-		ANSI_CHARSET,              // nCharSet
-		OUT_DEFAULT_PRECIS,        // nOutPrecision
-		CLIP_DEFAULT_PRECIS,       // nClipPrecision
-		DEFAULT_QUALITY,           // nQuality
-		DEFAULT_PITCH | FF_SWISS,  // nPitchAndFamily
-		fontName);                 // lpszFacename
-	oc=pdc->SetTextColor(fs.metricC);
-
-	//draw y metric
-	double resoy=calreso(YMAX-YMIN);
-	//double resoy=pow(10.0,calgrid(YMAX-YMIN));
-	pOldFont=pdc->SelectObject(&font);
-	for(gridi=resoy*ceil(YMIN/resoy);gridi<=YMAX;gridi+=resoy){
-		tmp=xRescale(gridi,YMIN,YMAX,rect.bottom,rect.top);
-		pdc->MoveTo(rect.left,tmp);
-		pdc->LineTo(rect.left-lcs,tmp);
-
-		pdc->MoveTo(rect.left,tmp);
-		pdc->LineTo(rect.right,tmp);
-
-		if(gridi<resoy && -gridi<resoy)
-			gridi=0;
-
-		str.Format(L"%g",gridi);
-		sz=pdc->GetTextExtent(str);
-
-		textLocate.x=rect.left-lc-sz.cy;
-		textLocate.y=tmp+sz.cx/2;
-		if(ymrect.top>textLocate.y){
-			if(textLocate.y-sz.cx>rect.top){
-				pdc->TextOutW(textLocate.x,textLocate.y,str);
-				ymrect.left=textLocate.x;
-				ymrect.top=textLocate.y-sz.cx;
-
-				pdc->MoveTo(rect.left,tmp);
-				pdc->LineTo(rect.left-lc,tmp);
-
-
-			}
-		}
-
-
-	}
-	newrect.left-=lc+sz.cy;
-	pdc->SelectObject(pOldFont);
-	font.DeleteObject();
-	pdc->SetTextColor(oc);
-	pdc->SelectObject(pOldPen);
-	pen.DeleteObject();
-
-
-	if(labelH>=0){
-		//draw y axis label
-		font.CreateFont(
-			labelH,                        // nHeight
-			0,                         // nWidth
-			900,                         // nEscapement
-			0,                         // nOrientation
-			FW_NORMAL,                 // nWeight
-			FALSE,                     // bItalic
-			FALSE,                     // bUnderline
-			0,                         // cStrikeOut
-			ANSI_CHARSET,              // nCharSet
-			OUT_DEFAULT_PRECIS,        // nOutPrecision
-			CLIP_DEFAULT_PRECIS,       // nClipPrecision
-			DEFAULT_QUALITY,           // nQuality
-			DEFAULT_PITCH | FF_SWISS,  // nPitchAndFamily
-			fontName);                 // lpszFacename
-
-		oc=pdc->SetTextColor(labelC);
-
-		//str.Format(L"current(A)");
-		str.Format(pd.ylabel);
-		//str=dtlist.back().label[1];
-		pOldFont=pdc->SelectObject(&font);
-		sz=pdc->GetTextExtent(str);
-		pdc->TextOutW(newrect.left-sz.cy,rect.CenterPoint().y+(sz.cx/2),str);
-		pdc->SelectObject(pOldFont);
-		font.DeleteObject();
-		//TRACE("%d,",sz.cy);
-		pdc->SetTextColor(oc);
-		newrect.left-=sz.cy;
-
-	}
-
-	///////////////////////////////////////////////////////////////////////
-
-
-
-
-	//return true;
-	return newrect;
-	//}
-}
+//not use
+//CRect dlg1::DrawXYAxis(CRect rect, CDC* pdc)
+//{
+//	//if(rect.IsRectEmpty()){
+//
+//	//	return false;
+//	//}
+//	//else{
+//
+//	//CPoint ptOffset1(rect.left,rect.top);//y
+//	//CPoint ptOffset2(rect.left,rect.bottom);//origin
+//	//CPoint ptOffset3(rect.right,rect.top);
+//	//CPoint ptOffset4(rect.right,rect.bottom);//x
+//	CFont font;
+//	CFont *pOldFont;
+//	CString str;
+//	CPen * pOldPen;
+//	CSize sz,szt;
+//	CRect newrect=rect;
+//	CPoint textLocate;
+//	CPen pen;
+//	int metricH=fs.metricSize;
+//	int labelH=fs.labelSize;
+//	int lc=5;
+//	int lcs=lc-2;
+//	double gridi,XMAX,XMIN,YMAX,YMIN;
+//	int tmp;
+//	COLORREF oc;
+//	CRect xmrect(rect.left,rect.bottom+lc,rect.left,rect.bottom+lc);
+//	CRect ymrect(rect.left-lc,rect.bottom,rect.left-lc,rect.bottom);
+//	XMAX=xmax;
+//	XMIN=xmin;
+//	YMAX=ymax;
+//	YMIN=ymin;
+//
+//	CString fontName=L"Arial";
+//
+//	COLORREF bkgndC=fs.bkgndC;
+//	COLORREF axisC=fs.gridC;
+//	COLORREF labelC=fs.labelC;
+//
+//	drawRectangle(rect,pdc,fs.bkgndC,fs.borderC);
+//
+//	////////////////////////////////////////////////////////////////////
+//
+//
+//	//draw x axis
+//
+//	pen.CreatePen(PS_SOLID, 1, axisC);
+//	pOldPen=pdc->SelectObject(&pen);
+//	//pdc->MoveTo(ptOffset2);
+//	//pdc->LineTo(ptOffset4);
+//
+//	//draw x metric
+//
+//
+//	font.CreateFont(
+//		metricH,                        // nHeight
+//		0,                         // nWidth
+//		0,                         // nEscapement
+//		0,                         // nOrientation
+//		FW_NORMAL,                 // nWeight
+//		FALSE,                     // bItalic
+//		FALSE,                     // bUnderline
+//		0,                         // cStrikeOut
+//		ANSI_CHARSET,              // nCharSet
+//		OUT_DEFAULT_PRECIS,        // nOutPrecision
+//		CLIP_DEFAULT_PRECIS,       // nClipPrecision
+//		DEFAULT_QUALITY,           // nQuality
+//		DEFAULT_PITCH | FF_SWISS,  // nPitchAndFamily
+//		fontName);                 // lpszFacename
+//
+//	pOldFont=pdc->SelectObject(&font);
+//
+//	//double resox=pow(10.0,calgrid(XMAX-XMIN));
+//	oc=pdc->SetTextColor(fs.metricC);
+//
+//	double resox=calreso(XMAX-XMIN);
+//
+//	for(gridi=resox*ceil(XMIN/resox);gridi<=XMAX;gridi+=resox){
+//
+//		tmp=xRescale(gridi,XMIN,XMAX,rect.left,rect.right);
+//
+//		pdc->MoveTo(tmp,rect.bottom);
+//		pdc->LineTo(tmp,rect.top);
+//
+//
+//		if(fs.metricSize>=0){
+//			if(gridi<resox && -gridi<resox)
+//				gridi=0;
+//
+//			str.Format(L"%g",gridi);
+//			sz=pdc->GetTextExtent(str);
+//
+//
+//			textLocate.x=tmp-sz.cx/2;
+//			textLocate.y=rect.bottom+lc;
+//			if(xmrect.right<textLocate.x){
+//				if(textLocate.x+sz.cx<rect.right){
+//					pdc->TextOutW(textLocate.x,textLocate.y,str);
+//					xmrect.right=textLocate.x+sz.cx;
+//					xmrect.bottom=textLocate.y+sz.cy;
+//
+//					pdc->MoveTo(tmp,rect.bottom);
+//					pdc->LineTo(tmp,rect.bottom+lc);
+//
+//				}
+//			}
+//			else{
+//				pdc->MoveTo(tmp,rect.bottom);
+//				pdc->LineTo(tmp,rect.bottom+lcs);
+//			}
+//		}
+//
+//	}
+//	newrect.bottom+=lc+sz.cy;
+//	pdc->SelectObject(pOldFont);
+//	font.DeleteObject();
+//	pdc->SetTextColor(oc);
+//	pdc->SelectObject(pOldPen);
+//	pen.DeleteObject();
+//
+//	if(labelH>=0){
+//		//draw x axis label
+//		font.CreateFont(
+//			labelH,                        // nHeight
+//			0,                         // nWidth
+//			0,                         // nEscapement
+//			0,                         // nOrientation
+//			FW_NORMAL,                 // nWeight
+//			FALSE,                     // bItalic
+//			FALSE,                     // bUnderline
+//			0,                         // cStrikeOut
+//			ANSI_CHARSET,              // nCharSet
+//			OUT_DEFAULT_PRECIS,        // nOutPrecision
+//			CLIP_DEFAULT_PRECIS,       // nClipPrecision
+//			DEFAULT_QUALITY,           // nQuality
+//			DEFAULT_PITCH | FF_SWISS,  // nPitchAndFamily
+//			fontName);                 // lpszFacename
+//		oc=pdc->SetTextColor(labelC);
+//		//font.CreatePointFont(200,L"MS Gothic",NULL);
+//		//str.Format(L"time(s)");
+//		str.Format(pd.xlabel);
+//		//str=dtlist.back().label[0];
+//		pOldFont=pdc->SelectObject(&font);
+//		sz=pdc->GetTextExtent(str);
+//		//pdc->SetTextAlign(TA_UPDATECP);
+//		pdc->TextOutW(rect.CenterPoint().x-(sz.cx/2),newrect.bottom,str);
+//		pdc->SelectObject(pOldFont);
+//		font.DeleteObject();
+//		pdc->SetTextColor(oc);
+//		//TRACE("%d,",sz.cy);
+//		newrect.bottom+=sz.cy;
+//	}
+//	///////////////////////////////////////////////////////
+//
+//
+//
+//
+//	//draw y axis
+//
+//	pen.CreatePen(PS_SOLID, 1, axisC);
+//	pOldPen=pdc->SelectObject(&pen);
+//	//pdc->MoveTo(ptOffset2);
+//	//pdc->LineTo(ptOffset1);
+//
+//
+//
+//	font.CreateFont(
+//		metricH,                        // nHeight
+//		0,                         // nWidth
+//		900,                         // nEscapement
+//		0,                         // nOrientation
+//		FW_NORMAL,                 // nWeight
+//		FALSE,                     // bItalic
+//		FALSE,                     // bUnderline
+//		0,                         // cStrikeOut
+//		ANSI_CHARSET,              // nCharSet
+//		OUT_DEFAULT_PRECIS,        // nOutPrecision
+//		CLIP_DEFAULT_PRECIS,       // nClipPrecision
+//		DEFAULT_QUALITY,           // nQuality
+//		DEFAULT_PITCH | FF_SWISS,  // nPitchAndFamily
+//		fontName);                 // lpszFacename
+//	oc=pdc->SetTextColor(fs.metricC);
+//
+//	//draw y metric
+//	double resoy=calreso(YMAX-YMIN);
+//	//double resoy=pow(10.0,calgrid(YMAX-YMIN));
+//	pOldFont=pdc->SelectObject(&font);
+//	for(gridi=resoy*ceil(YMIN/resoy);gridi<=YMAX;gridi+=resoy){
+//		tmp=xRescale(gridi,YMIN,YMAX,rect.bottom,rect.top);
+//		pdc->MoveTo(rect.left,tmp);
+//		pdc->LineTo(rect.left-lcs,tmp);
+//
+//		pdc->MoveTo(rect.left,tmp);
+//		pdc->LineTo(rect.right,tmp);
+//
+//		if(gridi<resoy && -gridi<resoy)
+//			gridi=0;
+//
+//		str.Format(L"%g",gridi);
+//		sz=pdc->GetTextExtent(str);
+//
+//		textLocate.x=rect.left-lc-sz.cy;
+//		textLocate.y=tmp+sz.cx/2;
+//		if(ymrect.top>textLocate.y){
+//			if(textLocate.y-sz.cx>rect.top){
+//				pdc->TextOutW(textLocate.x,textLocate.y,str);
+//				ymrect.left=textLocate.x;
+//				ymrect.top=textLocate.y-sz.cx;
+//
+//				pdc->MoveTo(rect.left,tmp);
+//				pdc->LineTo(rect.left-lc,tmp);
+//
+//
+//			}
+//		}
+//
+//
+//	}
+//	newrect.left-=lc+sz.cy;
+//	pdc->SelectObject(pOldFont);
+//	font.DeleteObject();
+//	pdc->SetTextColor(oc);
+//	pdc->SelectObject(pOldPen);
+//	pen.DeleteObject();
+//
+//
+//	if(labelH>=0){
+//		//draw y axis label
+//		font.CreateFont(
+//			labelH,                        // nHeight
+//			0,                         // nWidth
+//			900,                         // nEscapement
+//			0,                         // nOrientation
+//			FW_NORMAL,                 // nWeight
+//			FALSE,                     // bItalic
+//			FALSE,                     // bUnderline
+//			0,                         // cStrikeOut
+//			ANSI_CHARSET,              // nCharSet
+//			OUT_DEFAULT_PRECIS,        // nOutPrecision
+//			CLIP_DEFAULT_PRECIS,       // nClipPrecision
+//			DEFAULT_QUALITY,           // nQuality
+//			DEFAULT_PITCH | FF_SWISS,  // nPitchAndFamily
+//			fontName);                 // lpszFacename
+//
+//		oc=pdc->SetTextColor(labelC);
+//
+//		//str.Format(L"current(A)");
+//		str.Format(pd.ylabel);
+//		//str=dtlist.back().label[1];
+//		pOldFont=pdc->SelectObject(&font);
+//		sz=pdc->GetTextExtent(str);
+//		pdc->TextOutW(newrect.left-sz.cy,rect.CenterPoint().y+(sz.cx/2),str);
+//		pdc->SelectObject(pOldFont);
+//		font.DeleteObject();
+//		//TRACE("%d,",sz.cy);
+//		pdc->SetTextColor(oc);
+//		newrect.left-=sz.cy;
+//
+//	}
+//
+//	///////////////////////////////////////////////////////////////////////
+//
+//
+//
+//
+//	//return true;
+//	return newrect;
+//	//}
+//}
 
 
 
@@ -573,7 +575,7 @@ void dlg1::OnPaint()
 	dcMem.CreateCompatibleDC(&dc);               //依附窗口DC创建兼容内存DC
 	bmp.CreateCompatibleBitmap(&dc,rect.Width(),rect.Height());//创建兼容位图
 	dcMem.SelectObject(&bmp);                          //将位图选择进内存DC
-	dcMem.FillSolidRect(rect,dc.GetBkColor());//按原来背景填充客户区，不然会是黑色
+	dcMem.FillSolidRect(rect,fs.bkgndC);//按原来背景填充客户区，不然会是黑色
 
 	CRect plotrect;
 	GetPlotRect(plotrect);
@@ -581,6 +583,7 @@ void dlg1::OnPaint()
 	//if( !xlist.empty() && !ylist.empty() ){
 	if(!plotrect.IsRectEmpty() && !pd.ps.empty()){
 
+		//dcMem.SetBkColor(fs.bkgndC);
 		//DrawXYAxis(plotrect,&dcMem);
 		DrawXYAxis1(plotrect,&dcMem);
 
@@ -801,135 +804,135 @@ BOOL dlg1::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 	return CFormView::OnMouseWheel(nFlags, zDelta, pt);
 }
 
-
-CRect dlg1::DrawLegend(CRect rect, CDC* pDC)
-{
-
-
-	CFont font;
-	CFont *pOldFont;
-	CString str;
-	CPen * pOldPen;
-	CSize sz;
-	//CRect newrect=rect;
-
-	CSize rectsz(0,0);
-	CPen pen;
-	int metricH=15;
-	//int labelH=20;
-	int lc=20;
-	int gap=2;
-	CPoint textLocate(rect.right-gap,rect.top);
-	//int lcs=lc-2;
-	//double gridi,XMAX,XMIN,YMAX,YMIN;
-	int tmp;
-	COLORREF oc;
-	CString fontName=L"Arial";
-
-
-	font.CreateFont(
-		metricH,                        // nHeight
-		0,                         // nWidth
-		0,                         // nEscapement
-		0,                         // nOrientation
-		FW_NORMAL,                 // nWeight
-		FALSE,                     // bItalic
-		FALSE,                     // bUnderline
-		0,                         // cStrikeOut
-		ANSI_CHARSET,              // nCharSet
-		OUT_DEFAULT_PRECIS,        // nOutPrecision
-		CLIP_DEFAULT_PRECIS,       // nClipPrecision
-		DEFAULT_QUALITY,           // nQuality
-		DEFAULT_PITCH | FF_SWISS,  // nPitchAndFamily
-		fontName);                 // lpszFacename
-
-
-
-	pOldFont=pDC->SelectObject(&font);	
-
-
-	//pDC->SetBkColor(white);
-	//pDC->SetBkMode(TRANSPARENT);
-
-	for(size_t i=0;i<pd.ps.size();i++){
-
-		//pen.CreatePen(PS_SOLID, 1, clist[i]);
-		//pOldPen=pDC->SelectObject(&pen);
-		//oc=pDC->SetTextColor(clist[i]);
-
-		//oc=pDC->SetTextColor(black);
-		sz=pDC->GetTextExtent(pd.ps[i].name);
-
-		if(sz.cx>rectsz.cx)
-			rectsz.cx=sz.cx;
-
-		//pDC->TextOutW(textLocate.x-sz.cx,textLocate.y,names[i]);
-
-		//pDC->MoveTo(textLocate.x-sz.cx-gap,textLocate.y+sz.cy/2);
-		//pDC->LineTo(textLocate.x-sz.cx-lc,textLocate.y+sz.cy/2);
-		textLocate.y+=sz.cy;
-
-		//pDC->SelectObject(pOldPen);
-		//pen.DeleteObject();
-		//pDC->SetTextColor(oc);
-	}
-
-	//pDC->SelectObject(pOldFont);
-	//font.DeleteObject();
-
-
-	rectsz.cx+=lc;
-	//rectsz.cy=textLocate.y;
-
-
-	CRect legendrect(textLocate.x-rectsz.cx,rect.top,textLocate.x+1,textLocate.y);
-
-	//return CRect(textLocate.x-rectsz.cx,rect.top,textLocate.x,textLocate.y);
-
-	////////////////////////////////////////////////////////
-
-	drawRectangle(legendrect,pDC,white,black);
-
-
-	textLocate=legendrect.TopLeft();
-
-	pOldFont=pDC->SelectObject(&font);	
-
-
-	pDC->SetBkColor(white);
-	pDC->SetBkMode(TRANSPARENT);
-
-	for(size_t i=0;i<pd.ps.size();i++){
-
-		pen.CreatePen(PS_SOLID, 1, pd.ps[i].colour);
-		pOldPen=pDC->SelectObject(&pen);
-		//oc=pDC->SetTextColor(clist[i]);
-
-		oc=pDC->SetTextColor(black);
-		sz=pDC->GetTextExtent(pd.ps[i].name);
-
-		pDC->MoveTo(textLocate.x,textLocate.y+sz.cy/2);
-		pDC->LineTo(textLocate.x+lc-gap,textLocate.y+sz.cy/2);	
-
-		pDC->TextOutW(textLocate.x+lc,textLocate.y,pd.ps[i].name);
-
-		textLocate.y+=sz.cy;
-
-		pDC->SelectObject(pOldPen);
-		pen.DeleteObject();
-		pDC->SetTextColor(oc);
-	}
-
-	pDC->SelectObject(pOldFont);
-	font.DeleteObject();
-
-
-	rectsz.cx+=lc;
-
-
-	return CRect(textLocate.x-rectsz.cx,rect.top,textLocate.x,textLocate.y);
-
-}
+//not use
+//CRect dlg1::DrawLegend(CRect rect, CDC* pDC)
+//{
+//
+//
+//	CFont font;
+//	CFont *pOldFont;
+//	CString str;
+//	CPen * pOldPen;
+//	CSize sz;
+//	//CRect newrect=rect;
+//
+//	CSize rectsz(0,0);
+//	CPen pen;
+//	int metricH=15;
+//	//int labelH=20;
+//	int lc=20;
+//	int gap=2;
+//	CPoint textLocate(rect.right-gap,rect.top);
+//	//int lcs=lc-2;
+//	//double gridi,XMAX,XMIN,YMAX,YMIN;
+//	int tmp;
+//	COLORREF oc;
+//	CString fontName=L"Arial";
+//
+//
+//	font.CreateFont(
+//		metricH,                        // nHeight
+//		0,                         // nWidth
+//		0,                         // nEscapement
+//		0,                         // nOrientation
+//		FW_NORMAL,                 // nWeight
+//		FALSE,                     // bItalic
+//		FALSE,                     // bUnderline
+//		0,                         // cStrikeOut
+//		ANSI_CHARSET,              // nCharSet
+//		OUT_DEFAULT_PRECIS,        // nOutPrecision
+//		CLIP_DEFAULT_PRECIS,       // nClipPrecision
+//		DEFAULT_QUALITY,           // nQuality
+//		DEFAULT_PITCH | FF_SWISS,  // nPitchAndFamily
+//		fontName);                 // lpszFacename
+//
+//
+//
+//	pOldFont=pDC->SelectObject(&font);	
+//
+//
+//	//pDC->SetBkColor(white);
+//	//pDC->SetBkMode(TRANSPARENT);
+//
+//	for(size_t i=0;i<pd.ps.size();i++){
+//
+//		//pen.CreatePen(PS_SOLID, 1, clist[i]);
+//		//pOldPen=pDC->SelectObject(&pen);
+//		//oc=pDC->SetTextColor(clist[i]);
+//
+//		//oc=pDC->SetTextColor(black);
+//		sz=pDC->GetTextExtent(pd.ps[i].name);
+//
+//		if(sz.cx>rectsz.cx)
+//			rectsz.cx=sz.cx;
+//
+//		//pDC->TextOutW(textLocate.x-sz.cx,textLocate.y,names[i]);
+//
+//		//pDC->MoveTo(textLocate.x-sz.cx-gap,textLocate.y+sz.cy/2);
+//		//pDC->LineTo(textLocate.x-sz.cx-lc,textLocate.y+sz.cy/2);
+//		textLocate.y+=sz.cy;
+//
+//		//pDC->SelectObject(pOldPen);
+//		//pen.DeleteObject();
+//		//pDC->SetTextColor(oc);
+//	}
+//
+//	//pDC->SelectObject(pOldFont);
+//	//font.DeleteObject();
+//
+//
+//	rectsz.cx+=lc;
+//	//rectsz.cy=textLocate.y;
+//
+//
+//	CRect legendrect(textLocate.x-rectsz.cx,rect.top,textLocate.x+1,textLocate.y);
+//
+//	//return CRect(textLocate.x-rectsz.cx,rect.top,textLocate.x,textLocate.y);
+//
+//	////////////////////////////////////////////////////////
+//
+//	drawRectangle(legendrect,pDC,white,black);
+//
+//
+//	textLocate=legendrect.TopLeft();
+//
+//	pOldFont=pDC->SelectObject(&font);	
+//
+//
+//	pDC->SetBkColor(white);
+//	pDC->SetBkMode(TRANSPARENT);
+//
+//	for(size_t i=0;i<pd.ps.size();i++){
+//
+//		pen.CreatePen(PS_SOLID, 1, pd.ps[i].colour);
+//		pOldPen=pDC->SelectObject(&pen);
+//		//oc=pDC->SetTextColor(clist[i]);
+//
+//		oc=pDC->SetTextColor(black);
+//		sz=pDC->GetTextExtent(pd.ps[i].name);
+//
+//		pDC->MoveTo(textLocate.x,textLocate.y+sz.cy/2);
+//		pDC->LineTo(textLocate.x+lc-gap,textLocate.y+sz.cy/2);	
+//
+//		pDC->TextOutW(textLocate.x+lc,textLocate.y,pd.ps[i].name);
+//
+//		textLocate.y+=sz.cy;
+//
+//		pDC->SelectObject(pOldPen);
+//		pen.DeleteObject();
+//		pDC->SetTextColor(oc);
+//	}
+//
+//	pDC->SelectObject(pOldFont);
+//	font.DeleteObject();
+//
+//
+//	rectsz.cx+=lc;
+//
+//
+//	return CRect(textLocate.x-rectsz.cx,rect.top,textLocate.x,textLocate.y);
+//
+//}
 
 
 
@@ -1188,6 +1191,7 @@ void dlg1::DrawCurveA(CRect rect, CDC* pDC)
 	size_t si=0;
 	CPoint *pp=pointlist.data();	
 
+
 	for(size_t j=0;j<pd.ll.size();j++){
 
 		//if(pd.ps[j].showLine){
@@ -1275,94 +1279,94 @@ void dlg1::DrawCurveA(CRect rect, CDC* pDC)
 
 }
 
-
-void dlg1::DrawCurveB(CRect rect, CDC* pDC)
-{
-	std::vector<CPoint> pointlist;
-	CPen pen;
-	CPen * pOldPen;
-
-
-	//genPointToPlot(pd.xll,pd.yll,rect,pointlist);
-	size_t si=0;
-
-
-	for(size_t j=0;j<pd.ps.size();j++){
-
-		genPointToPlot(pd.xlist[j],pd.ylist[j],rect,pointlist);
-		CPoint *pp=pointlist.data();
-
-		//if(pd.ps[j].showLine){
-		if(pd.ps[j].lineType>=0){
-			//pen.CreatePen(PS_SOLID,1,pd.ps[j].colour);
-			pen.CreatePen(pd.ps[j].lineType,1,pd.ps[j].colour);
-			pOldPen=pDC->SelectObject(&pen);
-
-			if(pointlist.size()>2){
-				if(pd.ps[j].smoothLine==1){
-					DrawSpline(pp,pointlist.size(),rect,pDC);
-				}
-				if(pd.ps[j].smoothLine==2){
-					pDC->PolyBezier(pp,pointlist.size());
-				}
-				if(pd.ps[j].smoothLine==0){
-					pDC->Polyline(pp,pointlist.size());
-				}
-			}
-			else{
-				if(pointlist.size()==2){
-					pDC->Polyline(pp,pointlist.size());
-				}
-
-			}
-
-			pDC->SelectObject(pOldPen);
-			pen.DeleteObject();
-
-		}
-
-
-		if(pd.ps[j].dotSize==0){
-			for(size_t i=0;i<pointlist.size();i++){
-				pDC->SetPixelV(pointlist[i],pd.ps[j].colour);	
-			}
-			//si+=ll[j];
-		}
-		if(pd.ps[j].dotSize>0){
-			CRect prect(0,0,1,1);
-			CSize ppoc=CSize(pd.ps[j].dotSize,pd.ps[j].dotSize);
-			prect.InflateRect(ppoc);
-			for(size_t i=0;i<pointlist.size();i++){
-				prect.MoveToXY(pointlist[i]-ppoc);
-				drawRectangle(prect,pDC,pd.ps[j].colour,pd.ps[j].colour);
-			}
-			//si+=ll[j];
-		}
-
-		//si+=pd.ll[j];
-
-	}
-
-	//if(pd.ps.back().traceLast){
-	//	CRect prect(0,0,1,1);
-	//	CSize ppoc=CSize(4,4);
-	//	prect.InflateRect(ppoc);			
-	//	prect.MoveToXY(pointlist.back()-ppoc);
-	//	drawRectangle(prect,pDC,pd.ps.back().colour,pd.ps.back().colour);
-	//}
-
-	//////////////////////////////fast///////////////////////////
-	//genPointToPlot(xll,yll,rect,pointlist);
-	//pen.CreatePen(PS_SOLID,1,clist[0]);
-	//pOldPen=pDC->SelectObject(&pen);
-	//pDC->PolyPolyline(pointlist.data(),ll.data(),ll.size());
-	////dc.PolyDraw(pointlist.data(),styl.data(),pointlist.size());
-	//pDC->SelectObject(pOldPen);
-	//pen.DeleteObject();
-	//////////////////////////////////////////////////////////////////
-
-
-}
+//not use
+//void dlg1::DrawCurveB(CRect rect, CDC* pDC)
+//{
+//	std::vector<CPoint> pointlist;
+//	CPen pen;
+//	CPen * pOldPen;
+//
+//
+//	//genPointToPlot(pd.xll,pd.yll,rect,pointlist);
+//	size_t si=0;
+//
+//
+//	for(size_t j=0;j<pd.ps.size();j++){
+//
+//		genPointToPlot(pd.xlist[j],pd.ylist[j],rect,pointlist);
+//		CPoint *pp=pointlist.data();
+//
+//		//if(pd.ps[j].showLine){
+//		if(pd.ps[j].lineType>=0){
+//			//pen.CreatePen(PS_SOLID,1,pd.ps[j].colour);
+//			pen.CreatePen(pd.ps[j].lineType,1,pd.ps[j].colour);
+//			pOldPen=pDC->SelectObject(&pen);
+//
+//			if(pointlist.size()>2){
+//				if(pd.ps[j].smoothLine==1){
+//					DrawSpline(pp,pointlist.size(),rect,pDC);
+//				}
+//				if(pd.ps[j].smoothLine==2){
+//					pDC->PolyBezier(pp,pointlist.size());
+//				}
+//				if(pd.ps[j].smoothLine==0){
+//					pDC->Polyline(pp,pointlist.size());
+//				}
+//			}
+//			else{
+//				if(pointlist.size()==2){
+//					pDC->Polyline(pp,pointlist.size());
+//				}
+//
+//			}
+//
+//			pDC->SelectObject(pOldPen);
+//			pen.DeleteObject();
+//
+//		}
+//
+//
+//		if(pd.ps[j].dotSize==0){
+//			for(size_t i=0;i<pointlist.size();i++){
+//				pDC->SetPixelV(pointlist[i],pd.ps[j].colour);	
+//			}
+//			//si+=ll[j];
+//		}
+//		if(pd.ps[j].dotSize>0){
+//			CRect prect(0,0,1,1);
+//			CSize ppoc=CSize(pd.ps[j].dotSize,pd.ps[j].dotSize);
+//			prect.InflateRect(ppoc);
+//			for(size_t i=0;i<pointlist.size();i++){
+//				prect.MoveToXY(pointlist[i]-ppoc);
+//				drawRectangle(prect,pDC,pd.ps[j].colour,pd.ps[j].colour);
+//			}
+//			//si+=ll[j];
+//		}
+//
+//		//si+=pd.ll[j];
+//
+//	}
+//
+//	//if(pd.ps.back().traceLast){
+//	//	CRect prect(0,0,1,1);
+//	//	CSize ppoc=CSize(4,4);
+//	//	prect.InflateRect(ppoc);			
+//	//	prect.MoveToXY(pointlist.back()-ppoc);
+//	//	drawRectangle(prect,pDC,pd.ps.back().colour,pd.ps.back().colour);
+//	//}
+//
+//	//////////////////////////////fast///////////////////////////
+//	//genPointToPlot(xll,yll,rect,pointlist);
+//	//pen.CreatePen(PS_SOLID,1,clist[0]);
+//	//pOldPen=pDC->SelectObject(&pen);
+//	//pDC->PolyPolyline(pointlist.data(),ll.data(),ll.size());
+//	////dc.PolyDraw(pointlist.data(),styl.data(),pointlist.size());
+//	//pDC->SelectObject(pOldPen);
+//	//pen.DeleteObject();
+//	//////////////////////////////////////////////////////////////////
+//
+//
+//}
 
 
 

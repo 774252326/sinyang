@@ -26,7 +26,7 @@ typedef struct MYPARA{
 	ProcessState *psta;
 } mypara;
 
-const CString AnalysisSetupINI=L"as.txt";
+const CString AnalysisSetupINI=L"as.stp.txt";
 
 BOOL writeini( ANPara &p1t, CVPara &p2t, SAPara &p3t, CString fp=AnalysisSetupINI);
 BOOL readini( ANPara &p1t, CVPara &p2t, SAPara &p3t, CString fp=AnalysisSetupINI);

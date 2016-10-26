@@ -65,15 +65,15 @@ private:
 
 	void genPointToPlot(const std::vector<double> &px, const std::vector<double> &py, const CRect &rect, std::vector<CPoint> &pointlist);
 	void drawRectangle(const CRect &rect, CDC * pDC, COLORREF insidecolor, COLORREF bordercolor);
-	CRect DrawXYAxis(CRect rect, CDC* pdc);	
+//	CRect DrawXYAxis(CRect rect, CDC* pdc);	
 
-	CRect DrawLegend(CRect rect, CDC* pDC);
+//	CRect DrawLegend(CRect rect, CDC* pDC);
 	CRect DrawLegend1(CRect rect, CDC* pDC);
 	void DrawPoint(CRect rect, CDC * pDC, int d);
 	void DrawCurve(CRect rect, CDC* pDC);
 
 	void DrawCurveA(CRect rect, CDC* pDC);
-	void DrawCurveB(CRect rect, CDC* pDC);
+//	void DrawCurveB(CRect rect, CDC* pDC);
 
 	void GetPlotRect(CRect & plotRect);
 	void DrawSpline( CPoint * lpPoints, int np, CRect rect, CDC * pDC);

@@ -576,11 +576,17 @@ void CMainFrame::OnFileOpen()
 
 	CFileDialog fileDlg(true);
 
-	fileDlg.m_ofn.lpstrFilter=L"Text File(*.txt)\0*.txt\0\0";
+	fileDlg.m_ofn.lpstrFilter=L"Text File(*.stp.txt)\0*.stp.txt\0Text File(*.fig.txt)\0*.fig.txt\0\0";
 
 	if( fileDlg.DoModal()==IDOK)
 	{
+		//////////////////////////////////////////////////////////////////////
 		CString m_filePath=fileDlg.GetPathName();
+
+		CString lppath=m_filePath;
+		lppath.Replace(L".stp.txt",L"l.fig.txt");
+		CString rppath=m_filePath;
+		rppath.Replace(L".stp.txt",L"r.fig.txt");
 
 		ANPara p1t;
 		CVPara p2t;
@@ -589,17 +595,68 @@ void CMainFrame::OnFileOpen()
 		readini(p1t,p2t,p3t,m_filePath);
 		writeini(p1t,p2t,p3t);
 
+		this->LeftPlotPointer()->pd.ReadFile(lppath);
+		this->LeftPlotPointer()->updatePlotRange();
+		this->LeftPlotPointer()->Invalidate();
+
+		double totalV=0;
+		double q0=1;
+
+		this->GetOutputWnd()->clear();
+		{
+			std::vector<double> x;
+			std::vector<double> y;
+			LeftPlotPointer()->pd.GetDatai(0,x,y);
+			double q=intgQ(x,y,p2t.lowelimit,p2t.highelimit,p2t.endintegratione)/p2t.scanrate;
+			totalV+=p3t.vmsvol;
+			q0=q;
+			this->GetOutputWnd()->InsertListCtrl(0,
+				LeftPlotPointer()->pd.ps[0].name,
+				p3t.vmsvol,
+				totalV,
+				q,
+				q/q0,
+				true);
+		}
+
+
+		for(size_t i=1;i<LeftPlotPointer()->pd.ll.size();i++){
+			std::vector<double> x;
+			std::vector<double> y;
+			LeftPlotPointer()->pd.GetDatai(i,x,y);
+			double q=intgQ(x,y,p2t.lowelimit,p2t.highelimit,p2t.endintegratione)/p2t.scanrate;
+			totalV+=p3t.saplist[i-1].volconc;
+
+			this->GetOutputWnd()->InsertListCtrl(i,
+				LeftPlotPointer()->pd.ps[i].name,
+				p3t.saplist[i-1].volconc,
+				totalV,
+				q,
+				q/q0,
+				true);
+		}
+
+		this->RightPlotPointer()->pd.ReadFile(rppath);
+		this->RightPlotPointer()->updatePlotRange();
+		this->RightPlotPointer()->Invalidate();
+
 		CString strTemp;
 		strTemp=L"setup file "+m_filePath+L" loaded";
-
 		m_wndCaptionBar.ShowMessage(strTemp);
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		//CString m_filePath=fileDlg.GetPathName();
+		//this->LeftPlotPointer()->pd.ReadFile(m_filePath);
+		//this->LeftPlotPointer()->updatePlotRange();
+		//this->LeftPlotPointer()->Invalidate();
 
 		////////////////////////////////////////////////////////////////////////////
 
 		//CString m_filePath=fileDlg.GetPathName();
 		//pcct dt1;
 		//dt1.readFile(m_filePath);
-		//dlg1 *p1=( (dlg1*)m_wndSplitter.GetPane(0,1) );
+		//dlg1 *p1=( (dlg1*)m_wndSplitter.GetPane(0,0) );
 		//plotspec ps1;
 		//ps1.colour=genColor( genColorvFromIndex<float>( p1->pd.ps.size() ) ) ;
 		//ps1.dotSize=-1;

@@ -340,6 +340,35 @@ int SolveCubicPP(const std::vector<T> &x, const std::vector< std::vector<T> > &c
 
 }
 
+
+
+template <typename T>
+int SolveQuadraticPP(const std::vector<T> &x, const std::vector< std::vector<T> > &c, T d, std::vector<T> &r)
+{
+	if(x.size()<2)
+		return 0;
+
+	r.clear();
+
+	for(size_t i=0;i<c.size();i++){
+		std::vector<T> rtmp(2,0);
+		int ni=QuadraticSolver(c[i][0],c[i][1],c[i][2]-d,rtmp[0],rtmp[1]);
+		if(ni<0)
+			return ni;
+
+		for(size_t j=0;j<ni;j++){
+			if( rtmp[j]>=0 && rtmp[j]<x[i+1]-x[i] ){
+				r.push_back(rtmp[j]+x[i]);
+			}
+		}
+	}
+
+	return r.size();
+
+}
+
+
+
 //
 //void main()
 //{

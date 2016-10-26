@@ -1,7 +1,7 @@
 
 #include "stdafx.h"
 #include <iostream>     // std::cout
-//#include <algorithm>    // std::find
+#include <algorithm>    // std::find
 #include <vector>       // std::vector
 #include <fstream>
 
@@ -91,4 +91,42 @@ void copyfs(const figspec &fsi, figspec & fso)
 	fso.labelSize=fsi.labelSize;
 	fso.metricC=fsi.metricC;
 	fso.metricSize=fsi.metricSize;
+}
+
+
+double intgQ(std::vector<double> &x, std::vector<double> &y, double xmin, double xmax, double xUpLim)
+{
+	std::vector<double>::iterator itx;
+	itx=std::find(x.begin(), x.end(), xmin);
+	size_t index=itx-x.begin();
+
+	std::vector<double> xintg( x.begin()+index, x.end() );
+	std::vector<double> yintg( y.begin()+index, y.end() );
+
+	double ar=0;
+	for(size_t i=0;i<xintg.size()-1;i++){
+
+		if(xintg[i+1]<xUpLim){
+			if( (yintg[i]>0) || (yintg[i+1]>0) ){
+				if(yintg[i]<0){
+					ar+=(xintg[i+1]-xintg[i])*yintg[i+1]*yintg[i+1]/(yintg[i+1]-yintg[i]);
+				}
+				else{
+					if(yintg[i+1]<0){
+						ar+=(xintg[i+1]-xintg[i])*yintg[i]*yintg[i]/(yintg[i]-yintg[i+1]);
+					}
+					else{
+						ar+=(xintg[i+1]-xintg[i])*(yintg[i]+yintg[i+1]);
+					}
+				}
+			}
+		}
+		else{
+			ar+=(xUpLim-xintg[i])*(2*yintg[i]+(yintg[i+1]-yintg[i])*(xUpLim-xintg[i])/(xintg[i+1]-xintg[i]));
+			break;
+		}
+
+	}
+
+	return ar;
 }

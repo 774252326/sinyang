@@ -32,6 +32,7 @@ public:
 	void ReadFile(CString fp);
 	void AppendData(const PlotData & pda);
 	void GetDatai(size_t index, std::vector<double> & x, std::vector<double> & y);
+	void ExtractLastCycle(double xmax, CString fp);
 };
 
 

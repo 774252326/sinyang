@@ -209,7 +209,10 @@ void AnalysisParametersDlg::ComboSelectChange(void)
 	para.analysistype = pcb->GetCurSel(); 
 	// 根据选中项索引获取该项字符串   
 	//pcb->GetLBText(nSel, strWeb); 
-	pcb->GetLBText(para.analysistype, strWeb); 
+	//pcb->GetLBText(para.analysistype, strWeb); 
+
+	strWeb.LoadStringW(para.analysistype+IDS_STRING_EP1);
+
 	// 将组合框中选中的字符串显示到IDC_SEL_WEB_EDIT编辑框中   
 	SetDlgItemText(IDS_EDIT_REMARK_ON_ANALYSIS_TYPE, strWeb);   
 
@@ -350,7 +353,7 @@ int AnalysisParametersDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	int h=winrect.Height()-4*(gap2.cy+staticSize.cy);
 
-	str.LoadStringW( IDS_STRING_AT1+(pCombo->GetCurSel()) );
+	str.LoadStringW( IDS_STRING_EP1+(pCombo->GetCurSel()) );
 	pEdit=new CEdit;
 	pEdit->CreateEx(
 		WS_EX_CLIENTEDGE,
