@@ -146,19 +146,19 @@ bool DataOutA::Update(sapitemA sapi, BYTE bFlag)
 	}
 	else{
 
-		if(bFlag&DOA_SAMPLE){
-			if(!sapi.isUnknownComposition())
+		if(sapi.isUnknownComposition()){
+			if(!(bFlag&DOA_SAMPLE))
 				return false;
 		}
 		else{
 
-			if( !(bFlag&DOA_S) && (sapi.Sconc!=0) )
+			if( (sapi.Sconc!=0) && !(bFlag&DOA_S) )
 				return false;
 
-			if( !(bFlag&DOA_A) && (sapi.Aconc!=0) )
+			if( (sapi.Aconc!=0) && !(bFlag&DOA_A) )
 				return false;
 
-			if( !(bFlag&DOA_L) && (sapi.Lconc!=0) )
+			if( (sapi.Lconc!=0) && !(bFlag&DOA_L) )
 				return false;
 		}
 	}

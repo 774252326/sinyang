@@ -223,10 +223,16 @@ void AnalysisParametersPage::ComboSelectChange(void)
 	case 7:
 	case 9:
 	case 11:
-		this->GetDlgItem(IDS_COMBO_CALIBRATION_TYPE)->ShowWindow(SW_HIDE);
-		this->GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR)->ShowWindow(SW_HIDE);
-		this->GetDlgItem(IDS_EDIT_CALIBRATION_CURVE_FILE)->ShowWindow(SW_HIDE);
-		this->GetDlgItem(IDS_EDIT_INTERCEPT_VALUE)->ShowWindow(SW_HIDE);
+		//this->GetDlgItem(IDS_COMBO_CALIBRATION_TYPE)->ShowWindow(SW_HIDE);
+		//this->GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR)->ShowWindow(SW_HIDE);
+		//this->GetDlgItem(IDS_EDIT_CALIBRATION_CURVE_FILE)->ShowWindow(SW_HIDE);
+		//this->GetDlgItem(IDS_EDIT_INTERCEPT_VALUE)->ShowWindow(SW_HIDE);
+
+		this->GetDlgItem(IDS_COMBO_CALIBRATION_TYPE)->EnableWindow(FALSE);
+
+		//this->GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR)->EnableWindow(FALSE);
+		//this->GetDlgItem(IDS_EDIT_CALIBRATION_CURVE_FILE)->EnableWindow(FALSE);
+		//this->GetDlgItem(IDS_EDIT_INTERCEPT_VALUE)->EnableWindow(FALSE);
 		break;
 	case 2:
 	case 4:
@@ -234,10 +240,13 @@ void AnalysisParametersPage::ComboSelectChange(void)
 	case 8:
 	case 10:
 	case 12:
-		this->GetDlgItem(IDS_COMBO_CALIBRATION_TYPE)->ShowWindow(SW_SHOW);
-		this->GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR)->ShowWindow(SW_SHOW);
-		this->GetDlgItem(IDS_EDIT_CALIBRATION_CURVE_FILE)->ShowWindow(SW_SHOW);
-		this->GetDlgItem(IDS_EDIT_INTERCEPT_VALUE)->ShowWindow(SW_SHOW);
+		//this->GetDlgItem(IDS_COMBO_CALIBRATION_TYPE)->ShowWindow(SW_SHOW);
+
+		this->GetDlgItem(IDS_COMBO_CALIBRATION_TYPE)->EnableWindow(TRUE);
+
+		//this->GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR)->ShowWindow(SW_SHOW);
+		//this->GetDlgItem(IDS_EDIT_CALIBRATION_CURVE_FILE)->ShowWindow(SW_SHOW);
+		//this->GetDlgItem(IDS_EDIT_INTERCEPT_VALUE)->ShowWindow(SW_SHOW);
 		break;
 	default:
 		break;
@@ -497,9 +506,9 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		IDS_EDIT_INTERCEPT_VALUE);
 
 
-
-	CalibrationComboSelectChange();
 	ComboSelectChange();
+	CalibrationComboSelectChange();
+
 	//pStatic->ShowWindow(SW_SHOW);
 	//pEdit->ShowWindow(SW_SHOW);
 
@@ -700,21 +709,35 @@ void AnalysisParametersPage::editchange(void)
 
 void AnalysisParametersPage::CalibrationComboSelectChange(void)
 {
-	CString strWeb;   
-	int nSel;     
+	//CString strWeb;   
+
 	CComboBox * pcb=(CComboBox*)(this->GetDlgItem(IDS_COMBO_CALIBRATION_TYPE));
-	// 获取组合框控件的列表框中选中项的索引   
-	nSel = pcb->GetCurSel();  
+
 
 	for(int i=0;i<3;i++){
-		if(i==nSel){
-			GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR+i)->ShowWindow(SW_SHOW);
-		}
-		else{
-			GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR+i)->ShowWindow(SW_HIDE);
-		}
+		this->GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR+i)->ShowWindow(SW_HIDE);
+		//this->GetDlgItem(IDS_EDIT_CALIBRATION_CURVE_FILE)->ShowWindow(SW_HIDE);
+		//this->GetDlgItem(IDS_EDIT_INTERCEPT_VALUE)->ShowWindow(SW_HIDE);
 	}
 
+
+	if(pcb->IsWindowEnabled()==TRUE)
+	{
+
+		// 获取组合框控件的列表框中选中项的索引   
+		int nSel;     
+		nSel = pcb->GetCurSel();  
+		GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR+nSel)->ShowWindow(SW_SHOW);
+		//for(int i=0;i<3;i++){
+		//if(i==nSel){
+
+		//}
+		//else{
+		//GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR+i)->ShowWindow(SW_HIDE);
+		//}
+		//}
+
+	}
 
 }
 
