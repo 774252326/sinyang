@@ -16,9 +16,7 @@
 #define new DEBUG_NEW
 #endif
 
-#include "property\PlotSettingPageB.hpp"
-#include "property\PlotSettingPageC.hpp"
-#include "property\PropertySheetA.hpp"
+
 #include "export\ExportDataDlg.hpp"
 
 
@@ -39,6 +37,8 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		ON_WM_SIZE()
 		ON_MESSAGE(MESSAGE_CHANGE_APPLOOK, &CanalyzerView::OnMessageChangeApplook)
 		ON_MESSAGE(MESSAGE_UPDATE_VIEW, &CanalyzerView::OnMessageUpdateView)
+		ON_MESSAGE(MESSAGE_UPDATE_RAW, &CanalyzerView::OnMessageUpdateRaw)
+		ON_MESSAGE(MESSAGE_UPDATE_TEST, &CanalyzerView::OnMessageUpdateTest)
 		ON_NOTIFY(UDN_DELTAPOS, SPIN_ID, &CanalyzerView::OnDeltaposSpin)
 		ON_COMMAND(ID_VIEW_FITWINDOW, &CanalyzerView::OnViewFitwindow)
 		ON_COMMAND(ID_EDIT_COPY, &CanalyzerView::OnEditCopy)
@@ -51,10 +51,11 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 
 	CanalyzerView::CanalyzerView()
 		: spBtnSize(CSize(23*2,23))
-		, bPrint(false)
+		, b2(FALSE)
 	{
 		// TODO: add construction code here
-
+		 newClr=RGB(255,0,0);
+		 oldClr=RGB(80,80,100);
 	}
 
 	CanalyzerView::~CanalyzerView()
@@ -205,6 +206,8 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 			//|WS_EX_TRANSPARENT
 			,WS_CHILD
 			|WS_VISIBLE
+			//|UDS_ALIGNRIGHT
+			//|UDS_ARROWKEYS
 			|UDS_HORZ
 			|UDS_WRAP
 			, CRect()
@@ -309,7 +312,11 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 	{
 		// TODO: Add your command handler code here
 
-		PlotSettingSheet();
+		pw.PlotSettingSheet(b2);
+		if(!pdl.empty()){
+			oldClr=pw.pdex->pd.GetOldCr(oldClr);
+			newClr=pw.pdex->pd.GetNewCr(newClr);
+		}
 	}
 
 	void CanalyzerView::OnAnalysisExportdata()
@@ -396,30 +403,63 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		CView::OnPrint(pDC, pInfo);
 
 	}
-	
 
-	void CanalyzerView::PlotSettingSheet(BOOL bTwo)
+
+
+
+	afx_msg LRESULT CanalyzerView::OnMessageUpdateTest(WPARAM wParam, LPARAM lParam)
 	{
-		PropertySheetA1 sheet(IDS_STRING_POLT_SETTINGS);
-		PlotSettingPageB fig1setting;
-		if(pdl.empty()){		
-			fig1setting.fs=pw.blankPS;
-		}
-		else{
-			fig1setting.fs=pw.pdex->pd.ps;
-			fig1setting.lgc=pw.pdex->lgc;
-			fig1setting.lgs=pw.pdex->lgs;			
-		}
-		PlotSettingPageC fig2setting;
-		
-		if(!pdl.empty()){
-			fig2setting.ps.assign(pw.pdex->pd.ls.begin(),pw.pdex->pd.ls.end());
-			fig2setting.bTwo=bTwo;
-			fig2setting.oldC=pw.pdex->pd.GetOldCr();
-			fig2setting.newC=pw.pdex->pd.GetNewCr();
-		}
-		sheet.AddPage(&fig1setting);
-		sheet.AddPage(&fig2setting);
-		sheet.DoModal();
+		CanalyzerDoc* pDoc = GetDocument();
 
+		CSingleLock singleLock(&(pDoc->m_CritSection));
+
+		if(singleLock.Lock()) // Resource has been locked
+		{
+			UINT flg=DataOutAList2PlotDataExList(pDoc->da.dol, pDoc->da.p1, pw.GetPlotSpec()->winbkC, pdl,(bool)(lParam));
+			if(flg==2){
+				::PostMessageW(this->GetParentFrame()->GetSafeHwnd(),WM_COMMAND,ID_ANALYSIS_ABORTANALYSIS,0);
+			}
+
+			// Now that we are finished, 
+			// unlock the resource for others.
+			singleLock.Unlock();
+		}
+
+		WPARAM wParamNew=(PW_SHOW_ALL);
+		if(wParam&PW_INIT)
+			wParamNew|=PW_LAST;
+
+		::PostMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_VIEW,wParamNew,NULL);
+		//::SendMessage(mf->GetCaptionBar()->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)str.GetBuffer(),NULL);
+
+
+		return 0;
+	}
+
+
+
+	afx_msg LRESULT CanalyzerView::OnMessageUpdateRaw(WPARAM wParam, LPARAM lParam)
+	{
+		CanalyzerDoc* pDoc = GetDocument();
+
+		CSingleLock singleLock(&(pDoc->m_CritSection));
+		//singleLock.Lock();
+
+		//if (singleLock.IsLocked())  // Resource has been locked
+		if(singleLock.Lock())
+		{
+			UINT flg=RawData2PlotDataList(pDoc->da.raw,pDoc->da.dol,pw.GetPlotSpec()->winbkC, pdl, b2, newClr, oldClr);
+
+			// Now that we are finished, 
+			// unlock the resource for others.
+			singleLock.Unlock();
+		}
+
+		WPARAM wParamNew=(PW_SHOW_ALL);
+		if(wParam&PW_INIT)
+			wParamNew|=PW_LAST;		
+
+		::PostMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_VIEW,wParamNew,NULL);
+
+		return 0;
 	}

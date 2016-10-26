@@ -12,8 +12,8 @@
 #endif
 
 
-#include "analyzerViewL.h"
-#include "analyzerViewR.h"
+#include "analyzerView.h"
+//#include "analyzerViewR.h"
 #include "struct1\pcct.hpp"
 
 
@@ -711,15 +711,16 @@ BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
 	m_bSplitterCreated = m_wndSplitter.CreateStatic(this, 1, 2);
 	// CMyView and CMyOtherView are user-defined views derived from CView
 	if(m_bSplitterCreated){
-		m_bSplitterCreated = m_wndSplitter.CreateView(0, 0, RUNTIME_CLASS(CanalyzerViewL), CSize(), pContext);
+		m_bSplitterCreated = m_wndSplitter.CreateView(0, 0, RUNTIME_CLASS(CanalyzerView), CSize(), pContext);
 		//this->LeftPlotPointer()->lri=0;
 		if(m_bSplitterCreated){
-			m_bSplitterCreated = m_wndSplitter.CreateView(0, 1, RUNTIME_CLASS(CanalyzerViewR), CSize(), pContext);
+			m_bSplitterCreated = m_wndSplitter.CreateView(0, 1, RUNTIME_CLASS(CanalyzerView), CSize(), pContext);
 			//this->RightPlotPointer()->lri=1;
 		}
 	}
 
 	m_wndSplitter.SetActivePane(0, 0);
+	((CanalyzerView*)LeftPane())->b2=TRUE;
 
 	return (m_bSplitterCreated);
 
@@ -906,6 +907,10 @@ void CMainFrame::OnAnalysisMethodsetup()
 				cppage=new CVParametersPage();
 				//appage->dwStyle|=WS_DISABLED;
 				//cppage->dwStyle|=WS_DISABLED;
+				appage->para=pDoc->da.p1;
+				cppage->para=pDoc->da.p2;
+				
+
 				psheetml->AddPage(appage);
 				psheetml->AddPage(cppage);
 				psheetml->AddPage(sppage);
@@ -949,6 +954,14 @@ void CMainFrame::OnAnalysisMethodsetup()
 }
 
 
+void CMainFrame::ViewAll(WPARAM lwp, WPARAM rwp)
+{
+	CanalyzerView *lv=(CanalyzerView*)LeftPane();
+	CanalyzerView *rv=(CanalyzerView*)RightPane();
+	::PostMessage(lv->GetSafeHwnd(),MESSAGE_UPDATE_RAW,lwp,NULL);
+	::PostMessage(rv->GetSafeHwnd(),MESSAGE_UPDATE_TEST,rwp,NULL);
+	::PostMessage(GetOutputWnd()->GetListCtrl()->GetSafeHwnd(),MESSAGE_SHOW_DOL,NULL,NULL);
+}
 
 
 afx_msg LRESULT CMainFrame::OnMessageUpdateDol(WPARAM wParam, LPARAM lParam)
@@ -960,6 +973,9 @@ afx_msg LRESULT CMainFrame::OnMessageUpdateDol(WPARAM wParam, LPARAM lParam)
 	//TRACE("\n%d",pDoc->da.runstate);
 
 	//::PostMessage(this->GetSafeHwnd(),MESSAGE_CLOSE_SAP_SHEET,NULL,NULL);
+
+	ViewAll(PW_INIT,PW_INIT);
+
 	::SendMessage(this->GetSafeHwnd(),MESSAGE_CLOSE_SAP_SHEET,NULL,NULL);
 
 	return 0;
@@ -969,11 +985,13 @@ afx_msg LRESULT CMainFrame::OnMessageUpdateDol(WPARAM wParam, LPARAM lParam)
 afx_msg LRESULT CMainFrame::OnMessageCloseSapSheet(WPARAM wParam, LPARAM lParam)
 {
 
-	CanalyzerViewL *lv=(CanalyzerViewL*)LeftPane();
-	CanalyzerViewR *rv=(CanalyzerViewR*)RightPane();
-	::PostMessage(lv->GetSafeHwnd(),MESSAGE_UPDATE_RAW,PW_INIT,NULL);
-	::PostMessage(rv->GetSafeHwnd(),MESSAGE_UPDATE_TEST,PW_INIT,NULL);
-	::PostMessage(GetOutputWnd()->GetListCtrl()->GetSafeHwnd(),MESSAGE_SHOW_DOL,NULL,NULL);
+	//CanalyzerViewL *lv=(CanalyzerViewL*)LeftPane();
+	//CanalyzerViewR *rv=(CanalyzerViewR*)RightPane();
+	//::PostMessage(lv->GetSafeHwnd(),MESSAGE_UPDATE_RAW,PW_INIT,NULL);
+	//::PostMessage(rv->GetSafeHwnd(),MESSAGE_UPDATE_TEST,PW_INIT,NULL);
+	//::PostMessage(GetOutputWnd()->GetListCtrl()->GetSafeHwnd(),MESSAGE_SHOW_DOL,NULL,NULL);
+
+
 
 	CanalyzerDoc *pDoc=(CanalyzerDoc*)GetActiveDocument();
 
@@ -1349,11 +1367,13 @@ void CMainFrame::ChangeLang(void)
 
 	this->GetOutputWnd()->SetWindowTextW(strOutputWnd);
 
-	CanalyzerViewL *lv=(CanalyzerViewL*)LeftPane();
-	CanalyzerViewR *rv=(CanalyzerViewR*)RightPane();
-	::PostMessage(lv->GetSafeHwnd(),MESSAGE_UPDATE_RAW,NULL,NULL);
-	::PostMessage(rv->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
-	::PostMessage(GetOutputWnd()->GetListCtrl()->GetSafeHwnd(),MESSAGE_SHOW_DOL,NULL,NULL);
+	//CanalyzerViewL *lv=(CanalyzerViewL*)LeftPane();
+	//CanalyzerViewR *rv=(CanalyzerViewR*)RightPane();
+	//::PostMessage(lv->GetSafeHwnd(),MESSAGE_UPDATE_RAW,NULL,NULL);
+	//::PostMessage(rv->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
+	//::PostMessage(GetOutputWnd()->GetListCtrl()->GetSafeHwnd(),MESSAGE_SHOW_DOL,NULL,NULL);
+
+	ViewAll();
 
 	this->GetOutputWnd()->GetListCtrl()->ResetHeader();
 

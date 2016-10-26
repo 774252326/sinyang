@@ -256,7 +256,8 @@ public:
 		}
 		return false;
 	};
-
+	
+	void PlotSettingSheet(BOOL bTwo=FALSE);
 protected:
 	afx_msg void OnPaint();
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);

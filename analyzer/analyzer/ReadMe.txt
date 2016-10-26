@@ -169,3 +169,5 @@ For more information on both of these topics, please see the section on
 redistributing Visual C++ applications in MSDN documentation.
 
 /////////////////////////////////////////////////////////////////////////////
+
+when data change, call CanalyzerDoc::UpdateState() and CMainFrame::ViewAll() to show data.

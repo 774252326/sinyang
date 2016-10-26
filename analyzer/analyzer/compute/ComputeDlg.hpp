@@ -5,7 +5,7 @@
 #include "afxdialogex.h"
 #include "../analyzerDoc.h"
 #include "../MainFrm.h"
-#include "../analyzerViewR.h"
+#include "../analyzerView.h"
 
 // ComputeDlg dialog
 

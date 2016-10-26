@@ -194,10 +194,7 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		POSITION pos = GetFirstViewPosition();
 		if(pos!=NULL){
 			CMainFrame *mf=(CMainFrame*)(GetNextView(pos)->GetParentFrame());
-			::PostMessage(mf->GetOutputWnd()->GetListCtrl()->GetSafeHwnd(),
-				MESSAGE_SHOW_DOL,
-				NULL,
-				NULL);
+			mf->ViewAll(PW_INIT,PW_INIT);
 		}
 	}
 

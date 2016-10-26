@@ -48,6 +48,7 @@ public:
 	void ChangeLang(void);	
 	void ShowWaitDlg(CString tips);
 	void HideWaitDlg(void);
+	void ViewAll(WPARAM lwp=NULL, WPARAM rwp=NULL);
 // Overrides
 public:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);

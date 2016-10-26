@@ -7,6 +7,10 @@
 #include "../resource.h"
 #include "LegendDlg.hpp"
 
+#include "../property\PlotSettingPageB.hpp"
+#include "../property\PlotSettingPageC.hpp"
+#include "../property\PropertySheetA.hpp"
+
 // PlotWnd
 
 IMPLEMENT_DYNAMIC(PlotWnd, CWnd)
@@ -397,3 +401,29 @@ void PlotWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
 
 	CWnd::OnLButtonDblClk(nFlags, point);
 }
+
+
+	void PlotWnd::PlotSettingSheet(BOOL bTwo)
+	{
+		PropertySheetA1 sheet(IDS_STRING_POLT_SETTINGS);
+		PlotSettingPageB fig1setting;
+		PlotSettingPageC fig2setting;
+		
+		if(pdex!=NULL){
+			fig1setting.fs=pdex->pd.ps;
+			fig1setting.lgc=pdex->lgc;
+			fig1setting.lgs=pdex->lgs;	
+
+			fig2setting.ps.assign(pdex->pd.ls.begin(),pdex->pd.ls.end());
+			fig2setting.bTwo=bTwo;
+			fig2setting.oldC=pdex->pd.GetOldCr();
+			fig2setting.newC=pdex->pd.GetNewCr();
+		}
+		else{
+			fig1setting.fs=blankPS;
+		}
+
+		sheet.AddPage(&fig1setting);
+		sheet.AddPage(&fig2setting);
+		sheet.DoModal();
+	}

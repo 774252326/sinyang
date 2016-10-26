@@ -468,12 +468,6 @@
     <ClInclude Include="plot\PlotWnd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="analyzerViewL.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="analyzerViewR.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="list\ListCtrlB.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -510,12 +504,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="plot\PlotWnd.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="analyzerViewL.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="analyzerViewR.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="list\ListCtrlB.cpp">
