@@ -317,3 +317,20 @@ BOOL COutputList::InsertListCtrl(int StepNo, DataOut dout)
 {
 	return InsertListCtrl(StepNo,dout.stepName,dout.addVol,dout.totalVol,dout.Q,dout.nQ,dout.Use);
 }
+
+BOOL COutputList::InsertListCtrl(int StepNo, DataOutA &dout, int count, int Ari, bool bUse)
+{
+	CString str,strt;
+	strt.LoadStringW(IDS_STRING_CYCLE);
+	str.Format(L"%s(%s%d)",dout.GetStepName(count),strt,Ari+1);
+	
+	return InsertListCtrl(
+		StepNo,
+		str,
+		(Ari>0?0:dout.addVolume),
+		dout.TotalVolume(),
+		dout.Ar[Ari],
+		dout.Ar[Ari]/dout.Ar0,
+		(Ari+1==dout.Ar.size()&bUse)
+		);
+}

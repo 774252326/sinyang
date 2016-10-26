@@ -151,6 +151,24 @@ void AdjustWidth(CListCtrl *ls, int nCol, int nRow, int gap=12);
 
 CString TimeString();
 
+
+typedef struct ANRESULT{
+	CString itemName;
+	CString itemUnit;
+	double itemData;
+} ANRes;
+
+
+
+
+
+
+
+
+
+
+
+
 template <typename T>
 void UpdateRange( const std::vector<T> &x, T &xmin, T &xmax, T gapPercent=0, bool bLocalRange=false)
 {

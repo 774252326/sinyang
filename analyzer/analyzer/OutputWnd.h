@@ -2,6 +2,7 @@
 #pragma once
 
 #include "DataOut.h"
+#include "DataOutA.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // COutputList window
@@ -31,6 +32,7 @@ public:
 //	int gap;
 //	void AdjustWidth(int nRow, int nCol);
 	BOOL InsertListCtrl(int StepNo, DataOut dout);
+	BOOL InsertListCtrl(int StepNo, DataOutA &dout, int count, int Ari, bool bUse=true);
 };
 
 class COutputWnd : public CDockablePane

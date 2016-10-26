@@ -22,10 +22,10 @@
 //#include "colormapT.h"
 #include "analyzerViewL.h"
 #include "analyzerViewR.h"
-//#include "func.h"
+#include "func.h"
 #include "MainFrm.h"
 
-#include "pdfout.h"
+//#include "pdfout.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -139,7 +139,7 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 			ar>>resultStr;
 			size_t n;
 			ar>>n;
-			dol.assign(n,DataOut());
+			dol.assign(n,DataOutA());
 			for(size_t i=0;i<dol.size();i++){
 				dol[i].Serialize(ar);
 			}
@@ -172,10 +172,13 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 				rv->SetSpin(rp.size()-1);
 				rv->updatePlotRange();
 
-
-				for(size_t i=0;i<dol.size();i++){
-					ol->InsertListCtrl(i,dol[i]);
-				}
+				//size_t c=0;
+				//for(size_t i=0;i<dol.size();i++){
+				//	for(size_t j=0;j<dol[i].Ar.size();j++){
+				//		ol->InsertListCtrl(c,dol[i],i,j);
+				//		c++;
+				//	}
+				//}
 			}
 			//////////////////////////////////////////////
 
@@ -387,12 +390,12 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		fp=fp.Left(fp.ReverseFind('\\')+1);
 		fp+=TimeString()+L".pdf";
 
-		if(pdfd(fp,this)==0){
-			AfxMessageBox(L"report "+fp+L" is saved");
-		}
-		else{
-			AfxMessageBox(IDS_STRING_SAVE_ERROR);
-		}
+		//if(pdfd(fp,this)==0){
+		//	AfxMessageBox(L"report "+fp+L" is saved");
+		//}
+		//else{
+		//	AfxMessageBox(IDS_STRING_SAVE_ERROR);
+		//}
 
 
 	}

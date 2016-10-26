@@ -62,7 +62,7 @@ void sapitemA::Serialize(CArchive& ar)
 
 bool sapitemA::isUnknownComposition(void)
 {
-	return ( Sconc==0 & Aconc==0 & Lconc==0 );
+	return ( Sconc<=0 & Aconc<=0 & Lconc<=0 );
 }
 
 
@@ -86,4 +86,11 @@ bool sapitemA::isMixedComposition(void)
 			return true;
 	}
 	return false;
+}
+
+bool sapitemA::isSingleComposition(void)
+{
+	if(isMixedComposition()||isUnknownComposition())
+		return false;
+	return true;
 }

@@ -24,6 +24,7 @@ public:
 	bool isUnknownComposition(void);
 	bool isStepEnd(double currentRatio,bool bLess=true);
 	bool isMixedComposition(void);
+	bool isSingleComposition(void);
 };
 
 

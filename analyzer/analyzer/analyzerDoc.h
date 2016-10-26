@@ -7,6 +7,7 @@
 #include "SAPara.h"
 #include "VPara.h"
 #include <vector>
+#include "DataOutA.h"
 
 #pragma once
 
@@ -27,7 +28,7 @@ public:
 	ANPara p1;
 	CVPara p2;
 	SAPara p3;
-	std::vector<DataOut> dol;
+	std::vector<DataOutA> dol;
 	std::vector<PlotData> lp;
 	std::vector<PlotData> rp;
 	CString resultStr;

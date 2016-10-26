@@ -20,6 +20,8 @@
 #include "xRescaleT.h"
 #include "PlotData.h"
 
+#include "pcctC.h"
+#include "DataOutA.h"
 
 
 #include <time.h>
@@ -103,8 +105,8 @@ bool GetStepList(std::vector<DWORD> &sl, int atype)
 	case 1:
 		{
 			DWORD stepl[]={
-				stp(PCCTB_VMS,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_PLOT_LAST,PF_Q_NORMALIZED|PF_S),
-				stp(PCCTB_S,0,PF_Q_NORMALIZED|PF_S)
+				stp(DOA_VMS,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_PLOT_LAST,PF_Q_NORMALIZED|PF_S),
+				stp(DOA_S,0,PF_Q_NORMALIZED|PF_S)
 			};
 			sl.assign(stepl,stepl+2);
 		}
@@ -112,8 +114,8 @@ bool GetStepList(std::vector<DWORD> &sl, int atype)
 	case 2:
 		{
 			DWORD stepl[]={
-				stp(PCCTB_VMS,SC_NEW_LINE|SC_PLOT_LAST,PF_Q_NORMALIZED|PF_SAMPLE),
-				stp(PCCTB_SAMPLE,0,PF_Q_NORMALIZED|PF_SAMPLE)
+				stp(DOA_VMS,SC_NEW_LINE|SC_PLOT_LAST,PF_Q_NORMALIZED|PF_SAMPLE),
+				stp(DOA_SAMPLE,0,PF_Q_NORMALIZED|PF_SAMPLE)
 			};
 			sl.assign(stepl,stepl+2);
 		}
@@ -121,8 +123,8 @@ bool GetStepList(std::vector<DWORD> &sl, int atype)
 	case 3:
 		{
 			DWORD stepl[]={
-				stp(PCCTB_VMS,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_PLOT_LAST,PF_CONCERTRATION|PF_S),
-				stp(PCCTB_S,0,PF_CONCERTRATION|PF_S)
+				stp(DOA_VMS,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_PLOT_LAST,PF_CONCERTRATION|PF_S),
+				stp(DOA_S,0,PF_CONCERTRATION|PF_S)
 			};
 			sl.assign(stepl,stepl+2);
 
@@ -132,10 +134,10 @@ bool GetStepList(std::vector<DWORD> &sl, int atype)
 	case 4:
 		{
 			DWORD stepl[]={
-				stp(PCCTB_VMS,SC_NO_PLOT,0),
-				stp(PCCTB_S,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_PLOT_LAST,PF_CONCERTRATION|PF_A),
-				stp(PCCTB_SAMPLE|PCCTB_RESET_SOLUTION_AT_END,SC_PLOT_LAST,PF_CONCERTRATION|PF_A),
-				stp(PCCTB_A|PCCTB_MORE,0,PF_CONCERTRATION|PF_A)
+				stp(DOA_VMS,SC_NO_PLOT,0),
+				stp(DOA_S,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_PLOT_LAST,PF_CONCERTRATION|PF_A),
+				stp(DOA_SAMPLE|DOA_RESET_SOLUTION_AT_END,SC_PLOT_LAST,PF_CONCERTRATION|PF_A),
+				stp(DOA_A|DOA_MORE,0,PF_CONCERTRATION|PF_A)
 			};
 			sl.assign(stepl,stepl+4);
 
@@ -145,9 +147,9 @@ bool GetStepList(std::vector<DWORD> &sl, int atype)
 	case 5:
 		{
 			DWORD stepl[]={
-				stp(PCCTB_VMS,SC_NO_PLOT,0),
-				stp(PCCTB_S|PCCTB_A|PCCTB_MORE,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_PLOT_LAST,PF_CONCERTRATION|PF_L),
-				stp(PCCTB_L,0,PF_CONCERTRATION|PF_L)
+				stp(DOA_VMS,SC_NO_PLOT,0),
+				stp(DOA_S|DOA_A|DOA_MORE,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_PLOT_LAST,PF_CONCERTRATION|PF_L),
+				stp(DOA_L,0,PF_CONCERTRATION|PF_L)
 			};
 			sl.assign(stepl,stepl+3);
 		}
@@ -156,9 +158,9 @@ bool GetStepList(std::vector<DWORD> &sl, int atype)
 	case 6:
 		{
 			DWORD stepl[]={
-				stp(PCCTB_VMS,SC_NO_PLOT,0),
-				stp(PCCTB_S|PCCTB_A,SC_NO_PLOT,0),
-				stp(PCCTB_SAMPLE,SC_NO_PLOT,0)
+				stp(DOA_VMS,SC_NO_PLOT,0),
+				stp(DOA_S|DOA_A,SC_NO_PLOT,0),
+				stp(DOA_SAMPLE,SC_NO_PLOT,0)
 			};
 			sl.assign(stepl,stepl+3);
 		}
@@ -167,8 +169,8 @@ bool GetStepList(std::vector<DWORD> &sl, int atype)
 	case 7:
 		{
 			DWORD stepl[]={
-				stp(PCCTB_VMS,SC_NEW_LINE|SC_PLOT_LAST,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_S),
-				stp(PCCTB_S|PCCTB_A,0,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_S)
+				stp(DOA_VMS,SC_NEW_LINE|SC_PLOT_LAST,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_S),
+				stp(DOA_S|DOA_A,0,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_S)
 			};
 
 			sl.assign(stepl,stepl+2);
@@ -179,9 +181,9 @@ bool GetStepList(std::vector<DWORD> &sl, int atype)
 	case 8:
 		{
 			DWORD stepl[]={
-				stp(PCCTB_VMS,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_PLOT_LAST,PF_Q_NORMALIZED|PF_SAMPLE),
-				stp(PCCTB_SAMPLE|PCCTB_RESET_SOLUTION_AT_END,0,PF_Q_NORMALIZED|PF_SAMPLE),
-				stp(PCCTB_A|PCCTB_MORE,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_NEW_ONCE,PF_Q_NORMALIZED|PF_A|PF_CONCERTRATION)
+				stp(DOA_VMS,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_PLOT_LAST,PF_Q_NORMALIZED|PF_SAMPLE),
+				stp(DOA_SAMPLE|DOA_RESET_SOLUTION_AT_END,0,PF_Q_NORMALIZED|PF_SAMPLE),
+				stp(DOA_A|DOA_MORE,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_NEW_ONCE,PF_Q_NORMALIZED|PF_A|PF_CONCERTRATION)
 			};
 
 
@@ -192,8 +194,8 @@ bool GetStepList(std::vector<DWORD> &sl, int atype)
 	case 9:
 		{
 			DWORD stepl[]={
-				stp(PCCTB_VMS,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_PLOT_LAST,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_L),
-				stp(PCCTB_L,0,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_L)
+				stp(DOA_VMS,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_PLOT_LAST,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_L),
+				stp(DOA_L,0,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_L)
 			};
 			sl.assign(stepl,stepl+2);
 		}
@@ -201,9 +203,9 @@ bool GetStepList(std::vector<DWORD> &sl, int atype)
 	case 10:
 		{
 			DWORD stepl[]={
-				stp(PCCTB_VMS,SC_NO_PLOT,0),
-				stp(PCCTB_L,SC_NO_PLOT,0),
-				stp(PCCTB_SAMPLE,SC_NO_PLOT,0)
+				stp(DOA_VMS,SC_NO_PLOT,0),
+				stp(DOA_L,SC_NO_PLOT,0),
+				stp(DOA_SAMPLE,SC_NO_PLOT,0)
 			};
 			sl.assign(stepl,stepl+3);
 		}
@@ -212,9 +214,9 @@ bool GetStepList(std::vector<DWORD> &sl, int atype)
 	case 11:
 		{
 			DWORD stepl[]={
-				stp(PCCTB_VMS,SC_NO_PLOT,0),
-				stp(PCCTB_S|PCCTB_A,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_PLOT_LAST|SC_NEW_ONCE,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_L),
-				stp(PCCTB_L,0,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_L)
+				stp(DOA_VMS,SC_NO_PLOT,0),
+				stp(DOA_S|DOA_A,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_PLOT_LAST|SC_NEW_ONCE,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_L),
+				stp(DOA_L,0,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_L)
 			};
 			sl.assign(stepl,stepl+3);
 
@@ -224,10 +226,10 @@ bool GetStepList(std::vector<DWORD> &sl, int atype)
 	case 12:
 		{
 			DWORD stepl[]={
-				stp(PCCTB_VMS,SC_NO_PLOT,0),
-				stp(PCCTB_S|PCCTB_A,SC_NO_PLOT,0),
-				stp(PCCTB_SAMPLE|PCCTB_RESET_SOLUTION_AT_END,/*SC_NEW_RIGHT_PLOT|*/SC_NO_PLOT/*|SC_NEW_LINE|SC_PLOT_LAST*/,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_L),
-				stp(PCCTB_L,SC_NEW_LINE,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_L)
+				stp(DOA_VMS,SC_NO_PLOT,0),
+				stp(DOA_S|DOA_A,SC_NO_PLOT,0),
+				stp(DOA_SAMPLE|DOA_RESET_SOLUTION_AT_END,/*SC_NEW_RIGHT_PLOT|*/SC_NO_PLOT/*|SC_NEW_LINE|SC_PLOT_LAST*/,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_L),
+				stp(DOA_L,SC_NEW_LINE,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_L)
 			};
 			sl.assign(stepl,stepl+4);
 		}
@@ -384,6 +386,26 @@ bool InterpX(PlotData &pdat, int idx, double yr, double &xr)
 }
 
 
+bool InterpX(const std::vector<double> &x, const std::vector<double> &y, double yr, double &xr)
+{
+	//std::vector<double> x;
+	//std::vector<double> y;
+
+	//pdat.GetDatai(idx,x,y);
+
+	std::vector<double> c1(4,0);
+	std::vector< std::vector<double> > c(x.size()-1,c1);
+	smspl(x,y,1.0,c);
+	std::vector<double> r;
+	int ni=SolveCubicPP(x,c,yr,r);
+	if(ni<=0){
+		return false;
+	}
+	xr=r.back();
+	return true;
+
+}
+
 void AddLine(PlotData &pdat, double x1, double x2, double k, double b, CString name, int linetype=0)
 {
 	double xl[]={x1,x2};
@@ -443,32 +465,30 @@ bool FitLine(PlotData &pdat, int idx, double &k, double &b, int nFront=0, int nB
 
 
 
-
-
-
 void OneStep( COutputWnd * ow
 	, CanalyzerView * leftp
 	, CMFCCaptionBarA *cba
 	, ProcessState &pst
-	, pcct &data
-	, pcctB &dataB
+	//, pcct &data
+	, pcctC &dataC
 	, std::vector<CString> &filelist
 	, SAPara &p3
 	, bool bStopFlag=true
 	, bool bShowRight=true
 	)
 {
+	pcct data;
 	/////load data from file////////////
 	data.clear();
 	data.readFile(filelist.front());
 	data.TomA();
 	/////////////////prompt add solution//////////////////////////////
-	::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dataB.addVolume),NULL);
+	::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dataC.doa.addVolume),NULL);
 	/////////////////wait response/////////////////////////
 	pst=pause;
 	WaitSecond(pst);
 	///////////////////refresh analysis class///////////////////////
-	dataB.clear();
+	dataC.clear();
 	////////////////////prompt running////////////////////////////////
 	::SendMessage(cba->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
 
@@ -490,45 +510,26 @@ void OneStep( COutputWnd * ow
 	LineSpec ps1;
 	CString strTemp;
 	ps1.colour=genColor( genColorvFromIndex<float>( pDoc->lp[ci].ps.size() ) ) ;
-	ps1.dotSize=0;
-	ps1.name=dataB.stepName;
+	ps1.dotSize=0;	
+	ps1.name=dataC.doa.GetStepName(pDoc->dol.size());
 	ps1.lineType=0;
 	ps1.smoothLine=0;
 	ps1.traceLast=true;
 
-	CString postr;
-	postr.LoadStringW(IDS_STRING_POTENTIAL);
-	CString custr;
-	custr.LoadStringW(IDS_STRING_CURRENT);
-
-
-	//WaitForSingleObject(semaphoreWrite.m_hObject,INFINITE);
-	pDoc->lp[ci].AddNew(x,y,ps1,postr,custr);
-	//pDoc->lp[ci].AddNew(x,y,ps1,data.label[0],data.label[1]);
+	pDoc->lp[ci].AddNew(x,y,ps1);
 	if(leftp->updatePlotRange(ci)){
 		leftp->Invalidate(FALSE);
-		//leftp->UpdateWindow();
 	}
-	//ReleaseSemaphore(semaphoreWrite.m_hObject,1,NULL);
 
 
-	nflg=dataB.addXY(x,y);
+
+	nflg=dataC.addXY(x,y);
 
 	if(nflg>=1){//if one cycle complete
 
-		CString sname;
-		(sname.LoadString(IDS_STRING_CYCLE));
-		DataOut dout;
-		dout.addVol=( (dataB.Ar.size()==1)?dataB.addVolume:0 );
-		dout.nQ=(dataB.Ar.back()/dataB.Ar0);
-		dout.Q=dataB.Ar.back();
-		dout.stepName.Format(L"%s(%s%d)",pDoc->lp[ci].ps.back().name,sname,dataB.Ar.size());
-		dout.totalVol=dataB.additiveVolume+dataB.VMSVolume;
-		dout.Use=(nflg==2)&bShowRight;
-		pDoc->dol.push_back(dout);
+		ow->GetListCtrl()->InsertListCtrl(dataC.rowCount,dataC.doa,pDoc->dol.size(),dataC.doa.Ar.size()-1,(nflg==2)&bShowRight);
 
-		ow->GetListCtrl()->InsertListCtrl(dataB.rowCount,dout);
-		dataB.rowCount++;
+		dataC.rowCount++;
 	}
 
 
@@ -540,50 +541,177 @@ void OneStep( COutputWnd * ow
 		//TRACE(L"rccs running\n");
 		rn=data.popData(x,y,n1);
 
-		//WaitForSingleObject(semaphoreWrite.m_hObject,INFINITE);
 		pDoc->lp[ci].AddFollow(x,y);
 		if(leftp->updatePlotRange(ci,x,y)){
 			leftp->Invalidate(FALSE);
-			//leftp->UpdateWindow();
 		}
-		//ReleaseSemaphore(semaphoreWrite.m_hObject,1,NULL);
 
-		nflg=dataB.addXY(x,y);
+		nflg=dataC.addXY(x,y);
 
 		if(nflg>=1){//if one cycle complete
+			ow->GetListCtrl()->InsertListCtrl(dataC.rowCount,dataC.doa,pDoc->dol.size(),dataC.doa.Ar.size()-1,(nflg==2)&bShowRight);
 
-			CString sname;
-			(sname.LoadString(IDS_STRING_CYCLE));
-			DataOut dout;
-			dout.addVol=( (dataB.Ar.size()==1)?dataB.addVolume:0 );
-			dout.nQ=(dataB.Ar.back()/dataB.Ar0);
-			dout.Q=dataB.Ar.back();
-			dout.stepName.Format(L"%s(%s%d)",pDoc->lp[ci].ps.back().name,sname,dataB.Ar.size());
-			dout.totalVol=dataB.additiveVolume+dataB.VMSVolume;
-			dout.Use=(nflg==2)&bShowRight;
-			pDoc->dol.push_back(dout);
-
-			ow->GetListCtrl()->InsertListCtrl(dataB.rowCount, dout);
-
-			dataB.rowCount++;
+			dataC.rowCount++;
 		}
-
 
 		Sleep(intv);
 	}
+
+	pDoc->dol.push_back(dataC.doa);
 
 	///////////////////////all cycle end/////////////////
 
 	filelist.erase(filelist.begin());
 
-	if(p3.saplist.front().isStepEnd(dataB.Ar.back()/dataB.Ar0,bStopFlag)){
+	if(p3.saplist.front().isStepEnd(dataC.doa.Ar.back()/dataC.doa.Ar0,bStopFlag)){
 		p3.saplist.erase(p3.saplist.begin());
 	}
 
-	dataB.stepCount++;
+	dataC.stepCount++;
 
 	////////////////////analysis complete////////////////////////
 }
+
+
+
+//void OneStep( COutputWnd * ow
+//	, CanalyzerView * leftp
+//	, CMFCCaptionBarA *cba
+//	, ProcessState &pst
+//	, pcct &data
+//	, pcctB &dataB
+//	, std::vector<CString> &filelist
+//	, SAPara &p3
+//	, bool bStopFlag=true
+//	, bool bShowRight=true
+//	)
+//{
+//	/////load data from file////////////
+//	data.clear();
+//	data.readFile(filelist.front());
+//	data.TomA();
+//	/////////////////prompt add solution//////////////////////////////
+//	::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dataB.addVolume),NULL);
+//	/////////////////wait response/////////////////////////
+//	pst=pause;
+//	WaitSecond(pst);
+//	///////////////////refresh analysis class///////////////////////
+//	dataB.clear();
+//	////////////////////prompt running////////////////////////////////
+//	::SendMessage(cba->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
+//
+//	////////////////////////load data from memory for analysis////////////////////////////////
+//	int nflg;
+//
+//	std::vector<double> x;
+//	std::vector<double> y;
+//	size_t rn;
+//
+//	CanalyzerDoc *pDoc=leftp->GetDocument();
+//	int ci=pDoc->lp.size()-1;
+//
+//	//load n1 points
+//	rn=data.popData(x,y,n1);
+//	//plot points on plot1
+//
+//
+//	LineSpec ps1;
+//	CString strTemp;
+//	ps1.colour=genColor( genColorvFromIndex<float>( pDoc->lp[ci].ps.size() ) ) ;
+//	ps1.dotSize=0;
+//	ps1.name=dataB.stepName;
+//	ps1.lineType=0;
+//	ps1.smoothLine=0;
+//	ps1.traceLast=true;
+//
+//	CString postr;
+//	postr.LoadStringW(IDS_STRING_POTENTIAL);
+//	CString custr;
+//	custr.LoadStringW(IDS_STRING_CURRENT);
+//
+//
+//	//WaitForSingleObject(semaphoreWrite.m_hObject,INFINITE);
+//	pDoc->lp[ci].AddNew(x,y,ps1,postr,custr);
+//	//pDoc->lp[ci].AddNew(x,y,ps1,data.label[0],data.label[1]);
+//	if(leftp->updatePlotRange(ci)){
+//		leftp->Invalidate(FALSE);
+//		//leftp->UpdateWindow();
+//	}
+//	//ReleaseSemaphore(semaphoreWrite.m_hObject,1,NULL);
+//
+//
+//	nflg=dataB.addXY(x,y);
+//
+//	if(nflg>=1){//if one cycle complete
+//
+//		CString sname;
+//		(sname.LoadString(IDS_STRING_CYCLE));
+//		DataOut dout;
+//		dout.addVol=( (dataB.Ar.size()==1)?dataB.addVolume:0 );
+//		dout.nQ=(dataB.Ar.back()/dataB.Ar0);
+//		dout.Q=dataB.Ar.back();
+//		dout.stepName.Format(L"%s(%s%d)",pDoc->lp[ci].ps.back().name,sname,dataB.Ar.size());
+//		dout.totalVol=dataB.additiveVolume+dataB.VMSVolume;
+//		dout.Use=(nflg==2)&bShowRight;
+//		pDoc->dol.push_back(dout);
+//
+//		ow->GetListCtrl()->InsertListCtrl(dataB.rowCount,dout);
+//		dataB.rowCount++;
+//	}
+//
+//
+//
+//	Sleep(intv);
+//
+//	while(nflg<2){
+//
+//		//TRACE(L"rccs running\n");
+//		rn=data.popData(x,y,n1);
+//
+//		//WaitForSingleObject(semaphoreWrite.m_hObject,INFINITE);
+//		pDoc->lp[ci].AddFollow(x,y);
+//		if(leftp->updatePlotRange(ci,x,y)){
+//			leftp->Invalidate(FALSE);
+//			//leftp->UpdateWindow();
+//		}
+//		//ReleaseSemaphore(semaphoreWrite.m_hObject,1,NULL);
+//
+//		nflg=dataB.addXY(x,y);
+//
+//		if(nflg>=1){//if one cycle complete
+//
+//			CString sname;
+//			(sname.LoadString(IDS_STRING_CYCLE));
+//			DataOut dout;
+//			dout.addVol=( (dataB.Ar.size()==1)?dataB.addVolume:0 );
+//			dout.nQ=(dataB.Ar.back()/dataB.Ar0);
+//			dout.Q=dataB.Ar.back();
+//			dout.stepName.Format(L"%s(%s%d)",pDoc->lp[ci].ps.back().name,sname,dataB.Ar.size());
+//			dout.totalVol=dataB.additiveVolume+dataB.VMSVolume;
+//			dout.Use=(nflg==2)&bShowRight;
+//			pDoc->dol.push_back(dout);
+//
+//			ow->GetListCtrl()->InsertListCtrl(dataB.rowCount, dout);
+//
+//			dataB.rowCount++;
+//		}
+//
+//
+//		Sleep(intv);
+//	}
+//
+//	///////////////////////all cycle end/////////////////
+//
+//	filelist.erase(filelist.begin());
+//
+//	if(p3.saplist.front().isStepEnd(dataB.Ar.back()/dataB.Ar0,bStopFlag)){
+//		p3.saplist.erase(p3.saplist.begin());
+//	}
+//
+//	dataB.stepCount++;
+//
+//	////////////////////analysis complete////////////////////////
+//}
 
 
 
@@ -599,7 +727,7 @@ CString Output1(PlotData & pdat
 	if(InterpX(pdat,0,evalR,vsupp)){
 		double z=Sconc/(1+vmsvol/vsupp);
 		CString str;
-		str.Format(L" Vsupp=%g ml @ Ar/Ar0=%g, Z=%g ml/L",vsupp, evalR, z);
+		str.Format(L" Vsupp=%g ml @ Ar/Ar0=%g, Z=%g ml/L", vsupp, evalR, z);
 		return str;
 	}
 	else{
@@ -608,6 +736,13 @@ CString Output1(PlotData & pdat
 		return str;
 	}
 }
+
+
+
+
+
+
+
 
 CString Output2( PlotData & pdat
 	, double evaluationratio
@@ -710,7 +845,6 @@ CString Output3(PlotData & pdat
 
 
 CString Output4(PlotData & pdat
-	//, dlg1 *p1
 	, double vmsvol
 	, double Avol
 	)
@@ -769,8 +903,6 @@ CString Output6(PlotData & pdat
 		ps1.smoothLine=0;
 		ps1.traceLast=false;
 		pdat.AddNew(nx,ny,ps1);
-		//p1->updatePlotRange();
-		//p1->Invalidate(FALSE);
 
 		double originalConc=LConc*(totalVol/Lvol);
 
@@ -1030,238 +1162,6 @@ CString Output12(
 
 
 
-UINT DEMOP(CanalyzerViewL *leftp,
-	CanalyzerViewR *rightp,
-	CMFCCaptionBarA *cba,
-	COutputWnd *outw,
-	ProcessState &pst,
-	const ANPara &p1,
-	const CVPara &p2,
-	SAPara &p3
-	)
-{
-
-	//////////////////////////////load data//////////////////////////////////////
-	std::vector<CString> filelist;
-	LoadFileList(DEMOflist,filelist);
-	if(filelist.empty()){ pst=stop;return 1;}
-
-	pcct dt1;
-	pcctB dataB;
-
-	//////////////////////////clear window/////////////////////////////////
-
-	outw->clear();
-	leftp->clear();
-	rightp->clear();
-	//////////////////////////////////////////////////////////////////////////////
-	std::vector<double> x;
-	std::vector<double> y;
-
-	CanalyzerDoc *pDoc=leftp->GetDocument();
-	pDoc->dol.clear();
-
-	leftp->AddPlot(PlotData());
-	pDoc->lp.back().psp=PlotSpec(0);
-
-
-	rightp->AddPlot(PlotData());
-	pDoc->rp.back().psp=PlotSpec(0);
-	rightp->AddPlot(PlotData());
-	pDoc->rp.back().psp=PlotSpec(0);
-	rightp->AddPlot(PlotData());
-	pDoc->rp.back().psp=PlotSpec(0);
-	rightp->AddPlot(PlotData());
-	pDoc->rp.back().psp=PlotSpec(0);
-
-
-	CString xla;
-	CString yla;
-	//////////////////////////////first step////////////////////////////////////////////
-
-	dataB.initialPara(p2);
-
-	///////////////////////////////vms/////////////////////////////////////
-	if( dataB.ReadTask(p3.saplist.front()) ){
-
-		OneStep(outw,leftp,cba,pst,dt1,dataB,filelist,p3);
-
-		x.assign( 1, dataB.additiveVolume );
-		y.assign( 1, (dataB.Ar.back()/dataB.Ar0) );
-
-		{
-			LineSpec ps1;
-			ps1.colour=genColor( genColorvFromIndex<float>( pDoc->rp[0].ps.size() ) ) ;
-			ps1.dotSize=3;
-			ps1.name.LoadStringW(IDS_STRING_TEST_CURVE);
-			ps1.lineType=0;
-			ps1.smoothLine=0;
-			ps1.traceLast=false;
-
-			{
-				CString str;
-				//str.LoadStringW(IDS_STRING_SUPPRESSOR);
-				//xla=str;
-				//xla+=L" ";
-				str.LoadStringW(IDS_STRING_VOL_);
-				xla=str;
-				str.LoadStringW(IDS_STRING_NORMALIZED_Q);
-				yla=str;
-			}
-			pDoc->rp[0].AddNew(x,y,ps1,xla,yla);
-		}
-
-		{
-
-			x.assign( 1, dataB.SConc() );
-			y.assign( 1, (dataB.Ar.back()/dataB.Ar0) );
-
-			LineSpec ps1;
-			ps1.colour=genColor( genColorvFromIndex<float>( pDoc->rp[1].ps.size() ) ) ;
-			ps1.dotSize=3;
-			ps1.name.LoadStringW(IDS_STRING_TEST_CURVE);
-			ps1.lineType=0;
-			ps1.smoothLine=0;
-			ps1.traceLast=false;
-
-			{
-				CString str;
-				str.LoadStringW(IDS_STRING_SUPPRESSOR);
-				xla=str;
-				xla+=L" ";
-				str.LoadStringW(IDS_STRING_CONC_);
-				xla+=str;
-				str.LoadStringW(IDS_STRING_NORMALIZED_Q);
-				yla=str;
-			}
-			pDoc->rp[1].AddNew(x,y,ps1,xla,yla);
-		}
-
-
-		{
-
-			x.assign( 1, dataB.AConc() );
-			y.assign( 1, (dataB.Ar.back()/dataB.Ar0) );
-
-			LineSpec ps1;
-			ps1.colour=genColor( genColorvFromIndex<float>( pDoc->rp[2].ps.size() ) ) ;
-			ps1.dotSize=3;
-			ps1.name.LoadStringW(IDS_STRING_TEST_CURVE);
-			ps1.lineType=0;
-			ps1.smoothLine=0;
-			ps1.traceLast=false;
-
-			{
-				CString str;
-				str.LoadStringW(IDS_STRING_ACCELERATOR);
-				xla=str;
-				xla+=L" ";
-				str.LoadStringW(IDS_STRING_CONC_);
-				xla+=str;
-				str.LoadStringW(IDS_STRING_NORMALIZED_Q);
-				yla=str;
-			}
-			pDoc->rp[2].AddNew(x,y,ps1,xla,yla);
-		}
-
-
-
-		{
-
-			x.assign( 1, dataB.LConc() );
-			y.assign( 1, (dataB.Ar.back()/dataB.Ar0) );
-
-			LineSpec ps1;
-			ps1.colour=genColor( genColorvFromIndex<float>( pDoc->rp[3].ps.size() ) ) ;
-			ps1.dotSize=3;
-			ps1.name.LoadStringW(IDS_STRING_TEST_CURVE);
-			ps1.lineType=0;
-			ps1.smoothLine=0;
-			ps1.traceLast=false;
-
-			{
-				CString str;
-				str.LoadStringW(IDS_STRING_LEVELER);
-				xla=str;
-				xla+=L" ";
-				str.LoadStringW(IDS_STRING_CONC_);
-				xla+=str;
-				str.LoadStringW(IDS_STRING_NORMALIZED_Q);
-				yla=str;
-			}
-			pDoc->rp[3].AddNew(x,y,ps1,xla,yla);
-		}
-
-
-
-		if(rightp->updatePlotRange())
-			rightp->Invalidate(FALSE);
-	}
-	else{
-		AfxMessageBox(IDS_STRING_STEP_ERROR);pst=stop;return 1;		
-		p3.saplist.erase(p3.saplist.begin());
-	}
-
-	/////////////////////////add supressor////////////////////////////
-
-	while(!p3.saplist.empty()){
-
-		if( dataB.ReadTask(p3.saplist.front(),PCCTB_S|PCCTB_A|PCCTB_L|PCCTB_SAMPLE) ){
-
-			OneStep(outw,leftp,cba,pst,dt1,dataB,filelist,p3);
-
-			x.assign( 1, dataB.additiveVolume );
-			y.assign( 1, (dataB.Ar.back()/dataB.Ar0) );
-			pDoc->rp[0].AddFollow(x,y);
-
-			x.assign( 1, dataB.SConc() );
-			y.assign( 1, (dataB.Ar.back()/dataB.Ar0) );
-			pDoc->rp[1].AddFollow(x,y);
-
-			x.assign( 1, dataB.AConc() );
-			y.assign( 1, (dataB.Ar.back()/dataB.Ar0) );
-			pDoc->rp[2].AddFollow(x,y);
-
-			x.assign( 1, dataB.LConc() );
-			y.assign( 1, (dataB.Ar.back()/dataB.Ar0) );
-			pDoc->rp[3].AddFollow(x,y);
-
-			if(rightp->updatePlotRange())
-				rightp->Invalidate(FALSE);
-
-		}
-		else{
-			AfxMessageBox(IDS_STRING_STEP_ERROR);pst=stop;return 1;
-			p3.saplist.erase(p3.saplist.begin());
-		}
-	}
-
-	///////////////////////////////////////////////////////////////
-	if(dataB.bUnknown){
-		pDoc->resultStr=L"unknown sample";
-	}
-	else{
-		CString str;
-		pDoc->resultStr=L"";
-		str.Format(L"Aconc=%g ml/L,",dataB.AConc());
-		pDoc->resultStr+=str;
-		str.Format(L"Sconc=%g ml/L,",dataB.SConc());
-		pDoc->resultStr+=str;
-		str.Format(L"Lconc=%g ml/L",dataB.LConc());
-		pDoc->resultStr+=str;
-	}
-
-	::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(pDoc->resultStr.GetBuffer()),NULL);
-
-	TRACE(L"rccs ends\n");
-
-	pst=stop;
-
-	return 0;
-
-}
-
-
 
 
 void GetXYLabel(CString &xla,CString &yla,BYTE pf)
@@ -1338,20 +1238,183 @@ void SetData(double &x, double &y, BYTE pf, pcctB &dataB)
 }
 
 
+void SetData(double &x, double &y, BYTE pf, DataOutA &dataB)
+{
+	if( pf&PF_CONCERTRATION ){
+
+		if( pf&PF_S ){
+			x=dataB.SConc();
+		}
+		if( pf&PF_A ){
+			x=dataB.AConc();
+		}
+		if( pf&PF_L ){
+			x=dataB.LConc();
+		}
+
+	}
+	else{
+		x=dataB.additiveVolume;
+	}
+
+	if( pf&PF_Q_NORMALIZED ){
+		y=dataB.Ar.back()/dataB.Ar0;
+	}
+	else{
+		y=dataB.Ar.back();
+	}
+
+
+}
 
 
 
 
-UINT OneProcess2(CanalyzerViewL *leftp,
+//
+//UINT OneProcess2(CanalyzerViewL *leftp,
+//	CanalyzerViewR *rightp,
+//	CMFCCaptionBarA *cba,
+//	COutputWnd *outw,
+//	ProcessState &pst,
+//	std::vector<CString> &filelist,
+//	pcctB &dataB,
+//	SAPara &p3,
+//	std::vector<DWORD> &sl,
+//	std::vector<pcctB> &dbBuf,
+//	const LineSpec &lsp=LineSpec())
+//{
+//	//////////////////////////////load data//////////////////////////////////////
+//	//std::vector<CString> filelist;
+//	//LoadFileList(filePath,filelist);
+//	if(filelist.empty()){ 
+//		CString strerr;
+//		strerr.LoadStringW(IDS_STRING_READ_ERROR);
+//		::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(strerr.GetBuffer()),NULL);
+//		pst=stop;
+//		return 1;
+//	}
+//
+//	CanalyzerDoc *pDoc=leftp->GetDocument();
+//
+//	pcct dt1;
+//	std::vector<double> x(1,0);
+//	std::vector<double> y(1,0);
+//	////////////////////////////////////////////////////////////////////////////////////////
+//
+//	while( !p3.saplist.empty() && !sl.empty() ){
+//
+//		BYTE step=nby(sl.front(),0);
+//		BYTE stepControl=nby(sl.front(),1);
+//		BYTE plotFilter=nby(sl.front(),2);
+//
+//		if( dataB.ReadTask(p3.saplist.front(),step) ){
+//
+//			if( step&PCCTB_VMS ){
+//				leftp->AddPlot(PlotData());
+//				pDoc->lp.back().psp=PlotSpec(0);
+//			}
+//
+//			if(stepControl&SC_NEW_RIGHT_PLOT
+//				&&( !(stepControl&SC_STEP_COMPLETE) || !(stepControl&SC_NEW_ONCE) )){
+//					rightp->AddPlot(PlotData());
+//					CString xla;
+//					CString yla;
+//					GetXYLabel(xla,yla,plotFilter);
+//					pDoc->rp.back().SetSpec(xla,yla,PlotSpec(0));
+//			}
+//
+//			OneStep(outw,leftp,cba,pst,dt1,dataB,filelist,p3,!(step&PCCTB_MORE),!(stepControl&SC_NO_PLOT));
+//
+//			if(!(stepControl&SC_NO_PLOT)){
+//				if(!(stepControl&SC_PLOT_LAST)){
+//					SetData(x[0],y[0],plotFilter,dataB);
+//					if( (stepControl&SC_NEW_LINE)
+//						&&!(stepControl&SC_STEP_COMPLETE)){
+//							LineSpec ps1=lsp;
+//							ps1.colour=genColor( genColorvFromIndex<float>( pDoc->rp.back().ps.size() ) ) ;
+//							//ps1.dotSize=3;
+//							//ps1.name.LoadStringW(IDS_STRING_TEST_CURVE);
+//							//ps1.lineType=0;
+//							//ps1.smoothLine=0;
+//							//ps1.traceLast=false;
+//							pDoc->rp.back().AddNew(x,y,ps1);
+//					}
+//					else{
+//						pDoc->rp.back().AddFollow(x,y);
+//					}
+//					if(rightp->updatePlotRange((int)(pDoc->rp.size())-1))
+//						rightp->Invalidate(FALSE);
+//				}
+//			}
+//
+//			stepControl|=SC_STEP_COMPLETE;
+//			sl.front()=stp(step,stepControl,plotFilter);
+//
+//		}
+//		else{
+//			if( stepControl&SC_STEP_COMPLETE ){
+//
+//				dbBuf.push_back(dataB);
+//
+//				if(step&PCCTB_RESET_SOLUTION_AT_END){					
+//					dataB.bUnknown=false;
+//					dataB.Aml=0;
+//					dataB.Lml=0;
+//					dataB.Sml=0;
+//				}
+//
+//				if(!(stepControl&SC_NO_PLOT)){
+//					if( stepControl&SC_PLOT_LAST ){
+//						SetData(x[0],y[0],plotFilter,dataB);
+//						if(stepControl&SC_NEW_LINE){
+//							LineSpec ps1=lsp;
+//							ps1.colour=genColor( genColorvFromIndex<float>( pDoc->rp.back().ps.size() ) ) ;
+//							//ps1.dotSize=3;
+//							//ps1.name.LoadStringW(IDS_STRING_TEST_CURVE);
+//							//ps1.lineType=0;
+//							//ps1.smoothLine=0;
+//							//ps1.traceLast=false;
+//							pDoc->rp.back().AddNew(x,y,ps1);
+//						}
+//						else{
+//							pDoc->rp.back().AddFollow(x,y);
+//						}
+//						if(rightp->updatePlotRange((int)(pDoc->rp.size())-1))
+//							rightp->Invalidate(FALSE);
+//					}	
+//				}
+//				sl.erase(sl.begin());
+//			}
+//			else{				
+//				AfxMessageBox(IDS_STRING_STEP_ERROR);
+//				CString strerr;
+//				strerr.LoadStringW(IDS_STRING_STEP_ERROR);
+//				::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(strerr.GetBuffer()),NULL);
+//				pst=stop;
+//				return 1;
+//				p3.saplist.erase(p3.saplist.begin());
+//			}
+//		}
+//	}
+//
+//
+//	return 0;
+//
+//}
+
+
+
+
+UINT OneProcess3(CanalyzerViewL *leftp,
 	CanalyzerViewR *rightp,
 	CMFCCaptionBarA *cba,
 	COutputWnd *outw,
 	ProcessState &pst,
 	std::vector<CString> &filelist,
-	pcctB &dataB,
+	pcctC &dataB,
 	SAPara &p3,
 	std::vector<DWORD> &sl,
-	std::vector<pcctB> &dbBuf,
+	//std::vector<pcctB> &dbBuf,
 	const LineSpec &lsp=LineSpec())
 {
 	//////////////////////////////load data//////////////////////////////////////
@@ -1367,7 +1430,6 @@ UINT OneProcess2(CanalyzerViewL *leftp,
 
 	CanalyzerDoc *pDoc=leftp->GetDocument();
 
-	pcct dt1;
 	std::vector<double> x(1,0);
 	std::vector<double> y(1,0);
 	////////////////////////////////////////////////////////////////////////////////////////
@@ -1380,9 +1442,13 @@ UINT OneProcess2(CanalyzerViewL *leftp,
 
 		if( dataB.ReadTask(p3.saplist.front(),step) ){
 
-			if( step&PCCTB_VMS ){
+			if( step&DOA_VMS ){
 				leftp->AddPlot(PlotData());
-				pDoc->lp.back().psp=PlotSpec(0);
+				CString postr;
+				postr.LoadStringW(IDS_STRING_POTENTIAL);
+				CString custr;
+				custr.LoadStringW(IDS_STRING_CURRENT);
+				pDoc->lp.back().SetSpec(postr,custr,PlotSpec(0));
 			}
 
 			if(stepControl&SC_NEW_RIGHT_PLOT
@@ -1394,20 +1460,15 @@ UINT OneProcess2(CanalyzerViewL *leftp,
 					pDoc->rp.back().SetSpec(xla,yla,PlotSpec(0));
 			}
 
-			OneStep(outw,leftp,cba,pst,dt1,dataB,filelist,p3,!(step&PCCTB_MORE),!(stepControl&SC_NO_PLOT));
+			OneStep(outw,leftp,cba,pst,dataB,filelist,p3,!(step&DOA_MORE),!(stepControl&SC_NO_PLOT));
 
 			if(!(stepControl&SC_NO_PLOT)){
 				if(!(stepControl&SC_PLOT_LAST)){
-					SetData(x[0],y[0],plotFilter,dataB);
+					SetData(x[0],y[0],plotFilter,dataB.doa);
 					if( (stepControl&SC_NEW_LINE)
 						&&!(stepControl&SC_STEP_COMPLETE)){
 							LineSpec ps1=lsp;
 							ps1.colour=genColor( genColorvFromIndex<float>( pDoc->rp.back().ps.size() ) ) ;
-							//ps1.dotSize=3;
-							//ps1.name.LoadStringW(IDS_STRING_TEST_CURVE);
-							//ps1.lineType=0;
-							//ps1.smoothLine=0;
-							//ps1.traceLast=false;
 							pDoc->rp.back().AddNew(x,y,ps1);
 					}
 					else{
@@ -1425,26 +1486,19 @@ UINT OneProcess2(CanalyzerViewL *leftp,
 		else{
 			if( stepControl&SC_STEP_COMPLETE ){
 
-				dbBuf.push_back(dataB);
-
-				if(step&PCCTB_RESET_SOLUTION_AT_END){					
-					dataB.bUnknown=false;
-					dataB.Aml=0;
-					dataB.Lml=0;
-					dataB.Sml=0;
+				if(step&DOA_RESET_SOLUTION_AT_END){					
+					dataB.doa.bUnknown=false;
+					dataB.doa.Aml=0;
+					dataB.doa.Lml=0;
+					dataB.doa.Sml=0;
 				}
 
 				if(!(stepControl&SC_NO_PLOT)){
 					if( stepControl&SC_PLOT_LAST ){
-						SetData(x[0],y[0],plotFilter,dataB);
+						SetData(x[0],y[0],plotFilter,dataB.doa);
 						if(stepControl&SC_NEW_LINE){
 							LineSpec ps1=lsp;
 							ps1.colour=genColor( genColorvFromIndex<float>( pDoc->rp.back().ps.size() ) ) ;
-							//ps1.dotSize=3;
-							//ps1.name.LoadStringW(IDS_STRING_TEST_CURVE);
-							//ps1.lineType=0;
-							//ps1.smoothLine=0;
-							//ps1.traceLast=false;
 							pDoc->rp.back().AddNew(x,y,ps1);
 						}
 						else{
@@ -1474,7 +1528,89 @@ UINT OneProcess2(CanalyzerViewL *leftp,
 }
 
 
+std::vector<ANRes> Compute(const std::vector<DataOutA> &dol, PlotData & pdat, const ANPara &p1)
+{
+	std::vector<DWORD> sl;
+	bool flg=GetStepList(sl,p1.analysistype);
 
+	size_t i,j;
+	i=0;
+	j=0;
+
+	std::vector<DataOutA> dolast;
+	while( i<sl.size()){
+		BYTE cb=nby(sl[i],0);
+		while( j<dol.size() && cb==dol[j].stepFilter ){
+			j++;
+		}
+		dolast.push_back(dol[j-1]);
+		i++;
+	}
+
+	std::vector<ANRes> re;
+
+	switch(p1.analysistype){
+	case 1:
+		{
+			double Sconc=dolast[1].Sml/dolast[1].additiveVolume;
+			double vmsvol=dolast[1].VMSVolume;
+			double vsupp;
+			if(InterpX(pdat,0,p1.evaluationratio,vsupp)){
+				double z=Sconc/(1+vmsvol/vsupp);
+				CString str;
+				ANRes r1;
+
+				r1.itemData=vsupp;
+				str.LoadStringW(IDS_STRING_S);
+				r1.itemName=str;
+				str.LoadStringW(IDS_STRING_VOLUME);
+				r1.itemName+=L" "+str;
+				str.LoadStringW(IDS_STRING_ML);
+				r1.itemUnit=str;
+
+				re.push_back(r1);
+
+				r1.itemData=z;
+				str.LoadStringW(IDS_STRING_CALIBRATION_FACTOR);
+				r1.itemName=str;
+				str.LoadStringW(IDS_STRING_ML_PER_L);
+				r1.itemUnit=str;
+
+				re.push_back(r1);
+
+				
+
+			}
+
+		}
+
+		break;
+	default:
+		break;
+	}
+
+
+	return re;
+}
+
+
+
+CString ResultStr(const std::vector<ANRes> &r)
+{
+	CString str;
+
+	if(r.empty())
+		return str;
+
+	for(size_t i=0;i<r.size();i++){
+		CString str1;
+		str1.Format(L"%s=%g%s",r[i].itemName,r[i].itemData,r[i].itemUnit);
+		str+=str1+L" ";
+	}
+	return str;
+
+
+}
 
 
 
@@ -1513,11 +1649,10 @@ UINT PROCESS(LPVOID pParam)
 
 
 	/////////////////////////////////////////////////////////////////////////////
-	pcctB dataB;
-	dataB.initialPara(p2);
+	pcctC dataC;
+	dataC.initialPara(p2);
 
 	LineSpec ps1;
-	//ps1.colour=genColor( genColorvFromIndex<float>( pDoc->rp.back().ps.size() ) ) ;
 	ps1.dotSize=3;
 	ps1.name.LoadStringW(IDS_STRING_TEST_CURVE);
 	ps1.lineType=0;
@@ -1542,352 +1677,360 @@ UINT PROCESS(LPVOID pParam)
 		//return DTR1(leftp,rightp,cba,outw,*pst,p1,p2,p3);
 		{
 
-			UINT rea=OneProcess2(leftp,rightp,cba,outw,*pst,filelist,dataB,p3,sl,dbbuf,ps1);
+			//UINT rea=OneProcess2(leftp,rightp,cba,outw,*pst,filelist,dataB,p3,sl,dbbuf,ps1);
+			UINT rea=OneProcess3(leftp,rightp,cba,outw,*pst,filelist,dataC,p3,sl,ps1);
 			if(rea!=0){
 				*pst=stop;return rea;
 			}
-			pDoc->resultStr=Output1(pDoc->rp.back(),
-				p1.evaluationratio,
-				dataB.Sml/dataB.additiveVolume,
-				dataB.VMSVolume);
+			//pDoc->resultStr=Output1(pDoc->rp.back(),
+			//	p1.evaluationratio,
+			//	dataB.Sml/dataB.additiveVolume,
+			//	dataB.VMSVolume);
 
-		}
-		break;
-	case 2:
-		//return DTA1(leftp,rightp,cba,outw,*pst,p1,p2,p3);
-		{
 
-			/////////////////////////plot standrad curve////////////////////////
+			std::vector<ANRes> re;
+			re=Compute(pDoc->dol, pDoc->rp.back(),p1);
 
-			double Sconc0=0, vmsvol0=0;
-			if(p1.calibrationfactortype==1){
-				CanalyzerDoc tmp(false);
-				if(ReadFileCustom(&tmp,1,p1.calibrationfilepath)){
-					tmp.rp.front().ps.back().name.LoadStringW(IDS_STRING_CALIBRATION_CURVE);
-					rightp->AddPlot(tmp.rp.front());
-					if(rightp->updatePlotRange(0))
-						rightp->Invalidate(FALSE);
-					Sconc0=tmp.p3.saplist.back().Sconc;
-					vmsvol0=tmp.p3.saplist.front().volconc;
-				}
-				else{
-					*pst=stop;
-					return 1;
-				}
-			}
-			else{
-				sl[0]|=(SC_NEW_RIGHT_PLOT<<8);
-			}
-
-
-			UINT rea=OneProcess2(leftp,rightp,cba,outw,*pst,filelist,dataB,p3,sl,dbbuf,ps1);
-
-			///////////////////////////////////////////////////////////////
-			if(rea!=0){
-				*pst=stop;return rea;
-			}
-
-
-			pDoc->resultStr=Output2(pDoc->rp.back(),
-				p1.evaluationratio,
-				p1.calibrationfactortype,
-				p1.calibrationfactor,
-				dataB.VMSVolume,
-				Sconc0,
-				vmsvol0);
-
-		}
-		break;
-	case 3:
-		//return LATR1(leftp,rightp,cba,outw,*pst,p1,p2,p3);
-		{
-
-
-			UINT rea=OneProcess2(leftp,rightp,cba,outw,*pst,filelist,dataB,p3,sl,dbbuf,ps1);
-			if(rea!=0){
-				*pst=stop;return rea;
-			}
-
-			pDoc->resultStr=Output3(pDoc->rp.back());
-
-		}
-		break;
-	case 4:
-		//return LATA1(leftp,rightp,cba,outw,*pst,p1,p2,p3);
-		{
-
-
-			ps1.lineType=5;
-
-			UINT rea=OneProcess2(leftp,rightp,cba,outw,*pst,filelist,dataB,p3,sl,dbbuf,ps1);
-			if(rea!=0){
-				*pst=stop;return rea;
-			}
-
-			double sampleV,baseV;
-
-			sampleV=dbbuf[2].additiveVolume-dbbuf[1].additiveVolume;
-			baseV=dbbuf[1].TotalVolume();
-
-			pDoc->resultStr=Output4(
-				pDoc->rp.back(),
-				baseV,
-				sampleV);
-
-			if(rightp->updatePlotRange((int)(pDoc->rp.size())-1))
-				rightp->Invalidate(FALSE);
-
-		}
-		break;
-	case 5:
-		//return RCR1(leftp,rightp,cba,outw,*pst,p1,p2,p3);
-		{
-
-
-			UINT rea=OneProcess2(leftp,rightp,cba,outw,*pst,filelist,dataB,p3,sl,dbbuf,ps1);
-			if(rea!=0){
-				*pst=stop;return rea;
-			}
-
-		}
-		break;
-	case 6:
-		//return RCA1(leftp,rightp,cba,outw,*pst,p1,p2,p3);
-		{
-
-
-			/////////////////////////plot standrad curve////////////////////////
-			if(p1.calibrationfactortype==1){
-				CanalyzerDoc tmp(false);
-				if(ReadFileCustom(&tmp,1,p1.calibrationfilepath)){
-					tmp.rp.front().ps.back().name.LoadStringW(IDS_STRING_CALIBRATION_CURVE);
-					rightp->AddPlot(tmp.rp.front());
-					if(rightp->updatePlotRange(0))
-						rightp->Invalidate(FALSE);
-				}
-				else{
-					*pst=stop;
-					return 1;
-				}
-			}
-			else{
-				*pst=stop;
-				return 1;
-			}
-
-
-			UINT rea=OneProcess2(leftp,rightp,cba,outw,*pst,filelist,dataB,p3,sl,dbbuf,ps1);
-			if(rea!=0){
-				*pst=stop;return rea;
-			}
-
-			pDoc->resultStr=Output6(pDoc->rp.back(),
-				dataB.Ar.back(),
-				dataB.TotalVolume(),
-				dataB.addVolume);
-
-			if(rightp->updatePlotRange((int)(pDoc->rp.size())-1))
-				rightp->Invalidate(FALSE);
-
-		}
-		break;
-	case 7:
-		//return SARR1(leftp,rightp,cba,outw,*pst,p1,p2,p3);
-		{
-
-			sl[0]|=(SC_NEW_RIGHT_PLOT<<8);
-			while(!p3.saplist.empty()){
-				UINT rea=OneProcess2(leftp,rightp,cba,outw,*pst,filelist,dataB,p3,sl,dbbuf,ps1);
-				if(rea!=0){
-					*pst=stop;return rea;
-				}
-				bool bl=GetStepList(sl,p1.analysistype);
-			}
-
-			dbbuf.push_back(dataB);	
-
-			PlotData pda;
-			pDoc->resultStr=Output7(pda
-				,p1.evaluationratio
-				,pDoc->rp.back()
-				,dbbuf);
-
-			rightp->AddPlot(pda);
-
-			if(rightp->updatePlotRange((int)(pDoc->rp.size())-1))
-				rightp->Invalidate(FALSE);
-
-		}
-		break;
-	case 8:
-		//return SARA1(leftp,rightp,cba,outw,*pst,p1,p2,p3);
-		{
-
-			SARCalibCurve scc;
-			{
-				CanalyzerDoc tmp(false);
-				if(ReadFileCustom(&tmp,1,p1.calibrationfilepath)){
-
-					scc.ll.assign(tmp.rp[0].ll.begin(), tmp.rp[0].ll.end());
-					scc.normq.assign(tmp.rp[0].yll.begin(), tmp.rp[0].yll.end());
-					scc.sconc.assign(tmp.rp[0].xll.begin(), tmp.rp[0].xll.end());
-					SCP scp1;
-					for(size_t i=0;i<tmp.p3.saplist.size();i++){
-						if(tmp.p3.saplist[i].addType!=4){
-							scp1.AC=tmp.p3.saplist[i].Aconc;
-							scp1.LC=tmp.p3.saplist[i].Lconc;
-							scp1.SC=tmp.p3.saplist[i].Sconc;
-
-							if(scc.scl.empty()
-								||scc.scl.back().LC!=scp1.LC
-								||scc.scl.back().SC!=scp1.SC
-								||scc.scl.back().AC!=scp1.AC
-								){
-									scc.scl.push_back(scp1);
-							}
-						}
-					}
-				}
-			}
-
-
-
-
-			UINT rea=OneProcess2(leftp,rightp,cba,outw,*pst,filelist,dataB,p3,sl,dbbuf,ps1);
-			///////////////////////////////////////////////////////////////
-			if(rea!=0){
-				*pst=stop;return rea;
-			}
-			//////////////////////////////////////////////////////////////////////////
-
-			int fi=pDoc->rp.size();
-			fi--;
-			pDoc->resultStr=Output8(pDoc->rp[fi-1],
-				pDoc->rp[fi],
-				p1.evaluationratio,
-				dataB.VMSVolume,
-				scc,
-				false);
-
-			if(rightp->updatePlotRange(fi))
-				rightp->Invalidate(FALSE);
-
-		}
-		break;
-	case 9:
-		//return NEWR1(leftp,rightp,cba,outw,*pst,p1,p2,p3);
-		{
-			UINT rea=OneProcess2(leftp,rightp,cba,outw,*pst,filelist,dataB,p3,sl,dbbuf,ps1);
-			if(rea!=0){
-				*pst=stop;return rea;
-			}
-
-		}
-		break;
-	case 10:
-		//return NEWA1(leftp,rightp,cba,outw,*pst,p1,p2,p3);
-		{
-
-			/////////////////////////plot standrad curve////////////////////////
-
-			if(p1.calibrationfactortype==1){
-				CanalyzerDoc tmp(false);
-				if(ReadFileCustom(&tmp,1,p1.calibrationfilepath)){
-					tmp.rp.front().ps.back().name.LoadStringW(IDS_STRING_CALIBRATION_CURVE);
-					rightp->AddPlot(tmp.rp.front());
-					if(rightp->updatePlotRange(0))
-						rightp->Invalidate(FALSE);
-				}
-				else{
-					*pst=stop;
-					return 1;
-				}
-			}
-			else{
-				*pst=stop;
-				return 1;
-			}
-
-
-
-			UINT rea=OneProcess2(leftp,rightp,cba,outw,*pst,filelist,dataB,p3,sl,dbbuf,ps1);
-			if(rea!=0){
-				*pst=stop;return rea;
-			}
-
-			int fi=pDoc->rp.size();
-			fi--;
-
-			pDoc->resultStr=Output10(pDoc->rp[fi],
-				dataB.Ar.back()/dataB.Ar0,
-				dataB.TotalVolume(),
-				dataB.additiveVolume-dbbuf[1].additiveVolume,
-				dbbuf[1].Lml);
-
-			if(rightp->updatePlotRange(fi))
-				rightp->Invalidate(FALSE);
-
-		}
-		break;
-	case 11:
-		//return NER(leftp,rightp,cba,outw,*pst,p1,p2,p3);
-		{
-			ps1.lineType=5;
-			UINT rea=OneProcess2(leftp,rightp,cba,outw,*pst,filelist,dataB,p3,sl,dbbuf,ps1);
-			if(rea!=0){
-				*pst=stop;return rea;
-			}
-			pDoc->resultStr=Output11(pDoc->rp.back());
-			if(rightp->updatePlotRange((int)(pDoc->rp.size())-1))
-				rightp->Invalidate(FALSE);
-		}
-		break;
-	case 12:
-		//return NEA(leftp,rightp,cba,outw,*pst,p1,p2,p3);
-
-		{
-
-
-			/////////////////////////plot standrad curve////////////////////////
-
-			if(p1.calibrationfactortype==1){
-				CanalyzerDoc tmp(false);
-				if(ReadFileCustom(&tmp,1,p1.calibrationfilepath)){
-					tmp.rp.front().ps.front().name.LoadStringW(IDS_STRING_CALIBRATION_CURVE);
-					//tmp.rp.front().ps.back().name.LoadStringW(IDS_STRING_CALIBRATION_CURVE);
-					rightp->AddPlot(tmp.rp.front());
-					if(rightp->updatePlotRange(0))
-						rightp->Invalidate(FALSE);
-				}
-				else{
-					*pst=stop;
-					return 1;
-				}
-			}
-			else{
-				*pst=stop;
-				return 1;
-			}
-
-			ps1.lineType=5;
-
-			UINT rea=OneProcess2(leftp,rightp,cba,outw,*pst,filelist,dataB,p3,sl,dbbuf,ps1);
-			if(rea!=0){
-				*pst=stop;return rea;
-			}
-			pDoc->resultStr=Output12(
-				pDoc->rp.back(),
-				dataB.TotalVolume(),
-				dbbuf[2].additiveVolume-dbbuf[1].additiveVolume,
-				dataB.Lml);
-
-			if(rightp->updatePlotRange((int)(pDoc->rp.size())-1))
-				rightp->Invalidate(FALSE);
-
+			pDoc->resultStr=ResultStr(re);
 
 
 		}
 		break;
+		//case 2:
+		//	//return DTA1(leftp,rightp,cba,outw,*pst,p1,p2,p3);
+		//	{
+
+		//		/////////////////////////plot standrad curve////////////////////////
+
+		//		double Sconc0=0, vmsvol0=0;
+		//		if(p1.calibrationfactortype==1){
+		//			CanalyzerDoc tmp(false);
+		//			if(ReadFileCustom(&tmp,1,p1.calibrationfilepath)){
+		//				tmp.rp.front().ps.back().name.LoadStringW(IDS_STRING_CALIBRATION_CURVE);
+		//				rightp->AddPlot(tmp.rp.front());
+		//				if(rightp->updatePlotRange(0))
+		//					rightp->Invalidate(FALSE);
+		//				Sconc0=tmp.p3.saplist.back().Sconc;
+		//				vmsvol0=tmp.p3.saplist.front().volconc;
+		//			}
+		//			else{
+		//				*pst=stop;
+		//				return 1;
+		//			}
+		//		}
+		//		else{
+		//			sl[0]|=(SC_NEW_RIGHT_PLOT<<8);
+		//		}
+
+
+		//		UINT rea=OneProcess2(leftp,rightp,cba,outw,*pst,filelist,dataB,p3,sl,dbbuf,ps1);
+
+		//		///////////////////////////////////////////////////////////////
+		//		if(rea!=0){
+		//			*pst=stop;return rea;
+		//		}
+
+
+		//		pDoc->resultStr=Output2(pDoc->rp.back(),
+		//			p1.evaluationratio,
+		//			p1.calibrationfactortype,
+		//			p1.calibrationfactor,
+		//			dataB.VMSVolume,
+		//			Sconc0,
+		//			vmsvol0);
+
+		//	}
+		//	break;
+		//case 3:
+		//	//return LATR1(leftp,rightp,cba,outw,*pst,p1,p2,p3);
+		//	{
+
+
+		//		UINT rea=OneProcess2(leftp,rightp,cba,outw,*pst,filelist,dataB,p3,sl,dbbuf,ps1);
+		//		if(rea!=0){
+		//			*pst=stop;return rea;
+		//		}
+
+		//		pDoc->resultStr=Output3(pDoc->rp.back());
+
+		//	}
+		//	break;
+		//case 4:
+		//	//return LATA1(leftp,rightp,cba,outw,*pst,p1,p2,p3);
+		//	{
+
+
+		//		ps1.lineType=5;
+
+		//		UINT rea=OneProcess2(leftp,rightp,cba,outw,*pst,filelist,dataB,p3,sl,dbbuf,ps1);
+		//		if(rea!=0){
+		//			*pst=stop;return rea;
+		//		}
+
+		//		double sampleV,baseV;
+
+		//		sampleV=dbbuf[2].additiveVolume-dbbuf[1].additiveVolume;
+		//		baseV=dbbuf[1].TotalVolume();
+
+		//		pDoc->resultStr=Output4(
+		//			pDoc->rp.back(),
+		//			baseV,
+		//			sampleV);
+
+		//		if(rightp->updatePlotRange((int)(pDoc->rp.size())-1))
+		//			rightp->Invalidate(FALSE);
+
+		//	}
+		//	break;
+		//case 5:
+		//	//return RCR1(leftp,rightp,cba,outw,*pst,p1,p2,p3);
+		//	{
+
+
+		//		UINT rea=OneProcess2(leftp,rightp,cba,outw,*pst,filelist,dataB,p3,sl,dbbuf,ps1);
+		//		if(rea!=0){
+		//			*pst=stop;return rea;
+		//		}
+
+		//	}
+		//	break;
+		//case 6:
+		//	//return RCA1(leftp,rightp,cba,outw,*pst,p1,p2,p3);
+		//	{
+
+
+		//		/////////////////////////plot standrad curve////////////////////////
+		//		if(p1.calibrationfactortype==1){
+		//			CanalyzerDoc tmp(false);
+		//			if(ReadFileCustom(&tmp,1,p1.calibrationfilepath)){
+		//				tmp.rp.front().ps.back().name.LoadStringW(IDS_STRING_CALIBRATION_CURVE);
+		//				rightp->AddPlot(tmp.rp.front());
+		//				if(rightp->updatePlotRange(0))
+		//					rightp->Invalidate(FALSE);
+		//			}
+		//			else{
+		//				*pst=stop;
+		//				return 1;
+		//			}
+		//		}
+		//		else{
+		//			*pst=stop;
+		//			return 1;
+		//		}
+
+
+		//		UINT rea=OneProcess2(leftp,rightp,cba,outw,*pst,filelist,dataB,p3,sl,dbbuf,ps1);
+		//		if(rea!=0){
+		//			*pst=stop;return rea;
+		//		}
+
+		//		pDoc->resultStr=Output6(pDoc->rp.back(),
+		//			dataB.Ar.back(),
+		//			dataB.TotalVolume(),
+		//			dataB.addVolume);
+
+		//		if(rightp->updatePlotRange((int)(pDoc->rp.size())-1))
+		//			rightp->Invalidate(FALSE);
+
+		//	}
+		//	break;
+		//case 7:
+		//	//return SARR1(leftp,rightp,cba,outw,*pst,p1,p2,p3);
+		//	{
+
+		//		sl[0]|=(SC_NEW_RIGHT_PLOT<<8);
+		//		while(!p3.saplist.empty()){
+		//			UINT rea=OneProcess2(leftp,rightp,cba,outw,*pst,filelist,dataB,p3,sl,dbbuf,ps1);
+		//			if(rea!=0){
+		//				*pst=stop;return rea;
+		//			}
+		//			bool bl=GetStepList(sl,p1.analysistype);
+		//		}
+
+		//		dbbuf.push_back(dataB);	
+
+		//		PlotData pda;
+		//		pDoc->resultStr=Output7(pda
+		//			,p1.evaluationratio
+		//			,pDoc->rp.back()
+		//			,dbbuf);
+
+		//		rightp->AddPlot(pda);
+
+		//		if(rightp->updatePlotRange((int)(pDoc->rp.size())-1))
+		//			rightp->Invalidate(FALSE);
+
+		//	}
+		//	break;
+		//case 8:
+		//	//return SARA1(leftp,rightp,cba,outw,*pst,p1,p2,p3);
+		//	{
+
+		//		SARCalibCurve scc;
+		//		{
+		//			CanalyzerDoc tmp(false);
+		//			if(ReadFileCustom(&tmp,1,p1.calibrationfilepath)){
+
+		//				scc.ll.assign(tmp.rp[0].ll.begin(), tmp.rp[0].ll.end());
+		//				scc.normq.assign(tmp.rp[0].yll.begin(), tmp.rp[0].yll.end());
+		//				scc.sconc.assign(tmp.rp[0].xll.begin(), tmp.rp[0].xll.end());
+		//				SCP scp1;
+		//				for(size_t i=0;i<tmp.p3.saplist.size();i++){
+		//					if(tmp.p3.saplist[i].addType!=4){
+		//						scp1.AC=tmp.p3.saplist[i].Aconc;
+		//						scp1.LC=tmp.p3.saplist[i].Lconc;
+		//						scp1.SC=tmp.p3.saplist[i].Sconc;
+
+		//						if(scc.scl.empty()
+		//							||scc.scl.back().LC!=scp1.LC
+		//							||scc.scl.back().SC!=scp1.SC
+		//							||scc.scl.back().AC!=scp1.AC
+		//							){
+		//								scc.scl.push_back(scp1);
+		//						}
+		//					}
+		//				}
+		//			}
+		//		}
+
+
+
+
+		//		UINT rea=OneProcess2(leftp,rightp,cba,outw,*pst,filelist,dataB,p3,sl,dbbuf,ps1);
+		//		///////////////////////////////////////////////////////////////
+		//		if(rea!=0){
+		//			*pst=stop;return rea;
+		//		}
+		//		//////////////////////////////////////////////////////////////////////////
+
+		//		int fi=pDoc->rp.size();
+		//		fi--;
+		//		pDoc->resultStr=Output8(pDoc->rp[fi-1],
+		//			pDoc->rp[fi],
+		//			p1.evaluationratio,
+		//			dataB.VMSVolume,
+		//			scc,
+		//			false);
+
+		//		if(rightp->updatePlotRange(fi))
+		//			rightp->Invalidate(FALSE);
+
+		//	}
+		//	break;
+		//case 9:
+		//	//return NEWR1(leftp,rightp,cba,outw,*pst,p1,p2,p3);
+		//	{
+		//		UINT rea=OneProcess2(leftp,rightp,cba,outw,*pst,filelist,dataB,p3,sl,dbbuf,ps1);
+		//		if(rea!=0){
+		//			*pst=stop;return rea;
+		//		}
+
+		//	}
+		//	break;
+		//case 10:
+		//	//return NEWA1(leftp,rightp,cba,outw,*pst,p1,p2,p3);
+		//	{
+
+		//		/////////////////////////plot standrad curve////////////////////////
+
+		//		if(p1.calibrationfactortype==1){
+		//			CanalyzerDoc tmp(false);
+		//			if(ReadFileCustom(&tmp,1,p1.calibrationfilepath)){
+		//				tmp.rp.front().ps.back().name.LoadStringW(IDS_STRING_CALIBRATION_CURVE);
+		//				rightp->AddPlot(tmp.rp.front());
+		//				if(rightp->updatePlotRange(0))
+		//					rightp->Invalidate(FALSE);
+		//			}
+		//			else{
+		//				*pst=stop;
+		//				return 1;
+		//			}
+		//		}
+		//		else{
+		//			*pst=stop;
+		//			return 1;
+		//		}
+
+
+
+		//		UINT rea=OneProcess2(leftp,rightp,cba,outw,*pst,filelist,dataB,p3,sl,dbbuf,ps1);
+		//		if(rea!=0){
+		//			*pst=stop;return rea;
+		//		}
+
+		//		int fi=pDoc->rp.size();
+		//		fi--;
+
+		//		pDoc->resultStr=Output10(pDoc->rp[fi],
+		//			dataB.Ar.back()/dataB.Ar0,
+		//			dataB.TotalVolume(),
+		//			dataB.additiveVolume-dbbuf[1].additiveVolume,
+		//			dbbuf[1].Lml);
+
+		//		if(rightp->updatePlotRange(fi))
+		//			rightp->Invalidate(FALSE);
+
+		//	}
+		//	break;
+		//case 11:
+		//	//return NER(leftp,rightp,cba,outw,*pst,p1,p2,p3);
+		//	{
+		//		ps1.lineType=5;
+		//		UINT rea=OneProcess2(leftp,rightp,cba,outw,*pst,filelist,dataB,p3,sl,dbbuf,ps1);
+		//		if(rea!=0){
+		//			*pst=stop;return rea;
+		//		}
+		//		pDoc->resultStr=Output11(pDoc->rp.back());
+		//		if(rightp->updatePlotRange((int)(pDoc->rp.size())-1))
+		//			rightp->Invalidate(FALSE);
+		//	}
+		//	break;
+		//case 12:
+		//	//return NEA(leftp,rightp,cba,outw,*pst,p1,p2,p3);
+
+		//	{
+
+
+		//		/////////////////////////plot standrad curve////////////////////////
+
+		//		if(p1.calibrationfactortype==1){
+		//			CanalyzerDoc tmp(false);
+		//			if(ReadFileCustom(&tmp,1,p1.calibrationfilepath)){
+		//				tmp.rp.front().ps.front().name.LoadStringW(IDS_STRING_CALIBRATION_CURVE);
+		//				//tmp.rp.front().ps.back().name.LoadStringW(IDS_STRING_CALIBRATION_CURVE);
+		//				rightp->AddPlot(tmp.rp.front());
+		//				if(rightp->updatePlotRange(0))
+		//					rightp->Invalidate(FALSE);
+		//			}
+		//			else{
+		//				*pst=stop;
+		//				return 1;
+		//			}
+		//		}
+		//		else{
+		//			*pst=stop;
+		//			return 1;
+		//		}
+
+		//		ps1.lineType=5;
+
+		//		UINT rea=OneProcess2(leftp,rightp,cba,outw,*pst,filelist,dataB,p3,sl,dbbuf,ps1);
+		//		if(rea!=0){
+		//			*pst=stop;return rea;
+		//		}
+		//		pDoc->resultStr=Output12(
+		//			pDoc->rp.back(),
+		//			dataB.TotalVolume(),
+		//			dbbuf[2].additiveVolume-dbbuf[1].additiveVolume,
+		//			dataB.Lml);
+
+		//		if(rightp->updatePlotRange((int)(pDoc->rp.size())-1))
+		//			rightp->Invalidate(FALSE);
+
+
+
+		//	}
+		//	break;
 	default:
 		*pst=stop;
 
