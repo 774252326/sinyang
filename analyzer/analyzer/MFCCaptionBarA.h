@@ -60,6 +60,8 @@ public:
 protected:
 	afx_msg LRESULT OnMessageReady(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnMessageOverH(WPARAM wParam, LPARAM lParam);
+public:
+	CString strblank;
 };
 
 

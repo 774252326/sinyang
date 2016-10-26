@@ -1,5 +1,5 @@
 
-#include "stdafx.h"
+//#include "stdafx.h"
 //#include "dlg1.h"
 #include "analyzerDoc.h"
 #include "analyzerView.h"

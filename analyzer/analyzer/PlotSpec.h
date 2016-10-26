@@ -8,8 +8,9 @@ public:
 	PlotSpec();
 	virtual ~PlotSpec();
 
-	PlotSpec(const PlotSpec &src);
 	void operator=(const PlotSpec &src);
+	PlotSpec(const PlotSpec &src){ operator=(src); };
+
 	PlotSpec(int i);
 
 

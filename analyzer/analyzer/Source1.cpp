@@ -542,7 +542,6 @@ CRect DrawLegend(CRect rect
 		sz=pDC->GetTextExtent(ps[i].name);
 
 		if(ps[i].lineType>=0){
-			//pen.CreatePen(PS_SOLID, 1, ps[i].colour);
 			pen.CreatePen(ps[i].lineType
 				, lineWidth
 				, ps[i].colour);
@@ -725,9 +724,6 @@ void DrawData(CRect &plotrect
 			,plotrect.left
 			,plotrect.right);
 
-		rgn.SetRectRgn(&mainrt);
-		pDC->SelectClipRgn(&rgn);
-
 		CRect legendrect=DrawLegend( 
 			CRect(plotrect.right-plotrect.Width()/4
 			,plotrect.top
@@ -737,6 +733,8 @@ void DrawData(CRect &plotrect
 			, pd.ps
 			, pd.psp.bkgndC);
 
+		rgn.SetRectRgn(&mainrt);
+		pDC->SelectClipRgn(&rgn);
 	}
 
 }

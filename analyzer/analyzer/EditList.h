@@ -65,6 +65,8 @@ protected:
 public:
 	int GetChoice(int nItem, int nSubItem);
 	afx_msg void OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 };
 
 /////////////////////////////////////////////////////////////////////////////

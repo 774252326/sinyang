@@ -23,16 +23,16 @@ LineSpec::~LineSpec()
 }
 
 
-LineSpec::LineSpec(const LineSpec &src)
-{
-	colour=src.colour;
-	name=src.name;
-	dotSize=src.dotSize;
-	lineType=src.lineType;
-	smoothLine=src.smoothLine;
-	traceLast=src.traceLast;	
-
-}
+//LineSpec::LineSpec(const LineSpec &src)
+//{
+//	colour=src.colour;
+//	name=src.name;
+//	dotSize=src.dotSize;
+//	lineType=src.lineType;
+//	smoothLine=src.smoothLine;
+//	traceLast=src.traceLast;	
+//
+//}
 
 void LineSpec::operator=(const LineSpec &src)
 {

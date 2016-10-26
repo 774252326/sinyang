@@ -43,8 +43,8 @@ CString SARAflist=L"data\\sara\\i.txt";
 
 void WaitSecond(ProcessState &waitflg
 	//,int second=-1
-	//,int second=5
-	,int second=0
+	,int second=5
+	//,int second=0
 	)
 {
 	int interval=1000;
@@ -229,8 +229,6 @@ void OneStep( COutputWnd * ow
 	std::vector<double> y;
 	size_t rn;
 
-	//int ci=leftp->m_spBtn.GetPos32();
-
 	CanalyzerDoc *pDoc=leftp->GetDocument();
 	int ci=pDoc->lp.size()-1;
 
@@ -242,10 +240,8 @@ void OneStep( COutputWnd * ow
 	LineSpec ps1;
 	CString strTemp;
 	ps1.colour=genColor( genColorvFromIndex<float>( pDoc->lp[ci].ps.size() ) ) ;
-	//ps1.colour=genColorGray( genColorvFromIndex<float>( stepCount ) ) ;
 	ps1.dotSize=0;
 	ps1.name=data->stepName;
-	//ps1.showLine=true;
 	ps1.lineType=0;
 	ps1.smoothLine=0;
 	ps1.traceLast=true;
@@ -288,18 +284,18 @@ void OneStep( COutputWnd * ow
 
 		if(nflg>=1){//if one cycle complete
 
-					CString sname;
-		(sname.LoadString(IDS_STRING_CYCLE));
-		DataOut dout;
-		dout.addVol=( (dataB.Ar.size()==1)?dataB.addVolume:0 );
-		dout.nQ=(dataB.Ar.back()/dataB.Ar0);
-		dout.Q=dataB.Ar.back();
-		dout.stepName.Format(L"%s(%s%d)",pDoc->lp[ci].ps.back().name,sname,dataB.Ar.size());
-		dout.totalVol=dataB.totalVolume;
-		dout.Use=(nflg==2)&bShowRight;
-		pDoc->dol.push_back(dout);
+			CString sname;
+			(sname.LoadString(IDS_STRING_CYCLE));
+			DataOut dout;
+			dout.addVol=( (dataB.Ar.size()==1)?dataB.addVolume:0 );
+			dout.nQ=(dataB.Ar.back()/dataB.Ar0);
+			dout.Q=dataB.Ar.back();
+			dout.stepName.Format(L"%s(%s%d)",pDoc->lp[ci].ps.back().name,sname,dataB.Ar.size());
+			dout.totalVol=dataB.totalVolume;
+			dout.Use=(nflg==2)&bShowRight;
+			pDoc->dol.push_back(dout);
 
-		ow->GetListCtrl()->InsertListCtrl(dataB.rowCount, dout);
+			ow->GetListCtrl()->InsertListCtrl(dataB.rowCount, dout);
 
 			dataB.rowCount++;
 		}
@@ -774,7 +770,7 @@ UINT DTR(CanalyzerView *leftp,
 	rightp->AddPlot(PlotData());
 	pDoc->rp.back().psp=PlotSpec(0);
 
-		CString xla;
+	CString xla;
 	CString yla;
 	//////////////////////////////first step////////////////////////////////////////////
 	//waiting=false;
@@ -804,7 +800,7 @@ UINT DTR(CanalyzerView *leftp,
 	ps1.smoothLine=1;
 	ps1.traceLast=false;
 
-			{
+	{
 		CString str;
 		str.LoadStringW(IDS_STRING_SUPPRESSOR);
 		xla=str;
@@ -929,7 +925,7 @@ UINT DTA(CanalyzerView *leftp,
 	std::vector<double> x;
 	std::vector<double> y;
 	LineSpec ps1;
-		CString xla;
+	CString xla;
 	CString yla;
 	//////////////////////////////first step////////////////////////////////////////////
 
@@ -957,7 +953,7 @@ UINT DTA(CanalyzerView *leftp,
 	ps1.smoothLine=1;
 	ps1.traceLast=false;
 
-		{
+	{
 		CString str;
 		str.LoadStringW(IDS_STRING_SUPPRESSOR);
 		xla=str;
@@ -1069,7 +1065,7 @@ UINT LATR(CanalyzerView *leftp,
 	std::vector<double> x;
 	std::vector<double> y;
 	LineSpec ps1;
-		CString xla;
+	CString xla;
 	CString yla;
 
 	//////////////////////////////first step////////////////////////////////////////////
@@ -1183,7 +1179,7 @@ UINT LATA(CanalyzerView *leftp,
 	outw->clear();
 	leftp->clear();
 	rightp->clear();
-		CanalyzerDoc *pDoc=leftp->GetDocument();
+	CanalyzerDoc *pDoc=leftp->GetDocument();
 	pDoc->dol.clear();
 
 	leftp->AddPlot(PlotData());
@@ -1197,7 +1193,7 @@ UINT LATA(CanalyzerView *leftp,
 	LineSpec ps1;
 
 
-	
+
 	CString xla;
 	CString yla;
 
@@ -1294,7 +1290,7 @@ UINT LATA(CanalyzerView *leftp,
 
 
 	pDoc->resultStr=Output4(pDoc->rp[0]
-		,p3.vmsvol
+	,p3.vmsvol
 		,p3.saplist[1].volconc);
 
 	if(rightp->updatePlotRange(0))
@@ -1462,12 +1458,12 @@ UINT RCR(CanalyzerView *leftp,
 
 
 	////////////////////////////////////final step/////////////////////////////////////////////
-	
+
 	pDoc->resultStr=L"";
 
 	::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,NULL,NULL);
 
-	pDoc->rp[0].SaveFile(L"fr.fig.txt");
+	//pDoc->rp[0].SaveFile(L"fr.fig.txt");
 
 	TRACE(L"crcl ends\n");
 
@@ -1497,7 +1493,7 @@ UINT RCA(CanalyzerView *leftp,
 
 	//////////////////////////clear window/////////////////////////////////
 	outw->clear();
-		CanalyzerDoc *pDoc=leftp->GetDocument();
+	CanalyzerDoc *pDoc=leftp->GetDocument();
 	pDoc->dol.clear();
 
 	leftp->clear();
@@ -2157,14 +2153,6 @@ UINT PROCESS(LPVOID pParam)
 	CVPara p2;
 	SAPara p3;
 
-	//if(readini(p1,p2,p3)==FALSE){
-	//	CString strTemp;
-	//	strTemp.LoadStringW(IDS_STRING_SETUP_FILE_ERROR);
-	//	::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)strTemp.GetBuffer(),NULL);
-	//	*pst=stop;
-	//	return 0;
-	//}
-
 	CanalyzerDoc *adoc=leftp->GetDocument();
 
 	p1=adoc->p1;
@@ -2175,73 +2163,35 @@ UINT PROCESS(LPVOID pParam)
 	switch(p1.analysistype){
 	case 1:
 		DTR(leftp,rightp,cba,outw,*pst,p1,p2,p3);
-
-		//leftp->pd.ExtractLastCycle(p2.highelimit,L"data\\bl.fig.txt");
-		//rightp->pd.SaveFile(L"data\\br.fig.txt");
-
 		return 0;
 	case 2:
 		DTA(leftp,rightp,cba,outw,*pst,p1,p2,p3);
-
-		//leftp->pd.ExtractLastCycle(p2.highelimit,L"data\\cl.fig.txt");
-		//rightp->pd.SaveFile(L"data\\cr.fig.txt");
-
 		return 0;
 	case 3:
 		LATR(leftp,rightp,cba,outw,*pst,p1,p2,p3);
-
-		//leftp->pd.ExtractLastCycle(p2.highelimit,L"data\\dl.fig.txt");
-		//rightp->pd.SaveFile(L"data\\dr.fig.txt");
-
 		return 0;
 	case 4:
 		LATA(leftp,rightp,cba,outw,*pst,p1,p2,p3);
-
-		//leftp->pd.ExtractLastCycle(p2.highelimit,L"data\\el.fig.txt");
-		//rightp->pd.SaveFile(L"data\\er.fig.txt");
-
 		return 0;
 	case 5:
 		RCR(leftp,rightp,cba,outw,*pst,p1,p2,p3);
-
-		//leftp->pd.ExtractLastCycle(p2.highelimit,L"data\\fl.fig.txt");
-		//rightp->pd.SaveFile(L"data\\fr.fig.txt");
-
 		return 0;
 	case 6:
 		RCA(leftp,rightp,cba,outw,*pst,p1,p2,p3);
-
-		//leftp->pd.ExtractLastCycle(p2.highelimit,L"data\\gl.fig.txt");
-		//rightp->pd.SaveFile(L"data\\gr.fig.txt");
-
 		return 0;
 	case 7:
 		SARR(leftp,rightp,cba,outw,*pst,p1,p2,p3);
-
-		//leftp->pd.ExtractLastCycle(p2.highelimit,L"data\\hl.fig.txt");
-		//rightp->pd.SaveFile(L"data\\hr.fig.txt");
-
-		//leftp->SaveFile(L"left.fig.txt");
-		//rightp->SaveFile(L"right.fig.txt");
-
 		return 0;
-
 	case 8:
-
 		SARA(leftp,rightp,cba,outw,*pst,p1,p2,p3);
-		//leftp->pd.ExtractLastCycle(p2.highelimit,L"data\\il.fig.txt");
-		//rightp->pd.SaveFile(L"data\\ir.fig.txt");
-
-		//leftp->SaveFile(L"left.fig.txt");
-		//rightp->SaveFile(L"right.fig.txt");
-
 		return 0;
 	default:
+		*pst=stop;
 		return 1;
 	}
 
 
-	return 0;
+	return 1;
 
 }
 

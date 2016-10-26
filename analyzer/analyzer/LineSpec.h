@@ -7,8 +7,10 @@ class LineSpec : public CObject
 public:
 	LineSpec();
 	virtual ~LineSpec();
-	LineSpec(const LineSpec &src);
+
 	void operator=(const LineSpec &src);
+	LineSpec(const LineSpec &src){ operator=(src); };
+
 
 	COLORREF colour;
 	CString name;

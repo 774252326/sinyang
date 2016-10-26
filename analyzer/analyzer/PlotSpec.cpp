@@ -25,27 +25,27 @@ PlotSpec::~PlotSpec()
 }
 
 
-PlotSpec::PlotSpec(const PlotSpec &src)
-{
-	bkgndC=src.bkgndC;
-	borderC=src.borderC;
-	gridC=src.gridC;
-	gridType=src.gridType;
-	labelC=src.labelC;
-	labelSize=src.labelSize;
-	metricC=src.metricC;
-	metricSize=src.metricSize;
-}
+//PlotSpec::PlotSpec(const PlotSpec &src)
+//{
+//	bkgndC=src.bkgndC;
+//	borderC=src.borderC;
+//	gridC=src.gridC;
+//	gridType=src.gridType;
+//	labelC=src.labelC;
+//	labelSize=src.labelSize;
+//	metricC=src.metricC;
+//	metricSize=src.metricSize;
+//}
 
 PlotSpec::PlotSpec(int i)
 {
-	bkgndC=black;
-	borderC=white;
-	gridC=white;
+	bkgndC=white;
+	borderC=black;
+	gridC=black;
 	gridType=3;
-	labelC=green;
+	labelC=blue;
 	labelSize=20;
-	metricC=white;
+	metricC=black;
 	metricSize=15;
 }
 

@@ -1,1 +1,312 @@
- 
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="CMFCCaptionBarA" Collapsed="true">
+    <Position X="0.75" Y="3.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAUAQAwAJAEAAAAAAJAAAiUCAGCAACAoAAFACACEACA=</HashCode>
+      <FileName>MFCCaptionBarA.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CMainFrame" Collapsed="true">
+    <Position X="0.75" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BIBBCBBIAAlAIASAOACCiBAAoCEgEgAgAQBYKgAQMhA=</HashCode>
+      <FileName>MainFrm.h</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="m_wndCaptionBar" />
+      <Field Name="pst" />
+      <Field Name="m_wndOutput" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="COutputWnd" Collapsed="true">
+    <Position X="3.75" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AFAAAAAAAAECAAAAAAAABAAAACQAAAAABAAAIAAAAAA=</HashCode>
+      <FileName>OutputWnd.h</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="m_listCtrlMonitor" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="COutputList" Collapsed="true">
+    <Position X="7" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAAAAAEAAgAABAAAAgAAAAAAAAAAAIAABQAAIAAA=</HashCode>
+      <FileName>OutputWnd.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CanalyzerView" Collapsed="true">
+    <Position X="10" Y="2.75" Width="1.5" />
+    <NestedTypes>
+      <Enum Name="CanalyzerView::__unnamed_enum_0008_1" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>analyzerView.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>IGCJAAAAABkAAACIGBAAgABAgLAAAAEAgAgFAEAYUAA=</HashCode>
+      <FileName>analyzerView.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CanalyzerViewR" Collapsed="true">
+    <Position X="12" Y="2.75" Width="1.5" />
+    <NestedTypes>
+      <Enum Name="CanalyzerViewR::__unnamed_enum_000a_1" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>analyzerViewR.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>IGDIAAAAABkAAACIGBAAgABAgLAAAAEAgAgFAEAYUAA=</HashCode>
+      <FileName>analyzerViewR.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CanalyzerDoc" Collapsed="true">
+    <Position X="0.5" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAIAAEAAAAAAAAAACAAYgAggASkgAAAAgAAEAAEAAAA=</HashCode>
+      <FileName>analyzerDoc.h</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="p1" />
+      <Field Name="p2" />
+      <Field Name="p3" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="ANPara" Collapsed="true">
+    <Position X="4.25" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAAAAAAgggAAABAQAASAgAAAAAAAhAAAAAAA=</HashCode>
+      <FileName>ANPara.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CVPara" Collapsed="true">
+    <Position X="4.25" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAgEAAAAAAAQAQQAAAAECAAEACAAAAgAAAAAAQ=</HashCode>
+      <FileName>VPara.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SAPara" Collapsed="true">
+    <Position X="4.25" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAABAAAAAAAAAAAAKAAAACAAAAAAAAAgAAAAAgA=</HashCode>
+      <FileName>SAPara.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="pcctB" Collapsed="true">
+    <Position X="9.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>aEAIBAAAAAAIAAIBAAAAAAAAAAACCJBAAAAAgAAAQAA=</HashCode>
+      <FileName>pcctB.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CanalyzerApp" Collapsed="true">
+    <Position X="5.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAEAAAAAAAABQAAAAAQCAAAZAAACAAA=</HashCode>
+      <FileName>analyzer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AnalysisParametersPage" Collapsed="true">
+    <Position X="6.75" Y="10" Width="1.5" />
+    <NestedTypes>
+      <Enum Name="AnalysisParametersPage::__unnamed_enum_0002_1" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>AnalysisParametersPage.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AQQAAAGEAAAAAAAAABMACCAAACAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>AnalysisParametersPage.h</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="para" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="CVParametersPage" Collapsed="true">
+    <Position X="6.75" Y="9" Width="1.5" />
+    <NestedTypes>
+      <Enum Name="CVParametersPage::__unnamed_enum_0012_1" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>CVParametersPage.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AQQAAAEAAAAAAAAAABEACCAAgCAAAAAAAAAAAAAACAA=</HashCode>
+      <FileName>CVParametersPage.h</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="para" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="PlotData" Collapsed="true">
+    <Position X="8.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAQQAEAAQAAEAAACAEAAACAgAAAgBADiAAAkAAA=</HashCode>
+      <FileName>PlotData.h</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="psp" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="PlotSettingPage" Collapsed="true">
+    <Position X="11.5" Y="6.75" Width="1.5" />
+    <NestedTypes>
+      <Enum Name="PlotSettingPage::__unnamed_enum_002c_1" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>PlotSettingPage.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>IwQAAAEAAAAAAAAAIBAACEAIACAgAEAgAIAAAACAAAI=</HashCode>
+      <FileName>PlotSettingPage.h</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="pslist" />
+      <Field Name="fs" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="CEditList" Collapsed="true">
+    <Position X="11.5" Y="8" Width="1.5" />
+    <NestedTypes>
+      <Enum Name="CEditList::eType" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>EditList.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>CgAAAAAEAAAAAAAAEAcAAAASgDKAAAAAIAEAAAAAAQA=</HashCode>
+      <FileName>EditList.h</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="m_fGetType" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="pcct" Collapsed="true">
+    <Position X="12.5" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BEABBABAAAAYABABAABAAAAAiAIABgJEAABIAAJAQAA=</HashCode>
+      <FileName>pcct.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="sapitem" Collapsed="true">
+    <Position X="4.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAgAAAAAACAAAAAAACCAEAAAAAQAgAAAAEAE=</HashCode>
+      <FileName>sapitem.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SolutionAdditionParametersPage" Collapsed="true">
+    <Position X="6.75" Y="8" Width="1.5" />
+    <NestedTypes>
+      <Enum Name="SolutionAdditionParametersPage::__unnamed_enum_0037_1" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>SolutionAdditionParametersPage.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>IQAAAAEAAAAAIAAgIBEACCAAACAAQCAAAAAAAAIAAAI=</HashCode>
+      <FileName>SolutionAdditionParametersPage.h</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="para" />
+      <Field Name="m_SAPlist" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="SARCalibCurve" Collapsed="true">
+    <Position X="6.75" Y="6.5" Width="1.5" />
+    <InheritanceLine Type="CObject" ManuallyRouted="true">
+      <Path>
+        <Point X="6.25" Y="5.312" />
+        <Point X="6.25" Y="6.125" />
+        <Point X="7.5" Y="6.125" />
+        <Point X="7.5" Y="6.5" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>ABAAAAAACAAAACIAAAAAAAAAACAAAAAAAAAAAAAVAQA=</HashCode>
+      <FileName>SARCalibCurve.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LineSpec" Collapsed="true">
+    <Position X="5.5" Y="3.25" Width="1.5" />
+    <InheritanceLine Type="CObject" ManuallyRouted="true" FixedFromPoint="true">
+      <Path>
+        <Point X="6.312" Y="4.75" />
+        <Point X="6.312" Y="4.316" />
+        <Point X="6.25" Y="4.316" />
+        <Point X="6.25" Y="3.941" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>EAAgAAAACAAAAAAEAAAAAAAABCAEAAAAAAAgAIAAAAE=</HashCode>
+      <FileName>linespec.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CObject" Collapsed="true">
+    <Position X="5.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAQAQAAAAACAAAgQAAADAAAAAAEUAgAEAAAAA=</HashCode>
+      <FileName>c:\program files (x86)\microsoft visual studio 10.0\vc\atlmfc\include\afx.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CComboItem" Collapsed="true">
+    <Position X="13.5" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAACAAAEAAAgAAAAABAAQFCACAACAAAOAAAAAAAA=</HashCode>
+      <FileName>ComboItem.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataOut" Collapsed="true">
+    <Position X="2.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAKCAEAAAABIAgAAAhAgA=</HashCode>
+      <FileName>DataOut.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PlotSpec" Collapsed="true">
+    <Position X="9.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAIAIAAABAAAAAAAAAAACQAFACAABAgAAABAAA=</HashCode>
+      <FileName>PlotSpec.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CEditItem" Collapsed="true">
+    <Position X="13.5" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAEAAAAgAAAQABAAQFSACAAAAAAIACAAAAAA=</HashCode>
+      <FileName>EditItem.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CColorButton" Collapsed="true">
+    <Position X="8.75" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACIAAAAAAAAAAAAAAAAAAAAAAgAAACAAAAAAAABAAA=</HashCode>
+      <FileName>ColorButton.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Typedef Name="fGetType" Collapsed="true">
+    <Position X="10" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>EditList.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Enum Name="ProcessState" Collapsed="true">
+    <Position X="1" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAggAAAAAAAAAAAAIAA=</HashCode>
+      <FileName>typedefine.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Microsoft JhengHei" Size="9" />
+</ClassDiagram>

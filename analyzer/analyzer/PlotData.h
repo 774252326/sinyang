@@ -10,8 +10,9 @@ class PlotData : public CObject
 {
 public:
 	PlotData();
-	PlotData(const PlotData &src);
+
 	void operator=(const PlotData &src);
+	PlotData(const PlotData &src){ operator=(src); };
 
 	virtual ~PlotData();
 	virtual void Serialize(CArchive& ar);

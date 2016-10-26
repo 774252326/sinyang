@@ -33,6 +33,8 @@ BEGIN_MESSAGE_MAP(CEditList, CListCtrl)
 	ON_WM_CREATE()
 	//}}AFX_MSG_MAP
 	ON_NOTIFY_REFLECT(NM_CUSTOMDRAW, &CEditList::OnNMCustomdraw)
+	ON_WM_HSCROLL()
+	ON_WM_VSCROLL()
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -347,4 +349,24 @@ void CEditList::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 
 	}
 
+}
+
+
+void CEditList::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+{
+	// TODO: Add your message handler code here and/or call default
+
+	//this->Invalidate();
+
+	CListCtrl::OnHScroll(nSBCode, nPos, pScrollBar);
+}
+
+
+void CEditList::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+{
+	// TODO: Add your message handler code here and/or call default
+
+	//this->Invalidate();
+
+	CListCtrl::OnVScroll(nSBCode, nPos, pScrollBar);
 }

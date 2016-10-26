@@ -7,9 +7,9 @@ class DataOut : public CObject
 public:
 	DataOut();
 	virtual ~DataOut();
-
-	DataOut(const DataOut &src);
 	void operator=(const DataOut &src);
+
+	DataOut(const DataOut &src){ operator=(src); };
 
 	CString stepName;
 	double addVol;

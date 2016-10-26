@@ -7,8 +7,9 @@ class sapitem : public CObject
 public:
 	sapitem();
 	virtual ~sapitem();
-	sapitem(const sapitem &src);
+
 	void operator=(const sapitem &src);
+	sapitem(const sapitem &src){ operator=(src); };
 
 	double Sconc;
 	double Aconc;

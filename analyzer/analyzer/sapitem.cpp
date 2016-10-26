@@ -21,14 +21,14 @@ sapitem::~sapitem()
 {
 }
 
-sapitem::sapitem(const sapitem &src)
-{
-	Sconc=src.Sconc;
-	Aconc=src.Aconc;
-	Lconc=src.Lconc;
-	addType=src.addType;
-	volconc=src.volconc;	
-}
+//sapitem::sapitem(const sapitem &src)
+//{
+//	Sconc=src.Sconc;
+//	Aconc=src.Aconc;
+//	Lconc=src.Lconc;
+//	addType=src.addType;
+//	volconc=src.volconc;	
+//}
 
 void sapitem::operator=(const sapitem &src)
 {

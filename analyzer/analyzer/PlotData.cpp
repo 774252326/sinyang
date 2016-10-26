@@ -19,16 +19,16 @@ PlotData::~PlotData()
 }
 
 
-PlotData::PlotData(const PlotData &src)
-{
-	xlabel=src.xlabel;
-	ylabel=src.ylabel;
-	xll.assign(src.xll.begin(),src.xll.end());
-	yll.assign(src.yll.begin(),src.yll.end());
-	ll.assign(src.ll.begin(),src.ll.end());
-	ps.assign(src.ps.begin(),src.ps.end());
-	psp=src.psp;
-}
+//PlotData::PlotData(const PlotData &src)
+//{
+//	xlabel=src.xlabel;
+//	ylabel=src.ylabel;
+//	xll.assign(src.xll.begin(),src.xll.end());
+//	yll.assign(src.yll.begin(),src.yll.end());
+//	ll.assign(src.ll.begin(),src.ll.end());
+//	ps.assign(src.ps.begin(),src.ps.end());
+//	psp=src.psp;
+//}
 
 void PlotData::operator=(const PlotData &src)
 {

@@ -15,6 +15,7 @@ IMPLEMENT_DYNAMIC(CMFCCaptionBarA, CMFCCaptionBar)
 	: timer(0)
 	, x(0)
 	, ecWidth(50)
+	, strblank(_T("                     "))
 {
 
 }
@@ -247,7 +248,8 @@ void CMFCCaptionBarA::ShowMessage(CString str)
 
 void CMFCCaptionBarA::ShowMessageWithButton(CString str, double xv, bool bFlash)
 {
-	for(int i=0;i<21;i++) str+=" ";
+	//for(int i=0;i<21;i++) str+=" ";
+	str+=strblank;
 	x=xv;
 	UpdateData(FALSE);
 	SetTextA(str,bFlash);
@@ -268,11 +270,13 @@ void CMFCCaptionBarA::OnDrawText(
 	if(ec.IsWindowVisible()){
 		rect.right-=ecWidth;
 		rect.right-=this->GetMargin();
-		//for(int i=0;i<21;i++) strText-=" ";
+		CString strcopy(strText);
+		strcopy.Replace(strblank,NULL);
+		CMFCCaptionBar::OnDrawText(pDC, rect, strcopy);
 	}
-
-	CMFCCaptionBar::OnDrawText(pDC, rect, strText);
-
+	else{
+		CMFCCaptionBar::OnDrawText(pDC, rect, strText);
+	}
 }
 
 afx_msg LRESULT CMFCCaptionBarA::OnMessageBusy(WPARAM wParam, LPARAM lParam)

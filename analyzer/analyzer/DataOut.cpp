@@ -24,15 +24,15 @@ DataOut::~DataOut()
 
 
 
-DataOut::DataOut(const DataOut &src)
-{
-	stepName=src.stepName;
-	addVol=src.addVol;
-	totalVol=src.totalVol;
-	Q=src.Q;
-	nQ=src.nQ;
-	Use=src.Use;
-}
+//DataOut::DataOut(const DataOut &src)
+//{
+//	stepName=src.stepName;
+//	addVol=src.addVol;
+//	totalVol=src.totalVol;
+//	Q=src.Q;
+//	nQ=src.nQ;
+//	Use=src.Use;
+//}
 
 void DataOut::operator=(const DataOut &src)
 {
