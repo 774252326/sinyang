@@ -1,11 +1,11 @@
 #pragma once
 #include "analyzerview.h"
-class CanalyzerViewR :
+class CanalyzerViewL :
 	public CanalyzerView
 {
 public:
-	CanalyzerViewR(void);
-	~CanalyzerViewR(void);
+	CanalyzerViewL(void);
+	~CanalyzerViewL(void);
 	int AddPlot(const PlotData & pda);
 };
 

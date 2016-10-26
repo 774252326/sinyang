@@ -1,5 +1,5 @@
 
-// analyzerView.h : interface of the CanalyzerView class
+// analyzerView.h : interface of the CanalyzerViewR class
 //
 
 #pragma once
@@ -9,12 +9,12 @@
 #include "atltypes.h"
 
 
-class CanalyzerView : public CView
+class CanalyzerViewR : public CView
 {
 protected: // create from serialization only
-	CanalyzerView();
-	DECLARE_DYNCREATE(CanalyzerView)
-	CanalyzerView(int i);
+	CanalyzerViewR();
+	DECLARE_DYNCREATE(CanalyzerViewR)
+
 // Attributes
 public:
 	CanalyzerDoc* GetDocument() const;
@@ -33,7 +33,7 @@ protected:
 
 // Implementation
 public:
-	virtual ~CanalyzerView();
+	virtual ~CanalyzerViewR();
 #ifdef _DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
@@ -78,7 +78,7 @@ public:
 	bool updatePlotRange(int plotIndex, bool flg=true);
 	bool updatePlotRange(bool flg=true);
 
-//	int AddPlot(const PlotData & pda);
+	int AddPlot(const PlotData & pda);
 
 
 	void OnDeltaposSpin(NMHDR* pNMHDR, LRESULT* pResult);
@@ -92,20 +92,17 @@ public:
 
 	//afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	//afx_msg void OnSize(UINT nType, int cx, int cy);
-	virtual void OnInitialUpdate();
 	virtual void OnPrepareDC(CDC* pDC, CPrintInfo* pInfo = NULL);
 	double pct;
 	afx_msg void OnViewDatacursor();
+	afx_msg void OnUpdateViewDatacursor(CCmdUI *pCmdUI);
+
 	bool bMouseCursor;
 	size_t selectIdx;
-	afx_msg void OnUpdateViewDatacursor(CCmdUI *pCmdUI);
-	int lri;
-	PlotData * GetPD(void);
-	PlotData * GetPD(int idx);
 };
 
 #ifndef _DEBUG  // debug version in analyzerView.cpp
-inline CanalyzerDoc* CanalyzerView::GetDocument() const
+inline CanalyzerDoc* CanalyzerViewR::GetDocument() const
    { return reinterpret_cast<CanalyzerDoc*>(m_pDocument); }
 #endif
 

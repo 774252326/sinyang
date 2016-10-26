@@ -7,7 +7,7 @@
 #include "MFCCaptionBarA.h"
 #include "typedefine.h"
 
-#include "analyzerView.h"
+#include "analyzerViewL.h"
 #include "analyzerViewR.h"
 #include "afxwin.h"
 
@@ -83,7 +83,7 @@ public:
 	afx_msg void OnUpdateAnalysisMethodsetup(CCmdUI *pCmdUI);
 	afx_msg void OnAnalysisStartanalysis();
 
-	CanalyzerView * LeftPlotPointer(void);
+	CanalyzerViewL * LeftPlotPointer(void);
 	CanalyzerViewR * RightPlotPointer(void);
 
 	CWinThread *pWriteA;

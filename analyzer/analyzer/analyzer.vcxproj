@@ -115,6 +115,7 @@
     <ClInclude Include="analyzer.h" />
     <ClInclude Include="analyzerDoc.h" />
     <ClInclude Include="analyzerView.h" />
+    <ClInclude Include="analyzerViewL.h" />
     <ClInclude Include="analyzerViewR.h" />
     <ClInclude Include="ANPara.h" />
     <ClInclude Include="calgridT.h" />
@@ -153,6 +154,7 @@
     <ClCompile Include="analyzer.cpp" />
     <ClCompile Include="analyzerDoc.cpp" />
     <ClCompile Include="analyzerView.cpp" />
+    <ClCompile Include="analyzerViewL.cpp" />
     <ClCompile Include="analyzerViewR.cpp" />
     <ClCompile Include="ANPara.cpp" />
     <ClCompile Include="ColorButton.cpp" />

@@ -60,9 +60,27 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		, pct(0.02)
 		, bMouseCursor(false)
 		, selectIdx(0)
+		, lri(0)
 	{
 		// TODO: add construction code here
 		spBtnSize=CSize(23*2,23);
+	}
+
+
+		CanalyzerView::CanalyzerView(int i)
+		: xmin(0)
+		, xmax(0)
+		, ymin(0)
+		, ymax(0)
+		, m_mouseDownPoint(0)
+		, pct(0.02)
+		, bMouseCursor(false)
+		, selectIdx(0)
+		, lri(i)
+	{
+		// TODO: add construction code here
+		spBtnSize=CSize(23*2,23);
+		lri=i;
 	}
 
 	CanalyzerView::~CanalyzerView()
@@ -88,8 +106,8 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 
 		// TODO: add draw code for native data here
 
-		if(!pDoc->lp.empty()){
-
+		PlotData *pd=GetPD();
+		if(pd!=NULL){
 			CDC dcMem;                                                  //用于缓冲作图的内存DC
 			CBitmap bmp;                                                 //内存中承载临时图象的位图
 			CRect rect;
@@ -99,7 +117,7 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 			dcMem.SelectObject(&bmp);  	//将位图选择进内存DC
 			CRect plotrect=rect;
 
-			DrawData(plotrect,&dcMem,pDoc->lp[m_spBtn.GetPos32()],xmin,xmax,ymin,ymax);
+			DrawData(plotrect,&dcMem,*pd,xmin,xmax,ymin,ymax);
 			if(bMouseCursor){
 				//CString str;
 				//str.Format(L"%g,%g",pDoc->lp[m_spBtn.GetPos32()].xll[selectIdx],pDoc->lp[m_spBtn.GetPos32()].yll[selectIdx]);
@@ -107,8 +125,8 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 
 				DrawData1(plotrect
 					,&dcMem
-					,pDoc->lp[m_spBtn.GetPos32()].xll[selectIdx]
-				,pDoc->lp[m_spBtn.GetPos32()].yll[selectIdx]
+					,pd->xll[selectIdx]
+				,pd->yll[selectIdx]
 				,xmin,xmax,ymin,ymax);
 			}
 
@@ -124,6 +142,44 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 
 
 		}
+
+
+		//if(!pDoc->lp.empty()){
+
+		//	CDC dcMem;                                                  //用于缓冲作图的内存DC
+		//	CBitmap bmp;                                                 //内存中承载临时图象的位图
+		//	CRect rect;
+		//	GetClientRect(&rect);
+		//	dcMem.CreateCompatibleDC(pDC);               //依附窗口DC创建兼容内存DC
+		//	bmp.CreateCompatibleBitmap(pDC,rect.Width(),rect.Height());//创建兼容位图
+		//	dcMem.SelectObject(&bmp);  	//将位图选择进内存DC
+		//	CRect plotrect=rect;
+
+		//	DrawData(plotrect,&dcMem,pDoc->lp[m_spBtn.GetPos32()],xmin,xmax,ymin,ymax);
+		//	if(bMouseCursor){
+		//		//CString str;
+		//		//str.Format(L"%g,%g",pDoc->lp[m_spBtn.GetPos32()].xll[selectIdx],pDoc->lp[m_spBtn.GetPos32()].yll[selectIdx]);
+		//		//dcMem.TextOutW(m_mouseDownPoint.x,m_mouseDownPoint.y,str);
+
+		//		DrawData1(plotrect
+		//			,&dcMem
+		//			,pDoc->lp[m_spBtn.GetPos32()].xll[selectIdx]
+		//		,pDoc->lp[m_spBtn.GetPos32()].yll[selectIdx]
+		//		,xmin,xmax,ymin,ymax);
+		//	}
+
+		//	pDC->BitBlt(0,0,rect.Width(),rect.Height(),&dcMem,0,0,SRCCOPY);//将内存DC上的图象拷贝到前台
+		//	dcMem.DeleteDC(); //删除DC
+		//	bmp.DeleteObject(); //删除位图
+
+		//	//////////////////////////////////////////////
+		//	//CRect rect;
+		//	//GetClientRect(&rect);
+		//	//CRect plotrect=rect;
+		//	//DrawData(plotrect,pDC,pDoc->lp[m_spBtn.GetPos32()],xmin,xmax,ymin,ymax);
+
+
+		//}
 	}
 
 
@@ -239,22 +295,24 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 	{
 		// TODO: Add your message handler code here and/or call default
 
-		CanalyzerDoc* pDoc=GetDocument();
-		int idx=m_spBtn.GetPos32();
+		//CanalyzerDoc* pDoc=GetDocument();
+		////int idx=m_spBtn.GetPos32();
 
-		if (!pDoc->lp.empty() && !pDoc->lp[idx].ps.empty()){
+		//PlotData * pd=pDoc->GetPD(lri,idx);
+		PlotData * pd=GetPD();
+		if(pd!=NULL && !pd->ps.empty() ){
 			CRect plotrect;
 			this->GetClientRect(&plotrect);	
 
 			int re=DownUpdate(plotrect
-				, pDoc->lp[idx].psp.metricSize
-				, pDoc->lp[idx].psp.labelSize
+				, pd->psp.metricSize
+				, pd->psp.labelSize
 				, point
 				, m_mouseDownPoint
 				, xmin, xmax, ymin, ymax
 				, bMouseCursor
-				, pDoc->lp[idx].xll
-				, pDoc->lp[idx].yll
+				, pd->xll
+				, pd->yll
 				, selectIdx);
 
 			switch(re){
@@ -271,6 +329,37 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 			}
 
 		}
+
+
+		//if (!pDoc->lp.empty() && !pDoc->lp[idx].ps.empty()){
+		//	CRect plotrect;
+		//	this->GetClientRect(&plotrect);	
+
+		//	int re=DownUpdate(plotrect
+		//		, pDoc->lp[idx].psp.metricSize
+		//		, pDoc->lp[idx].psp.labelSize
+		//		, point
+		//		, m_mouseDownPoint
+		//		, xmin, xmax, ymin, ymax
+		//		, bMouseCursor
+		//		, pDoc->lp[idx].xll
+		//		, pDoc->lp[idx].yll
+		//		, selectIdx);
+
+		//	switch(re){
+		//	case 1:
+		//		SetCapture();
+		//		break;
+		//	case 2:
+		//		this->ClientToScreen(&m_mouseDownPoint);
+		//		::SetCursorPos(m_mouseDownPoint.x,m_mouseDownPoint.y);
+		//		Invalidate(FALSE);
+		//		break;
+		//	default:
+		//		break;
+		//	}
+
+		//}
 
 		CView::OnLButtonDown(nFlags, point);
 	}
@@ -300,8 +389,20 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		m_spBtn.SetPos32(0);
 		m_spBtn.ShowWindow(SW_HIDE);
 		CanalyzerDoc* pDoc=GetDocument();
+
+		switch(lri){
+		case 0:
 		if( !(pDoc->lp.empty()) )
 			pDoc->lp.clear();
+		return;
+		case 1:
+					if( !(pDoc->rp.empty()) )
+			pDoc->rp.clear();
+					return;
+		default:
+			return;
+		}
+
 	}
 
 
@@ -331,30 +432,55 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		//sheet.SetWizardMode();   
 		//sheet.SetWindowPos(&CWnd::wndTopMost,10,10,800,600,SWP_SHOWWINDOW);
 
-		CanalyzerDoc* pDoc=GetDocument();
-		if(!pDoc->lp.empty()){
-			int il=m_spBtn.GetPos32();
-			str.LoadStringW(IDS_STRING_FIGURE1);
+		PlotData * pd=GetPD();
+		if(pd!=NULL){
+			str.LoadStringW(IDS_STRING_FIGURE1+lri);
 			PlotSettingPage fig1setting(str
-				,pDoc->lp[il].psp
-				,pDoc->lp[il].ps
-				,pDoc->lp[il].xlabel
-				,pDoc->lp[il].ylabel);
+				,pd->psp
+				,pd->ps
+				,pd->xlabel
+				,pd->ylabel);
 
 			sheet.AddPage(&fig1setting);
 
 			// 打开模态向导对话框   
 			if(sheet.DoModal()==IDOK){
-
-				pDoc->lp[il].xlabel=fig1setting.xlabel;
-				pDoc->lp[il].ylabel=fig1setting.ylabel;
-				pDoc->lp[il].psp=fig1setting.fs;
-				pDoc->lp[il].ps.clear();
-				pDoc->lp[il].ps.assign(fig1setting.ps.begin(),fig1setting.ps.end());
+				pd->xlabel=fig1setting.xlabel;
+				pd->ylabel=fig1setting.ylabel;
+				pd->psp=fig1setting.fs;
+				pd->ps.clear();
+				pd->ps.assign(fig1setting.ps.begin(),fig1setting.ps.end());
 				Invalidate(FALSE);
 				//this->UpdateWindow();
 			}
 		}
+
+
+
+		//CanalyzerDoc* pDoc=GetDocument();
+		//if(!pDoc->lp.empty()){
+		//	int il=m_spBtn.GetPos32();
+		//	str.LoadStringW(IDS_STRING_FIGURE1);
+		//	PlotSettingPage fig1setting(str
+		//		,pDoc->lp[il].psp
+		//		,pDoc->lp[il].ps
+		//		,pDoc->lp[il].xlabel
+		//		,pDoc->lp[il].ylabel);
+
+		//	sheet.AddPage(&fig1setting);
+
+		//	// 打开模态向导对话框   
+		//	if(sheet.DoModal()==IDOK){
+
+		//		pDoc->lp[il].xlabel=fig1setting.xlabel;
+		//		pDoc->lp[il].ylabel=fig1setting.ylabel;
+		//		pDoc->lp[il].psp=fig1setting.fs;
+		//		pDoc->lp[il].ps.clear();
+		//		pDoc->lp[il].ps.assign(fig1setting.ps.begin(),fig1setting.ps.end());
+		//		Invalidate(FALSE);
+		//		//this->UpdateWindow();
+		//	}
+		//}
 	}
 
 
@@ -362,18 +488,20 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 	{
 		// TODO: Add your message handler code here and/or call default
 
-		CanalyzerDoc* pDoc=GetDocument();
-		int idx=m_spBtn.GetPos32();
+		//CanalyzerDoc* pDoc=GetDocument();
+		//int idx=m_spBtn.GetPos32();
 
-		if (!pDoc->lp.empty() && !pDoc->lp[idx].ps.empty()){
+		//PlotData * pd=pDoc->GetPD(lri,idx);
+		PlotData * pd=GetPD();
+		if(pd!=NULL && !pd->ps.empty() ){
 			CRect plotrect;
 			this->GetClientRect(&plotrect);	
 			//ScreenToClient(&point);
 
 			if(GetCapture()==this){
 				if(MoveUpdateA(plotrect
-					, pDoc->lp[idx].psp.metricSize
-					, pDoc->lp[idx].psp.labelSize
+					, pd->psp.metricSize
+					, pd->psp.labelSize
 					, point
 					, this->m_mouseDownPoint
 					, xmin,xmax,ymin,ymax))
@@ -383,40 +511,73 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 
 				CString str;
 				if(MoveUpdateB(plotrect
-					, pDoc->lp[idx].psp.metricSize
-					, pDoc->lp[idx].psp.labelSize
+					, pd->psp.metricSize
+					, pd->psp.labelSize
 					, point
 					, this->m_mouseDownPoint
 					, xmin,xmax,ymin,ymax
 					, str))
 					m_tool.UpdateTipText(str,this);
 
-				//str.Format(L"%d,%d",point.x,point.y);
-				//m_tool.UpdateTipText(str,this);
-
-				//CPoint pt;
-				//int flg=MoveUpdateC(plotrect
-				//	, pDoc->lp[idx].psp.metricSize
-				//	, pDoc->lp[idx].psp.labelSize
-				//	, point
-				//	, this->m_mouseDownPoint
-				//	, xmin,xmax,ymin,ymax
-				//	, str
-				//	, pDoc->lp[idx].xll
-				//	, pDoc->lp[idx].yll
-				//	, pt);
-				//if(flg==2){
-				//	//this->ClientToScreen(&pt);
-				//	//::SetCursorPos(pt.x,pt.y);
-				//	m_tool.UpdateTipText(str,this);
-				//}
-				//if(flg==1){
-				//	m_tool.UpdateTipText(str,this);
-				//}
-
 			}
 
 		}
+
+
+
+
+		//if (!pDoc->lp.empty() && !pDoc->lp[idx].ps.empty()){
+		//	CRect plotrect;
+		//	this->GetClientRect(&plotrect);	
+		//	//ScreenToClient(&point);
+
+		//	if(GetCapture()==this){
+		//		if(MoveUpdateA(plotrect
+		//			, pDoc->lp[idx].psp.metricSize
+		//			, pDoc->lp[idx].psp.labelSize
+		//			, point
+		//			, this->m_mouseDownPoint
+		//			, xmin,xmax,ymin,ymax))
+		//			this->Invalidate(FALSE);
+		//	}
+		//	else{
+
+		//		CString str;
+		//		if(MoveUpdateB(plotrect
+		//			, pDoc->lp[idx].psp.metricSize
+		//			, pDoc->lp[idx].psp.labelSize
+		//			, point
+		//			, this->m_mouseDownPoint
+		//			, xmin,xmax,ymin,ymax
+		//			, str))
+		//			m_tool.UpdateTipText(str,this);
+
+		//		//str.Format(L"%d,%d",point.x,point.y);
+		//		//m_tool.UpdateTipText(str,this);
+
+		//		//CPoint pt;
+		//		//int flg=MoveUpdateC(plotrect
+		//		//	, pDoc->lp[idx].psp.metricSize
+		//		//	, pDoc->lp[idx].psp.labelSize
+		//		//	, point
+		//		//	, this->m_mouseDownPoint
+		//		//	, xmin,xmax,ymin,ymax
+		//		//	, str
+		//		//	, pDoc->lp[idx].xll
+		//		//	, pDoc->lp[idx].yll
+		//		//	, pt);
+		//		//if(flg==2){
+		//		//	//this->ClientToScreen(&pt);
+		//		//	//::SetCursorPos(pt.x,pt.y);
+		//		//	m_tool.UpdateTipText(str,this);
+		//		//}
+		//		//if(flg==1){
+		//		//	m_tool.UpdateTipText(str,this);
+		//		//}
+
+		//	}
+
+		//}
 
 		CView::OnMouseMove(nFlags, point);
 	}
@@ -427,16 +588,19 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		// TODO: Add your message handler code here and/or call default
 
 
-		CanalyzerDoc* pDoc=GetDocument();
-		int idx=m_spBtn.GetPos32();
+		//CanalyzerDoc* pDoc=GetDocument();
+		//int idx=m_spBtn.GetPos32();
 
-		if(!pDoc->lp.empty() && !pDoc->lp[idx].ps.empty()){
-			ScreenToClient(&pt);
+				//PlotData * pd=pDoc->GetPD(lri,idx);
+		PlotData * pd=GetPD();
+
+		if(pd!=NULL && !pd->ps.empty() ){
+						ScreenToClient(&pt);
 			CRect plotrect;
 			this->GetClientRect(&plotrect);
 			if( WheelUpdate(plotrect
-				, pDoc->lp[idx].psp.metricSize
-				, pDoc->lp[idx].psp.labelSize
+				, pd->psp.metricSize
+				, pd->psp.labelSize
 				, pt
 				, ((zDelta>0)?0.8:1.25)
 				,xmin,xmax,ymin,ymax) ){
@@ -445,6 +609,21 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 
 		}
 
+		//if(!pDoc->lp.empty() && !pDoc->lp[idx].ps.empty()){
+		//	ScreenToClient(&pt);
+		//	CRect plotrect;
+		//	this->GetClientRect(&plotrect);
+		//	if( WheelUpdate(plotrect
+		//		, pDoc->lp[idx].psp.metricSize
+		//		, pDoc->lp[idx].psp.labelSize
+		//		, pt
+		//		, ((zDelta>0)?0.8:1.25)
+		//		,xmin,xmax,ymin,ymax) ){
+		//			this->Invalidate(FALSE);
+		//	}
+
+		//}
+
 		return CView::OnMouseWheel(nFlags, zDelta, pt);
 	}
 
@@ -452,34 +631,50 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 	// update xmin,xmax,ymin,ymax
 	bool CanalyzerView::updatePlotRange(int plotIndex, bool flg)
 	{
-		CanalyzerDoc* pDoc=GetDocument();
-		if(pDoc->lp.empty())
+		//CanalyzerDoc* pDoc=GetDocument();
+		//if(pDoc->lp.empty())
+		//	return false;
+
+		//return updatePlotRange(plotIndex,pDoc->lp[plotIndex].xll,pDoc->lp[plotIndex].yll,flg);
+
+
+		
+		PlotData *pd=GetPD(plotIndex);
+		if(pd==NULL)
 			return false;
 
-		return updatePlotRange(plotIndex,pDoc->lp[plotIndex].xll,pDoc->lp[plotIndex].yll,flg);
+		return updatePlotRange(plotIndex,pd->xll,pd->yll,flg);
 	}
 
 	// update xmin,xmax,ymin,ymax
 	bool CanalyzerView::updatePlotRange(bool flg)
 	{
-		CanalyzerDoc* pDoc=GetDocument();
-		if(pDoc->lp.empty())
+		//CanalyzerDoc* pDoc=GetDocument();
+		//if(pDoc->lp.empty())
+		//	return false;
+		//int ci=m_spBtn.GetPos32();
+		//UpdateRange(pDoc->lp[ci].xll,xmin,xmax,pct,flg);
+		//UpdateRange(pDoc->lp[ci].yll,ymin,ymax,pct,flg);
+		//return true;
+
+
+		PlotData *pd=GetPD();
+		if(pd==NULL)
 			return false;
-		int ci=m_spBtn.GetPos32();
-		UpdateRange(pDoc->lp[ci].xll,xmin,xmax,pct,flg);
-		UpdateRange(pDoc->lp[ci].yll,ymin,ymax,pct,flg);
+		UpdateRange(pd->xll,xmin,xmax,pct,flg);
+		UpdateRange(pd->yll,ymin,ymax,pct,flg);
 		return true;
 	}
 
 
-	int CanalyzerView::AddPlot(const PlotData & pda)
-	{
-		CanalyzerDoc* pDoc=GetDocument();
-		pDoc->lp.push_back(pda);
-		int newi=pDoc->lp.size()-1;
-		SetSpin(newi);
-		return newi;
-	}
+//	int CanalyzerView::AddPlot(const PlotData & pda)
+//	{
+//		CanalyzerDoc* pDoc=GetDocument();
+//		pDoc->lp.push_back(pda);
+//		int newi=pDoc->lp.size()-1;
+//		SetSpin(newi);
+//		return newi;
+//	}
 
 	void CanalyzerView::OnViewFitwindow()
 	{
@@ -496,7 +691,7 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 
 		CanalyzerDoc* pDoc=GetDocument();
 
-		int n=pDoc->lp.size();
+		int n=pDoc->GetNPD(lri);
 		int newpos=pNMUpDown->iPos+pNMUpDown->iDelta;
 		if(newpos>=n)
 			newpos=0;
@@ -506,8 +701,15 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 
 		//if(updatePlotRange(newpos))
 		//if(updatePlotRange())
-		UpdateRange(pDoc->lp[newpos].xll,xmin,xmax,pct,true);
-		UpdateRange(pDoc->lp[newpos].yll,ymin,ymax,pct,true);
+
+		PlotData *pd=GetPD(newpos);
+
+		//UpdateRange(pDoc->lp[newpos].xll,xmin,xmax,pct,true);
+		//UpdateRange(pDoc->lp[newpos].yll,ymin,ymax,pct,true);
+
+		UpdateRange(pd->xll,xmin,xmax,pct,true);
+		UpdateRange(pd->yll,ymin,ymax,pct,true);
+
 		Invalidate(FALSE);
 
 		*pResult = 0;
@@ -582,4 +784,21 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 	{
 		// TODO: Add your command update UI handler code here
 		pCmdUI->SetCheck(bMouseCursor);
+	}
+
+
+	PlotData * CanalyzerView::GetPD(void)
+	{
+		return GetPD(m_spBtn.GetPos32());	
+	}
+
+	PlotData * CanalyzerView::GetPD(int idx)
+	{
+		CanalyzerDoc* pDoc=GetDocument();
+
+		//ASSERT_VALID(pDoc);
+		//if (!pDoc)
+		//	return NULL;
+
+		return pDoc->GetPD(lri,idx);	
 	}

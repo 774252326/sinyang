@@ -20,7 +20,7 @@
 #include "SolutionAdditionParametersPageA.h"
 //#include "pcct.h"
 //#include "colormapT.h"
-#include "analyzerView.h"
+#include "analyzerViewL.h"
 #include "analyzerViewR.h"
 //#include "func.h"
 #include "MainFrm.h"
@@ -85,7 +85,7 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		resultStr.Empty();
 
 		POSITION pos = GetFirstViewPosition();
-		CanalyzerView* lv=((CanalyzerView*)GetNextView(pos));
+		CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));
 		lv->SetSpin(0);
 		CMainFrame *mf=(CMainFrame*)(lv->GetParentFrame());
 		mf->GetOutputWnd()->clear();
@@ -149,7 +149,7 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 
 			if(bUpdateView){
 				POSITION pos = GetFirstViewPosition();
-				CanalyzerView* lv=((CanalyzerView*)GetNextView(pos));
+				CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));
 				lv->SetSpin(lp.size()-1);
 				lv->updatePlotRange();
 
@@ -318,3 +318,35 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 	}
 
 
+
+
+	PlotData * CanalyzerDoc::GetPD(int lr, int index)
+	{
+		switch(lr){
+		case 0:
+			if(lp.size()>index){
+				return &lp[index];
+			}			
+			return NULL;
+		case 1:
+			if(rp.size()>index){
+				return &rp[index];
+			}			
+			return NULL;
+		default:
+			return NULL;
+		}
+	}
+
+
+	int CanalyzerDoc::GetNPD(int lr)
+	{
+		switch(lr){
+		case 0:
+			return lp.size();
+		case 1:	
+			return rp.size();
+		default:
+			return -1;
+		}
+	}

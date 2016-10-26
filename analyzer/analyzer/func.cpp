@@ -29,7 +29,9 @@ int intv=1;
 size_t n1=100;
 //PlotSpec psp0;
 
-CString folderp=L"C:\\Users\\r8anw2x\\Desktop\\";
+//CString folderp=L"C:\\Users\\r8anw2x\\Desktop\\";
+
+CString folderp=L"C:\\Users\\G\\Desktop\\";
 
 //CString DTRsetup=L"data\\b1.ghb";
 CString DTRflist=folderp+L"data\\dtr\\b.txt";
@@ -812,7 +814,7 @@ CString Output8(PlotData & pdat0
 
 
 
-UINT DEMOP(CanalyzerView *leftp,
+UINT DEMOP(CanalyzerViewL *leftp,
 	CanalyzerViewR *rightp,
 	CMFCCaptionBarA *cba,
 	COutputWnd *outw,
@@ -1048,7 +1050,7 @@ UINT DEMOP(CanalyzerView *leftp,
 
 
 
-UINT DTR(CanalyzerView *leftp,
+UINT DTR(CanalyzerViewL *leftp,
 	CanalyzerViewR *rightp,
 	CMFCCaptionBarA *cba,
 	COutputWnd *outw,
@@ -1173,7 +1175,7 @@ UINT DTR(CanalyzerView *leftp,
 
 
 
-UINT DTA(CanalyzerView *leftp,
+UINT DTA(CanalyzerViewL *leftp,
 	CanalyzerViewR *rightp,
 	CMFCCaptionBarA *cba,
 	COutputWnd *outw,
@@ -1324,7 +1326,7 @@ UINT DTA(CanalyzerView *leftp,
 
 
 
-UINT LATR(CanalyzerView *leftp,
+UINT LATR(CanalyzerViewL *leftp,
 	CanalyzerViewR *rightp,
 	CMFCCaptionBarA *cba,
 	COutputWnd *outw,
@@ -1445,7 +1447,7 @@ UINT LATR(CanalyzerView *leftp,
 	return 0;
 }
 
-UINT LATA(CanalyzerView *leftp,
+UINT LATA(CanalyzerViewL *leftp,
 	CanalyzerViewR *rightp,
 	CMFCCaptionBarA *cba,
 	COutputWnd *outw,
@@ -1597,7 +1599,7 @@ UINT LATA(CanalyzerView *leftp,
 	return 0;
 }
 
-UINT RCR(CanalyzerView *leftp,
+UINT RCR(CanalyzerViewL *leftp,
 	CanalyzerViewR *rightp,
 	CMFCCaptionBarA *cba,
 	COutputWnd *outw,
@@ -1723,7 +1725,7 @@ UINT RCR(CanalyzerView *leftp,
 	return 0;
 }
 
-UINT RCA(CanalyzerView *leftp,
+UINT RCA(CanalyzerViewL *leftp,
 	CanalyzerViewR *rightp,
 	CMFCCaptionBarA *cba,
 	COutputWnd *outw,
@@ -1835,7 +1837,7 @@ UINT RCA(CanalyzerView *leftp,
 
 
 
-UINT SARR(CanalyzerView *leftp,
+UINT SARR(CanalyzerViewL *leftp,
 	CanalyzerViewR *rightp,
 	CMFCCaptionBarA *cba,
 	COutputWnd *outw,
@@ -2040,7 +2042,7 @@ UINT SARR(CanalyzerView *leftp,
 
 
 
-UINT SARA(CanalyzerView *leftp,
+UINT SARA(CanalyzerViewL *leftp,
 	CanalyzerViewR *rightp,
 	CMFCCaptionBarA *cba,
 	COutputWnd *outw,
@@ -2255,7 +2257,7 @@ UINT SARA(CanalyzerView *leftp,
 UINT PROCESS(LPVOID pParam)
 {
 
-	CanalyzerView *leftp=((mypara*)pParam)->leftp;
+	CanalyzerViewL *leftp=((mypara*)pParam)->leftp;
 	CanalyzerViewR *rightp=((mypara*)pParam)->rightp;
 	//CanalyzerDoc *adoc=((mypara*)pParam)->adoc;
 

@@ -66,4 +66,6 @@ public:
 //	CWinThread *ppa;
 
 	bool bUpdateView;
+	PlotData * GetPD(int lr, int index);
+	int GetNPD(int lr);
 };

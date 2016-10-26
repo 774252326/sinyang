@@ -235,9 +235,11 @@ BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT /*lpcs*/,
 	m_bSplitterCreated = m_wndSplitter.CreateStatic(this, 1, 2);
 	// CMyView and CMyOtherView are user-defined views derived from CView
 	if(m_bSplitterCreated){
-		m_bSplitterCreated = m_wndSplitter.CreateView(0, 0, RUNTIME_CLASS(CanalyzerView), CSize(500,500), pContext);
+		m_bSplitterCreated = m_wndSplitter.CreateView(0, 0, RUNTIME_CLASS(CanalyzerViewL), CSize(500,500), pContext);
+		this->LeftPlotPointer()->lri=0;
 		if(m_bSplitterCreated){
 			m_bSplitterCreated = m_wndSplitter.CreateView(0, 1, RUNTIME_CLASS(CanalyzerViewR), CSize(500,500), pContext);
+			this->RightPlotPointer()->lri=1;
 		}
 	}
 
@@ -609,9 +611,9 @@ void CMainFrame::OnAnalysisStartanalysis()
 	pst=running;
 }
 
-CanalyzerView * CMainFrame::LeftPlotPointer(void)
+CanalyzerViewL * CMainFrame::LeftPlotPointer(void)
 {
-	return ( (CanalyzerView*)m_wndSplitter.GetPane(0,0) );
+	return ( (CanalyzerViewL*)m_wndSplitter.GetPane(0,0) );
 }
 
 

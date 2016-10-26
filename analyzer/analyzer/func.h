@@ -3,6 +3,7 @@
 //#include "dlg1.h"
 #include "analyzerDoc.h"
 #include "analyzerView.h"
+#include "analyzerViewL.h"
 #include "analyzerViewR.h"
 #include "OutputWnd.h"
 #include "MFCCaptionBarA.h"
@@ -20,7 +21,7 @@
 
 
 typedef struct MYPARA{
-	CanalyzerView *leftp;
+	CanalyzerViewL *leftp;
 	CanalyzerViewR *rightp;
 	CanalyzerDoc *adoc;
 	COutputWnd *outw;
