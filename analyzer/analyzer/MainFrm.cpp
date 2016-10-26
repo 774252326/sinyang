@@ -296,7 +296,7 @@ BOOL CMainFrame::CreateCaptionBar()
 
 	m_wndCaptionBar.EnableButton(FALSE);
 
-	bNameValid = strTemp.LoadString(IDS_CAPTION_TEXT);
+	bNameValid = strTemp.LoadString(AFX_IDS_IDLEMESSAGE);
 	ASSERT(bNameValid);
 	//m_wndCaptionBar.SetText(strTemp, CMFCCaptionBar::ALIGN_LEFT);
 	m_wndCaptionBar.SetTextA(strTemp);

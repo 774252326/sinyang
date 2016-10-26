@@ -18,12 +18,14 @@ double doubledummy;
 
 const DWORD sleepms=100;
 
-const size_t nd=1000;
-//const size_t nd=sleepms/10;
+//const size_t nd=1000;
+const size_t nd=sleepms/10;
 
-CString folderp=L"C:\\Users\\r8anw2x\\Desktop\\data\\d\\";
+//CString folderp=L"C:\\Users\\r8anw2x\\Desktop\\data\\d\\";
 //CString folderp=L"D:\\data\\d\\";
 //CString folderp=L"C:\\Users\\G\\Desktop\\data\\d\\";
+
+CString folderp=L"data\\d\\";
 
 CString DEMOflist=folderp+L"fl1.txt";
 CString DTRflist=folderp+L"dtr.txt";
@@ -58,7 +60,7 @@ CString flistlist[]={
 
 void WaitSecond(ProcessState &waitflg
 	//,int second=-1
-	,int second=2
+	,int second=3
 	//,int second=0
 	)
 {

@@ -212,7 +212,7 @@ afx_msg LRESULT COutputList::OnMessageUpdateDol(WPARAM wParam, LPARAM lParam)
 	::PostMessage(pavl->GetSafeHwnd(),MESSAGE_UPDATE_RAW,NULL,NULL);
 	//pavr->SendMessage(MESSAGE_UPDATE_TEST,NULL,NULL);
 	//}
-	::PostMessage(this->GetSafeHwnd(),MESSAGE_SHOW_DOL,wParam,NULL);
+	::PostMessage(this->GetSafeHwnd(),MESSAGE_SHOW_DOL,NULL,NULL);
 
 	return 0;
 }
@@ -278,7 +278,13 @@ afx_msg LRESULT COutputList::OnMessageShowDol(WPARAM wParam, LPARAM lParam)
 
 
 	size_t nr=GetDOLRow();
-	if(nr==0 || GetItemCount()==nr){
+
+	if(nr==0){
+		this->DeleteAllItems();
+		return 2;
+	}
+
+	if(GetItemCount()==nr){
 		return 1;
 	}
 

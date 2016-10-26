@@ -256,8 +256,12 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 
 			::SendMessage(mf->GetOutputWnd()->GetListCtrl()->GetSafeHwnd(),
 				MESSAGE_UPDATE_DOL,
-				(WPARAM)lv,
-				(LPARAM)rv);
+				NULL,
+				NULL);
+
+			str.LoadString(IDS_STRING_PARA_CHANGED);
+			mf->GetCaptionBar()->ShowMessage(str);
+
 
 		}
 	}
@@ -343,22 +347,12 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 			CString str;
 			str.LoadStringW(IDS_STRING_VOLTAMMOGRAM);
 			nl.assign(lv->pdl.size(),str);
-
 			if(b6){
 				pdl.resize(rv->pdl.size()+pdl.size());
 				std::copy_backward(rv->pdl.begin(),rv->pdl.end(),pdl.end());
 				str.LoadStringW(IDS_STRING_TEST_CURVE);
 				nl.resize(rv->pdl.size()+nl.size(),str);
 			}
-
-
-
-			//POSITION pos = GetFirstViewPosition();
-			//CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));	
-			CDC* pdc=lv->GetDC();
-
-			//a=imgout2(p,pdc,pdl,nl,CSize(1200,800));
-			a=imgout2(p,pdc,pdl,nl);
 		}
 		else{
 			if(b6){
@@ -366,19 +360,10 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 				CString str;
 				str.LoadStringW(IDS_STRING_TEST_CURVE);
 				nl.assign(rv->pdl.size(),str);
-
-				//POSITION pos = GetFirstViewPosition();
-				//CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));	
-				CDC* pdc=lv->GetDC();
-
-				//a=imgout2(p,pdc,pdl,nl,CSize(1200,800));
-				a=imgout2(p,pdc,pdl,nl);
-
-
 			}
 		}
 
-		//a=imgout2(p,this,pdl,nl);
+		a=imgout2(p,lv->GetDC(),pdl,nl);
 
 		p.end_document(optlist.str());
 
@@ -444,7 +429,12 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 			//if(pdfd(fp,this)==0){
 			if(pdfd(fp,chk1,chk2,chk3,chk4,chk5,chk6,chk7)==0){
 				//AfxMessageBox(L"report "+fp+L" is saved");
-				mf->GetCaptionBar()->ShowMessage(L"report "+se.GetFileName()+L" is saved");
+
+				str.LoadStringW(IDS_STRING_REPORT);
+				CString tmps;
+				tmps.LoadStringW(IDS_STRING_IS_SAVED);
+
+				mf->GetCaptionBar()->ShowMessage(str+L" "+se.GetFileName()+L" "+tmps);
 				ShellExecute(NULL, L"open", fp, NULL, NULL, SW_SHOW);			
 			}
 			else{

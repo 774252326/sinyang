@@ -3233,7 +3233,8 @@ int imgout2(
 	CSize szimg)
 {
 
-
+	if(imagelist.empty() || namelist.empty())
+		return 3;
 
 	int fsize=10;
 

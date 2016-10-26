@@ -86,6 +86,7 @@ public:
 	void OnDeltaposSpin(NMHDR* pNMHDR, LRESULT* pResult);
 	size_t selectPIdx;
 	virtual void OnPrepareDC(CDC* pDC, CPrintInfo* pInfo = NULL);
+	int UpdateSpinButton(int np, bool bLast);
 };
 
 #ifndef _DEBUG  // debug version in analyzerView.cpp

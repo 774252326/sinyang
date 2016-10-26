@@ -432,6 +432,8 @@ void PlotSettingPage::GetList(void)
 {
 	//fs=PlotSpec( ((CComboBox*)GetDlgItem(IDS_COMBO_COLOR_STYLE))->GetCurSel() );
 
+	BYTE lpos=fs.legendPos;
+
 	fs=PlotSpec( ((CComboBox*)GetDlgItem(IDS_COMBO_COLOR_STYLE))->GetCurSel(), bkcr );
 
 	//fs.bkgndC=( (CColorButton*)GetDlgItem(IDS_COLOR_BKGND) )->color;
@@ -439,6 +441,8 @@ void PlotSettingPage::GetList(void)
 	//fs.gridC=( (CColorButton*)GetDlgItem(IDS_COLOR_GRID_LINE) )->color;
 	//fs.labelC=( (CColorButton*)GetDlgItem(IDS_COLOR_LABEL) )->color;
 	//fs.metricC=( (CColorButton*)GetDlgItem(IDS_COLOR_METRIC) )->color;
+
+	fs.legendPos=lpos;
 
 	fs.gridType=((CComboBox*)GetDlgItem(IDS_COMBO_GRID_LINE_TYPE))->GetCurSel();
 	UpdateData();

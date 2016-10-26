@@ -314,25 +314,33 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 
 	afx_msg LRESULT CanalyzerView::OnMessageUpdateView(WPARAM wParam, LPARAM lParam)
 	{
-		if(pdl.empty())
+		//int np=pdl.size();
+
+		//m_spBtn.ShowWindow( (np>1 ? SW_SHOW : SW_HIDE) );
+
+		//if(pdl.empty())
+		//	return 1;
+
+		//m_spBtn.SetRange32(0,pdl.size()-1);		
+
+		//int selecti;
+		//if(wParam){
+		//	selecti=pdl.size()-1;
+		//	m_spBtn.SetPos32(selecti);
+		//}
+		//else{
+		//	selecti=m_spBtn.GetPos32();
+		//	if(selecti<0 || selecti>=pdl.size()){
+		//		selecti=0;			
+		//		m_spBtn.SetPos32(selecti);
+		//	}
+		//}
+
+
+		int selecti=UpdateSpinButton(pdl.size(),wParam);
+
+		if(selecti<0)
 			return 1;
-
-		m_spBtn.SetRange32(0,pdl.size()-1);
-		m_spBtn.ShowWindow( (pdl.size()>1 ? SW_SHOW : SW_HIDE) );
-
-		int selecti;
-		if(wParam){
-			selecti=pdl.size()-1;
-			m_spBtn.SetPos32(selecti);
-		}
-		else{
-			selecti=m_spBtn.GetPos32();
-			if(selecti<0 || selecti>=pdl.size()){
-				selecti=0;			
-				m_spBtn.SetPos32(selecti);
-			}
-		}
-
 
 		UpdateRange(pdl[selecti].xll,xmin,xmax,pct,true);
 		UpdateRange(pdl[selecti].yll,ymin,ymax,pct,true);
@@ -356,7 +364,7 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		//CMainFrame *mf=(CMainFrame*)GetParentFrame();
 
 		//if(mf->pst!=stop)
-			//SuspendThread(mf->pWriteA->m_hThread);		
+		//SuspendThread(mf->pWriteA->m_hThread);		
 
 		// 创建属性表对象   
 		CString str;
@@ -364,10 +372,11 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		CPropertySheet sheet(str);
 
 		str.LoadStringW(IDS_STRING_FIGURE1);
-
+		str=L"";
 		int selecti=m_spBtn.GetPos32();
 
 		PlotSettingPage fig1setting(str,pdl[selecti].psp,pdl[selecti].ps);
+
 
 		fig1setting.bkcr=pdl[selecti].psp.winbkC;
 
@@ -378,14 +387,14 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 			pdl[selecti].psp=fig1setting.fs;
 			pdl[selecti].ps.assign(fig1setting.ps.begin(),fig1setting.ps.end());
 
-			::SendMessage(this->GetSafeHwnd(),MESSAGE_GET_PLOTSPEC,NULL,NULL);
+			::PostMessage(this->GetSafeHwnd(),MESSAGE_GET_PLOTSPEC,NULL,NULL);
 
 			Invalidate(FALSE);
 
 		}
 
 		//if(mf->pst!=stop)
-			//ResumeThread(mf->pWriteA->m_hThread);
+		//ResumeThread(mf->pWriteA->m_hThread);
 
 	}
 
@@ -531,7 +540,7 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 	void CanalyzerView::OnUpdateViewDatacursor(CCmdUI *pCmdUI)
 	{
 		// TODO: Add your command update UI handler code here
-		
+
 		CMainFrame *mf=(CMainFrame*)GetParentFrame();
 		if(mf->pst!=running){
 			pCmdUI->Enable(TRUE);
@@ -624,4 +633,32 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		pDC->SetViewportExt(vsize); //确定视口大小
 
 		CView::OnPrepareDC(pDC, pInfo);
+	}
+
+
+	int CanalyzerView::UpdateSpinButton(int np, bool bLast)
+	{
+		int selecti;	
+		if(np>1){
+			m_spBtn.SetRange32(0,np-1);
+			m_spBtn.ShowWindow(SW_SHOW);
+			if(bLast){
+				selecti=np-1;
+			}
+			else{
+				selecti=m_spBtn.GetPos32();
+				if(selecti<0 || selecti>=np){
+					selecti=0;				
+				}
+			}
+		}
+		else{
+			m_spBtn.SetRange32(0,0);
+			m_spBtn.ShowWindow(SW_HIDE);
+			selecti=np-1;			
+		}
+		
+		m_spBtn.SetPos32(selecti);
+		return selecti;
+
 	}
