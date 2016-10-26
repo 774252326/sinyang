@@ -187,13 +187,14 @@ afx_msg LRESULT COutputList::OnMessageUpdateDol(WPARAM wParam, LPARAM lParam)
 
 	sapitemA outitem;
 	BYTE outstep;
-	UINT flg=ComputeStateData(pad->p1.analysistype,pad->p2,pad->p3,pad->raw,dol,outitem,outstep);	
+	double a1;
+	UINT flg=ComputeStateData(pad->p1.analysistype,pad->p2,pad->p3,pad->raw,dol,outitem,outstep,a1);	
 
-	if(flg==1){
-		DataOutA doa=dol.back();
-		doa.Update(outitem,outstep);
-		mf->GetCaptionBar()->x=doa.addVolume;
-	}
+	//if(flg==1){
+	//	DataOutA doa=dol.back();
+	//	doa.Update(outitem,outstep);
+	//	mf->GetCaptionBar()->x=doa.addVolume;
+	//}
 
 	TRACE(L"%d\n",flg);
 	//if(flg==0){
@@ -276,20 +277,26 @@ afx_msg LRESULT COutputList::OnMessageShowDol(WPARAM wParam, LPARAM lParam)
 {
 
 
-	int ti=this->GetItemCount();
 	size_t nr=GetDOLRow();
-	if(ti==nr || nr==0){
+	if(nr==0 || GetItemCount()==nr){
 		return 1;
 	}
+
+
+	//for(int i=nr;i<ti;i++){
+	//	this->DeleteItem(i);
+	//}
+
+
 
 	size_t StepNo;
 	CString strcycle;
 	strcycle.LoadStringW(IDS_STRING_CYCLE);
 	size_t starti;
-	if(true)
+	//if(true)
 	{
 
-		this->DeleteAllItems();
+		//this->DeleteAllItems();
 		StepNo=0;
 		starti=0;
 
@@ -302,9 +309,13 @@ afx_msg LRESULT COutputList::OnMessageShowDol(WPARAM wParam, LPARAM lParam)
 			for(size_t ari=0;ari<dol[i].Ar.size();ari++){
 
 				CString str;
-
 				str.Format(L"%d",StepNo);
-				InsertItem(StepNo,str);
+				if(StepNo>=GetItemCount()){					
+					InsertItem(StepNo,str);
+				}
+				else{
+					SetItemText(StepNo,0,str);				
+				}
 				AdjustWidth(this,0,str);
 
 				str.Format(L"%s(%s%d)",StepName,strcycle,ari+1);
@@ -315,6 +326,9 @@ afx_msg LRESULT COutputList::OnMessageShowDol(WPARAM wParam, LPARAM lParam)
 					str.Format(L"%g",dol[i].addVolume);
 					SetItemText(StepNo,2,str);
 					AdjustWidth(this,2,str);
+				}
+				else{
+					SetItemText(StepNo,2,L"");
 				}
 
 				str.Format(L"%g",dol[i].TotalVolume());
@@ -334,6 +348,7 @@ afx_msg LRESULT COutputList::OnMessageShowDol(WPARAM wParam, LPARAM lParam)
 				}
 				else{
 					//ASSERT
+					SetItemText(StepNo,5,L"");
 					(str.LoadString(IDS_STRING_NO));
 				}
 				SetItemText(StepNo,6,str);
@@ -344,66 +359,74 @@ afx_msg LRESULT COutputList::OnMessageShowDol(WPARAM wParam, LPARAM lParam)
 			}
 		}
 
-		StepNo--;
-		EnsureVisible(StepNo, FALSE);
+		//StepNo--;
+		EnsureVisible(StepNo-1, FALSE);
+
+		//for(;StepNo<ti;StepNo++){
+			//this->DeleteItem(StepNo);
+		//}
+
+		while(GetItemCount()>StepNo){
+			DeleteItem(StepNo);
+		}
 
 	}
-	else{
-		if(dol.back().Ar.size()>1){
-			SetItemText(ti-1,5,L"");
-			CString str;
-			(str.LoadString(IDS_STRING_NO));
-			SetItemText(ti-1,6,str);
-			AdjustWidth(this,6,str);
-		}
+	//else{
+	//	if(dol.back().Ar.size()>1){
+	//		SetItemText(ti-1,5,L"");
+	//		CString str;
+	//		(str.LoadString(IDS_STRING_NO));
+	//		SetItemText(ti-1,6,str);
+	//		AdjustWidth(this,6,str);
+	//	}
 
-		CString StepName=dol.back().GetStepName(dol.size()-1);
+	//	CString StepName=dol.back().GetStepName(dol.size()-1);
 
-		CString str;
+	//	CString str;
 
-		str.Format(L"%d",StepNo);
-		InsertItem(StepNo,str);
-		AdjustWidth(this,0,str);
+	//	str.Format(L"%d",StepNo);
+	//	InsertItem(StepNo,str);
+	//	AdjustWidth(this,0,str);
 
 
-		size_t ari=dol.back().Ar.size();
-		str.Format(L"%s(%s%d)",StepName,strcycle,ari);
-		SetItemText(StepNo,1,str);
-		AdjustWidth(this,1,str);
+	//	size_t ari=dol.back().Ar.size();
+	//	str.Format(L"%s(%s%d)",StepName,strcycle,ari);
+	//	SetItemText(StepNo,1,str);
+	//	AdjustWidth(this,1,str);
 
-		ari--;
+	//	ari--;
 
-		if(ari==0){
-			str.Format(L"%g",dol.back().addVolume);
-			SetItemText(StepNo,2,str);
-			AdjustWidth(this,2,str);
-		}
+	//	if(ari==0){
+	//		str.Format(L"%g",dol.back().addVolume);
+	//		SetItemText(StepNo,2,str);
+	//		AdjustWidth(this,2,str);
+	//	}
 
-		str.Format(L"%g",dol.back().TotalVolume());
-		SetItemText(StepNo,3,str);
-		AdjustWidth(this,3,str);
+	//	str.Format(L"%g",dol.back().TotalVolume());
+	//	SetItemText(StepNo,3,str);
+	//	AdjustWidth(this,3,str);
 
-		str.Format(L"%g",dol.back().Ar[ari]);
-		SetItemText(StepNo,4,str);
-		AdjustWidth(this,4,str);
+	//	str.Format(L"%g",dol.back().Ar[ari]);
+	//	SetItemText(StepNo,4,str);
+	//	AdjustWidth(this,4,str);
 
-		if(ari==dol.back().UseIndex){
-			str.Format(L"%g",dol.back().Ar[ari]/dol.back().Ar0);
-			SetItemText(StepNo,5,str);
-			AdjustWidth(this,5,str);
-			//ASSERT
-			(str.LoadString(IDS_STRING_YES));
-		}
-		else{
-			//ASSERT
-			(str.LoadString(IDS_STRING_NO));
-		}
-		SetItemText(StepNo,6,str);
-		AdjustWidth(this,6,str);
+	//	if(ari==dol.back().UseIndex){
+	//		str.Format(L"%g",dol.back().Ar[ari]/dol.back().Ar0);
+	//		SetItemText(StepNo,5,str);
+	//		AdjustWidth(this,5,str);
+	//		//ASSERT
+	//		(str.LoadString(IDS_STRING_YES));
+	//	}
+	//	else{
+	//		//ASSERT
+	//		(str.LoadString(IDS_STRING_NO));
+	//	}
+	//	SetItemText(StepNo,6,str);
+	//	AdjustWidth(this,6,str);
 
-		EnsureVisible(StepNo, FALSE);
+	//	EnsureVisible(StepNo, FALSE);
 
-	}
+	//}
 
 
 	return 0;

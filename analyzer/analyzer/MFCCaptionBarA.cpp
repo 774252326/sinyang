@@ -329,7 +329,12 @@ afx_msg LRESULT CMFCCaptionBarA::OnMessageWaitResponse(WPARAM wParam, LPARAM lPa
 		ShowMessageWithButton(strTemp,*px,true);
 	}
 	else{
-		ShowMessageWithButton(strTemp,x,true);
+
+			CString strTemp;
+	(strTemp.LoadString(IDS_STRING_PAUSE));
+	ShowMessage(strTemp);
+
+		//ShowMessageWithButton(strTemp,x,true);
 	}
 
 	return 0;

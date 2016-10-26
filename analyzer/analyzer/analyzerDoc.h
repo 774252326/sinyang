@@ -60,7 +60,7 @@ public:
 #endif
 
 protected:
-	afx_msg void OnAnalysisMethodsetup();
+	
 
 
 
@@ -73,5 +73,6 @@ protected:
 	void SetSearchContent(const CString& value);
 #endif // SHARED_HANDLERS
 public:
+	afx_msg void OnAnalysisMethodsetup();
 	afx_msg void OnAnalysisReport();
 };

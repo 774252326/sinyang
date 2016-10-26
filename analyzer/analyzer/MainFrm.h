@@ -82,8 +82,22 @@ public:
 	CMFCCaptionBarA* GetCaptionBar(){ return &m_wndCaptionBar;};
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 
-	bool bWaiting;
+	//bool bWaiting;
 	ProcessState pst;
+	afx_msg void OnAnalysisStartanalysis();
+	CWinThread *pWriteA;
+	afx_msg void OnAnalysisAbortanalysis();
+	afx_msg void OnAnalysisPause();
+	afx_msg void OnUpdateAnalysisMethodsetup(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateAnalysisStartanalysis(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateAnalysisPause(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateAnalysisAbortanalysis(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateAnalysisReport(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateOptionsPlotsettings(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateViewFitwindow(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateViewDatacursor(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateAnalysisCompute(CCmdUI *pCmdUI);
+	afx_msg void OnAnalysisCompute();
 };
 
 

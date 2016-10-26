@@ -36,7 +36,7 @@ IMPLEMENT_DYNCREATE(CanalyzerViewR, CanalyzerView)
 
 		//CString str=Compute(ol->dol,pDoc->p1,pdl,true);
 
-		::SendMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_VIEW,NULL,NULL);
+		::PostMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_VIEW,NULL,NULL);
 		//::SendMessage(mf->GetCaptionBar()->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)str.GetBuffer(),NULL);
 
 
@@ -52,8 +52,10 @@ IMPLEMENT_DYNCREATE(CanalyzerViewR, CanalyzerView)
 		CanalyzerDoc* pDoc = GetDocument();
 
 		CString str=Compute(ol->dol,pDoc->p1,pdl,true);
-		::SendMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_VIEW,NULL,NULL);
+
 		::SendMessage(mf->GetCaptionBar()->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)str.GetBuffer(),NULL);
+
+		::PostMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_VIEW,NULL,NULL);
 
 		return 0;
 	}

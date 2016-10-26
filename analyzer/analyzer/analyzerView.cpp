@@ -105,24 +105,24 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		bmp.CreateCompatibleBitmap(pDC,winsz.cx,winsz.cy);//创建兼容位图
 		dcMem.SelectObject(&bmp);  	//将位图选择进内存DC
 
-		
+
 		DrawData(rect,&dcMem,pdl[selectIdx],xmin,xmax,ymin,ymax);
 
 		if(bMouseCursor && !pdl[selectIdx].ps.empty()
 			&& selectPIdx>=0 && selectPIdx<pdl[selectIdx].xll.size()){
-			//CString str;
-			//str.Format(L"%g,%g",pDoc->lp[m_spBtn.GetPos32()].xll[selectIdx],pDoc->lp[m_spBtn.GetPos32()].yll[selectIdx]);
-			//dcMem.TextOutW(m_mouseDownPoint.x,m_mouseDownPoint.y,str);
+				//CString str;
+				//str.Format(L"%g,%g",pDoc->lp[m_spBtn.GetPos32()].xll[selectIdx],pDoc->lp[m_spBtn.GetPos32()].yll[selectIdx]);
+				//dcMem.TextOutW(m_mouseDownPoint.x,m_mouseDownPoint.y,str);
 
-			DrawData1(rect
-				,&dcMem
-				,pdl[selectIdx].xll[selectPIdx]
+				DrawData1(rect
+					,&dcMem
+					,pdl[selectIdx].xll[selectPIdx]
 				,pdl[selectIdx].yll[selectPIdx]
 				,xmin
-				,xmax
-				,ymin
-				,ymax
-				,inv(pdl[selectIdx].psp.bkgndC));
+					,xmax
+					,ymin
+					,ymax
+					,inv(pdl[selectIdx].psp.bkgndC));
 		}
 
 		pDC->BitBlt(0,0,winsz.cx,winsz.cy,&dcMem,0,0,SRCCOPY);//将内存DC上的图象拷贝到前台
@@ -278,7 +278,7 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 			WS_EX_TRANSPARENT
 			//|WS_EX_CLIENTEDGE
 			,WS_CHILD
-			|WS_VISIBLE
+			//|WS_VISIBLE
 			|UDS_HORZ
 			|UDS_WRAP
 			//|WS_CLIPCHILDREN
@@ -320,13 +320,19 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		m_spBtn.SetRange32(0,pdl.size()-1);
 		m_spBtn.ShowWindow( (pdl.size()>1 ? SW_SHOW : SW_HIDE) );
 
-		int selecti=m_spBtn.GetPos32();
-		if(selecti<0 || selecti>=pdl.size()){
-			selecti=0;			
+		int selecti;
+		if(wParam){
+			selecti=pdl.size()-1;
 			m_spBtn.SetPos32(selecti);
 		}
-		//int selecti=pdl.size()-1;
-		//m_spBtn.SetPos32(selecti);
+		else{
+			selecti=m_spBtn.GetPos32();
+			if(selecti<0 || selecti>=pdl.size()){
+				selecti=0;			
+				m_spBtn.SetPos32(selecti);
+			}
+		}
+
 
 		UpdateRange(pdl[selecti].xll,xmin,xmax,pct,true);
 		UpdateRange(pdl[selecti].yll,ymin,ymax,pct,true);
@@ -334,7 +340,7 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		this->Invalidate(FALSE);	
 
 		return 0;
-		
+
 		//return 1;
 	}
 
@@ -345,6 +351,12 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 
 		if(pdl.empty())
 			return;
+
+
+		//CMainFrame *mf=(CMainFrame*)GetParentFrame();
+
+		//if(mf->pst!=stop)
+			//SuspendThread(mf->pWriteA->m_hThread);		
 
 		// 创建属性表对象   
 		CString str;
@@ -372,6 +384,8 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 
 		}
 
+		//if(mf->pst!=stop)
+			//ResumeThread(mf->pWriteA->m_hThread);
 
 	}
 
@@ -517,7 +531,16 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 	void CanalyzerView::OnUpdateViewDatacursor(CCmdUI *pCmdUI)
 	{
 		// TODO: Add your command update UI handler code here
-		pCmdUI->SetCheck(bMouseCursor);
+		
+		CMainFrame *mf=(CMainFrame*)GetParentFrame();
+		if(mf->pst!=running){
+			pCmdUI->Enable(TRUE);
+			pCmdUI->SetCheck(bMouseCursor);
+		}
+		else{
+			pCmdUI->SetCheck(FALSE);
+			pCmdUI->Enable(FALSE);
+		}
 	}
 
 
@@ -534,13 +557,13 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 	{
 		// TODO: Add your command handler code here
 
-		::SendMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_VIEW,NULL,NULL);
+		::PostMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_VIEW,NULL,NULL);
 	}
 
 	void CanalyzerView::OnDeltaposSpin(NMHDR* pNMHDR, LRESULT* pResult)
 	{
 		NM_UPDOWN* pNMUpDown=(NM_UPDOWN*)pNMHDR;	
-		
+
 		////int newpos=pNMUpDown->iPos+pNMUpDown->iDelta;
 
 		////CanalyzerDoc* pDoc=GetDocument();
@@ -578,7 +601,7 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 	{
 		// TODO: Add your specialized code here and/or call the base class
 
-				pDC->SetMapMode(MM_ANISOTROPIC); //转换坐标映射方式
+		pDC->SetMapMode(MM_ANISOTROPIC); //转换坐标映射方式
 		CRect rect;
 		this->GetClientRect(&rect);
 		CSize wsize = rect.Size(); 

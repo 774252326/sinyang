@@ -444,7 +444,7 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 			//if(pdfd(fp,this)==0){
 			if(pdfd(fp,chk1,chk2,chk3,chk4,chk5,chk6,chk7)==0){
 				//AfxMessageBox(L"report "+fp+L" is saved");
-				mf->GetCaptionBar()->ShowMessage(L"");
+				mf->GetCaptionBar()->ShowMessage(L"report "+se.GetFileName()+L" is saved");
 				ShellExecute(NULL, L"open", fp, NULL, NULL, SW_SHOW);			
 			}
 			else{

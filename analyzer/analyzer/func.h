@@ -116,7 +116,8 @@ UINT ComputeStateData(
 	const RawData &raw,
 	std::vector<DataOutA> &dol,	
 	sapitemA &outitem,
-	BYTE &outstep
+	BYTE &outstep,
+	double &VtoAdd
 	);
 
 void DrawData1(CRect &plotrect

@@ -11,13 +11,18 @@
 
 sapitemA sapitemdummy;
 BYTE bytedummy;
+double doubledummy;
+
+
+
+
+const DWORD sleepms=100;
 
 const size_t nd=1000;
+//const size_t nd=sleepms/10;
 
-const DWORD sleepms=1000;
-
-//CString folderp=L"C:\\Users\\r8anw2x\\Desktop\\data\\d\\";
-CString folderp=L"D:\\data\\d\\";
+CString folderp=L"C:\\Users\\r8anw2x\\Desktop\\data\\d\\";
+//CString folderp=L"D:\\data\\d\\";
 //CString folderp=L"C:\\Users\\G\\Desktop\\data\\d\\";
 
 CString DEMOflist=folderp+L"fl1.txt";
@@ -362,46 +367,46 @@ UINT OneProcess(
 
 		if( doalast.Ar.size()>=p2.noofcycles
 			&& saplist.front().isStepEnd(doalast.ArUse()/doalast.Ar0,!(step&DOA_MORE))){
-			saplist.erase(saplist.begin());
+				saplist.erase(saplist.begin());
 
-			DataOutA doalast0=doalast;
-			if(!doalast0.Update(saplist.front(),step)){
+				DataOutA doalast0=doalast;
+				if(!doalast0.Update(saplist.front(),step)){
 
-				if(step&DOA_RESET_SOLUTION_AT_END){		
-					doalast.ResetCompound();
-					//dol.back().ResetCompound();
+					if(step&DOA_RESET_SOLUTION_AT_END){		
+						doalast.ResetCompound();
+						//dol.back().ResetCompound();
+					}
+
+					if(!(stepControl&SC_NO_PLOT)){
+						if( stepControl&SC_PLOT_LAST ){
+							doalast.UseIndex=doalast.Ar.size()-1;
+							//dol.back().UseIndex=dol.back().Ar.size()-1;
+						}	
+					}
+					else{
+						doalast.UseIndex=-1;
+						//dol.back().UseIndex=-1;
+					}
+
+					if( step&DOA_VMS ){	
+						doalast.Ar0=doalast.ArUse();
+						//dol.back().Ar0=dol.back().ArUse();
+					}
+
+					if( (stepControl&SC_NO_PLOT)||
+						(stepControl&SC_PLOT_LAST) ){
+							dol.back()=doalast;
+					}
+
+
+					sl.erase(sl.begin());
+
 				}
-
-				if(!(stepControl&SC_NO_PLOT)){
-					if( stepControl&SC_PLOT_LAST ){
-						doalast.UseIndex=doalast.Ar.size()-1;
-						//dol.back().UseIndex=dol.back().Ar.size()-1;
-					}	
-				}
-				else{
-					doalast.UseIndex=-1;
-					//dol.back().UseIndex=-1;
-				}
-
-				if( step&DOA_VMS ){	
-					doalast.Ar0=doalast.ArUse();
-					//dol.back().Ar0=dol.back().ArUse();
-				}
-
-				if( (stepControl&SC_NO_PLOT)||
-					(stepControl&SC_PLOT_LAST) ){
-						dol.back()=doalast;
-				}
-
-
-				sl.erase(sl.begin());
-
-			}
 
 
 
 		}
-		
+
 		if(doalast.Ar.size()<p2.noofcycles){
 			return 6;
 		}
@@ -420,11 +425,11 @@ UINT ComputeStateData(
 	const RawData &raw,
 	std::vector<DataOutA> &dol,
 	sapitemA &outitem,
-	BYTE &outstep
-	){
+	BYTE &outstep,
+	double &VtoAdd){
 
-		if(raw.ll.empty())//无数据
-			return 4;
+		//if(raw.ll.empty())//无数据
+		//return 4;
 
 		std::vector<DWORD> sl;
 
@@ -470,9 +475,10 @@ UINT ComputeStateData(
 					outitem=p3t.saplist.front();
 					outstep=step;
 
-					if(dol[rawi-1].Ar.size()<p2.noofcycles)
+					if(rawi>0 && dol[rawi-1].Ar.size()<p2.noofcycles)
 						return 1;
 
+					VtoAdd=d0.addVolume;
 					return 5;
 				}
 
@@ -555,7 +561,8 @@ UINT ComputeStateData(
 			}
 		}
 
-		if(dol.back().Ar.size()<p2.noofcycles)
+		if(!dol.empty()
+			&& dol.back().Ar.size()<p2.noofcycles)
 			return 6;
 
 		return 0;//最后一个加液步骤完成，注意此时最后一步的转圈计数未必到达预设值p2.noofcycles
@@ -621,7 +628,7 @@ bool AddCalibrationCurve(CString calibrationfilepath, PlotData &pda)
 	if(ReadFileCustom(&tmp,1,calibrationfilepath)){
 
 		std::vector<DataOutA> dol;
-		UINT flg=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol,sapitemdummy,bytedummy);
+		UINT flg=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol,sapitemdummy,bytedummy,doubledummy);
 
 		if(flg!=0)
 			return false;
@@ -1112,17 +1119,37 @@ UINT DataOutAList2PlotDataList(const std::vector<DataOutA> &dol, const ANPara &p
 	case 7:
 		//return SARR1(leftp,rightp,cba,outw,*pst,p1,p2,p3);
 		{
-			std::vector<DataOutA> dolast0;
-			dolast0=StepLastState(dol);
-			for(size_t i=0;i<dolast0.size();i++){
-				if(dolast0[i].stepFilter|DOA_VMS){
-					sl.resize(sl.size()+2);
-					std::copy_backward(sl.begin(),sl.begin()+2,sl.end());
+
+			//std::vector<DataOutA> dolast0;
+			//dolast0=StepLastState(dol);
+			//for(size_t i=0;i<dolast0.size();i++){
+			//	if(dolast0[i].stepFilter&DOA_VMS){
+			//		sl.resize(sl.size()+2);
+			//		std::copy_backward(sl.begin(),sl.begin()+2,sl.end());
+			//	}
+			//}
+			//sl.pop_back();
+			//sl.pop_back();
+			//sl[0]|=(SC_NEW_RIGHT_PLOT<<8);
+
+			///////////////////////////////////////////////////////////
+
+			size_t ol=sl.size();
+
+			for(size_t i=0;i<dol.size();i++){
+				if(dol[i].stepFilter&DOA_VMS){
+					sl.resize(sl.size()+ol);
+					std::copy_backward(sl.begin(),sl.begin()+ol,sl.end());
 				}
 			}
-			sl.pop_back();
-			sl.pop_back();
+			sl.erase(sl.begin(),sl.begin()+ol);
+
+			if(sl.empty()){
+				bool flg1=GetStepList(sl,p1.analysistype);
+			}
+
 			sl[0]|=(SC_NEW_RIGHT_PLOT<<8);
+
 
 		}
 		break;
@@ -1404,7 +1431,7 @@ bool Compute2(const std::vector<DataOutA> &dol, const ANPara &p1, double &SPv, d
 					double Sv;
 
 					std::vector<DataOutA> dol1;
-					UINT f1=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol1,sapitemdummy,bytedummy);
+					UINT f1=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol1,sapitemdummy,bytedummy,doubledummy);
 					if(f1==0){
 						if(Compute1(dol1,tmp.p1,Sv,z)){
 							SPc=z*(1+Vv/SPv);
@@ -1547,7 +1574,7 @@ bool Compute6(const std::vector<DataOutA> &dol, /*PlotData & pdat,*/ const ANPar
 	if(ReadFileCustom(&tmp,1,p1.calibrationfilepath)){
 
 		std::vector<DataOutA> dol1;
-		UINT f1=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol1,sapitemdummy,bytedummy);
+		UINT f1=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol1,sapitemdummy,bytedummy,doubledummy);
 		if(f1==0){
 
 			tmp.p1.evaluationratio=Q/dol1.back().Ar0;
@@ -1664,7 +1691,7 @@ bool Compute8(
 		//size_t i=tmp.rp.size()-2;
 
 		std::vector<DataOutA> dol1;
-		UINT f1=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol1,sapitemdummy,bytedummy);
+		UINT f1=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol1,sapitemdummy,bytedummy,doubledummy);
 		if(f1==0){
 
 
@@ -1759,7 +1786,7 @@ bool Compute10(
 		tmp.p1.evaluationratio=nQ;
 
 		std::vector<DataOutA> dol1;
-		UINT f1=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol1,sapitemdummy,bytedummy);
+		UINT f1=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol1,sapitemdummy,bytedummy,doubledummy);
 		if(f1==0){
 
 			if(Compute9(dol1,tmp.p1,Lc)){
@@ -1825,7 +1852,7 @@ bool Compute12(
 
 
 		std::vector<DataOutA> dol1;
-		UINT f1=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol1,sapitemdummy,bytedummy);
+		UINT f1=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol1,sapitemdummy,bytedummy,doubledummy);
 		if(f1==0){
 
 
@@ -2571,6 +2598,7 @@ UINT PROCESS(LPVOID pParam)
 
 
 	CanalyzerViewL* lv=((mypara*)pParam)->leftp;
+	CanalyzerViewR* rv=((mypara*)pParam)->rightp;
 	COutputWnd *ow=((mypara*)pParam)->outw;
 	CMFCCaptionBarA *cba=((mypara*)pParam)->cba;
 
@@ -2579,40 +2607,56 @@ UINT PROCESS(LPVOID pParam)
 	COutputList* ol=ow->GetListCtrl();
 	//ol->DeleteAllItems();
 
-	HWND olhw=ol->GetSafeHwnd();	
-
 	CanalyzerDoc* pDoc=lv->GetDocument();
-
-	//POSITION pos = pDoc->GetFirstViewPosition();
-	//CanalyzerViewL* lv=(CanalyzerViewL*)(pDoc->GetNextView(pos));
-	//CMainFrame *mf=(CMainFrame*)( lv->GetParentFrame() );
 
 	delete pParam;
 
-	//pDoc->raw.LoadFromFileList(flistlist[pDoc->p1.analysistype],olhw,1000,100);
+	std::vector<CString> filelist;
+	LoadFileList(flistlist[pDoc->p1.analysistype],filelist);
 
+	UINT runstate=2;
 
-
-
+	double v2a;
+	sapitemA outitem;
+	BYTE outstep;
 
 	pDoc->raw.Clear();
 
+	runstate=ComputeStateData(pDoc->p1.analysistype,pDoc->p2,pDoc->p3,pDoc->raw,ol->dol,outitem,outstep,v2a);
 
-	//CMainFrame *mf=(CMainFrame*)( ((CanalyzerViewL*)lv)->GetParentFrame() );
-	//COutputList* ol=mf->GetOutputWnd()->GetListCtrl();
+	TRACE(L"%d\n",runstate);
+	if(runstate==3){
+		CString strerr;
+		strerr.LoadStringW(IDS_STRING_STEP_ERROR);
+		::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(strerr.GetBuffer()),NULL);
+		*pst=stop;
+		
+		return 1;
+	}
+	::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(v2a),NULL);
 
-	std::vector<CString> filelist;
-	LoadFileList(flistlist[pDoc->p1.analysistype],filelist);
-	
+	*pst=pause;
+	WaitSecond(*pst);
 
-	::SendMessage(ol->GetSafeHwnd(),MESSAGE_UPDATE_DOL,NULL,NULL);
+	::SendMessage(cba->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
 
-	//ol->doalast=DataOutA();
-	//ol->dol.assign(1,DataOutA());
-	//ol->p3=pDoc->p3;
-	//GetStepList(ol->sl,pDoc->p1.analysistype);
+	lv->bMouseCursor=rv->bMouseCursor=false;
 
-	while(!filelist.empty()){
+	while(true){
+
+		if(filelist.empty()){
+
+			CString strerr;
+			strerr.LoadStringW(IDS_STRING_STEP_ERROR);
+			::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(strerr.GetBuffer()),NULL);
+
+			*pst=stop;
+			return 1;
+
+		}
+
+
+
 		/////load data from file////////////
 		//data.clear();
 		pcct data;
@@ -2624,7 +2668,7 @@ UINT PROCESS(LPVOID pParam)
 		size_t rnd;
 		pDoc->raw.ll.push_back(0);
 
-		do{
+		while(true){
 			rnd=data.popData(x,y,nd);
 			pDoc->raw.xll.resize(pDoc->raw.xll.size()+x.size());
 			std::copy_backward(x.begin(),x.end(),pDoc->raw.xll.end());
@@ -2634,29 +2678,51 @@ UINT PROCESS(LPVOID pParam)
 
 			pDoc->raw.ll.back()+=x.size();
 
-			//::SendMessage(ol->GetSafeHwnd(),MESSAGE_REFRESH_DOL,NULL,NULL);
-			//::PostMessage(olhw,MESSAGE_UPDATE_DOL,NULL,NULL);
+			ol->dol.clear();
 
-			::SendMessage(ol->GetSafeHwnd(),MESSAGE_UPDATE_DOL,NULL,NULL);
+			runstate=ComputeStateData(pDoc->p1.analysistype,pDoc->p2,pDoc->p3,pDoc->raw,ol->dol,outitem,outstep,v2a);	
 
+			TRACE(L"%d\n",runstate);
+
+			if(runstate==3){
+				CString strerr;
+				strerr.LoadStringW(IDS_STRING_STEP_ERROR);
+				::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(strerr.GetBuffer()),NULL);
+				*pst=stop;
+				return 1;
+			}
+
+
+			::PostMessage(rv->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
+			::PostMessage(lv->GetSafeHwnd(),MESSAGE_UPDATE_RAW,NULL,NULL);
+			::PostMessage(ol->GetSafeHwnd(),MESSAGE_SHOW_DOL,NULL,NULL);
 			Sleep(sleepms);
 
-		}while(rnd>0);
+			if(runstate==5){
+				::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(v2a),NULL);
+				*pst=pause;
+				WaitSecond(*pst);
+				::SendMessage(cba->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
+				filelist.erase(filelist.begin());
+				break;
+			}
 
-		//if(rnd==0)
-		//ll.push_back(data.potential.size());
-
-		filelist.erase(filelist.begin());
-
-
-
+			if(runstate==0){
+				::SendMessage(rv->GetSafeHwnd(),MESSAGE_COMPUTE_RESULT,NULL,NULL);
+				filelist.erase(filelist.begin());
+				*pst=stop;
+				return 0;
+				//break;
+			}
+		}
+		
 	}
 
+	
+
+
+
 	*pst=stop;
-
-
-
-
 
 	return 0;
 }

@@ -18,7 +18,7 @@ protected:
 public:
 	int timer;
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
-	afx_msg void OnAnalysisStartanalysis();
+//	afx_msg void OnAnalysisStartanalysis();
 	CWinThread *pWriteA;
 };
 

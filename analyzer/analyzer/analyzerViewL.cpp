@@ -52,7 +52,7 @@ IMPLEMENT_DYNCREATE(CanalyzerViewL, CanalyzerView)
 
 		ON_MESSAGE(MESSAGE_UPDATE_RAW, &CanalyzerViewL::OnMessageUpdateRaw)
 		ON_WM_TIMER()
-		ON_COMMAND(ID_ANALYSIS_STARTANALYSIS, &CanalyzerViewL::OnAnalysisStartanalysis)
+//		ON_COMMAND(ID_ANALYSIS_STARTANALYSIS, &CanalyzerViewL::OnAnalysisStartanalysis)
 	END_MESSAGE_MAP()
 
 
@@ -97,7 +97,7 @@ IMPLEMENT_DYNCREATE(CanalyzerViewL, CanalyzerView)
 		pdl.clear();
 		UINT flg=RawData2PlotDataList(pDoc->raw, ol->dol, psview, pdl);
 
-		::SendMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_VIEW,NULL,NULL);
+		::PostMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_VIEW,(WPARAM)true,NULL);
 
 		return 0;
 	}
@@ -125,48 +125,51 @@ IMPLEMENT_DYNCREATE(CanalyzerViewL, CanalyzerView)
 	}
 
 
-	void CanalyzerViewL::OnAnalysisStartanalysis()
-	{
-		// TODO: Add your command handler code here
-
-		CanalyzerDoc* pDoc = GetDocument();
-		//pDoc->raw.Clear();
-		//timer=SetTimer(1,1000,NULL);
-
-		//pDoc->raw.LoadFromFileList(flistlist[pDoc->p1.analysistype],100,20);
-
-		//KillTimer(timer);
-
-			mypara * pa1=new mypara;
-	//pa1->leftp=this->LeftPlotPointer();
-	//pa1->rightp=this->RightPlotPointer();
-	//pa1->outw=this->GetOutputWnd();
-	//pa1->cba=this->GetCaptionBar();
-	//pa1->psta=&pst;
-
-			pa1->leftp=this;
-
-			CMainFrame *mf=(CMainFrame*)( GetParentFrame() );
-	pa1->outw=mf->GetOutputWnd();
-	pa1->cba=mf->GetCaptionBar();
-	pa1->psta=&(mf->pst);
-
-
-	//CWinThread *pWriteA;
-
-	//HANDLE hThread;
-
-	pWriteA=AfxBeginThread(PROCESS,
-		(LPVOID)(pa1),
-		THREAD_PRIORITY_NORMAL,
-		0,
-		CREATE_SUSPENDED);
-
-	//hThread=pWriteA->m_hThread;
-
-	//CloseHandle(hThread);
-	pWriteA->ResumeThread();
-
-	mf->pst=running;
-
-	}
+//	void CanalyzerViewL::OnAnalysisStartanalysis()
+//	{
+//		// TODO: Add your command handler code here
+//
+//		CanalyzerDoc* pDoc = GetDocument();
+//		//pDoc->raw.Clear();
+//		//timer=SetTimer(1,1000,NULL);
+//
+//		//pDoc->raw.LoadFromFileList(flistlist[pDoc->p1.analysistype],100,20);
+//
+//		//KillTimer(timer);
+//
+//			mypara * pa1=new mypara;
+//	//pa1->leftp=this->LeftPlotPointer();
+//	//pa1->rightp=this->RightPlotPointer();
+//	//pa1->outw=this->GetOutputWnd();
+//	//pa1->cba=this->GetCaptionBar();
+//	//pa1->psta=&pst;
+//
+//			pa1->leftp=this;
+//
+//			CMainFrame *mf=(CMainFrame*)( GetParentFrame() );
+//	pa1->outw=mf->GetOutputWnd();
+//	pa1->cba=mf->GetCaptionBar();
+//	pa1->psta=&(mf->pst);
+//
+//
+//	//CWinThread *pWriteA;
+//
+//	//HANDLE hThread;
+//
+//	pWriteA=AfxBeginThread(PROCESS,
+//		(LPVOID)(pa1),
+//		THREAD_PRIORITY_NORMAL,
+//		0,
+//		CREATE_SUSPENDED);
+//
+//	//hThread=pWriteA->m_hThread;
+//
+//	//CloseHandle(hThread);
+//	pWriteA->ResumeThread();
+//
+//	//PROCESS((LPVOID)(pa1));
+//
+//
+//	mf->pst=running;
+//
+//	}

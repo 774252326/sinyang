@@ -9,6 +9,7 @@
 
 #include "analyzerViewL.h"
 #include "analyzerViewR.h"
+#include "func.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -37,6 +38,19 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_COMMAND(ID_VIEW_ANALYSIS_PROGRESS, &CMainFrame::OnViewAnalysisProgress)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_ANALYSIS_PROGRESS, &CMainFrame::OnUpdateViewAnalysisProgress)
 	ON_WM_SIZE()
+	ON_COMMAND(ID_ANALYSIS_STARTANALYSIS, &CMainFrame::OnAnalysisStartanalysis)
+	ON_COMMAND(ID_ANALYSIS_ABORTANALYSIS, &CMainFrame::OnAnalysisAbortanalysis)
+	ON_COMMAND(ID_ANALYSIS_PAUSE, &CMainFrame::OnAnalysisPause)
+	ON_UPDATE_COMMAND_UI(ID_ANALYSIS_METHODSETUP, &CMainFrame::OnUpdateAnalysisMethodsetup)
+	ON_UPDATE_COMMAND_UI(ID_ANALYSIS_STARTANALYSIS, &CMainFrame::OnUpdateAnalysisStartanalysis)
+	ON_UPDATE_COMMAND_UI(ID_ANALYSIS_PAUSE, &CMainFrame::OnUpdateAnalysisPause)
+	ON_UPDATE_COMMAND_UI(ID_ANALYSIS_ABORTANALYSIS, &CMainFrame::OnUpdateAnalysisAbortanalysis)
+	ON_UPDATE_COMMAND_UI(ID_ANALYSIS_REPORT, &CMainFrame::OnUpdateAnalysisReport)
+	ON_UPDATE_COMMAND_UI(ID_OPTIONS_PLOTSETTINGS, &CMainFrame::OnUpdateOptionsPlotsettings)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_FITWINDOW, &CMainFrame::OnUpdateViewFitwindow)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_DATACURSOR, &CMainFrame::OnUpdateViewDatacursor)
+	ON_UPDATE_COMMAND_UI(ID_ANALYSIS_COMPUTE, &CMainFrame::OnUpdateAnalysisCompute)
+	ON_COMMAND(ID_ANALYSIS_COMPUTE, &CMainFrame::OnAnalysisCompute)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -50,6 +64,10 @@ static UINT indicators[] =
 // CMainFrame construction/destruction
 
 CMainFrame::CMainFrame()
+	: m_bSplitterCreated(FALSE)
+	//, bWaiting(false)
+	, pWriteA(NULL)
+	, pst(stop)
 {
 	// TODO: add member initialization code here
 	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_OFF_2007_BLUE);
@@ -447,6 +465,8 @@ void CMainFrame::OnUpdateViewCaptionBar(CCmdUI* pCmdUI)
 
 void CMainFrame::OnOptions()
 {
+	//bWaiting=false;
+	pst=running;
 }
 
 BOOL CMainFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParentWnd, CCreateContext* pContext) 
@@ -528,4 +548,160 @@ void CMainFrame::OnSize(UINT nType, int cx, int cy)
 		m_wndSplitter.SetColumnInfo(0,(lc0+lc1)*3/5,10);
 		m_wndSplitter.RecalcLayout();
 	}
+}
+
+
+void CMainFrame::OnAnalysisStartanalysis()
+{
+	// TODO: Add your command handler code here
+
+			mypara * pa1=new mypara;
+	pa1->leftp=(CanalyzerViewL*)m_wndSplitter.GetPane(0,0);
+	pa1->rightp=(CanalyzerViewR*)m_wndSplitter.GetPane(0,1);
+	pa1->outw=this->GetOutputWnd();
+	pa1->cba=this->GetCaptionBar();
+	pa1->psta=&pst;
+//
+
+//
+//	//CWinThread *pWriteA;
+//
+//	//HANDLE hThread;
+//
+	pWriteA=AfxBeginThread(PROCESS,
+		(LPVOID)(pa1),
+		THREAD_PRIORITY_NORMAL,
+		0,
+		CREATE_SUSPENDED);
+//
+//	//hThread=pWriteA->m_hThread;
+//
+//	//CloseHandle(hThread);
+	pWriteA->ResumeThread();
+//
+//	//PROCESS((LPVOID)(pa1));
+//
+//
+	pst=running;
+
+}
+
+
+void CMainFrame::OnAnalysisAbortanalysis()
+{
+	// TODO: Add your command handler code here
+	::TerminateThread(pWriteA->m_hThread,0);
+
+	pst=stop;
+	::SendMessage(this->GetCaptionBar()->GetSafeHwnd(),MESSAGE_OVER,NULL,NULL);
+}
+
+
+void CMainFrame::OnAnalysisPause()
+{
+	// TODO: Add your command handler code here
+
+	//DWORD res=bWaiting?ResumeThread(pWriteA->m_hThread):SuspendThread(pWriteA->m_hThread);
+
+	//if(res!=(DWORD)(-1))
+	//	bWaiting=!bWaiting;
+
+	//if(bWaiting){
+	//	ResumeThread(pWriteA->m_hThread);
+	//	bWaiting=false;
+	//}
+	//else{
+	//	SuspendThread(pWriteA->m_hThread);	
+	//	bWaiting=true;
+	//}
+
+	switch(pst){
+	case running:
+		if(SuspendThread(pWriteA->m_hThread)!=(DWORD)(-1)){
+			::SendMessage(this->GetCaptionBar()->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,NULL,NULL);
+			pst=pause;
+		}
+		break;
+	case pause:
+		if(ResumeThread(pWriteA->m_hThread)!=(DWORD)(-1)){
+			::SendMessage(this->GetCaptionBar()->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
+			pst=running;
+		}
+		break;
+	default:
+		break;
+	}
+
+}
+
+
+void CMainFrame::OnUpdateAnalysisMethodsetup(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->Enable(pst==stop);
+}
+
+
+void CMainFrame::OnUpdateAnalysisStartanalysis(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->Enable(pst==stop);
+}
+
+
+void CMainFrame::OnUpdateAnalysisPause(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->Enable(pst!=stop);
+}
+
+
+void CMainFrame::OnUpdateAnalysisAbortanalysis(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->Enable(pst!=stop);
+}
+
+
+void CMainFrame::OnUpdateAnalysisReport(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->Enable(pst==stop);
+}
+
+
+void CMainFrame::OnUpdateOptionsPlotsettings(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->Enable(pst==stop);
+}
+
+
+void CMainFrame::OnUpdateViewFitwindow(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->Enable(pst!=running);
+}
+
+
+void CMainFrame::OnUpdateViewDatacursor(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+}
+
+
+void CMainFrame::OnUpdateAnalysisCompute(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->Enable(pst!=running);
+}
+
+
+void CMainFrame::OnAnalysisCompute()
+{
+	// TODO: Add your command handler code here
+
+	CanalyzerViewR *pavr=(CanalyzerViewR*)m_wndSplitter.GetPane(0,1);
+	::SendMessage(pavr->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
+	::SendMessage(pavr->GetSafeHwnd(),MESSAGE_COMPUTE_RESULT,NULL,NULL);
 }
