@@ -32,8 +32,12 @@ public:
 		btnIDOK.ShowWindow(bShow);
 		CString str=L"";
 		if(bShow)
+		{
 			str.LoadStringW(IDS_STRING_PAUSE);
+			btnIDOK.SetFocus();
+		}
 		this->SetWindowTextW(str);
+		
 	};
 
 protected:
@@ -130,7 +134,7 @@ protected:
 
 		ShowTitleAndButton();
 
-		btnIDOK.SetFocus();
+		
 
 		return 0;
 	};

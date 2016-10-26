@@ -1223,7 +1223,7 @@ void CMainFrame::OnAnalysisAbortanalysis()
 			singleLockSAP.Unlock();
 		}
 
-
+		/*SetMessageText(L"reeeeeeeeeee");  */
 
 
 	}
@@ -1571,6 +1571,9 @@ void CMainFrame::OnUpdateLanguage(CCmdUI *pCmdUI)
 
 void CMainFrame::OnLanguage(UINT id)
 {
+
+	
+
 	LangID=nID2LangID(id);
 	ChangeLang();
 }
