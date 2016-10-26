@@ -2,11 +2,17 @@
 
 // CVPara command target
 
+//CVParameters
+
 class CVPara : public CObject
 {
 public:
 	CVPara();
 	virtual ~CVPara();
+
+	void operator=(const CVPara &src);
+	CVPara(const CVPara &src){ operator=(src); };
+
 	double lowelimit;
 	double highelimit;
 	double scanrate;

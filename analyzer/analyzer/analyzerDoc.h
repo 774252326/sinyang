@@ -1,7 +1,12 @@
 
 // analyzerDoc.h : interface of the CanalyzerDoc class
 //
-
+#include "ANPara.h"
+#include "DataOut.h"
+#include "PlotData.h"
+#include "SAPara.h"
+#include "VPara.h"
+#include <vector>
 
 #pragma once
 
@@ -14,6 +19,13 @@ protected: // create from serialization only
 
 // Attributes
 public:
+
+	ANPara p1;
+	CVPara p2;
+	SAPara p3;
+	DataOut dato;
+	std::vector<PlotData> lp;
+	std::vector<PlotData> rp;
 
 // Operations
 public:
@@ -45,4 +57,6 @@ protected:
 	// Helper function that sets search content for a Search Handler
 	void SetSearchContent(const CString& value);
 #endif // SHARED_HANDLERS
+public:
+	afx_msg void OnAnalysisMethodsetup();
 };

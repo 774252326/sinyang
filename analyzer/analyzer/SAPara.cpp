@@ -17,6 +17,12 @@ SAPara::~SAPara()
 {
 }
 
+void SAPara::operator=(const SAPara &src)
+{
+	vmsvol=src.vmsvol;
+	saplist.assign(src.saplist.begin(),src.saplist.end());
+}
+
 
 // SAPara member functions
 
@@ -29,16 +35,8 @@ void SAPara::Serialize(CArchive& ar)
 			<<saplist.size();
 
 		for(size_t i=0;i<saplist.size();i++){
-			ar<<saplist[i].Aconc
-				<<saplist[i].addtype
-				<<saplist[i].Lconc
-				<<saplist[i].Sconc
-				<<saplist[i].volconc;
+			saplist[i].Serialize(ar);
 		}
-
-
-
-
 	}
 	else
 	{	// loading code
@@ -46,16 +44,10 @@ void SAPara::Serialize(CArchive& ar)
 		ar>>vmsvol
 			>>nrow;
 
-		sapitem onerow;
-		saplist.assign(nrow,onerow);
+		saplist.assign(nrow,sapitem());
 
 		for(size_t i=0;i<nrow;i++){
-			ar>>saplist[i].Aconc
-				>>saplist[i].addtype
-				>>saplist[i].Lconc
-				>>saplist[i].Sconc
-				>>saplist[i].volconc;
+			saplist[i].Serialize(ar);
 		}
-
 	}
 }

@@ -24,6 +24,29 @@ ANPara::~ANPara()
 }
 
 
+//ANPara::ANPara(const ANPara &src)
+//{
+//	//analysistype=src.analysistype;
+//	//evaluationratio=src.evaluationratio;
+//	//endpointratio=src.endpointratio;
+//	//calibrationfactortype=src.calibrationfactortype;
+//	//calibrationfactor=src.calibrationfactor;
+//	//interceptvalue=src.interceptvalue;
+//	//calibrationfilepath=src.calibrationfilepath;
+//}
+
+void ANPara::operator=(const ANPara &src)
+{
+	analysistype=src.analysistype;
+	evaluationratio=src.evaluationratio;
+	endpointratio=src.endpointratio;
+	calibrationfactortype=src.calibrationfactortype;
+	calibrationfactor=src.calibrationfactor;
+	interceptvalue=src.interceptvalue;
+	calibrationfilepath=src.calibrationfilepath;
+}
+
+
 // ANPara member functions
 
 

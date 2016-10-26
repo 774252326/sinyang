@@ -27,6 +27,7 @@ PlotData::PlotData(const PlotData &src)
 	yll.assign(src.yll.begin(),src.yll.end());
 	ll.assign(src.ll.begin(),src.ll.end());
 	ps.assign(src.ps.begin(),src.ps.end());
+	psp=src.psp;
 }
 
 void PlotData::operator=(const PlotData &src)
@@ -37,6 +38,7 @@ void PlotData::operator=(const PlotData &src)
 	yll.assign(src.yll.begin(),src.yll.end());
 	ll.assign(src.ll.begin(),src.ll.end());
 	ps.assign(src.ps.begin(),src.ps.end());
+	psp=src.psp;
 }
 
 // PlotData member functions
@@ -52,16 +54,10 @@ void PlotData::Serialize(CArchive& ar)
 			ar<<ll.size()
 				<<xlabel
 				<<ylabel;
-			for(size_t i=0;i<ll.size();i++){
-				//ps[i].Serialize(ar);
-				ar<<ps[i].colour
-					<<ps[i].name
-					<<ps[i].dotSize
-					//<<ps[i].showLine
-					<<ps[i].lineType
-					<<ps[i].smoothLine
-					<<ps[i].traceLast;
+			psp.Serialize(ar);
 
+			for(size_t i=0;i<ll.size();i++){
+				ps[i].Serialize(ar);
 				ar<<ll[i];
 			}
 			for(size_t j=0;j<xll.size();j++){
@@ -69,28 +65,6 @@ void PlotData::Serialize(CArchive& ar)
 				<<yll[j];
 			}
 		}
-
-		/////////////////////////////////////////////////
-
-		//		ar<<ps.size()
-		//	<<xlabel
-		//	<<ylabel;
-		//for(size_t i=0;i<ps.size();i++){
-		//	//ps[i].Serialize(ar);
-		//	ar<<ps[i].colour
-		//		<<ps[i].name
-		//		<<ps[i].dotSize
-		//		<<ps[i].showLine
-		//		<<ps[i].smoothLine
-		//		<<ps[i].traceLast;
-
-		//	ar<<xlist[i].size();
-		//for(size_t j=0;j<xlist[i].size();j++){
-		//	ar<<xlist[i][j]
-		//	<<ylist[i][j];
-		//}
-		//}
-
 
 
 
@@ -102,77 +76,22 @@ void PlotData::Serialize(CArchive& ar)
 		ar>>nl
 			>>xlabel
 			>>ylabel;
-		//LineSpec ls;
-		plotspec ls;
-		ps.assign(nl,ls);
+		psp.Serialize(ar);
+
+		ps.assign(nl,LineSpec());
 		ll.assign(nl,0);
 		nl=0;
 		for(size_t i=0;i<ll.size();i++){
-			//ps[i].Serialize(ar);
-			ar>>ps[i].colour
-				>>ps[i].name
-				>>ps[i].dotSize
-				//>>ps[i].showLine
-				>>ps[i].lineType
-				>>ps[i].smoothLine
-				>>ps[i].traceLast;
-
-
+			ps[i].Serialize(ar);
 			ar>>ll[i];
 			nl+=ll[i];
 		}
-
 		xll.assign(nl,0);
 		yll.assign(nl,0);
-
 		for(size_t j=0;j<nl;j++){
 			ar>>xll[j]
 			>>yll[j];
 		}
-
-		///////////////////////////////////////////////////////////
-
-		//size_t nl;
-		//ar>>nl
-		//	>>xlabel
-		//	>>ylabel;
-		////LineSpec ls;
-		//plotspec ls;
-		//ps.assign(nl,ls);
-		////ll.assign(nl,0);
-		//nl=0;
-		//for(size_t i=0;i<ps.size();i++){
-		//	//ps[i].Serialize(ar);
-		//	ar>>ps[i].colour
-		//		>>ps[i].name
-		//		>>ps[i].dotSize
-		//		>>ps[i].showLine
-		//		>>ps[i].smoothLine
-		//		>>ps[i].traceLast;
-
-
-		//	//ar>>ll[i];
-		//	//nl+=ll[i];
-		//	ar>>nl;
-		//	//xll.assign(nl,0);
-		//	//yll.assign(nl,0);
-
-		//	std::vector<double> x(nl);
-		//	std::vector<double> y(nl);
-
-		//	for(size_t j=0;j<nl;j++){
-		//		ar>>x[j]
-		//		>>y[j];
-		//	}
-
-		//	xlist.push_back(x);
-		//	ylist.push_back(y);
-
-		//}
-
-
-
-
 
 	}
 
@@ -195,7 +114,7 @@ bool PlotData::CheckData(void)
 }
 
 
-void PlotData::AddNew(const std::vector<double> &x, const std::vector<double> &y, const plotspec &plotsp, const CString &xla, const CString &yla)
+void PlotData::AddNew(const std::vector<double> &x, const std::vector<double> &y, const LineSpec &plotsp, const CString &xla, const CString &yla)
 {
 	if(x.size()!=y.size())
 		return;
@@ -205,9 +124,6 @@ void PlotData::AddNew(const std::vector<double> &x, const std::vector<double> &y
 	yll.resize(yll.size()+y.size());
 	std::copy_backward(y.begin(),y.end(),yll.end());
 	ll.push_back(x.size());
-
-	//xlist.push_back(x);
-	//ylist.push_back(y);
 
 	ps.push_back(plotsp);
 
@@ -229,12 +145,6 @@ void PlotData::AddFollow(const std::vector<double> &x, const std::vector<double>
 	std::copy_backward(y.begin(),y.end(),yll.end());
 	ll.back()+=x.size();
 
-
-	//xlist.back().resize(xlist.back().size()+x.size());
-	//std::copy_backward(x.begin(),x.end(),xlist.back().end());
-	//ylist.back().resize(ylist.back().size()+y.size());
-	//std::copy_backward(y.begin(),y.end(),ylist.back().end());
-
 }
 
 
@@ -243,12 +153,9 @@ void PlotData::clear(void)
 	xll.clear();
 	yll.clear();
 
-	//xlist.clear();
-	//ylist.clear();
-
 	ll.clear();
 	ps.clear();
-
+	
 	if(!xlabel.IsEmpty())
 		xlabel.Empty();
 	if(!ylabel.IsEmpty())
@@ -301,24 +208,6 @@ void PlotData::AppendData(const PlotData & pda)
 	xlabel=pda.xlabel;
 	ylabel=pda.ylabel;
 
-	//xlist.resize(xlist.size()+pda.xlist.size());
-	//std::copy_backward(pda.xlist.begin(),pda.xlist.end(),xlist.end());
-	//ylist.resize(ylist.size()+pda.ylist.size());
-	//std::copy_backward(pda.ylist.begin(),pda.ylist.end(),ylist.end());
-
-
-	//for(size_t i=0;i<pda.xlist.size();i++){
-	//	{
-	//		std::vector<double> temp;
-	//		temp.assign(pda.xlist[i].begin(),pda.xlist[i].end());
-	//		xlist.push_back(temp);
-	//	}
-	//	{
-	//		std::vector<double> temp;
-	//		temp.assign(pda.ylist[i].begin(),pda.ylist[i].end());
-	//		ylist.push_back(temp);
-	//	}
-	//}
 
 }
 
@@ -342,7 +231,7 @@ void PlotData::GetDatai(size_t index, std::vector<double> & x, std::vector<doubl
 }
 
 
-void PlotData::ExtractLastCycle(double xmax, CString fp)
+PlotData PlotData::ExtractLastCycle(double xmax)
 {
 
 	PlotData p1;
@@ -350,9 +239,9 @@ void PlotData::ExtractLastCycle(double xmax, CString fp)
 	p1.xlabel=xlabel;
 	p1.ylabel=ylabel;
 	p1.ps.assign(ps.begin(),ps.end());
+	p1.psp=psp;
 
 	std::vector<double> xseg(1,xmax);
-
 
 	for(size_t i=0;i<ll.size();i++){
 		std::vector<double> x;
@@ -406,10 +295,5 @@ void PlotData::ExtractLastCycle(double xmax, CString fp)
 			p1.ll.push_back(x.size());
 		}
 	}
-
-
-	//return PlotData();
-	//return p1;
-
-	p1.SaveFile(fp);
+	return p1;
 }

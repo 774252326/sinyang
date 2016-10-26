@@ -9,43 +9,16 @@
 
 #include "analyzerDoc.h"
 #include "analyzerView.h"
-//#include "plotdlg.h"
-//#include "dlg1.h"
-//#include "pcct.h"
-//#include "colormapT.h"
-//#include "tipsdlg.h"
-//#include "CSpline.cpp"
-#include "AnalysisSetupPage.h"
-//#include "C:\\Users\\G\\Dropbox\\W\\funT\\smsp.h"
-
-//#include "C:\\Users\\r8anw2x\\Dropbox\\W\\funT\\smsp.h"
-//#include "C:\\Users\\r8anw2x\\Dropbox\\W\\funT\\lspfitT.h"
-//#include "funT\\smsp.h"
-//#include "funT\\lspfitT.h"
-
-#include "func.h"
-//#include "sst.cpp"
-#include "PlotSettingSheet.h"
-#include "PlotSettingPage.h"
-
-#include "ANPara.h"
-#include "SAPara.h"
-#include "VPara.h"
-#include "PlotData.h"
-
-
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
-
-
 // CMainFrame
 
 IMPLEMENT_DYNCREATE(CMainFrame, CFrameWndEx)
 
-	const int  iMaxUserToolbars = 10;
+const int  iMaxUserToolbars = 10;
 const UINT uiFirstUserToolBarId = AFX_IDW_CONTROLBAR_FIRST + 40;
 const UINT uiLastUserToolBarId = uiFirstUserToolBarId + iMaxUserToolbars - 1;
 
@@ -60,30 +33,6 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_COMMAND(ID_TOOLS_OPTIONS, &CMainFrame::OnOptions)
 	ON_WM_SETTINGCHANGE()
 	ON_WM_SIZE()
-	ON_COMMAND(ID_FILE_OPEN, &CMainFrame::OnFileOpen)
-	ON_COMMAND(ID_VIEW_FITWINDOW, &CMainFrame::OnViewFitwindow)
-	ON_COMMAND(ID_VIEW_ANALYSIS_PROGRESS, &CMainFrame::OnViewAnalysisProgress)
-	ON_UPDATE_COMMAND_UI(ID_VIEW_ANALYSIS_PROGRESS, &CMainFrame::OnUpdateViewAnalysisProgress)
-	ON_WM_TIMER()
-	ON_COMMAND(ID_VIEW_TOOLBARA, &CMainFrame::OnViewToolbara)
-	ON_UPDATE_COMMAND_UI(ID_VIEW_TOOLBARA, &CMainFrame::OnUpdateViewToolbara)
-	ON_COMMAND(ID_ANALYSIS_METHODSETUP, &CMainFrame::OnAnalysisMethodsetup)
-	ON_COMMAND(ID_FILE_SAVE, &CMainFrame::OnFileSave)
-	ON_COMMAND(ID_ANALYSIS_STARTANALYSIS, &CMainFrame::OnAnalysisStartanalysis)
-	ON_COMMAND(ID_ANALYSIS_ABORTANALYSIS, &CMainFrame::OnAnalysisAbortanalysis)
-	//ON_MESSAGE(MESSAGE_BUSY, &CMainFrame::OnMessagebusy)
-	//ON_MESSAGE(MESSAGE_WAIT_RESPONSE, &CMainFrame::OnMessageWaitResponse)
-	//ON_MESSAGE(CAPTIONBAR_MESSAGE, &CMainFrame::OnCaptionbarMessage)
-	//ON_MESSAGE(MESSAGE_OVER, &CMainFrame::OnMessageOver)
-	ON_COMMAND(ID_OPTIONS_PLOTSETTINGS, &CMainFrame::OnOptionsPlotsettings)
-	ON_UPDATE_COMMAND_UI(ID_OPTIONS_PLOTSETTINGS, &CMainFrame::OnUpdateOptionsPlotsettings)
-	ON_UPDATE_COMMAND_UI(ID_ANALYSIS_STARTANALYSIS, &CMainFrame::OnUpdateAnalysisStartanalysis)
-	ON_UPDATE_COMMAND_UI(ID_VIEW_FITWINDOW, &CMainFrame::OnUpdateViewFitwindow)
-	ON_UPDATE_COMMAND_UI(ID_ANALYSIS_ABORTANALYSIS, &CMainFrame::OnUpdateAnalysisAbortanalysis)
-	ON_COMMAND(ID_ANALYSIS_PAUSE, &CMainFrame::OnAnalysisPause)
-	ON_UPDATE_COMMAND_UI(ID_ANALYSIS_PAUSE, &CMainFrame::OnUpdateAnalysisPause)
-	ON_UPDATE_COMMAND_UI(ID_ANALYSIS_METHODSETUP, &CMainFrame::OnUpdateAnalysisMethodsetup)
-	ON_MESSAGE(MESSAGE_SWITCH_FIGURE, &CMainFrame::OnMessageSwitchFigure)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -98,26 +47,9 @@ static UINT indicators[] =
 
 CMainFrame::CMainFrame()
 	: m_bSplitterCreated(FALSE)
-	//, tflg(false)
-	//, timer1(0)
-	//, finishflag(false)
-	//, finishflag2(false)
-	//, Ar0(0)
-	//, stepCount(0)
-	//, rowCount(0)
-	//, totalVolume(0)
-	//, timer2(0)
-	//, AnalysisSetupINI(_T("as.txt"))
-	//, Aml(0)
-	//, Qintercept(0)
-	, waiting(false)
-	, pst(stop)
 {
 	// TODO: add member initialization code here
 	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_VS_2008);
-
-	//this->m_bAutoMenuEnable=FALSE;
-
 }
 
 CMainFrame::~CMainFrame()
@@ -202,9 +134,8 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	DockPane(&m_wndOutput);
 
 
-
 	// Enable toolbar and docking window menu replacement
-	//EnablePaneMenu(TRUE, ID_VIEW_CUSTOMIZE, strCustomize, ID_VIEW_TOOLBAR);
+	EnablePaneMenu(TRUE, ID_VIEW_CUSTOMIZE, strCustomize, ID_VIEW_TOOLBAR);
 
 	// enable quick (Alt+drag) toolbar customization
 	CMFCToolBar::EnableQuickCustomization();
@@ -241,8 +172,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	lstBasicCommands.AddTail(ID_VIEW_APPLOOK_OFF_2007_AQUA);
 	lstBasicCommands.AddTail(ID_VIEW_APPLOOK_WINDOWS_7);
 
-	//CMFCToolBar::SetBasicCommands(lstBasicCommands);
-
+	CMFCToolBar::SetBasicCommands(lstBasicCommands);
 
 	return 0;
 }
@@ -250,28 +180,22 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT /*lpcs*/,
 	CCreateContext* pContext)
 {
+
 	m_bSplitterCreated = m_wndSplitter.CreateStatic(this, 1, 2);
 	// CMyView and CMyOtherView are user-defined views derived from CView
 	if(m_bSplitterCreated){
-		m_bSplitterCreated = m_wndSplitter.CreateView(0, 0, RUNTIME_CLASS(dlg1), CSize(500, 100), pContext);
+		m_bSplitterCreated = m_wndSplitter.CreateView(0, 0, RUNTIME_CLASS(CanalyzerView), CSize(), pContext);
 		if(m_bSplitterCreated){
-			m_bSplitterCreated = m_wndSplitter.CreateView(0, 1, RUNTIME_CLASS(dlg1), CSize(500, 100), pContext);
+			m_bSplitterCreated = m_wndSplitter.CreateView(0, 1, RUNTIME_CLASS(CanalyzerView), CSize(), pContext);
 		}
 	}
 
-
-
 	return (m_bSplitterCreated);
 
-
-
-
-	//return m_wndSplitter.CreateStatic(this, 1, 2);
 	return m_wndSplitter.Create(this,
-		1, 2,               // TODO: adjust the number of rows, columns
+		2, 2,               // TODO: adjust the number of rows, columns
 		CSize(10, 10),      // TODO: adjust the minimum pane size
 		pContext);
-
 }
 
 BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
@@ -280,7 +204,6 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 		return FALSE;
 	// TODO: Modify the Window class or styles here by modifying
 	//  the CREATESTRUCT cs
-
 
 	return TRUE;
 }
@@ -299,7 +222,6 @@ BOOL CMainFrame::CreateDockingWindows()
 	}
 
 	SetDockingWindowIcons(theApp.m_bHiColorIcons);
-
 	return TRUE;
 }
 
@@ -320,48 +242,24 @@ BOOL CMainFrame::CreateCaptionBar()
 
 	BOOL bNameValid;
 
-	CString strTemp/*, strTemp2=L""*/;
-
-	//bNameValid = strTemp.LoadString(IDS_CAPTION_BUTTON);
-	//ASSERT(bNameValid);
-	//strTemp=L"fff ";
-	//m_wndCaptionBar.SetButton(strTemp, ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_RIGHT, FALSE);
-	//bNameValid = strTemp.LoadString(IDS_CAPTION_BUTTON_TIP);
-	//ASSERT(bNameValid);
-
-	//m_wndCaptionBar.SetMargin(0);
-
-	//m_wndCaptionBar.ShowButton(false);
-
-	//CString strTemp;
-	//ASSERT
-	(strTemp.LoadString(IDS_CAPTION_BUTTON));
-	//SetButton(strTemp, ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_RIGHT, FALSE);
+	CString strTemp, strTemp2;
+	bNameValid = strTemp.LoadString(IDS_CAPTION_BUTTON);
+	ASSERT(bNameValid);
 	m_wndCaptionBar.SetButton(strTemp, ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_LEFT, FALSE);
-
-	m_wndCaptionBar.EnableButton(FALSE);
-	//m_wndCaptionBar.ec.ShowWindow(SW_SHOW);
-
-	//m_wndCaptionBar.SetButtonToolTip(strTemp2);
+	bNameValid = strTemp.LoadString(IDS_CAPTION_BUTTON_TIP);
+	ASSERT(bNameValid);
+	m_wndCaptionBar.SetButtonToolTip(strTemp);
 
 	bNameValid = strTemp.LoadString(IDS_CAPTION_TEXT);
 	ASSERT(bNameValid);
-	//m_wndCaptionBar.SetText(strTemp, CMFCCaptionBar::ALIGN_LEFT);
-	m_wndCaptionBar.SetTextA(strTemp);
-
+	m_wndCaptionBar.SetText(strTemp, CMFCCaptionBar::ALIGN_LEFT);
 
 	m_wndCaptionBar.SetBitmap(IDB_INFO, RGB(255, 255, 255), FALSE, CMFCCaptionBar::ALIGN_LEFT);
-	//bNameValid = strTemp.LoadString(IDS_CAPTION_IMAGE_TIP);
-	//ASSERT(bNameValid);
-	//bNameValid = strTemp2.LoadString(IDS_CAPTION_IMAGE_TEXT);
-	//ASSERT(bNameValid);
-	//m_wndCaptionBar.SetImageToolTip(strTemp, strTemp2);
-
-
-
-	//m_wndCaptionBar.EnableButton(FALSE);
-
-	//m_wndCaptionBar.gett
+	bNameValid = strTemp.LoadString(IDS_CAPTION_IMAGE_TIP);
+	ASSERT(bNameValid);
+	bNameValid = strTemp2.LoadString(IDS_CAPTION_IMAGE_TEXT);
+	ASSERT(bNameValid);
+	m_wndCaptionBar.SetImageToolTip(strTemp, strTemp2);
 
 	return TRUE;
 }
@@ -498,20 +396,6 @@ void CMainFrame::OnUpdateViewCaptionBar(CCmdUI* pCmdUI)
 
 void CMainFrame::OnOptions()
 {
-	//CString strTemp;
-	//////ASSERT
-	//(strTemp.LoadString(IDS_STRING_RUNNING));
-	//m_wndCaptionBar.SetTextA(strTemp);
-	////m_wndCaptionBar.ShowButton(false);
-	//m_wndCaptionBar.EnableButton(FALSE);
-	//m_wndCaptionBar.SetEdit();
-	//m_wndCaptionBar.ec.ShowWindow(SW_HIDE);
-	//m_wndCaptionBar.st.ShowWindow(SW_HIDE);
-	//timer1=SetTimer(1,10,NULL);
-
-	waiting=false;
-
-	pst=running;
 }
 
 BOOL CMainFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParentWnd, CCreateContext* pContext) 
@@ -530,7 +414,7 @@ BOOL CMainFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParent
 	bNameValid = strCustomize.LoadString(IDS_TOOLBAR_CUSTOMIZE);
 	ASSERT(bNameValid);
 
-	for (int i = 0; i < iMaxUserToolbars; i++)
+	for (int i = 0; i < iMaxUserToolbars; i ++)
 	{
 		CMFCToolBar* pUserToolbar = GetUserToolBarByIndex(i);
 		if (pUserToolbar != NULL)
@@ -555,508 +439,13 @@ void CMainFrame::OnSize(UINT nType, int cx, int cy)
 	CFrameWndEx::OnSize(nType, cx, cy);
 
 	// TODO: Add your message handler code here
-
-
-	if(m_bSplitterCreated) 
-	{ 
+	
+	if(m_bSplitterCreated){
 		int lc0,lc1,tmp;
-
 		m_wndSplitter.GetColumnInfo(0,lc0,tmp);
 		m_wndSplitter.GetColumnInfo(1,lc1,tmp);
-
-		m_wndSplitter.SetColumnInfo(0,(lc0+lc1)*0.6,10);
+		m_wndSplitter.SetColumnInfo(0,(lc0+lc1)*3/5,10);
 		m_wndSplitter.RecalcLayout();
-	} 
-
-}
-
-
-void CMainFrame::OnFileOpen()
-{
-	// TODO: Add your command handler code here
-
-	CFileDialog fileDlg(true);
-
-	fileDlg.m_ofn.lpstrFilter=L"Text File(*.stp.txt)\0*.stp.txt\0Text File(*.fig.txt)\0*.fig.txt\0\0";
-
-	if( fileDlg.DoModal()==IDOK)
-	{
-		//////////////////////////////////////////////////////////////////////
-		CString m_filePath=fileDlg.GetPathName();
-
-		ANPara p1t;
-		CVPara p2t;
-		SAPara p3t;
-
-		readini(p1t,p2t,p3t,m_filePath);
-		writeini(p1t,p2t,p3t);
-
-		CString lppath=m_filePath;
-		lppath.Replace(L".stp.txt",L"l.fig.txt");
-		CString rppath=m_filePath;
-		rppath.Replace(L".stp.txt",L"r.fig.txt");
-
-		////if(this->LeftPlotPointer()->pd.ReadFile(lppath)){
-		////	this->LeftPlotPointer()->updatePlotRange();
-		////	this->LeftPlotPointer()->Invalidate();
-
-
-		////	//double totalV=0;
-		////	//double q0=1;
-
-		////	//this->GetOutputWnd()->clear();
-		////	//{
-		////	//	std::vector<double> x;
-		////	//	std::vector<double> y;
-		////	//	LeftPlotPointer()->pd.GetDatai(0,x,y);
-		////	//	double q=intgQ(x,y,p2t.lowelimit,p2t.highelimit,p2t.endintegratione)/p2t.scanrate;
-		////	//	totalV+=p3t.vmsvol;
-		////	//	q0=q;
-		////	//	this->GetOutputWnd()->InsertListCtrl(0,
-		////	//		LeftPlotPointer()->pd.ps[0].name,
-		////	//		p3t.vmsvol,
-		////	//		totalV,
-		////	//		q,
-		////	//		q/q0,
-		////	//		true);
-		////	//}
-
-
-		////	//for(size_t i=1;i<LeftPlotPointer()->pd.ll.size();i++){
-		////	//	std::vector<double> x;
-		////	//	std::vector<double> y;
-		////	//	LeftPlotPointer()->pd.GetDatai(i,x,y);
-		////	//	double q=intgQ(x,y,p2t.lowelimit,p2t.highelimit,p2t.endintegratione)/p2t.scanrate;
-		////	//	//totalV+=p3t.saplist[i-1].volconc;
-
-		////	//	this->GetOutputWnd()->InsertListCtrl(i,
-		////	//		LeftPlotPointer()->pd.ps[i].name,
-		////	//		//p3t.saplist[i-1].volconc,
-		////	//		//totalV,
-		////	//		1,1,
-		////	//		q,
-		////	//		q/q0,
-		////	//		true);
-		////	//}
-		////}
-
-		////PlotData pdl;
-		////if(pdl.ReadFile(lppath)){
-		////	LeftPlotPointer()->AddPlot(pdl);
-		////	if(LeftPlotPointer()->updatePlotRange())
-		////		LeftPlotPointer()->Invalidate();
-		////}
-
-		//if(LeftPlotPointer()->ReadFile(L"left.fig.txt")){
-		//	if(LeftPlotPointer()->updatePlotRange())
-		//		LeftPlotPointer()->Invalidate();
-		//}
-
-
-		////PlotData pdr;
-		////if(pdr.ReadFile(rppath)){
-		////	RightPlotPointer()->AddPlot(pdr);
-		////	if(RightPlotPointer()->updatePlotRange())
-		////		RightPlotPointer()->Invalidate();
-		////}
-
-
-		//if(RightPlotPointer()->ReadFile(L"right.fig.txt")){
-		//	if(RightPlotPointer()->updatePlotRange())
-		//		RightPlotPointer()->Invalidate();
-		//}
-
-
-		////if(this->RightPlotPointer()->pd.ReadFile(rppath)){
-		////	this->RightPlotPointer()->updatePlotRange();
-		////	this->RightPlotPointer()->Invalidate();
-		////}
-
-
-		CString strTemp;
-		strTemp=L"setup file "+m_filePath+L" loaded";
-		m_wndCaptionBar.ShowMessage(strTemp);
-
-		/////////////////////////////////////////////////////////////////////////////
-
-		//CString m_filePath=fileDlg.GetPathName();
-		//this->LeftPlotPointer()->pd.ReadFile(m_filePath);
-		//this->LeftPlotPointer()->updatePlotRange();
-		//this->LeftPlotPointer()->Invalidate();
-		////////////////////////////////////////////////////////////////////////////////
-		//if(LeftPlotPointer()->ReadFile(fileDlg.GetPathName())){
-		//	if(LeftPlotPointer()->updatePlotRange())
-		//		LeftPlotPointer()->Invalidate();
-		//}
-
-		////////////////////////////////////////////////////////////////////////////
-
-		//CString m_filePath=fileDlg.GetPathName();
-		//pcct dt1;
-		//dt1.readFile(m_filePath);
-		//dlg1 *p1=( (dlg1*)m_wndSplitter.GetPane(0,0) );
-		//plotspec ps1;
-		//ps1.colour=genColor( genColorvFromIndex<float>( p1->pd.ps.size() ) ) ;
-		//ps1.dotSize=-1;
-		//ps1.name=m_filePath;
-		//ps1.showLine=true;
-		//ps1.smoothLine=0;
-		//ps1.traceLast=false;
-		//p1->pd.AddNew(dt1.potential,dt1.current,ps1,dt1.label[0],dt1.label[1]);
-		//p1->updatePlotRange();
-		//p1->Invalidate();
-
-
-	}
-}
-
-
-void CMainFrame::OnViewFitwindow()
-{
-	// TODO: Add your command handler code here
-
-	if( ( (dlg1*)m_wndSplitter.GetActivePane() )->updatePlotRange() )
-		( (dlg1*)m_wndSplitter.GetActivePane() )->Invalidate();
-
-}
-
-
-
-void CMainFrame::OnViewAnalysisProgress()
-{
-	// TODO: Add your command handler code here
-	//tflg=!tflg;		
-	//tflg=m_wndOutput.IsVisible();
-	//this->ShowPane((CBasePane*)&m_wndOutput,!m_wndOutput.IsVisible(),false,false);
-
-
-	m_wndOutput.ShowWindow(m_wndOutput.IsVisible() ? SW_HIDE : SW_SHOW);
-	RecalcLayout(FALSE);
-
-}
-
-
-void CMainFrame::OnUpdateViewAnalysisProgress(CCmdUI *pCmdUI)
-{
-	// TODO: Add your command update UI handler code here
-	pCmdUI->SetCheck(m_wndOutput.IsVisible());
-}
-
-
-void CMainFrame::OnViewToolbara()
-{
-	// TODO: Add your command handler code here
-
-	this->ShowPane((CBasePane*)&m_wndToolBar,!m_wndToolBar.IsVisible(),false,false);
-}
-
-
-void CMainFrame::OnUpdateViewToolbara(CCmdUI *pCmdUI)
-{
-	// TODO: Add your command update UI handler code here
-
-	pCmdUI->SetCheck(m_wndToolBar.IsVisible());
-}
-
-
-void CMainFrame::OnAnalysisMethodsetup()
-{
-	// TODO: Add your command handler code here
-
-	//AfxMessageBox(L"fasd");
-
-
-	// 创建属性表对象   
-	CString str;
-	str.LoadStringW(IDS_STRING_ANALYSIS_SETUP);
-	AnalysisSetupPage sheet(str);
-	//abc sheet(777);
-	// 设置属性对话框为向导对话框   
-	//sheet.SetWizardMode();   
-	//sheet.SetWindowPos(&CWnd::wndTopMost,10,10,800,600,SWP_SHOWWINDOW);
-
-	readini(sheet.APdlg.para,sheet.CVPdlg.para,sheet.SAPdlg.para);
-
-	//std::vector<CObject> cl;
-	//cl.push_back(sheet.APdlg.para);
-	//cl.push_back(sheet.CVPdlg.para);
-	//cl.push_back(sheet.SAPdlg.para);
-	//ReadFileCustom(cl.data(), cl.size(), AnalysisSetupINI);
-
-	// 打开模态向导对话框   
-	if(sheet.DoModal()==IDOK){
-		writeini(sheet.APdlg.para,sheet.CVPdlg.para,sheet.SAPdlg.para);
 	}
 
-}
-
-
-void CMainFrame::OnFileSave()
-{
-	// TODO: Add your command handler code here
-	//AfxMessageBox(L"sdfas");
-
-
-	//CFileDialog fileDlg(FALSE);
-
-	//fileDlg.m_ofn.lpstrFilter=L"Text File(*.stp.txt)\0*.stp.txt\0Text File(*.fig.txt)\0*.fig.txt\0\0";
-
-	TCHAR szFilter[] = _T("Text File(*.stp.txt)\0*.stp.txt\0Text File(*.fig.txt)\0*.fig.txt\0\0");
-	
-	//TCHAR szFilter[] = _T("文本文件(*.txt)|*.txt|Word文件(*.doc)|*.doc|所有文件(*.*)|*.*||");   
-    // 构造保存文件对话框   
-    CFileDialog fileDlg(FALSE, _T("txt"), _T("my"), OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, szFilter, this);  
-
-	
-
-	if( fileDlg.DoModal()==IDOK)
-	{
-		//////////////////////////////////////////////////////////////////////
-		CString m_filePath=fileDlg.GetPathName();
-
-		ANPara p1t;
-		CVPara p2t;
-		SAPara p3t;
-
-		readini(p1t,p2t,p3t);
-		writeini(p1t,p2t,p3t,m_filePath);
-
-				CString strTemp;
-		strTemp=L"setup file "+m_filePath+L" saved";
-		m_wndCaptionBar.ShowMessage(strTemp);
-	}
-
-
-}
-
-
-
-
-
-void CMainFrame::OnAnalysisStartanalysis()
-{
-	// TODO: Add your command handler code here
-
-	////////////////////////////////////////////////////////////////////////////
-
-	mypara * pa1=new mypara;
-	pa1->leftp=this->LeftPlotPointer();
-	pa1->rightp=this->RightPlotPointer();
-	//pa1->mf=this;
-	pa1->outw=this->GetOutputWnd();
-	pa1->cba=this->GetCaptionBar();
-	pa1->psta=&pst;
-
-	CWinThread *pWriteA;
-
-	//HANDLE hThread;
-
-	pWriteA=AfxBeginThread(PROCESS,
-		(LPVOID)pa1,
-		THREAD_PRIORITY_NORMAL,
-		0,
-		CREATE_SUSPENDED);
-
-	hThread=pWriteA->m_hThread;
-
-	//CloseHandle(hThread);
-	pWriteA->ResumeThread();
-
-	pst=running;
-
-
-}
-
-
-
-dlg1 * CMainFrame::LeftPlotPointer(void)
-{
-	return ( (dlg1*)m_wndSplitter.GetPane(0,0) );
-}
-
-
-dlg1 * CMainFrame::RightPlotPointer(void)
-{
-	return ( (dlg1*)m_wndSplitter.GetPane(0,1) );
-}
-
-
-void CMainFrame::OnAnalysisAbortanalysis()
-{
-	// TODO: Add your command handler code here
-
-	TerminateThread(hThread,0);
-
-	pst=stop;
-	CString strTemp;
-	(strTemp.LoadString(IDS_STRING_OVER));
-	m_wndCaptionBar.ShowMessage(strTemp);
-}
-
-
-//afx_msg LRESULT CMainFrame::OnMessagebusy(WPARAM wParam, LPARAM lParam)
-//{
-//	m_wndCaptionBar.ShowMessageRunning();
-//
-//	return 0;
-//}
-
-
-//afx_msg LRESULT CMainFrame::OnMessageWaitResponse(WPARAM wParam, LPARAM lParam)
-//{
-//	CString strTemp;
-//
-//	(strTemp.LoadString(IDS_STRING_WAIT_RESPONSE));
-//
-//	double *px=(double*)wParam;
-//
-//	m_wndCaptionBar.ShowMessageWithButton(strTemp,*px,true);
-//	return 0;
-//}
-
-
-//afx_msg LRESULT CMainFrame::OnCaptionbarMessage(WPARAM wParam, LPARAM lParam)
-//{
-//
-//	return 0;
-//}
-
-
-//afx_msg LRESULT CMainFrame::OnMessageOver(WPARAM wParam, LPARAM lParam)
-//{
-//	CString strTemp;
-//	(strTemp.LoadString(IDS_STRING_OVER));
-//
-//	CString str((wchar_t*)wParam);
-//
-//	strTemp+=str;
-//
-//	m_wndCaptionBar.ShowMessage(strTemp);
-//
-//
-//	return 0;
-//}
-
-
-void CMainFrame::OnOptionsPlotsettings()
-{
-	// TODO: Add your command handler code here
-	// 创建属性表对象   
-	CString str;
-	str.LoadStringW(IDS_STRING_POLT_SETTINGS);
-	PlotSettingSheet sheet(str);
-	//abc sheet(777);
-	// 设置属性对话框为向导对话框   
-	//sheet.SetWizardMode();   
-	//sheet.SetWindowPos(&CWnd::wndTopMost,10,10,800,600,SWP_SHOWWINDOW);
-
-	int il=LeftPlotPointer()->m_spBtn.GetPos32();
-	str.LoadStringW(IDS_STRING_FIGURE1);
-	PlotSettingPage fig1setting(str
-		,LeftPlotPointer()->fs
-		,LeftPlotPointer()->pdl[il].ps
-		,LeftPlotPointer()->pdl[il].xlabel
-		,LeftPlotPointer()->pdl[il].ylabel);
-
-	int ir=RightPlotPointer()->m_spBtn.GetPos32();
-	str.LoadStringW(IDS_STRING_FIGURE2);
-	PlotSettingPage fig2setting(str
-		,RightPlotPointer()->fs
-		,RightPlotPointer()->pdl[ir].ps
-		,RightPlotPointer()->pdl[ir].xlabel
-		,RightPlotPointer()->pdl[ir].ylabel);
-
-	sheet.AddPage(&fig1setting);
-	sheet.AddPage(&fig2setting);
-
-	// 打开模态向导对话框   
-	if(sheet.DoModal()==IDOK){
-
-		LeftPlotPointer()->pdl[il].xlabel=fig1setting.xlabel;
-		LeftPlotPointer()->pdl[il].ylabel=fig1setting.ylabel;
-		copyfs(fig1setting.fs,LeftPlotPointer()->fs);
-		LeftPlotPointer()->pdl[il].ps.clear();
-		LeftPlotPointer()->pdl[il].ps.assign(fig1setting.ps.begin(),fig1setting.ps.end());
-		LeftPlotPointer()->Invalidate();
-
-		RightPlotPointer()->pdl[ir].xlabel=fig2setting.xlabel;
-		RightPlotPointer()->pdl[ir].ylabel=fig2setting.ylabel;
-		copyfs(fig2setting.fs,RightPlotPointer()->fs);
-		RightPlotPointer()->pdl[ir].ps.clear();
-		RightPlotPointer()->pdl[ir].ps.assign(fig2setting.ps.begin(),fig2setting.ps.end());
-		RightPlotPointer()->Invalidate();
-	}
-}
-
-
-void CMainFrame::OnAnalysisPause()
-{
-	// TODO: Add your command handler code here
-
-	if(waiting){
-		ResumeThread(hThread);
-		waiting=false;
-	}
-	else{
-		SuspendThread(hThread);	
-		waiting=true;
-	}
-
-}
-
-
-void CMainFrame::OnUpdateOptionsPlotsettings(CCmdUI *pCmdUI)
-{
-	// TODO: Add your command update UI handler code here
-
-	pCmdUI->Enable(pst!=running);
-}
-
-
-void CMainFrame::OnUpdateAnalysisStartanalysis(CCmdUI *pCmdUI)
-{
-	// TODO: Add your command update UI handler code here
-
-	pCmdUI->Enable(pst==stop);
-}
-
-
-void CMainFrame::OnUpdateViewFitwindow(CCmdUI *pCmdUI)
-{
-	// TODO: Add your command update UI handler code here
-
-	pCmdUI->Enable(pst!=running);
-}
-
-void CMainFrame::OnUpdateAnalysisAbortanalysis(CCmdUI *pCmdUI)
-{
-	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst!=stop);
-}
-
-void CMainFrame::OnUpdateAnalysisPause(CCmdUI *pCmdUI)
-{
-	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst==running);	
-}
-
-
-void CMainFrame::OnUpdateAnalysisMethodsetup(CCmdUI *pCmdUI)
-{
-	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst==stop);
-}
-
-
-afx_msg LRESULT CMainFrame::OnMessageSwitchFigure(WPARAM wParam, LPARAM lParam)
-{
-	
-	CString str((wchar_t*)wParam);
-
-	//this->RightPlotPointer()->clear();
-	//this->RightPlotPointer()->pd.ReadFile(str);
-	//this->RightPlotPointer()->updatePlotRange();
-	//this->RightPlotPointer()->Invalidate();
-	
-	return 0;
 }

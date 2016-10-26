@@ -46,6 +46,13 @@ res\analyzer.rc2
     Visual C++. You should place all resources not editable by
     the resource editor in this file.
 
+analyzer.reg
+    This is an example .reg file that shows you the kind of registration
+    settings the framework will set for you.  You can use this as a .reg
+    file to go along with your application or just delete it and rely
+    on the default RegisterShellFileTypes registration.
+
+
 /////////////////////////////////////////////////////////////////////////////
 
 For the main frame window:
@@ -69,6 +76,14 @@ analyzerDoc.h, analyzerDoc.cpp - the document
     These files contain your CanalyzerDoc class.  Edit these files to
     add your special document data and to implement file saving and loading
     (via CanalyzerDoc::Serialize).
+    The Document will have the following strings:
+        File extension:      ghb
+        File type ID:        analyzer.Document
+        Main frame caption:  analyzer
+        Doc type name:       analyzer
+        Filter name:         analyzer Files (*.ghb)
+        File new short name: analyzer
+        File type long name: analyzer.Document
 
 analyzerView.h, analyzerView.cpp - the view of the document
     These files contain your CanalyzerView class.
@@ -84,10 +99,6 @@ Other Features:
 
 ActiveX Controls
     The application includes support to use ActiveX controls.
-
-Printing and Print Preview support
-    The application wizard has generated code to handle the print, print setup, and print preview
-    commands by calling member functions in the CView class from the MFC library.
 
 Split Window
     The application wizard has added support for splitter windows for your application documents.

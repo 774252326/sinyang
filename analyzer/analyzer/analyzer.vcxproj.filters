@@ -16,6 +16,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
+    <None Include="analyzer.reg" />
     <None Include="res\output_wnd.ico">
       <Filter>Resource Files</Filter>
     </None>
@@ -69,70 +70,43 @@
     <ClInclude Include="OutputWnd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="dlg1.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="pcct.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CSpline.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="pcctA.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="tipsdlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AnalysisParametersDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="VParametersDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SolutionAdditionParametersDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AnalysisSetupPage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="typedefine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="MFCCaptionBarA.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PlotData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LineSpec.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LineSpecA.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="VPara.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ANPara.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PlotData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="SAPara.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="pcctB.h">
+    <ClInclude Include="VPara.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="func.h">
+    <ClInclude Include="typedefine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PlotSettingPage.h">
+    <ClInclude Include="sapitem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PlotSettingSheet.h">
+    <ClInclude Include="linespec.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ColorButton.h">
+    <ClInclude Include="PlotSpec.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DataOut.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AnalysisParametersPage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CVParametersPage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SolutionAdditionParametersPage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ComboItem.h">
@@ -142,9 +116,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="EditList.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SARCalibCurve.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -167,70 +138,40 @@
     <ClCompile Include="OutputWnd.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="dlg1.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="pcct.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CSpline.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="pcctA.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="tipsdlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AnalysisParametersDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="VParametersDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SolutionAdditionParametersDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AnalysisSetupPage.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="typedefine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="MFCCaptionBarA.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PlotData.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="LineSpec.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="LineSpecA.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="VPara.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ANPara.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PlotData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="SAPara.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="pcctB.cpp">
+    <ClCompile Include="VPara.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="func.cpp">
+    <ClCompile Include="sapitem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PlotSettingPage.cpp">
+    <ClCompile Include="linespec.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PlotSettingSheet.cpp">
+    <ClCompile Include="PlotSpec.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ColorButton.cpp">
+    <ClCompile Include="DataOut.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AnalysisParametersPage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CVParametersPage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SolutionAdditionParametersPage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ComboItem.cpp">
@@ -240,9 +181,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="EditList.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SARCalibCurve.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

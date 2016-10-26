@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{E20A8085-F28F-41A2-A775-BED415AE5DB7}</ProjectGuid>
+    <ProjectGuid>{AF2947B0-6884-453C-85D3-170C574660B3}</ProjectGuid>
     <RootNamespace>analyzer</RootNamespace>
     <Keyword>MFCProj</Keyword>
   </PropertyGroup>
@@ -94,6 +94,7 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="analyzer.reg" />
     <None Include="ReadMe.txt" />
     <None Include="res\analyzer.ico" />
     <None Include="res\analyzer.rc2" />
@@ -106,77 +107,56 @@
     <None Include="UserImages.bmp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AnalysisParametersDlg.h" />
-    <ClInclude Include="AnalysisSetupPage.h" />
+    <ClInclude Include="AnalysisParametersPage.h" />
     <ClInclude Include="analyzer.h" />
     <ClInclude Include="analyzerDoc.h" />
     <ClInclude Include="analyzerView.h" />
     <ClInclude Include="ANPara.h" />
-    <ClInclude Include="ColorButton.h" />
     <ClInclude Include="ComboItem.h" />
-    <ClInclude Include="CSpline.h" />
-    <ClInclude Include="dlg1.h" />
+    <ClInclude Include="CVParametersPage.h" />
+    <ClInclude Include="DataOut.h" />
     <ClInclude Include="EditItem.h" />
     <ClInclude Include="EditList.h" />
-    <ClInclude Include="func.h" />
-    <ClInclude Include="LineSpec.h" />
-    <ClInclude Include="LineSpecA.h" />
+    <ClInclude Include="linespec.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="MFCCaptionBarA.h" />
     <ClInclude Include="OutputWnd.h" />
-    <ClInclude Include="pcct.h" />
-    <ClInclude Include="pcctA.h" />
-    <ClInclude Include="pcctB.h" />
     <ClInclude Include="PlotData.h" />
-    <ClInclude Include="PlotSettingPage.h" />
-    <ClInclude Include="PlotSettingSheet.h" />
+    <ClInclude Include="PlotSpec.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SAPara.h" />
-    <ClInclude Include="SARCalibCurve.h" />
-    <ClInclude Include="SolutionAdditionParametersDlg.h" />
+    <ClInclude Include="sapitem.h" />
+    <ClInclude Include="SolutionAdditionParametersPage.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="tipsdlg.h" />
     <ClInclude Include="typedefine.h" />
     <ClInclude Include="VPara.h" />
-    <ClInclude Include="VParametersDlg.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AnalysisParametersDlg.cpp" />
-    <ClCompile Include="AnalysisSetupPage.cpp" />
+    <ClCompile Include="AnalysisParametersPage.cpp" />
     <ClCompile Include="analyzer.cpp" />
     <ClCompile Include="analyzerDoc.cpp" />
     <ClCompile Include="analyzerView.cpp" />
     <ClCompile Include="ANPara.cpp" />
-    <ClCompile Include="ColorButton.cpp" />
     <ClCompile Include="ComboItem.cpp" />
-    <ClCompile Include="CSpline.cpp" />
-    <ClCompile Include="dlg1.cpp" />
+    <ClCompile Include="CVParametersPage.cpp" />
+    <ClCompile Include="DataOut.cpp" />
     <ClCompile Include="EditItem.cpp" />
     <ClCompile Include="EditList.cpp" />
-    <ClCompile Include="func.cpp" />
-    <ClCompile Include="LineSpec.cpp" />
-    <ClCompile Include="LineSpecA.cpp" />
+    <ClCompile Include="linespec.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="MFCCaptionBarA.cpp" />
     <ClCompile Include="OutputWnd.cpp" />
-    <ClCompile Include="pcct.cpp" />
-    <ClCompile Include="pcctA.cpp" />
-    <ClCompile Include="pcctB.cpp" />
     <ClCompile Include="PlotData.cpp" />
-    <ClCompile Include="PlotSettingPage.cpp" />
-    <ClCompile Include="PlotSettingSheet.cpp" />
+    <ClCompile Include="PlotSpec.cpp" />
     <ClCompile Include="SAPara.cpp" />
-    <ClCompile Include="SARCalibCurve.cpp" />
-    <ClCompile Include="SolutionAdditionParametersDlg.cpp" />
+    <ClCompile Include="sapitem.cpp" />
+    <ClCompile Include="SolutionAdditionParametersPage.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="tipsdlg.cpp" />
-    <ClCompile Include="typedefine.cpp" />
     <ClCompile Include="VPara.cpp" />
-    <ClCompile Include="VParametersDlg.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="analyzer.rc" />

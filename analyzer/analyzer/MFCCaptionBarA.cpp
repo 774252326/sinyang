@@ -5,7 +5,7 @@
 #include "analyzer.h"
 #include "MFCCaptionBarA.h"
 #include "colormapT.h"
-#include "typedefine.h"
+//#include "typedefine.h"
 
 // CMFCCaptionBarA
 
@@ -320,10 +320,10 @@ void CMFCCaptionBarA::BtnClicked(void)
 	CString str;
 
 	if(bCheck){
-		str=rightPlotFile1;
+		//str=rightPlotFile1;
 	}
 	else{
-		str=rightPlotFile0;
+		//str=rightPlotFile0;
 	}
 
 	::SendMessageW(this->GetParentFrame()->GetSafeHwnd(), MESSAGE_SWITCH_FIGURE, (WPARAM)str.GetBuffer(), NULL);

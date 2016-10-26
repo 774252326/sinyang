@@ -24,6 +24,17 @@ CVPara::~CVPara()
 {
 }
 
+void CVPara::operator=(const CVPara &src)
+{
+	lowelimit=src.lowelimit;
+	highelimit=src.highelimit;
+	scanrate=src.scanrate;
+	combochoice=src.combochoice;
+	noofcycles=src.noofcycles;
+	variationtolerance=src.variationtolerance;
+	rotationrate=src.rotationrate;
+	endintegratione=src.endintegratione;
+}
 
 // CVPara member functions
 

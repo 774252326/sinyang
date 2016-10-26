@@ -4,12 +4,17 @@
 
 #pragma once
 
+#include "resource.h"
 
-class CanalyzerView : public CView
+
+class CanalyzerView : public CFormView
 {
 protected: // create from serialization only
 	CanalyzerView();
 	DECLARE_DYNCREATE(CanalyzerView)
+
+public:
+	enum{ IDD = IDD_ANALYZER_FORM };
 
 // Attributes
 public:
@@ -20,12 +25,10 @@ public:
 
 // Overrides
 public:
-	virtual void OnDraw(CDC* pDC);  // overridden to draw this view
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 protected:
-	virtual BOOL OnPreparePrinting(CPrintInfo* pInfo);
-	virtual void OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo);
-	virtual void OnEndPrinting(CDC* pDC, CPrintInfo* pInfo);
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void OnInitialUpdate(); // called first time after construct
 
 // Implementation
 public:
@@ -43,14 +46,6 @@ protected:
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	DECLARE_MESSAGE_MAP()
-public:
-	afx_msg void OnPaint();
-	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
-	afx_msg void OnSize(UINT nType, int cx, int cy);
-	afx_msg void OnAnalysisAbortanalysis();
-	afx_msg void OnAnalysisDatalisting();
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
-	afx_msg void OnFileSaveAs();
 };
 
 #ifndef _DEBUG  // debug version in analyzerView.cpp
