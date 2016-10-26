@@ -251,6 +251,9 @@ void AnalysisParametersPage::ComboSelectChange(void)
 	default:
 		break;
 	}
+
+	CalibrationComboSelectChange();
+
 }
 
 
@@ -507,7 +510,7 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 
 	ComboSelectChange();
-	CalibrationComboSelectChange();
+	//CalibrationComboSelectChange();
 
 	//pStatic->ShowWindow(SW_SHOW);
 	//pEdit->ShowWindow(SW_SHOW);

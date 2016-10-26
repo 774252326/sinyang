@@ -52,6 +52,7 @@ const CString AnalysisSetupINI=L"as.stp.txt";
 
 bool Compute1(const std::vector<DataOutA> &dol, const ANPara &p1, double &Sv, double &z);
 
+bool Compute(const std::vector<DataOutA> &dol, const ANPara &p1, std::vector<CString> &res);
 
 BOOL writeini( ANPara &p1t, CVPara &p2t, SAPara &p3t, CString fp=AnalysisSetupINI);
 BOOL readini( ANPara &p1t, CVPara &p2t, SAPara &p3t, CString fp=AnalysisSetupINI);
@@ -152,14 +153,14 @@ HCURSOR BigCross(const CRect &rect, const CPoint & pt);
 void AdjustWidth(CListCtrl *ls, int nCol, CString str, int gap=12);
 void AdjustWidth(CListCtrl *ls, int nCol, int nRow, int gap=12);
 
-CString TimeString();
+CString TimeString(bool bSeg=false);
 
 
-typedef struct ANRESULT{
-	CString itemName;
-	CString itemUnit;
-	double itemData;
-} ANRes;
+//typedef struct ANRESULT{
+//	CString itemName;
+//	CString itemUnit;
+//	double itemData;
+//} ANRes;
 
 
 

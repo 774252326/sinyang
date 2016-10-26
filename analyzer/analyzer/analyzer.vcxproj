@@ -138,6 +138,7 @@
     <ClInclude Include="EditList.h" />
     <ClInclude Include="func.h" />
     <ClInclude Include="intgQT.h" />
+    <ClInclude Include="LineSeg.h" />
     <ClInclude Include="linespec.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="MFCCaptionBarA.h" />
@@ -145,9 +146,11 @@
     <ClInclude Include="pcct.h" />
     <ClInclude Include="pcctB.h" />
     <ClInclude Include="pcctC.h" />
+    <ClInclude Include="pdfout.h" />
     <ClInclude Include="PlotData.h" />
     <ClInclude Include="PlotSettingPage.h" />
     <ClInclude Include="PlotSpec.h" />
+    <ClInclude Include="Point2d.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SAPara.h" />
     <ClInclude Include="sapitemA.h" />
@@ -175,6 +178,7 @@
     <ClCompile Include="EditItem.cpp" />
     <ClCompile Include="EditList.cpp" />
     <ClCompile Include="func.cpp" />
+    <ClCompile Include="LineSeg.cpp" />
     <ClCompile Include="linespec.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="MFCCaptionBarA.cpp" />
@@ -182,9 +186,11 @@
     <ClCompile Include="pcct.cpp" />
     <ClCompile Include="pcctB.cpp" />
     <ClCompile Include="pcctC.cpp" />
+    <ClCompile Include="pdfout.cpp" />
     <ClCompile Include="PlotData.cpp" />
     <ClCompile Include="PlotSettingPageA.cpp" />
     <ClCompile Include="PlotSpec.cpp" />
+    <ClCompile Include="Point2d.cpp" />
     <ClCompile Include="SAPara.cpp" />
     <ClCompile Include="sapitemA.cpp" />
     <ClCompile Include="SARCalibCurve.cpp" />

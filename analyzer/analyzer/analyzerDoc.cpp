@@ -22,10 +22,10 @@
 //#include "colormapT.h"
 #include "analyzerViewL.h"
 #include "analyzerViewR.h"
-#include "func.h"
+//#include "func.h"
 #include "MainFrm.h"
 
-//#include "pdfout.h"
+#include "pdfout.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -419,12 +419,12 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		fp=fp.Left(fp.ReverseFind('\\')+1);
 		fp+=TimeString()+L".pdf";
 
-		//if(pdfd(fp,this)==0){
-		//	AfxMessageBox(L"report "+fp+L" is saved");
-		//}
-		//else{
-		//	AfxMessageBox(IDS_STRING_SAVE_ERROR);
-		//}
+		if(pdfd(fp,this)==0){
+			AfxMessageBox(L"report "+fp+L" is saved");
+		}
+		else{
+			AfxMessageBox(IDS_STRING_SAVE_ERROR);
+		}
 
 
 	}
