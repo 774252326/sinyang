@@ -95,6 +95,7 @@ public:
 	anp p1;
 	cvp p2;
 	sap p3;
+	afx_msg void OnFileSave();
 };
 
 

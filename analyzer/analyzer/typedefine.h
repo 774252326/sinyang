@@ -7,12 +7,12 @@
 
 //AnalysisParameters
 typedef struct ANP{
-int analysistype;
-double evaluationratio;
-double endpointratio;
-int calibrationfactortype;
-double calibrationfactor;
-CString calfilepath;
+	int analysistype;
+	double evaluationratio;
+	double endpointratio;
+	int calibrationfactortype;
+	double calibrationfactor;
+	CString calfilepath;
 } anp;
 
 

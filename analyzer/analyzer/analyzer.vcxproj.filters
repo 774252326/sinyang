@@ -111,6 +111,15 @@
     <ClInclude Include="MFCCaptionBarA.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PlotData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LineSpec.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LineSpecA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="analyzer.cpp">
@@ -171,6 +180,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MFCCaptionBarA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PlotData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LineSpec.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LineSpecA.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

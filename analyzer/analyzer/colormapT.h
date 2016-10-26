@@ -22,7 +22,7 @@ void hsv2rgb(T hsv[3], TT rgb[3]){
 		TT h,p,t,n;
 		int k;
 		h=hsv[0]*6;
-		k=floor(h);
+		k=(int)floor(h);
 		p=h-k;
 		t=1-hsv[1];
 		n=1-hsv[1]*p;

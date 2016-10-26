@@ -14,7 +14,7 @@
 //#include "pcct.h"
 #include "colormapT.h"
 #include "tipsdlg.h"
-
+#include "CSpline.cpp"
 #include "AnalysisSetupPage.h"
 
 
@@ -49,6 +49,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_COMMAND(ID_VIEW_TOOLBARA, &CMainFrame::OnViewToolbara)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_TOOLBARA, &CMainFrame::OnUpdateViewToolbara)
 	ON_COMMAND(ID_ANALYSIS_METHODSETUP, &CMainFrame::OnAnalysisMethodsetup)
+	ON_COMMAND(ID_FILE_SAVE, &CMainFrame::OnFileSave)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -519,19 +520,20 @@ void CMainFrame::OnFileOpen()
 
 	fileDlg.m_ofn.lpstrFilter=L"Text File(*.txt)\0*.txt\0\0";
 
-	if( fileDlg.DoModal()==IDOK)
+	//if( fileDlg.DoModal()==IDOK)
 	{
 		dat.clear();
 		( (dlg1*)m_wndSplitter.GetPane(0,0) )->clear();
 		( (dlg1*)m_wndSplitter.GetPane(0,1) )->clear();
 		m_wndOutput.clear();
 
-		CString m_filePath=fileDlg.GetPathName();
+
+
+		CString m_filePath=L"C:\\Users\\r8anw2x\\Dropbox\\W\\data\\a.txt";
+		//CString m_filePath=fileDlg.GetPathName();
+
 		//CString folderpath=fileDlg.GetFolderPath();
 		CString folderpath=m_filePath.Left(m_filePath.ReverseFind('\\'));
-
-
-		//CString m_filePath=L"C:\\Users\\r8anw2x\\Dropbox\\W\\data\\a.txt";
 		//CString folderpath=L"C:\\Users\\r8anw2x\\Dropbox\\W\\data";
 
 
@@ -633,10 +635,43 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 				(strTemp.LoadString(IDS_STRING_OVER));
 				m_wndCaptionBar.SetTextA(strTemp);
 				m_wndCaptionBar.ShowButton(false);
+
+
+
+				( (dlg1*)m_wndSplitter.GetPane(0,1) )->SaveFile(L"af.txt");
+				( (dlg1*)m_wndSplitter.GetPane(0,0) )->SaveFile(L"af0.txt");
+
+				//( (dlg1*)m_wndSplitter.GetPane(0,0) )->ReadFile(L"af.txt");
+				//( (dlg1*)m_wndSplitter.GetPane(0,0) )->showall();
+				//( (dlg1*)m_wndSplitter.GetPane(0,1) )->ReadFile(L"af0.txt");
+				//( (dlg1*)m_wndSplitter.GetPane(0,1) )->showall();
+
+	CFile theFile;
+	theFile.Open(L"af.txt", CFile::modeRead);
+	CArchive archive(&theFile, CArchive::load);
+	PlotData pdat;
+	pdat.Serialize(archive);
+	archive.Close();
+	theFile.Close();
+
+	double z;
+	
+		std::vector<double> y2(pdat.yll.size());
+		spline(pdat.xll,pdat.yll,1.0e30,1.0e30,y2);
+
+		splint(pdat.xll, pdat.yll, y2, p1.evaluationratio, z);
+	
+
+		CString str;
+		str.Format(L"%g",(double)z);
+		AfxMessageBox(str);
+
+
+
 			}
 			else{
 
-				size_t n1=660;
+				size_t n1=810;
 
 				std::vector<double> x;
 				std::vector<double> y;
@@ -741,9 +776,10 @@ void CMainFrame::plot1(const std::vector<double> & x, const std::vector<double> 
 
 	if(finishflag){//if to plot a new line
 		plotspec ps1;
+		//LineSpec ps1;
 		CString strTemp;
-		//ps1.colour=genColor( genColorvFromIndex<float>( stepCount ) ) ;
-		ps1.colour=genColorGray( genColorvFromIndex<float>( stepCount ) ) ;
+		ps1.colour=genColor( genColorvFromIndex<float>( stepCount ) ) ;
+		//ps1.colour=genColorGray( genColorvFromIndex<float>( stepCount ) ) ;
 		ps1.dotSize=-1;
 		if(stepCount>0){
 			//ASSERT
@@ -772,7 +808,8 @@ void CMainFrame::plot2(const std::vector<double> & x, const std::vector<double> 
 	//CString strTemp;
 	if(finishflag2){
 		plotspec ps1;
-		ps1.colour=red;
+		//LineSpec ps1;
+		ps1.colour=blue;
 		ps1.dotSize=3;
 		ps1.name=L"Ar/Ar0";
 		ps1.showLine=true;
@@ -813,4 +850,16 @@ void CMainFrame::OnAnalysisMethodsetup()
 		//AfxMessageBox(str);
 	}
 
+}
+
+
+void CMainFrame::OnFileSave()
+{
+	// TODO: Add your command handler code here
+	//AfxMessageBox(L"sdfas");
+
+
+	//( (dlg1*)m_wndSplitter.GetPane(0,1) )->SaveFile(L"af.txt");
+
+	//( (dlg1*)m_wndSplitter.GetPane(0,1) )->ReadFile(L"af.txt");
 }

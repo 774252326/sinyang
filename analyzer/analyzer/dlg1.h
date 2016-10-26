@@ -3,8 +3,8 @@
 #include <vector>
 #include "atltypes.h"
 
-#include "typedefine.h"
-
+//#include "typedefine.h"
+#include "PlotData.h"
 
 // dlg1 form view
 
@@ -49,16 +49,18 @@ public:
 
 private:
 	double xmin,xmax,ymin,ymax;
-	CString xlabel,ylabel;
+	//CString xlabel,ylabel;
 
 	//std::vector< std::vector<double> > xlist;
 	//std::vector< std::vector<double> > ylist;
 
-	std::vector<double> xll;
-	std::vector<double> yll;
-	std::vector<DWORD> ll;
+	//std::vector<double> xll;
+	//std::vector<double> yll;
+	//std::vector<DWORD> ll;
+	//std::vector<plotspec> ps;
 
-	std::vector<plotspec> ps;
+	PlotData pd;
+
 
 	void genPointToPlot(const std::vector<double> &px, const std::vector<double> &py, const CRect &rect, std::vector<CPoint> &pointlist);
 	void drawRectangle(const CRect &rect, CDC * pDC, COLORREF insidecolor, COLORREF bordercolor);
@@ -81,6 +83,8 @@ public:
 	void plot2dfollow(const std::vector<double> & x, const std::vector<double> & y);
 	void smoothLine(void);
 	void clear(void);
+	void SaveFile(CString fp);
+	void ReadFile(CString fp);
 };
 
 
