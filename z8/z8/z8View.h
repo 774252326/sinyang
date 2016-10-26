@@ -58,7 +58,19 @@ public:
 	double xmax;
 	double ymin;
 	double ymax;
-	bool DrawXYAxis(CRect rect, CPaintDC* pdc);
+	CRect DrawXYAxis(CRect rect, CPaintDC* pdc);
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	long ci;
+	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	double *x;
+	double *y;
+	CString windowTitle;
+	// update xmin,xmax,ymin,ymax
+	void updatePlotRange(std::vector<double> x, std::vector<double> y);
+
+	std::vector<pcct> dtlist;
+	std::vector<CPoint> genPointToPlot(const std::vector<double> &px, const std::vector<double> &py, CRect rect);
+	std::vector<COLORREF> cllist;
 };
 
 #ifndef _DEBUG  // debug version in z8View.cpp

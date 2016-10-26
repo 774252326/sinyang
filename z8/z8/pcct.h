@@ -29,5 +29,15 @@ public:
 	int readFile(LPCTSTR lpszFileName);
 	
 	void clear(void);
+	void seperate(void);
+	std::vector<long> xBreakIndex;
+	double intg(double xtop);
+	double AR;
+	CString segmentinfo;
+	std::vector<CString> label;
+	CString FilePath;
+
+	std::vector<CString> seginfo;
+
 };
 

@@ -3,6 +3,8 @@
 
 
 pcct::pcct(void)
+	: AR(0)
+	, segmentinfo(_T(""))
 {
 }
 
@@ -38,11 +40,39 @@ int pcct::readFile(LPCTSTR lpszFileName)
 
 		TRACE("\n--Begin to read file");
 
+		FilePath=lpszFileName;
+
+
 		while(file.ReadString(strRead))
 		{	
+			
 			if(wcscoll(strRead.GetBuffer(),sps7)==0){
+
+				token = wcstok( strRead.GetBuffer(), sps1 );
+
+			if(token!=NULL)
+				label.push_back(token);
+
+			token = wcstok( NULL, sps1 );
+			if(token!=NULL)
+				label.push_back(token);
+
+			token = wcstok( NULL, sps1);
+			if(token!=NULL)
+				label.push_back(token);
+
+			token = wcstok( NULL, sps1 );
+			if(token!=NULL)
+				label.push_back(token);
+
 				break;
 			}
+			else{
+				segmentinfo=segmentinfo+strRead+L"\n";
+				//if(!strRead.IsEmpty())
+				seginfo.push_back(strRead);
+			}
+
 			//token = wcstok( strRead.GetBuffer(), sps2 );
 			//if(wcscoll(token,sps3)==0){
 			//	file.ReadString(strRead);
@@ -128,4 +158,63 @@ void pcct::clear(void)
 	current.clear();
 	charge.clear();
 	time.clear();
+	xBreakIndex.clear();
+	label.clear();
+	seginfo.clear();
+}
+
+
+void pcct::seperate(void)
+{
+	long i;
+	double diff1,diff2;
+	xBreakIndex.push_back(0);
+	diff2=potential[0]-potential[1];
+	for(i=1;i<potential.size()-1;i++){
+		diff1=diff2;
+		diff2=potential[i]-potential[i+1];
+		if(diff1*diff2<0){
+			xBreakIndex.push_back(i);
+		}
+	}
+	xBreakIndex.push_back(potential.size()-1);
+
+}
+
+
+
+
+double pcct::intg(double xtop)
+{
+	std::vector<double> xintg(potential.begin()+(*(xBreakIndex.end()-2)),potential.begin()+(*(xBreakIndex.end()-1)) );
+	//std::vector<double> xintg( time.begin()+(*(xBreakIndex.end()-2)),time.begin()+(*(xBreakIndex.end()-1)) );
+	std::vector<double> yintg( current.begin()+(*(xBreakIndex.end()-2)),current.begin()+(*(xBreakIndex.end()-1)) );
+
+	long i;
+	double ar=0;
+	for(i=0;i<xintg.size()-1;i++){
+
+		if(xintg[i+1]<xtop){
+			if( (yintg[i]>0) || (yintg[i+1]>0) ){
+				if(yintg[i]<0){
+					ar+=(xintg[i+1]-xintg[i])*yintg[i+1]*yintg[i+1]/(yintg[i+1]-yintg[i]);
+				}
+				else{
+					if(yintg[i+1]<0){
+						ar+=(xintg[i+1]-xintg[i])*yintg[i]*yintg[i]/(yintg[i]-yintg[i+1]);
+					}
+					else{
+						ar+=(xintg[i+1]-xintg[i])*(yintg[i]+yintg[i+1]);
+					}
+				}
+			}
+		}
+		else{
+			ar+=(xtop-xintg[i])*(2*yintg[i]+(yintg[i+1]-yintg[i])*(xtop-xintg[i])/(xintg[i+1]-xintg[i]));
+			break;
+		}
+
+	}
+
+	return ar;
 }

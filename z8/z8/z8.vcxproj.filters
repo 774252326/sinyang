@@ -135,6 +135,9 @@
     <ClInclude Include="pcct.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="colormap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="z8.cpp">
