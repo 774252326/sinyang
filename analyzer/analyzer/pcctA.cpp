@@ -96,7 +96,7 @@ int pcctA::addXY(std::vector<double> & x, std::vector<double> & y)
 }
 
 
-double pcctA::intg(const double & xUpLim)
+double pcctA::intg(double xUpLim)
 {
 	std::vector<double>::iterator itx;
 	itx=find(xx.back().begin(), xx.back().end(), xmin);

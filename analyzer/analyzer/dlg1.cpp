@@ -190,7 +190,7 @@ CRect dlg1::DrawXYAxis(CRect rect, CDC* pdc)
 	COLORREF axisC=black;
 	COLORREF labelC=green;
 
-	drawRectangle(rect,pdc,bkgndC,axisC);
+	drawRectangle(rect,pdc,bkgndC,bkgndC);
 
 	////////////////////////////////////////////////////////////////////
 

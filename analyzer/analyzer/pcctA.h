@@ -18,7 +18,7 @@ public:
 	//bool StartLoad;
 	double xmin;
 	double xmax;
-	double intg(const double & xUpLim);
+	double intg(double xUpLim);
 	void clear(void);
 	//second per voltage
 	double spv;

@@ -27,4 +27,5 @@ public:
 	virtual BOOL OnKillActive();
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	void ComboSelectChange(void);
+	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 };

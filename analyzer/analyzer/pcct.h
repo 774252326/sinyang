@@ -43,5 +43,6 @@ public:
 	void copyPrefix(pcct a);
 	void copyData(pcct a);
 	size_t popData(std::vector<double> & x, std::vector<double> & y, size_t nd);
+	void TomA(void);
 };
 

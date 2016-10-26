@@ -161,13 +161,13 @@ void CEditList::OnKeydown(NMHDR* pNMHDR, LRESULT* pResult)
 	case VK_DELETE: 
 		{
 			int nItem = GetSelectionMark();
-			//if(nItem!=-1) // valid item 	
-			if( nItem > 0 )
+			if(nItem!=-1) // valid item 	
+			//if( nItem > 0 )
 			{
 				DeleteItem( nItem );
 				for(;nItem<GetItemCount();nItem++){
 					CString str;
-					str.Format(L"%d",nItem);
+					str.Format(L"%d",nItem+1);
 					SetItemText(nItem,0,str);
 				}
 			}
@@ -181,7 +181,7 @@ void CEditList::OnKeydown(NMHDR* pNMHDR, LRESULT* pResult)
 				//DeleteItem( nItem );
 				nItem=GetItemCount();
 				CString str;
-				str.Format(L"%d",nItem);
+				str.Format(L"%d",nItem+1);
 				InsertItem( nItem, str );
 			}
 		}	break;

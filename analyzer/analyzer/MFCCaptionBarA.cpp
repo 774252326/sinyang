@@ -75,6 +75,8 @@ void CMFCCaptionBarA::OnSize(UINT nType, int cx, int cy)
 	CMFCCaptionBar::OnSize(nType, cx, cy);
 
 	// TODO: Add your message handler code here
+
+	SetEdit();
 }
 
 
@@ -89,7 +91,7 @@ int CMFCCaptionBarA::SetEdit(void)
 	pt.x-=ecrect.Width();
 	ecrect.MoveToXY(pt);
 	ec.MoveWindow(&ecrect);
-	ec.ShowWindow(SW_SHOW);
+	//ec.ShowWindow(SW_SHOW);
 
 	return 0;
 }
@@ -97,7 +99,7 @@ int CMFCCaptionBarA::SetEdit(void)
 
 int CMFCCaptionBarA::HideEdit(void)
 {
-	ec.ShowWindow(SW_HIDE);
+	//ec.ShowWindow(SW_HIDE);
 	return 0;
 }
 

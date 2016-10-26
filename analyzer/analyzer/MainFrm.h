@@ -94,7 +94,7 @@ public:
 
 	anp p1;
 	cvp p2;
-	std::vector<sap> p3;
+	sap p3;
 };
 
 

@@ -11,7 +11,7 @@
 
 IMPLEMENT_DYNAMIC(CVParametersDlg, CPropertyPage)
 
-	CVParametersDlg::CVParametersDlg()
+CVParametersDlg::CVParametersDlg()
 	: CPropertyPage(CVParametersDlg::IDD)
 {
 	para.endintegratione=1;
@@ -20,6 +20,7 @@ IMPLEMENT_DYNAMIC(CVParametersDlg, CPropertyPage)
 	para.noofcycles=1;
 	para.rotationrate=1;
 	para.scanrate=1;
+	para.variationtolerance=0;
 }
 
 CVParametersDlg::~CVParametersDlg()
@@ -102,11 +103,31 @@ BOOL CVParametersDlg::OnKillActive()
 		return FALSE;
 	}
 
-	if(para.noofcycles<=0){
+	para.combochoice=((CComboBox*)GetDlgItem(IDS_COMBO_CYCLE_TYPE))->GetCurSel();
+
+	if(para.combochoice<0){
 		AfxMessageBox(L"error");
-		CEdit *ped=(CEdit*)(this->GetDlgItem(IDS_EDIT_NO_OF_CYCLES));
-		ped->SetFocus();
+		CComboBox * pcb=(CComboBox*)(this->GetDlgItem(IDS_COMBO_CYCLE_TYPE));
+		pcb->SetFocus();
 		return FALSE;
+	}
+
+	if(para.combochoice==0){
+		if(para.noofcycles<=0){
+			AfxMessageBox(L"error");
+			CEdit *ped=(CEdit*)(this->GetDlgItem(IDS_EDIT_NO_OF_CYCLES));
+			ped->SetFocus();
+			return FALSE;
+		}
+	}
+
+	if(para.combochoice==1){
+		if(para.variationtolerance<=0 || para.variationtolerance>1){
+			AfxMessageBox(L"error");
+			CEdit *ped=(CEdit*)(this->GetDlgItem(IDS_EDIT_VARIATION_TOLERANCE));
+			ped->SetFocus();
+			return FALSE;
+		}
 	}
 
 	if(para.rotationrate<=0){
@@ -196,7 +217,7 @@ int CVParametersDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		str.LoadStringW(i);
 		pCombo->AddString(str);
 	}
-	pCombo->SetCurSel(0);
+	pCombo->SetCurSel(para.combochoice);
 
 	pEdit = (CEdit*)pCombo->GetWindow(GW_CHILD);
 	pEdit->SetReadOnly();
@@ -215,7 +236,7 @@ int CVParametersDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		CRect(pt,editSize),
 		this,
 		IDS_EDIT_NO_OF_CYCLES);
-
+	
 	str.LoadStringW(IDS_EDIT_VARIATION_TOLERANCE);
 	pEdit=new CEdit;
 	pEdit->CreateEx(
@@ -229,6 +250,7 @@ int CVParametersDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		this,
 		IDS_EDIT_VARIATION_TOLERANCE);
 
+	ComboSelectChange();
 
 	pt.y+=staticSize.cy+gap2.cy;
 	pt.x-=gap2.cx+staticSize.cx;
@@ -274,6 +296,9 @@ int CVParametersDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	//pStatic->ShowWindow(SW_SHOW);
 	//pEdit->ShowWindow(SW_SHOW);
 
+	//SetWindowTextW(L"asdf");
+
+	//GetWindowTextW(str);
 
 	return 0;
 }
@@ -282,9 +307,9 @@ int CVParametersDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 void CVParametersDlg::ComboSelectChange(void)
 {
 	CString strWeb;   
-    int nSel;     
+	int nSel;     
 	CComboBox * pcb=(CComboBox*)(this->GetDlgItem(IDS_COMBO_CYCLE_TYPE));
-    // 获取组合框控件的列表框中选中项的索引   
+	// 获取组合框控件的列表框中选中项的索引   
 	nSel = pcb->GetCurSel();  
 
 	for(int i=0;i<2;i++){
@@ -295,4 +320,14 @@ void CVParametersDlg::ComboSelectChange(void)
 			GetDlgItem(IDS_EDIT_NO_OF_CYCLES+i)->ShowWindow(SW_HIDE);
 		}
 	}
+}
+
+
+BOOL CVParametersDlg::PreCreateWindow(CREATESTRUCT& cs)
+{
+	// TODO: Add your specialized code here and/or call the base class
+
+	//SetWindowTextW(L"asdf");
+
+	return CPropertyPage::PreCreateWindow(cs);
 }

@@ -13,6 +13,7 @@ IMPLEMENT_DYNAMIC(SolutionAdditionParametersDlg, CPropertyPage)
 
 SolutionAdditionParametersDlg::SolutionAdditionParametersDlg()
 	: CPropertyPage(SolutionAdditionParametersDlg::IDD)
+	//, vmsvol(0)
 {
 	
 	//sap s1;
@@ -38,6 +39,7 @@ void SolutionAdditionParametersDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
 	//DDX_Control(pDX, 500, m_SAPlist);
+	DDX_Text(pDX, IDS_EDIT_VMS_VOLUME, para.vmsvol);
 }
 
 
@@ -93,22 +95,60 @@ int SolutionAdditionParametersDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// TODO:  Add your specialized creation code here
 
 	CSize gap1(20,20);
+	CSize gap2(20,20);
+	CSize staticSize(150,22);
+
 	CRect winrect;
 	this->GetWindowRect(&winrect);
 	winrect.DeflateRect(gap1);
 	CPoint pt(gap1);
-	int h=22;
+	CStatic *pStatic;
+	CEdit *pEdit;
+	CString str;
 
 	
 	stt.Create(
 		L"press Insert to add step, press Delete to delete selection",
 		WS_CHILD
 		|WS_VISIBLE, 
-		CRect(pt,CSize(winrect.Width(),h)),
+		CRect(pt,CSize(winrect.Width(),staticSize.cy)),
 		this,
 		10000);
 
-	pt.y+=gap1.cy+h;
+	pt.y+=gap2.cy+staticSize.cy;
+
+
+
+	str.LoadStringW(IDS_STRING_VMS_VOLUME);
+		pStatic=new CStatic;
+		pStatic->Create(
+			str,
+			WS_CHILD
+			|WS_VISIBLE, 
+			CRect(pt,staticSize),
+			this,
+			IDS_STRING_VMS_VOLUME);
+
+		pt.x+=gap2.cx+staticSize.cx;
+
+		str.LoadStringW(IDS_EDIT_VMS_VOLUME);
+		//str=L"0";
+		pEdit=new CEdit;
+		pEdit->CreateEx(
+			WS_EX_CLIENTEDGE,
+			L"Edit", 
+			str,
+			ES_LEFT
+			|WS_CHILD
+			|WS_VISIBLE,
+			CRect(pt,CSize(winrect.Width()-gap2.cx-staticSize.cx,staticSize.cy)),
+			this,
+			IDS_EDIT_VMS_VOLUME);
+
+		pt.y+=staticSize.cy+gap2.cy;
+		pt.x-=gap2.cx+staticSize.cx;
+
+
 
 
 	const DWORD dwStyle = WS_VISIBLE 
@@ -156,7 +196,7 @@ void SolutionAdditionParametersDlg::BuildList(int width)
 	//dwStyle1 |= LVS_EX_CHECKBOXES;//item前生成checkbox控件
 	m_SAPlist.SetExtendedStyle(dwStyle1); //设置扩展风格
 
-	int wi[6]={33,87,88,87,40,width/4};
+	int wi[6]={33,87,88,87,150,150};
 
 
 	CString strTemp;
@@ -224,34 +264,40 @@ BOOL SolutionAdditionParametersDlg::OnKillActive()
 void SolutionAdditionParametersDlg::SetList(void)
 {
 
-	if(paral.empty()){
+	UpdateData(FALSE);
+
+	if(para.saplist.empty()){
 		return;
 	}
 
 	CString strTemp;
-	strTemp.LoadStringW(IDS_STRING_STEPNAME0);
-	m_SAPlist.InsertItem( 0, strTemp );
-	
-	strTemp.Format(L"%g",paral[0].Sconc);
-	m_SAPlist.SetItemText(0,1,strTemp);
-	strTemp.Format(L"%g",paral[0].Aconc);
-	m_SAPlist.SetItemText(0,2,strTemp);
-	strTemp.Format(L"%g",paral[0].Lconc);
-	m_SAPlist.SetItemText(0,3,strTemp);
-	strTemp.Format(L"%g",paral[0].volume);
-	m_SAPlist.SetItemText(0,5,strTemp);
+	//strTemp.LoadStringW(IDS_STRING_STEPNAME0);
+	//m_SAPlist.InsertItem( 0, strTemp );
+	//
+	//strTemp.Format(L"%g",paral[0].Sconc);
+	//m_SAPlist.SetItemText(0,1,strTemp);
+	//strTemp.Format(L"%g",paral[0].Aconc);
+	//m_SAPlist.SetItemText(0,2,strTemp);
+	//strTemp.Format(L"%g",paral[0].Lconc);
+	//m_SAPlist.SetItemText(0,3,strTemp);
+	//strTemp.Format(L"%g",paral[0].volume);
+	//m_SAPlist.SetItemText(0,5,strTemp);
 
 
-	for(size_t i=1;i<paral.size();i++){
-		strTemp.Format(L"%d",i);
+	for(size_t i=0;i<para.saplist.size();i++){
+		strTemp.Format(L"%d",i+1);
 		m_SAPlist.InsertItem( i, strTemp );
-		strTemp.Format(L"%g",paral[i].Sconc);
+		strTemp.Format(L"%g",para.saplist[i].Sconc);
 		m_SAPlist.SetItemText(i,1,strTemp);
-		strTemp.Format(L"%g",paral[i].Aconc);
+		strTemp.Format(L"%g",para.saplist[i].Aconc);
 		m_SAPlist.SetItemText(i,2,strTemp);
-		strTemp.Format(L"%g",paral[i].Lconc);
+		strTemp.Format(L"%g",para.saplist[i].Lconc);
 		m_SAPlist.SetItemText(i,3,strTemp);
-		strTemp.Format(L"%g",paral[i].volume);
+		
+		strTemp.LoadStringW(IDS_STRING_VOL_ONCE+para.saplist[i].addtype);
+		m_SAPlist.SetItemText(i,4,strTemp);
+
+		strTemp.Format(L"%g",para.saplist[i].volconc);
 		m_SAPlist.SetItemText(i,5,strTemp);
 	}
 }
@@ -259,23 +305,42 @@ void SolutionAdditionParametersDlg::SetList(void)
 
 void SolutionAdditionParametersDlg::GetList(void)
 {
+	UpdateData(TRUE);
+
 	int nItem=m_SAPlist.GetItemCount();
 
-	paral.resize(nItem);
+	para.saplist.resize(nItem);
 	CString strTemp;
 
 	for(size_t i=0;i<nItem;i++){
 		strTemp=m_SAPlist.GetItemText(i,1);
-		paral[i].Sconc=_wtof(strTemp.GetBuffer());
+		para.saplist[i].Sconc=_wtof(strTemp.GetBuffer());
 
 		strTemp=m_SAPlist.GetItemText(i,2);
-		paral[i].Aconc=_wtof(strTemp.GetBuffer());
+		para.saplist[i].Aconc=_wtof(strTemp.GetBuffer());
 
 		strTemp=m_SAPlist.GetItemText(i,3);
-		paral[i].Lconc=_wtof(strTemp.GetBuffer());
+		para.saplist[i].Lconc=_wtof(strTemp.GetBuffer());
+
+		para.saplist[i].addtype=GetChoice(i,4);
 
 		strTemp=m_SAPlist.GetItemText(i,5);
-		paral[i].volume=_wtof(strTemp.GetBuffer());
+		para.saplist[i].volconc=_wtof(strTemp.GetBuffer());
 	}
 
+}
+
+
+int SolutionAdditionParametersDlg::GetChoice(int nItem, int nSubItem)
+{
+	CString strTemp, strTemp2;
+	strTemp=m_SAPlist.GetItemText(nItem,nSubItem);
+	int i=4-1;
+	for ( ; i >= 0 ; i--){
+		strTemp2.LoadStringW(IDS_STRING_VOL_ONCE+i);
+		if(strTemp2==strTemp)
+			break;
+	}
+
+	return i;
 }

@@ -21,6 +21,7 @@ AnalysisSetupPage::AnalysisSetupPage(UINT nIDCaption, CWnd* pParentWnd, UINT iSe
 AnalysisSetupPage::AnalysisSetupPage(LPCTSTR pszCaption, CWnd* pParentWnd, UINT iSelectPage)
 	:CPropertySheet(pszCaption, pParentWnd, iSelectPage)
 {
+	//AnalysisParametersDlg APdlg;
 	this->AddPage(&APdlg);
 	this->AddPage(&CVPdlg);
 	this->AddPage(&SAPdlg);
@@ -68,7 +69,7 @@ int AnalysisSetupPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 
 
-	mreadini(L"pa.txt",APdlg.para,CVPdlg.para,SAPdlg.paral);
+	mreadini(L"pa.txt",APdlg.para,CVPdlg.para,SAPdlg.para);
 
 
 
@@ -83,9 +84,10 @@ BOOL AnalysisSetupPage::OnInitDialog()
 	// TODO:  Add your specialized code here
 
 
-	CRect winrect;
-	this->GetWindowRect(&winrect);
-	BOOL flg=this->SetWindowPos(&CWnd::wndTopMost, winrect.left, winrect.top, 1200, 600, this->GetStyle());
+	//CRect winrect;
+	//this->GetWindowRect(&winrect);
+	//BOOL flg=this->SetWindowPos(&CWnd::wndTopMost, winrect.left, winrect.top, 1200, 600, SWP_SHOWWINDOW );
+
 
 
 	return bResult;

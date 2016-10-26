@@ -276,3 +276,13 @@ size_t pcct::popData(std::vector<double> & x, std::vector<double> & y, size_t nd
 
 	return potential.size();
 }
+
+
+void pcct::TomA(void)
+{
+	for(size_t i=0;i<current.size();i++){
+		current[i]*=1e3;
+	}
+
+	label[1]=L"Current/mA";
+}

@@ -161,7 +161,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 
 	// Enable toolbar and docking window menu replacement
-	EnablePaneMenu(TRUE, ID_VIEW_CUSTOMIZE, strCustomize, ID_VIEW_TOOLBAR);
+	//EnablePaneMenu(TRUE, ID_VIEW_CUSTOMIZE, strCustomize, ID_VIEW_TOOLBAR);
 
 	// enable quick (Alt+drag) toolbar customization
 	CMFCToolBar::EnableQuickCustomization();
@@ -285,10 +285,10 @@ BOOL CMainFrame::CreateCaptionBar()
 	//m_wndCaptionBar.SetButton(strTemp, ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_RIGHT, FALSE);
 	//bNameValid = strTemp.LoadString(IDS_CAPTION_BUTTON_TIP);
 	//ASSERT(bNameValid);
-	//m_wndCaptionBar.SetButtonToolTip(strTemp2);
+
 
 	m_wndCaptionBar.ShowButton(false);
-
+	//m_wndCaptionBar.SetButtonToolTip(strTemp2);
 
 	bNameValid = strTemp.LoadString(IDS_CAPTION_TEXT);
 	ASSERT(bNameValid);
@@ -296,7 +296,7 @@ BOOL CMainFrame::CreateCaptionBar()
 	m_wndCaptionBar.SetTextA(strTemp);
 
 
-	//m_wndCaptionBar.SetBitmap(IDB_INFO, RGB(255, 255, 255), FALSE, CMFCCaptionBar::ALIGN_LEFT);
+	m_wndCaptionBar.SetBitmap(IDB_INFO, RGB(255, 255, 255), FALSE, CMFCCaptionBar::ALIGN_LEFT);
 	//bNameValid = strTemp.LoadString(IDS_CAPTION_IMAGE_TIP);
 	//ASSERT(bNameValid);
 	//bNameValid = strTemp2.LoadString(IDS_CAPTION_IMAGE_TEXT);
@@ -449,7 +449,8 @@ void CMainFrame::OnOptions()
 	(strTemp.LoadString(IDS_STRING_RUNNING));
 	m_wndCaptionBar.SetTextA(strTemp);
 	m_wndCaptionBar.ShowButton(false);
-	m_wndCaptionBar.HideEdit();
+	m_wndCaptionBar.SetEdit();
+	m_wndCaptionBar.ec.ShowWindow(SW_HIDE);
 	timer1=SetTimer(1,10,NULL);
 }
 
@@ -558,6 +559,7 @@ void CMainFrame::OnFileOpen()
 			//dt1.seperate();
 			//dt1.AR=dt1.intg(0.8);
 
+			dt1.TomA();
 			dat.push_back(dt1);
 		}
 
@@ -567,7 +569,8 @@ void CMainFrame::OnFileOpen()
 		finishflag2=true;
 		totalVolume=0;
 		Ar0=0;	
-		stepCount=rowCount=0;
+		stepCount=0;
+		rowCount=0;
 
 		mreadini(L"pa.txt",p1,p2,p3);
 		datt.clear();
@@ -622,7 +625,7 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 		{
 			/////////////////////////////////////////////////////////////////////////////////////////////
 
-			if( dat.empty() || stepCount>=p3.size() ){
+			if( dat.empty() || stepCount>p3.saplist.size() ){
 				finishflag2=true;
 				KillTimer(timer1);
 				CString strTemp;
@@ -633,7 +636,7 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 			}
 			else{
 
-				size_t n1=360;
+				size_t n1=660;
 
 				std::vector<double> x;
 				std::vector<double> y;
@@ -652,7 +655,12 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 				if(nflg>=1 || finishflag){//if one cycle complete
 					double addvol;
 					if(datt.Ar.size()==1){
-						addvol=p3[stepCount].volume;
+						if(finishflag2){
+							addvol=p3.vmsvol;
+						}
+						else{
+							addvol=p3.saplist[stepCount-1].volconc;
+						}
 					}
 					else{
 						addvol=0;
@@ -663,12 +671,12 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 						Ar0=datt.Ar.back();
 					}
 
-					m_wndOutput.InsertListCtrl(rowCount,stepCount,datt.Ar.size(),addvol,totalVolume,datt.Ar.back()*1e3,(datt.Ar.back()/Ar0),finishflag);
+					m_wndOutput.InsertListCtrl(rowCount,stepCount,datt.Ar.size(),addvol,totalVolume,datt.Ar.back(),(datt.Ar.back()/Ar0),finishflag);
 
 					rowCount++;
 					if(finishflag){
 
-						x.assign( 1,totalVolume-p3.front().volume );
+						x.assign( 1,totalVolume-p3.vmsvol );
 						y.assign( 1,(datt.Ar.back()/Ar0) );
 
 						plot2(x,y,L"Suppressor(ml)",L"Ratio of Charge");
@@ -684,6 +692,7 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 						m_wndCaptionBar.SetTextA(strTemp,true);
 						m_wndCaptionBar.ShowButton();
 						m_wndCaptionBar.SetEdit();
+						m_wndCaptionBar.ec.ShowWindow(SW_SHOW);
 						m_wndCaptionBar.ShowWindow(SW_SHOW);
 						RecalcLayout(FALSE);
 
@@ -733,7 +742,8 @@ void CMainFrame::plot1(const std::vector<double> & x, const std::vector<double> 
 	if(finishflag){//if to plot a new line
 		plotspec ps1;
 		CString strTemp;
-		ps1.colour=genColor( genColorvFromIndex<float>( stepCount ) ) ;
+		//ps1.colour=genColor( genColorvFromIndex<float>( stepCount ) ) ;
+		ps1.colour=genColorGray( genColorvFromIndex<float>( stepCount ) ) ;
 		ps1.dotSize=-1;
 		if(stepCount>0){
 			//ASSERT
@@ -791,10 +801,12 @@ void CMainFrame::OnAnalysisMethodsetup()
 	//abc sheet(777);
 	// 设置属性对话框为向导对话框   
 	//sheet.SetWizardMode();   
+	//sheet.SetWindowPos(&CWnd::wndTopMost,10,10,800,600,SWP_SHOWWINDOW);
+
 	// 打开模态向导对话框   
 	if(sheet.DoModal()==IDOK){
 
-		mwriteini(L"pa.txt", sheet.APdlg.para, sheet.CVPdlg.para, sheet.SAPdlg.paral);
+		mwriteini(L"pa.txt", sheet.APdlg.para, sheet.CVPdlg.para, sheet.SAPdlg.para);
 
 		//CString str;
 		//str.Format(L"%g",(double)sheet.APdlg.para.analysistype);

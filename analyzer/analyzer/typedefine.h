@@ -10,7 +10,9 @@ typedef struct ANP{
 int analysistype;
 double evaluationratio;
 double endpointratio;
+int calibrationfactortype;
 double calibrationfactor;
+CString calfilepath;
 } anp;
 
 
@@ -19,6 +21,7 @@ typedef struct CVP{
 	double lowelimit;
 	double highelimit;
 	double scanrate;
+	int combochoice;
 	int noofcycles;
 	double variationtolerance;
 	double rotationrate;
@@ -27,13 +30,19 @@ typedef struct CVP{
 
 //SolutionAdditionParameters
 
-typedef struct SAP{
+typedef struct SAPITEM{
 	double Sconc;
 	double Aconc;
 	double Lconc;
-	double volume;
-} sap;
+	int addtype;
+	double volconc;
+} sapitem;
 
+
+typedef struct SAP{
+	double vmsvol;
+	std::vector<sapitem> saplist;
+} sap;
 
 typedef struct PLOTSPEC{
 	COLORREF colour;
@@ -45,6 +54,6 @@ typedef struct PLOTSPEC{
 } plotspec;
 
 
-void mreadini(wchar_t *fn, anp &p1, cvp &p2, std::vector<sap> &p3 );
+void mreadini(wchar_t *fn, anp &p1, cvp &p2, sap &p3 );
 
-void mwriteini(wchar_t *fn, const anp &p1, const cvp &p2, const std::vector<sap> &p3 );
+void mwriteini(wchar_t *fn, const anp &p1, const cvp &p2, const sap &p3 );

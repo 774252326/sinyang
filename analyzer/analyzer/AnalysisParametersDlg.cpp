@@ -11,7 +11,7 @@
 
 IMPLEMENT_DYNAMIC(AnalysisParametersDlg, CPropertyPage)
 
-AnalysisParametersDlg::AnalysisParametersDlg()
+	AnalysisParametersDlg::AnalysisParametersDlg()
 	: CPropertyPage(AnalysisParametersDlg::IDD)
 	, filePath(_T(""))
 {
@@ -37,7 +37,7 @@ void AnalysisParametersDlg::DoDataExchange(CDataExchange* pDX)
 
 
 BEGIN_MESSAGE_MAP(AnalysisParametersDlg, CPropertyPage)
-	
+
 	ON_CBN_SELCHANGE(IDS_COMBO_ANALYSIS_TYPE, &AnalysisParametersDlg::ComboSelectChange)
 
 	ON_CBN_SELCHANGE(IDS_COMBO_CALIBRATION_TYPE, &AnalysisParametersDlg::CalibrationComboSelectChange)
@@ -174,7 +174,7 @@ BOOL AnalysisParametersDlg::OnInitDialog()
 	//pEdit->ShowWindow(SW_SHOW);
 
 
-		//CPropertyPage::OnInitDialog();
+	//CPropertyPage::OnInitDialog();
 
 	//UpdateData(FALSE);
 
@@ -186,18 +186,18 @@ BOOL AnalysisParametersDlg::OnInitDialog()
 
 void AnalysisParametersDlg::ComboSelectChange(void)
 {
-	
-    CString strWeb;   
-    //int nSel;     
+
+	CString strWeb;   
+	//int nSel;     
 	CComboBox * pcb=(CComboBox*)(this->GetDlgItem(IDS_COMBO_ANALYSIS_TYPE));
-    // 获取组合框控件的列表框中选中项的索引   
+	// 获取组合框控件的列表框中选中项的索引   
 	//nSel = pcb->GetCurSel();  
 	para.analysistype = pcb->GetCurSel(); 
-    // 根据选中项索引获取该项字符串   
-    //pcb->GetLBText(nSel, strWeb); 
+	// 根据选中项索引获取该项字符串   
+	//pcb->GetLBText(nSel, strWeb); 
 	pcb->GetLBText(para.analysistype, strWeb); 
-    // 将组合框中选中的字符串显示到IDC_SEL_WEB_EDIT编辑框中   
-    SetDlgItemText(IDS_EDIT_REMARK_ON_ANALYSIS_TYPE, strWeb);   
+	// 将组合框中选中的字符串显示到IDC_SEL_WEB_EDIT编辑框中   
+	SetDlgItemText(IDS_EDIT_REMARK_ON_ANALYSIS_TYPE, strWeb);   
 
 
 }
@@ -213,9 +213,9 @@ BOOL AnalysisParametersDlg::OnKillActive()
 {
 	// TODO: Add your specialized code here and/or call the base class
 
-   
-	
-    // 获取组合框控件的列表框中选中项的索引   
+
+
+	// 获取组合框控件的列表框中选中项的索引   
 	//para.analysistype = pcb->GetCurSel();  
 
 	if(para.analysistype<0){
@@ -224,7 +224,7 @@ BOOL AnalysisParametersDlg::OnKillActive()
 		pcb->SetFocus();
 		return FALSE;
 	}
-	
+
 	if(UpdateData()==FALSE){
 		return FALSE;
 	}
@@ -243,11 +243,21 @@ BOOL AnalysisParametersDlg::OnKillActive()
 		return FALSE;
 	}
 
-	if(para.calibrationfactor<=0){
+	para.calibrationfactortype=((CComboBox*)GetDlgItem(IDS_COMBO_CALIBRATION_TYPE))->GetCurSel();
+	if(para.calibrationfactortype<0){
 		AfxMessageBox(L"error");
-		CEdit *ped=(CEdit*)(this->GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR));
-		ped->SetFocus();
+		CComboBox * pcb=(CComboBox*)(this->GetDlgItem(IDS_COMBO_CALIBRATION_TYPE));
+		pcb->SetFocus();
 		return FALSE;
+	}
+
+	if(para.calibrationfactortype==0){
+		if(para.calibrationfactor<=0){
+			AfxMessageBox(L"error");
+			CEdit *ped=(CEdit*)(this->GetDlgItem(IDS_EDIT_CALIBRATION_FACTOR));
+			ped->SetFocus();
+			return FALSE;
+		}
 	}
 
 	return CPropertyPage::OnKillActive();
@@ -391,40 +401,40 @@ int AnalysisParametersDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		str.LoadStringW(i);
 		pCombo2->AddString(str);
 	}
-	pCombo2->SetCurSel(0);
+	pCombo2->SetCurSel(para.calibrationfactortype);
 
 	pEdit = (CEdit*)pCombo2->GetWindow(GW_CHILD);
 	pEdit->SetReadOnly();
-		
+
 	pt.x+=gap2.cx+staticSize.cx;
 
-		str.LoadStringW(IDS_EDIT_CALIBRATION_FACTOR);
-		pEdit=new CEdit;
-		pEdit->CreateEx(
-			WS_EX_CLIENTEDGE,
-			L"Edit", 
-			str,
-			ES_LEFT
-			|WS_CHILD
-			|WS_VISIBLE,
-			CRect(pt,editSize),
-			this,
-			IDS_EDIT_CALIBRATION_FACTOR);
+	str.LoadStringW(IDS_EDIT_CALIBRATION_FACTOR);
+	pEdit=new CEdit;
+	pEdit->CreateEx(
+		WS_EX_CLIENTEDGE,
+		L"Edit", 
+		str,
+		ES_LEFT
+		|WS_CHILD
+		|WS_VISIBLE,
+		CRect(pt,editSize),
+		this,
+		IDS_EDIT_CALIBRATION_FACTOR);
 
-		str.LoadStringW(IDS_EDIT_CALIBRATION_CURVE_FILE);
-		pEdit=new CEdit;
-		pEdit->CreateEx(
-			WS_EX_CLIENTEDGE,
-			L"Edit", 
-			str,
-			ES_LEFT
-			|WS_CHILD,
-			//|WS_VISIBLE,
-			CRect(pt,editSize),
-			this,
-			IDS_EDIT_CALIBRATION_CURVE_FILE);
+	str.LoadStringW(IDS_EDIT_CALIBRATION_CURVE_FILE);
+	pEdit=new CEdit;
+	pEdit->CreateEx(
+		WS_EX_CLIENTEDGE,
+		L"Edit", 
+		str,
+		ES_LEFT
+		|WS_CHILD,
+		//|WS_VISIBLE,
+		CRect(pt,editSize),
+		this,
+		IDS_EDIT_CALIBRATION_CURVE_FILE);
 
-
+	CalibrationComboSelectChange();
 
 	//pStatic->ShowWindow(SW_SHOW);
 	//pEdit->ShowWindow(SW_SHOW);
@@ -442,9 +452,9 @@ void AnalysisParametersDlg::editchange(void)
 void AnalysisParametersDlg::CalibrationComboSelectChange(void)
 {
 	CString strWeb;   
-    int nSel;     
+	int nSel;     
 	CComboBox * pcb=(CComboBox*)(this->GetDlgItem(IDS_COMBO_CALIBRATION_TYPE));
-    // 获取组合框控件的列表框中选中项的索引   
+	// 获取组合框控件的列表框中选中项的索引   
 	nSel = pcb->GetCurSel();  
 
 	for(int i=0;i<2;i++){

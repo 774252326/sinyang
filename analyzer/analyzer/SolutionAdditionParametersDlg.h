@@ -31,8 +31,12 @@ public:
 
 	CStatic stt;
 
-	std::vector<sap> paral;
+	//std::vector<sap> paral;
 	virtual BOOL OnKillActive();
 	void SetList(void);
 	void GetList(void);
+	//double vmsvol;
+
+	sap para;
+	int GetChoice(int nItem, int nSubItem);
 };

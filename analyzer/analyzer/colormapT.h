@@ -110,4 +110,18 @@ T genColorvFromIndex(unsigned long idx){
 }
 
 
+template <typename T>
+COLORREF genColorGray(T colorv){
+	//T hsv[3]={colorv,1,1};
+	//if(colorv>1 || colorv<0)
+	//	hsv[0]=1;
+
+	//T rgb[3];
+	//hsv2rgb(hsv,rgb);
+
+	int gray=colorv*255;
+
+	return RGB(gray,gray,gray);
+}
+
 #endif

@@ -150,7 +150,12 @@ void COutputWnd::OnSize(UINT nType, int cx, int cy)
 	//nColInterval[2]=rt2.Width()-(nCol-1)*(rt2.Width()/10);
 
 	std::vector<int> nColInterval(nCol,cx/10);
-	nColInterval[1]=cx/*-nCol*/-(nCol-1)*(cx/10);
+	//nColInterval[1]=cx/*-nCol*/-(nCol-1)*(cx/10);
+
+
+	nColInterval[0]=nColInterval[6]=40;
+	nColInterval[1]=200;
+	nColInterval[2]=nColInterval[3]=nColInterval[4]=nColInterval[5]=83;
 
 	for(int i=0;i<nCol;i++){
 		m_listCtrlMonitor.SetColumnWidth(i,nColInterval[i]);
