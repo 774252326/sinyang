@@ -59,4 +59,6 @@ protected:
 	void SetSearchContent(const CString& value);
 #endif // SHARED_HANDLERS
 
+public:
+	void ClearExpData(void);
 };

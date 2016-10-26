@@ -2,7 +2,7 @@
 #include "../struct\SAPara.hpp"
 #include "../list\ListCtrlSAP.h"
 #include "../analyzerDoc.h"
-#include "../MainFrm.h"
+//#include "../MainFrm.h"
 
 // SolutionAdditionParametersPageB dialog
 
@@ -33,7 +33,7 @@ public:
 	ListCtrlSAP m_SAPlist;
 	CStatic stt;
 	CanalyzerDoc *pDoc;
-	CMainFrame *mf;
+	//CMainFrame *mf;
 
 	void SetList(void);
 	void GetList(void);

@@ -94,9 +94,9 @@ CString flistlist[]={
 
 void WaitSecond(ProcessState &waitflg
 	,int second=-1
-	//,int second=3
+	//,int second=1
 	//,int second=0
-	,int interval=1000
+	,int interval=500
 	)
 {
 	while( waitflg!=running
@@ -109,121 +109,183 @@ void WaitSecond(ProcessState &waitflg
 
 UINT CMainFrame::PROCESS(LPVOID pParam)
 {
+	CMainFrame *mf=((mypara*)pParam)->mf;
+	CanalyzerDoc* pDoc=((mypara*)pParam)->adoc;
 	//CanalyzerDoc* pDoc=(CanalyzerDoc*)pParam;
 
 
 	//CanalyzerViewL* lv=((mypara*)pParam)->leftp;
 	//CanalyzerViewR* rv=((mypara*)pParam)->rightp;
 
-	CMainFrame *mf=((mypara*)pParam)->mf;
 
 	//COutputListA* ol=((mypara*)pParam)->ol;
 
 	//CanalyzerDoc* pDoc=(CanalyzerDoc*)(mf->GetActiveDocument());
 
 	//CanalyzerDoc* pDoc=((CanalyzerViewL*)(mf->LeftPane()))->GetDocument();
-
-	CanalyzerDoc* pDoc=((mypara*)pParam)->adoc;
-
 	delete pParam;
 	////////////////////////////////////////////////////
 	std::vector<CString> filelist;
 	pcct::LoadFileList(flistlist[pDoc->da.p1.analysistype],filelist);
 
-
-	double v2a;
-	BYTE outstep;
-	size_t nextidx;
-	size_t nowidx;
 	CSingleLock singleLock(&(pDoc->m_CritSection));
-	//lv->pw.bMouseCursor=rv->pw.bMouseCursor=false;
-	//CSingleLock singleLock1(&(mf->m_CritSection));
 
 	pcct data;
 	std::vector<double> x;
 	std::vector<double> y;
 	size_t rnd;
+	//////////////////////////////////////////////
+	//while(mf->pst!=stop){
 
+	//	mf->SendMessage(MESSAGE_UPDATE_DOL,NULL,NULL);
+	//	//mf->pst=pause;
 
-	if(singleLock.Lock())
-	{
-		pDoc->da.raw.Clear();
-		// Now that we are finished, 
-		// unlock the resource for others.
-		singleLock.Unlock();
-	}
+	//	WaitSecond(mf->pst);
 
-	mf->SendMessage(MESSAGE_UPDATE_DOL,NULL,NULL);
-	mf->pst=pause;
+	//	if(mf->pst==pause){
+	//		::SendMessage(mf->GetSafeHwnd(),WM_COMMAND,ID_ANALYSIS_PAUSE,NULL);
+	//	}
 
-	while(mf->pst!=stop){
+	//	if(pDoc->da.runstate==0){
+	//		mf->pst=stop;
+	//		return 0;
+	//	}
 
-		WaitSecond(mf->pst,-1,50);
+	//	if(pDoc->da.runstate==5){
 
-		{
-			if(pDoc->da.runstate==0){
-				mf->pst=stop;
-				return 0;
+	//		if(filelist.empty()){
+	//			CString strerr;
+	//			strerr.LoadStringW(IDS_STRING_STEP_ERROR);
+	//			mf->pst=stop;
+	//			return 1;
+	//		}
+
+	//		/////load data from file////////////
+	//		data.clear();
+	//		data.readFile(filelist.front());
+	//		data.TomA();
+	//		filelist.erase(filelist.begin());
+
+	//		rnd=data.popData(x,y,nd);
+
+	//		if(x.empty()||y.empty()){
+	//			TRACE("\ninput empty\n");
+	//			mf->pst=stop;
+	//			return 8;
+	//		}
+	//		if(singleLock.Lock())
+	//		{
+	//			pDoc->da.raw.AddNew(x,y);
+	//			// Now that we are finished, 
+	//			// unlock the resource for others.
+	//			singleLock.Unlock();
+	//		}
+	//	}
+	//	else{
+	//		rnd=data.popData(x,y,nd);
+
+	//		if(x.empty()||y.empty()){
+	//			TRACE("\ninput empty\n");
+	//			mf->pst=stop;
+	//			return 8;
+	//		}
+	//		if(singleLock.Lock())
+	//		{
+	//			pDoc->da.raw.AddFollow(x,y);
+	//			// Now that we are finished, 
+	//			// unlock the resource for others.
+	//			singleLock.Unlock();
+	//		}
+	//	}
+
+	//}
+	//////////////////////////////////////////////////////
+
+	while(true){
+		switch(mf->pst){
+		case running:
+			{
+				switch(pDoc->da.runstate){
+				case 0:
+				case 7:	
+				case 3:
+				case 4:
+					{
+						mf->pst=stop;
+					}
+					break;
+				case 1:
+				case 2:
+				case 6:
+					{
+						rnd=data.popData(x,y,nd);
+
+						if(x.empty()||y.empty()){
+							TRACE("\ninput empty\n");
+							mf->pst=stop;
+							return 8;
+						}
+						if(singleLock.Lock())
+						{
+							pDoc->da.raw.AddFollow(x,y);
+							// Now that we are finished, 
+							// unlock the resource for others.
+							singleLock.Unlock();
+						}
+						mf->SendMessage(MESSAGE_UPDATE_DOL,NULL,NULL);						
+					}
+					break;
+
+				case 5:
+					{
+						if(filelist.empty()){
+							CString strerr;
+							strerr.LoadStringW(IDS_STRING_STEP_ERROR);
+							mf->pst=stop;
+							return 3;
+						}
+
+						/////load data from file////////////
+						data.clear();
+						data.readFile(filelist.front());
+						data.TomA();
+						filelist.erase(filelist.begin());
+
+						rnd=data.popData(x,y,nd);
+
+						if(x.empty()||y.empty()){
+							TRACE("\ninput empty\n");
+							mf->pst=stop;
+							return 8;
+						}
+						if(singleLock.Lock())
+						{
+							pDoc->da.raw.AddNew(x,y);
+							// Now that we are finished, 
+							// unlock the resource for others.
+							singleLock.Unlock();
+						}
+						mf->SendMessage(MESSAGE_UPDATE_DOL,NULL,NULL);
+						
+					}
+					break;
+
+				default:
+					return 2;
+				}
+
+				Sleep(sleepms);
 			}
-
-
-			if(pDoc->da.runstate==5){
-
-				if(filelist.empty()){
-					CString strerr;
-					strerr.LoadStringW(IDS_STRING_STEP_ERROR);
-					mf->pst=stop;
-					return 1;
-				}
-
-				/////load data from file////////////
-				data.clear();
-				data.readFile(filelist.front());
-				data.TomA();
-				filelist.erase(filelist.begin());
-
-				rnd=data.popData(x,y,nd);
-
-				if(x.empty()||y.empty()){
-					TRACE("\ninput empty\n");
-					mf->pst=stop;
-					return 8;
-				}
-				if(singleLock.Lock())
-				{
-					pDoc->da.raw.AddNew(x,y);
-					// Now that we are finished, 
-					// unlock the resource for others.
-					singleLock.Unlock();
-				}
-			}
-			else{
-				rnd=data.popData(x,y,nd);
-
-				if(x.empty()||y.empty()){
-					TRACE("\ninput empty\n");
-					mf->pst=stop;
-					return 8;
-				}
-
-				if(singleLock.Lock())
-				{
-					pDoc->da.raw.AddFollow(x,y);
-					// Now that we are finished, 
-					// unlock the resource for others.
-					singleLock.Unlock();
-				}
-			}
-
-			mf->SendMessage(MESSAGE_UPDATE_DOL,NULL,NULL);
-
+			break;
+		case pause:
 			Sleep(sleepms);
+			break;
+		case stop:
+			return 0;
+		default:
+			return 1;
 		}
-
 	}
-
-
-
 	mf->pst=stop;
 
 	return 0;
@@ -327,9 +389,12 @@ CMainFrame::CMainFrame()
 
 CMainFrame::~CMainFrame()
 {
-	::TerminateThread(pWriteA->m_hThread,0);
+	if(pWriteA!=NULL)
+		::TerminateThread(pWriteA->m_hThread,0);
 	this->HideWaitDlg();
 	delete psheetml;
+	//pWriteA->m_hThread
+	//delete pWriteA;
 }
 
 int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -450,7 +515,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	//CMFCToolBar::SetBasicCommands(lstBasicCommands);
 
-	::PostMessage(this->GetSafeHwnd(),MESSAGE_CHANGE_LANG,NULL,NULL);
+	//::PostMessage(this->GetSafeHwnd(),MESSAGE_CHANGE_LANG,NULL,NULL);
 
 	return 0;
 }
@@ -868,7 +933,7 @@ void CMainFrame::OnAnalysisMethodsetup()
 			}
 			//sppage->para0=pDoc->p3done;
 			sppage->pDoc=pDoc;
-			sppage->mf=this;
+			//sppage->mf=this;
 
 			////if(psheetml->GetSafeHwnd()){
 			//	//sppage->SetList();			
@@ -900,7 +965,8 @@ afx_msg LRESULT CMainFrame::OnMessageUpdateDol(WPARAM wParam, LPARAM lParam)
 
 	TRACE("\n%d",pDoc->da.runstate);
 
-	::PostMessage(this->GetSafeHwnd(),MESSAGE_CLOSE_SAP_SHEET,NULL,NULL);
+	//::PostMessage(this->GetSafeHwnd(),MESSAGE_CLOSE_SAP_SHEET,NULL,NULL);
+	::SendMessage(this->GetSafeHwnd(),MESSAGE_CLOSE_SAP_SHEET,NULL,NULL);
 
 	return 0;
 }
@@ -921,7 +987,7 @@ afx_msg LRESULT CMainFrame::OnMessageCloseSapSheet(WPARAM wParam, LPARAM lParam)
 	case 0:
 		{
 			CString str;
-			str.Format(L"complete all");
+			str.LoadStringW(IDS_STRING_OVER);
 			pst=pause;
 			ShowWaitDlg(str);
 		}
@@ -944,8 +1010,12 @@ afx_msg LRESULT CMainFrame::OnMessageCloseSapSheet(WPARAM wParam, LPARAM lParam)
 		break;
 	case 5:
 		{		
-			CString str;
-			str.Format(L"add solution %g ml",pDoc->da.VtoAdd);
+			CString str,strt;
+			str.LoadStringW(IDS_STRING_ADD_SOLUTION);
+			strt.Format(L" %g ",pDoc->da.VtoAdd);
+			str+=strt;
+			strt.LoadStringW(IDS_STRING_ML);
+			str+=strt;
 			pst=pause;
 			ShowWaitDlg(str);
 		}
@@ -955,7 +1025,7 @@ afx_msg LRESULT CMainFrame::OnMessageCloseSapSheet(WPARAM wParam, LPARAM lParam)
 	case 7:
 		{
 			CString str;
-			str.Format(L"complete all");
+			str.LoadStringW(IDS_STRING_OVER);
 			pst=pause;
 			ShowWaitDlg(str);
 		}
@@ -1006,7 +1076,24 @@ void CMainFrame::HideWaitDlg(void)
 void CMainFrame::OnAnalysisAbortanalysis()
 {
 	// TODO: Add your command handler code here
-	if(::TerminateThread(pWriteA->m_hThread,0)!=FALSE){
+
+
+	//// 主线程结束UI线程的代码
+	//if(pWriteA) 
+	//{
+	//	// 1. 发一个WM_QUIT　消息结　UI　线程
+	//	pWriteA->PostThreadMessage(WM_QUIT, NULL, NULL);
+	//	// 2. 等待　UI　线程正常退出
+	//	if (WAIT_OBJECT_0 == WaitForSingleObject(pWriteA->m_hThread, INFINITE))
+	//	{
+	//		// 3. 删除 UI 线程对象，只有当你设置了m_bAutoDelete = FALSE;　时才调用
+	//		//delete   pWriteA; 
+	//	}
+	//}
+
+
+	//if(::TerminateThread(pWriteA->m_hThread,0)!=FALSE)
+	{
 		pst=stop;
 		HideWaitDlg();
 	}
@@ -1028,15 +1115,18 @@ void CMainFrame::OnAnalysisStartanalysis()
 	pa1->adoc=(CanalyzerDoc*)(GetActiveDocument());
 	pa1->mf=this;
 
+	pa1->adoc->ClearExpData();
+	OnMessageUpdateDol(NULL,NULL);
+	((CanalyzerView*)LeftPane())->pw.bMouseCursor=((CanalyzerView*)RightPane())->pw.bMouseCursor=false;
+
+
 	pWriteA=AfxBeginThread(PROCESS,
 		(LPVOID)(pa1),
 		THREAD_PRIORITY_NORMAL,
 		0,
-		CREATE_SUSPENDED);
+		CREATE_SUSPENDED);	
 
-	((CanalyzerView*)LeftPane())->pw.bMouseCursor=((CanalyzerView*)RightPane())->pw.bMouseCursor=false;
-
-	pst=running;
+	//pst=running;
 
 	pWriteA->ResumeThread();
 
@@ -1051,13 +1141,15 @@ void CMainFrame::OnAnalysisPause()
 
 	switch(pst){
 	case running:
-		if(SuspendThread(pWriteA->m_hThread)!=(DWORD)(-1)){
+		//if(SuspendThread(pWriteA->m_hThread)!=(DWORD)(-1))
+		{
 			pst=pause;
 			ShowWaitDlg(L"");
 		}
 		break;
 	case pause:
-		if(ResumeThread(pWriteA->m_hThread)!=(DWORD)(-1)){
+		//if(ResumeThread(pWriteA->m_hThread)!=(DWORD)(-1))
+		{
 			pst=running;
 			HideWaitDlg();
 		}
@@ -1261,6 +1353,52 @@ void CMainFrame::ChangeLang(void)
 	}
 
 	m_wndMenuBar.RestoreOriginalstate();
+
+	BOOL bNameValid;
+	// Create output window
+	CString strOutputWnd;
+	bNameValid = strOutputWnd.LoadString(IDS_OUTPUT_WND);
+	ASSERT(bNameValid);
+
+	this->GetOutputWnd()->SetWindowTextW(strOutputWnd);
+
+	CanalyzerViewL *lv=(CanalyzerViewL*)LeftPane();
+	CanalyzerViewR *rv=(CanalyzerViewR*)RightPane();
+	::PostMessage(lv->GetSafeHwnd(),MESSAGE_UPDATE_RAW,NULL,NULL);
+	::PostMessage(rv->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
+	::PostMessage(GetOutputWnd()->GetListCtrl()->GetSafeHwnd(),MESSAGE_SHOW_DOL,NULL,NULL);
+
+	COutputListA *ol=this->GetOutputWnd()->GetListCtrl();
+
+	if(ol->GetSafeHwnd()!=NULL && ol->IsWindowVisible()==TRUE ){
+		ol->cbstr[6][0].LoadString(IDS_STRING_YES);
+ol->cbstr[6][1].LoadString(IDS_STRING_NO);
+
+	CHeaderCtrl* pha=ol->GetHeaderCtrl();
+
+	int    i, nCount = pha->GetItemCount();
+HDITEM hdi;
+enum   { sizeOfBuffer = 256 };
+TCHAR  lpBuffer[sizeOfBuffer];
+bool   fFound = false;
+
+hdi.mask = HDI_TEXT;
+hdi.pszText = lpBuffer;
+hdi.cchTextMax = sizeOfBuffer;
+
+for (i=0; i < nCount; i++)
+{
+   pha->GetItem(i, &hdi); 
+   CString str;  
+   str.LoadStringW(i+IDS_STRING111);
+   hdi.pszText=str.GetBuffer();
+   pha->SetItem(i, &hdi);
+}
+
+
+	}
+
+
 }
 
 
@@ -1300,3 +1438,55 @@ afx_msg LRESULT CMainFrame::OnMessageChangeLang(WPARAM wParam, LPARAM lParam)
 	ChangeLang();
 	return 0;
 }
+
+
+
+//
+//DWORD WINAPI Check(LPVOID lpParameter )  // thread data
+//{
+//	//DebugBreak();
+//	COoDlg *pMonitor = (COoDlg*)lpParameter;
+//	while(pMonitor->bStart)
+//	{ 
+//		OVERLAPPED opd;
+//		if(NotifyAddrChange(NULL,&opd) == NO_ERROR)
+//		{
+//			TRACE("aaa");
+//		}
+//		WaitForSingleObject(pMonitor->m_hThread,5000);
+//	}
+//	return FALSE;
+//}
+//void COoDlg::OnOK() 
+//{
+//	DWORD ThreadID;  
+//	m_hThread = CreateThread(NULL,0,Check,this,0,&ThreadID);
+//	if(m_hThread == NULL)
+//	{
+//		//AfxMessageBox("创建监控线程失败!");
+//		return ;//FALSE;
+//	}
+//	else
+//	{
+//		bStart = true;
+//		return ;//TRUE;
+//	}
+//	return ;//FALSE;
+//
+//}
+//
+//void COoDlg::OnCancel() 
+//{
+//	bStart=0;
+//	if(m_hThread)
+//	{
+//		if(::WaitForSingleObject(m_hThread,1000) == WAIT_TIMEOUT)
+//		{
+//			//如果超时：
+//			TerminateThread(m_hThread,NULL);
+//		}
+//		CloseHandle(m_hThread);
+//		m_hThread = NULL; 
+//	} 
+//	//CDialog::OnCancel();
+//}

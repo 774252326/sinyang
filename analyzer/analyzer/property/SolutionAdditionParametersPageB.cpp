@@ -14,7 +14,7 @@ IMPLEMENT_DYNAMIC(SolutionAdditionParametersPageB, CPropertyPage)
 
 SolutionAdditionParametersPageB::SolutionAdditionParametersPageB()
 	: CPropertyPage(SolutionAdditionParametersPageB::IDD)
-	, mf(NULL)
+	//, mf(NULL)
 {
 	CString title;
 	title.LoadStringW(IDS_STRING_ADDITION_SOLUTION_PARA);
@@ -220,7 +220,7 @@ BOOL SolutionAdditionParametersPageB::OnApply()
 	//pDoc->p3todo=para;
 	pDoc->SetSAPtodo(para);
 
-	::PostMessage(mf->GetSafeHwnd(),MESSAGE_CLOSE_SAP_SHEET,NULL,NULL);
+	//::PostMessage(mf->GetSafeHwnd(),MESSAGE_CLOSE_SAP_SHEET,NULL,NULL);
 
 	return CPropertyPage::OnApply();
 }

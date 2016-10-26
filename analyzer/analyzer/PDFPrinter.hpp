@@ -95,8 +95,8 @@ public:
 
 			p.setfont(font, 10);
 			std::wostringstream strt;
-			strt<<L"page "<<pageno<<L" of "<<endpage;
-
+			//strt<<L"page "<<pageno<<L" of "<<endpage;
+			strt<<pageno<<L"/"<<endpage;
 			p.fit_textline(strt.str(), 20, 20, L"");
 
 			p.end_page_ext(L"");
@@ -1630,7 +1630,10 @@ public:
 	void work()
 	{
 
-		TCHAR szFilters[]= _T("PDF Files (*.pdf)|*.pdf||");
+		//TCHAR szFilters[]= _T("PDF Files (*.pdf)|*.pdf||");
+		CString szFilters;
+		szFilters.LoadStringW(IDS_FILTER_PDF);
+		szFilters+=L"|";
 
 		CFileDialog se(FALSE,L"pdf",TimeString()+L".pdf",OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,szFilters);
 

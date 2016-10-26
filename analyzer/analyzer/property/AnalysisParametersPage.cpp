@@ -184,7 +184,11 @@ void AnalysisParametersPage::ComboSelectChange(void)
 
 void AnalysisParametersPage::OnBnClickedButton1()
 {
-	TCHAR szFilters[]= _T("Analyzer Files (*.ghb)|*.ghb|All Files (*.*)|*.*||");
+	//TCHAR szFilters[]= _T("Analyzer Files (*.ghb)|*.ghb|All Files (*.*)|*.*||");
+
+		CString szFilters;
+		szFilters.LoadStringW(IDS_FILTER_GHB);
+		szFilters+=L"|";
 
 		// Create an Open dialog; the default file name extension is ".my".
 
@@ -439,7 +443,10 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		IDS_EDIT_CALIBRATION_CURVE_FILE);
 
 
-	TCHAR szFilters[]= _T("Analyzer Files (*.ghb)|*.ghb|All Files (*.*)|*.*||");
+	//TCHAR szFilters[]= _T("Analyzer Files (*.ghb)|*.ghb|All Files (*.*)|*.*||");
+		CString szFilters;
+		szFilters.LoadStringW(IDS_FILTER_GHB);
+		szFilters+=L"|";
 	pc->EnableFileBrowseButton(_T("ghb"),szFilters);
 
 	//pc.ModifyStyleEx(NULL,WS_EX_CLIENTEDGE);

@@ -125,6 +125,8 @@ protected:
 	afx_msg void OnUpdateLanguageEnglish(CCmdUI *pCmdUI);
 	afx_msg LRESULT OnMessageChangeLang(WPARAM wParam, LPARAM lParam);
 
+public:
+	HANDLE m_hStop;
 };
 
 

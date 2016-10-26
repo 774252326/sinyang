@@ -26,7 +26,7 @@ WaitDlg::~WaitDlg()
 void WaitDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	DDX_Text(pDX, IDC_EDIT1, m_tips);
+	DDX_Text(pDX, IDS_EDIT_TIPS, m_tips);
 }
 
 
@@ -118,12 +118,10 @@ int WaitDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		winSize.cy,		
 		SWP_SHOWWINDOW);
 
-	CSize gap1(20,20);
+	CSize gap1(10,10);
 
 	int btnH=22;
-	int listH=250;
-
-	int btnW=winSize.cx-2*gap1.cx;
+	int btnW=100;
 
 	
 	CPoint pt(gap1);
@@ -132,11 +130,12 @@ int WaitDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	CButton *pButton;
 	CString str;
 
-	str=L"continue";
-	//str.LoadStringW(IDS_STRING_EXPORT_DLG);
-	this->SetWindowTextW(str);
+	str.LoadStringW(IDS_STRING_PAUSE);
 
-	//str.LoadStringW(IDS_EDIT_LABEL_SIZE);
+	this->SetWindowTextW(str);
+	this->ModifyStyle(WS_SYSMENU,NULL);
+
+
 
 	pEdit=new CEdit;
 	pEdit->CreateEx(
@@ -151,9 +150,9 @@ int WaitDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		|WS_DISABLED
 		|WS_CHILD
 		|WS_VISIBLE,
-		CRect(pt,CSize(btnW,btnH)),
+		CRect(pt,CSize(winSize.cx-2*gap1.cx,btnH)),
 		this,
-		IDC_EDIT1);
+		IDS_EDIT_TIPS);
 
 	CFont * pFont = new CFont; 
 	pFont->CreateFont(26, // nHeight
@@ -172,9 +171,10 @@ int WaitDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		_T("Arial")); // lpszFac 
 	pEdit->SetFont(pFont,TRUE);
 
-	pt.y+=btnH;
+	pt.y+=btnH+gap1.cy;
+	pt.x+=(winSize.cx-btnW)/2-gap1.cx;
 
-	//str.LoadStringW(IDS_STRING_EXPORT);
+	str.LoadStringW(IDS_STRING_RESUME);
 	pButton=new CButton;
 
 	if(pButton->Create(str, WS_CHILD|WS_VISIBLE|BS_PUSHBUTTON, CRect(pt,CSize(btnW,btnH)), this, IDOK)==FALSE){

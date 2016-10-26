@@ -312,7 +312,7 @@ public:
 					//tmp1=ComputeQListC(x,y,Ql,p2.scanrate,p2.lowelimit*.9,p2.highelimit*.9);
 
 					if(Ql.empty()){
-						//if(tmp1!=0){//第rawi次加液数据不足，即第rawi次加液未完成第一圈数据时，无法计算积分
+						//if(tmp1!=0){
 						d0.Ar.clear();
 						d0.UseIndex=-1;
 						dol.push_back(d0);
@@ -322,7 +322,7 @@ public:
 
 						outstep=step;
 
-						return 2;
+						return 2;//第rawi次加液数据不足，即第rawi次加液未完成第一圈数据时，无法计算积分
 					}
 
 					d0.Ar.assign(Ql.begin(),Ql.end());	

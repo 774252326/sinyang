@@ -149,18 +149,14 @@ afx_msg LRESULT COutputListA::OnMessageShowDol(WPARAM wParam, LPARAM lParam)
 {
 
 	CanalyzerDoc *ow=(CanalyzerDoc*)(this->GetParentFrame()->GetActiveDocument());
-
 	CSingleLock singleLock(&(ow->m_CritSection));
-	singleLock.Lock();
-	if (singleLock.IsLocked())  // Resource has been locked
+	if (singleLock.Lock())  // Resource has been locked
 	{
 		dol.assign(ow->da.dol.begin(),ow->da.dol.end());
 		// Now that we are finished, 
 		// unlock the resource for others.
 		singleLock.Unlock();
 	}
-
 	ShowDOL();
-
 	return 0;
 }

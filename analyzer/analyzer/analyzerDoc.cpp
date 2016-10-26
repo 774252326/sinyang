@@ -60,7 +60,6 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		if (singleLock.Lock())  // Resource has been locked
 		{
 			da.Clear();
-
 			// Now that we are finished, 
 			// unlock the resource for others.
 			singleLock.Unlock();
@@ -75,6 +74,8 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 			// unlock the resource for others.
 			singleLockSAP.Unlock();
 		}
+
+
 
 		return TRUE;
 	}
@@ -186,23 +187,11 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		POSITION pos = GetFirstViewPosition();
 		if(pos!=NULL){
 			CMainFrame *mf=(CMainFrame*)(GetNextView(pos)->GetParentFrame());
-
-			//	CSingleLock singleLock(&m_CritSection);
-			//	singleLock.Lock();
-			//	if (singleLock.IsLocked())  // Resource has been locked
-			//	{
-			//		mf->GetOutputWnd()->GetListCtrl()->dol.assign(da.dol.begin(),da.dol.end());
-			//		// Now that we are finished, 
-			//		// unlock the resource for others.
-			//		singleLock.Unlock();
-			//	}
-
 			::PostMessage(mf->GetOutputWnd()->GetListCtrl()->GetSafeHwnd(),
 				MESSAGE_SHOW_DOL,
 				NULL,
 				NULL);
 		}
-
 	}
 
 
@@ -267,6 +256,7 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 				if(mf->pst==pause){
 					da.ChangeSAP(ptd);
 					bChangeSAP=false;
+					::PostMessage(mf->GetSafeHwnd(),MESSAGE_CLOSE_SAP_SHEET,NULL,NULL);
 				}
 				else{
 					p3todo=ptd;
@@ -298,4 +288,16 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 
 		pp.work();
 
+	}
+
+	void CanalyzerDoc::ClearExpData(void)
+	{
+		CSingleLock singleLock(&m_CritSection);
+		if (singleLock.Lock())  // Resource has been locked
+		{
+			da.raw.Clear();			
+			// Now that we are finished, 
+			// unlock the resource for others.
+			singleLock.Unlock();
+		}
 	}

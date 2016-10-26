@@ -126,13 +126,13 @@ BOOL CanalyzerApp::InitInstance()
 	LoginDlg ld;
 	CString fp=L"ua";
 	ld.al.ReadFile(fp);
-	
+
 	if(ld.al.ual.empty()){
-		AfxMessageBox(L"read account list error");
+		AfxMessageBox(IDS_STRING_USERLIST_ERROR);
 		return FALSE;
 	}
 
-		if(ld.DoModal()==IDOK){
+	if(ld.DoModal()==IDOK){
 
 		sd->ShowWindow(SW_HIDE);
 		delete sd;
@@ -141,46 +141,46 @@ BOOL CanalyzerApp::InitInstance()
 
 
 
-	// Register the application's document templates.  Document templates
-	//  serve as the connection between documents, frame windows and views
-	CSingleDocTemplate* pDocTemplate;
-	pDocTemplate = new CSingleDocTemplate(
-		IDR_MAINFRAME,
-		RUNTIME_CLASS(CanalyzerDoc),
-		RUNTIME_CLASS(CMainFrame),       // main SDI frame window
-		RUNTIME_CLASS(CanalyzerView));
-	if (!pDocTemplate)
-		return FALSE;
-	AddDocTemplate(pDocTemplate);
+		// Register the application's document templates.  Document templates
+		//  serve as the connection between documents, frame windows and views
+		CSingleDocTemplate* pDocTemplate;
+		pDocTemplate = new CSingleDocTemplate(
+			IDR_MAINFRAME,
+			RUNTIME_CLASS(CanalyzerDoc),
+			RUNTIME_CLASS(CMainFrame),       // main SDI frame window
+			RUNTIME_CLASS(CanalyzerView));
+		if (!pDocTemplate)
+			return FALSE;
+		AddDocTemplate(pDocTemplate);
 
 
-	// Parse command line for standard shell commands, DDE, file open
-	CCommandLineInfo cmdInfo;
-	ParseCommandLine(cmdInfo);
+		// Parse command line for standard shell commands, DDE, file open
+		CCommandLineInfo cmdInfo;
+		ParseCommandLine(cmdInfo);
 
-	// Enable DDE Execute open
-	EnableShellOpen();
-	RegisterShellFileTypes(TRUE);
+		// Enable DDE Execute open
+		EnableShellOpen();
+		RegisterShellFileTypes(TRUE);
 
 
-	// Dispatch commands specified on the command line.  Will return FALSE if
-	// app was launched with /RegServer, /Register, /Unregserver or /Unregister.
-	if (!ProcessShellCommand(cmdInfo))
-		return FALSE;
+		// Dispatch commands specified on the command line.  Will return FALSE if
+		// app was launched with /RegServer, /Register, /Unregserver or /Unregister.
+		if (!ProcessShellCommand(cmdInfo))
+			return FALSE;
 
-	// The one and only window has been initialized, so show and update it
-	m_pMainWnd->ShowWindow(SW_SHOW);
-	m_pMainWnd->UpdateWindow();
-	// call DragAcceptFiles only if there's a suffix
-	//  In an SDI app, this should occur after ProcessShellCommand
-	// Enable drag/drop open
-	m_pMainWnd->DragAcceptFiles();
+		// The one and only window has been initialized, so show and update it
+		m_pMainWnd->ShowWindow(SW_SHOW);
+		m_pMainWnd->UpdateWindow();
+		// call DragAcceptFiles only if there's a suffix
+		//  In an SDI app, this should occur after ProcessShellCommand
+		// Enable drag/drop open
+		m_pMainWnd->DragAcceptFiles();
 
 		((CMainFrame*)m_pMainWnd)->userIndex=ld.usridx;
 		((CMainFrame*)m_pMainWnd)->al=ld.al;
 
-	return TRUE;
-		}
+		return TRUE;
+	}
 	else{
 		return FALSE;
 	}
@@ -204,13 +204,13 @@ class CAboutDlg : public CDialogEx
 public:
 	CAboutDlg();
 
-// Dialog Data
+	// Dialog Data
 	enum { IDD = IDD_ABOUTBOX };
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
-// Implementation
+	// Implementation
 protected:
 	DECLARE_MESSAGE_MAP()
 };
