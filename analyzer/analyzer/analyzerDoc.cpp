@@ -420,7 +420,9 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		fp+=TimeString()+L".pdf";
 
 		if(pdfd(fp,this)==0){
-			AfxMessageBox(L"report "+fp+L" is saved");
+			//AfxMessageBox(L"report "+fp+L" is saved");
+
+			ShellExecute(NULL, L"open", fp, NULL, NULL, SW_SHOW);
 		}
 		else{
 			AfxMessageBox(IDS_STRING_SAVE_ERROR);
