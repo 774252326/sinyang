@@ -67,11 +67,6 @@ public:
 
 	COutputWnd* GetOutputWnd(){return &m_wndOutput;}
 	afx_msg void OnViewFitwindow();
-	afx_msg void OnViewToolbar32787();
-	afx_msg void OnUpdateViewToolbar32787(CCmdUI *pCmdUI);
-//	bool tflg;
-	afx_msg void OnViewPro();
-	afx_msg void OnUpdateViewPro(CCmdUI *pCmdUI);
 	afx_msg void OnViewAnalysisProgress();
 	afx_msg void OnUpdateViewAnalysisProgress(CCmdUI *pCmdUI);
 	int timer1;
@@ -89,6 +84,9 @@ public:
 	std::vector<double> addVolume;
 	afx_msg void OnViewToolbara();
 	afx_msg void OnUpdateViewToolbara(CCmdUI *pCmdUI);
+	void plot1(const std::vector<double> & x, const std::vector<double> & y, const CString & xlabel, const CString & ylabel);
+	void plot2(const std::vector<double> & x, const std::vector<double> & y, const CString & xlabel, const CString & ylabel);
+	int timer2;
 };
 
 

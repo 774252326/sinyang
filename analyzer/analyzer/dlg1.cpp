@@ -1324,3 +1324,15 @@ void dlg1::smoothLine(void)
 	ps.back().showLine=true;
 	ps.back().smoothLine=1;
 }
+
+
+void dlg1::clear(void)
+{
+	xll.clear();
+	yll.clear();
+	ll.clear();
+	ps.clear();
+	xmin=xmax=ymin=ymax=0;
+	xlabel.Empty();
+	ylabel.Empty();
+}

@@ -81,12 +81,13 @@ private:
 	void DrawCurveB(CRect rect, CDC* pDC);
 
 	void GetPlotRect(CRect & plotRect);
+	void DrawSpline( CPoint * lpPoints, int np, CRect rect, CDC * pDC);
 
 public:
 	void showall(void);
-	void DrawSpline( CPoint * lpPoints, int np, CRect rect, CDC * pDC);
 	void plot2dfollow(const std::vector<double> & x, const std::vector<double> & y);
 	void smoothLine(void);
+	void clear(void);
 };
 
 

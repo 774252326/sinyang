@@ -6,6 +6,7 @@ pcctA::pcctA(void)
 	: StartLoad(false)
 	, xmin(0)
 	, xmax(0)
+	, spv(0)
 {
 }
 
@@ -93,7 +94,7 @@ double pcctA::intg(const double & xUpLim)
 
 	}
 
-	return ar;
+	return ar*spv;
 
 }
 

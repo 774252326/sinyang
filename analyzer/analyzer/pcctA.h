@@ -20,5 +20,7 @@ public:
 	double xmax;
 	double intg(const double & xUpLim);
 	void clear(void);
+	//second per voltage
+	double spv;
 };
 

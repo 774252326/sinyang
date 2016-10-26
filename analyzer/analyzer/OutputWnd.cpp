@@ -77,17 +77,11 @@ int COutputWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_listCtrlMonitor.SetExtendedStyle(dwStyle1); //设置扩展风格
 
 
-	std::vector<CString> strl(6);
-
-	strl[0]=_T("No.");
-	strl[1]=_T("Step Name");
-	strl[2]=_T("Add Vol.(mL)");
-	strl[3]=_T("Total Vol.(mL)");
-	strl[4]=_T("Charge Q(mC)");
-	strl[5]=_T("Use");
-
-	for(size_t i=0;i<strl.size();i++){
-		m_listCtrlMonitor.InsertColumn(i, strl[i], LVCFMT_LEFT, 0);
+	CString strTemp;
+	for(size_t i=IDS_STRING111;i<=IDS_STRING117;i++){
+				//ASSERT
+		(strTemp.LoadString(i));
+		m_listCtrlMonitor.InsertColumn(i, strTemp, LVCFMT_LEFT, 0);
 	}
 
 	if ( !m_listCtrlMonitor.GetSafeHwnd() )
@@ -269,7 +263,7 @@ BOOL COutputWnd::InsertListCtrl(int StepNo, LPCTSTR StepName, double ArValue, bo
 }
 
 
-BOOL COutputWnd::InsertListCtrl(int StepNo, int No2, int CycleNo, double addVol, double totalVol, double Q, bool Use)
+BOOL COutputWnd::InsertListCtrl(int StepNo, int No2, int CycleNo, double addVol, double totalVol, double Q, double nQ, bool Use)
 {
 
 	//insert the data from the list control head(记录改成从最上面插入)
@@ -280,37 +274,102 @@ BOOL COutputWnd::InsertListCtrl(int StepNo, int No2, int CycleNo, double addVol,
 	m_listCtrlMonitor.InsertItem(StepNo,str);
 
 	if(No2>0){		
-		ASSERT(strTemp.LoadString(IDS_STRING_STEPNAME1));
+		//ASSERT
+		(strTemp.LoadString(IDS_STRING_STEPNAME1));
 		StepName.Format(L"%s%d",strTemp,No2);
 	}
 	else{		
-		ASSERT(StepName.LoadString(IDS_STRING_STEPNAME0));		
+		//ASSERT
+		(StepName.LoadString(IDS_STRING_STEPNAME0));		
 	}
-	ASSERT(strTemp.LoadString(IDS_STRING_CYCLE));
+	//ASSERT
+	(strTemp.LoadString(IDS_STRING_CYCLE));
 	str.Format(L"%s(%s%d)",StepName,strTemp,CycleNo);
 	m_listCtrlMonitor.SetItemText(StepNo,1,str);
 
-	str.Format(L"%f",addVol);
-	m_listCtrlMonitor.SetItemText(StepNo,2,str);
+	if(addVol!=0){
+		str.Format(L"%g",addVol);
+		m_listCtrlMonitor.SetItemText(StepNo,2,str);
 
-	str.Format(L"%f",totalVol);
-	m_listCtrlMonitor.SetItemText(StepNo,3,str);
+		str.Format(L"%g",totalVol);
+		m_listCtrlMonitor.SetItemText(StepNo,3,str);
+	}
 
-	str.Format(L"%f",Q);
+	str.Format(L"%g",Q);
 	m_listCtrlMonitor.SetItemText(StepNo,4,str);
 
+
 	if(Use){
-		ASSERT(str.LoadString(IDS_STRING_YES));
+		str.Format(L"%g",nQ);
+		m_listCtrlMonitor.SetItemText(StepNo,5,str);
+		//ASSERT
+		(str.LoadString(IDS_STRING_YES));
 	}
 	else{
-		ASSERT(str.LoadString(IDS_STRING_NO));
+		//ASSERT
+		(str.LoadString(IDS_STRING_NO));
 	}
-	m_listCtrlMonitor.SetItemText(StepNo,5,str);
+	m_listCtrlMonitor.SetItemText(StepNo,6,str);
 
 	return TRUE;
 
 
 }
+
+
+BOOL COutputWnd::InsertListCtrl(int StepNo, int No2, int CycleNo, double Q, bool Use)
+{
+
+	//insert the data from the list control head(记录改成从最上面插入)
+	CString str, StepName;
+	CString strTemp;
+
+	str.Format(L"%d",StepNo);
+	m_listCtrlMonitor.InsertItem(StepNo,str);
+
+	if(No2>0){		
+		//ASSERT
+		(strTemp.LoadString(IDS_STRING_STEPNAME1));
+		StepName.Format(L"%s%d",strTemp,No2);
+	}
+	else{		
+		//ASSERT
+		(StepName.LoadString(IDS_STRING_STEPNAME0));		
+	}
+	//ASSERT
+	(strTemp.LoadString(IDS_STRING_CYCLE));
+	str.Format(L"%s(%s%d)",StepName,strTemp,CycleNo);
+	m_listCtrlMonitor.SetItemText(StepNo,1,str);
+
+	//str.Format(L"%g",addVol);
+	//m_listCtrlMonitor.SetItemText(StepNo,2,str);
+
+	//str.Format(L"%g",totalVol);
+	//m_listCtrlMonitor.SetItemText(StepNo,3,str);
+
+	str.Format(L"%g",Q);
+	m_listCtrlMonitor.SetItemText(StepNo,4,str);
+
+	//str.Format(L"%g",nQ);
+	//m_listCtrlMonitor.SetItemText(StepNo,5,str);
+
+	if(Use){
+		//ASSERT
+		(str.LoadString(IDS_STRING_YES));
+	}
+	else{
+		//ASSERT
+		(str.LoadString(IDS_STRING_NO));
+	}
+	m_listCtrlMonitor.SetItemText(StepNo,6,str);
+
+	return TRUE;
+
+
+}
+
+
+
 
 
 #pragma pack()
