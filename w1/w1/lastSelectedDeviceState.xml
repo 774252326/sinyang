@@ -1,0 +1,6 @@
+<device_state libver="3.2" filemajor="1" fileminor="0">
+    <device name="DMK 23GP031" base_name="DMK 23GP031" unique_name="DMK 23GP031 34214037">
+        <videoformat>Y800 (640x484) [Binning 4x]</videoformat>
+        <fps>50.</fps>
+    </device>
+</device_state>
