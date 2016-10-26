@@ -87,6 +87,7 @@ public:
 	size_t selectPIdx;
 	virtual void OnPrepareDC(CDC* pDC, CPrintInfo* pInfo = NULL);
 	int UpdateSpinButton(int np, bool bLast);
+	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 };
 
 #ifndef _DEBUG  // debug version in analyzerView.cpp

@@ -506,7 +506,7 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 
 
-	str.LoadStringW(IDS_STRING_INTERCEPT_VALUE);
+	str.LoadStringW(IDS_EDIT_INTERCEPT_VALUE);
 	pStatic=new CStatic;
 	pStatic->Create(
 		str,
@@ -535,7 +535,7 @@ int AnalysisParametersPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		this,
 		IDS_COMBO_CALIBRATION_TYPE);
 
-	for(int i=IDS_STRING_CALIBRATION_FACTOR;i<=IDS_STRING_CALIBRATION_CURVE_FILE;i++){
+	for(int i=IDS_EDIT_CALIBRATION_FACTOR;i<=IDS_EDIT_CALIBRATION_CURVE_FILE;i++){
 		str.LoadStringW(i);
 		pCombo2->AddString(str);
 	}

@@ -26,7 +26,7 @@ public:
 	COLORREF metricC;
 	int metricSize;
 
-	BYTE legendPos;
+	BYTE legendPos;//0=rightbottom,1=leftbottom,2=righttop,3=lefttop
 	COLORREF winbkC;	
 
 	virtual void Serialize(CArchive& ar);

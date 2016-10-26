@@ -11,6 +11,8 @@
 #include "analyzerDoc.h"
 #include "analyzerView.h"
 
+#include "LoginDlg.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -108,6 +110,11 @@ BOOL CanalyzerApp::InitInstance()
 	theApp.GetTooltipManager()->SetTooltipParams(AFX_TOOLTIP_TYPE_ALL,
 		RUNTIME_CLASS(CMFCToolTipCtrl), &ttParams);
 
+
+	LoginDlg ld;
+
+	if(ld.DoModal()==IDOK){
+
 	// Register the application's document templates.  Document templates
 	//  serve as the connection between documents, frame windows and views
 	CSingleDocTemplate* pDocTemplate;
@@ -142,7 +149,16 @@ BOOL CanalyzerApp::InitInstance()
 	//  In an SDI app, this should occur after ProcessShellCommand
 	// Enable drag/drop open
 	m_pMainWnd->DragAcceptFiles();
+
+	((CMainFrame*)m_pMainWnd)->au=ld.a;
+
 	return TRUE;
+
+	}
+	else{
+		return FALSE;
+	}
+
 }
 
 int CanalyzerApp::ExitInstance()

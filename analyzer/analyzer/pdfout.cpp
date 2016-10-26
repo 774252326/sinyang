@@ -356,12 +356,9 @@ int pdfout(pdflib::PDFlib &p, const std::vector<DataOutA> &dol){
 	int rowmax=dol.size()+2, colmax=7;
 	//PDFlib p;
 	double llx=50, lly=50, urx=550, ury=800;
-
+	int titlefont,fsize=10,titlesize=12;
 	CString str;
 
-	str.LoadStringW(IDS_OUTPUT_WND);
-
-	const std::wstring headertext = (LPCWSTR)str;
 	//L"Table header (centered across all columns)";
 	std::wstring result;
 	std::wostringstream optlist;
@@ -369,10 +366,6 @@ int pdfout(pdflib::PDFlib &p, const std::vector<DataOutA> &dol){
 	/* -------------------- Add table cells -------------------- */
 	row = 1; col = 1;
 	/* ---------- Row 1: table header (spans all columns) */
-
-
-
-
 
 	//const std::wstring imagefile = L"C:\\Users\\r8anw2x\\Documents\\Visual Studio 2010\\project0\\analyzer\\analyzer\\res\\sinyang.bmp";
 
@@ -396,6 +389,25 @@ int pdfout(pdflib::PDFlib &p, const std::vector<DataOutA> &dol){
 	row++;
 
 
+	str.LoadStringW(IDS_OUTPUT_WND);
+	const std::wstring headertext = (LPCWSTR)str;
+
+	titlefont = p.load_font(L"Times-Bold", L"winansi", L"");
+	if (titlefont == -1) {
+		std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
+		return(2);
+	}
+
+	optlist.str(L"");
+	optlist << L"fittextline={position={left center} font=" << titlefont
+		<< L" fontsize="<< titlesize << L"}"
+		<< L" colspan=" << colmax;
+
+	tbl = p.add_table_cell(tbl, col, row, L" ", optlist.str());
+	row++;
+
+	tbl = p.add_table_cell(tbl, col, row, headertext, optlist.str());
+	row++;
 
 
 	font = p.load_font(L"Helvetica", L"winansi", L"");
@@ -403,17 +415,6 @@ int pdfout(pdflib::PDFlib &p, const std::vector<DataOutA> &dol){
 		std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
 		return(2);
 	}
-
-	optlist.str(L"");
-	optlist << L"fittextline={position={left center} font=" << font
-		<< L" fontsize=10} colspan=" << colmax;
-
-	tbl = p.add_table_cell(tbl, col, row, L" ", optlist.str());
-	row++;
-
-	tbl = p.add_table_cell(tbl, col, row, headertext, optlist.str());
-
-	row++;
 
 	int rowstart=row;
 
@@ -429,7 +430,7 @@ int pdfout(pdflib::PDFlib &p, const std::vector<DataOutA> &dol){
 
 		optlist.str(L"");
 		optlist << L"colwidth=20% fittextline={font=" << font
-			<<  L" fontsize=10}";
+			<< L" fontsize="<< fsize << L"}";
 
 		tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
 	}
@@ -454,7 +455,7 @@ int pdfout(pdflib::PDFlib &p, const std::vector<DataOutA> &dol){
 
 			optlist.str(L"");
 			optlist << L"colwidth=15% fittextline={font=" << font
-				<<  L" fontsize=10}";
+				<< L" fontsize="<< fsize << L"}";
 
 			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
 		}
@@ -470,7 +471,7 @@ int pdfout(pdflib::PDFlib &p, const std::vector<DataOutA> &dol){
 
 			optlist.str(L"");
 			optlist << L"colwidth=15% fittextline={font=" << font
-				<<  L" fontsize=10}";
+				<< L" fontsize="<< fsize << L"}";
 
 			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
 
@@ -489,7 +490,7 @@ int pdfout(pdflib::PDFlib &p, const std::vector<DataOutA> &dol){
 
 			optlist.str(L"");
 			optlist << L"colwidth=15% fittextline={font=" << font
-				<<  L" fontsize=10}";
+				<< L" fontsize="<< fsize << L"}";
 
 			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
 		}
@@ -504,7 +505,7 @@ int pdfout(pdflib::PDFlib &p, const std::vector<DataOutA> &dol){
 			num << doa.TotalVolume();
 			optlist.str(L"");
 			optlist << L"colwidth=15% fittextline={font=" << font
-				<<  L" fontsize=10}";
+				<< L" fontsize="<< fsize << L"}";
 
 			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
 		}
@@ -523,7 +524,7 @@ int pdfout(pdflib::PDFlib &p, const std::vector<DataOutA> &dol){
 
 			optlist.str(L"");
 			optlist << L"colwidth=15% fittextline={font=" << font
-				<<  L" fontsize=10}";
+				<< L" fontsize="<< fsize << L"}";
 
 			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
 		}
@@ -546,7 +547,7 @@ int pdfout(pdflib::PDFlib &p, const std::vector<DataOutA> &dol){
 
 			optlist.str(L"");
 			optlist << L"colwidth=15% fittextline={font=" << font
-				<<  L" fontsize=10}";
+				<< L" fontsize="<< fsize << L"}";
 
 			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
 		}
@@ -567,7 +568,7 @@ int pdfout(pdflib::PDFlib &p, const std::vector<DataOutA> &dol){
 
 			optlist.str(L"");
 			optlist << L"colwidth=15% fittextline={font=" << font
-				<<  L" fontsize=10}";
+				<< L" fontsize="<< fsize << L"}";
 
 			//tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
 			tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)st, optlist.str());
@@ -642,967 +643,967 @@ int pdfout(pdflib::PDFlib &p, const std::vector<DataOutA> &dol){
 
 
 
-
-
-
-int pdfout1(pdflib::PDFlib &p, const SAPara &para){
-
-	//const std::wstring searchpath = L"../data";
-
-	int row, col, font, image, tf=-1, tbl=-1;
-	int rowmax=para.saplist.size()+2, colmax=7;
-	//PDFlib p;
-	double llx=50, lly=50, urx=550, ury=800;
-
-	CString str;
-
-	str.LoadStringW(IDS_STRING_ADDITION_SOLUTION_PARA);
-
-	const std::wstring headertext = (LPCWSTR)str;
-	//L"Table header (centered across all columns)";
-	std::wstring result;
-	std::wostringstream optlist;
-
-	/* -------------------- Add table cells -------------------- */
-
-	/* ---------- Row 1: table header (spans all columns) */
-	row = 1; col = 1;
-	font = p.load_font(L"Times-Bold", L"winansi", L"");
-	if (font == -1) {
-		std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
-		return(2);
-	}
-
-	optlist.str(L"");
-	optlist << L"fittextline={position=center font=" << font
-		<< L" fontsize=14} colspan=" << colmax;
-
-	tbl = p.add_table_cell(tbl, col, row, headertext, optlist.str());
-
-	row++;
-
-
-
-	for(col = 1;col<=7;col++)
-	{
-		std::wostringstream num;
-
-		//num << L"Col " << col << L"/Row " << row;
-
-		str.LoadStringW(IDS_STRING520+col-1);
-
-		num << (LPCWSTR)str;
-
-		optlist.str(L"");
-		optlist << L"colwidth=20% fittextline={font=" << font
-			<<  L" fontsize=10}";
-
-		tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
-	}
-
-
-	for (row++; row <= rowmax; row++) {
-
-		//for (col = 1; col <= colmax; col++) 
-
-		col = 1;
-		{
-			std::wostringstream num;
-
-			//num << L"Col " << col << L"/Row " << row;
-
-			num << row-3;
-
-			optlist.str(L"");
-			optlist << L"colwidth=20% fittextline={font=" << font
-				<<  L" fontsize=10}";
-
-			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
-		}
-
-
-		col = 2;
-		{
-			std::wostringstream num;
-
-			//num << L"Col " << col << L"/Row " << row;
-
-			str.LoadStringW(IDS_STRING_VOL_ONCE+para.saplist[row-3].addType);
-			num <<(LPCWSTR)(str);
-
-			optlist.str(L"");
-			optlist << L"colwidth=20% fittextline={font=" << font
-				<<  L" fontsize=10}";
-
-			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
-
-			//tbl = p.add_table_cell(tbl, col, row, , optlist.str());
-		}
-
-
-		col = 3;
-		{
-			std::wostringstream num;
-
-			//num << L"Col " << col << L"/Row " << row;
-			str.Format(L"%g",para.saplist[row-3].Sconc);
-			num << (LPCWSTR)(str);
-
-			optlist.str(L"");
-			optlist << L"colwidth=20% fittextline={font=" << font
-				<<  L" fontsize=10}";
-
-			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
-		}
-
-
-		col = 4;
-		{
-			std::wostringstream num;
-
-			//num << L"Col " << col << L"/Row " << row;
-			str.Format(L"%g",para.saplist[row-3].Aconc);
-			num << (LPCWSTR)(str);
-
-			optlist.str(L"");
-			optlist << L"colwidth=20% fittextline={font=" << font
-				<<  L" fontsize=10}";
-
-			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
-		}
-
-
-		col = 5;
-		{
-			std::wostringstream num;
-
-			//num << L"Col " << col << L"/Row " << row;
-			str.Format(L"%g",para.saplist[row-3].Lconc);
-			num << (LPCWSTR)(str);
-
-			optlist.str(L"");
-			optlist << L"colwidth=20% fittextline={font=" << font
-				<<  L" fontsize=10}";
-
-			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
-		}
-
-
-		col = 6;
-		{
-			std::wostringstream num;
-
-			//num << L"Col " << col << L"/Row " << row;
-			str.Format(L"%g",para.saplist[row-3].volconc);
-			num << (LPCWSTR)(str);
-
-			optlist.str(L"");
-			optlist << L"colwidth=20% fittextline={font=" << font
-				<<  L" fontsize=10}";
-
-			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
-		}
-
-		col = 7;
-		{
-			std::wostringstream num;
-
-			//num << L"Col " << col << L"/Row " << row;
-			str.Format(L"%g",para.saplist[row-3].endRatio);
-			num << (LPCWSTR)(str);
-
-			optlist.str(L"");
-			optlist << L"colwidth=20% fittextline={font=" << font
-				<<  L" fontsize=10}";
-
-			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
-		}
-
-
-	}
-
-	/* ---------- Place the table on one or more pages ---------- */
-
-	/*
-	* Loop until all of the table is placed; create new pages
-	* as long as more table instances need to be placed.
-	*/
-	do {
-		p.begin_page_ext(0, 0, L"width=a4.width height=a4.height");
-
-		/* Shade every other row; draw lines for all table cells.
-		* Add "showcells showborder" to visualize cell borders 
-		*/
-
-		/* Place the table instance */
-		result = p.fit_table(tbl, llx, lly, urx, ury, 
-			L"header=1 fill={{area=rowodd fillcolor={gray 0.9}}} " 
-			//L"stroke={{line=other}}"
-			);
-		if (result == L"_error") {
-			std::wcerr << L"Couldn't place table: " << p.get_errmsg() << std::endl;
-			return 2;
-		}
-
-		p.end_page_ext(L"");
-
-	} while (result == L"_boxfull");
-
-	/* Check the result; "_stop" means all is ok. */
-	if (result != L"_stop") {
-		if (result == L"_error") {
-			std::wcerr << L"Error when placing table: " << p.get_errmsg()
-				<< std::endl;
-			return 2;
-		}
-		else {
-			/* Any other return value is a user exit caused by
-			* the "return" option; this requires dedicated code to
-			* deal with.
-			*/
-			std::wcerr << L"User return found in Textflow" << std::endl;
-			return 2;
-		}
-	}
-	/* This will also delete Textflow handles used in the table */
-	p.delete_table(tbl, L"");
-
-	return 0;
-}
-
-
-int pdfout2(pdflib::PDFlib &p, const CVPara &para){
-
-	//const std::wstring searchpath = L"../data";
-
-	int row, col, font, image, tf=-1, tbl=-1;
-	int rowmax=3, colmax=6;
-	//PDFlib p;
-	double llx=50, lly=50, urx=550, ury=800;
-
-	CString str;
-
-	str.LoadStringW(IDS_STRING_CV_PARA);
-
-	const std::wstring headertext = (LPCWSTR)str;
-	//L"Table header (centered across all columns)";
-	std::wstring result;
-	std::wostringstream optlist;
-
-	/* -------------------- Add table cells -------------------- */
-
-	/* ---------- Row 1: table header (spans all columns) */
-	row = 1; col = 1;
-	font = p.load_font(L"Times-Bold", L"winansi", L"");
-	if (font == -1) {
-		std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
-		return(2);
-	}
-
-	optlist.str(L"");
-	optlist << L"fittextline={position=center font=" << font
-		<< L" fontsize=14} colspan=" << colmax;
-
-	tbl = p.add_table_cell(tbl, col, row, headertext, optlist.str());
-
-	row++;
-
-
-
-
-
-
-
-	col = 1;
-	{
-		std::wostringstream num;
-
-		//num << L"Col " << col << L"/Row " << row;
-
-		str.LoadStringW(IDS_STRING_LOW_E_LIMIT);
-		num <<(LPCWSTR)(str);
-
-		optlist.str(L"");
-		optlist << L"colwidth=20% fittextline={font=" << font
-			<<  L" fontsize=10}";
-
-		tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
-	}
-
-
-	col = 2;
-	{
-		std::wostringstream num;
-
-		//num << L"Col " << col << L"/Row " << row;
-
-		str.LoadStringW(IDS_STRING_HIGH_E_LIMIT);
-		num <<(LPCWSTR)(str);
-
-		optlist.str(L"");
-		optlist << L"colwidth=20% fittextline={font=" << font
-			<<  L" fontsize=10}";
-
-		tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
-
-		//tbl = p.add_table_cell(tbl, col, row, , optlist.str());
-	}
-
-
-	col = 3;
-	{
-		std::wostringstream num;
-
-		//num << L"Col " << col << L"/Row " << row;
-		str.LoadStringW(IDS_STRING_SCAN_RATE);
-		num <<(LPCWSTR)(str);
-
-		optlist.str(L"");
-		optlist << L"colwidth=20% fittextline={font=" << font
-			<<  L" fontsize=10}";
-
-		tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
-	}
-
-
-	col = 4;
-	{
-		std::wostringstream num;
-
-		//num << L"Col " << col << L"/Row " << row;
-		str.LoadStringW(para.combochoice==0?IDS_STRING_NO_OF_CYCLES:IDS_STRING_VARIATION_TOLERANCE);
-		num <<(LPCWSTR)(str);
-
-		optlist.str(L"");
-		optlist << L"colwidth=20% fittextline={font=" << font
-			<<  L" fontsize=10}";
-
-		tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
-	}
-
-
-	col = 5;
-	{
-		std::wostringstream num;
-
-		//num << L"Col " << col << L"/Row " << row;
-		str.LoadStringW(IDS_STRING_ROTATION_RATE);
-		num <<(LPCWSTR)(str);
-
-		optlist.str(L"");
-		optlist << L"colwidth=20% fittextline={font=" << font
-			<<  L" fontsize=10}";
-
-		tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
-	}
-
-
-	col = 6;
-	{
-		std::wostringstream num;
-
-		//num << L"Col " << col << L"/Row " << row;
-		str.LoadStringW(IDS_STRING_END_INTEGRATION_E);
-		num <<(LPCWSTR)(str);
-
-		optlist.str(L"");
-		optlist << L"colwidth=20% fittextline={font=" << font
-			<<  L" fontsize=10}";
-
-		tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
-	}
-
-
-
-
-	row++;
-	col = 1;
-	{
-		std::wostringstream num;
-
-		//num << L"Col " << col << L"/Row " << row;
-
-
-		num <<para.lowelimit;
-
-		optlist.str(L"");
-		optlist << L"colwidth=20% fittextline={font=" << font
-			<<  L" fontsize=10}";
-
-		tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
-	}
-
-
-	col = 2;
-	{
-		std::wostringstream num;
-
-		//num << L"Col " << col << L"/Row " << row;
-
-		//str.LoadStringW(IDS_STRING_HIGH_E_LIMIT);
-		num <<para.highelimit;
-
-		optlist.str(L"");
-		optlist << L"colwidth=20% fittextline={font=" << font
-			<<  L" fontsize=10}";
-
-		tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
-
-		//tbl = p.add_table_cell(tbl, col, row, , optlist.str());
-	}
-
-
-	col = 3;
-	{
-		std::wostringstream num;
-
-		//num << L"Col " << col << L"/Row " << row;
-		//str.LoadStringW(IDS_STRING_SCAN_RATE);
-		num <<para.scanrate;
-
-		optlist.str(L"");
-		optlist << L"colwidth=20% fittextline={font=" << font
-			<<  L" fontsize=10}";
-
-		tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
-	}
-
-
-	col = 4;
-	{
-		std::wostringstream num;
-
-		//num << L"Col " << col << L"/Row " << row;
-		if(para.combochoice==0)
-			num<<para.noofcycles;
-		else
-			num<<para.variationtolerance;
-
-		optlist.str(L"");
-		optlist << L"colwidth=20% fittextline={font=" << font
-			<<  L" fontsize=10}";
-
-		tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
-	}
-
-
-	col = 5;
-	{
-		std::wostringstream num;
-
-		//num << L"Col " << col << L"/Row " << row;
-		//str.LoadStringW(IDS_STRING_ROTATION_RATE);
-		num <<para.rotationrate;
-
-		optlist.str(L"");
-		optlist << L"colwidth=20% fittextline={font=" << font
-			<<  L" fontsize=10}";
-
-		tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
-	}
-
-
-	col = 6;
-	{
-		std::wostringstream num;
-
-		//num << L"Col " << col << L"/Row " << row;
-		//str.LoadStringW(IDS_STRING_END_INTEGRATION_E);
-		num <<para.endintegratione;
-
-		optlist.str(L"");
-		optlist << L"colwidth=20% fittextline={font=" << font
-			<<  L" fontsize=10}";
-
-		tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
-	}
-
-
-	/* ---------- Place the table on one or more pages ---------- */
-
-	/*
-	* Loop until all of the table is placed; create new pages
-	* as long as more table instances need to be placed.
-	*/
-	do {
-		p.begin_page_ext(0, 0, L"width=a4.width height=a4.height");
-
-		/* Shade every other row; draw lines for all table cells.
-		* Add "showcells showborder" to visualize cell borders 
-		*/
-
-		/* Place the table instance */
-		result = p.fit_table(tbl, llx, lly, urx, ury, 
-			L"header=1 fill={{area=rowodd fillcolor={gray 0.9}}} " 
-			L"stroke={{line=other}}");
-		if (result == L"_error") {
-			std::wcerr << L"Couldn't place table: " << p.get_errmsg() << std::endl;
-			return 2;
-		}
-
-		p.end_page_ext(L"");
-
-	} while (result == L"_boxfull");
-
-	/* Check the result; "_stop" means all is ok. */
-	if (result != L"_stop") {
-		if (result == L"_error") {
-			std::wcerr << L"Error when placing table: " << p.get_errmsg()
-				<< std::endl;
-			return 2;
-		}
-		else {
-			/* Any other return value is a user exit caused by
-			* the "return" option; this requires dedicated code to
-			* deal with.
-			*/
-			std::wcerr << L"User return found in Textflow" << std::endl;
-			return 2;
-		}
-	}
-	/* This will also delete Textflow handles used in the table */
-	p.delete_table(tbl, L"");
-
-	return 0;
-}
-
-
-
-int pdfout3(pdflib::PDFlib &p, const ANPara &para, const CString &resultStr){
-
-	int font;
-	font = p.load_font(L"Helvetica", L"winansi", L"");
-	if (font == -1) {
-		std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
-		return 2;
-	}
-
-	/* Start page 1 */
-	p.begin_page_ext(0, 0, L"width=a4.width height=a4.height");
-	p.setfont(font, 12);
-
-	CString str;
-
-	int hi=800;
-
-	str.LoadStringW(IDS_STRING_AT1+para.analysistype);
-	p.fit_textline((LPCWSTR)str, 20, hi, L"");
-
-	hi-=12;
-	str.LoadStringW(IDS_STRING_EVALUATION_RATIO);
-	{
-		CString str1;			
-		str1.Format(L"=%g",para.evaluationratio);
-		str=str+str1;
-	}
-	p.fit_textline((LPCWSTR)str, 20, hi, L"");
-	hi-=12;
-
-	switch(para.analysistype){
-	case 2:
-	case 6:
-	case 8:
-	case 10:
-		str.LoadStringW(IDS_STRING_CALIBRATION_CURVE_FILE);
-		p.fit_textline((LPCWSTR)str, 20, hi, L"");
-		hi-=12;
-		p.fit_textline((LPCWSTR)para.calibrationfilepath, 20, hi, L"");
-		hi-=12;
-		break;
-	case 4:
-		str.LoadStringW(IDS_STRING_INTERCEPT_VALUE);
-		{
-			CString str1;			
-			str1.Format(L"=%g",para.interceptvalue);
-			str=str+str1;
-		}
-		p.fit_textline((LPCWSTR)str, 20, hi, L"");
-		hi-=12;
-		break;
-	default:
-		break;
-	}
-	p.fit_textline((LPCWSTR)resultStr, 20, hi, L"");
-
-
-	p.end_page_ext(L"");
-
-	return 0;
-}
-
-
-
-int pdfout4(pdflib::PDFlib &p, const ANPara &para, const std::vector<DataOutA> &dol){
-
-
-	int fsize=12;
-
-
-	int font;
-	font = p.load_font(L"Helvetica", L"winansi", L"");
-	if (font == -1) {
-		std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
-		return 2;
-	}
-
-	/* Start page 1 */
-	p.begin_page_ext(0, 0, L"width=a4.width height=a4.height");
-	p.setfont(font, fsize);
-
-	CString str;
-
-	int hi=800;
-	int hi2=50;
-	int wi=50;
-	int wi2=175;
-	int wi3=300;
-	int wi4=425;
-	int wi5=550;
-
-	str.LoadStringW(IDS_STRING_REPORT);
-	p.fit_textline((LPCWSTR)str, wi3-30, hi, L"");
-	hi-=fsize;
-
-
-	str.LoadStringW(IDS_STRING_GENERAL_INFO);
-	p.fit_textline((LPCWSTR)str, wi, hi, L"");
-	hi-=fsize;
-
-	str.LoadStringW(IDS_STRING_SOFTWARE);
-	p.fit_textline((LPCWSTR)str, wi, hi, L"");
-
-	str.LoadStringW(AFX_IDS_APP_TITLE);
-	p.fit_textline((LPCWSTR)str, wi2, hi, L"");
-
-	str.LoadStringW(IDS_STRING_TIME);
-	p.fit_textline((LPCWSTR)str, wi3, hi, L"");
-
-	str=TimeString(true);
-	p.fit_textline((LPCWSTR)str, wi4, hi, L"");
-
-	hi-=fsize;
-	hi-=fsize;
-
-	str.LoadStringW(IDS_STRING_ANALYSIS_PARA);
-	p.fit_textline((LPCWSTR)str, wi, hi, L"");
-	hi-=fsize;
-
-	str.LoadStringW(IDS_STRING_ANALYSIS_TYPE);
-	p.fit_textline((LPCWSTR)str, wi, hi, L"");
-
-	str.LoadStringW(IDS_STRING_AT1+para.analysistype);
-	p.fit_textline((LPCWSTR)str, wi2, hi, L"");
-	hi-=fsize;
-
-	str.LoadStringW(IDS_STRING_EVALUATION_RATIO);
-	p.fit_textline((LPCWSTR)str, wi, hi, L"");
-
-	str.Format(L"%g",para.evaluationratio);
-	p.fit_textline((LPCWSTR)str, wi2, hi, L"");
-	hi-=fsize;
-
-	switch(para.analysistype){
-	case 2:
-		{
-			switch(para.calibrationfactortype){
-			case 0:
-				{
-					str.LoadStringW(IDS_STRING_CALIBRATION_FACTOR);
-					p.fit_textline((LPCWSTR)str, wi, hi, L"");
-
-					str.Format(L"%g",para.calibrationfactor);
-					p.fit_textline((LPCWSTR)str, wi, hi, L"");
-					hi-=fsize;
-
-				}
-				break;
-			case 1:
-				{
-					str.LoadStringW(IDS_STRING_CALIBRATION_CURVE_FILE);
-					p.fit_textline((LPCWSTR)str, wi, hi, L"");
-					//hi-=fsize;
-					p.fit_textline((LPCWSTR)para.calibrationfilepath, wi2, hi, L"");
-					hi-=fsize;
-				}
-				break;
-			default:
-				break;
-			}
-			break;
-		}
-
-	case 6:
-	case 8:
-	case 10:
-		str.LoadStringW(IDS_STRING_CALIBRATION_CURVE_FILE);
-		p.fit_textline((LPCWSTR)str, wi, hi, L"");
-		//hi-=fsize;
-		p.fit_textline((LPCWSTR)para.calibrationfilepath, wi2, hi, L"");
-		hi-=fsize;
-		break;
-	case 4:
-		str.LoadStringW(IDS_STRING_INTERCEPT_VALUE);
-		p.fit_textline((LPCWSTR)str, wi, hi, L"");
-
-		str.Format(L"%g",para.interceptvalue);
-		p.fit_textline((LPCWSTR)str, wi2, hi, L"");
-		hi-=fsize;
-
-		break;
-	default:
-		break;
-	}
-	//p.fit_textline((LPCWSTR)resultStr, 20, hi, L"");
-
-
-	hi-=fsize;
-
-	str.LoadStringW(IDS_STRING_RESULT);
-	p.fit_textline((LPCWSTR)str, wi, hi, L"");
-	hi-=fsize;
-
-	std::vector<CString> res;
-	bool flg=Compute(dol, para, res);
-
-	for(size_t i=0;i<res.size();i+=2){
-		p.fit_textline((LPCWSTR)(res[i]), wi, hi, L"");
-		p.fit_textline((LPCWSTR)(res[i+1]), wi2, hi, L"");
-		hi-=fsize;
-	}
-
-
-
-	p.end_page_ext(L"");
-
-	return 0;
-}
-
-
-
-
-int pdfout5(pdflib::PDFlib &p, const ANPara &para, const std::vector<DataOutA> &dol, const CVPara &p2){
-
-
-	int fsize=16;
-
-
-	int font;
-	font = p.load_font(L"Helvetica", L"winansi", L"");
-	if (font == -1) {
-		std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
-		return 2;
-	}
-
-	/* Start page 1 */
-	p.begin_page_ext(0, 0, L"width=a4.width height=a4.height");
-	p.setfont(font, fsize);
-
-	CString str;
-
-	int hi=800;
-	int hi2=50;
-	int wi=50;
-	int wi1=60;
-
-	int wi2=175;
-	int wi3=300;
-	int wi4=425;
-	int wi5=550;
-
-	str.LoadStringW(IDS_STRING_REPORT);
-	p.fit_textline((LPCWSTR)str, wi3-30, hi, L"");
-	hi-=fsize;
-	hi-=fsize;
-
-
-	fsize=10;
-	p.setfont(font, fsize);
-
-
-	str.LoadStringW(IDS_STRING_GENERAL_INFO);
-	p.fit_textline((LPCWSTR)str, wi, hi, L"");
-	hi-=fsize;
-	hi-=fsize;
-
-	str.LoadStringW(IDS_STRING_SOFTWARE);
-	p.fit_textline((LPCWSTR)str, wi1, hi, L"");
-
-	str.LoadStringW(AFX_IDS_APP_TITLE);
-	p.fit_textline((LPCWSTR)str, wi2, hi, L"");
-
-	str.LoadStringW(IDS_STRING_TIME);
-	p.fit_textline((LPCWSTR)str, wi3, hi, L"");
-
-	str=TimeString(true);
-	p.fit_textline((LPCWSTR)str, wi4, hi, L"");
-
-	hi-=fsize;
-	hi-=fsize;
-
-	//p.setfont(font, 8);
-
-	str.LoadStringW(IDS_STRING_ANALYSIS_PARA);
-	p.fit_textline((LPCWSTR)str, wi, hi, L"");
-	hi-=fsize;
-	hi-=fsize;
-
-	str.LoadStringW(IDS_STRING_ANALYSIS_TYPE);
-	p.fit_textline((LPCWSTR)str, wi1, hi, L"");
-
-	str.LoadStringW(IDS_STRING_AT1+para.analysistype);
-	p.fit_textline((LPCWSTR)str, wi2, hi, L"");
-	hi-=fsize;
-
-	str.LoadStringW(IDS_STRING_EVALUATION_RATIO);
-	p.fit_textline((LPCWSTR)str, wi1, hi, L"");
-
-	str.Format(L"%g",para.evaluationratio);
-	p.fit_textline((LPCWSTR)str, wi2, hi, L"");
-	hi-=fsize;
-
-	switch(para.analysistype){
-	case 2:
-		{
-			switch(para.calibrationfactortype){
-			case 0:
-				{
-					str.LoadStringW(IDS_STRING_CALIBRATION_FACTOR);
-					p.fit_textline((LPCWSTR)str, wi1, hi, L"");
-
-					str.Format(L"%g",para.calibrationfactor);
-					p.fit_textline((LPCWSTR)str, wi2, hi, L"");
-					hi-=fsize;
-
-				}
-				break;
-			case 1:
-				{
-					str.LoadStringW(IDS_STRING_CALIBRATION_CURVE_FILE);
-					p.fit_textline((LPCWSTR)str, wi1, hi, L"");
-					//hi-=fsize;
-					p.fit_textline((LPCWSTR)para.calibrationfilepath, wi2, hi, L"");
-					hi-=fsize;
-				}
-				break;
-			default:
-				break;
-			}
-			break;
-		}
-
-	case 6:
-	case 8:
-	case 10:
-		str.LoadStringW(IDS_STRING_CALIBRATION_CURVE_FILE);
-		p.fit_textline((LPCWSTR)str, wi1, hi, L"");
-		//hi-=fsize;
-		p.fit_textline((LPCWSTR)para.calibrationfilepath, wi2, hi, L"");
-		hi-=fsize;
-		break;
-	case 4:
-		str.LoadStringW(IDS_STRING_INTERCEPT_VALUE);
-		p.fit_textline((LPCWSTR)str, wi1, hi, L"");
-
-		str.Format(L"%g",para.interceptvalue);
-		p.fit_textline((LPCWSTR)str, wi2, hi, L"");
-		hi-=fsize;
-
-		break;
-	default:
-		break;
-	}
-	//p.fit_textline((LPCWSTR)resultStr, 20, hi, L"");
-
-
-	hi-=fsize;
-
-
-	//p.setfont(font, 18);
-	str.LoadStringW(IDS_STRING_RESULT);
-	p.fit_textline((LPCWSTR)str, wi, hi, L"");
-	hi-=fsize;
-	hi-=fsize;
-
-	std::vector<CString> res;
-	bool flg=Compute(dol, para, res);
-
-	for(size_t i=0;i<res.size();i+=4){
-		p.fit_textline((LPCWSTR)(res[i]), wi1, hi, L"");
-		p.fit_textline((LPCWSTR)(res[i+1]), wi2, hi, L"");
-		if(i+3<res.size()){
-			p.fit_textline((LPCWSTR)(res[i+2]), wi3, hi, L"");
-			p.fit_textline((LPCWSTR)(res[i+3]), wi4, hi, L"");
-		}
-		hi-=fsize;
-	}
-
-	hi-=fsize;
-
-	str.LoadStringW(IDS_STRING_CV_PARA);
-	p.fit_textline((LPCWSTR)str, wi, hi, L"");
-	hi-=fsize;
-	hi-=fsize;
-
-	str.LoadStringW(IDS_STRING_LOW_E_LIMIT);
-	p.fit_textline((LPCWSTR)str, wi1, hi, L"");
-
-	str.Format(L"%g",p2.lowelimit);
-	p.fit_textline((LPCWSTR)str, wi2, hi, L"");
-
-	str.LoadStringW(IDS_STRING_HIGH_E_LIMIT);
-	p.fit_textline((LPCWSTR)str, wi3, hi, L"");
-
-	str.Format(L"%g",p2.highelimit);
-	p.fit_textline((LPCWSTR)str, wi4, hi, L"");
-
-	hi-=fsize;
-
-	str.LoadStringW(IDS_STRING_SCAN_RATE);
-	p.fit_textline((LPCWSTR)str, wi1, hi, L"");
-
-	str.Format(L"%g",p2.scanrate);
-	p.fit_textline((LPCWSTR)str, wi2, hi, L"");
-
-	str.LoadStringW(IDS_STRING_NO_OF_CYCLES);
-	p.fit_textline((LPCWSTR)str, wi3, hi, L"");
-
-	str.Format(L"%d",p2.noofcycles);
-	p.fit_textline((LPCWSTR)str, wi4, hi, L"");
-
-	hi-=fsize;
-
-	str.LoadStringW(IDS_STRING_ROTATION_RATE);
-	p.fit_textline((LPCWSTR)str, wi1, hi, L"");
-
-	str.Format(L"%g",p2.rotationrate);
-	p.fit_textline((LPCWSTR)str, wi2, hi, L"");
-
-	str.LoadStringW(IDS_STRING_END_INTEGRATION_E);
-	p.fit_textline((LPCWSTR)str, wi3, hi, L"");
-
-	str.Format(L"%g",p2.endintegratione);
-	p.fit_textline((LPCWSTR)str, wi4, hi, L"");
-
-	hi-=fsize;
-
-
-
-	p.end_page_ext(L"");
-
-	return 0;
-}
-
-
-void AddGI(pdflib::PDFlib &p, int & tbl, int & row, int & col, int colmax, int font)
+//
+//
+//
+//int pdfout1(pdflib::PDFlib &p, const SAPara &para){
+//
+//	//const std::wstring searchpath = L"../data";
+//
+//	int row, col, font, image, tf=-1, tbl=-1;
+//	int rowmax=para.saplist.size()+2, colmax=7;
+//	//PDFlib p;
+//	double llx=50, lly=50, urx=550, ury=800;
+//
+//	CString str;
+//
+//	str.LoadStringW(IDS_STRING_ADDITION_SOLUTION_PARA);
+//
+//	const std::wstring headertext = (LPCWSTR)str;
+//	//L"Table header (centered across all columns)";
+//	std::wstring result;
+//	std::wostringstream optlist;
+//
+//	/* -------------------- Add table cells -------------------- */
+//
+//	/* ---------- Row 1: table header (spans all columns) */
+//	row = 1; col = 1;
+//	font = p.load_font(L"Times-Bold", L"winansi", L"");
+//	if (font == -1) {
+//		std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
+//		return(2);
+//	}
+//
+//	optlist.str(L"");
+//	optlist << L"fittextline={position=center font=" << font
+//		<< L" fontsize=14} colspan=" << colmax;
+//
+//	tbl = p.add_table_cell(tbl, col, row, headertext, optlist.str());
+//
+//	row++;
+//
+//
+//
+//	for(col = 1;col<=7;col++)
+//	{
+//		std::wostringstream num;
+//
+//		//num << L"Col " << col << L"/Row " << row;
+//
+//		str.LoadStringW(IDS_STRING520+col-1);
+//
+//		num << (LPCWSTR)str;
+//
+//		optlist.str(L"");
+//		optlist << L"colwidth=20% fittextline={font=" << font
+//			<<  L" fontsize=10}";
+//
+//		tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
+//	}
+//
+//
+//	for (row++; row <= rowmax; row++) {
+//
+//		//for (col = 1; col <= colmax; col++) 
+//
+//		col = 1;
+//		{
+//			std::wostringstream num;
+//
+//			//num << L"Col " << col << L"/Row " << row;
+//
+//			num << row-3;
+//
+//			optlist.str(L"");
+//			optlist << L"colwidth=20% fittextline={font=" << font
+//				<<  L" fontsize=10}";
+//
+//			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
+//		}
+//
+//
+//		col = 2;
+//		{
+//			std::wostringstream num;
+//
+//			//num << L"Col " << col << L"/Row " << row;
+//
+//			str.LoadStringW(IDS_STRING_VOL_ONCE+para.saplist[row-3].addType);
+//			num <<(LPCWSTR)(str);
+//
+//			optlist.str(L"");
+//			optlist << L"colwidth=20% fittextline={font=" << font
+//				<<  L" fontsize=10}";
+//
+//			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
+//
+//			//tbl = p.add_table_cell(tbl, col, row, , optlist.str());
+//		}
+//
+//
+//		col = 3;
+//		{
+//			std::wostringstream num;
+//
+//			//num << L"Col " << col << L"/Row " << row;
+//			str.Format(L"%g",para.saplist[row-3].Sconc);
+//			num << (LPCWSTR)(str);
+//
+//			optlist.str(L"");
+//			optlist << L"colwidth=20% fittextline={font=" << font
+//				<<  L" fontsize=10}";
+//
+//			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
+//		}
+//
+//
+//		col = 4;
+//		{
+//			std::wostringstream num;
+//
+//			//num << L"Col " << col << L"/Row " << row;
+//			str.Format(L"%g",para.saplist[row-3].Aconc);
+//			num << (LPCWSTR)(str);
+//
+//			optlist.str(L"");
+//			optlist << L"colwidth=20% fittextline={font=" << font
+//				<<  L" fontsize=10}";
+//
+//			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
+//		}
+//
+//
+//		col = 5;
+//		{
+//			std::wostringstream num;
+//
+//			//num << L"Col " << col << L"/Row " << row;
+//			str.Format(L"%g",para.saplist[row-3].Lconc);
+//			num << (LPCWSTR)(str);
+//
+//			optlist.str(L"");
+//			optlist << L"colwidth=20% fittextline={font=" << font
+//				<<  L" fontsize=10}";
+//
+//			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
+//		}
+//
+//
+//		col = 6;
+//		{
+//			std::wostringstream num;
+//
+//			//num << L"Col " << col << L"/Row " << row;
+//			str.Format(L"%g",para.saplist[row-3].volconc);
+//			num << (LPCWSTR)(str);
+//
+//			optlist.str(L"");
+//			optlist << L"colwidth=20% fittextline={font=" << font
+//				<<  L" fontsize=10}";
+//
+//			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
+//		}
+//
+//		col = 7;
+//		{
+//			std::wostringstream num;
+//
+//			//num << L"Col " << col << L"/Row " << row;
+//			str.Format(L"%g",para.saplist[row-3].endRatio);
+//			num << (LPCWSTR)(str);
+//
+//			optlist.str(L"");
+//			optlist << L"colwidth=20% fittextline={font=" << font
+//				<<  L" fontsize=10}";
+//
+//			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
+//		}
+//
+//
+//	}
+//
+//	/* ---------- Place the table on one or more pages ---------- */
+//
+//	/*
+//	* Loop until all of the table is placed; create new pages
+//	* as long as more table instances need to be placed.
+//	*/
+//	do {
+//		p.begin_page_ext(0, 0, L"width=a4.width height=a4.height");
+//
+//		/* Shade every other row; draw lines for all table cells.
+//		* Add "showcells showborder" to visualize cell borders 
+//		*/
+//
+//		/* Place the table instance */
+//		result = p.fit_table(tbl, llx, lly, urx, ury, 
+//			L"header=1 fill={{area=rowodd fillcolor={gray 0.9}}} " 
+//			//L"stroke={{line=other}}"
+//			);
+//		if (result == L"_error") {
+//			std::wcerr << L"Couldn't place table: " << p.get_errmsg() << std::endl;
+//			return 2;
+//		}
+//
+//		p.end_page_ext(L"");
+//
+//	} while (result == L"_boxfull");
+//
+//	/* Check the result; "_stop" means all is ok. */
+//	if (result != L"_stop") {
+//		if (result == L"_error") {
+//			std::wcerr << L"Error when placing table: " << p.get_errmsg()
+//				<< std::endl;
+//			return 2;
+//		}
+//		else {
+//			/* Any other return value is a user exit caused by
+//			* the "return" option; this requires dedicated code to
+//			* deal with.
+//			*/
+//			std::wcerr << L"User return found in Textflow" << std::endl;
+//			return 2;
+//		}
+//	}
+//	/* This will also delete Textflow handles used in the table */
+//	p.delete_table(tbl, L"");
+//
+//	return 0;
+//}
+//
+//
+//int pdfout2(pdflib::PDFlib &p, const CVPara &para){
+//
+//	//const std::wstring searchpath = L"../data";
+//
+//	int row, col, font, image, tf=-1, tbl=-1;
+//	int rowmax=3, colmax=6;
+//	//PDFlib p;
+//	double llx=50, lly=50, urx=550, ury=800;
+//
+//	CString str;
+//
+//	str.LoadStringW(IDS_STRING_CV_PARA);
+//
+//	const std::wstring headertext = (LPCWSTR)str;
+//	//L"Table header (centered across all columns)";
+//	std::wstring result;
+//	std::wostringstream optlist;
+//
+//	/* -------------------- Add table cells -------------------- */
+//
+//	/* ---------- Row 1: table header (spans all columns) */
+//	row = 1; col = 1;
+//	font = p.load_font(L"Times-Bold", L"winansi", L"");
+//	if (font == -1) {
+//		std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
+//		return(2);
+//	}
+//
+//	optlist.str(L"");
+//	optlist << L"fittextline={position=center font=" << font
+//		<< L" fontsize=14} colspan=" << colmax;
+//
+//	tbl = p.add_table_cell(tbl, col, row, headertext, optlist.str());
+//
+//	row++;
+//
+//
+//
+//
+//
+//
+//
+//	col = 1;
+//	{
+//		std::wostringstream num;
+//
+//		//num << L"Col " << col << L"/Row " << row;
+//
+//		str.LoadStringW(IDS_STRING_LOW_E_LIMIT);
+//		num <<(LPCWSTR)(str);
+//
+//		optlist.str(L"");
+//		optlist << L"colwidth=20% fittextline={font=" << font
+//			<<  L" fontsize=10}";
+//
+//		tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
+//	}
+//
+//
+//	col = 2;
+//	{
+//		std::wostringstream num;
+//
+//		//num << L"Col " << col << L"/Row " << row;
+//
+//		str.LoadStringW(IDS_STRING_HIGH_E_LIMIT);
+//		num <<(LPCWSTR)(str);
+//
+//		optlist.str(L"");
+//		optlist << L"colwidth=20% fittextline={font=" << font
+//			<<  L" fontsize=10}";
+//
+//		tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
+//
+//		//tbl = p.add_table_cell(tbl, col, row, , optlist.str());
+//	}
+//
+//
+//	col = 3;
+//	{
+//		std::wostringstream num;
+//
+//		//num << L"Col " << col << L"/Row " << row;
+//		str.LoadStringW(IDS_STRING_SCAN_RATE);
+//		num <<(LPCWSTR)(str);
+//
+//		optlist.str(L"");
+//		optlist << L"colwidth=20% fittextline={font=" << font
+//			<<  L" fontsize=10}";
+//
+//		tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
+//	}
+//
+//
+//	col = 4;
+//	{
+//		std::wostringstream num;
+//
+//		//num << L"Col " << col << L"/Row " << row;
+//		str.LoadStringW(para.combochoice==0?IDS_STRING_NO_OF_CYCLES:IDS_STRING_VARIATION_TOLERANCE);
+//		num <<(LPCWSTR)(str);
+//
+//		optlist.str(L"");
+//		optlist << L"colwidth=20% fittextline={font=" << font
+//			<<  L" fontsize=10}";
+//
+//		tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
+//	}
+//
+//
+//	col = 5;
+//	{
+//		std::wostringstream num;
+//
+//		//num << L"Col " << col << L"/Row " << row;
+//		str.LoadStringW(IDS_STRING_ROTATION_RATE);
+//		num <<(LPCWSTR)(str);
+//
+//		optlist.str(L"");
+//		optlist << L"colwidth=20% fittextline={font=" << font
+//			<<  L" fontsize=10}";
+//
+//		tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
+//	}
+//
+//
+//	col = 6;
+//	{
+//		std::wostringstream num;
+//
+//		//num << L"Col " << col << L"/Row " << row;
+//		str.LoadStringW(IDS_STRING_END_INTEGRATION_E);
+//		num <<(LPCWSTR)(str);
+//
+//		optlist.str(L"");
+//		optlist << L"colwidth=20% fittextline={font=" << font
+//			<<  L" fontsize=10}";
+//
+//		tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
+//	}
+//
+//
+//
+//
+//	row++;
+//	col = 1;
+//	{
+//		std::wostringstream num;
+//
+//		//num << L"Col " << col << L"/Row " << row;
+//
+//
+//		num <<para.lowelimit;
+//
+//		optlist.str(L"");
+//		optlist << L"colwidth=20% fittextline={font=" << font
+//			<<  L" fontsize=10}";
+//
+//		tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
+//	}
+//
+//
+//	col = 2;
+//	{
+//		std::wostringstream num;
+//
+//		//num << L"Col " << col << L"/Row " << row;
+//
+//		//str.LoadStringW(IDS_STRING_HIGH_E_LIMIT);
+//		num <<para.highelimit;
+//
+//		optlist.str(L"");
+//		optlist << L"colwidth=20% fittextline={font=" << font
+//			<<  L" fontsize=10}";
+//
+//		tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
+//
+//		//tbl = p.add_table_cell(tbl, col, row, , optlist.str());
+//	}
+//
+//
+//	col = 3;
+//	{
+//		std::wostringstream num;
+//
+//		//num << L"Col " << col << L"/Row " << row;
+//		//str.LoadStringW(IDS_STRING_SCAN_RATE);
+//		num <<para.scanrate;
+//
+//		optlist.str(L"");
+//		optlist << L"colwidth=20% fittextline={font=" << font
+//			<<  L" fontsize=10}";
+//
+//		tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
+//	}
+//
+//
+//	col = 4;
+//	{
+//		std::wostringstream num;
+//
+//		//num << L"Col " << col << L"/Row " << row;
+//		if(para.combochoice==0)
+//			num<<para.noofcycles;
+//		else
+//			num<<para.variationtolerance;
+//
+//		optlist.str(L"");
+//		optlist << L"colwidth=20% fittextline={font=" << font
+//			<<  L" fontsize=10}";
+//
+//		tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
+//	}
+//
+//
+//	col = 5;
+//	{
+//		std::wostringstream num;
+//
+//		//num << L"Col " << col << L"/Row " << row;
+//		//str.LoadStringW(IDS_STRING_ROTATION_RATE);
+//		num <<para.rotationrate;
+//
+//		optlist.str(L"");
+//		optlist << L"colwidth=20% fittextline={font=" << font
+//			<<  L" fontsize=10}";
+//
+//		tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
+//	}
+//
+//
+//	col = 6;
+//	{
+//		std::wostringstream num;
+//
+//		//num << L"Col " << col << L"/Row " << row;
+//		//str.LoadStringW(IDS_STRING_END_INTEGRATION_E);
+//		num <<para.endintegratione;
+//
+//		optlist.str(L"");
+//		optlist << L"colwidth=20% fittextline={font=" << font
+//			<<  L" fontsize=10}";
+//
+//		tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
+//	}
+//
+//
+//	/* ---------- Place the table on one or more pages ---------- */
+//
+//	/*
+//	* Loop until all of the table is placed; create new pages
+//	* as long as more table instances need to be placed.
+//	*/
+//	do {
+//		p.begin_page_ext(0, 0, L"width=a4.width height=a4.height");
+//
+//		/* Shade every other row; draw lines for all table cells.
+//		* Add "showcells showborder" to visualize cell borders 
+//		*/
+//
+//		/* Place the table instance */
+//		result = p.fit_table(tbl, llx, lly, urx, ury, 
+//			L"header=1 fill={{area=rowodd fillcolor={gray 0.9}}} " 
+//			L"stroke={{line=other}}");
+//		if (result == L"_error") {
+//			std::wcerr << L"Couldn't place table: " << p.get_errmsg() << std::endl;
+//			return 2;
+//		}
+//
+//		p.end_page_ext(L"");
+//
+//	} while (result == L"_boxfull");
+//
+//	/* Check the result; "_stop" means all is ok. */
+//	if (result != L"_stop") {
+//		if (result == L"_error") {
+//			std::wcerr << L"Error when placing table: " << p.get_errmsg()
+//				<< std::endl;
+//			return 2;
+//		}
+//		else {
+//			/* Any other return value is a user exit caused by
+//			* the "return" option; this requires dedicated code to
+//			* deal with.
+//			*/
+//			std::wcerr << L"User return found in Textflow" << std::endl;
+//			return 2;
+//		}
+//	}
+//	/* This will also delete Textflow handles used in the table */
+//	p.delete_table(tbl, L"");
+//
+//	return 0;
+//}
+//
+//
+//
+//int pdfout3(pdflib::PDFlib &p, const ANPara &para, const CString &resultStr){
+//
+//	int font;
+//	font = p.load_font(L"Helvetica", L"winansi", L"");
+//	if (font == -1) {
+//		std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
+//		return 2;
+//	}
+//
+//	/* Start page 1 */
+//	p.begin_page_ext(0, 0, L"width=a4.width height=a4.height");
+//	p.setfont(font, 12);
+//
+//	CString str;
+//
+//	int hi=800;
+//
+//	str.LoadStringW(IDS_STRING_AT1+para.analysistype);
+//	p.fit_textline((LPCWSTR)str, 20, hi, L"");
+//
+//	hi-=12;
+//	str.LoadStringW(IDS_STRING_EVALUATION_RATIO);
+//	{
+//		CString str1;			
+//		str1.Format(L"=%g",para.evaluationratio);
+//		str=str+str1;
+//	}
+//	p.fit_textline((LPCWSTR)str, 20, hi, L"");
+//	hi-=12;
+//
+//	switch(para.analysistype){
+//	case 2:
+//	case 6:
+//	case 8:
+//	case 10:
+//		str.LoadStringW(IDS_STRING_CALIBRATION_CURVE_FILE);
+//		p.fit_textline((LPCWSTR)str, 20, hi, L"");
+//		hi-=12;
+//		p.fit_textline((LPCWSTR)para.calibrationfilepath, 20, hi, L"");
+//		hi-=12;
+//		break;
+//	case 4:
+//		str.LoadStringW(IDS_STRING_INTERCEPT_VALUE);
+//		{
+//			CString str1;			
+//			str1.Format(L"=%g",para.interceptvalue);
+//			str=str+str1;
+//		}
+//		p.fit_textline((LPCWSTR)str, 20, hi, L"");
+//		hi-=12;
+//		break;
+//	default:
+//		break;
+//	}
+//	p.fit_textline((LPCWSTR)resultStr, 20, hi, L"");
+//
+//
+//	p.end_page_ext(L"");
+//
+//	return 0;
+//}
+//
+//
+//
+//int pdfout4(pdflib::PDFlib &p, const ANPara &para, const std::vector<DataOutA> &dol){
+//
+//
+//	int fsize=12;
+//
+//
+//	int font;
+//	font = p.load_font(L"Helvetica", L"winansi", L"");
+//	if (font == -1) {
+//		std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
+//		return 2;
+//	}
+//
+//	/* Start page 1 */
+//	p.begin_page_ext(0, 0, L"width=a4.width height=a4.height");
+//	p.setfont(font, fsize);
+//
+//	CString str;
+//
+//	int hi=800;
+//	int hi2=50;
+//	int wi=50;
+//	int wi2=175;
+//	int wi3=300;
+//	int wi4=425;
+//	int wi5=550;
+//
+//	str.LoadStringW(IDS_STRING_REPORT);
+//	p.fit_textline((LPCWSTR)str, wi3-30, hi, L"");
+//	hi-=fsize;
+//
+//
+//	str.LoadStringW(IDS_STRING_GENERAL_INFO);
+//	p.fit_textline((LPCWSTR)str, wi, hi, L"");
+//	hi-=fsize;
+//
+//	str.LoadStringW(IDS_STRING_SOFTWARE);
+//	p.fit_textline((LPCWSTR)str, wi, hi, L"");
+//
+//	str.LoadStringW(AFX_IDS_APP_TITLE);
+//	p.fit_textline((LPCWSTR)str, wi2, hi, L"");
+//
+//	str.LoadStringW(IDS_STRING_TIME);
+//	p.fit_textline((LPCWSTR)str, wi3, hi, L"");
+//
+//	str=TimeString(true);
+//	p.fit_textline((LPCWSTR)str, wi4, hi, L"");
+//
+//	hi-=fsize;
+//	hi-=fsize;
+//
+//	str.LoadStringW(IDS_STRING_ANALYSIS_PARA);
+//	p.fit_textline((LPCWSTR)str, wi, hi, L"");
+//	hi-=fsize;
+//
+//	str.LoadStringW(IDS_STRING_ANALYSIS_TYPE);
+//	p.fit_textline((LPCWSTR)str, wi, hi, L"");
+//
+//	str.LoadStringW(IDS_STRING_AT1+para.analysistype);
+//	p.fit_textline((LPCWSTR)str, wi2, hi, L"");
+//	hi-=fsize;
+//
+//	str.LoadStringW(IDS_STRING_EVALUATION_RATIO);
+//	p.fit_textline((LPCWSTR)str, wi, hi, L"");
+//
+//	str.Format(L"%g",para.evaluationratio);
+//	p.fit_textline((LPCWSTR)str, wi2, hi, L"");
+//	hi-=fsize;
+//
+//	switch(para.analysistype){
+//	case 2:
+//		{
+//			switch(para.calibrationfactortype){
+//			case 0:
+//				{
+//					str.LoadStringW(IDS_STRING_CALIBRATION_FACTOR);
+//					p.fit_textline((LPCWSTR)str, wi, hi, L"");
+//
+//					str.Format(L"%g",para.calibrationfactor);
+//					p.fit_textline((LPCWSTR)str, wi, hi, L"");
+//					hi-=fsize;
+//
+//				}
+//				break;
+//			case 1:
+//				{
+//					str.LoadStringW(IDS_STRING_CALIBRATION_CURVE_FILE);
+//					p.fit_textline((LPCWSTR)str, wi, hi, L"");
+//					//hi-=fsize;
+//					p.fit_textline((LPCWSTR)para.calibrationfilepath, wi2, hi, L"");
+//					hi-=fsize;
+//				}
+//				break;
+//			default:
+//				break;
+//			}
+//			break;
+//		}
+//
+//	case 6:
+//	case 8:
+//	case 10:
+//		str.LoadStringW(IDS_STRING_CALIBRATION_CURVE_FILE);
+//		p.fit_textline((LPCWSTR)str, wi, hi, L"");
+//		//hi-=fsize;
+//		p.fit_textline((LPCWSTR)para.calibrationfilepath, wi2, hi, L"");
+//		hi-=fsize;
+//		break;
+//	case 4:
+//		str.LoadStringW(IDS_STRING_INTERCEPT_VALUE);
+//		p.fit_textline((LPCWSTR)str, wi, hi, L"");
+//
+//		str.Format(L"%g",para.interceptvalue);
+//		p.fit_textline((LPCWSTR)str, wi2, hi, L"");
+//		hi-=fsize;
+//
+//		break;
+//	default:
+//		break;
+//	}
+//	//p.fit_textline((LPCWSTR)resultStr, 20, hi, L"");
+//
+//
+//	hi-=fsize;
+//
+//	str.LoadStringW(IDS_STRING_RESULT);
+//	p.fit_textline((LPCWSTR)str, wi, hi, L"");
+//	hi-=fsize;
+//
+//	std::vector<CString> res;
+//	bool flg=Compute(dol, para, res);
+//
+//	for(size_t i=0;i<res.size();i+=2){
+//		p.fit_textline((LPCWSTR)(res[i]), wi, hi, L"");
+//		p.fit_textline((LPCWSTR)(res[i+1]), wi2, hi, L"");
+//		hi-=fsize;
+//	}
+//
+//
+//
+//	p.end_page_ext(L"");
+//
+//	return 0;
+//}
+//
+//
+//
+//
+//int pdfout5(pdflib::PDFlib &p, const ANPara &para, const std::vector<DataOutA> &dol, const CVPara &p2){
+//
+//
+//	int fsize=16;
+//
+//
+//	int font;
+//	font = p.load_font(L"Helvetica", L"winansi", L"");
+//	if (font == -1) {
+//		std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
+//		return 2;
+//	}
+//
+//	/* Start page 1 */
+//	p.begin_page_ext(0, 0, L"width=a4.width height=a4.height");
+//	p.setfont(font, fsize);
+//
+//	CString str;
+//
+//	int hi=800;
+//	int hi2=50;
+//	int wi=50;
+//	int wi1=60;
+//
+//	int wi2=175;
+//	int wi3=300;
+//	int wi4=425;
+//	int wi5=550;
+//
+//	str.LoadStringW(IDS_STRING_REPORT);
+//	p.fit_textline((LPCWSTR)str, wi3-30, hi, L"");
+//	hi-=fsize;
+//	hi-=fsize;
+//
+//
+//	fsize=10;
+//	p.setfont(font, fsize);
+//
+//
+//	str.LoadStringW(IDS_STRING_GENERAL_INFO);
+//	p.fit_textline((LPCWSTR)str, wi, hi, L"");
+//	hi-=fsize;
+//	hi-=fsize;
+//
+//	str.LoadStringW(IDS_STRING_SOFTWARE);
+//	p.fit_textline((LPCWSTR)str, wi1, hi, L"");
+//
+//	str.LoadStringW(AFX_IDS_APP_TITLE);
+//	p.fit_textline((LPCWSTR)str, wi2, hi, L"");
+//
+//	str.LoadStringW(IDS_STRING_TIME);
+//	p.fit_textline((LPCWSTR)str, wi3, hi, L"");
+//
+//	str=TimeString(true);
+//	p.fit_textline((LPCWSTR)str, wi4, hi, L"");
+//
+//	hi-=fsize;
+//	hi-=fsize;
+//
+//	//p.setfont(font, 8);
+//
+//	str.LoadStringW(IDS_STRING_ANALYSIS_PARA);
+//	p.fit_textline((LPCWSTR)str, wi, hi, L"");
+//	hi-=fsize;
+//	hi-=fsize;
+//
+//	str.LoadStringW(IDS_STRING_ANALYSIS_TYPE);
+//	p.fit_textline((LPCWSTR)str, wi1, hi, L"");
+//
+//	str.LoadStringW(IDS_STRING_AT1+para.analysistype);
+//	p.fit_textline((LPCWSTR)str, wi2, hi, L"");
+//	hi-=fsize;
+//
+//	str.LoadStringW(IDS_STRING_EVALUATION_RATIO);
+//	p.fit_textline((LPCWSTR)str, wi1, hi, L"");
+//
+//	str.Format(L"%g",para.evaluationratio);
+//	p.fit_textline((LPCWSTR)str, wi2, hi, L"");
+//	hi-=fsize;
+//
+//	switch(para.analysistype){
+//	case 2:
+//		{
+//			switch(para.calibrationfactortype){
+//			case 0:
+//				{
+//					str.LoadStringW(IDS_STRING_CALIBRATION_FACTOR);
+//					p.fit_textline((LPCWSTR)str, wi1, hi, L"");
+//
+//					str.Format(L"%g",para.calibrationfactor);
+//					p.fit_textline((LPCWSTR)str, wi2, hi, L"");
+//					hi-=fsize;
+//
+//				}
+//				break;
+//			case 1:
+//				{
+//					str.LoadStringW(IDS_STRING_CALIBRATION_CURVE_FILE);
+//					p.fit_textline((LPCWSTR)str, wi1, hi, L"");
+//					//hi-=fsize;
+//					p.fit_textline((LPCWSTR)para.calibrationfilepath, wi2, hi, L"");
+//					hi-=fsize;
+//				}
+//				break;
+//			default:
+//				break;
+//			}
+//			break;
+//		}
+//
+//	case 6:
+//	case 8:
+//	case 10:
+//		str.LoadStringW(IDS_STRING_CALIBRATION_CURVE_FILE);
+//		p.fit_textline((LPCWSTR)str, wi1, hi, L"");
+//		//hi-=fsize;
+//		p.fit_textline((LPCWSTR)para.calibrationfilepath, wi2, hi, L"");
+//		hi-=fsize;
+//		break;
+//	case 4:
+//		str.LoadStringW(IDS_STRING_INTERCEPT_VALUE);
+//		p.fit_textline((LPCWSTR)str, wi1, hi, L"");
+//
+//		str.Format(L"%g",para.interceptvalue);
+//		p.fit_textline((LPCWSTR)str, wi2, hi, L"");
+//		hi-=fsize;
+//
+//		break;
+//	default:
+//		break;
+//	}
+//	//p.fit_textline((LPCWSTR)resultStr, 20, hi, L"");
+//
+//
+//	hi-=fsize;
+//
+//
+//	//p.setfont(font, 18);
+//	str.LoadStringW(IDS_STRING_RESULT);
+//	p.fit_textline((LPCWSTR)str, wi, hi, L"");
+//	hi-=fsize;
+//	hi-=fsize;
+//
+//	std::vector<CString> res;
+//	bool flg=Compute(dol, para, res);
+//
+//	for(size_t i=0;i<res.size();i+=4){
+//		p.fit_textline((LPCWSTR)(res[i]), wi1, hi, L"");
+//		p.fit_textline((LPCWSTR)(res[i+1]), wi2, hi, L"");
+//		if(i+3<res.size()){
+//			p.fit_textline((LPCWSTR)(res[i+2]), wi3, hi, L"");
+//			p.fit_textline((LPCWSTR)(res[i+3]), wi4, hi, L"");
+//		}
+//		hi-=fsize;
+//	}
+//
+//	hi-=fsize;
+//
+//	str.LoadStringW(IDS_STRING_CV_PARA);
+//	p.fit_textline((LPCWSTR)str, wi, hi, L"");
+//	hi-=fsize;
+//	hi-=fsize;
+//
+//	str.LoadStringW(IDS_STRING_LOW_E_LIMIT);
+//	p.fit_textline((LPCWSTR)str, wi1, hi, L"");
+//
+//	str.Format(L"%g",p2.lowelimit);
+//	p.fit_textline((LPCWSTR)str, wi2, hi, L"");
+//
+//	str.LoadStringW(IDS_STRING_HIGH_E_LIMIT);
+//	p.fit_textline((LPCWSTR)str, wi3, hi, L"");
+//
+//	str.Format(L"%g",p2.highelimit);
+//	p.fit_textline((LPCWSTR)str, wi4, hi, L"");
+//
+//	hi-=fsize;
+//
+//	str.LoadStringW(IDS_STRING_SCAN_RATE);
+//	p.fit_textline((LPCWSTR)str, wi1, hi, L"");
+//
+//	str.Format(L"%g",p2.scanrate);
+//	p.fit_textline((LPCWSTR)str, wi2, hi, L"");
+//
+//	str.LoadStringW(IDS_STRING_NO_OF_CYCLES);
+//	p.fit_textline((LPCWSTR)str, wi3, hi, L"");
+//
+//	str.Format(L"%d",p2.noofcycles);
+//	p.fit_textline((LPCWSTR)str, wi4, hi, L"");
+//
+//	hi-=fsize;
+//
+//	str.LoadStringW(IDS_STRING_ROTATION_RATE);
+//	p.fit_textline((LPCWSTR)str, wi1, hi, L"");
+//
+//	str.Format(L"%g",p2.rotationrate);
+//	p.fit_textline((LPCWSTR)str, wi2, hi, L"");
+//
+//	str.LoadStringW(IDS_STRING_END_INTEGRATION_E);
+//	p.fit_textline((LPCWSTR)str, wi3, hi, L"");
+//
+//	str.Format(L"%g",p2.endintegratione);
+//	p.fit_textline((LPCWSTR)str, wi4, hi, L"");
+//
+//	hi-=fsize;
+//
+//
+//
+//	p.end_page_ext(L"");
+//
+//	return 0;
+//}
+
+
+void AddGI(pdflib::PDFlib &p, int & tbl, int & row, int & col, int colmax, int font, int titlefont, int fsize=10, int titlesize=12)
 {
-	int fsize=10;
+	//int fsize=10;
 	int quartercolmax=colmax/4;
 	std::wostringstream optlist;
 	CString str;
 
 	optlist.str(L"");
-	optlist << L"fittextline={position={left center} font=" << font
-		<< L" fontsize=" << fsize << L"}"
+	optlist << L"fittextline={position={left center} font=" << titlefont
+		<< L" fontsize=" << titlesize << L"}"
 		//<< L" colwidth=25%"
 		<< L" colspan=" << colmax
 		;
@@ -1644,18 +1645,18 @@ void AddGI(pdflib::PDFlib &p, int & tbl, int & row, int & col, int colmax, int f
 	row++;
 }
 
-void AddANP(pdflib::PDFlib &p, int & tbl, int & row, int & col, int colmax, int font, const ANPara &para)
+void AddANP(pdflib::PDFlib &p, int & tbl, int & row, int & col, int colmax, int font, int titlefont, const ANPara &para, int fsize=10, int titlesize=12)
 {
 
-	int fsize=10;
+	//int fsize=10;
 	int quartercolmax=colmax/4;
 	std::wostringstream optlist;
 	CString str;
 
 
 	optlist.str(L"");
-	optlist << L"fittextline={position={left center} font=" << font		
-		<< L" fontsize=" << fsize << L"}"
+	optlist << L"fittextline={position={left center} font=" << titlefont		
+		<< L" fontsize=" << titlesize << L"}"
 		<< L" colspan=" << colmax
 		;
 	//tbl = p.add_table_cell(tbl, col, row, L" ", optlist.str());
@@ -1740,7 +1741,7 @@ void AddANP(pdflib::PDFlib &p, int & tbl, int & row, int & col, int colmax, int 
 						<< L" colspan=" << quartercolmax
 						//<< L" colwidth=25%"
 						;
-					str.LoadStringW(IDS_STRING_CALIBRATION_FACTOR);
+					str.LoadStringW(IDS_EDIT_CALIBRATION_FACTOR);
 					tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
 
 
@@ -1809,7 +1810,7 @@ void AddANP(pdflib::PDFlib &p, int & tbl, int & row, int & col, int colmax, int 
 			<< L" colspan=" << quartercolmax
 			//<< L" colwidth=25%"
 			;
-		str.LoadStringW(IDS_STRING_INTERCEPT_VALUE);
+		str.LoadStringW(IDS_EDIT_INTERCEPT_VALUE);
 		tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
 
 
@@ -1866,17 +1867,17 @@ void AddANP(pdflib::PDFlib &p, int & tbl, int & row, int & col, int colmax, int 
 }
 
 
-void AddCVP(pdflib::PDFlib &p, int & tbl, int & row, int & col, int colmax, int font, const CVPara &p2)
+void AddCVP(pdflib::PDFlib &p, int & tbl, int & row, int & col, int colmax, int font, int titlefont, const CVPara &p2, int fsize=10, int titlesize=12)
 {
 
-	int fsize=10;
+	//int fsize=10;
 	int quartercolmax=colmax/4;
 	std::wostringstream optlist;
 	CString str;
 
 	optlist.str(L"");
-	optlist << L"fittextline={position={left center} font=" << font		
-		<< L" fontsize=" << fsize << L"}"
+	optlist << L"fittextline={position={left center} font=" << titlefont		
+		<< L" fontsize=" << titlesize << L"}"
 		<< L" colspan=" << colmax
 		;
 	str.LoadStringW(IDS_STRING_CV_PARA);
@@ -1955,9 +1956,9 @@ void AddCVP(pdflib::PDFlib &p, int & tbl, int & row, int & col, int colmax, int 
 }
 
 
-void AddSAP(pdflib::PDFlib &p, int & tbl, int & row, int & col, int colmax, int font, const SAPara &p3)
+void AddSAP(pdflib::PDFlib &p, int & tbl, int & row, int & col, int colmax, int font, int titlefont, const SAPara &p3, int fsize=10, int titlesize=12)
 {
-	int fsize=10;
+	//int fsize=10;
 	//int quartercolmax=colmax/4;
 
 	int seventhcolmax=(colmax/7)+1;
@@ -1968,8 +1969,8 @@ void AddSAP(pdflib::PDFlib &p, int & tbl, int & row, int & col, int colmax, int 
 
 
 	optlist.str(L"");
-	optlist << L"fittextline={position={left center} font=" << font		
-		<< L" fontsize=" << fsize << L"}"
+	optlist << L"fittextline={position={left center} font=" << titlefont		
+		<< L" fontsize=" << titlesize << L"}"
 		<< L" colspan=" << colmax
 		;
 
@@ -2176,10 +2177,10 @@ void AddSAP(pdflib::PDFlib &p, int & tbl, int & row, int & col, int colmax, int 
 }
 
 
-void AddRES(pdflib::PDFlib &p, int & tbl, int & row, int & col, int colmax, int font, const std::vector<CString> &res)
+void AddRES(pdflib::PDFlib &p, int & tbl, int & row, int & col, int colmax, int font, int titlefont, const std::vector<CString> &res, int fsize=10, int titlesize=12)
 {
 
-	int fsize=10;
+	//int fsize=10;
 	int quartercolmax=colmax/4;
 
 	//int seventhcolmax=(colmax/7)+1;
@@ -2189,8 +2190,8 @@ void AddRES(pdflib::PDFlib &p, int & tbl, int & row, int & col, int colmax, int 
 	CString str;
 
 	optlist.str(L"");
-	optlist << L"fittextline={position={left center} font=" << font		
-		<< L" fontsize=" << fsize << L"}"
+	optlist << L"fittextline={position={left center} font=" << titlefont		
+		<< L" fontsize=" << titlesize << L"}"
 		<< L" colspan=" << colmax
 		;
 	//tbl = p.add_table_cell(tbl, col, row, L" ", optlist.str());
@@ -2248,741 +2249,742 @@ int pdfout6(
 	){
 
 
-	int titlesize=16;
+		int titlesize=16;
 
-	//std::vector<CString> res;
-	//bool flg=Compute(dol, para, res);
+		//std::vector<CString> res;
+		//bool flg=Compute(dol, para, res);
 
-	//int font;
-	//font = p.load_font(L"Helvetica", L"winansi", L"");
-	//if (font == -1) {
-	//	std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
-	//	return 2;
-	//}
+		//int font;
+		//font = p.load_font(L"Helvetica", L"winansi", L"");
+		//if (font == -1) {
+		//	std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
+		//	return 2;
+		//}
 
-	/* Start page 1 */
-	//p.begin_page_ext(0, 0, L"width=a4.width height=a4.height");
-	//p.setfont(font, fsize);
+		/* Start page 1 */
+		//p.begin_page_ext(0, 0, L"width=a4.width height=a4.height");
+		//p.setfont(font, fsize);
 
 
 
 
-	int row, col, font, image, tf=-1, tbl=-1;
-	int rowmax=1+2+1+4+1+1+res.size()+1+4, colmax=20;
+		int row, col, font, image, tf=-1, tbl=-1;
+		int rowmax=1+2+1+4+1+1+res.size()+1+4, colmax=20;
 
 
-	//int quartercolmax=colmax/4;
+		//int quartercolmax=colmax/4;
 
-	//int rowmax=para.saplist.size()+2, colmax=7;
+		//int rowmax=para.saplist.size()+2, colmax=7;
 
-	//PDFlib p;
-	double llx=50, lly=50, urx=550, ury=800;
-	int fsize=10;
-	CString str;
+		//PDFlib p;
+		double llx=50, lly=50, urx=550, ury=800;
+		int fsize=10;
+		CString str;
 
+		int titlefont;
 
 
-	//L"Table header (centered across all columns)";
-	std::wstring result;
-	std::wostringstream optlist;
+		//L"Table header (centered across all columns)";
+		std::wstring result;
+		std::wostringstream optlist;
 
-	/* -------------------- Add table cells -------------------- */
-	row = 1; col = 1;
-	/* ---------- Row 1: table header (spans all columns) */
+		/* -------------------- Add table cells -------------------- */
+		row = 1; col = 1;
+		/* ---------- Row 1: table header (spans all columns) */
 
 
 
-	//const std::wstring imagefile = L"C:\\Users\\r8anw2x\\Documents\\Visual Studio 2010\\project0\\analyzer\\analyzer\\res\\sinyang.bmp";
+		//const std::wstring imagefile = L"C:\\Users\\r8anw2x\\Documents\\Visual Studio 2010\\project0\\analyzer\\analyzer\\res\\sinyang.bmp";
 
-	image = p.load_image(L"auto", logofile, L"");
-	if (image == -1) {
-		std::wcerr << L"Couldn't load image: " << p.get_errmsg() << std::endl;
-		return 2;
-	}
+		image = p.load_image(L"auto", logofile, L"");
+		if (image == -1) {
+			std::wcerr << L"Couldn't load image: " << p.get_errmsg() << std::endl;
+			return 2;
+		}
 
-	optlist.str(L"");
-	optlist << L"image=" << image << L" fitimage={fitmethod=auto position={right center} }";
-	optlist << L" rowheight=30";
-	optlist << L" colspan=" << colmax;
+		optlist.str(L"");
+		optlist << L"image=" << image << L" fitimage={fitmethod=auto position={right center} }";
+		optlist << L" rowheight=30";
+		optlist << L" colspan=" << colmax;
 
-	tbl = p.add_table_cell(tbl, col, row, L"", optlist.str());
-	if (tbl == -1) {
-		std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
-		return 2;
-	}
+		tbl = p.add_table_cell(tbl, col, row, L"", optlist.str());
+		if (tbl == -1) {
+			std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
+			return 2;
+		}
 
-	row++;
+		row++;
 
-	font = p.load_font(L"Helvetica", L"winansi", L"");
-	if (font == -1) {
-		std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
-		return 2;
-	}
+		font = p.load_font(L"Helvetica", L"winansi", L"");
+		if (font == -1) {
+			std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
+			return 2;
+		}
 
-	optlist.str(L"");
-	optlist << L"fittextline={position={left center} font=" << font
-		<< L" fontsize=" << fsize << L"}"
-		//<< L" colwidth=25%"
-		<< L" colspan=" << colmax
-		;
+		optlist.str(L"");
+		optlist << L"fittextline={position={left center} font=" << font
+			<< L" fontsize=" << fsize << L"}"
+			//<< L" colwidth=25%"
+			<< L" colspan=" << colmax
+			;
 
-	tbl = p.add_table_cell(tbl, col, row, L" ", optlist.str());
-	row++;
+		tbl = p.add_table_cell(tbl, col, row, L" ", optlist.str());
+		row++;
 
-	/* ---------- Row 1: table header (spans all columns) */
-	font = p.load_font(L"Times-Bold", L"winansi", L"");
-	if (font == -1) {
-		std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
-		return(2);
-	}
+		/* ---------- Row 1: table header (spans all columns) */
+		titlefont = p.load_font(L"Times-Bold", L"winansi", L"");
+		if (titlefont == -1) {
+			std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
+			return(2);
+		}
 
-	optlist.str(L"");
-	optlist << L"fittextline={position=center font=" << font
-		<< L" fontsize=" << titlesize << L"}"
-		<< L" colwidth=100%"
-		<< L" colspan=" << colmax
-		;
+		optlist.str(L"");
+		optlist << L"fittextline={position=center font=" << titlefont
+			<< L" fontsize=" << titlesize << L"}"
+			<< L" colwidth=100%"
+			<< L" colspan=" << colmax
+			;
 
-	str.LoadStringW(IDS_STRING_REPORT);
-	tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
-	row++;
+		str.LoadStringW(IDS_STRING_REPORT);
+		tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
+		row++;
 
 
-	/* ---------- Row 1: table header (spans all columns) */
-	font = p.load_font(L"Helvetica", L"winansi", L"");
-	if (font == -1) {
-		std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
-		return 2;
-	}
+		/* ---------- Row 1: table header (spans all columns) */
+		font = p.load_font(L"Helvetica", L"winansi", L"");
+		if (font == -1) {
+			std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
+			return 2;
+		}
 
-	AddGI(p,tbl,row,col,colmax,font);
+		AddGI(p,tbl,row,col,colmax,font,titlefont,fsize);
 
 
-	//optlist.str(L"");
-	//optlist << L"fittextline={position={left center} font=" << font
-	//	<< L" fontsize=" << fsize << L"}"
-	//	//<< L" colwidth=25%"
-	//	<< L" colspan=" << colmax
-	//	;
+		//optlist.str(L"");
+		//optlist << L"fittextline={position={left center} font=" << font
+		//	<< L" fontsize=" << fsize << L"}"
+		//	//<< L" colwidth=25%"
+		//	<< L" colspan=" << colmax
+		//	;
 
-	//str.LoadStringW(IDS_STRING_GENERAL_INFO);
-	//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
-	//row++;
+		//str.LoadStringW(IDS_STRING_GENERAL_INFO);
+		//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
+		//row++;
 
 
 
 
-	//optlist.str(L"");
-	//optlist << L"fittextline={position={left center} font=" << font
-	//	<< L" fontsize=" << fsize << L"}"
-	//	//<< L" colwidth=25%"
-	//	<< L" colspan=" << quartercolmax
-	//	;
+		//optlist.str(L"");
+		//optlist << L"fittextline={position={left center} font=" << font
+		//	<< L" fontsize=" << fsize << L"}"
+		//	//<< L" colwidth=25%"
+		//	<< L" colspan=" << quartercolmax
+		//	;
 
-	//str.LoadStringW(IDS_STRING_SOFTWARE);
-	//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
+		//str.LoadStringW(IDS_STRING_SOFTWARE);
+		//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
 
-	//col+=quartercolmax;
+		//col+=quartercolmax;
 
-	//str.LoadStringW(AFX_IDS_APP_TITLE);
-	//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
+		//str.LoadStringW(AFX_IDS_APP_TITLE);
+		//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
 
-	//col+=quartercolmax;
+		//col+=quartercolmax;
 
 
-	//str.LoadStringW(IDS_STRING_TIME);
-	//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
+		//str.LoadStringW(IDS_STRING_TIME);
+		//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
 
-	//col+=quartercolmax;
+		//col+=quartercolmax;
 
-	//str=TimeString(true);
-	//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
+		//str=TimeString(true);
+		//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
 
-	//col=1;
-	//row++;
+		//col=1;
+		//row++;
 
-	/* ---------- Row 1: table header (spans all columns) */
+		/* ---------- Row 1: table header (spans all columns) */
 
 
-	if(b1){
+		if(b1){
 
-	optlist.str(L"");
-	optlist << L"fittextline={position={left center} font=" << font		
-		<< L" fontsize=" << fsize << L"}"
-		<< L" colspan=" << colmax
-		;
-	tbl = p.add_table_cell(tbl, col, row, L" ", optlist.str());
+			optlist.str(L"");
+			optlist << L"fittextline={position={left center} font=" << font		
+				<< L" fontsize=" << fsize << L"}"
+				<< L" colspan=" << colmax
+				;
+			tbl = p.add_table_cell(tbl, col, row, L" ", optlist.str());
 
-	row++;
+			row++;
 
-	AddANP(p,tbl,row,col,colmax,font,para);
+			AddANP(p,tbl,row,col,colmax,font,titlefont,para,fsize);
 
-	}
-	//str.LoadStringW(IDS_STRING_ANALYSIS_PARA);
-	//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
+		}
+		//str.LoadStringW(IDS_STRING_ANALYSIS_PARA);
+		//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
 
-	//row++;
+		//row++;
 
-	//optlist.str(L"");
-	//optlist << L"fittextline={position={left center} font=" << font
-	//	<< L" fontsize=" << fsize << L"}"
-	//	//<< L" colwidth=25%"
-	//	<< L" colspan=" << quartercolmax
-	//	;
-	//str.LoadStringW(IDS_STRING_ANALYSIS_TYPE);
-	//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
+		//optlist.str(L"");
+		//optlist << L"fittextline={position={left center} font=" << font
+		//	<< L" fontsize=" << fsize << L"}"
+		//	//<< L" colwidth=25%"
+		//	<< L" colspan=" << quartercolmax
+		//	;
+		//str.LoadStringW(IDS_STRING_ANALYSIS_TYPE);
+		//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
 
-	//col+=quartercolmax;
+		//col+=quartercolmax;
 
-	//optlist.str(L"");
-	//optlist << L"fittextline={position={left center} font=" << font		
-	//	<< L" fontsize=" << fsize << L"}"
-	//	<< L" colspan=" << colmax+1-col
-	//	;
-	//str.LoadStringW(IDS_STRING_AT1+para.analysistype);
-	//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
+		//optlist.str(L"");
+		//optlist << L"fittextline={position={left center} font=" << font		
+		//	<< L" fontsize=" << fsize << L"}"
+		//	<< L" colspan=" << colmax+1-col
+		//	;
+		//str.LoadStringW(IDS_STRING_AT1+para.analysistype);
+		//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
 
-	//col=1;
-	//row++;
+		//col=1;
+		//row++;
 
-	//optlist.str(L"");
-	//optlist << L"fittextline={position={left center} font=" << font		
-	//	<< L" fontsize=" << fsize << L"}"
-	//	<< L" colspan=" << quartercolmax
-	//	//<< L" colwidth=25%"
-	//	;
-	//str.LoadStringW(IDS_STRING_EVALUATION_RATIO);
-	//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
+		//optlist.str(L"");
+		//optlist << L"fittextline={position={left center} font=" << font		
+		//	<< L" fontsize=" << fsize << L"}"
+		//	<< L" colspan=" << quartercolmax
+		//	//<< L" colwidth=25%"
+		//	;
+		//str.LoadStringW(IDS_STRING_EVALUATION_RATIO);
+		//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
 
-	//col+=quartercolmax;
+		//col+=quartercolmax;
 
-	//optlist.str(L"");
-	//optlist << L"fittextline={position={left center} font=" << font		
-	//	<< L" fontsize=" << fsize << L"}"
-	//	<< L" colspan=" << colmax+1-col
-	//	;
-	//str.Format(L"%g",para.evaluationratio);
-	//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
+		//optlist.str(L"");
+		//optlist << L"fittextline={position={left center} font=" << font		
+		//	<< L" fontsize=" << fsize << L"}"
+		//	<< L" colspan=" << colmax+1-col
+		//	;
+		//str.Format(L"%g",para.evaluationratio);
+		//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
 
 
-	//col=1;
-	//row++;
+		//col=1;
+		//row++;
 
-	//switch(para.analysistype){
-	//case 2:
-	//	{
-	//		switch(para.calibrationfactortype){
-	//		case 0:
-	//			{
+		//switch(para.analysistype){
+		//case 2:
+		//	{
+		//		switch(para.calibrationfactortype){
+		//		case 0:
+		//			{
 
 
-	//				optlist.str(L"");
-	//				optlist << L"fittextline={position={left center} font=" << font		
-	//					<< L" fontsize=" << fsize << L"}"
-	//					<< L" colspan=" << quartercolmax
-	//					//<< L" colwidth=25%"
-	//					;
-	//				str.LoadStringW(IDS_STRING_CALIBRATION_FACTOR);
-	//				tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
+		//				optlist.str(L"");
+		//				optlist << L"fittextline={position={left center} font=" << font		
+		//					<< L" fontsize=" << fsize << L"}"
+		//					<< L" colspan=" << quartercolmax
+		//					//<< L" colwidth=25%"
+		//					;
+		//				str.LoadStringW(IDS_STRING_CALIBRATION_FACTOR);
+		//				tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
 
 
-	//				col+=quartercolmax;
+		//				col+=quartercolmax;
 
-	//				optlist.str(L"");
-	//				optlist << L"fittextline={position={left center} font=" << font		
-	//					<< L" fontsize=" << fsize << L"}"
-	//					<< L" colspan=" << colmax+1-col
-	//					;
-	//				str.Format(L"%g",para.calibrationfactor);
-	//				tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
+		//				optlist.str(L"");
+		//				optlist << L"fittextline={position={left center} font=" << font		
+		//					<< L" fontsize=" << fsize << L"}"
+		//					<< L" colspan=" << colmax+1-col
+		//					;
+		//				str.Format(L"%g",para.calibrationfactor);
+		//				tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
 
 
-	//				col=1;
-	//				row++;
+		//				col=1;
+		//				row++;
 
 
-	//			}
-	//			break;
-	//		case 1:
-	//			{
+		//			}
+		//			break;
+		//		case 1:
+		//			{
 
 
-	//				optlist.str(L"");
-	//				optlist << L"fittextline={position={left center} font=" << font		
-	//					<< L" fontsize=" << fsize << L"}"
-	//					<< L" colspan=" << quartercolmax
-	//					//<< L" colwidth=25%"
-	//					;
-	//				str.LoadStringW(IDS_STRING_CALIBRATION_CURVE_FILE);
-	//				tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
+		//				optlist.str(L"");
+		//				optlist << L"fittextline={position={left center} font=" << font		
+		//					<< L" fontsize=" << fsize << L"}"
+		//					<< L" colspan=" << quartercolmax
+		//					//<< L" colwidth=25%"
+		//					;
+		//				str.LoadStringW(IDS_STRING_CALIBRATION_CURVE_FILE);
+		//				tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
 
 
-	//				col+=quartercolmax;
+		//				col+=quartercolmax;
 
-	//				optlist.str(L"");
-	//				optlist << L"fittextline={position={left center} font=" << font		
-	//					<< L" fontsize=" << fsize << L"}"
-	//					<< L" colspan=" << colmax+1-col
-	//					;
-	//				//str.Format(L"%g",para.calibrationfactor);
-	//				tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)para.calibrationfilepath, optlist.str());
+		//				optlist.str(L"");
+		//				optlist << L"fittextline={position={left center} font=" << font		
+		//					<< L" fontsize=" << fsize << L"}"
+		//					<< L" colspan=" << colmax+1-col
+		//					;
+		//				//str.Format(L"%g",para.calibrationfactor);
+		//				tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)para.calibrationfilepath, optlist.str());
 
 
-	//				col=1;
-	//				row++;
+		//				col=1;
+		//				row++;
 
 
-	//			}
-	//			break;
-	//		default:
-	//			break;
-	//		}
-	//		break;
-	//	}
+		//			}
+		//			break;
+		//		default:
+		//			break;
+		//		}
+		//		break;
+		//	}
 
-	//case 6:
-	//case 8:
-	//case 10:
-	//case 12:
-	//	optlist.str(L"");
-	//	optlist << L"fittextline={position={left center} font=" << font		
-	//		<< L" fontsize=" << fsize << L"}"
-	//		<< L" colspan=" << quartercolmax
-	//		//<< L" colwidth=25%"
-	//		;
-	//	str.LoadStringW(IDS_STRING_CALIBRATION_CURVE_FILE);
-	//	tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
+		//case 6:
+		//case 8:
+		//case 10:
+		//case 12:
+		//	optlist.str(L"");
+		//	optlist << L"fittextline={position={left center} font=" << font		
+		//		<< L" fontsize=" << fsize << L"}"
+		//		<< L" colspan=" << quartercolmax
+		//		//<< L" colwidth=25%"
+		//		;
+		//	str.LoadStringW(IDS_STRING_CALIBRATION_CURVE_FILE);
+		//	tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
 
 
-	//	col+=quartercolmax;
+		//	col+=quartercolmax;
 
-	//	optlist.str(L"");
-	//	optlist << L"fittextline={position={left center} font=" << font		
-	//		<< L" fontsize=" << fsize << L"}"
-	//		<< L" colspan=" << colmax+1-col
-	//		;
-	//	//str.Format(L"%g",para.calibrationfactor);
-	//	tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)para.calibrationfilepath, optlist.str());
+		//	optlist.str(L"");
+		//	optlist << L"fittextline={position={left center} font=" << font		
+		//		<< L" fontsize=" << fsize << L"}"
+		//		<< L" colspan=" << colmax+1-col
+		//		;
+		//	//str.Format(L"%g",para.calibrationfactor);
+		//	tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)para.calibrationfilepath, optlist.str());
 
 
-	//	col=1;
-	//	row++;
-	//	break;
-	//case 4:
+		//	col=1;
+		//	row++;
+		//	break;
+		//case 4:
 
 
 
-	//	optlist.str(L"");
-	//	optlist << L"fittextline={position={left center} font=" << font		
-	//		<< L" fontsize=" << fsize << L"}"
-	//		<< L" colspan=" << quartercolmax
-	//		//<< L" colwidth=25%"
-	//		;
-	//	str.LoadStringW(IDS_STRING_INTERCEPT_VALUE);
-	//	tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
+		//	optlist.str(L"");
+		//	optlist << L"fittextline={position={left center} font=" << font		
+		//		<< L" fontsize=" << fsize << L"}"
+		//		<< L" colspan=" << quartercolmax
+		//		//<< L" colwidth=25%"
+		//		;
+		//	str.LoadStringW(IDS_STRING_INTERCEPT_VALUE);
+		//	tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
 
 
-	//	col+=quartercolmax;
+		//	col+=quartercolmax;
 
-	//	optlist.str(L"");
-	//	optlist << L"fittextline={position={left center} font=" << font		
-	//		<< L" fontsize=" << fsize << L"}"
-	//		<< L" colspan=" << colmax+1-col
-	//		;
-	//	str.Format(L"%g",para.interceptvalue);
-	//	tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
+		//	optlist.str(L"");
+		//	optlist << L"fittextline={position={left center} font=" << font		
+		//		<< L" fontsize=" << fsize << L"}"
+		//		<< L" colspan=" << colmax+1-col
+		//		;
+		//	str.Format(L"%g",para.interceptvalue);
+		//	tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
 
 
-	//	col=1;
-	//	row++;
+		//	col=1;
+		//	row++;
 
 
 
-	//	break;
-	//default:
-	//	break;
-	//}
+		//	break;
+		//default:
+		//	break;
+		//}
 
-	/* ---------- Row 1: table header (spans all columns) */
+		/* ---------- Row 1: table header (spans all columns) */
 
-if(b2){
-	optlist.str(L"");
-	optlist << L"fittextline={position={left center} font=" << font		
-		<< L" fontsize=" << fsize << L"}"
-		<< L" colspan=" << colmax
-		;
-	tbl = p.add_table_cell(tbl, col, row, L" ", optlist.str());
+		if(b2){
+			optlist.str(L"");
+			optlist << L"fittextline={position={left center} font=" << font		
+				<< L" fontsize=" << fsize << L"}"
+				<< L" colspan=" << colmax
+				;
+			tbl = p.add_table_cell(tbl, col, row, L" ", optlist.str());
 
-	row++;
+			row++;
 
-	AddCVP(p,tbl,row,col,colmax,font,p2);
-}
-	//optlist.str(L"");
-	//optlist << L"fittextline={position={left center} font=" << font		
-	//	<< L" fontsize=" << fsize << L"}"
-	//	<< L" colspan=" << colmax
-	//	;
-	//str.LoadStringW(IDS_STRING_CV_PARA);
-	//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
+			AddCVP(p,tbl,row,col,colmax,font,titlefont,p2,fsize);
+		}
+		//optlist.str(L"");
+		//optlist << L"fittextline={position={left center} font=" << font		
+		//	<< L" fontsize=" << fsize << L"}"
+		//	<< L" colspan=" << colmax
+		//	;
+		//str.LoadStringW(IDS_STRING_CV_PARA);
+		//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
 
 
-	//row++;
+		//row++;
 
-	//optlist.str(L"");
-	//optlist << L"fittextline={position={left center} font=" << font		
-	//	<< L" fontsize=" << fsize << L"}"
-	//	<< L" colspan=" << quartercolmax
-	//	//<< L" colwidth=25%"
-	//	;
-	//str.LoadStringW(IDS_STRING_LOW_E_LIMIT);
-	//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
+		//optlist.str(L"");
+		//optlist << L"fittextline={position={left center} font=" << font		
+		//	<< L" fontsize=" << fsize << L"}"
+		//	<< L" colspan=" << quartercolmax
+		//	//<< L" colwidth=25%"
+		//	;
+		//str.LoadStringW(IDS_STRING_LOW_E_LIMIT);
+		//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
 
-	//col+=quartercolmax;
-	//str.Format(L"%g",p2.lowelimit);
-	//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
+		//col+=quartercolmax;
+		//str.Format(L"%g",p2.lowelimit);
+		//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
 
 
-	//col+=quartercolmax;
-	//str.LoadStringW(IDS_STRING_HIGH_E_LIMIT);
-	//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
+		//col+=quartercolmax;
+		//str.LoadStringW(IDS_STRING_HIGH_E_LIMIT);
+		//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
 
-	//col+=quartercolmax;
-	//str.Format(L"%g",p2.highelimit);
-	//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
+		//col+=quartercolmax;
+		//str.Format(L"%g",p2.highelimit);
+		//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
 
-	//col=1;
-	//row++;
+		//col=1;
+		//row++;
 
 
-	//str.LoadStringW(IDS_STRING_SCAN_RATE);
-	//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
+		//str.LoadStringW(IDS_STRING_SCAN_RATE);
+		//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
 
-	//col+=quartercolmax;
-	//str.Format(L"%g",p2.scanrate);
-	//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
+		//col+=quartercolmax;
+		//str.Format(L"%g",p2.scanrate);
+		//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
 
 
-	//col+=quartercolmax;
-	//str.LoadStringW(IDS_STRING_NO_OF_CYCLES);
-	//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
+		//col+=quartercolmax;
+		//str.LoadStringW(IDS_STRING_NO_OF_CYCLES);
+		//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
 
-	//col+=quartercolmax;
-	//str.Format(L"%d",p2.noofcycles);
-	//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
+		//col+=quartercolmax;
+		//str.Format(L"%d",p2.noofcycles);
+		//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
 
 
 
-	//col=1;
-	//row++;
+		//col=1;
+		//row++;
 
 
-	//str.LoadStringW(IDS_STRING_ROTATION_RATE);
-	//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
+		//str.LoadStringW(IDS_STRING_ROTATION_RATE);
+		//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
 
-	//col+=quartercolmax;
-	//str.Format(L"%g",p2.rotationrate);
-	//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
+		//col+=quartercolmax;
+		//str.Format(L"%g",p2.rotationrate);
+		//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
 
 
-	//col+=quartercolmax;
-	//str.LoadStringW(IDS_STRING_END_INTEGRATION_E);
-	//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
+		//col+=quartercolmax;
+		//str.LoadStringW(IDS_STRING_END_INTEGRATION_E);
+		//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
 
-	//col+=quartercolmax;
-	//str.Format(L"%g",p2.endintegratione);
-	//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
+		//col+=quartercolmax;
+		//str.Format(L"%g",p2.endintegratione);
+		//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
 
-	//col=1;
-	//row++;
+		//col=1;
+		//row++;
 
 
 
 
 
-	/* ---------- Row 1: table header (spans all columns) */
-if(b3){
-	optlist.str(L"");
-	optlist << L"fittextline={position={left center} font=" << font		
-		<< L" fontsize=" << fsize << L"}"
-		<< L" colspan=" << colmax
-		;
+		/* ---------- Row 1: table header (spans all columns) */
+		if(b3){
+			optlist.str(L"");
+			optlist << L"fittextline={position={left center} font=" << font		
+				<< L" fontsize=" << fsize << L"}"
+				<< L" colspan=" << colmax
+				;
 
-	tbl = p.add_table_cell(tbl, col, row, L" ", optlist.str());
-	row++;
+			tbl = p.add_table_cell(tbl, col, row, L" ", optlist.str());
+			row++;
 
 
-	//str.LoadStringW(IDS_STRING_ADDITION_SOLUTION_PARA);
-	//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
+			//str.LoadStringW(IDS_STRING_ADDITION_SOLUTION_PARA);
+			//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
 
-	//row++;
+			//row++;
 
-	//int sarowstart=row;
+			//int sarowstart=row;
 
-	AddSAP(p,tbl,row,col,colmax,font,p3);
-}
-	//str.LoadStringW(IDS_STRING520);	
-	//optlist.str(L"");
-	//optlist << L"fittextline={position={center} font=" << font		
-	//	<< L" fontsize=" << fsize << L"}"
-	//	<< L" colspan=" << 2
-	//	<< L" colwidth=10%"
-	//	;
-	//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
-	//col+=2;
+			AddSAP(p,tbl,row,col,colmax,font,titlefont,p3,fsize);
+		}
+		//str.LoadStringW(IDS_STRING520);	
+		//optlist.str(L"");
+		//optlist << L"fittextline={position={center} font=" << font		
+		//	<< L" fontsize=" << fsize << L"}"
+		//	<< L" colspan=" << 2
+		//	<< L" colwidth=10%"
+		//	;
+		//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
+		//col+=2;
 
-	//str.LoadStringW(IDS_STRING524);	
-	//optlist.str(L"");
-	//optlist << L"fittextline={position={center} font=" << font		
-	//	<< L" fontsize=" << fsize << L"}"
-	//	<< L" colspan=" << 3
-	//	//<< L" colwidth=15%"
-	//	;
-	//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
-	//col+=3;
+		//str.LoadStringW(IDS_STRING524);	
+		//optlist.str(L"");
+		//optlist << L"fittextline={position={center} font=" << font		
+		//	<< L" fontsize=" << fsize << L"}"
+		//	<< L" colspan=" << 3
+		//	//<< L" colwidth=15%"
+		//	;
+		//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
+		//col+=3;
 
-	//for(int i=1;i<=3;i++){
-	//	str.LoadStringW(IDS_STRING524+i);	
-	//	optlist.str(L"");
-	//	optlist << L"fittextline={position={center} font=" << font		
-	//		<< L" fontsize=" << fsize << L"}"
-	//		<< L" colspan=" << 3
-	//		//<< L" colwidth=15%"
-	//		;
-	//	tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
-	//	col+=3;
-	//}
+		//for(int i=1;i<=3;i++){
+		//	str.LoadStringW(IDS_STRING524+i);	
+		//	optlist.str(L"");
+		//	optlist << L"fittextline={position={center} font=" << font		
+		//		<< L" fontsize=" << fsize << L"}"
+		//		<< L" colspan=" << 3
+		//		//<< L" colwidth=15%"
+		//		;
+		//	tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
+		//	col+=3;
+		//}
 
-	//str.LoadStringW(IDS_STRING525);	
-	//optlist.str(L"");
-	//optlist << L"fittextline={position={center} font=" << font		
-	//	<< L" fontsize=" << fsize << L"}"
-	//	<< L" colspan=" << 3
-	//	//<< L" colwidth=15%"
-	//	;
-	//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
-	//col+=3;
+		//str.LoadStringW(IDS_STRING525);	
+		//optlist.str(L"");
+		//optlist << L"fittextline={position={center} font=" << font		
+		//	<< L" fontsize=" << fsize << L"}"
+		//	<< L" colspan=" << 3
+		//	//<< L" colwidth=15%"
+		//	;
+		//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
+		//col+=3;
 
-	//str.LoadStringW(IDS_STRING526);	
-	//optlist.str(L"");
-	//optlist << L"fittextline={position={center} font=" << font		
-	//	<< L" fontsize=" << fsize << L"}"
-	//	<< L" colspan=" << 3
-	//	//<< L" colwidth=15%"
-	//	;
-	//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
-	//col+=3;
+		//str.LoadStringW(IDS_STRING526);	
+		//optlist.str(L"");
+		//optlist << L"fittextline={position={center} font=" << font		
+		//	<< L" fontsize=" << fsize << L"}"
+		//	<< L" colspan=" << 3
+		//	//<< L" colwidth=15%"
+		//	;
+		//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
+		//col+=3;
 
-	//for (row++; row <= sarowstart+p3.saplist.size(); row++) {
+		//for (row++; row <= sarowstart+p3.saplist.size(); row++) {
 
-	//	col = 1;
-	//	{
-	//		std::wostringstream num;
+		//	col = 1;
+		//	{
+		//		std::wostringstream num;
 
-	//		num << row-sarowstart-1;
+		//		num << row-sarowstart-1;
 
-	//		optlist.str(L"");
-	//		optlist << L"fittextline={position={center} font=" << font		
-	//			<< L" fontsize=" << fsize << L"}"
-	//			<< L" colspan=" << 2
-	//			<< L" colwidth=10%"
-	//			;
+		//		optlist.str(L"");
+		//		optlist << L"fittextline={position={center} font=" << font		
+		//			<< L" fontsize=" << fsize << L"}"
+		//			<< L" colspan=" << 2
+		//			<< L" colwidth=10%"
+		//			;
 
-	//		tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
-	//		col += 2;
-	//	}
+		//		tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
+		//		col += 2;
+		//	}
 
 
 
-	//	{
-	//		str.LoadStringW(IDS_STRING_VOL_ONCE+p3.saplist[row-sarowstart-1].addType);
+		//	{
+		//		str.LoadStringW(IDS_STRING_VOL_ONCE+p3.saplist[row-sarowstart-1].addType);
 
-	//		optlist.str(L"");
-	//		optlist << L"fittextline={position={center} font=" << font		
-	//			<< L" fontsize=" << fsize << L"}"
-	//			<< L" colspan=" << 3
-	//			//<< L" colwidth=15%"
-	//			;
+		//		optlist.str(L"");
+		//		optlist << L"fittextline={position={center} font=" << font		
+		//			<< L" fontsize=" << fsize << L"}"
+		//			<< L" colspan=" << 3
+		//			//<< L" colwidth=15%"
+		//			;
 
-	//		tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)(str), optlist.str());
-	//		col+=3;
-	//	}
+		//		tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)(str), optlist.str());
+		//		col+=3;
+		//	}
 
 
 
-	//	{
-	//		//std::wostringstream num;
+		//	{
+		//		//std::wostringstream num;
 
 
-	//		str.Format(L"%g",p3.saplist[row-sarowstart-1].Sconc);
-	//		//num << (LPCWSTR)(str);
+		//		str.Format(L"%g",p3.saplist[row-sarowstart-1].Sconc);
+		//		//num << (LPCWSTR)(str);
 
-	//		optlist.str(L"");
-	//		optlist << L"fittextline={position={center} font=" << font		
-	//			<< L" fontsize=" << fsize << L"}"
-	//			<< L" colspan=" << 3
-	//			//<< L" colwidth=15%"
-	//			;
+		//		optlist.str(L"");
+		//		optlist << L"fittextline={position={center} font=" << font		
+		//			<< L" fontsize=" << fsize << L"}"
+		//			<< L" colspan=" << 3
+		//			//<< L" colwidth=15%"
+		//			;
 
-	//		tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)(str), optlist.str());
-	//		col+=3;
-	//	}
+		//		tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)(str), optlist.str());
+		//		col+=3;
+		//	}
 
 
 
-	//	{
-	//		//std::wostringstream num;
+		//	{
+		//		//std::wostringstream num;
 
 
-	//		str.Format(L"%g",p3.saplist[row-sarowstart-1].Aconc);
-	//		//num << (LPCWSTR)(str);
+		//		str.Format(L"%g",p3.saplist[row-sarowstart-1].Aconc);
+		//		//num << (LPCWSTR)(str);
 
-	//		optlist.str(L"");
-	//		optlist << L"fittextline={position={center} font=" << font		
-	//			<< L" fontsize=" << fsize << L"}"
-	//			<< L" colspan=" << 3
-	//			//<< L" colwidth=15%"
-	//			;
+		//		optlist.str(L"");
+		//		optlist << L"fittextline={position={center} font=" << font		
+		//			<< L" fontsize=" << fsize << L"}"
+		//			<< L" colspan=" << 3
+		//			//<< L" colwidth=15%"
+		//			;
 
-	//		tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)(str), optlist.str());
-	//		col+=3;
-	//	}
+		//		tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)(str), optlist.str());
+		//		col+=3;
+		//	}
 
 
 
-	//	{
-	//		//std::wostringstream num;
+		//	{
+		//		//std::wostringstream num;
 
 
-	//		str.Format(L"%g",p3.saplist[row-sarowstart-1].Lconc);
-	//		//num << (LPCWSTR)(str);
+		//		str.Format(L"%g",p3.saplist[row-sarowstart-1].Lconc);
+		//		//num << (LPCWSTR)(str);
 
-	//		optlist.str(L"");
-	//		optlist << L"fittextline={position={center} font=" << font		
-	//			<< L" fontsize=" << fsize << L"}"
-	//			<< L" colspan=" << 3
-	//			//<< L" colwidth=15%"
-	//			;
-	//		tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)(str), optlist.str());
-	//		col+=3;
-	//	}
+		//		optlist.str(L"");
+		//		optlist << L"fittextline={position={center} font=" << font		
+		//			<< L" fontsize=" << fsize << L"}"
+		//			<< L" colspan=" << 3
+		//			//<< L" colwidth=15%"
+		//			;
+		//		tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)(str), optlist.str());
+		//		col+=3;
+		//	}
 
 
 
-	//	{
-	//		//std::wostringstream num;
+		//	{
+		//		//std::wostringstream num;
 
-	//		str.Format(L"%g",p3.saplist[row-sarowstart-1].volconc);
-	//		//num << (LPCWSTR)(str);
+		//		str.Format(L"%g",p3.saplist[row-sarowstart-1].volconc);
+		//		//num << (LPCWSTR)(str);
 
-	//		optlist.str(L"");
-	//		optlist << L"fittextline={position={center} font=" << font		
-	//			<< L" fontsize=" << fsize << L"}"
-	//			<< L" colspan=" << 3
-	//			//<< L" colwidth=15%"
-	//			;
+		//		optlist.str(L"");
+		//		optlist << L"fittextline={position={center} font=" << font		
+		//			<< L" fontsize=" << fsize << L"}"
+		//			<< L" colspan=" << 3
+		//			//<< L" colwidth=15%"
+		//			;
 
-	//		tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)(str), optlist.str());
-	//		col+=3;
-	//	}
+		//		tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)(str), optlist.str());
+		//		col+=3;
+		//	}
 
 
-	//	{
-	//		//std::wostringstream num;
+		//	{
+		//		//std::wostringstream num;
 
 
-	//		str.Format(L"%g",p3.saplist[row-sarowstart-1].endRatio);
-	//		//num << (LPCWSTR)(str);
+		//		str.Format(L"%g",p3.saplist[row-sarowstart-1].endRatio);
+		//		//num << (LPCWSTR)(str);
 
-	//		optlist.str(L"");
-	//		optlist << L"fittextline={position={center} font=" << font		
-	//			<< L" fontsize=" << fsize << L"}"
-	//			<< L" colspan=" << 3
-	//			//<< L" colwidth=15%"
-	//			;
+		//		optlist.str(L"");
+		//		optlist << L"fittextline={position={center} font=" << font		
+		//			<< L" fontsize=" << fsize << L"}"
+		//			<< L" colspan=" << 3
+		//			//<< L" colwidth=15%"
+		//			;
 
-	//		tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)(str), optlist.str());
-	//	}
+		//		tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)(str), optlist.str());
+		//	}
 
 
-	//}
+		//}
 
-	int sarowend=row;
-	//col=1;
+		int sarowend=row;
+		//col=1;
 
-	/* ---------- Row 1: table header (spans all columns) */
-	if(b4){
-	optlist.str(L"");
-	optlist << L"fittextline={position={left center} font=" << font		
-		<< L" fontsize=" << fsize << L"}"
-		<< L" colspan=" << colmax
-		;
-	tbl = p.add_table_cell(tbl, col, row, L" ", optlist.str());
+		/* ---------- Row 1: table header (spans all columns) */
+		if(b4){
+			optlist.str(L"");
+			optlist << L"fittextline={position={left center} font=" << font		
+				<< L" fontsize=" << fsize << L"}"
+				<< L" colspan=" << colmax
+				;
+			tbl = p.add_table_cell(tbl, col, row, L" ", optlist.str());
 
-	row++;
+			row++;
 
 
-	AddRES(p,tbl,row,col,colmax,font,res);
-	}
+			AddRES(p,tbl,row,col,colmax,font,titlefont,res,fsize);
+		}
 
-	//str.LoadStringW(IDS_STRING_RESULT);
+		//str.LoadStringW(IDS_STRING_RESULT);
 
-	//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
+		//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
 
 
-	//row++;
+		//row++;
 
-	//for(size_t i=0;i<res.size();i+=2){
+		//for(size_t i=0;i<res.size();i+=2){
 
 
-	//	optlist.str(L"");
-	//	optlist << L"fittextline={position={left center} font=" << font		
-	//		<< L" fontsize=" << fsize << L"}"
-	//		<< L" colspan=" << quartercolmax
-	//		//<< L" colwidth=25%"
-	//		;
+		//	optlist.str(L"");
+		//	optlist << L"fittextline={position={left center} font=" << font		
+		//		<< L" fontsize=" << fsize << L"}"
+		//		<< L" colspan=" << quartercolmax
+		//		//<< L" colwidth=25%"
+		//		;
 
-	//	tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)(res[i]), optlist.str());
+		//	tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)(res[i]), optlist.str());
 
 
-	//	col+=quartercolmax;
+		//	col+=quartercolmax;
 
-	//	optlist.str(L"");
-	//	optlist << L"fittextline={position={left center} font=" << font		
-	//		<< L" fontsize=" << fsize << L"}"
-	//		<< L" colspan=" << colmax+1-col
-	//		;
-	//	//str.Format(L"%g",para.calibrationfactor);
-	//	tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)(res[i+1]), optlist.str());
+		//	optlist.str(L"");
+		//	optlist << L"fittextline={position={left center} font=" << font		
+		//		<< L" fontsize=" << fsize << L"}"
+		//		<< L" colspan=" << colmax+1-col
+		//		;
+		//	//str.Format(L"%g",para.calibrationfactor);
+		//	tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)(res[i+1]), optlist.str());
 
 
-	//	col=1;
-	//	row++;
-	//}
+		//	col=1;
+		//	row++;
+		//}
 
 
 
 
 
 
-	//optlist.str(L"");
-	//optlist <<L"fill={";
-	//for(int i=sarowstart;i<sarowend;i+=2){
-	//	optlist << L"{area=row"
-	//		<< i
-	//		<< L" fillcolor={gray 0.9}} ";
-	//}
-	//optlist << L"} "; 
-	//optlist << L"stroke={{line=other}} ";
+		//optlist.str(L"");
+		//optlist <<L"fill={";
+		//for(int i=sarowstart;i<sarowend;i+=2){
+		//	optlist << L"{area=row"
+		//		<< i
+		//		<< L" fillcolor={gray 0.9}} ";
+		//}
+		//optlist << L"} "; 
+		//optlist << L"stroke={{line=other}} ";
 
 
-	/* Place the table instance */
-	//result = p.fit_table(tbl, llx, lly, urx, ury, optlist.str());
+		/* Place the table instance */
+		//result = p.fit_table(tbl, llx, lly, urx, ury, optlist.str());
 
-	////result = p.fit_table(tbl, llx, lly, urx, ury, L"fill={{area=row20 fillcolor={gray 0.9}} {area=row22 fillcolor={gray 0.9}} {area=row24 fillcolor={gray 0.9}}}" );
-	//if (result == L"_error") {
-	//	std::wcerr << L"Couldn't place table: " << p.get_errmsg() << std::endl;
-	//	return 2;
-	//}
+		////result = p.fit_table(tbl, llx, lly, urx, ury, L"fill={{area=row20 fillcolor={gray 0.9}} {area=row22 fillcolor={gray 0.9}} {area=row24 fillcolor={gray 0.9}}}" );
+		//if (result == L"_error") {
+		//	std::wcerr << L"Couldn't place table: " << p.get_errmsg() << std::endl;
+		//	return 2;
+		//}
 
 
 
@@ -2992,7 +2994,7 @@ if(b3){
 
 
 
-	//p.end_page_ext(L"");
+		//p.end_page_ext(L"");
 
 
 
@@ -3001,225 +3003,226 @@ if(b3){
 
 
 
-	optlist.str(L"");
-	if(b3){
-	optlist <<L"fill={";
-	for(int i=sarowend-p3.saplist.size()-1;i<sarowend;i+=2){
-		optlist << L"{area=row"
-			<< i
-			<< L" fillcolor={gray 0.9}} ";
-	}
-	optlist << L"} "; 
-	//optlist << L"stroke={{line=other}} ";
-	}
+		optlist.str(L"");
+		if(b3){
+			optlist <<L"fill={";
+			for(int i=sarowend-p3.saplist.size()-1;i<sarowend;i+=2){
+				optlist << L"{area=row"
+					<< i
+					<< L" fillcolor={gray 0.9}} ";
+			}
+			optlist << L"} "; 
+			
+		}
+		//optlist << L"stroke={{line=other}} ";
 
-	/* ---------- Place the table on one or more pages ---------- */
+		/* ---------- Place the table on one or more pages ---------- */
 
-	/*
-	* Loop until all of the table is placed; create new pages
-	* as long as more table instances need to be placed.
-	*/
-	do {
-		p.begin_page_ext(0, 0, L"width=a4.width height=a4.height");
-
-		/* Shade every other row; draw lines for all table cells.
-		* Add "showcells showborder" to visualize cell borders 
+		/*
+		* Loop until all of the table is placed; create new pages
+		* as long as more table instances need to be placed.
 		*/
+		do {
+			p.begin_page_ext(0, 0, L"width=a4.width height=a4.height");
 
-		/* Place the table instance */
-
-
-
-
-		/* Place the table instance */
-		result = p.fit_table(tbl, llx, lly, urx, ury, optlist.str());
-
-
-		if (result == L"_error") {
-			std::wcerr << L"Couldn't place table: " << p.get_errmsg() << std::endl;
-			return 2;
-		}
-
-		p.end_page_ext(L"");
-
-	} while (result == L"_boxfull");
-
-	/* Check the result; "_stop" means all is ok. */
-	if (result != L"_stop") {
-		if (result == L"_error") {
-			std::wcerr << L"Error when placing table: " << p.get_errmsg()
-				<< std::endl;
-			return 2;
-		}
-		else {
-			/* Any other return value is a user exit caused by
-			* the "return" option; this requires dedicated code to
-			* deal with.
+			/* Shade every other row; draw lines for all table cells.
+			* Add "showcells showborder" to visualize cell borders 
 			*/
-			std::wcerr << L"User return found in Textflow" << std::endl;
-			return 2;
+
+			/* Place the table instance */
+
+
+
+
+			/* Place the table instance */
+			result = p.fit_table(tbl, llx, lly, urx, ury, optlist.str());
+
+
+			if (result == L"_error") {
+				std::wcerr << L"Couldn't place table: " << p.get_errmsg() << std::endl;
+				return 2;
+			}
+
+			p.end_page_ext(L"");
+
+		} while (result == L"_boxfull");
+
+		/* Check the result; "_stop" means all is ok. */
+		if (result != L"_stop") {
+			if (result == L"_error") {
+				std::wcerr << L"Error when placing table: " << p.get_errmsg()
+					<< std::endl;
+				return 2;
+			}
+			else {
+				/* Any other return value is a user exit caused by
+				* the "return" option; this requires dedicated code to
+				* deal with.
+				*/
+				std::wcerr << L"User return found in Textflow" << std::endl;
+				return 2;
+			}
 		}
-	}
-	/* This will also delete Textflow handles used in the table */
-	p.delete_table(tbl, L"");
+		/* This will also delete Textflow handles used in the table */
+		p.delete_table(tbl, L"");
 
-	//return 0;
-
+		//return 0;
 
 
 
 
 
 
-	return 0;
+
+		return 0;
 }
 
 
 
-
-
-int imgout(pdflib::PDFlib &p, const std::wstring imagefile, CString str)
-{
-
-	int fsize=10;
-
-	//int font, image;
-
-	std::wstring result;
-	std::wostringstream optlist;
-
-	double llx=50, lly=50, urx=550, ury=800;
-
-	int row, col, font, image, tf=-1, tbl=-1;
-
-	//int font;
-	//font = p.load_font(L"Helvetica", L"winansi", L"");
-	//if (font == -1) {
-	//	std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
-	//	return 2;
-	//}
-
-
-	p.begin_page_ext(0, 0, L"width=a4.width height=a4.height");
-
-	/* Position the image in its original size with its lower left corner
-	* at the reference point (20, 380)
-	*/
-
-
-
-	/* -------------------- Add table cells -------------------- */
-	row = 1; col = 1;
-	/* ---------- Row 1: table header (spans all columns) */
-
-
-
-
-
-	image = p.load_image(L"auto", logofile, L"");
-	if (image == -1) {
-		std::wcerr << L"Couldn't load image: " << p.get_errmsg() << std::endl;
-		return 2;
-	}
-
-	optlist.str(L"");
-	optlist << L"image=" << image << L" fitimage={fitmethod=auto position={right center}}";
-	optlist << L" rowheight=30";
-	//optlist << L" colspan=" << colmax;
-
-	tbl = p.add_table_cell(tbl, col, row, L"", optlist.str());
-	if (tbl == -1) {
-		std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
-		return 2;
-	}
-
-	row++;
-
-
-	font = p.load_font(L"Helvetica", L"winansi", L"");
-	if (font == -1) {
-		std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
-		return 2;
-	}
-
-	optlist.str(L"");
-	optlist << L"fittextline={position={left center} font=" << font
-		<< L" fontsize=" << fsize << L"}"
-		<< L" colwidth=100%"
-		//<< L" colspan=" << colmax
-		;
-
-	tbl = p.add_table_cell(tbl, col, row, L" ", optlist.str());
-	row++;
-
-	tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
-	row++;
-
-
-
-	image = p.load_image(L"auto", imagefile, L"");
-	if (image == -1) {
-		std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
-		return 2;
-	}
-
-	optlist.str(L"");
-	optlist << L"image=" << image << L" fitimage={fitmethod=auto position={left top}}";
-	optlist << L" rowheight=600";
-	//optlist << L" colspan=" << colmax;
-
-	tbl = p.add_table_cell(tbl, col, row, L"", optlist.str());
-	if (tbl == -1) {
-		std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
-		return 2;
-	}
-
-	row++;
-
-
-
-
-	//p.setfont(font, fsize);
-
-	//p.fit_textline((LPCWSTR)str, 50, 760, L"");
-
-
-	//optlist.str(L"");
-	//optlist << L"boxsize={500 700}"
-	//	<< L" fitmethod=auto"
-	//	<< L" position={left top}";
-
-	//p.fit_image(image, 50, 50, optlist.str());
-
-
-	optlist.str(L"");
-	//optlist <<L"fill={";
-	//for(int i=sarowstart;i<sarowend;i+=2){
-	//	optlist << L"{area=row"
-	//		<< i
-	//		<< L" fillcolor={gray 0.9}} ";
-	//}
-	//optlist << L"} "; 
-	//optlist << L"stroke={{line=other}} ";
-
-
-	/* Place the table instance */
-	result = p.fit_table(tbl, llx, lly, urx, ury, optlist.str());
-
-	//result = p.fit_table(tbl, llx, lly, urx, ury, L"fill={{area=row20 fillcolor={gray 0.9}} {area=row22 fillcolor={gray 0.9}} {area=row24 fillcolor={gray 0.9}}}" );
-	if (result == L"_error") {
-		std::wcerr << L"Couldn't place table: " << p.get_errmsg() << std::endl;
-		return 2;
-	}
-
-
-
-
-	p.end_page_ext(L"");
-
-	return 0;
-}
-
+//
+//
+//int imgout(pdflib::PDFlib &p, const std::wstring imagefile, CString str)
+//{
+//
+//	int fsize=10;
+//
+//	//int font, image;
+//
+//	std::wstring result;
+//	std::wostringstream optlist;
+//
+//	double llx=50, lly=50, urx=550, ury=800;
+//
+//	int row, col, font, image, tf=-1, tbl=-1;
+//
+//	//int font;
+//	//font = p.load_font(L"Helvetica", L"winansi", L"");
+//	//if (font == -1) {
+//	//	std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
+//	//	return 2;
+//	//}
+//
+//
+//	p.begin_page_ext(0, 0, L"width=a4.width height=a4.height");
+//
+//	/* Position the image in its original size with its lower left corner
+//	* at the reference point (20, 380)
+//	*/
+//
+//
+//
+//	/* -------------------- Add table cells -------------------- */
+//	row = 1; col = 1;
+//	/* ---------- Row 1: table header (spans all columns) */
+//
+//
+//
+//
+//
+//	image = p.load_image(L"auto", logofile, L"");
+//	if (image == -1) {
+//		std::wcerr << L"Couldn't load image: " << p.get_errmsg() << std::endl;
+//		return 2;
+//	}
+//
+//	optlist.str(L"");
+//	optlist << L"image=" << image << L" fitimage={fitmethod=auto position={right center}}";
+//	optlist << L" rowheight=30";
+//	//optlist << L" colspan=" << colmax;
+//
+//	tbl = p.add_table_cell(tbl, col, row, L"", optlist.str());
+//	if (tbl == -1) {
+//		std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
+//		return 2;
+//	}
+//
+//	row++;
+//
+//
+//	font = p.load_font(L"Helvetica", L"winansi", L"");
+//	if (font == -1) {
+//		std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
+//		return 2;
+//	}
+//
+//	optlist.str(L"");
+//	optlist << L"fittextline={position={left center} font=" << font
+//		<< L" fontsize=" << fsize << L"}"
+//		<< L" colwidth=100%"
+//		//<< L" colspan=" << colmax
+//		;
+//
+//	tbl = p.add_table_cell(tbl, col, row, L" ", optlist.str());
+//	row++;
+//
+//	tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
+//	row++;
+//
+//
+//
+//	image = p.load_image(L"auto", imagefile, L"");
+//	if (image == -1) {
+//		std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
+//		return 2;
+//	}
+//
+//	optlist.str(L"");
+//	optlist << L"image=" << image << L" fitimage={fitmethod=auto position={left top}}";
+//	optlist << L" rowheight=600";
+//	//optlist << L" colspan=" << colmax;
+//
+//	tbl = p.add_table_cell(tbl, col, row, L"", optlist.str());
+//	if (tbl == -1) {
+//		std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
+//		return 2;
+//	}
+//
+//	row++;
+//
+//
+//
+//
+//	//p.setfont(font, fsize);
+//
+//	//p.fit_textline((LPCWSTR)str, 50, 760, L"");
+//
+//
+//	//optlist.str(L"");
+//	//optlist << L"boxsize={500 700}"
+//	//	<< L" fitmethod=auto"
+//	//	<< L" position={left top}";
+//
+//	//p.fit_image(image, 50, 50, optlist.str());
+//
+//
+//	optlist.str(L"");
+//	//optlist <<L"fill={";
+//	//for(int i=sarowstart;i<sarowend;i+=2){
+//	//	optlist << L"{area=row"
+//	//		<< i
+//	//		<< L" fillcolor={gray 0.9}} ";
+//	//}
+//	//optlist << L"} "; 
+//	//optlist << L"stroke={{line=other}} ";
+//
+//
+//	/* Place the table instance */
+//	result = p.fit_table(tbl, llx, lly, urx, ury, optlist.str());
+//
+//	//result = p.fit_table(tbl, llx, lly, urx, ury, L"fill={{area=row20 fillcolor={gray 0.9}} {area=row22 fillcolor={gray 0.9}} {area=row24 fillcolor={gray 0.9}}}" );
+//	if (result == L"_error") {
+//		std::wcerr << L"Couldn't place table: " << p.get_errmsg() << std::endl;
+//		return 2;
+//	}
+//
+//
+//
+//
+//	p.end_page_ext(L"");
+//
+//	return 0;
+//}
+//
 
 
 
@@ -3287,8 +3290,8 @@ int imgout2(
 
 
 
-
-	font = p.load_font(L"Helvetica", L"winansi", L"");
+	font = p.load_font(L"Times-Bold", L"winansi", L"");
+	//font = p.load_font(L"Helvetica", L"winansi", L"");
 	if (font == -1) {
 		std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
 		return(2);

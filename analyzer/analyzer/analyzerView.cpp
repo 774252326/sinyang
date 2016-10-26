@@ -49,6 +49,7 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		ON_UPDATE_COMMAND_UI(ID_VIEW_DATACURSOR, &CanalyzerView::OnUpdateViewDatacursor)
 		ON_COMMAND(ID_VIEW_FITWINDOW, &CanalyzerView::OnViewFitwindow)
 		ON_NOTIFY(UDN_DELTAPOS, 1, &CanalyzerView::OnDeltaposSpin)
+		ON_WM_LBUTTONDBLCLK()
 	END_MESSAGE_MAP()
 
 	// CanalyzerView construction/destruction
@@ -542,7 +543,7 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		// TODO: Add your command update UI handler code here
 
 		CMainFrame *mf=(CMainFrame*)GetParentFrame();
-		if(mf->pst!=running){
+		if(mf->pst!=running && mf->au!=authority::guest){
 			pCmdUI->Enable(TRUE);
 			pCmdUI->SetCheck(bMouseCursor);
 		}
@@ -661,4 +662,14 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		m_spBtn.SetPos32(selecti);
 		return selecti;
 
+	}
+
+
+	void CanalyzerView::OnLButtonDblClk(UINT nFlags, CPoint point)
+	{
+		// TODO: Add your message handler code here and/or call default
+
+		OnOptionsPlotsettings();
+
+		CView::OnLButtonDblClk(nFlags, point);
 	}

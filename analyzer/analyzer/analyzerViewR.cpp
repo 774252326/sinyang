@@ -53,7 +53,9 @@ IMPLEMENT_DYNCREATE(CanalyzerViewR, CanalyzerView)
 
 		CString str=Compute(ol->dol,pDoc->p1,pdl,true);
 
-		::SendMessage(mf->GetCaptionBar()->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)str.GetBuffer(),NULL);
+		//::SendMessage(mf->GetCaptionBar()->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)str.GetBuffer(),NULL);
+
+		mf->GetCaptionBar()->ShowMessage(str);
 
 		::PostMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_VIEW,NULL,NULL);
 

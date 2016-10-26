@@ -11,6 +11,8 @@
 #include "analyzerViewR.h"
 #include "func.h"
 
+#include "LoginDlg.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -51,6 +53,13 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_DATACURSOR, &CMainFrame::OnUpdateViewDatacursor)
 	ON_UPDATE_COMMAND_UI(ID_ANALYSIS_COMPUTE, &CMainFrame::OnUpdateAnalysisCompute)
 	ON_COMMAND(ID_ANALYSIS_COMPUTE, &CMainFrame::OnAnalysisCompute)
+	ON_COMMAND(ID_SECURITY_LOGIN, &CMainFrame::OnSecurityLogin)
+	ON_COMMAND(ID_SECURITY_USERACCOUNTS, &CMainFrame::OnSecurityUseraccounts)
+	ON_UPDATE_COMMAND_UI(ID_FILE_PRINT, &CMainFrame::OnUpdateFilePrint)
+	ON_UPDATE_COMMAND_UI(ID_FILE_PRINT_PREVIEW, &CMainFrame::OnUpdateFilePrintPreview)
+	ON_UPDATE_COMMAND_UI(ID_FILE_PRINT_SETUP, &CMainFrame::OnUpdateFilePrintSetup)
+	ON_UPDATE_COMMAND_UI(ID_FILE_SAVE, &CMainFrame::OnUpdateFileSave)
+	ON_UPDATE_COMMAND_UI(ID_FILE_NEW, &CMainFrame::OnUpdateFileNew)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -638,62 +647,65 @@ void CMainFrame::OnAnalysisPause()
 void CMainFrame::OnUpdateAnalysisMethodsetup(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst==stop);
+	pCmdUI->Enable(pst==stop && au!=guest);
 }
 
 
 void CMainFrame::OnUpdateAnalysisStartanalysis(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst==stop);
+	pCmdUI->Enable(pst==stop && au!=guest);
 }
 
 
 void CMainFrame::OnUpdateAnalysisPause(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst!=stop);
+	pCmdUI->Enable(pst!=stop && au!=guest);
 }
 
 
 void CMainFrame::OnUpdateAnalysisAbortanalysis(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst!=stop);
+	pCmdUI->Enable(pst!=stop && au!=guest);
 }
 
 
 void CMainFrame::OnUpdateAnalysisReport(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst==stop);
+	pCmdUI->Enable(pst==stop && au!=guest);
 }
 
 
 void CMainFrame::OnUpdateOptionsPlotsettings(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst==stop);
+	pCmdUI->Enable(pst==stop && au!=guest);
 }
 
 
 void CMainFrame::OnUpdateViewFitwindow(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst!=running);
+	pCmdUI->Enable(pst!=running && au!=guest);
 }
 
 
 void CMainFrame::OnUpdateViewDatacursor(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
+	//pCmdUI->Enable(au==admin);
 }
 
 
 void CMainFrame::OnUpdateAnalysisCompute(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst!=running);
+	pCmdUI->Enable(pst!=running 
+		//&& au!=guest
+		);
 }
 
 
@@ -704,4 +716,71 @@ void CMainFrame::OnAnalysisCompute()
 	CanalyzerViewR *pavr=(CanalyzerViewR*)m_wndSplitter.GetPane(0,1);
 	::SendMessage(pavr->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
 	::SendMessage(pavr->GetSafeHwnd(),MESSAGE_COMPUTE_RESULT,NULL,NULL);
+}
+
+
+void CMainFrame::OnSecurityLogin()
+{
+	// TODO: Add your command handler code here
+
+	LoginDlg ld;
+	if(ld.DoModal()==IDOK){
+		au=ld.a;
+	}
+
+}
+
+
+void CMainFrame::OnSecurityUseraccounts()
+{
+	// TODO: Add your command handler code here
+
+	switch(au){
+	case admin:
+		AfxMessageBox(L"admin");
+		break;
+	case user:
+		AfxMessageBox(L"user");
+		break;
+	case guest:
+		AfxMessageBox(L"guest");
+		break;
+	default:
+		break;
+	}
+}
+
+
+void CMainFrame::OnUpdateFilePrint(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->Enable(au!=guest);
+}
+
+
+void CMainFrame::OnUpdateFilePrintPreview(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->Enable(au!=guest);
+}
+
+
+void CMainFrame::OnUpdateFilePrintSetup(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->Enable(au!=guest);
+}
+
+
+void CMainFrame::OnUpdateFileSave(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->Enable(au!=guest);
+}
+
+
+void CMainFrame::OnUpdateFileNew(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->Enable(au!=guest);
 }

@@ -70,6 +70,7 @@
 
 
 
+
 typedef struct MYPARA{
 	CanalyzerViewL *leftp;
 	CanalyzerViewR *rightp;
@@ -85,7 +86,7 @@ typedef struct MYPARA{
 } mypara;
 
 
-
+bool CheckLogin(const CString &un, const CString &pw, authority &ar);
 void LoadFileList(const CString &m_filePath, std::vector<CString> &filelist);
 UINT PROCESS(LPVOID pParam);
 

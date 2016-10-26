@@ -17,6 +17,13 @@ enum ProcessState{
 };
 
 
+enum authority{
+	admin,
+	user,
+	guest
+};
+
+
 class CMainFrame : public CFrameWndEx
 {
 	
@@ -98,6 +105,17 @@ public:
 	afx_msg void OnUpdateViewDatacursor(CCmdUI *pCmdUI);
 	afx_msg void OnUpdateAnalysisCompute(CCmdUI *pCmdUI);
 	afx_msg void OnAnalysisCompute();
+
+
+	authority au;
+
+	afx_msg void OnSecurityLogin();
+	afx_msg void OnSecurityUseraccounts();
+	afx_msg void OnUpdateFilePrint(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateFilePrintPreview(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateFilePrintSetup(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateFileSave(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateFileNew(CCmdUI *pCmdUI);
 };
 
 

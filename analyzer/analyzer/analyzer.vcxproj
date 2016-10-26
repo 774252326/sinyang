@@ -128,6 +128,7 @@
     <ClInclude Include="CVParametersPage.h" />
     <ClInclude Include="DataOutA.h" />
     <ClInclude Include="EditB.h" />
+    <ClInclude Include="EditC.h" />
     <ClInclude Include="EditInt.h" />
     <ClInclude Include="EditNum.h" />
     <ClInclude Include="EditReal.h" />
@@ -137,13 +138,13 @@
     <ClInclude Include="ListCtrlA.h" />
     <ClInclude Include="ListCtrlLS.h" />
     <ClInclude Include="ListCtrlSAP.h" />
+    <ClInclude Include="LoginDlg.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="MFCCaptionBarA.h" />
     <ClInclude Include="MFCToolBarA.h" />
     <ClInclude Include="OutputList.h" />
     <ClInclude Include="OutputWnd.h" />
     <ClInclude Include="pcct.h" />
-    <ClInclude Include="pcctC.h" />
     <ClInclude Include="pdfout.h" />
     <ClInclude Include="PlotData.h" />
     <ClInclude Include="PlotSettingPageA.h" />
@@ -171,6 +172,7 @@
     <ClCompile Include="DataOutA.cpp" />
     <ClCompile Include="drawfunc.cpp" />
     <ClCompile Include="EditB.cpp" />
+    <ClCompile Include="EditC.cpp" />
     <ClCompile Include="EditInt.cpp" />
     <ClCompile Include="EditNum.cpp" />
     <ClCompile Include="EditReal.cpp" />
@@ -180,13 +182,13 @@
     <ClCompile Include="ListCtrlA.cpp" />
     <ClCompile Include="ListCtrlLS.cpp" />
     <ClCompile Include="ListCtrlSAP.cpp" />
+    <ClCompile Include="LoginDlg.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="MFCCaptionBarA.cpp" />
     <ClCompile Include="MFCToolBarA.cpp" />
     <ClCompile Include="OutputList.cpp" />
     <ClCompile Include="OutputWnd.cpp" />
     <ClCompile Include="pcct.cpp" />
-    <ClCompile Include="pcctC.cpp" />
     <ClCompile Include="pdfout.cpp" />
     <ClCompile Include="PlotData.cpp" />
     <ClCompile Include="PlotSettingPageA.cpp" />

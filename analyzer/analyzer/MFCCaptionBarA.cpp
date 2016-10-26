@@ -15,7 +15,7 @@ IMPLEMENT_DYNAMIC(CMFCCaptionBarA, CMFCCaptionBar)
 	: timer(0)
 	, x(0)
 	, ecWidth(50)
-	, strblank(_T("                                        "))
+	, strblank(_T("                                      "))
 	, fontheight(-14)
 	, flashms(500)
 {
@@ -43,6 +43,20 @@ END_MESSAGE_MAP()
 
 
 
+
+void CMFCCaptionBarA::DoDataExchange(CDataExchange* pDX)
+{
+	// TODO: Add your specialized code here and/or call the base class
+
+
+	DDX_Text(pDX, IDS_EDIT_CAPTION_EDIT, x);
+	CMFCCaptionBar::DoDataExchange(pDX);
+
+
+}
+
+
+
 // CMFCCaptionBarA message handlers
 
 
@@ -67,7 +81,7 @@ int CMFCCaptionBarA::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 
 
-	//if( bn.Create(_T(""), WS_CHILD|/*WS_VISIBLE|*/BS_AUTOCHECKBOX, CRect(0,0,12,12), this, IDS_BUTTON_CAPTION_CHECKBOX) ==FALSE)
+	//if( bn.Create(_T(""), WS_CHILD|WS_VISIBLE|BS_PUSHBUTTON, CRect(0,0,100,100), this, IDS_BUTTON_CAPTION_CHECKBOX) ==FALSE)
 		//return -1;
 
 	return 0;
@@ -126,7 +140,7 @@ int CMFCCaptionBarA::SetEdit(void)
 	//CRect bnrect;
 	//bn.GetWindowRect(&bnrect);
 	//bnrect.MoveToXY(bRect.left,bRect.CenterPoint().y-bnrect.Height()/2);
-	//bn.MoveWindow(&bnrect);
+	////bn.MoveWindow(&bnrect);
 
 
 	return 0;
@@ -203,16 +217,6 @@ void CMFCCaptionBarA::OnTimer(UINT_PTR nIDEvent)
 }
 
 
-void CMFCCaptionBarA::DoDataExchange(CDataExchange* pDX)
-{
-	// TODO: Add your specialized code here and/or call the base class
-
-
-	DDX_Text(pDX, IDS_EDIT_CAPTION_EDIT, x);
-	CMFCCaptionBar::DoDataExchange(pDX);
-
-
-}
 
 
 void CMFCCaptionBarA::ShowMessageRunning(void)
@@ -290,8 +294,18 @@ void CMFCCaptionBarA::OnDrawText(
 	font.CreateFontIndirectW(&lgft);
 	pDC->SelectObject(&font);
 
-	CSize sz=pDC->GetTextExtent(strText);
 
+	//strblank=L" ";
+	//int w=(pDC->GetTextExtent(strblank)).cx;
+
+	//while( w<ecWidth ){
+	//	strblank+=L" ";
+	//	w=(pDC->GetTextExtent(strblank)).cx;
+	//}
+
+
+	CSize sz=pDC->GetTextExtent(strText);
+	
 	rect.right=rect.left+sz.cx;
 	rect.top=rect.CenterPoint().y-sz.cy/2;
 	rect.bottom=rect.top+sz.cy;

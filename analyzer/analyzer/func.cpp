@@ -18,8 +18,8 @@ double doubledummy;
 
 const DWORD sleepms=100;
 
-//const size_t nd=1000;
-const size_t nd=sleepms/10;
+const size_t nd=500;
+//const size_t nd=sleepms/10;
 
 //CString folderp=L"C:\\Users\\r8anw2x\\Desktop\\data\\d\\";
 //CString folderp=L"D:\\data\\d\\";
@@ -59,8 +59,8 @@ CString flistlist[]={
 };
 
 void WaitSecond(ProcessState &waitflg
-	//,int second=-1
-	,int second=3
+	,int second=-1
+	//,int second=3
 	//,int second=0
 	)
 {
@@ -72,6 +72,37 @@ void WaitSecond(ProcessState &waitflg
 	}
 	waitflg=running;
 }
+
+
+
+
+bool CheckLogin(const CString &un, const CString &pw, authority &ar)
+{
+	if(un==L"admin" 
+		&& pw==L"admin"
+		){
+		ar=authority::admin;
+		return true;
+	}
+	
+	if(un==L"user" 
+		//&& pw==L"user"
+		){
+		ar=authority::user;
+		return true;
+	}
+
+	if(un==L"guest"
+		//&& pw==L"guest"
+		){
+		ar=authority::guest;
+		return true;
+	}
+
+	return false;
+}
+
+
 
 
 void LoadFileList(const CString &m_filePath, std::vector<CString> &filelist)
@@ -98,20 +129,6 @@ void LoadFileList(const CString &m_filePath, std::vector<CString> &filelist)
 }
 
 
-void AdjustWidth(CListCtrl *ls, int nCol, CString str, int gap)
-{
-	int widthc,widtht;
-	widtht=ls->GetStringWidth(str)+gap;
-	widthc=ls->GetColumnWidth(nCol);
-	if(widthc<widtht)
-		ls->SetColumnWidth(nCol,widtht);
-}
-
-void AdjustWidth(CListCtrl *ls, int nCol, int nRow, int gap)
-{
-	CString	str=ls->GetItemText(nRow,nCol);
-	AdjustWidth(ls, nCol, str, gap);
-}
 
 
 DWORD stp(BYTE step,BYTE stepControl,BYTE plotFilter)
@@ -1059,6 +1076,7 @@ UINT DataOutAList2PlotDataList(const std::vector<DataOutA> &dol, const ANPara &p
 	ps1.smoothLine=1;
 	ps1.traceLast=false;
 
+	ps0.legendPos=2;
 
 	switch(p1.analysistype){
 
@@ -1097,7 +1115,7 @@ UINT DataOutAList2PlotDataList(const std::vector<DataOutA> &dol, const ANPara &p
 		{
 			ps1.lineType=5;
 
-
+			ps0.legendPos=3;
 
 		}
 		break;
@@ -1153,10 +1171,13 @@ UINT DataOutAList2PlotDataList(const std::vector<DataOutA> &dol, const ANPara &p
 			sl[0]|=(SC_NEW_RIGHT_PLOT<<8);
 
 
+
 		}
 		break;
 
-
+	case 8:
+		//ps0.legendPos=3;
+		break;
 	case 10:
 		//return NEWA1(leftp,rightp,cba,outw,*pst,p1,p2,p3);
 		{
@@ -2336,7 +2357,7 @@ CString Compute( const std::vector<DataOutA> &dol, const ANPara &p1, std::vector
 {
 
 	CString str;
-
+	CString strt;
 
 
 	switch(p1.analysistype){
@@ -2347,8 +2368,16 @@ CString Compute( const std::vector<DataOutA> &dol, const ANPara &p1, std::vector
 		//return DTR1(leftp,rightp,cba,outw,*pst,p1,p2,p3);
 		{
 			double Sv,z;
-			if(Compute1(dol, p1, Sv, z))
-				str.Format(L"Sv=%g,z=%g",Sv,z);
+			if(Compute1(dol, p1, Sv, z)){
+				//str.Format(L"Sv=%g,z=%g",Sv,z);				
+				strt.LoadStringW(IDS_STRING_CALIBRATION_FACTOR);
+				str=strt;
+				strt.Format(L": %g",z);
+				str+=strt;
+				strt.LoadStringW(IDS_STRING_ML_PER_L);
+				str+=strt;
+			}
+				
 		}
 		break;
 	case 2:
@@ -2356,8 +2385,21 @@ CString Compute( const std::vector<DataOutA> &dol, const ANPara &p1, std::vector
 		{
 
 			double SPv,SPc;
-			if(Compute2(dol, p1, SPv, SPc))
-				str.Format(L"SPv=%g,SPc=%g",SPv,SPc);
+			if(Compute2(dol, p1, SPv, SPc)){
+				//str.Format(L"SPv=%g,SPc=%g",SPv,SPc);
+				strt.LoadStringW(IDS_STRING_SAMPLE);
+				str=strt;
+				str+=L" ";
+				strt.LoadStringW(IDS_STRING_CONCERTRATION);
+				str+=strt;
+				//res.push_back(str);
+
+				strt.Format(L": %g",SPc);
+				str+=strt;
+				strt.LoadStringW(IDS_STRING_ML_PER_L);
+				str+=strt;
+				//str.Format(L"%g%s",SPc,strt);
+			}
 
 		}
 		break;
@@ -2365,8 +2407,22 @@ CString Compute( const std::vector<DataOutA> &dol, const ANPara &p1, std::vector
 		//return LATR1(leftp,rightp,cba,outw,*pst,p1,p2,p3);
 		{
 			double ITc;
-			if(Compute3(dol, p1, ITc))
-				str.Format(L"ITc=%g",ITc);
+			if(Compute3(dol, p1, ITc)){
+				//str.Format(L"ITc=%g",ITc);
+				strt.LoadStringW(IDS_STRING_INTERCEPT_VALUE);
+				str=strt;
+
+				//res.push_back(str);
+
+				//strt.LoadStringW(IDS_STRING_ML_PER_L);
+				//str.Format(L"%g%s",ITc,strt);
+
+				strt.Format(L": %g",ITc);
+				str+=strt;
+				strt.LoadStringW(IDS_STRING_ML_PER_L);
+				str+=strt;
+
+			}
 		}
 		break;
 	case 4:
@@ -2376,7 +2432,21 @@ CString Compute( const std::vector<DataOutA> &dol, const ANPara &p1, std::vector
 			LineSeg lis;
 
 			if(Compute4(dol, p1, Ac, SPc, ITQ, lis)){
-				str.Format(L"Ac=%g,SPc=%g",Ac,SPc);
+				//str.Format(L"Ac=%g,SPc=%g",Ac,SPc);
+
+				strt.LoadStringW(IDS_STRING_SAMPLE);
+				str=strt;
+				str+=L" ";
+				strt.LoadStringW(IDS_STRING_CONCERTRATION);
+				str+=strt;
+				//res.push_back(str);
+
+				strt.Format(L": %g",SPc);
+				str+=strt;
+				strt.LoadStringW(IDS_STRING_ML_PER_L);
+				str+=strt;
+
+
 				if(bDraw){
 					//CanalyzerDoc *pDoc=rightp->GetDocument();
 					CString str0;
@@ -2398,7 +2468,20 @@ CString Compute( const std::vector<DataOutA> &dol, const ANPara &p1, std::vector
 		{
 			double Lc;
 			if(Compute5(dol,p1,Lc)){
-				str.Format(L"Lc=%g",Lc);
+				//str.Format(L"Lc=%g",Lc);
+
+								strt.LoadStringW(IDS_STRING_L);
+				str=strt;
+				str+=L" ";
+				strt.LoadStringW(IDS_STRING_CONCERTRATION);
+				str+=strt;
+				//res.push_back(str);
+
+				strt.Format(L": %g",Lc);
+				str+=strt;
+				strt.LoadStringW(IDS_STRING_ML_PER_L);
+				str+=strt;
+
 			}
 
 		}
@@ -2410,7 +2493,19 @@ CString Compute( const std::vector<DataOutA> &dol, const ANPara &p1, std::vector
 
 			double Lc,SPc,Q;
 			if(Compute6(dol, p1, Lc, SPc, Q)){
-				str.Format(L"Lc=%g,SPc=%g",Lc,SPc);
+				//str.Format(L"Lc=%g,SPc=%g",Lc,SPc);
+
+				strt.LoadStringW(IDS_STRING_SAMPLE);
+				str=strt;
+				str+=L" ";
+				strt.LoadStringW(IDS_STRING_CONCERTRATION);
+				str+=strt;
+				//res.push_back(str);
+
+				strt.Format(L": %g",SPc);
+				str+=strt;
+				strt.LoadStringW(IDS_STRING_ML_PER_L);
+				str+=strt;
 
 				if(bDraw){
 					//CanalyzerDoc *pDoc=rightp->GetDocument();
@@ -2428,7 +2523,16 @@ CString Compute( const std::vector<DataOutA> &dol, const ANPara &p1, std::vector
 			std::vector<double> Ac;
 			std::vector<double> Sc;
 			if(Compute7(dol, p1, Ac, Sc, lis)){
-				str.Format(L"S=%gA%+g",lis.GetK(),lis.GetB());
+				//str.Format(L"S=%gA%+g",lis.GetK(),lis.GetB());
+
+				
+				strt.LoadStringW(IDS_STRING_FITTING_LINE);
+				str=strt;
+				//res.push_back(str);
+
+				strt.Format(L": S=%gA%+g",lis.GetK(),lis.GetB());
+				str+=strt;
+
 				if(bDraw){
 
 					//CanalyzerDoc *pDoc=rightp->GetDocument();
@@ -2491,7 +2595,53 @@ CString Compute( const std::vector<DataOutA> &dol, const ANPara &p1, std::vector
 			LineSeg lis;
 
 			if(Compute8(dol, p1, SPv, SPvEnd, lis0, lis, Sc, Ac)){
-				str.Format(L"Sc=%g, Ac=%g",Sc,Ac);
+				//str.Format(L"Sc=%g, Ac=%g",Sc,Ac);
+
+				strt.LoadStringW(IDS_STRING_SAMPLE);
+				str=strt;
+				str+=L" ";
+				strt.LoadStringW(IDS_STRING_S);
+				str+=strt;
+				str+=L" ";
+				strt.LoadStringW(IDS_STRING_CONCERTRATION);
+				str+=strt;
+				//res.push_back(str);
+				strt.Format(L": %g",Sc);
+				str+=strt;
+
+				strt.LoadStringW(IDS_STRING_ML_PER_L);
+				str+=strt;
+				
+				str+=L", ";
+
+
+								strt.LoadStringW(IDS_STRING_SAMPLE);
+				str+=strt;
+				str+=L" ";
+				strt.LoadStringW(IDS_STRING_A);
+				str+=strt;
+				str+=L" ";
+				strt.LoadStringW(IDS_STRING_CONCERTRATION);
+				str+=strt;
+				//res.push_back(str);
+				strt.Format(L": %g",Ac);
+				str+=strt;
+
+				strt.LoadStringW(IDS_STRING_ML_PER_L);
+				str+=strt;
+
+				//strt.LoadStringW(IDS_STRING_A);
+				//str=strt;
+				//str+=L" ";
+				//strt.LoadStringW(IDS_STRING_CONCERTRATION);
+				//str+=strt;
+				//res.push_back(str);
+
+				//strt.LoadStringW(IDS_STRING_ML_PER_L);
+				//str.Format(L"%g%s",Ac,strt);
+				//res.push_back(str);
+
+
 				if(bDraw){
 					//CanalyzerDoc *pDoc=rightp->GetDocument();
 					pdl.back().ps.back().lineType=5;
@@ -2511,7 +2661,18 @@ CString Compute( const std::vector<DataOutA> &dol, const ANPara &p1, std::vector
 		{
 			double Lc;
 			if(Compute9(dol, p1, Lc)){
-				str.Format(L"Lc=%g",Lc);
+				//str.Format(L"Lc=%g",Lc);
+												strt.LoadStringW(IDS_STRING_L);
+				str=strt;
+				str+=L" ";
+				strt.LoadStringW(IDS_STRING_CONCERTRATION);
+				str+=strt;
+				//res.push_back(str);
+
+				strt.Format(L": %g",Lc);
+				str+=strt;
+				strt.LoadStringW(IDS_STRING_ML_PER_L);
+				str+=strt;
 			}
 		}
 		break;
@@ -2522,7 +2683,19 @@ CString Compute( const std::vector<DataOutA> &dol, const ANPara &p1, std::vector
 
 			double Lc,SPc,nQ;
 			if(Compute10(dol, p1, Lc, SPc, nQ)){
-				str.Format(L"Lc=%g,SPc=%g",Lc,SPc);
+				//str.Format(L"Lc=%g,SPc=%g",Lc,SPc);
+
+								strt.LoadStringW(IDS_STRING_SAMPLE);
+				str=strt;
+				str+=L" ";
+				strt.LoadStringW(IDS_STRING_CONCERTRATION);
+				str+=strt;
+				//res.push_back(str);
+
+				strt.Format(L": %g",SPc);
+				str+=strt;
+				strt.LoadStringW(IDS_STRING_ML_PER_L);
+				str+=strt;
 
 				if(bDraw){
 
@@ -2541,7 +2714,14 @@ CString Compute( const std::vector<DataOutA> &dol, const ANPara &p1, std::vector
 
 			LineSeg lis;
 			if(Compute11(dol, p1, lis)){
-				str.Format(L"nQ=%gL%+g",lis.GetK(),lis.GetB());
+				//str.Format(L"nQ=%gL%+g",lis.GetK(),lis.GetB());
+
+				strt.LoadStringW(IDS_STRING_FITTING_LINE);
+				str=strt;
+				//res.push_back(str);
+
+				strt.Format(L": nQ=%gL%+g",lis.GetK(),lis.GetB());
+				str+=strt;
 
 				if(bDraw){
 
@@ -2563,7 +2743,21 @@ CString Compute( const std::vector<DataOutA> &dol, const ANPara &p1, std::vector
 			double Lc,SPc;
 			//int nIgnore=3;
 			if(Compute12(dol, p1, lis, Lc, SPc)){
-				str.Format(L"Lc=%g,SPc=%g",Lc,SPc);
+				//str.Format(L"Lc=%g,SPc=%g",Lc,SPc);
+
+
+								strt.LoadStringW(IDS_STRING_SAMPLE);
+				str=strt;
+				str+=L" ";
+				strt.LoadStringW(IDS_STRING_CONCERTRATION);
+				str+=strt;
+				//res.push_back(str);
+
+				strt.Format(L": %g",SPc);
+				str+=strt;
+				strt.LoadStringW(IDS_STRING_ML_PER_L);
+				str+=strt;
+
 
 				if(bDraw){
 					//CanalyzerDoc *pDoc=rightp->GetDocument();

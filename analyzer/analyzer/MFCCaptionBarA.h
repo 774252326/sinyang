@@ -58,7 +58,7 @@ protected:
 public:
 	CEdit ec;
 //	CStatic st;
-//	CButton bn;
+	//CButton bn;
 	CString strblank;
 	int ecWidth;
 	int timer;
