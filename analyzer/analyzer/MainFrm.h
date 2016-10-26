@@ -5,8 +5,8 @@
 #pragma once
 #include "OutputWnd.h"
 #include "user\AccountList.hpp"
-#include "wait\WaitDlg.h"
-#include "property\PropertySheetA1ML.h"
+//#include "wait\WaitDlg.h"
+#include "property\PropertySheetA1ML.hpp"
 
 enum ProcessState{
 	stop,
@@ -32,7 +32,8 @@ public:
 	AccountList al;
 	BOOL m_bSplitterCreated;
 	PropertySheetA1ML *psheetml;
-	WaitDlg *wd;
+	//WaitDlg *wd;
+	CDialogEx *wd;
 	CWinThread *pWriteA;
 	LANGID LangID;
 // Operations

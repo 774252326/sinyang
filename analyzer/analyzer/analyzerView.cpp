@@ -16,9 +16,9 @@
 #define new DEBUG_NEW
 #endif
 
-#include "property\PlotSettingPageB.h"
-#include "property\PlotSettingPageC.h"
-#include "property\PropertySheetA.h"
+#include "property\PlotSettingPageB.hpp"
+#include "property\PlotSettingPageC.hpp"
+#include "property\PropertySheetA.hpp"
 #include "export\ExportDataDlg.hpp"
 
 
@@ -309,26 +309,7 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 	{
 		// TODO: Add your command handler code here
 
-		PropertySheetA1 sheet(IDS_STRING_POLT_SETTINGS);
-		PlotSettingPageB fig1setting;
-		if(pdl.empty()){		
-			fig1setting.fs=pw.blankPS;
-		}
-		else{
-			fig1setting.fs=pw.pdex->pd.ps;
-
-			fig1setting.lgc=pw.pdex->lgc;
-			fig1setting.lgs=pw.pdex->lgs;			
-		}
-		PlotSettingPageC fig2setting;
-		if(!pdl.empty()){
-			fig2setting.ps.assign(pw.pdex->pd.ls.begin(),pw.pdex->pd.ls.end());
-			fig2setting.bTwo=FALSE;
-		}
-		sheet.AddPage(&fig1setting);
-		sheet.AddPage(&fig2setting);
-		sheet.DoModal();
-
+		PlotSettingSheet();
 	}
 
 	void CanalyzerView::OnAnalysisExportdata()
@@ -395,45 +376,50 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 
 		CBitmap bitmap;
 		CClientDC dc(this);
-		//CDC memdc;
 		CRect rect;
 		BOOL bRet = FALSE;
 
-		//memdc.CreateCompatibleDC(&dc);
-		//pDC->CreateCompatibleDC(&dc);
 		GetClientRect(rect);
 		bitmap.CreateCompatibleBitmap(&dc,rect.Width(),rect.Height()); 
-
-		//CBitmap * oldbitmap = memdc.SelectObject(&bitmap);
 		CBitmap * oldbitmap = pDC->SelectObject(&bitmap);
-		//bRet = memdc.BitBlt(0,0,rect.Width(),rect.Height(),&dc,0,0,SRCCOPY); 
-		//bRet = pDC->BitBlt(700-rect.Width(),0,rect.Width(),rect.Height(),&dc,0,0,SRCCOPY); 
-		//bRet = pDC->BitBlt(0,0,nPrintW,nPrintH,&dc,0,0,SRCCOPY);
 
 		CSize rectsz=rect.Size();
-		//CSize newsz;
 		if(nPrintW*rectsz.cy>nPrintH*rectsz.cx){
 			int newW=nPrintH*rectsz.cx/rectsz.cy;
-			//newsz=CSize(newW,nPrintH);
-
 			bRet = pDC->StretchBlt((nPrintW-newW)/2,0,newW,nPrintH,&dc,0,0,rect.Width(),rect.Height(),SRCCOPY);
 		}
 		else{
 			int newH=nPrintW*rectsz.cy/rectsz.cx;	
-			//newsz=CSize(nPrintW,newH);
-
 			bRet = pDC->StretchBlt(0,(nPrintH-newH)/2,nPrintW,newH,&dc,0,0,rect.Width(),rect.Height(),SRCCOPY);
 		}
 
-
-
-
 		CView::OnPrint(pDC, pInfo);
 
+	}
+	
+
+	void CanalyzerView::PlotSettingSheet(BOOL bTwo)
+	{
+		PropertySheetA1 sheet(IDS_STRING_POLT_SETTINGS);
+		PlotSettingPageB fig1setting;
+		if(pdl.empty()){		
+			fig1setting.fs=pw.blankPS;
+		}
+		else{
+			fig1setting.fs=pw.pdex->pd.ps;
+			fig1setting.lgc=pw.pdex->lgc;
+			fig1setting.lgs=pw.pdex->lgs;			
+		}
+		PlotSettingPageC fig2setting;
+		
+		if(!pdl.empty()){
+			fig2setting.ps.assign(pw.pdex->pd.ls.begin(),pw.pdex->pd.ls.end());
+			fig2setting.bTwo=bTwo;
+			fig2setting.oldC=pw.pdex->pd.GetOldCr();
+			fig2setting.newC=pw.pdex->pd.GetNewCr();
+		}
+		sheet.AddPage(&fig1setting);
+		sheet.AddPage(&fig2setting);
+		sheet.DoModal();
 
 	}
-
-
-
-
-

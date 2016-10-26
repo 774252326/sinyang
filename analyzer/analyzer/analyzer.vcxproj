@@ -460,14 +460,9 @@ echo.
     <ClInclude Include="list\ListCtrlAA.h" />
     <ClInclude Include="list\ListCtrlB.h" />
     <ClInclude Include="list\ListCtrlC.h" />
-    <ClInclude Include="list\ListCtrlLS.h" />
-    <ClInclude Include="list\ListCtrlSAP.h" />
-    <ClInclude Include="list\ListCtrlUA.h" />
     <ClInclude Include="list\OutputListA.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="OutputWnd.h" />
-    <ClInclude Include="wait\StaticEdit.h" />
-    <ClInclude Include="wait\WaitDlg.h" />
     <CustomBuild Include="Resource.h">
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">hlp\HTMLDefines.h;%(Outputs)</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">echo // Generated Help Map file.  Used by analyzer.HHP. &gt; "hlp\HTMLDefines.h"
@@ -509,15 +504,6 @@ makehm /h /a afxhh.h IDW_,HIDW_,0x50000 "%(FullPath)" &gt;&gt; "hlp\HTMLDefines.
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Generating map file for help compiler...</Message>
     </CustomBuild>
     <ClInclude Include="plot\PlotWnd.h" />
-    <ClInclude Include="property\AnalysisParametersPage.h" />
-    <ClInclude Include="property\CVParametersPage.h" />
-    <ClInclude Include="property\PlotSettingPageB.h" />
-    <ClInclude Include="property\PlotSettingPageC.h" />
-    <ClInclude Include="property\PropertySheetA.h" />
-    <ClInclude Include="property\PropertySheetA1ML.h" />
-    <ClInclude Include="property\SolutionAdditionParametersPageA.h" />
-    <ClInclude Include="property\SolutionAdditionParametersPageB.h" />
-    <ClInclude Include="property\UserAccountPage.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -531,28 +517,14 @@ makehm /h /a afxhh.h IDW_,HIDW_,0x50000 "%(FullPath)" &gt;&gt; "hlp\HTMLDefines.
     <ClCompile Include="list\ListCtrlAA.cpp" />
     <ClCompile Include="list\ListCtrlB.cpp" />
     <ClCompile Include="list\ListCtrlC.cpp" />
-    <ClCompile Include="list\ListCtrlLS.cpp" />
-    <ClCompile Include="list\ListCtrlSAP.cpp" />
-    <ClCompile Include="list\ListCtrlUA.cpp" />
     <ClCompile Include="list\OutputListA.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="OutputWnd.cpp" />
     <ClCompile Include="plot\PlotWnd.cpp" />
-    <ClCompile Include="property\AnalysisParametersPage.cpp" />
-    <ClCompile Include="property\CVParametersPage.cpp" />
-    <ClCompile Include="property\PlotSettingPageB.cpp" />
-    <ClCompile Include="property\PlotSettingPageC.cpp" />
-    <ClCompile Include="property\PropertySheetA.cpp" />
-    <ClCompile Include="property\PropertySheetA1ML.cpp" />
-    <ClCompile Include="property\SolutionAdditionParametersPageA.cpp" />
-    <ClCompile Include="property\SolutionAdditionParametersPageB.cpp" />
-    <ClCompile Include="property\UserAccountPage.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="wait\StaticEdit.cpp" />
-    <ClCompile Include="wait\WaitDlg.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="analyzer.rc" />

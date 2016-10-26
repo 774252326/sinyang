@@ -1,14 +1,6 @@
 #include "StdAfx.h"
 //#include "analyzer.h"
 #include "analyzerViewL.h"
-//#include "MainFrm.h"
-//#include "calfunc.h"
-//#include "analyzerViewR.h"
-
-#include "property\PlotSettingPageB.h"
-#include "property\PlotSettingPageC.h"
-#include "property\PropertySheetA.h"
-
 
 
 IMPLEMENT_DYNCREATE(CanalyzerViewL, CanalyzerView)
@@ -54,6 +46,10 @@ IMPLEMENT_DYNCREATE(CanalyzerViewL, CanalyzerView)
 		//if (singleLock.IsLocked())  // Resource has been locked
 		if(singleLock.Lock())
 		{
+			if(!pdl.empty()){
+				oldCr=pw.pdex->pd.GetOldCr();
+				newCr=pw.pdex->pd.GetNewCr();
+			}
 			UINT flg=RawData2PlotDataList(pDoc->da.raw,pDoc->da.dol,pw.GetPlotSpec()->winbkC, newCr, oldCr, pdl);
 			// Now that we are finished, 
 			// unlock the resource for others.
@@ -75,26 +71,5 @@ IMPLEMENT_DYNCREATE(CanalyzerViewL, CanalyzerView)
 	{
 		// TODO: Add your command handler code here
 
-		PropertySheetA1 sheet(IDS_STRING_POLT_SETTINGS);
-		PlotSettingPageB fig1setting;
-		if(pdl.empty()){		
-			fig1setting.fs=pw.blankPS;
-		}
-		else{
-			fig1setting.fs=pw.pdex->pd.ps;
-			
-			fig1setting.lgc=pw.pdex->lgc;
-			fig1setting.lgs=pw.pdex->lgs;			
-		}
-		PlotSettingPageC fig2setting;
-		if(!pdl.empty()){
-			fig2setting.ps.assign(pw.pdex->pd.ls.begin(),pw.pdex->pd.ls.end());
-			fig2setting.bTwo=TRUE;
-			fig2setting.newC=newCr;
-			fig2setting.oldC=oldCr;
-		}
-		sheet.AddPage(&fig1setting);
-		sheet.AddPage(&fig2setting);
-		sheet.DoModal();
-
+		PlotSettingSheet(TRUE);
 	}

@@ -188,6 +188,7 @@ public:
 	virtual void OnPrepareDC(CDC* pDC, CPrintInfo* pInfo = NULL);
 	bool bPrint;
 	virtual void OnPrint(CDC* pDC, CPrintInfo* pInfo);
+	void PlotSettingSheet(BOOL bTwo=FALSE);
 };
 
 #ifndef _DEBUG  // debug version in analyzerView.cpp

@@ -1,221 +1,231 @@
-<HTML>
-<HEAD>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<TITLE></TITLE>
-</HEAD>
-<BODY>
-
-
-
-
-
-<P><A NAME="hid_edit_cut"></A><B>分析设置(分析菜单)</B></P>
-
-
-
-<P>打开分析设置对话框， 内含'分析参数'，'伏安参数'和 '加液参数'共三个标签页。</P>
-
-
-
-
-
-
-<P>'分析参数'标签页：
-
-</P>
-<TABLE cols=2 width=900>
-
-<TR VALIGN="top">
-<TD width="20%">分析方法 
-</TD>
-
-<TD width=85%>选择分析方法，下方的方法备注中有相应的加液步骤的提示。</TD>
-
-</TR>
-
-<TR VALIGN="top">
-
-<TD width="20%">评定比值</TD>
-
-<TD width=85%>取值范围一般是0～1，用于结果计算。</TD>
-
-</TR>
-
-<TR VALIGN="top">
-
-<TD width="20%">标定曲线/校正因子/截距</TD>
-<TD width=85%>校正因子/截距为一个数值，标定曲线要填写相应数据文件的路径。</TD>
-</TR>
-
-</TABLE>
-
- <P><IMG SRC="images/anp.png" ALT="" BORDER=0></P>
-
-<P>'伏安参数'标签页：</P>
-
-<P>此标签页的参数用于计算电量。</P>
-
-<TABLE cols=2 width=900>
-
-<TR VALIGN="top">
-<TD width="20%">最低电势/最高电势</TD>
-
-<TD width=85%>伏安曲线横坐标的上下限</TD>
-
-</TR>
-
-<TR VALIGN="top">
-
-<TD width="20%">扫描速度</TD>
-
-<TD width=85%>扫描电势的变化速度</TD>
-
-</TR>
-
-<TR VALIGN="top">
-
-<TD width="20%">旋转速度</TD>
-
-<TD width=85%>电极的转速</TD>
-
-</TR>
-
-<TR VALIGN="top">
-
-<TD width="20%">容限</TD>
-
-<TD width=85%>当最后一次电量的测量值与倒数第二的测量值相差的比值小于容限时，扫描停止。此项与'循环次数'项共同决定扫描次数。</TD>
-
-</TR>
-
-<TR VALIGN="top">
-
-<TD width="20%">循环次数</TD>
-
-<TD width=85%>电势扫描的最大次数，若此项设为0，则扫描次数不作限制。此项与'循环次数'项共同决定扫描次数。</TD>
-
-</TR>
-
-<TR VALIGN="top">
-
-<TD width="20%">积分上限/积分下限</TD>
-<TD width=85%>由伏安曲线计算电量时的积分上下限。积分下限项选择为'自适应'时，程序将自动查找积分下限。</TD>
-</TR>
-
-</TABLE>
-
- <P><IMG SRC="images/cvp.png" ALT="" BORDER=0></P>
-
-
- <P>上述两个标签页的参数都必须在分析过程开始前全部设置好。</P>
-
-
-<P>'加液参数'标签页：</P>
-
-<P>在列表中填入将要执行的加液步骤，具体的参数设置如下：</P>
-
-
-<TABLE cols=2 width=900>
-
-<TR VALIGN="top">
-<TD width=15%>编号</TD>
-<TD width=85%>步骤的执行次序</TD>
-</TR>
-<TR VALIGN="top">
-<TD width=15%>加液类型</TD>
-<TD width=85%>共五种加液步骤类型，具体含义和相应参数设置见下表。</TD>
-</TR>
-
-</TABLE>
-
-
-<P>加液步骤的参数设置及含义：</P>
-
-<TABLE cols=6 width=1200 border="2">
-
-<TR VALIGN="top">
-<TD width=10% align="center" valign="middle">加液类型</TD>
-
-<TD width=18% align="center" valign="middle">S浓度(ml/L)</TD>
-<TD width=18% align="center" valign="middle">A浓度(ml/L)</TD>
-<TD width=18% align="center" valign="middle">L浓度(ml/L)</TD>
-<TD width=18% align="center" valign="middle">体积(ml)/浓度(ml/L)</TD>
-<TD width=18% align="center" valign="middle">结束点</TD>
-
-</TR>
-
-<TR VALIGN="top">
-
-<TD width=10% align="center" valign="middle">按体积加一次</TD>
-
-    <td align="center" rowspan="4" valign="middle">
-        待添加溶液的抑制剂浓度</td>
-    <td align="center" rowspan="4" valign="middle">
-        待添加溶液的加速剂浓度</td>
-    <td align="center" rowspan="4" valign="middle">
-        待添加溶液的整平剂浓度</td>
-
-<TD align="center" rowspan="2" valign="middle">一次加液的体积</TD>
-
-<TD width=18% align="center" valign="middle">无效</TD>
-
-</TR>
-
-<TR VALIGN="top">
-
-<TD width=10% align="center" valign="middle">按体积递加</TD>
-
-<TD width=18% align="center" valign="middle">
-    归一化电量值，当测得的归一化电量值小于（或大于，根据所选的分析方法而定）此值时，该步骤结束。</TD>
-
-</TR>
-
-<TR VALIGN="top">
-
-<TD width=10% align="center" valign="middle">按浓度加一次</TD>
-
-    <td align="center" valign="middle">
-        一次加液后电镀池里指定成分的浓度</td>
-
-<TD width=18% align="center" valign="middle">无效</TD>
-
-</TR>
-
-
-<TR VALIGN="top">
-
-<TD width=10% align="center" valign="middle">按浓度递加</TD>
-
-<TD width=18% align="center" valign="middle">一次加液后电镀池里指定成分的浓度增量</TD>
-<TD width=18% align="center" valign="middle">
-    归一化电量值，当测得的归一化电量值小于（或大于，根据所选的分析方法而定）此值时，该步骤结束。</TD>
-
-</TR>
-
-
-<TR VALIGN="top">
-
-<TD width=10% align="center" valign="middle">加电镀基液</TD>
-
-<TD width=18% align="center" valign="middle">无效</TD>
-<TD width=18% align="center" valign="middle">无效</TD>
-<TD width=18% align="center" valign="middle">无效</TD>
-<TD width=18% align="center" valign="middle">加液体积</TD>
-<TD width=18% align="center" valign="middle">无效</TD>
-</TR>
-
-
-</TABLE>
-
+<html>
+<head>
+    <meta name="GENERATOR" content="Microsoft Visual Studio 8.0">
+    <title></title>
+</head>
+<body>
     <p>
-        备注：</p>
-<P>1.无效是指程序在计算中不使用该参数，即填写任意的参数值都不会影响计算结果。</P>
-<P>2.若S浓度(ml/L)，A浓度(ml/L)和L浓度(ml/L)三项的值同时为0，代表待加溶液成分未知，这在浓度测量中用来表示添加样品。</P>
+        <a name="hid_edit_cut"></a><b>Analysis Setup command (Analysis menu)</b></p>
     <p>
-        3.当加液类型为按浓度加一次或按浓度递加时，待加溶液必须为已知而成分单一，即S浓度(ml/L)，A浓度(ml/L)和L浓度(ml/L)三项的值有且只有一项不为0，其后体积(ml)/浓度(ml/L)一项中的指定成分即是待加溶液的成分。</p>
-        <P>4.若列表中留空的项将全部取默认值，数值项的默认值是0，加液类型的默认值是按体积加一次。</P>
-    <P><IMG SRC="images/sap.png" ALT="" BORDER=0></P>
+        Open analysis setup window with an &#39;analysis parameters&#39; tab, a &#39;CV
+        parameters&#39; tab and a &#39;solution addition patameteers&#39; tab.</p>
+    <p>
+        &#39;analysis parameters&#39; tab:
+    </p>
+    <table cols="2" width="900">
+        <tr valign="top">
+            <td width="20%">
+                analysis type
+            </td>
+            <td width="85%">
+                choose analysis method, corresponding solution addition tips will show in the text box below.
+            </td>
+        </tr>
+        <tr valign="top">
+            <td width="20%">
+                evaluation ratio
+            </td>
+            <td width="85%">
+                range in 0~1 for result computation
+            </td>
+        </tr>
+        <tr valign="top">
+            <td width="20%">
+                calibration curve/calibration factor/intercept value
+            </td>
+            <td width="85%">
+                enter the value of calibration factor/intercept value or the file path of calibration curve data file.
+            </td>
+        </tr>
+    </table>
+    <p>
+        <img src="images/anp.png" alt="" border="0"></p>
+    <p>
+        &#39;CV parameters&#39; tab:</p>
+    <p>
+        parameters for charge computation.</p>
+    <table cols="2" width="900">
+        <tr valign="top">
+            <td width="20%">
+                low E limit/high E limit
+            </td>
+            <td width="85%">
+                upper limit and lower limit of the x value of voltammogram 
+            </td>
+        </tr>
+        <tr valign="top">
+            <td width="20%">
+                scan rate
+            </td>
+            <td width="85%">
+                change rate of scan voltage
+            </td>
+        </tr>
+        <tr valign="top">
+            <td width="20%">
+                rotation rate
+            </td>
+            <td width="85%">
+                rotation rate of electrode
+            </td>
+        </tr>
+        <tr valign="top">
+            <td width="20%">
+                variation tolerance
+            </td>
+            <td width="85%">
+                scan stop when the difference ratio of last charge to second last charge go below variation tolerance.
+            </td>
+        </tr>
+        <tr valign="top">
+            <td width="20%">
+                no. of cycle
+            </td>
+            <td width="85%">
+                maximum number of scanning, input 0=infinity.
+            </td>
+        </tr>
+        <tr valign="top">
+            <td width="20%">
+                end integration E/start integration E
+            </td>
+            <td width="85%">
+                upper and lower limit of integration for charge computation, software will find zero point as the start integration E when you select auto.
+            </td>
+        </tr>
+    </table>
+    <p>
+        <img src="images/cvp.png" alt="" border="0"></p>
+    <p>
+        You must set all the parameters above before you start your analysis process.</p>
+    <p>
+        &#39;solution addition patameteers&#39; tab:</p>
+    <p>
+        fill your solution addition steps in the form:</p>
+    <table cols="2" width="900">
+        <tr valign="top">
+            <td width="15%">
+                no.
+            </td>
+            <td width="85%">
+                no. of step
+            </td>
+        </tr>
+        <tr valign="top">
+            <td width="15%">
+                type
+            </td>
+            <td width="85%">
+                five addition type provided, see below.
+            </td>
+        </tr>
+    </table>
+    <p>
+        solution addition parameters settings:</p>
+    <table cols="6" width="1200" border="2">
+        <tr valign="top">
+            <td width="10%" align="center" valign="middle">
+                type
+            </td>
+            <td width="18%" align="center" valign="middle">
+                S conc.(ml/L)
+            </td>
+            <td width="18%" align="center" valign="middle">
+                A conc.(ml/L)
+            </td>
+            <td width="18%" align="center" valign="middle">
+                L conc.(ml/L)
+            </td>
+            <td width="18%" align="center" valign="middle">
+                vol.(ml)/conc.(ml/L)
+            </td>
+            <td width="18%" align="center" valign="middle">
+                end ratio
+            </td>
+        </tr>
+        <tr valign="top">
+            <td width="10%" align="center" valign="middle">
+                vol. once addition
+            </td>
+            <td align="center" rowspan="4" valign="middle">
+                standrad suppressor concentration
+            </td>
+            <td align="center" rowspan="4" valign="middle">
+                standrad accelerator concentration
+            </td>
+            <td align="center" rowspan="4" valign="middle">
+                standrad leveler concentration
+            </td>
+            <td align="center" rowspan="2" valign="middle">
+               solution volume to add
+            </td>
+            <td width="18%" align="center" valign="middle">
+                not use
+            </td>
+        </tr>
+        <tr valign="top">
+            <td width="10%" align="center" valign="middle">
+                vol. interval
+            </td>
+            <td width="18%" align="center" valign="middle">
+                normalized charge, this step ends when its normalized charge go below/above(according to analysis method in use) specify value.
+            </td>
+        </tr>
+        <tr valign="top">
+            <td width="10%" align="center" valign="middle">
+                conc. once addition
+            </td>
+            <td align="center" valign="middle">
+                ��Ƴ���ָ���ɷֵ�Ũ��after adding solution
+            </td>
+            <td width="18%" align="center" valign="middle">
+                not use
+            </td>
+        </tr>
+        <tr valign="top">
+            <td width="10%" align="center" valign="middle">
+                conc. interval
+            </td>
+            <td width="18%" align="center" valign="middle">
+                ��Ƴ���ָ���ɷֵ�Ũ��increment after adding solution
+            </td>
+            <td width="18%" align="center" valign="middle">
+                normalized charge, this step ends when its normalized charge go below/above(according to analysis method in use) specify value.
+            </td>
+        </tr>
+        <tr valign="top">
+            <td width="10%" align="center" valign="middle">
+                VMS
+            </td>
+            <td width="18%" align="center" valign="middle">
+                not use
+            </td>
+            <td width="18%" align="center" valign="middle">
+                not use
+            </td>
+            <td width="18%" align="center" valign="middle">
+                not use
+            </td>
+            <td width="18%" align="center" valign="middle">
+                solution volume to add
+            </td>
+            <td width="18%" align="center" valign="middle">
+                not use
+            </td>
+        </tr>
+    </table>
+    <p>
+        remark:</p>
+    <p>
+        1.not use: parameter will not be used in computation, you may enter any value.</p>
+    <p>
+        2.S conc.(ml/L), A conc.(ml/L) and L conc.(ml/L) all equal to 0 is an indicator of an unknown solution, or the sample solution to analysis.</p>
+    <p>
+        3.when we choose conc. once addition or conc. interval, the solution to add must be single compound, or in other words, there is one and only one not be zero between S conc.(ml/L), A conc.(ml/L) and L conc.(ml/L). ������(ml)/Ũ��(ml/L)һ���е�ָ���ɷּ��Ǵ�����Һ�ĳɷ֡�</p>
+    <p>
+        4.for any blank cell in the form, software will automatically set it to a default value, default value of type is vol. once addition, and of others are 0.</p>
+    <p>
+        <img src="images/sap.png" alt="" border="0"></p>
 
-
-</BODY>
-</HTML>
+</body>
+</html>

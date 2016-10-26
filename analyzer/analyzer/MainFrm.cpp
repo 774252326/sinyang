@@ -18,16 +18,19 @@
 
 
 #include "user\LoginDlg.hpp"
-#include "property\PropertySheetA.h"
-#include "property\UserAccountPage.h"
+#include "property\PropertySheetA.hpp"
+#include "property\UserAccountPage.hpp"
 
 
-#include "property\AnalysisParametersPage.h"
-#include "property\CVParametersPage.h"
-#include "property\SolutionAdditionParametersPageA.h"
-#include "property\SolutionAdditionParametersPageB.h"
+#include "property\AnalysisParametersPage.hpp"
+#include "property\CVParametersPage.hpp"
+#include "property\SolutionAdditionParametersPageA.hpp"
+#include "property\SolutionAdditionParametersPageB.hpp"
 
 #include "windowsversion.hpp"
+
+#include "wait\WaitDlg.hpp"
+
 //////////////////////////////////////////////////thread///////////////////////////////////////////
 
 
@@ -1048,8 +1051,8 @@ void CMainFrame::ShowWaitDlg(CString tips)
 	if(tips.IsEmpty())
 		tips.LoadStringW(IDS_STRING_PAUSE);
 
-	wd->m_tips=tips;
-	wd->UpdateData(FALSE);
+	((WaitDlg*)wd)->m_tips=tips;
+	((WaitDlg*)wd)->UpdateData(FALSE);
 }
 
 
@@ -1058,7 +1061,7 @@ void CMainFrame::HideWaitDlg(void)
 	if(wd!=NULL){
 		//wd->ShowWindow(SW_HIDE);
 		wd->DestroyWindow();
-		delete wd;
+		delete ((WaitDlg*)wd);
 		wd=NULL;
 	}
 }
@@ -1354,17 +1357,30 @@ void CMainFrame::ChangeLang(void)
 	strOutputWnd.LoadStringW(AFX_IDS_IDLEMESSAGE);
 	m_wndStatusBar.SetWindowTextW(strOutputWnd);
 
-
+	BOOL cpflg=FALSE;
 	switch(LangID){
 	case MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US):
-		//CopyFile(pcct::folderpath()+L"\\analyzer[en].chm",pcct::folderpath()+L"\\analyzer.chm",FALSE);
+		cpflg=CopyFile(pcct::folderpath()+L"\\analyzer[en].chm",pcct::folderpath()+L"\\analyzer.chm",FALSE);
 		break;		
 	case MAKELANGID(LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED):
-		//CopyFile(pcct::folderpath()+L"\\analyzer[ch].chm",pcct::folderpath()+L"\\analyzer.chm",FALSE);
+		cpflg=CopyFile(pcct::folderpath()+L"\\analyzer[ch].chm",pcct::folderpath()+L"\\analyzer.chm",FALSE);
 		break;
 	default:
 		break;
 	}
+
+	if(cpflg==FALSE){
+		DWORD dw=::GetLastError();
+		::AfxMessageBox(IDS_STRING_SAVE_ERROR);
+		switch(dw){
+		case ERROR_ACCESS_DENIED:		
+		case ERROR_ENCRYPTION_FAILED:
+		default:
+			break;
+		}
+
+	}
+
 
 }
 
@@ -1394,7 +1410,7 @@ void CMainFrame::OnUpdateLanguage(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
 	pCmdUI->SetCheck( LangID==nID2LangID(pCmdUI->m_nID) );
-	pCmdUI->Enable(pst==stop );
+	pCmdUI->Enable( pst==stop );
 }
 
 

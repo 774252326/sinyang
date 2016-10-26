@@ -306,6 +306,16 @@ public:
 	};
 
 
+	COLORREF GetOldCr(COLORREF defaultCr=RGB(80,80,100))
+	{
+		return (ls.size()>1)?ls.front().colour:defaultCr;
+	};
+	
+	COLORREF GetNewCr(COLORREF defaultCr=RGB(255,0,0))
+	{
+		return (ls.empty())?defaultCr:ls.back().colour;
+	};
+
 	void AddNew(const std::vector<double> &x
 		, const std::vector<double> &y
 		, const LineSpec &plotsp

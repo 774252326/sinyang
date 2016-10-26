@@ -170,33 +170,5 @@ void COutputListA::BuildList(void)
 
 void COutputListA::ResetHeader(void)
 {	
-	//std::vector<CString> strl;
-	//CString strTemp;
-	//for(int i=IDS_STRING111;i<=IDS_STRING117;i++){		
-	//	(strTemp.LoadString(i));
-	//	strl.push_back(strTemp);
-	//}
-
-	////cbstr[6].clear();
-	////(strTemp.LoadString(IDS_STRING_YES));
-	////cbstr[6].push_back(strTemp);
-	////(strTemp.LoadString(IDS_STRING_NO));
-	////cbstr[6].push_back(strTemp);
-
-
-	//LVCOLUMN col;
-	//col.mask = LVCF_TEXT;
-	//col.cchTextMax=256;
-	//col.pszText=new TCHAR[col.cchTextMax];
-
-	//for(int i=0;i<strl.size();i++){
-	//	GetColumn(i,&col);
-	//	CString::CopyChars(col.pszText,strl[i].GetBuffer(),strl[i].GetLength()+1);
-	//	SetColumn(i,&col);
-	//	AdjustWidth(i,strl[i],30);
-	//}
-	//delete [] col.pszText;
-
 	BuildList();
-
 }

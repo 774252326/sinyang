@@ -6,44 +6,44 @@
 </HEAD><BODY>
 <UL>
 	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="&lt;&lt;YourApp&gt;&gt; 帮助目录">
+		<param name="Name" value="&lt;&lt;YourApp&gt;&gt; Help Index">
 		<param name="Local" value="main_index.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="菜单">
+		<param name="Name" value="Menus">
 		</OBJECT>
 	<UL>
 		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="文件">
+			<param name="Name" value="File menu commands">
 			<param name="Local" value="menu_file.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="分析">
+			<param name="Name" value="Analysis menu commands">
 			<param name="Local" value="menu_analysis.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="视图">
+			<param name="Name" value="View menu commands">
 			<param name="Local" value="menu_view.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="用户">
+			<param name="Name" value="Security menu commands">
 			<param name="Local" value="menu_security.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="语言">
+			<param name="Name" value="Language menu commands">
 			<param name="Local" value="menu_language.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="帮助">
+			<param name="Name" value="Help menu commands">
 			<param name="Local" value="menu_help.htm">
 			</OBJECT>
 	</UL>
 	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="状态栏">
+		<param name="Name" value="status bar">
 		<param name="Local" value="afx_hidw_status_bar.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="工具栏">
+		<param name="Name" value="toolbar">
 		<param name="Local" value="afx_hidw_toolbar.htm">
 		</OBJECT>
 </UL>
