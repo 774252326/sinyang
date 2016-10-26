@@ -33,8 +33,8 @@ int intv=1;
 size_t n1=1000;
 //PlotSpec psp0;
 
-CString folderp=L"C:\\Users\\r8anw2x\\Desktop\\data\\d\\";
-//CString folderp=L"data\\d\\";
+//CString folderp=L"C:\\Users\\r8anw2x\\Desktop\\data\\d\\";
+CString folderp=L"data\\d\\";
 //CString folderp=L"C:\\Users\\G\\Desktop\\data\\d\\";
 
 CString DEMOflist=folderp+L"fl1.txt";
@@ -81,6 +81,167 @@ void WaitSecond(ProcessState &waitflg
 	}
 	waitflg=running;
 }
+
+
+DWORD stp(BYTE step,BYTE stepControl,BYTE plotFilter)
+{
+	return step|(stepControl<<8)|(plotFilter<<16);
+}
+
+BYTE nby(DWORD w, unsigned int i)
+{
+	i=i%4;
+	i*=8;
+	return (BYTE)(w>>i);
+}
+
+
+bool GetStepList(std::vector<DWORD> &sl, int atype)
+{
+
+	switch(atype){
+	case 1:
+		{
+			DWORD stepl[]={
+				stp(PCCTB_VMS,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_PLOT_LAST,PF_Q_NORMALIZED|PF_S),
+				stp(PCCTB_S,0,PF_Q_NORMALIZED|PF_S)
+			};
+			sl.assign(stepl,stepl+2);
+		}
+		return true;
+	case 2:
+		{
+			DWORD stepl[]={
+				stp(PCCTB_VMS,SC_NEW_LINE|SC_PLOT_LAST,PF_Q_NORMALIZED|PF_SAMPLE),
+				stp(PCCTB_SAMPLE,0,PF_Q_NORMALIZED|PF_SAMPLE)
+			};
+			sl.assign(stepl,stepl+2);
+		}
+		return true;
+	case 3:
+		{
+			DWORD stepl[]={
+				stp(PCCTB_VMS,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_PLOT_LAST,PF_CONCERTRATION|PF_S),
+				stp(PCCTB_S,0,PF_CONCERTRATION|PF_S)
+			};
+			sl.assign(stepl,stepl+2);
+
+		}
+		return true;
+
+	case 4:
+		{
+			DWORD stepl[]={
+				stp(PCCTB_VMS,SC_NO_PLOT,0),
+				stp(PCCTB_S,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_PLOT_LAST,PF_CONCERTRATION|PF_A),
+				stp(PCCTB_SAMPLE|PCCTB_RESET_SOLUTION_AT_END,SC_PLOT_LAST,PF_CONCERTRATION|PF_A),
+				stp(PCCTB_A|PCCTB_MORE,0,PF_CONCERTRATION|PF_A)
+			};
+			sl.assign(stepl,stepl+4);
+
+		}
+		return true;
+
+	case 5:
+		{
+			DWORD stepl[]={
+				stp(PCCTB_VMS,SC_NO_PLOT,0),
+				stp(PCCTB_S|PCCTB_A|PCCTB_MORE,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_PLOT_LAST,PF_CONCERTRATION|PF_L),
+				stp(PCCTB_L,0,PF_CONCERTRATION|PF_L)
+			};
+			sl.assign(stepl,stepl+3);
+		}
+		return true;
+
+	case 6:
+		{
+			DWORD stepl[]={
+				stp(PCCTB_VMS,SC_NO_PLOT,0),
+				stp(PCCTB_S|PCCTB_A,SC_NO_PLOT,0),
+				stp(PCCTB_SAMPLE,SC_NO_PLOT,0)
+			};
+			sl.assign(stepl,stepl+3);
+		}
+		return true;
+
+	case 7:
+		{
+			DWORD stepl[]={
+				stp(PCCTB_VMS,SC_NEW_LINE|SC_PLOT_LAST,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_S),
+				stp(PCCTB_S|PCCTB_A,0,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_S)
+			};
+
+			sl.assign(stepl,stepl+2);
+
+		}
+		return true;
+
+	case 8:
+		{
+			DWORD stepl[]={
+				stp(PCCTB_VMS,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_PLOT_LAST,PF_Q_NORMALIZED|PF_SAMPLE),
+				stp(PCCTB_SAMPLE|PCCTB_RESET_SOLUTION_AT_END,0,PF_Q_NORMALIZED|PF_SAMPLE),
+				stp(PCCTB_A|PCCTB_MORE,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_NEW_ONCE,PF_Q_NORMALIZED|PF_A|PF_CONCERTRATION)
+			};
+
+
+			sl.assign(stepl,stepl+3);
+		}
+		return true;
+
+	case 9:
+		{
+			DWORD stepl[]={
+				stp(PCCTB_VMS,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_PLOT_LAST,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_L),
+				stp(PCCTB_L,0,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_L)
+			};
+			sl.assign(stepl,stepl+2);
+		}
+		return true;
+	case 10:
+		{
+			DWORD stepl[]={
+				stp(PCCTB_VMS,SC_NO_PLOT,0),
+				stp(PCCTB_L,SC_NO_PLOT,0),
+				stp(PCCTB_SAMPLE,SC_NO_PLOT,0)
+			};
+			sl.assign(stepl,stepl+3);
+		}
+		return true;
+
+	case 11:
+		{
+			DWORD stepl[]={
+				stp(PCCTB_VMS,SC_NO_PLOT,0),
+				stp(PCCTB_S|PCCTB_A,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_PLOT_LAST|SC_NEW_ONCE,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_L),
+				stp(PCCTB_L,0,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_L)
+			};
+			sl.assign(stepl,stepl+3);
+
+		}
+		return true;
+
+	case 12:
+		{
+			DWORD stepl[]={
+				stp(PCCTB_VMS,SC_NO_PLOT,0),
+				stp(PCCTB_S|PCCTB_A,SC_NO_PLOT,0),
+				stp(PCCTB_SAMPLE|PCCTB_RESET_SOLUTION_AT_END,/*SC_NEW_RIGHT_PLOT|*/SC_NO_PLOT/*|SC_NEW_LINE|SC_PLOT_LAST*/,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_L),
+				stp(PCCTB_L,SC_NEW_LINE,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_L)
+			};
+			sl.assign(stepl,stepl+4);
+		}
+
+		return true;
+	default:
+		sl.clear();
+		return false;
+	}
+
+
+}
+
+
 
 BOOL SaveFileCustom(CObject * co, size_t n, CString fp)
 {
@@ -1178,281 +1339,6 @@ void SetData(double &x, double &y, BYTE pf, pcctB &dataB)
 
 
 
-DWORD stp(BYTE step,BYTE stepControl,BYTE plotFilter)
-{
-	return step|(stepControl<<8)|(plotFilter<<16);
-}
-
-BYTE nby(DWORD w, unsigned int i)
-{
-	i=i%4;
-	i*=8;
-	return (BYTE)(w>>i);
-}
-
-
-
-//
-//
-//UINT OneProcess(CanalyzerViewL *leftp,
-//	CanalyzerViewR *rightp,
-//	CMFCCaptionBarA *cba,
-//	COutputWnd *outw,
-//	ProcessState &pst,
-//	const CString &filePath,
-//	pcctB &dataB,
-//	SAPara &p3,
-//	std::vector<DWORD> &sl)
-//{
-//	//////////////////////////////load data//////////////////////////////////////
-//	std::vector<CString> filelist;
-//	LoadFileList(filePath,filelist);
-//	if(filelist.empty()){ 
-//		CString strerr;
-//		strerr.LoadStringW(IDS_STRING_READ_ERROR);
-//		::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(strerr.GetBuffer()),NULL);
-//		pst=stop;
-//		return 1;
-//	}
-//
-//	CanalyzerDoc *pDoc=leftp->GetDocument();
-//
-//	pcct dt1;
-//	std::vector<double> x(1,0);
-//	std::vector<double> y(1,0);
-//	////////////////////////////////////////////////////////////////////////////////////////
-//
-//	while( !p3.saplist.empty() && !sl.empty() ){
-//
-//		BYTE step=nby(sl.front(),0);
-//		BYTE stepControl=nby(sl.front(),1);
-//		BYTE plotFilter=nby(sl.front(),2);
-//
-//		if( dataB.ReadTask(p3.saplist.front(),step) ){
-//
-//			if( step&PCCTB_VMS ){
-//				leftp->AddPlot(PlotData());
-//				pDoc->lp.back().psp=PlotSpec(0);
-//			}
-//
-//			if(stepControl&SC_NEW_RIGHT_PLOT){
-//				rightp->AddPlot(PlotData());
-//				CString xla;
-//				CString yla;
-//				GetXYLabel(xla,yla,plotFilter);
-//				pDoc->rp.back().SetSpec(xla,yla,PlotSpec(0));
-//			}
-//
-//			OneStep(outw,leftp,cba,pst,dt1,dataB,filelist,p3,!(step&PCCTB_MORE),!(stepControl&SC_NO_PLOT));
-//
-//			if(!(stepControl&SC_NO_PLOT)){
-//				if(!(stepControl&SC_PLOT_LAST)){
-//					SetData(x[0],y[0],plotFilter,dataB);
-//					if( (stepControl&SC_NEW_LINE)
-//						&&!(stepControl&SC_STEP_COMPLETE)){
-//							LineSpec ps1;
-//							ps1.colour=genColor( genColorvFromIndex<float>( pDoc->rp.back().ps.size() ) ) ;
-//							ps1.dotSize=3;
-//							ps1.name.LoadStringW(IDS_STRING_TEST_CURVE);
-//							ps1.lineType=0;
-//							ps1.smoothLine=0;
-//							ps1.traceLast=false;
-//							pDoc->rp.back().AddNew(x,y,ps1);
-//					}
-//					else{
-//						pDoc->rp.back().AddFollow(x,y);
-//					}
-//					if(rightp->updatePlotRange((int)(pDoc->rp.size())-1))
-//						rightp->Invalidate(FALSE);
-//				}
-//			}
-//
-//			stepControl|=SC_STEP_COMPLETE;
-//			sl.front()=stp(step,stepControl,plotFilter);
-//
-//		}
-//		else{
-//			if( stepControl&SC_STEP_COMPLETE ){
-//
-//				if(step&PCCTB_RESET_SOLUTION_AT_END){
-//					dataB.bUnknown=false;
-//					dataB.Aml=0;
-//					dataB.Lml=0;
-//					dataB.Sml=0;
-//				}
-//
-//				if(!(stepControl&SC_NO_PLOT)){
-//					if( stepControl&SC_PLOT_LAST ){
-//						SetData(x[0],y[0],plotFilter,dataB);
-//						if(stepControl&SC_NEW_LINE){
-//							LineSpec ps1;
-//							ps1.colour=genColor( genColorvFromIndex<float>( pDoc->rp.back().ps.size() ) ) ;
-//							ps1.dotSize=3;
-//							ps1.name.LoadStringW(IDS_STRING_TEST_CURVE);
-//							ps1.lineType=0;
-//							ps1.smoothLine=0;
-//							ps1.traceLast=false;
-//							pDoc->rp.back().AddNew(x,y,ps1);
-//						}
-//						else{
-//							pDoc->rp.back().AddFollow(x,y);
-//						}
-//						if(rightp->updatePlotRange((int)(pDoc->rp.size())-1))
-//							rightp->Invalidate(FALSE);
-//					}	
-//				}
-//				sl.erase(sl.begin());
-//			}
-//			else{				
-//				AfxMessageBox(IDS_STRING_STEP_ERROR);
-//				CString strerr;
-//				strerr.LoadStringW(IDS_STRING_STEP_ERROR);
-//				::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(strerr.GetBuffer()),NULL);
-//				pst=stop;
-//				return 1;
-//				p3.saplist.erase(p3.saplist.begin());
-//			}
-//		}
-//	}
-//
-//
-//	return 0;
-//
-//}
-//
-//
-//
-//
-//UINT OneProcess1(CanalyzerViewL *leftp,
-//	CanalyzerViewR *rightp,
-//	CMFCCaptionBarA *cba,
-//	COutputWnd *outw,
-//	ProcessState &pst,
-//	const CString &filePath,
-//	pcctB &dataB,
-//	SAPara &p3,
-//	std::vector<DWORD> &sl,
-//	std::vector<pcctB> &dbBuf)
-//{
-//	//////////////////////////////load data//////////////////////////////////////
-//	std::vector<CString> filelist;
-//	LoadFileList(filePath,filelist);
-//	if(filelist.empty()){ 
-//		CString strerr;
-//		strerr.LoadStringW(IDS_STRING_READ_ERROR);
-//		::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(strerr.GetBuffer()),NULL);
-//		pst=stop;
-//		return 1;
-//	}
-//
-//	CanalyzerDoc *pDoc=leftp->GetDocument();
-//
-//	pcct dt1;
-//	std::vector<double> x(1,0);
-//	std::vector<double> y(1,0);
-//	////////////////////////////////////////////////////////////////////////////////////////
-//
-//	while( !p3.saplist.empty() && !sl.empty() ){
-//
-//		BYTE step=nby(sl.front(),0);
-//		BYTE stepControl=nby(sl.front(),1);
-//		BYTE plotFilter=nby(sl.front(),2);
-//
-//		if( dataB.ReadTask(p3.saplist.front(),step) ){
-//
-//			if( step&PCCTB_VMS ){
-//				leftp->AddPlot(PlotData());
-//				pDoc->lp.back().psp=PlotSpec(0);
-//			}
-//
-//			if(stepControl&SC_NEW_RIGHT_PLOT){
-//				rightp->AddPlot(PlotData());
-//				CString xla;
-//				CString yla;
-//				GetXYLabel(xla,yla,plotFilter);
-//				pDoc->rp.back().SetSpec(xla,yla,PlotSpec(0));
-//			}
-//
-//			OneStep(outw,leftp,cba,pst,dt1,dataB,filelist,p3,!(step&PCCTB_MORE),!(stepControl&SC_NO_PLOT));
-//
-//			if(!(stepControl&SC_NO_PLOT)){
-//				if(!(stepControl&SC_PLOT_LAST)){
-//					SetData(x[0],y[0],plotFilter,dataB);
-//					if( (stepControl&SC_NEW_LINE)
-//						&&!(stepControl&SC_STEP_COMPLETE)){
-//							LineSpec ps1;
-//							ps1.colour=genColor( genColorvFromIndex<float>( pDoc->rp.back().ps.size() ) ) ;
-//							ps1.dotSize=3;
-//							ps1.name.LoadStringW(IDS_STRING_TEST_CURVE);
-//							ps1.lineType=0;
-//							ps1.smoothLine=0;
-//							ps1.traceLast=false;
-//							pDoc->rp.back().AddNew(x,y,ps1);
-//					}
-//					else{
-//						pDoc->rp.back().AddFollow(x,y);
-//					}
-//					if(rightp->updatePlotRange((int)(pDoc->rp.size())-1))
-//						rightp->Invalidate(FALSE);
-//				}
-//			}
-//
-//			stepControl|=SC_STEP_COMPLETE;
-//			sl.front()=stp(step,stepControl,plotFilter);
-//
-//		}
-//		else{
-//			if( stepControl&SC_STEP_COMPLETE ){
-//
-//				dbBuf.push_back(dataB);
-//
-//				if(step&PCCTB_RESET_SOLUTION_AT_END){					
-//					dataB.bUnknown=false;
-//					dataB.Aml=0;
-//					dataB.Lml=0;
-//					dataB.Sml=0;
-//				}
-//
-//				if(!(stepControl&SC_NO_PLOT)){
-//					if( stepControl&SC_PLOT_LAST ){
-//						SetData(x[0],y[0],plotFilter,dataB);
-//						if(stepControl&SC_NEW_LINE){
-//							LineSpec ps1;
-//							ps1.colour=genColor( genColorvFromIndex<float>( pDoc->rp.back().ps.size() ) ) ;
-//							ps1.dotSize=3;
-//							ps1.name.LoadStringW(IDS_STRING_TEST_CURVE);
-//							ps1.lineType=0;
-//							ps1.smoothLine=0;
-//							ps1.traceLast=false;
-//							pDoc->rp.back().AddNew(x,y,ps1);
-//						}
-//						else{
-//							pDoc->rp.back().AddFollow(x,y);
-//						}
-//						if(rightp->updatePlotRange((int)(pDoc->rp.size())-1))
-//							rightp->Invalidate(FALSE);
-//					}	
-//				}
-//				sl.erase(sl.begin());
-//			}
-//			else{				
-//				AfxMessageBox(IDS_STRING_STEP_ERROR);
-//				CString strerr;
-//				strerr.LoadStringW(IDS_STRING_STEP_ERROR);
-//				::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(strerr.GetBuffer()),NULL);
-//				pst=stop;
-//				return 1;
-//				p3.saplist.erase(p3.saplist.begin());
-//			}
-//		}
-//	}
-//
-//
-//	return 0;
-//
-//}
-//
-
 
 
 
@@ -1589,1044 +1475,6 @@ UINT OneProcess2(CanalyzerViewL *leftp,
 
 
 
-bool GetStepList(std::vector<DWORD> &sl, int atype)
-{
-
-	switch(atype){
-	case 1:
-		{
-			DWORD stepl[]={
-				stp(PCCTB_VMS,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_PLOT_LAST,PF_Q_NORMALIZED|PF_S),
-				stp(PCCTB_S,0,PF_Q_NORMALIZED|PF_S)
-			};
-			sl.assign(stepl,stepl+2);
-		}
-		return true;
-	case 2:
-		{
-			DWORD stepl[]={
-				stp(PCCTB_VMS,SC_NEW_LINE|SC_PLOT_LAST,PF_Q_NORMALIZED|PF_SAMPLE),
-				stp(PCCTB_SAMPLE,0,PF_Q_NORMALIZED|PF_SAMPLE)
-			};
-			sl.assign(stepl,stepl+2);
-		}
-		return true;
-	case 3:
-		{
-			DWORD stepl[]={
-				stp(PCCTB_VMS,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_PLOT_LAST,PF_CONCERTRATION|PF_S),
-				stp(PCCTB_S,0,PF_CONCERTRATION|PF_S)
-			};
-			sl.assign(stepl,stepl+2);
-
-		}
-		return true;
-
-	case 4:
-		{
-			DWORD stepl[]={
-				stp(PCCTB_VMS,SC_NO_PLOT,0),
-				stp(PCCTB_S,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_PLOT_LAST,PF_CONCERTRATION|PF_A),
-				stp(PCCTB_SAMPLE|PCCTB_RESET_SOLUTION_AT_END,SC_PLOT_LAST,PF_CONCERTRATION|PF_A),
-				stp(PCCTB_A|PCCTB_MORE,0,PF_CONCERTRATION|PF_A)
-			};
-			sl.assign(stepl,stepl+4);
-
-		}
-		return true;
-
-	case 5:
-		{
-			DWORD stepl[]={
-				stp(PCCTB_VMS,SC_NO_PLOT,0),
-				stp(PCCTB_S|PCCTB_A|PCCTB_MORE,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_PLOT_LAST,PF_CONCERTRATION|PF_L),
-				stp(PCCTB_L,0,PF_CONCERTRATION|PF_L)
-			};
-			sl.assign(stepl,stepl+3);
-		}
-		return true;
-
-	case 6:
-		{
-			DWORD stepl[]={
-				stp(PCCTB_VMS,SC_NO_PLOT,0),
-				stp(PCCTB_S|PCCTB_A,SC_NO_PLOT,0),
-				stp(PCCTB_SAMPLE,SC_NO_PLOT,0)
-			};
-			sl.assign(stepl,stepl+3);
-		}
-		return true;
-
-	case 7:
-		{
-			DWORD stepl[]={
-				stp(PCCTB_VMS,SC_NEW_LINE|SC_PLOT_LAST,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_S),
-				stp(PCCTB_S|PCCTB_A,0,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_S)
-			};
-
-			sl.assign(stepl,stepl+2);
-
-		}
-		return true;
-
-	case 8:
-		{
-			DWORD stepl[]={
-				stp(PCCTB_VMS,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_PLOT_LAST,PF_Q_NORMALIZED|PF_SAMPLE),
-				stp(PCCTB_SAMPLE|PCCTB_RESET_SOLUTION_AT_END,0,PF_Q_NORMALIZED|PF_SAMPLE),
-				stp(PCCTB_A|PCCTB_MORE,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_NEW_ONCE,PF_Q_NORMALIZED|PF_A|PF_CONCERTRATION)
-			};
-
-
-			sl.assign(stepl,stepl+3);
-		}
-		return true;
-
-	case 9:
-		{
-			DWORD stepl[]={
-				stp(PCCTB_VMS,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_PLOT_LAST,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_L),
-				stp(PCCTB_L,0,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_L)
-			};
-			sl.assign(stepl,stepl+2);
-		}
-		return true;
-	case 10:
-		{
-			DWORD stepl[]={
-				stp(PCCTB_VMS,SC_NO_PLOT,0),
-				stp(PCCTB_L,SC_NO_PLOT,0),
-				stp(PCCTB_SAMPLE,SC_NO_PLOT,0)
-			};
-			sl.assign(stepl,stepl+3);
-		}
-		return true;
-
-	case 11:
-		{
-			DWORD stepl[]={
-				stp(PCCTB_VMS,SC_NO_PLOT,0),
-				stp(PCCTB_S|PCCTB_A,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_PLOT_LAST|SC_NEW_ONCE,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_L),
-				stp(PCCTB_L,0,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_L)
-			};
-			sl.assign(stepl,stepl+3);
-
-		}
-		return true;
-
-	case 12:
-		{
-			DWORD stepl[]={
-				stp(PCCTB_VMS,SC_NO_PLOT,0),
-				stp(PCCTB_S|PCCTB_A,SC_NO_PLOT,0),
-				stp(PCCTB_SAMPLE|PCCTB_RESET_SOLUTION_AT_END,/*SC_NEW_RIGHT_PLOT|*/SC_NO_PLOT/*|SC_NEW_LINE|SC_PLOT_LAST*/,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_L),
-				stp(PCCTB_L,SC_NEW_LINE,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_L)
-			};
-			sl.assign(stepl,stepl+4);
-		}
-
-		return true;
-	default:
-		sl.clear();
-		return false;
-	}
-
-
-}
-
-
-//
-//
-//UINT DTR1(CanalyzerViewL *leftp,
-//	CanalyzerViewR *rightp,
-//	CMFCCaptionBarA *cba,
-//	COutputWnd *outw,
-//	ProcessState &pst,
-//	const ANPara &p1,
-//	const CVPara &p2,
-//	SAPara &p3
-//	)
-//{
-//	DWORD stepl[]={
-//		stp(PCCTB_VMS,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_PLOT_LAST,PF_Q_NORMALIZED|PF_S),
-//		stp(PCCTB_S,0,PF_Q_NORMALIZED|PF_S)
-//	};
-//	std::vector<DWORD> sl(stepl,stepl+2);
-//	//////////////////////////clear window/////////////////////////////////
-//	outw->clear();
-//	CanalyzerDoc *pDoc=leftp->GetDocument();
-//	pDoc->dol.clear();
-//
-//	leftp->clear();
-//	rightp->clear();
-//	/////////////////////////////////////////////////////////////////////////////
-//	pcctB dataB;
-//	dataB.initialPara(p2);
-//
-//	LineSpec ps1;
-//	//ps1.colour=genColor( genColorvFromIndex<float>( pDoc->rp.back().ps.size() ) ) ;
-//	ps1.dotSize=3;
-//	ps1.name.LoadStringW(IDS_STRING_TEST_CURVE);
-//	ps1.lineType=0;
-//	ps1.smoothLine=1;
-//	ps1.traceLast=false;
-//	//////////////////////////////first step////////////////////////////////////////////
-//	std::vector<CString> filelist;
-//	LoadFileList(DTRflist,filelist);
-//
-//	std::vector<pcctB> dbbuf;
-//	UINT rea=OneProcess2(leftp,rightp,cba,outw,pst,filelist,dataB,p3,sl,dbbuf,ps1);
-//
-//	//UINT rea=OneProcess(leftp,rightp,cba,outw,pst,DTRflist,dataB,p3,sl);
-//	///////////////////////////////////////////////////////////////
-//	if(rea!=0){
-//		pst=stop;return rea;
-//	}
-//
-//	pDoc->resultStr=Output1(pDoc->rp.back(),
-//		p1.evaluationratio,
-//		dataB.Sml/dataB.additiveVolume,
-//		dataB.VMSVolume);
-//	::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(pDoc->resultStr.GetBuffer()),NULL);
-//	pst=stop;
-//	return 0;
-//
-//
-//}
-//
-//
-//
-//UINT DTA1(CanalyzerViewL *leftp,
-//	CanalyzerViewR *rightp,
-//	CMFCCaptionBarA *cba,
-//	COutputWnd *outw,
-//	ProcessState &pst,
-//	const ANPara &p1,
-//	const CVPara &p2,
-//	SAPara &p3)
-//{
-//
-//	std::vector<DWORD> sl;
-//
-//	//////////////////////////clear window/////////////////////////////////
-//	outw->clear();
-//	CanalyzerDoc *pDoc=leftp->GetDocument();
-//	pDoc->dol.clear();
-//
-//	leftp->clear();
-//	rightp->clear();
-//	/////////////////////////////////////////////////////////////////////////////
-//	pcctB dataB;
-//	dataB.initialPara(p2);
-//	LineSpec ps1;
-//	//ps1.colour=genColor( genColorvFromIndex<float>( pDoc->rp.back().ps.size() ) ) ;
-//	ps1.dotSize=3;
-//	ps1.name.LoadStringW(IDS_STRING_TEST_CURVE);
-//	ps1.lineType=0;
-//	ps1.smoothLine=1;
-//	ps1.traceLast=false;
-//	/////////////////////////plot standrad curve////////////////////////
-//
-//	double Sconc0, vmsvol0;
-//	if(p1.calibrationfactortype==1){
-//		CanalyzerDoc tmp(false);
-//		if(ReadFileCustom(&tmp,1,p1.calibrationfilepath)){
-//			tmp.rp.front().ps.back().name.LoadStringW(IDS_STRING_CALIBRATION_CURVE);
-//			rightp->AddPlot(tmp.rp.front());
-//			if(rightp->updatePlotRange(0))
-//				rightp->Invalidate(FALSE);
-//			Sconc0=tmp.p3.saplist.back().Sconc;
-//			vmsvol0=tmp.p3.saplist.front().volconc;
-//		}
-//		else{
-//			pst=stop;
-//			return 0;
-//		}
-//
-//		DWORD stepl[]={
-//			stp(PCCTB_VMS,SC_NEW_LINE|SC_PLOT_LAST,PF_Q_NORMALIZED|PF_SAMPLE),
-//			stp(PCCTB_SAMPLE,0,PF_Q_NORMALIZED|PF_SAMPLE)
-//		};
-//		sl.assign(stepl,stepl+2);
-//	}
-//	else{
-//		DWORD stepl[]={
-//			stp(PCCTB_VMS,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_PLOT_LAST,PF_Q_NORMALIZED|PF_SAMPLE),
-//			stp(PCCTB_SAMPLE,0,PF_Q_NORMALIZED|PF_SAMPLE)
-//		};
-//		sl.assign(stepl,stepl+2);
-//	}
-//
-//	//////////////////////////////first step////////////////////////////////////////////
-//	std::vector<CString> filelist;
-//	LoadFileList(DTAflist,filelist);
-//
-//	std::vector<pcctB> dbbuf;
-//	UINT rea=OneProcess2(leftp,rightp,cba,outw,pst,filelist,dataB,p3,sl,dbbuf,ps1);
-//
-//	///////////////////////////////////////////////////////////////
-//	if(rea!=0){
-//		pst=stop;return rea;
-//	}
-//
-//
-//	pDoc->resultStr=Output2(pDoc->rp.back(),
-//		p1.evaluationratio,
-//		p1.calibrationfactortype,
-//		p1.calibrationfactor,
-//		dataB.VMSVolume,
-//		Sconc0,
-//		vmsvol0);
-//
-//	::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(pDoc->resultStr.GetBuffer()),NULL);
-//	pst=stop;
-//	return 0;
-//
-//
-//}
-//
-//
-//
-//UINT LATR1(CanalyzerViewL *leftp,
-//	CanalyzerViewR *rightp,
-//	CMFCCaptionBarA *cba,
-//	COutputWnd *outw,
-//	ProcessState &pst,
-//	const ANPara &p1,
-//	const CVPara &p2,
-//	SAPara &p3)
-//{
-//
-//	DWORD stepl[]={
-//		stp(PCCTB_VMS,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_PLOT_LAST,PF_CONCERTRATION|PF_S),
-//		stp(PCCTB_S,0,PF_CONCERTRATION|PF_S)
-//	};
-//	std::vector<DWORD> sl(stepl,stepl+2);
-//	//////////////////////////clear window/////////////////////////////////
-//	outw->clear();
-//	CanalyzerDoc *pDoc=leftp->GetDocument();
-//	pDoc->dol.clear();
-//
-//	leftp->clear();
-//	rightp->clear();
-//	/////////////////////////////////////////////////////////////////////////////
-//	pcctB dataB;
-//	dataB.initialPara(p2);
-//	LineSpec ps1;
-//	//ps1.colour=genColor( genColorvFromIndex<float>( pDoc->rp.back().ps.size() ) ) ;
-//	ps1.dotSize=3;
-//	ps1.name.LoadStringW(IDS_STRING_TEST_CURVE);
-//	ps1.lineType=0;
-//	ps1.smoothLine=1;
-//	ps1.traceLast=false;
-//	//////////////////////////////first step////////////////////////////////////////////
-//	std::vector<CString> filelist;
-//	LoadFileList(LATRflist,filelist);
-//
-//	std::vector<pcctB> dbbuf;
-//	UINT rea=OneProcess2(leftp,rightp,cba,outw,pst,filelist,dataB,p3,sl,dbbuf,ps1);
-//	//UINT rea=OneProcess(leftp,rightp,cba,outw,pst,LATRflist,dataB,p3,sl);
-//	///////////////////////////////////////////////////////////////
-//	if(rea!=0){
-//		pst=stop;return rea;
-//	}
-//
-//	pDoc->resultStr=Output3(pDoc->rp.back());
-//
-//	::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(pDoc->resultStr.GetBuffer()),NULL);
-//	pst=stop;
-//	return 0;
-//}
-//
-//
-//
-//UINT LATA1(CanalyzerViewL *leftp,
-//	CanalyzerViewR *rightp,
-//	CMFCCaptionBarA *cba,
-//	COutputWnd *outw,
-//	ProcessState &pst,
-//	const ANPara &p1,
-//	const CVPara &p2,
-//	SAPara &p3)
-//{
-//
-//	DWORD stepl[]={
-//		stp(PCCTB_VMS,SC_NO_PLOT,0),
-//		stp(PCCTB_S,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_PLOT_LAST,PF_CONCERTRATION|PF_A),
-//		stp(PCCTB_SAMPLE|PCCTB_RESET_SOLUTION_AT_END,SC_PLOT_LAST,PF_CONCERTRATION|PF_A),
-//		stp(PCCTB_A|PCCTB_MORE,0,PF_CONCERTRATION|PF_A)
-//	};
-//	std::vector<DWORD> sl(stepl,stepl+4);
-//
-//
-//	//////////////////////////clear window/////////////////////////////////
-//	outw->clear();
-//	CanalyzerDoc *pDoc=leftp->GetDocument();
-//	pDoc->dol.clear();
-//
-//	leftp->clear();
-//	rightp->clear();
-//	/////////////////////////////////////////////////////////////////////////////
-//	pcctB dataB;
-//	dataB.initialPara(p2);
-//
-//	LineSpec ps1;
-//	//ps1.colour=genColor( genColorvFromIndex<float>( pDoc->rp.back().ps.size() ) );
-//	ps1.dotSize=3;
-//	ps1.name.LoadStringW(IDS_STRING_TEST_CURVE);
-//	ps1.lineType=5;
-//	ps1.smoothLine=1;
-//	ps1.traceLast=false;
-//
-//	//////////////////////////////first step////////////////////////////////////////////
-//	std::vector<CString> filelist;
-//	LoadFileList(LATAflist,filelist);
-//
-//	std::vector<pcctB> dbbuf;
-//	UINT rea=OneProcess2(leftp,rightp,cba,outw,pst,filelist,dataB,p3,sl,dbbuf,ps1);
-//
-//	//UINT rea=OneProcess1(leftp,rightp,cba,outw,pst,LATAflist,dataB,p3,sl,dbbuf);
-//	///////////////////////////////////////////////////////////////
-//	if(rea!=0){
-//		pst=stop;return rea;
-//	}
-//
-//	double sampleV,baseV;
-//
-//	sampleV=dbbuf[2].additiveVolume-dbbuf[1].additiveVolume;
-//	baseV=dbbuf[1].TotalVolume();
-//
-//	pDoc->resultStr=Output4(pDoc->rp.back(),baseV,sampleV);
-//
-//	if(rightp->updatePlotRange((int)(pDoc->rp.size())-1))
-//		rightp->Invalidate(FALSE);
-//
-//	::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(pDoc->resultStr.GetBuffer()),NULL);
-//	pst=stop;
-//	return 0;
-//}
-//
-//
-//
-//UINT RCR1(CanalyzerViewL *leftp,
-//	CanalyzerViewR *rightp,
-//	CMFCCaptionBarA *cba,
-//	COutputWnd *outw,
-//	ProcessState &pst,
-//	const ANPara &p1,
-//	const CVPara &p2,
-//	SAPara &p3)
-//{
-//
-//	/////////////////////////////////////////////////////////////////////////////
-//	DWORD stepl[]={
-//		stp(PCCTB_VMS,SC_NO_PLOT,0),
-//		stp(PCCTB_S|PCCTB_A|PCCTB_MORE,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_PLOT_LAST,PF_CONCERTRATION|PF_L),
-//		stp(PCCTB_L,0,PF_CONCERTRATION|PF_L)
-//	};
-//	std::vector<DWORD> sl(stepl,stepl+3);
-//
-//	//////////////////////////clear window/////////////////////////////////
-//	outw->clear();
-//	CanalyzerDoc *pDoc=leftp->GetDocument();
-//	pDoc->dol.clear();
-//
-//	leftp->clear();
-//	rightp->clear();
-//
-//
-//	pcctB dataB;
-//	dataB.initialPara(p2);
-//	LineSpec ps1;
-//	//ps1.colour=genColor( genColorvFromIndex<float>( pDoc->rp.back().ps.size() ) ) ;
-//	ps1.dotSize=3;
-//	ps1.name.LoadStringW(IDS_STRING_TEST_CURVE);
-//	ps1.lineType=0;
-//	ps1.smoothLine=1;
-//	ps1.traceLast=false;
-//	//////////////////////////////first step////////////////////////////////////////////	
-//
-//	std::vector<CString> filelist;
-//	LoadFileList(RCRflist,filelist);
-//
-//	std::vector<pcctB> dbbuf;
-//	UINT rea=OneProcess2(leftp,rightp,cba,outw,pst,filelist,dataB,p3,sl,dbbuf,ps1);
-//	//UINT rea=OneProcess(leftp,rightp,cba,outw,pst,RCRflist,dataB,p3,sl);
-//
-//	if(rea!=0){
-//		pst=stop;return rea;
-//	}
-//	pDoc->resultStr=L"";
-//
-//	::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,NULL,NULL);
-//	pst=stop;
-//	return 0;
-//}
-//
-//
-//
-//UINT RCA1(CanalyzerViewL *leftp,
-//	CanalyzerViewR *rightp,
-//	CMFCCaptionBarA *cba,
-//	COutputWnd *outw,
-//	ProcessState &pst,
-//	const ANPara &p1,
-//	const CVPara &p2,
-//	SAPara &p3)
-//{
-//	DWORD stepl[]={
-//		stp(PCCTB_VMS,SC_NO_PLOT,0),
-//		stp(PCCTB_S|PCCTB_A,SC_NO_PLOT,0),
-//		stp(PCCTB_SAMPLE,SC_NO_PLOT,0)
-//	};
-//	std::vector<DWORD> sl(stepl,stepl+3);
-//
-//	//////////////////////////clear window/////////////////////////////////
-//	outw->clear();
-//	CanalyzerDoc *pDoc=leftp->GetDocument();
-//	pDoc->dol.clear();
-//
-//	leftp->clear();
-//	rightp->clear();
-//
-//	pcctB dataB;
-//	dataB.initialPara(p2);
-//
-//	LineSpec ps1;
-//	//ps1.colour=genColor( genColorvFromIndex<float>( pDoc->rp.back().ps.size() ) ) ;
-//	ps1.dotSize=3;
-//	ps1.name.LoadStringW(IDS_STRING_TEST_CURVE);
-//	ps1.lineType=0;
-//	ps1.smoothLine=1;
-//	ps1.traceLast=false;
-//	/////////////////////////plot standrad curve////////////////////////
-//	if(p1.calibrationfactortype==1){
-//		CanalyzerDoc tmp(false);
-//		if(ReadFileCustom(&tmp,1,p1.calibrationfilepath)){
-//			tmp.rp.front().ps.back().name.LoadStringW(IDS_STRING_CALIBRATION_CURVE);
-//			rightp->AddPlot(tmp.rp.front());
-//			if(rightp->updatePlotRange(0))
-//				rightp->Invalidate(FALSE);
-//		}
-//		else{
-//			pst=stop;
-//			return 1;
-//		}
-//	}
-//	else{
-//		pst=stop;
-//		return 1;
-//	}
-//
-//	/////////////////////////////////////////////////////////////////////////////
-//	std::vector<CString> filelist;
-//	LoadFileList(RCAflist,filelist);
-//
-//	std::vector<pcctB> dbbuf;
-//	UINT rea=OneProcess2(leftp,rightp,cba,outw,pst,filelist,dataB,p3,sl,dbbuf,ps1);
-//	//UINT rea=OneProcess(leftp,rightp,cba,outw,pst,RCAflist,dataB,p3,sl);
-//
-//	if(rea!=0){
-//		pst=stop;return rea;
-//	}
-//
-//	pDoc->resultStr=Output6(pDoc->rp.back(),
-//		dataB.Ar.back(),
-//		dataB.TotalVolume(),
-//		dataB.addVolume);
-//
-//	if(rightp->updatePlotRange((int)(pDoc->rp.size())-1))
-//		rightp->Invalidate(FALSE);
-//
-//	::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(pDoc->resultStr.GetBuffer()),NULL);
-//
-//	pst=stop;
-//	return 0;
-//}
-//
-//
-//
-//
-//UINT SARR1(CanalyzerViewL *leftp,
-//	CanalyzerViewR *rightp,
-//	CMFCCaptionBarA *cba,
-//	COutputWnd *outw,
-//	ProcessState &pst,
-//	const ANPara &p1,
-//	const CVPara &p2,
-//	SAPara &p3
-//	)
-//{
-//	DWORD stepl[]={
-//		stp(PCCTB_VMS,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_PLOT_LAST,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_S),
-//		stp(PCCTB_S|PCCTB_A,0,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_S)
-//	};
-//
-//	DWORD stepl1[]={
-//		stp(PCCTB_VMS,SC_NEW_LINE|SC_PLOT_LAST,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_S),
-//		stp(PCCTB_S|PCCTB_A,0,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_S)
-//	};
-//
-//	std::vector<DWORD> sl(stepl,stepl+2);
-//	//////////////////////////clear window/////////////////////////////////
-//	outw->clear();
-//	CanalyzerDoc *pDoc=leftp->GetDocument();
-//	pDoc->dol.clear();
-//
-//	leftp->clear();
-//	rightp->clear();
-//	/////////////////////////////////////////////////////////////////////////////
-//	pcctB dataB;
-//	dataB.initialPara(p2);
-//
-//	LineSpec ps1;
-//	//ps1.colour=genColor( genColorvFromIndex<float>( pDoc->rp.back().ps.size() ) ) ;
-//	ps1.dotSize=3;
-//	ps1.name.LoadStringW(IDS_STRING_TEST_CURVE);
-//	ps1.lineType=0;
-//	ps1.smoothLine=1;
-//	ps1.traceLast=false;
-//
-//	std::vector<CString> filelist;
-//	LoadFileList(SARRflist,filelist);
-//
-//	std::vector<pcctB> dbbuf;
-//
-//	while(!p3.saplist.empty()){
-//		UINT rea=OneProcess2(leftp,rightp,cba,outw,pst,filelist,dataB,p3,sl,dbbuf,ps1);
-//		if(rea!=0){
-//			pst=stop;return rea;
-//		}
-//		sl.assign(stepl1,stepl1+2);
-//	}
-//
-//	dbbuf.push_back(dataB);
-//	PlotData pda;
-//	pDoc->resultStr=Output7(pda,p1.evaluationratio,pDoc->rp.back(),dbbuf);
-//	rightp->AddPlot(pda);
-//	if(rightp->updatePlotRange((int)(pDoc->rp.size())-1))
-//		rightp->Invalidate(FALSE);
-//
-//	::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(pDoc->resultStr.GetBuffer()),NULL);
-//	pst=stop;
-//	return 0;
-//}
-//
-//
-//
-//
-//UINT SARA1(CanalyzerViewL *leftp,
-//	CanalyzerViewR *rightp,
-//	CMFCCaptionBarA *cba,
-//	COutputWnd *outw,
-//	ProcessState &pst,
-//	const ANPara &p1,
-//	const CVPara &p2,
-//	SAPara &p3
-//	)
-//{
-//
-//
-//	DWORD stepl[]={
-//		stp(PCCTB_VMS,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_PLOT_LAST,PF_Q_NORMALIZED|PF_SAMPLE),
-//		stp(PCCTB_SAMPLE|PCCTB_RESET_SOLUTION_AT_END,0,PF_Q_NORMALIZED|PF_SAMPLE),
-//		stp(PCCTB_A|PCCTB_MORE,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_NEW_ONCE,PF_Q_NORMALIZED|PF_A|PF_CONCERTRATION)
-//	};
-//
-//
-//	std::vector<DWORD> sl(stepl,stepl+3);
-//	//////////////////////////clear window/////////////////////////////////
-//	outw->clear();
-//	CanalyzerDoc *pDoc=leftp->GetDocument();
-//	pDoc->dol.clear();
-//
-//	leftp->clear();
-//	rightp->clear();
-//
-//	//////////////////////////////////////////////////////////////////////////////////////////
-//
-//	SARCalibCurve scc;
-//	{
-//		CanalyzerDoc tmp(false);
-//		if(ReadFileCustom(&tmp,1,p1.calibrationfilepath)){
-//
-//			scc.ll.assign(tmp.rp[0].ll.begin(), tmp.rp[0].ll.end());
-//			scc.normq.assign(tmp.rp[0].yll.begin(), tmp.rp[0].yll.end());
-//			scc.sconc.assign(tmp.rp[0].xll.begin(), tmp.rp[0].xll.end());
-//			SCP scp1;
-//			for(size_t i=0;i<tmp.p3.saplist.size();i++){
-//				if(tmp.p3.saplist[i].addType!=4){
-//					scp1.AC=tmp.p3.saplist[i].Aconc;
-//					scp1.LC=tmp.p3.saplist[i].Lconc;
-//					scp1.SC=tmp.p3.saplist[i].Sconc;
-//
-//					if(scc.scl.empty()
-//						||scc.scl.back().LC!=scp1.LC
-//						||scc.scl.back().SC!=scp1.SC
-//						||scc.scl.back().AC!=scp1.AC
-//						){
-//							scc.scl.push_back(scp1);
-//					}
-//				}
-//			}
-//		}
-//	}
-//
-//	/////////////////////////////////////////////////////////////////////////////
-//	pcctB dataB;
-//	dataB.initialPara(p2);
-//
-//	LineSpec ps1;
-//	//ps1.colour=genColor( genColorvFromIndex<float>( pDoc->rp.back().ps.size() ) ) ;
-//	ps1.dotSize=3;
-//	ps1.name.LoadStringW(IDS_STRING_TEST_CURVE);
-//	ps1.lineType=0;
-//	ps1.smoothLine=1;
-//	ps1.traceLast=false;
-//
-//	std::vector<CString> filelist;
-//	LoadFileList(SARAflist,filelist);
-//
-//	std::vector<pcctB> dbbuf;
-//	UINT rea=OneProcess2(leftp,rightp,cba,outw,pst,filelist,dataB,p3,sl,dbbuf,ps1);
-//	///////////////////////////////////////////////////////////////
-//	if(rea!=0){
-//		pst=stop;return rea;
-//	}
-//	//////////////////////////////////////////////////////////////////////////
-//
-//	int fi=pDoc->rp.size();
-//	fi--;
-//	pDoc->resultStr=Output8(pDoc->rp[fi-1]
-//	, pDoc->rp[fi]
-//	, p1.evaluationratio
-//		, dataB.VMSVolume
-//		, scc
-//		, false);
-//
-//	if(rightp->updatePlotRange(fi))
-//		rightp->Invalidate(FALSE);
-//
-//
-//	::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(pDoc->resultStr.GetBuffer()),NULL);
-//	pst=stop;
-//	return 0;
-//
-//}
-//
-//
-//
-//UINT NEWR1(CanalyzerViewL *leftp,
-//	CanalyzerViewR *rightp,
-//	CMFCCaptionBarA *cba,
-//	COutputWnd *outw,
-//	ProcessState &pst,
-//	const ANPara &p1,
-//	const CVPara &p2,
-//	SAPara &p3)
-//{
-//
-//	/////////////////////////////////////////////////////////////////////////////
-//	DWORD stepl[]={
-//		stp(PCCTB_VMS,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_PLOT_LAST,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_L),
-//		stp(PCCTB_L,0,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_L)
-//	};
-//	std::vector<DWORD> sl(stepl,stepl+2);
-//
-//	//////////////////////////clear window/////////////////////////////////
-//	outw->clear();
-//	CanalyzerDoc *pDoc=leftp->GetDocument();
-//	pDoc->dol.clear();
-//
-//	leftp->clear();
-//	rightp->clear();
-//
-//
-//	pcctB dataB;
-//	dataB.initialPara(p2);
-//	LineSpec ps1;
-//	//ps1.colour=genColor( genColorvFromIndex<float>( pDoc->rp.back().ps.size() ) ) ;
-//	ps1.dotSize=3;
-//	ps1.name.LoadStringW(IDS_STRING_TEST_CURVE);
-//	ps1.lineType=0;
-//	ps1.smoothLine=1;
-//	ps1.traceLast=false;
-//	//////////////////////////////first step////////////////////////////////////////////	
-//
-//	std::vector<CString> filelist;
-//	LoadFileList(NEWRflist,filelist);
-//
-//	std::vector<pcctB> dbbuf;
-//	UINT rea=OneProcess2(leftp,rightp,cba,outw,pst,filelist,dataB,p3,sl,dbbuf,ps1);
-//
-//	//UINT rea=OneProcess(leftp,rightp,cba,outw,pst,NEWRflist,dataB,p3,sl);
-//
-//	if(rea!=0){
-//		pst=stop;return rea;
-//	}
-//	pDoc->resultStr=L"";
-//
-//	::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,NULL,NULL);
-//	pst=stop;
-//	return 0;
-//
-//
-//}
-//
-//
-//
-//
-//
-//UINT NEWA1(CanalyzerViewL *leftp,
-//	CanalyzerViewR *rightp,
-//	CMFCCaptionBarA *cba,
-//	COutputWnd *outw,
-//	ProcessState &pst,
-//	const ANPara &p1,
-//	const CVPara &p2,
-//	SAPara &p3)
-//{
-//
-//
-//	/////////////////////////////////////////////////////////////////////////////
-//	DWORD stepl[]={
-//		stp(PCCTB_VMS,SC_NO_PLOT,0),
-//		stp(PCCTB_L,SC_NO_PLOT,0),
-//		stp(PCCTB_SAMPLE,SC_NO_PLOT,0)
-//	};
-//	std::vector<DWORD> sl(stepl,stepl+3);
-//
-//	//////////////////////////clear window/////////////////////////////////
-//	outw->clear();
-//	CanalyzerDoc *pDoc=leftp->GetDocument();
-//	pDoc->dol.clear();
-//
-//	leftp->clear();
-//	rightp->clear();
-//
-//
-//	/////////////////////////plot standrad curve////////////////////////
-//
-//	if(p1.calibrationfactortype==1){
-//		CanalyzerDoc tmp(false);
-//		if(ReadFileCustom(&tmp,1,p1.calibrationfilepath)){
-//			tmp.rp.front().ps.back().name.LoadStringW(IDS_STRING_CALIBRATION_CURVE);
-//			rightp->AddPlot(tmp.rp.front());
-//			if(rightp->updatePlotRange(0))
-//				rightp->Invalidate(FALSE);
-//		}
-//		else{
-//			pst=stop;
-//			return 1;
-//		}
-//	}
-//	else{
-//		pst=stop;
-//		return 1;
-//	}
-//
-//
-//	//////////////////////////////first step////////////////////////////////////////////	
-//	pcctB dataB;
-//	dataB.initialPara(p2);
-//	LineSpec ps1;
-//	//ps1.colour=genColor( genColorvFromIndex<float>( pDoc->rp.back().ps.size() ) ) ;
-//	ps1.dotSize=3;
-//	ps1.name.LoadStringW(IDS_STRING_TEST_CURVE);
-//	ps1.lineType=0;
-//	ps1.smoothLine=1;
-//	ps1.traceLast=false;
-//	std::vector<CString> filelist;
-//	LoadFileList(NEWAflist,filelist);
-//
-//	std::vector<pcctB> dbbuf;
-//	UINT rea=OneProcess2(leftp,rightp,cba,outw,pst,filelist,dataB,p3,sl,dbbuf,ps1);
-//
-//
-//	if(rea!=0){
-//		pst=stop;return rea;
-//	}
-//
-//	int fi=pDoc->rp.size();
-//	fi--;
-//
-//	pDoc->resultStr=Output10(pDoc->rp[fi],
-//		dataB.Ar.back()/dataB.Ar0,
-//		dataB.TotalVolume(),
-//		dataB.additiveVolume-dbbuf[1].additiveVolume,
-//		dbbuf[1].Lml);
-//
-//
-//	if(rightp->updatePlotRange(fi))
-//		rightp->Invalidate(FALSE);
-//
-//	::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(pDoc->resultStr.GetBuffer()),NULL);
-//
-//	pst=stop;
-//	return 0;
-//}
-//
-//
-//
-//
-//
-//
-//UINT NER(CanalyzerViewL *leftp,
-//	CanalyzerViewR *rightp,
-//	CMFCCaptionBarA *cba,
-//	COutputWnd *outw,
-//
-//	ProcessState &pst,
-//	const ANPara &p1,
-//	const CVPara &p2,
-//	SAPara &p3)
-//{
-//	/////////////////////////////////////////////////////////////////////////////
-//
-//
-//	DWORD stepl[]={
-//		stp(PCCTB_VMS,SC_NO_PLOT,0),
-//		stp(PCCTB_S|PCCTB_A,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_PLOT_LAST|SC_NEW_ONCE,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_L),
-//		stp(PCCTB_L,0,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_L)
-//	};
-//	std::vector<DWORD> sl(stepl,stepl+3);
-//	//////////////////////////////load data//////////////////////////////////////
-//
-//
-//
-//	//////////////////////////clear window/////////////////////////////////
-//	outw->clear();
-//	CanalyzerDoc *pDoc=leftp->GetDocument();
-//	pDoc->dol.clear();
-//
-//	leftp->clear();
-//	rightp->clear();
-//
-//
-//	pcctB dataB;
-//	dataB.initialPara(p2);
-//	LineSpec ps1;
-//	//ps1.colour=genColor( genColorvFromIndex<float>( pDoc->rp.back().ps.size() ) ) ;
-//	ps1.dotSize=3;
-//	ps1.name.LoadStringW(IDS_STRING_TEST_CURVE);
-//	ps1.lineType=5;
-//	ps1.smoothLine=1;
-//	ps1.traceLast=false;
-//	//////////////////////////////first step////////////////////////////////////////////
-//
-//	std::vector<CString> filelist;
-//	LoadFileList(NERflist,filelist);
-//
-//	std::vector<pcctB> dbbuf;
-//	UINT rea=OneProcess2(leftp,rightp,cba,outw,pst,filelist,dataB,p3,sl,dbbuf,ps1);
-//
-//	//UINT rea=OneProcess(leftp,rightp,cba,outw,pst,NERflist,dataB,p3,sl);
-//
-//	if(rea!=0){
-//		pst=stop;return rea;
-//	}
-//	pDoc->resultStr=Output11(pDoc->rp.back());
-//	if(rightp->updatePlotRange((int)(pDoc->rp.size())-1))
-//		rightp->Invalidate(FALSE);
-//
-//
-//	::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(pDoc->resultStr.GetBuffer()),NULL);
-//	pst=stop;
-//	return 0;
-//}
-//
-//
-//
-//UINT NEA(CanalyzerViewL *leftp,
-//	CanalyzerViewR *rightp,
-//	CMFCCaptionBarA *cba,
-//	COutputWnd *outw,
-//	ProcessState &pst,
-//	const ANPara &p1,
-//	const CVPara &p2,
-//	SAPara &p3)
-//{
-//
-//	//////////////////////////////load data//////////////////////////////////////
-//	DWORD stepl[]={
-//		stp(PCCTB_VMS,SC_NO_PLOT,0),
-//		stp(PCCTB_S|PCCTB_A,SC_NO_PLOT,0),
-//		stp(PCCTB_SAMPLE|PCCTB_RESET_SOLUTION_AT_END,/*SC_NEW_RIGHT_PLOT|*/SC_NO_PLOT/*|SC_NEW_LINE|SC_PLOT_LAST*/,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_L),
-//		stp(PCCTB_L,SC_NEW_LINE,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_L)
-//	};
-//	std::vector<DWORD> sl(stepl,stepl+4);
-//
-//
-//	//////////////////////////////first step////////////////////////////////////////////
-//
-//
-//	//////////////////////////clear window/////////////////////////////////
-//	outw->clear();
-//	CanalyzerDoc *pDoc=leftp->GetDocument();
-//	pDoc->dol.clear();
-//
-//	leftp->clear();
-//	rightp->clear();
-//
-//
-//	/////////////////////////plot standrad curve////////////////////////
-//
-//	if(p1.calibrationfactortype==1){
-//		CanalyzerDoc tmp(false);
-//		if(ReadFileCustom(&tmp,1,p1.calibrationfilepath)){
-//			tmp.rp.front().ps.front().name.LoadStringW(IDS_STRING_CALIBRATION_CURVE);
-//			//tmp.rp.front().ps.back().name.LoadStringW(IDS_STRING_CALIBRATION_CURVE);
-//			rightp->AddPlot(tmp.rp.front());
-//			if(rightp->updatePlotRange(0))
-//				rightp->Invalidate(FALSE);
-//		}
-//		else{
-//			pst=stop;
-//			return 1;
-//		}
-//	}
-//	else{
-//		pst=stop;
-//		return 1;
-//	}
-//
-//
-//	pcctB dataB;
-//	dataB.initialPara(p2);
-//
-//	LineSpec ps1;
-//	//ps1.colour=genColor( genColorvFromIndex<float>( pDoc->rp.back().ps.size() ) ) ;
-//	ps1.dotSize=3;
-//	ps1.name.LoadStringW(IDS_STRING_TEST_CURVE);
-//	ps1.lineType=5;
-//	ps1.smoothLine=1;
-//	ps1.traceLast=false;
-//	/////////////////////////////////////////////////////////////////////////////
-//
-//	std::vector<CString> filelist;
-//	LoadFileList(NEAflist,filelist);
-//
-//	std::vector<pcctB> dbbuf;
-//	UINT rea=OneProcess2(leftp,rightp,cba,outw,pst,filelist,dataB,p3,sl,dbbuf,ps1);
-//
-//	//UINT rea=OneProcess(leftp,rightp,cba,outw,pst,NEAflist,dataB,p3,sl);
-//
-//	if(rea!=0){
-//		pst=stop;return rea;
-//	}
-//	pDoc->resultStr=Output12(
-//		pDoc->rp.back(),
-//		dataB.TotalVolume(),
-//		dbbuf[2].additiveVolume-dbbuf[1].additiveVolume,
-//		dataB.Lml);
-//
-//	if(rightp->updatePlotRange((int)(pDoc->rp.size())-1))
-//		rightp->Invalidate(FALSE);
-//
-//	::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(pDoc->resultStr.GetBuffer()),NULL);
-//	pst=stop;
-//	return 0;
-//}
 
 
 
@@ -3060,84 +1908,7 @@ UINT PROCESS(LPVOID pParam)
 
 
 
-//
-//
-//UINT PROCESS1(LPVOID pParam)
-//{
-//	CanalyzerViewL *leftp=((mypara*)pParam)->leftp;
-//	CanalyzerViewR *rightp=((mypara*)pParam)->rightp;
-//
-//	CMFCCaptionBarA *cba=((mypara*)pParam)->cba;
-//	COutputWnd *outw=((mypara*)pParam)->outw;
-//	ProcessState *pst=((mypara*)pParam)->psta;
-//
-//	delete pParam;
-//	/////////////////////////////////////////////////////////////////////
-//
-//	ANPara p1;
-//	CVPara p2;
-//	SAPara p3;
-//
-//	CanalyzerDoc *adoc=leftp->GetDocument();
-//
-//	p1=adoc->p1;
-//	p2=adoc->p2;
-//	p3=adoc->p3;
-//
-//
-//
-//
-//
-//
-//	switch(p1.analysistype){
-//	case 0:
-//		return DEMOP(leftp,rightp,cba,outw,*pst,p1,p2,p3);
-//
-//	case 1:
-//		return DTR1(leftp,rightp,cba,outw,*pst,p1,p2,p3);
-//
-//	case 2:
-//		return DTA1(leftp,rightp,cba,outw,*pst,p1,p2,p3);
-//
-//	case 3:
-//		return LATR1(leftp,rightp,cba,outw,*pst,p1,p2,p3);
-//
-//	case 4:
-//		return LATA1(leftp,rightp,cba,outw,*pst,p1,p2,p3);
-//
-//	case 5:
-//		return RCR1(leftp,rightp,cba,outw,*pst,p1,p2,p3);
-//
-//	case 6:
-//		return RCA1(leftp,rightp,cba,outw,*pst,p1,p2,p3);
-//
-//	case 7:
-//		return SARR1(leftp,rightp,cba,outw,*pst,p1,p2,p3);
-//
-//	case 8:
-//		return SARA1(leftp,rightp,cba,outw,*pst,p1,p2,p3);
-//
-//	case 9:
-//		return NEWR1(leftp,rightp,cba,outw,*pst,p1,p2,p3);
-//
-//	case 10:
-//		return NEWA1(leftp,rightp,cba,outw,*pst,p1,p2,p3);
-//
-//	case 11:
-//		return NER(leftp,rightp,cba,outw,*pst,p1,p2,p3);
-//
-//	case 12:
-//		return NEA(leftp,rightp,cba,outw,*pst,p1,p2,p3);
-//
-//	default:
-//		*pst=stop;
-//
-//		return 1;
-//	}
-//
-//
-//}
-//
+
 
 
 
