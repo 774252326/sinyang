@@ -4,7 +4,7 @@
 #include "OutputWnd.h"
 #include "Resource.h"
 //#include "MainFrm.h"
-
+#include "Header1.h"
 
 
 #ifdef _DEBUG
@@ -79,10 +79,11 @@ int COutputWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 
 	CString strTemp;
-	for(size_t i=IDS_STRING111;i<=IDS_STRING117;i++){
-		(strTemp.LoadString(i));
-		int w=m_listCtrlMonitor.GetStringWidth(strTemp)+m_listCtrlMonitor.gap;
-		m_listCtrlMonitor.InsertColumn(i, strTemp, LVCFMT_LEFT,w);
+	for(size_t i=0;i<7;i++){
+		(strTemp.LoadString(i+IDS_STRING111));
+		//int w=m_listCtrlMonitor.GetStringWidth(strTemp)+m_listCtrlMonitor.gap;
+		m_listCtrlMonitor.InsertColumn(i, strTemp, LVCFMT_LEFT);
+		AdjustWidth(&m_listCtrlMonitor,i,strTemp);
 	}
 
 	if ( !m_listCtrlMonitor.GetSafeHwnd() ){
@@ -189,7 +190,7 @@ BOOL COutputWnd::clear(void)
 // COutputList1
 
 COutputList::COutputList()
-	: gap(12)
+	//: gap(12)
 {
 }
 
@@ -264,47 +265,19 @@ BOOL COutputList::InsertListCtrl(int StepNo, CString StepName, double addVol, do
 	str.Format(L"%d",StepNo);
 	InsertItem(StepNo,str);
 
-	//if(CycleNo<0){
-	//	SetItemText(StepNo,1,StepName);
-
-	//	if(addVol!=0){
-	//		str.Format(L"%g",addVol);
-	//		SetItemText(StepNo,2,str);
-
-	//		str.Format(L"%g",totalVol);
-	//		SetItemText(StepNo,3,str);
-	//	}
-
-	//}
-	//else{
-
-	//	(strTemp.LoadString(IDS_STRING_CYCLE));
-	//	str.Format(L"%s(%s%d)",StepName,strTemp,CycleNo);
-	//	SetItemText(StepNo,1,str);
-
-	//	if(addVol!=0 && CycleNo==1){
-	//		str.Format(L"%g",addVol);
-	//		SetItemText(StepNo,2,str);
-
-	//		str.Format(L"%g",totalVol);
-	//		SetItemText(StepNo,3,str);
-	//	}
-	//}
-
-
 	SetItemText(StepNo,1,StepName);
 
-		if(addVol!=0){
-			str.Format(L"%g",addVol);
-			SetItemText(StepNo,2,str);
+	if(addVol!=0){
+		str.Format(L"%g",addVol);
+		SetItemText(StepNo,2,str);
 
-			str.Format(L"%g",totalVol);
-			SetItemText(StepNo,3,str);
-		}
+		str.Format(L"%g",totalVol);
+		SetItemText(StepNo,3,str);
+	}
 
 	str.Format(L"%g",Q);
 	SetItemText(StepNo,4,str);
-	
+
 	if(Use){
 		if(nQ!=0){
 			str.Format(L"%g",nQ);
@@ -320,7 +293,7 @@ BOOL COutputList::InsertListCtrl(int StepNo, CString StepName, double addVol, do
 	SetItemText(StepNo,6,str);
 
 	for(int i=0;i<7;i++){
-		AdjustWidth(StepNo,i);
+		AdjustWidth(this,i,StepNo);
 	}
 	EnsureVisible(StepNo, FALSE);
 
@@ -329,15 +302,15 @@ BOOL COutputList::InsertListCtrl(int StepNo, CString StepName, double addVol, do
 
 
 
-void COutputList::AdjustWidth(int nRow, int nCol)
-{
-	CString str=this->GetItemText(nRow,nCol);
-	int widthc,widtht;
-	widtht=this->GetStringWidth(str)+gap;
-	widthc=this->GetColumnWidth(nCol);
-	if(widthc<widtht)
-		this->SetColumnWidth(nCol,widtht);
-}
+//void COutputList::AdjustWidth(int nRow, int nCol)
+//{
+//	CString str=this->GetItemText(nRow,nCol);
+//	int widthc,widtht;
+//	widtht=this->GetStringWidth(str)+gap;
+//	widthc=this->GetColumnWidth(nCol);
+//	if(widthc<widtht)
+//		this->SetColumnWidth(nCol,widtht);
+//}
 
 
 BOOL COutputList::InsertListCtrl(int StepNo, DataOut dout)

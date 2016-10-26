@@ -55,6 +55,7 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		, ymin(0)
 		, ymax(0)
 		, m_mouseDownPoint(0)
+		, pct(0.02)
 	{
 		// TODO: add construction code here
 		spBtnSize=CSize(23*2,23);
@@ -271,7 +272,6 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 	bool CanalyzerView::updatePlotRange(int plotIndex, const std::vector<double> &x, const std::vector<double> &y, bool flg)
 	{
 		if(plotIndex==m_spBtn.GetPos32()){
-			double pct=0.02;
 			UpdateRange(x,xmin,xmax,pct,flg);
 			UpdateRange(y,ymin,ymax,pct,flg);
 			return true;
@@ -428,8 +428,6 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		CanalyzerDoc* pDoc=GetDocument();
 		if(pDoc->lp.empty())
 			return false;
-
-		double pct=0.02;
 		int ci=m_spBtn.GetPos32();
 		UpdateRange(pDoc->lp[ci].xll,xmin,xmax,pct,flg);
 		UpdateRange(pDoc->lp[ci].yll,ymin,ymax,pct,flg);
@@ -471,7 +469,6 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 
 		//if(updatePlotRange(newpos))
 		//if(updatePlotRange())
-		double pct=0.02;
 		UpdateRange(pDoc->lp[newpos].xll,xmin,xmax,pct,true);
 		UpdateRange(pDoc->lp[newpos].yll,ymin,ymax,pct,true);
 		Invalidate(FALSE);
@@ -503,7 +500,6 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 
 		// TODO: Add your specialized code here and/or call the base class
 
-
 	}
 
 
@@ -524,17 +520,24 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 
 		//确定窗口大小
 
+		int wmm=::GetDeviceCaps(::GetDC(this->GetSafeHwnd()),HORZSIZE);
+		int hmm=::GetDeviceCaps(::GetDC(this->GetSafeHwnd()),VERTSIZE);
+
+		int wpxl=::GetDeviceCaps(::GetDC(this->GetSafeHwnd()),HORZRES);
+		int hpxl=::GetDeviceCaps(::GetDC(this->GetSafeHwnd()),VERTRES);
+
 
 
 		//得到实际设备每逻辑英寸的象素数量
 
-
+		int xLogPixPerInch0 = ::GetDeviceCaps(::GetDC(this->GetSafeHwnd()),LOGPIXELSX); 
+		int yLogPixPerInch0 = ::GetDeviceCaps(::GetDC(this->GetSafeHwnd()),LOGPIXELSY); 
 
 		int xLogPixPerInch = pDC->GetDeviceCaps(LOGPIXELSX); 
 		int yLogPixPerInch = pDC->GetDeviceCaps(LOGPIXELSY); 
 		//得到设备坐标和逻辑坐标的比例
-		long xExt = (long)size.cx * xLogPixPerInch/96;  
-		long yExt = (long)size.cy * yLogPixPerInch/96; 
+		long xExt = (long)size.cx * xLogPixPerInch/xLogPixPerInch0;  
+		long yExt = (long)size.cy * yLogPixPerInch/yLogPixPerInch0; 
 
 		//long xExt = (long)(11/sqrt(2.0) * xLogPixPerInch);  
 		//long yExt = (long)(11 * yLogPixPerInch); 

@@ -28,8 +28,8 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 public:
-	int gap;
-	void AdjustWidth(int nRow, int nCol);
+//	int gap;
+//	void AdjustWidth(int nRow, int nCol);
 	BOOL InsertListCtrl(int StepNo, DataOut dout);
 };
 

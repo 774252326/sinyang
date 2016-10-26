@@ -93,6 +93,7 @@ public:
 	//afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	//afx_msg void OnSize(UINT nType, int cx, int cy);
 	virtual void OnPrepareDC(CDC* pDC, CPrintInfo* pInfo = NULL);
+	double pct;
 };
 
 #ifndef _DEBUG  // debug version in analyzerView.cpp

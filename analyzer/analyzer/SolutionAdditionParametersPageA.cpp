@@ -5,7 +5,7 @@
 #include "analyzer.h"
 #include "SolutionAdditionParametersPageA.h"
 #include "afxdialogex.h"
-
+#include "Header1.h"
 
 // SolutionAdditionParametersPageA dialog
 
@@ -74,19 +74,21 @@ void SolutionAdditionParametersPageA::BuildList(int width)
 	//dwStyle1 |= LVS_EX_CHECKBOXES;//item前生成checkbox控件
 	m_SAPlist.SetExtendedStyle(dwStyle1); //设置扩展风格
 
-	int wi[]={33,150,90,90,90,150,90};
+	//int wi[]={33,150,90,90,90,150,90};
 
 
 	CString strTemp;
 	for(int i=0;i<totaln;i++){
 		strTemp.LoadStringW(IDS_STRING520+i);
-		m_SAPlist.InsertColumn(i, strTemp, LVCFMT_LEFT,wi[i]);
+		m_SAPlist.InsertColumn(i, strTemp, LVCFMT_LEFT);
+		AdjustWidth(&m_SAPlist,i,strTemp);
 
 		if(i==typeidx){
 			// insert string elements  for the ComboBox : 
 			for ( int j=IDS_STRING_VOL_ONCE ; j <= IDS_STRING_VMS ; j++){
 				strTemp.LoadStringW(j);
 				m_SAPlist.allComboStr.AddTail( strTemp );
+				AdjustWidth(&m_SAPlist,i,strTemp);
 			}
 		}
 
@@ -149,6 +151,11 @@ void SolutionAdditionParametersPageA::SetList(void)
 
 		strTemp.Format(L"%g",para.saplist[i].endRatio);
 		m_SAPlist.SetItemText(i,6,strTemp);
+
+
+		for(int j=0;j<7;j++){
+			AdjustWidth(&m_SAPlist,j,i);
+		}
 
 	}
 }

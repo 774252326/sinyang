@@ -43,6 +43,21 @@
     <None Include="res\Toolbar256.bmp">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="..\..\..\..\..\Downloads\635\635\advanced.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\..\..\..\Downloads\635\635\appearance.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\..\..\..\Downloads\635\635\agt_virus.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\mainfram.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\bmp00001.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="analyzer.h">

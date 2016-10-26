@@ -9,6 +9,7 @@
 
 #include "analyzerView.h"
 #include "analyzerViewR.h"
+#include "afxwin.h"
 
 class CMainFrame : public CFrameWndEx
 {
@@ -88,6 +89,7 @@ public:
 	CWinThread *pWriteA;
 	afx_msg void OnAnalysisAbortanalysis();
 	afx_msg void OnAnalysisPause();
+	CMenu cume;
 };
 
 

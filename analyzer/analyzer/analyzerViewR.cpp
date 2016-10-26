@@ -55,6 +55,7 @@ CanalyzerViewR::CanalyzerViewR()
 		, ymin(0)
 		, ymax(0)
 		, m_mouseDownPoint(0)
+		, pct(0.02)
 {
 	// TODO: add construction code here
 	spBtnSize=CSize(23*2,23);
@@ -506,14 +507,24 @@ void CanalyzerViewR::OnLButtonDown(UINT nFlags, CPoint point)
 		CRect rect;
 		this->GetClientRect(&rect);
 		CSize size = rect.Size(); 
-		pDC->SetWindowExt(size);  
-		//确定窗口大小
+		pDC->SetWindowExt(size); 
+
+
+
+		int wmm=::GetDeviceCaps(::GetDC(this->GetSafeHwnd()),HORZSIZE);
+		int hmm=::GetDeviceCaps(::GetDC(this->GetSafeHwnd()),VERTSIZE);
+
+		int wpxl=::GetDeviceCaps(::GetDC(this->GetSafeHwnd()),HORZRES);
+		int hpxl=::GetDeviceCaps(::GetDC(this->GetSafeHwnd()),VERTRES);
 		//得到实际设备每逻辑英寸的象素数量
+		int xLogPixPerInch0 = ::GetDeviceCaps(::GetDC(this->GetSafeHwnd()),LOGPIXELSX); 
+		int yLogPixPerInch0 = ::GetDeviceCaps(::GetDC(this->GetSafeHwnd()),LOGPIXELSY); 
+
 		int xLogPixPerInch = pDC->GetDeviceCaps(LOGPIXELSX); 
 		int yLogPixPerInch = pDC->GetDeviceCaps(LOGPIXELSY); 
 		//得到设备坐标和逻辑坐标的比例
-		long xExt = (long)size.cx * xLogPixPerInch/96;  
-		long yExt = (long)size.cy * yLogPixPerInch/96; 
+		long xExt = (long)size.cx * xLogPixPerInch/xLogPixPerInch0;  
+		long yExt = (long)size.cy * yLogPixPerInch/yLogPixPerInch0; 
 		pDC->SetViewportExt((int)xExt, (int)yExt); 
 		//确定视口大小
 

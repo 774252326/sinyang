@@ -7,6 +7,8 @@
 #include "afxdialogex.h"
 #include "ColorButton.h"
 
+#include "Header1.h"
+
 // PlotSettingPage dialog
 
 IMPLEMENT_DYNAMIC(PlotSettingPage, CPropertyPage)
@@ -273,6 +275,7 @@ static int _List_Type( int col )
 	return CEditList::eEdit;
 }
 
+
 void PlotSettingPage::BuildList(int width)
 {
 	pslist.ModifyStyle(0,LVS_REPORT|LVS_SHOWSELALWAYS);
@@ -288,18 +291,20 @@ void PlotSettingPage::BuildList(int width)
 	//dwStyle1 |= LVS_EX_CHECKBOXES;//item前生成checkbox控件
 	pslist.SetExtendedStyle(dwStyle1); //设置扩展风格
 
-	int wi[7]={33,150,70,60,90,85,100};
+	//int wi[7]={33,150,70,60,90,85,100};
 
 
 	CString strTemp;
 	for(int i=0;i<7;i++){
 		strTemp.LoadStringW(IDS_STRING720+i);
-		pslist.InsertColumn(i, strTemp, LVCFMT_LEFT,wi[i]);
+		pslist.InsertColumn(i, strTemp, LVCFMT_LEFT);
+		AdjustWidth(&pslist,i,strTemp);
 
 		if(i==4){
 			for ( int j=IDS_STRING_GRID_LINE_SOLID ; j <= IDS_STRING_GRID_LINE_HIDE ; j++){
 				strTemp.LoadStringW(j);
 				pslist.allComboStr.AddTail( strTemp );
+				AdjustWidth(&pslist,i,strTemp);
 			}
 		}
 
@@ -307,6 +312,7 @@ void PlotSettingPage::BuildList(int width)
 			for ( int j=IDS_STRING_NO_SMOOTH ; j <= IDS_STRING_BEZIER ; j++){
 				strTemp.LoadStringW(j);
 				pslist.allComboStr.AddTail( strTemp );
+				AdjustWidth(&pslist,i,strTemp);
 			}
 		}
 
@@ -314,6 +320,7 @@ void PlotSettingPage::BuildList(int width)
 			for ( int j=IDS_STRING_YES ; j <= IDS_STRING_NO ; j++){
 				strTemp.LoadStringW(j);
 				pslist.allComboStr.AddTail( strTemp );
+				AdjustWidth(&pslist,i,strTemp);
 			}
 		}
 
@@ -367,14 +374,21 @@ void PlotSettingPage::SetList(void)
 		strTemp.Format(L"%d",ps[i].dotSize);
 		pslist.SetItemText(i,3,strTemp);
 
+
 		strTemp.LoadStringW(IDS_STRING_GRID_LINE_SOLID+ps[i].lineType);
 		pslist.SetItemText(i,4,strTemp);
+		
 
 		strTemp.LoadStringW(IDS_STRING_NO_SMOOTH+ps[i].smoothLine);
 		pslist.SetItemText(i,5,strTemp);
+		
 
 		strTemp.LoadStringW( (ps[i].traceLast?IDS_STRING_YES:IDS_STRING_NO) );
 		pslist.SetItemText(i,6,strTemp);
+		
+		for(int j=0;j<7;j++){
+			AdjustWidth(&pslist,j,i);
+		}
 	}
 
 }

@@ -94,11 +94,16 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="..\..\..\..\..\Downloads\635\635\advanced.ico" />
+    <None Include="..\..\..\..\..\Downloads\635\635\agt_virus.ico" />
+    <None Include="..\..\..\..\..\Downloads\635\635\appearance.ico" />
     <None Include="ReadMe.txt" />
     <None Include="res\analyzer.ico" />
     <None Include="res\analyzer.rc2" />
     <None Include="res\analyzerDoc.ico" />
+    <None Include="res\bmp00001.bmp" />
     <None Include="res\info.bmp" />
+    <None Include="res\mainfram.bmp" />
     <None Include="res\output_wnd.ico" />
     <None Include="res\output_wnd_hc.ico" />
     <None Include="res\Toolbar.bmp" />
@@ -184,4 +189,9 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties RESOURCE_FILE="analyzer.rc" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>

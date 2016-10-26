@@ -20,6 +20,22 @@ COLORREF inv(const COLORREF &oc){
 }
 
 
+void AdjustWidth(CListCtrl *ls, int nCol, CString str, int gap)
+{
+	int widthc,widtht;
+	widtht=ls->GetStringWidth(str)+gap;
+	widthc=ls->GetColumnWidth(nCol);
+	if(widthc<widtht)
+		ls->SetColumnWidth(nCol,widtht);
+}
+
+void AdjustWidth(CListCtrl *ls, int nCol, int nRow, int gap)
+{
+	CString	str=ls->GetItemText(nRow,nCol);
+	AdjustWidth(ls, nCol, str, gap);
+}
+
+
 
 int FindClosest(double x, double y, const std::vector<double> &xl, const std::vector<double> &yl, double thres)
 {

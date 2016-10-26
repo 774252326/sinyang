@@ -295,7 +295,13 @@ void OneStep( COutputWnd * ow
 	ps1.lineType=0;
 	ps1.smoothLine=0;
 	ps1.traceLast=true;
-	pDoc->lp[ci].AddNew(x,y,ps1,data.label[0],data.label[1]);
+
+	CString postr;
+	postr.LoadStringW(IDS_STRING_POTENTIAL);
+	CString custr;
+	custr.LoadStringW(IDS_STRING_CURRENT);
+	pDoc->lp[ci].AddNew(x,y,ps1,postr,custr);
+	//pDoc->lp[ci].AddNew(x,y,ps1,data.label[0],data.label[1]);
 	if(leftp->updatePlotRange(ci)){
 		leftp->Invalidate(FALSE);
 	}
@@ -957,7 +963,7 @@ UINT DEMOP(CanalyzerView *leftp,
 			rightp->Invalidate(FALSE);
 	}
 	else{
-		AfxMessageBox(L"step error");pst=stop;return 1;		
+		CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;		
 		p3.saplist.erase(p3.saplist.begin());
 	}
 
@@ -990,7 +996,7 @@ UINT DEMOP(CanalyzerView *leftp,
 
 		}
 		else{
-			AfxMessageBox(L"step error");pst=stop;return 1;
+			CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
 			p3.saplist.erase(p3.saplist.begin());
 		}
 	}
@@ -1098,7 +1104,7 @@ UINT DTR(CanalyzerView *leftp,
 			rightp->Invalidate(FALSE);
 	}
 	else{
-		AfxMessageBox(L"step error");pst=stop;return 1;		
+		CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;		
 		p3.saplist.erase(p3.saplist.begin());
 	}
 
@@ -1118,7 +1124,7 @@ UINT DTR(CanalyzerView *leftp,
 
 		}
 		else{
-			AfxMessageBox(L"step error");pst=stop;return 1;
+			CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
 			p3.saplist.erase(p3.saplist.begin());
 		}
 	}
@@ -1254,7 +1260,7 @@ UINT DTA(CanalyzerView *leftp,
 			rightp->Invalidate(FALSE);
 	}
 	else{
-		AfxMessageBox(L"step error");pst=stop;return 1;
+		CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
 		p3.saplist.erase(p3.saplist.begin());
 	}
 
@@ -1272,7 +1278,7 @@ UINT DTA(CanalyzerView *leftp,
 				rightp->Invalidate(FALSE);
 		}
 		else{
-			AfxMessageBox(L"step error");pst=stop;return 1;
+			CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
 			p3.saplist.erase(p3.saplist.begin());
 		}
 	}
@@ -1383,7 +1389,7 @@ UINT LATR(CanalyzerView *leftp,
 
 	}
 	else{
-		AfxMessageBox(L"step error");pst=stop;return 1;
+		CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
 		p3.saplist.erase(p3.saplist.begin());
 	}
 
@@ -1402,7 +1408,7 @@ UINT LATR(CanalyzerView *leftp,
 				rightp->Invalidate(FALSE);
 		}
 		else{
-			AfxMessageBox(L"step error");pst=stop;return 1;
+			CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
 			p3.saplist.erase(p3.saplist.begin());
 		}
 	}
@@ -1471,7 +1477,7 @@ UINT LATA(CanalyzerView *leftp,
 		OneStep(outw,leftp,cba,pst,dt1,dataB,filelist,p3,true,false);
 	}
 	else{
-		AfxMessageBox(L"step error");pst=stop;return 1;
+		CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
 		p3.saplist.erase(p3.saplist.begin());
 	}
 
@@ -1508,7 +1514,7 @@ UINT LATA(CanalyzerView *leftp,
 
 	}
 	else{
-		AfxMessageBox(L"step error");pst=stop;return 1;
+		CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
 		p3.saplist.erase(p3.saplist.begin());
 	}
 
@@ -1531,7 +1537,7 @@ UINT LATA(CanalyzerView *leftp,
 
 	}
 	else{
-		AfxMessageBox(L"step error");pst=stop;return 1;
+		CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
 		p3.saplist.erase(p3.saplist.begin());
 	}
 
@@ -1552,7 +1558,7 @@ UINT LATA(CanalyzerView *leftp,
 				rightp->Invalidate(FALSE);
 		}
 		else{
-			AfxMessageBox(L"step error");pst=stop;return 1;
+			CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
 			p3.saplist.erase(p3.saplist.begin());
 		}
 	}
@@ -1626,7 +1632,7 @@ UINT RCR(CanalyzerView *leftp,
 		OneStep(outw,leftp,cba,pst,dt1,dataB,filelist,p3,true,false);
 	}
 	else{
-		AfxMessageBox(L"step error");pst=stop;return 1;
+		CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
 		p3.saplist.erase(p3.saplist.begin());
 	}
 
@@ -1662,7 +1668,7 @@ UINT RCR(CanalyzerView *leftp,
 
 	}
 	else{
-		AfxMessageBox(L"step error");pst=stop;return 1;
+		CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
 		p3.saplist.erase(p3.saplist.begin());
 	}
 
@@ -1682,7 +1688,7 @@ UINT RCR(CanalyzerView *leftp,
 				rightp->Invalidate(FALSE);
 		}
 		else{
-			AfxMessageBox(L"step error");pst=stop;return 1;
+			CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
 			p3.saplist.erase(p3.saplist.begin());
 		}
 	}
@@ -1774,7 +1780,7 @@ UINT RCA(CanalyzerView *leftp,
 		OneStep(outw,leftp,cba,pst,dt1,dataB,filelist,p3,true,false);
 	}
 	else{
-		AfxMessageBox(L"step error");pst=stop;return 1;
+		CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
 		p3.saplist.erase(p3.saplist.begin());
 	}
 	/////////////////////////////////add s and a//////////////////////////////////
@@ -1782,7 +1788,7 @@ UINT RCA(CanalyzerView *leftp,
 		OneStep(outw,leftp,cba,pst,dt1,dataB,filelist,p3,true,false);
 	}
 	else{
-		AfxMessageBox(L"step error");pst=stop;return 1;
+		CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
 		p3.saplist.erase(p3.saplist.begin());
 	}
 	////////////////////////////////////////////add sample////////////////////////////
@@ -1791,7 +1797,7 @@ UINT RCA(CanalyzerView *leftp,
 		OneStep(outw,leftp,cba,pst,dt1,dataB,filelist,p3,true,false);
 	}
 	else{
-		AfxMessageBox(L"step error");pst=stop;return 1;
+		CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
 		p3.saplist.erase(p3.saplist.begin());
 	}
 	/////////////////////////////////////last step////////////////////////////////////////////////////////////////
@@ -1922,7 +1928,7 @@ UINT SARR(CanalyzerView *leftp,
 
 		}
 		else{
-			AfxMessageBox(L"step error");pst=stop;return 1;
+			CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
 			p3.saplist.erase(p3.saplist.begin());
 		}
 
@@ -2122,7 +2128,7 @@ UINT SARA(CanalyzerView *leftp,
 			rightp->Invalidate(FALSE);
 	}
 	else{
-		AfxMessageBox(L"step error");pst=stop;return 1;
+		CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
 		p3.saplist.erase(p3.saplist.begin());
 	}
 
@@ -2195,7 +2201,7 @@ UINT SARA(CanalyzerView *leftp,
 				rightp->Invalidate(FALSE);
 		}
 		else{
-			AfxMessageBox(L"step error");pst=stop;return 1;
+			CString str;str.LoadStringW(IDS_STRING_STEP_ERROR);AfxMessageBox(str);pst=stop;return 1;
 			p3.saplist.erase(p3.saplist.begin());
 		}
 	}

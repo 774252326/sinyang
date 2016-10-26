@@ -72,6 +72,18 @@ BOOL CanalyzerApp::InitInstance()
 	CWinAppEx::InitInstance();
 
 
+	if(GetUserDefaultUILanguage()!= MAKELANGID(LANG_CHINESE,SUBLANG_CHINESE_SIMPLIFIED))
+	{
+		SetThreadUILanguage(MAKELANGID(LANG_ENGLISH,SUBLANG_ENGLISH_US)); 
+		//SetThreadUILanguage(MAKELANGID(LANG_CHINESE,SUBLANG_CHINESE_SIMPLIFIED)); 
+
+		//CMenu m_menu;
+		//m_menu.LoadMenu(L"IDR_MAINFRAME_CHINESE");
+		//SetMenu(this->m_pMainWnd->GetSafeHwnd(),m_menu.GetSafeHmenu());
+	}
+
+
+
 	// Initialize OLE libraries
 	if (!AfxOleInit())
 	{
@@ -141,13 +153,24 @@ BOOL CanalyzerApp::InitInstance()
 	//  In an SDI app, this should occur after ProcessShellCommand
 	// Enable drag/drop open
 	m_pMainWnd->DragAcceptFiles();
+
+
+
+
+
 	return TRUE;
 }
 
 int CanalyzerApp::ExitInstance()
 {
 	//TODO: handle additional resources you may have added
+
+	this->CleanState(); 
+
+
 	AfxOleTerm(FALSE);
+
+
 
 	return CWinAppEx::ExitInstance();
 }

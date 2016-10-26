@@ -79,15 +79,29 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CFrameWndEx::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
+
+
+				//CMenu m_menu;
+	////m_menu.LoadMenu(L"IDR_MAINFRAME_CHINESE");
+	//m_wndMenuBar.CreateFromMenu(m_menu.GetSafeHmenu(),true,true);
+	//this->SetMenu(&m_menu);
+
 	BOOL bNameValid;
 	// set the visual manager and style based on persisted value
 	OnApplicationLook(theApp.m_nAppLook);
+
+
 
 	if (!m_wndMenuBar.Create(this))
 	{
 		TRACE0("Failed to create menubar\n");
 		return -1;      // fail to create
 	}
+
+
+
+	
+
 
 	m_wndMenuBar.SetPaneStyle(m_wndMenuBar.GetPaneStyle() | CBRS_SIZE_DYNAMIC | CBRS_TOOLTIPS | CBRS_FLYBY);
 
@@ -110,6 +124,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	// m_wndToolBar.GetToolBarCtrl().SetHotImageList(&img); 
  //   img.Detach(); 
+
 
 
 
@@ -203,6 +218,12 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	lstBasicCommands.AddTail(ID_VIEW_APPLOOK_WINDOWS_7);
 
 	//CMFCToolBar::SetBasicCommands(lstBasicCommands);
+
+	//CMenu m_menu;
+	//m_menu.LoadMenuW(L"IDR_MAINFRAME_CHINESE");
+	//m_wndMenuBar.CreateFromMenu(m_menu.GetSafeHmenu(),true,true);
+	////::SetMenu(this->GetSafeHwnd(),m_menu.GetSafeHmenu());
+
 
 	return 0;
 }
