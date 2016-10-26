@@ -6,8 +6,10 @@
 #include "dlg1.h"
 
 #include <algorithm>
-#include "../../funT/xRescaleT.h"
-#include "../../funT/calgridT.h"
+//#include "../../funT/xRescaleT.h"
+//#include "../../funT/calgridT.h"
+#include "xRescaleT.h"
+#include "calgridT.h"
 #include "colormap.h"
 // dlg1
 
@@ -42,6 +44,7 @@ BEGIN_MESSAGE_MAP(dlg1, CFormView)
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
 	ON_WM_MOUSEWHEEL()
+	ON_WM_CHAR()
 END_MESSAGE_MAP()
 
 
@@ -71,15 +74,15 @@ void dlg1::OnSize(UINT nType, int cx, int cy)
 
 	// TODO: Add your message handler code here
 
-	int gap=50;
-	CRect dlgRect(gap,gap,cx-gap,cy-gap);
+	//int gap=50;
+	//CRect dlgRect(gap,gap,cx-gap,cy-gap);
 
-	if( GetDlgItem(IDC_PLOT)->GetSafeHwnd()){
-		GetDlgItem(IDC_PLOT)->SetWindowPos(NULL, dlgRect.left, dlgRect.top, dlgRect.Width(), dlgRect.Height(),
-			SWP_HIDEWINDOW);
-		//SWP_SHOWWINDOW);
-	}
-	Invalidate();
+	//if( GetDlgItem(IDC_PLOT)->GetSafeHwnd()){
+	//	GetDlgItem(IDC_PLOT)->SetWindowPos(NULL, dlgRect.left, dlgRect.top, dlgRect.Width(), dlgRect.Height(),
+	//		SWP_HIDEWINDOW);
+	//	//SWP_SHOWWINDOW);
+	//}
+	//Invalidate();
 
 }
 
@@ -197,7 +200,7 @@ CRect dlg1::DrawXYAxis(CRect rect, CDC* pdc)
 	COLORREF axisC=black;
 	COLORREF labelC=green;
 
-	drawRectangle(rect,pdc,bkgndC,bkgndC);
+	drawRectangle(rect,pdc,bkgndC,axisC);
 
 	////////////////////////////////////////////////////////////////////
 
@@ -246,14 +249,7 @@ CRect dlg1::DrawXYAxis(CRect rect, CDC* pdc)
 
 		str.Format(L"%g",gridi);
 		sz=pdc->GetTextExtent(str);
-		//str.Format(L"%g",gridi);
-		//szt=pdc->GetTextExtent(str);
-		//if(sz.cx>szt.cx){
-		//	sz=szt;
-		//}
-		//else{
-		//	str.Format(L"%.1e",gridi);
-		//}
+
 
 		textLocate.x=tmp-sz.cx/2;
 		textLocate.y=rect.bottom+lc;
@@ -269,7 +265,6 @@ CRect dlg1::DrawXYAxis(CRect rect, CDC* pdc)
 
 
 			}
-			//TRACE("%d,",sz.cy);
 		}
 	}
 	newrect.bottom+=lc+sz.cy;
@@ -356,18 +351,6 @@ CRect dlg1::DrawXYAxis(CRect rect, CDC* pdc)
 
 		str.Format(L"%g",gridi);
 		sz=pdc->GetTextExtent(str);
-		//str.Format(L"%g",gridi);
-		//szt=pdc->GetTextExtent(str);
-		//if(sz.cx>szt.cx){
-		//	sz=szt;
-		//}
-		//else{
-		//	str.Format(L"%.1e",gridi);
-		//}
-
-		//pdc->TextOutW(rect.left-lc-sz.cy,tmp+sz.cx/2,str);
-		//TRACE("%d,",sz.cy);
-
 
 		textLocate.x=rect.left-lc-sz.cy;
 		textLocate.y=tmp+sz.cx/2;
@@ -382,7 +365,6 @@ CRect dlg1::DrawXYAxis(CRect rect, CDC* pdc)
 
 
 			}
-			//TRACE("%d,",sz.cy);
 		}
 
 
@@ -441,7 +423,7 @@ CRect dlg1::DrawXYAxis(CRect rect, CDC* pdc)
 
 
 // update xmin,xmax,ymin,ymax
-void dlg1::updatePlotRange(const std::vector<double> &x, const std::vector<double> &y)
+void dlg1::updatePlotRange(const std::vector<double> &x, const std::vector<double> &y, bool flg)
 {
 
 	double iv,pct=0.02;
@@ -453,9 +435,9 @@ void dlg1::updatePlotRange(const std::vector<double> &x, const std::vector<doubl
 	tmin-=iv*pct;
 	tmax+=iv*pct;
 
-	if(xmin>tmin||xlist.size()==1)
+	if(flg||xmin>tmin||xlist.size()==1)
 		xmin=tmin;
-	if(xmax<tmax||xlist.size()==1)
+	if(flg||xmax<tmax||xlist.size()==1)
 		xmax=tmax;
 
 
@@ -468,9 +450,9 @@ void dlg1::updatePlotRange(const std::vector<double> &x, const std::vector<doubl
 	tmax+=iv*pct;
 
 
-	if(ymin>tmin||ylist.size()==1)
+	if(flg||ymin>tmin||ylist.size()==1)
 		ymin=tmin;
-	if(ymax<tmax||ylist.size()==1)
+	if(flg||ymax<tmax||ylist.size()==1)
 		ymax=tmax;
 }
 
@@ -489,10 +471,10 @@ void dlg1::OnPaint()
 
 	CRect plotrect;
 	CSize sz;
-	//this->GetWindowRect(&plotrect);
+	GetPlotRect(plotrect);
+
 	COLORREF oc;
-	GetDlgItem(IDC_PLOT)->GetWindowRect(&plotrect);
-	ScreenToClient(&plotrect);
+	//GetDlgItem(IDC_PLOT)->GetWindowRect(&plotrect);
 
 	CPen pen;
 
@@ -533,9 +515,6 @@ void dlg1::OnPaint()
 			//legendrect.InflateRect(0,0,1,0);
 			//drawRectangle(legendrect,&dc,white,black);
 			//legendrect=DrawLegend(plotrect, &dc);
-
-			////rgn.CreateRectRgnIndirect(&mainrt);
-
 
 		}
 	}
@@ -617,7 +596,10 @@ void dlg1::OnMouseMove(UINT nFlags, CPoint point)
 	if (GetCapture()==this && !xlist.empty())
 	{
 		CRect plotrect;
-		GetDlgItem(IDC_PLOT)->GetWindowRect(&plotrect);
+		//GetDlgItem(IDC_PLOT)->GetWindowRect(&plotrect);
+
+GetPlotRect(plotrect);
+
 		double kx=(double)(point.x-m_mouseDownPoint.x)*(xmax-xmin)/(double)plotrect.Width();
 		double ky=(double)(point.y-m_mouseDownPoint.y)*(ymax-ymin)/(double)plotrect.Height();
 
@@ -665,8 +647,9 @@ BOOL dlg1::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 {
 	// TODO: Add your message handler code here and/or call default
 	CRect plotrect;
-	GetDlgItem(IDC_PLOT)->GetWindowRect(&plotrect);
-	ScreenToClient(&plotrect);
+	//GetDlgItem(IDC_PLOT)->GetWindowRect(&plotrect);
+
+	GetPlotRect(plotrect);
 
 	ScreenToClient(&pt);
 
@@ -1089,12 +1072,38 @@ void dlg1::OnInitialUpdate()
 
 	// TODO: Add your specialized code here and/or call the base class
 
-	//plot region
-	CButton * pPlot=new CButton;
-	CRect plotrect(0,0,1,1);
-	CString str;
-	str.LoadStringW(IDC_PLOT);
-	pPlot->Create( str, WS_CHILD|BS_GROUPBOX/*|WS_VISIBLE*/, plotrect, this, IDC_PLOT); 
+	////plot region
+	//CButton * pPlot=new CButton;
+	//CRect plotrect(0,0,1,1);
+	//CString str;
+	//str.LoadStringW(IDC_PLOT);
+	//pPlot->Create( str, WS_CHILD|BS_GROUPBOX|WS_VISIBLE, plotrect, this, IDC_PLOT); 
 
 
+}
+
+
+void dlg1::GetPlotRect(CRect & plotRect)
+{
+	this->GetClientRect(&plotRect);
+	int gap=50;
+	plotRect.DeflateRect(gap,gap,gap,gap);
+}
+
+
+void dlg1::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	// TODO: Add your message handler code here and/or call default
+
+	switch(nChar){
+	case 'q':
+		this->updatePlotRange(xll,yll,true);
+		Invalidate();
+		break;
+	default:
+		break;
+	}
+
+
+	CFormView::OnChar(nChar, nRepCnt, nFlags);
 }

@@ -37,24 +37,28 @@ int COutputWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	rectDummy.SetRectEmpty();
 
 	// Create tabs window:
-	if (!m_wndTabs.Create(CMFCTabCtrl::STYLE_FLAT, rectDummy, this, 1))
-	{
-		TRACE0("Failed to create output tab window\n");
-		return -1;      // fail to create
-	}
+	//if (!m_wndTabs.Create(CMFCTabCtrl::STYLE_FLAT, rectDummy, this, 1))
+	//{
+		//TRACE0("Failed to create output tab window\n");
+		//return -1;      // fail to create
+	//}
 
 	// Create output panes:
 	const DWORD dwStyle = LBS_NOINTEGRALHEIGHT | WS_CHILD | WS_VISIBLE | WS_HSCROLL | WS_VSCROLL;
 
-	if (!m_wndOutputBuild.Create(dwStyle, rectDummy, &m_wndTabs, 2) ||
-		!m_wndOutputDebug.Create(dwStyle, rectDummy, &m_wndTabs, 3) ||
-		!m_wndOutputFind.Create(dwStyle, rectDummy, &m_wndTabs, 4) ||
-		!m_listCtrlMonitor.Create(dwStyle, rectDummy, &m_wndTabs, 5) )
-	{
+	//if (!m_wndOutputBuild.Create(dwStyle, rectDummy, &m_wndTabs, 2) ||
+	//	!m_wndOutputDebug.Create(dwStyle, rectDummy, &m_wndTabs, 3) ||
+	//	!m_wndOutputFind.Create(dwStyle, rectDummy, &m_wndTabs, 4) ||
+	//	!m_listCtrlMonitor.Create(dwStyle, rectDummy, &m_wndTabs, 5) )
+	//{
+	//	TRACE0("Failed to create output windows\n");
+	//	return -1;      // fail to create
+	//}
+
+	if(!m_listCtrlMonitor.Create(dwStyle, rectDummy, this, 5) ){
 		TRACE0("Failed to create output windows\n");
 		return -1;      // fail to create
 	}
-
 
 	/************************************************************************/
 	/*                                                                      */
@@ -96,17 +100,17 @@ int COutputWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	UpdateFonts();
 
-	CString strTabName;
-	BOOL bNameValid;
+	//CString strTabName;
+	//BOOL bNameValid;
 
 	///
 	///
 
 		// Attach list windows to tab:
-	bNameValid = strTabName.LoadString(IDS_PROGRESS_TAB);
-	ASSERT(bNameValid);
-	strTabName = "Progress";
-	m_wndTabs.AddTab(&m_listCtrlMonitor, strTabName, (UINT)3);
+	//bNameValid = strTabName.LoadString(IDS_PROGRESS_TAB);
+	//ASSERT(bNameValid);
+	//strTabName = "Progress";
+	//m_wndTabs.AddTab(&m_listCtrlMonitor, strTabName, (UINT)3);
 	/////////////////////////////////////////////////////////////////////////
 
 	// Attach list windows to tab:
@@ -120,6 +124,8 @@ int COutputWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	//ASSERT(bNameValid);
 	//m_wndTabs.AddTab(&m_wndOutputFind, strTabName, (UINT)2);
 
+
+	//this->GetParent()->SetWindowTextW(L"progress");
 
 
 
@@ -136,7 +142,9 @@ void COutputWnd::OnSize(UINT nType, int cx, int cy)
 	CDockablePane::OnSize(nType, cx, cy);
 
 	// Tab control should cover the whole client area:
-	m_wndTabs.SetWindowPos (NULL, -1, -1, cx, cy, SWP_NOMOVE | SWP_NOACTIVATE | SWP_NOZORDER);
+	//m_wndTabs.SetWindowPos (NULL, -1, -1, cx, cy, SWP_NOMOVE | SWP_NOACTIVATE | SWP_NOZORDER);
+
+	m_listCtrlMonitor.SetWindowPos (NULL, -1, -1, cx, cy, SWP_NOMOVE | SWP_NOACTIVATE | SWP_NOZORDER);
 
 	//resize list bar
 	//CRect rt1,rt2;
@@ -148,7 +156,7 @@ void COutputWnd::OnSize(UINT nType, int cx, int cy)
 	//nColInterval[2]=rt2.Width()-(nCol-1)*(rt2.Width()/10);
 
 	std::vector<int> nColInterval(nCol,cx/10);
-	nColInterval[2]=cx-nCol-(nCol-1)*(cx/10);
+	nColInterval[2]=cx/*-nCol*/-(nCol-1)*(cx/10);
 
 	for(int i=0;i<nCol;i++){
 		m_listCtrlMonitor.SetColumnWidth(i,nColInterval[i]);

@@ -62,6 +62,8 @@ public:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	BOOL m_bSplitterCreated;
 	afx_msg void OnFileOpen();
+
+	COutputWnd* GetOutputWnd(){return &m_wndOutput;}
 };
 
 

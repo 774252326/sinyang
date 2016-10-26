@@ -43,7 +43,7 @@ public:
 	void genPointToPlot(const std::vector<double> &px, const std::vector<double> &py, const CRect &rect, std::vector<CPoint> &pointlist);
 	void drawRectangle(CRect rect, CDC * pDC, COLORREF insidecolor, COLORREF bordercolor);
 	CRect DrawXYAxis(CRect rect, CDC* pdc);
-	void updatePlotRange(const std::vector<double> &x, const std::vector<double> &y);
+	void updatePlotRange(const std::vector<double> &x, const std::vector<double> &y, bool flg=false);
 	afx_msg void OnPaint();
 
 	void plot2d(const std::vector<double> &x, const std::vector<double> &y, const CString &xla, const CString &yla );
@@ -63,6 +63,8 @@ public:
 	void DrawPoint(CRect rect, CDC * pDC, int d);
 	void DrawCurve(CRect rect, CDC* pDC);
 	virtual void OnInitialUpdate();
+	void GetPlotRect(CRect & plotRect);
+	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
 };
 
 

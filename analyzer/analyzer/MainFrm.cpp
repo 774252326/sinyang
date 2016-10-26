@@ -7,6 +7,8 @@
 
 #include "MainFrm.h"
 
+#include "analyzerDoc.h"
+#include "analyzerView.h"
 //#include "plotdlg.h"
 #include "dlg1.h"
 #include "pcct.h"
@@ -136,6 +138,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	DockPane(&m_wndOutput);
 
 
+
 	// Enable toolbar and docking window menu replacement
 	EnablePaneMenu(TRUE, ID_VIEW_CUSTOMIZE, strCustomize, ID_VIEW_TOOLBAR);
 
@@ -176,6 +179,11 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	CMFCToolBar::SetBasicCommands(lstBasicCommands);
 
+
+	//if(m_wndOutput.GetSafeHwnd())
+	//	m_wndOutput.SetWindowTextW(L"Analysis Progress");
+
+
 	return 0;
 }
 
@@ -210,6 +218,7 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 		return FALSE;
 	// TODO: Modify the Window class or styles here by modifying
 	//  the CREATESTRUCT cs
+
 
 	return TRUE;
 }
@@ -446,11 +455,23 @@ void CMainFrame::OnSize(UINT nType, int cx, int cy)
 
 	// TODO: Add your message handler code here
 
+
+
+	//CanalyzerView* pView=(CanalyzerView*)GetActiveView();
+
+	//CRect vrect;
+	//if(pView->GetSafeHwnd())
+	//	pView->GetWindowRect(&vrect);
+
+
+
+	//int h;
+
 	if(m_bSplitterCreated) 
 	{ 
 		int lc0,lc1,tmp;
 		//m_wndSplitter.GetRowInfo(0,lr0,tmp);
-		//m_wndSplitter.GetRowInfo(1,lr1,tmp);
+		//m_wndSplitter.GetRowInfo(0,h,tmp);
 
 		m_wndSplitter.GetColumnInfo(0,lc0,tmp);
 		m_wndSplitter.GetColumnInfo(1,lc1,tmp);
@@ -458,10 +479,26 @@ void CMainFrame::OnSize(UINT nType, int cx, int cy)
 		//m_wndSplitter.SetRowInfo(0,(lr0+lr1)*2/3,10);
 		//m_wndSplitter.RecalcLayout() ;  
 
-		m_wndSplitter.SetColumnInfo(0,(lc0+lc1)*2/3,10);
-		//m_wndSplitter.SetRowInfo(0,cy*2/3,10);
+		m_wndSplitter.SetColumnInfo(0,(lc0+lc1)*3/5,10);
 		m_wndSplitter.RecalcLayout();
+		//m_wndSplitter.SetRowInfo(0,cy*2/3,10);
+		//m_wndSplitter.RecalcLayout();
 	} 
+
+	//if(m_wndOutput.GetSafeHwnd()){
+
+		//m_wndStatusBar.GetClientRect(&vrect);
+		//GetClientRect(&vrect);
+		//ScreenToClient(&vrect);
+	//	vrect.top=vrect.bottom-(vrect.Height()+h)/3;
+	//	m_wndOutput.SetWindowPos(&CWnd::wndBottom, 0, vrect.top, cx, vrect.Height(), SWP_SHOWWINDOW);
+
+		//m_wndOutput.SetWindowPos(&CWnd::wndBottom, 0, vrect.Height()/2, cx, vrect.Height()/2, SWP_SHOWWINDOW);
+		//m_wndOutput.MovePane(CRect(0,cy/2,cx,cy),true,);
+	//	m_wndOutput.MoveWindow(CRect(0,cy/2,cx,cy-vrect.Height()));
+		//m_wndOutput.AdjustSizeImmediate();
+	//}
+
 }
 
 
@@ -473,62 +510,62 @@ void CMainFrame::OnFileOpen()
 
 	fileDlg.m_ofn.lpstrFilter=L"Text File(*.txt)\0*.txt\0\0";
 
-	//if( fileDlg.DoModal()==IDOK){
+	if( fileDlg.DoModal()==IDOK){
 
-		//CString m_filePath=fileDlg.GetPathName();
-		//CString folderpath=fileDlg.GetFolderPath();
+	CString m_filePath=fileDlg.GetPathName();
+	CString folderpath=fileDlg.GetFolderPath();
 
-		CString m_filePath=L"C:\\Users\\r8anw2x\\Dropbox\\W\\data\\a.txt";
-		CString folderpath=L"C:\\Users\\r8anw2x\\Dropbox\\W\\data";
+	//CString m_filePath=L"C:\\Users\\r8anw2x\\Dropbox\\W\\data\\a.txt";
+	//CString folderpath=L"C:\\Users\\r8anw2x\\Dropbox\\W\\data";
 
 
-		std::vector<CString> filelist;
-		CStdioFile file;
-		BOOL readflag;
-		readflag=file.Open(m_filePath, CFile::modeRead);
+	std::vector<CString> filelist;
+	CStdioFile file;
+	BOOL readflag;
+	readflag=file.Open(m_filePath, CFile::modeRead);
 
-		if(readflag)
-		{	
-			CString strRead;
+	if(readflag)
+	{	
+		CString strRead;
 
-			//TRACE("\n--Begin to read file");
-			while(file.ReadString(strRead)){
-				strRead=folderpath+"\\"+strRead;
-				filelist.push_back(strRead);
-			}
-			//TRACE("\n--End reading\n");
-			file.Close();
+		//TRACE("\n--Begin to read file");
+		while(file.ReadString(strRead)){
+			strRead=folderpath+"\\"+strRead;
+			filelist.push_back(strRead);
 		}
+		//TRACE("\n--End reading\n");
+		file.Close();
+	}
 
-		std::vector<double> ar;
+	std::vector<double> ar;
 
-		for(size_t i=0;i<filelist.size();i++){
-			pcct dt1;
-			dt1.readFile(filelist[i]);
-			dt1.seperate();
-			dt1.AR=dt1.intg(0.8);
-			ar.push_back(dt1.AR);
+	for(size_t i=0;i<filelist.size();i++){
+		pcct dt1;
+		dt1.readFile(filelist[i]);
+		dt1.seperate();
+		dt1.AR=dt1.intg(0.8);
+		ar.push_back(dt1.AR);
 
-			( (dlg1*)m_wndSplitter.GetPane(0,0) )->plot2d(dt1.potential,dt1.current,dt1.label[0],dt1.label[1],dt1.FileName);
+		( (dlg1*)m_wndSplitter.GetPane(0,0) )->plot2d(dt1.potential,dt1.current,dt1.label[0],dt1.label[1],dt1.FileName);
 
-			m_wndOutput.InsertListCtrl(i,dt1.FileName,dt1.AR,true);
+		m_wndOutput.InsertListCtrl(i,dt1.FileName,dt1.AR,true);
 
-		}
+	}
 
 
-		//CString sstr;
+	//CString sstr;
 
-		std::vector<double> spr;
+	std::vector<double> spr;
 
-		double ar0=ar[0];
-		for(size_t i=0;i<ar.size();i++){
-			ar[i]/=ar0;
-			spr.push_back(i/8.0);
-			//sstr.Format(L"%f",i/8.0);
-			//pppty.nl.push_back(sstr);
-		}			
+	double ar0=ar[0];
+	for(size_t i=0;i<ar.size();i++){
+		ar[i]/=ar0;
+		spr.push_back(i/8.0);
+		//sstr.Format(L"%f",i/8.0);
+		//pppty.nl.push_back(sstr);
+	}			
 
-		( (dlg1*)m_wndSplitter.GetPane(0,1) )->plot2d(spr,ar,L"suppressor(ml)",L"Ratio of Charge",L"Ar/Ar0");
+	( (dlg1*)m_wndSplitter.GetPane(0,1) )->plot2d(spr,ar,L"suppressor(ml)",L"Ratio of Charge",L"Ar/Ar0");
 
-	//}
+	}
 }

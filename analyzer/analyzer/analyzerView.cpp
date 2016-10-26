@@ -11,6 +11,7 @@
 
 #include "analyzerDoc.h"
 #include "analyzerView.h"
+#include "MainFrm.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -30,6 +31,7 @@ BEGIN_MESSAGE_MAP(CanalyzerView, CView)
 	ON_WM_RBUTTONUP()
 	ON_WM_PAINT()
 	ON_WM_ERASEBKGND()
+	ON_WM_SIZE()
 END_MESSAGE_MAP()
 
 // CanalyzerView construction/destruction
@@ -174,4 +176,16 @@ BOOL CanalyzerView::OnEraseBkgnd(CDC* pDC)
 	// TODO: Add your message handler code here and/or call default
 	//return TRUE;
 	return CView::OnEraseBkgnd(pDC);
+}
+
+
+void CanalyzerView::OnSize(UINT nType, int cx, int cy)
+{
+	CView::OnSize(nType, cx, cy);
+
+	// TODO: Add your message handler code here
+
+	//CMainFrame *pMain=(CMainFrame *)AfxGetApp()->m_pMainWnd; 
+	////if(	pMain->GetOutputWnd()->GetSafeHwnd())
+	//	pMain->GetOutputWnd()->SetWindowPos(NULL, 0, cy*2/3, cx, cy/3, SWP_SHOWWINDOW);
 }

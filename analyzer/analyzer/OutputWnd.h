@@ -33,11 +33,11 @@ public:
 
 // Attributes
 protected:
-	CMFCTabCtrl	m_wndTabs;
+	//CMFCTabCtrl	m_wndTabs;
 
-	COutputList m_wndOutputBuild;
-	COutputList m_wndOutputDebug;
-	COutputList m_wndOutputFind;
+	//COutputList m_wndOutputBuild;
+	//COutputList m_wndOutputDebug;
+	//COutputList m_wndOutputFind;
 
 	COutputList m_listCtrlMonitor;
 
