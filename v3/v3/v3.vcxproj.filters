@@ -19,7 +19,7 @@
     <None Include="res\v3.rc2">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="res\v3.ico">
+    <None Include="res\google_earth.ico">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

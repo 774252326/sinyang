@@ -57,7 +57,8 @@ END_MESSAGE_MAP()
 Cv3Dlg::Cv3Dlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(Cv3Dlg::IDD, pParent)
 {
-	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+	//m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+	m_hIcon = AfxGetApp()->LoadIcon(IDI_ICON1);
 }
 
 void Cv3Dlg::DoDataExchange(CDataExchange* pDX)
@@ -167,15 +168,13 @@ void Cv3Dlg::OnBnClickedButton1()
 {
 	// TODO: Add your control notification handler code here
 
-	//btn1.SetWindowTextW(L"ing");
+	btn1.SetWindowTextW(L"Stitching...");
+	btn1.EnableWindow(FALSE);
 
 	bool try_use_gpu = false;
 	std::vector<cv::Mat> imgs;
-
-
-	for(int i=0;i<ilb.GetCount();i++){
-
-		
+	
+	for(int i=0;i<ilb.GetCount();i++){		
 		CString str;
 		ilb.GetText(i,str);
 		std::vector<char> buffer0(str.GetLength()+1); 
@@ -195,19 +194,34 @@ void Cv3Dlg::OnBnClickedButton1()
 
 	//Mat pano;
 	cv::Stitcher stitcher = cv::Stitcher::createDefault(try_use_gpu);
-	cv::Stitcher::Status status = stitcher.stitch(imgs, res);
+	cv::Stitcher::Status status = stitcher.stitch(imgs, res);	
 
-	if (status != cv::Stitcher::OK)
-	{
-		//std::cout <<  << status << endl;
-		AfxMessageBox(L"Can't stitch images, error code = %d",status);
-		return;
+
+
+	switch(status){
+	case cv::Stitcher::OK:
+		{
+			CString str;
+			str.Format(L"Complete stitch images, elapsed time %d s.\r\nSave stitch image?",(clock()-t)/1000);
+			if(AfxMessageBox(str,MB_YESNO)==IDYES)
+			{
+				OnBnClickedButton2();
+			}
+			break;
+		}
+	case cv::Stitcher::ERR_NEED_MORE_IMGS:
+		AfxMessageBox(L"Can't stitch images, need more images.");
+		break;
+	case cv::Stitcher::ORIG_RESOL:
+		AfxMessageBox(L"Can't stitch images, origin resolution.");
+		break;
+	default:
+		break;
 	}
 
-	AfxMessageBox(L"%dms",clock()-t);
+	btn1.SetWindowTextW(L"Stitch");
+	btn1.EnableWindow(TRUE);
 
-
-	//btn1.SetWindowTextW(L"ing");
 }
 
 
@@ -237,17 +251,16 @@ void Cv3Dlg::OnBnClickedButton2()
 	// TODO: Add your control notification handler code here
 
 
-	TCHAR szFilters[]= _T("BMP Files (*.bmp)|*.bmp||");
+	TCHAR szFilters[]= _T("BMP Files (*.bmp)|*.bmp|PNG Files (*.png)|*.png|JPEG Files (*.jpg)|*.jpg||");
 
-	CFileDialog se(FALSE,L"bmp",TimeString()+L".bmp",OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,szFilters);
+	CFileDialog se(FALSE,L"bmp",L"StitchImg"+TimeString()+L".bmp",OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,szFilters);
 	if(se.DoModal() == IDOK)
 	{ 
 		CString fp = se.GetPathName();
 		std::vector<char> buffer0(fp.GetLength()+1); 
 		wcstombs(buffer0.data(),fp.GetBuffer(),fp.GetLength()+1);
-
+		btn1.SetWindowTextW(L"Saving...");
 		cv::imwrite(buffer0.data(),res);
-
 		ShellExecute(NULL, L"open", fp, NULL, NULL, SW_SHOW);	
 	}
 

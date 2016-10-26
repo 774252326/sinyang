@@ -18,6 +18,7 @@ public:
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnPopupAdd();
 	afx_msg void OnPopupRemove();
+	afx_msg void OnLbnDblclk();
 };
 
 

@@ -25,6 +25,7 @@ BEGIN_MESSAGE_MAP(ImageListBox, CListBox)
 	ON_WM_RBUTTONUP()
 	ON_COMMAND(ID_POPUP_ADD, &ImageListBox::OnPopupAdd)
 	ON_COMMAND(ID_POPUP_REMOVE, &ImageListBox::OnPopupRemove)
+	ON_CONTROL_REFLECT(LBN_DBLCLK, &ImageListBox::OnLbnDblclk)
 END_MESSAGE_MAP()
 
 
@@ -81,11 +82,11 @@ void ImageListBox::OnPopupAdd()
 	// TODO: Add your command handler code here
 
 
-	    TCHAR szFilters[]= _T("All Files (*.*)|*.*||");
+	    TCHAR szFilters[]= _T("JPEG Files (*.jpg)|*.jpg|BMP Files (*.bmp)|*.bmp|PNG Files (*.png)|*.png|All Files (*.*)|*.*||");
   
      // Create an Open dialog; the default file name extension is ".my".
   
-     CFileDialog fileDlg(TRUE, _T("*"), _T("*.*"),
+     CFileDialog fileDlg(TRUE, _T("jpg"), _T("*.jpg"),
         OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_ALLOWMULTISELECT , szFilters);
   
      // Display the file dialog. When user clicks OK, fileDlg.DoModal() 
@@ -121,5 +122,22 @@ void ImageListBox::OnPopupRemove()
 		sis.pop_back();
 	}
 
+
+}
+
+
+void ImageListBox::OnLbnDblclk()
+{
+	// TODO: Add your control notification handler code here
+
+	//AfxMessageBox(L"dsaf");
+
+	int ci=this->GetCurSel();
+
+	if(ci!=LB_ERR){
+		CString fp;
+		this->GetText(ci,fp);
+		ShellExecute(NULL, L"open", fp, NULL, NULL, SW_SHOW);	
+	}
 
 }
