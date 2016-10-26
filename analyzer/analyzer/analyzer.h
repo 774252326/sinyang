@@ -62,7 +62,7 @@ public:
 		for(int i=ncnt2;i<m_nCnt;i++)
 		{
 			x[i-ncnt2]=fx[i];
-			y[i-ncnt2]=fy[i];
+			y[i-ncnt2]=-fy[i]*1000;
 		}
 	};
 
@@ -105,7 +105,7 @@ public:
 		runner->setProperty("m_vv",p2.scanrate);//scan rate
 		runner->setProperty("m_inpcl", seg);//sweep segment
 		runner->setProperty("m_inpsi",p2.EInterval());//sample interval
-		runner->setProperty("m_qt", 1);//quiet time
+		runner->setProperty("m_qt", p2.quiettime);//quiet time
 		runner->setProperty("m_iSens",2);
 
 		delete []fx;

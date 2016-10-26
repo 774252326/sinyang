@@ -125,6 +125,18 @@ protected:
 	};
 	
 
+	//BOOL PreCreateWindow(CREATESTRUCT& cs)
+	//	{
+	//		cs.style = cs.style&~WS_MAXIMIZEBOX&~WS_SYSMENU&~WS_MINIMIZEBOX; 
+	//if( !CWnd::PreCreateWindow(cs) )
+	//	return FALSE;
+	//// TODO: Modify the Window class or styles here by modifying
+	////  the CREATESTRUCT cs
+
+	//return TRUE;
+	//};
+
+
 	virtual void DoDataExchange(CDataExchange* pDX)
 	{
 		CDialogEx::DoDataExchange(pDX);

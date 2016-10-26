@@ -1657,9 +1657,11 @@ public:
 		//CDC dc;
 		//dc.CreateCompatibleDC(NULL);
 
+		CDC *pDC=::AfxGetMainWnd()->GetDC();
+
 		a=imgout2(p,
 			//&dc,
-			::AfxGetMainWnd()->GetDC(),
+			pDC,
 			pdl,nl,CSize(1000,690),templogobmp);
 
 		p.end_document(optlist.str());
@@ -1668,6 +1670,8 @@ public:
 
 		CFile::Remove(temppdf.c_str());
 		CFile::Remove(templogobmp.c_str());
+
+		::AfxGetMainWnd()->ReleaseDC(pDC);
 
 		return 0;
 	};

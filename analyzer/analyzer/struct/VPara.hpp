@@ -17,6 +17,7 @@ public:
 	double endintegratione;
 	double startintegratione;
 	double samplefrequecy;
+	double quiettime;
 
 	CVPara()
 		: lowelimit(-0.23)
@@ -29,6 +30,7 @@ public:
 		, endintegratione(1)
 		, startintegratione(0)
 		, samplefrequecy(100)
+		, quiettime(1)
 	{
 	};
 
@@ -45,6 +47,7 @@ public:
 		endintegratione=src.endintegratione;
 		startintegratione=src.startintegratione;
 		samplefrequecy=src.samplefrequecy;
+		quiettime=src.quiettime;
 	};
 
 	CVPara(const CVPara &src){ operator=(src); };

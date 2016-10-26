@@ -90,6 +90,7 @@ protected:
 		maxd[7]=maxd[3]=maxd[4]=maxd[5]=maxd[6]=1000;
 
 		// insert string elements  for the ComboBox : 
+		cbstr[2].clear();
 		for ( int j=IDS_STRING_VOL_ONCE ; j <= IDS_STRING_VMS ; j++){
 			strTemp.LoadStringW(j);
 			cbstr[2].push_back(strTemp);

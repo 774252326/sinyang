@@ -41,6 +41,7 @@ public:
 	CDialogEx *wd;
 	CWinThread *pWriteA;
 	LANGID LangID;
+	bool bWaitForStop;
 // Operations
 public:
 	CWnd * LeftPane(void) const { return m_wndSplitter.GetPane(0,0);};
@@ -49,7 +50,7 @@ public:
 	UserAccount::authority GetCurAuth(void){ return al.ual[userIndex].au; };
 	BOOL Login(bool bReadFile=false, CString fp=L"ua");
 	void ChangeLang(void);	
-	void ShowWaitDlg(CString tips);
+	void ShowWaitDlg(CString tips, BOOL bShowButon=TRUE);
 	void HideWaitDlg(void);
 	void ViewAll(WPARAM lwp=NULL, WPARAM rwp=NULL);
 // Overrides

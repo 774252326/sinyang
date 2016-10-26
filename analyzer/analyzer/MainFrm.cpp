@@ -66,7 +66,7 @@ typedef struct MYPARA{
 } mypara;
 
 
-const DWORD sleepms=10;
+const DWORD sleepms=100;
 
 const size_t nd=20;
 //const size_t nd=sleepms/10;
@@ -232,10 +232,11 @@ UINT CMainFrame::PROCESS(LPVOID pParam)
 		case running:
 			{
 				switch(pDoc->da.runstate){
-				case 0:
+				case 9:
 				case 7:	
 				case 3:
 				case 4:
+				case 11:
 					{
 						mf->pst=stop;
 					}
@@ -243,18 +244,14 @@ UINT CMainFrame::PROCESS(LPVOID pParam)
 				case 1:
 				case 2:
 				case 6:
-					//case 8:
+				case 8:
+				case 5:
+				case 0:
 					{
-						//rnd=data.popData(x,y,nd);
+
 
 						theApp.dosomething(x,y);
 
-						//if(x.empty()||y.empty()){
-						//	TRACE("\ninput empty\n");
-						//	mf->pst=stop;
-						//	return 8;
-						//}
-
 						if(!(x.empty()||y.empty()))
 						{
 
@@ -273,135 +270,16 @@ UINT CMainFrame::PROCESS(LPVOID pParam)
 						}
 					}
 					break;
-				case 8:
+				case 12:
+				case 10:
 					{
-						//rnd=data.popData(x,y,nd);
-
-						while(theApp.runner->isRunningInWorkerThread())
-						{
-							Sleep(sleepms);
-						}
-						theApp.setsomething(pDoc->da.p2,2);
-
-		//						theApp.m_nCnt=0;
-
-
-		//Q_ASSERT(theApp.NN >= theApp.runner->singleChannelStorageRequired());
-		//// change technique. must do this before changing any Q_PROPERTYs...
-		//bool bResult1 = QMetaObject::invokeMethod(
-		//	theApp.runner, 
-		//	"set_iTech", // invoke (protected!) slot
-		//	Qt::DirectConnection,
-		//	Q_ARG(int, M_IT) // ECDEF.H
-		//	);
-		//Q_ASSERT(bResult1);
-
-		//int polar=0;
-		//double ie=(pDoc->da.p2.highelimit);
-		//theApp.runner->setProperty("m_ei", ie);//initial E
-		//theApp.runner->setProperty("m_eh", pDoc->da.p2.highelimit);//high E
-		//theApp.runner->setProperty("m_el", pDoc->da.p2.lowelimit);	//low E
-		//theApp.runner->setProperty("m_ef", 0.8);//final E
-		//theApp.runner->setProperty("m_pn", polar);//intial scan polarity
-		//theApp.runner->setProperty("m_vv",pDoc->da.p2.scanrate);//scan rate
-		//theApp.runner->setProperty("m_inpcl", 2);//sweep segment
-		//theApp.runner->setProperty("m_inpsi",pDoc->da.p2.EInterval());//sample interval
-		//theApp.runner->setProperty("m_qt", 1);//quiet time
-		//theApp.runner->setProperty("m_iSens",2);
-
-		////delete []theApp.fx;
-		////delete []theApp.fy;
-		////		
-		////theApp.fx=new float[theApp.NN];
-		////theApp.fy=new float[theApp.NN];
-
-		//theApp.arrayRecorder->reset();
-		//theApp.arrayRecorder->setStorageTarget(theApp.fx,theApp.fy,theApp.NN); // a quirk of my api	
-		//theApp.runner->runInWorkerThread();
-
-						Sleep(3000);
-						while(true)
-						{
-							//TRACE("num=%d",theApp.arrayRecorder->numRecorded());
-							//Sleep(sleepms);
-							theApp.dosomething(x,y);
-
-
-		//							int ncnt2=theApp.m_nCnt;
-		//theApp.arrayRecorder->recordAllSeries();
-		//theApp.m_nCnt = theApp.arrayRecorder->numRecorded();
-		//if(theApp.m_nCnt>=ncnt2){
-		//	x.resize(theApp.m_nCnt-ncnt2,0);
-		//	y.resize(theApp.m_nCnt-ncnt2,0);
-		//}
-		//else{
-		//	x.resize(theApp.m_nCnt,0);
-		//	y.resize(theApp.m_nCnt,0);
-		//}
-		//for(int i=ncnt2;i<theApp.m_nCnt;i++)
-		//{
-		//	x[i-ncnt2]=theApp.fx[i];
-		//	y[i-ncnt2]=theApp.fy[i];
-		//}
-
-
-							if(x.empty()||y.empty()){
-								Sleep(sleepms);
-							}
-							else{
-								break;
-							}
-						}
-
-						//if(x.empty()||y.empty()){
-						//	TRACE("\ninput empty\n");
-						//	mf->pst=stop;
-						//	return 8;
-						//}
-
-						if(!(x.empty()||y.empty()))
-						{
-
-							if(singleLock.Lock())
-							{
-								pDoc->da.raw.AddFollow(x,y);
-								// Now that we are finished, 
-								// unlock the resource for others.
-								singleLock.Unlock();
-							}
-
-							pDoc->UpdateState();
-
-							::SendMessage(mf->GetSafeHwnd(),MESSAGE_UPDATE_DOL,PW_INIT,PW_INIT);
-							::SendMessage(mf->GetSafeHwnd(),MESSAGE_CLOSE_SAP_SHEET,NULL,NULL);
-						}
-					}
-					break;
-				case 5:
-					{
-						//if(filelist.empty()){
-						//	CString strerr;
-						//	strerr.LoadStringW(IDS_STRING_STEP_ERROR);
-						//	mf->pst=stop;
-						//	return 3;
-						//}
-
-						///////load data from file////////////
-						//data.clear();
-						//data.readFile(filelist.front());
-						//data.TomA();
-						//filelist.erase(filelist.begin());
-
-						//rnd=data.popData(x,y,nd);
-
-
 						while(theApp.runner->isRunningInWorkerThread())
 						{
 							Sleep(sleepms);
 						}
 
-						theApp.setsomething(pDoc->da.p2,3);
-						Sleep(3000);
+						theApp.setsomething(pDoc->da.p2,2*pDoc->da.p2.noofcycles);
+						Sleep((pDoc->da.p2.quiettime+1)*1000);
 
 						while(true)
 						{
@@ -414,11 +292,6 @@ UINT CMainFrame::PROCESS(LPVOID pParam)
 							}
 						}
 
-						//if(x.empty()||y.empty()){
-						//	TRACE("\ninput empty\n");
-						//	mf->pst=stop;
-						//	return 8;
-						//}
 
 						if(!(x.empty()||y.empty()))
 						{
@@ -449,6 +322,7 @@ UINT CMainFrame::PROCESS(LPVOID pParam)
 			Sleep(sleepms);
 			break;
 		case stop:
+			mf->bWaitForStop=false;
 			return 0;
 		default:
 			return 1;
@@ -545,6 +419,7 @@ CMainFrame::CMainFrame()
 	, wd(NULL)
 	, psheetml(NULL)
 	, pWriteA(NULL)
+	, bWaitForStop(false)
 {
 	// TODO: add member initialization code here
 	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), (GetWinVer()==6?ID_VIEW_APPLOOK_OFF_2007_BLACK:ID_VIEW_APPLOOK_WIN_XP));
@@ -1189,18 +1064,7 @@ afx_msg LRESULT CMainFrame::OnMessageCloseSapSheet(WPARAM wParam, LPARAM lParam)
 	CanalyzerDoc *pDoc=(CanalyzerDoc*)GetActiveDocument();
 
 	switch(pDoc->da.runstate){
-	case 0:
-		{
-			CString str;
-			str.LoadStringW(IDS_STRING_OVER);
-			pst=pause;
-			ShowWaitDlg(str);
-		}
-		break;
-	case 1:
-		break;
-	case 2:
-		break;
+
 	case 3:
 		{
 			AfxMessageBox(IDS_STRING_STEP_ERROR);
@@ -1213,7 +1077,41 @@ afx_msg LRESULT CMainFrame::OnMessageCloseSapSheet(WPARAM wParam, LPARAM lParam)
 			OnAnalysisAbortanalysis();
 		}
 		break;
+
+	case 0:
+		break;
+	case 1:
+		break;
+	case 2:
+		break;
 	case 5:
+		break;
+	case 6:
+		break;
+	case 8:
+		break;
+
+	case 9:
+	case 7:
+	case 11:
+		{
+			if(bWaitForStop)
+			{
+				pst=stop;
+				HideWaitDlg();
+			}
+			else{
+			CString str;
+			str.LoadStringW(IDS_STRING_OVER);
+			pst=pause;
+			ShowWaitDlg(str);
+			}
+		}
+		break;
+
+
+	case 10:
+	case 12:
 		{		
 			CString str,strt;
 
@@ -1230,19 +1128,7 @@ afx_msg LRESULT CMainFrame::OnMessageCloseSapSheet(WPARAM wParam, LPARAM lParam)
 			//::PostMessage(this->GetSafeHwnd(),WM_COMMAND,ID_ANALYSIS_PAUSE,0);
 		}
 		break;
-	case 6:
-		break;
-	case 7:
-		{
-			CString str;
-			str.LoadStringW(IDS_STRING_OVER);
-			pst=pause;
-			ShowWaitDlg(str);
-		}
-		break;
-	case 8:
-		::AfxMessageBox(L"cycle complete");
-		break;
+
 	default:
 		return 100;
 	}
@@ -1251,7 +1137,7 @@ afx_msg LRESULT CMainFrame::OnMessageCloseSapSheet(WPARAM wParam, LPARAM lParam)
 }
 
 
-void CMainFrame::ShowWaitDlg(CString tips)
+void CMainFrame::ShowWaitDlg(CString tips, BOOL bShowButon)
 {
 	if(wd==NULL){
 		wd=new WaitDlg();
@@ -1267,6 +1153,8 @@ void CMainFrame::ShowWaitDlg(CString tips)
 
 	if(tips.IsEmpty())
 		tips.LoadStringW(IDS_STRING_PAUSE);
+
+	((WaitDlg*)wd)->btnIDOK.ShowWindow(bShowButon);
 
 	((WaitDlg*)wd)->m_tips=tips;
 	((WaitDlg*)wd)->UpdateData(FALSE);
@@ -1304,7 +1192,25 @@ void CMainFrame::OnAnalysisAbortanalysis()
 	//	}
 	//}
 
-	{
+
+
+	if(theApp.runner->isRunningInWorkerThread()){
+		ShowWaitDlg(L"waiting for thread",FALSE);
+
+		//while(theApp.runner->isRunningInWorkerThread())
+		//{
+		//	Sleep(sleepms);
+		//}
+
+		CanalyzerDoc* pdoc=(CanalyzerDoc*)(GetActiveDocument());
+		pdoc->bChangeSAP=true;
+		pdoc->p3todo.saplist.clear();
+		bWaitForStop=true;
+
+
+	}
+
+	else{
 		pst=stop;
 		HideWaitDlg();
 	}
@@ -1406,7 +1312,11 @@ void CMainFrame::OnUpdateViewToolbarA(CCmdUI *pCmdUI)
 void CMainFrame::OnUpdateAnalysisMethodsetup(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	//pCmdUI->Enable(/*pst==stop &&*/ GetCurAuth()!=UserAccount::authority::guest);
+	pCmdUI->Enable(
+		/*pst==stop &&*/ 
+		//GetCurAuth()!=UserAccount::authority::guest
+		!bWaitForStop
+		);
 }
 
 
@@ -1424,6 +1334,7 @@ void CMainFrame::OnUpdateAnalysisPause(CCmdUI *pCmdUI)
 	// TODO: Add your command update UI handler code here
 	pCmdUI->Enable(pst!=stop 
 		//&& GetCurAuth()!=UserAccount::authority::guest
+		&& !bWaitForStop
 		);
 }
 

@@ -63,8 +63,10 @@ public:
 
 		PrintDC.StartPage(); 
 
-		int   nScreenW   =   GetDeviceCaps(*GetDC(),   LOGPIXELSX); 
-		int   nScreenH   =   GetDeviceCaps(*GetDC(),   LOGPIXELSY); 
+		CDC *pDC=GetDC();
+
+		int   nScreenW   =   GetDeviceCaps(*pDC,   LOGPIXELSX); 
+		int   nScreenH   =   GetDeviceCaps(*pDC,   LOGPIXELSY); 
 		int   nPrintW   =   GetDeviceCaps(hPrintDC,   LOGPIXELSX); 
 		int   nPrintH   =   GetDeviceCaps(hPrintDC,   LOGPIXELSY); 
 
@@ -119,6 +121,8 @@ public:
 		PrintDC.EndPage(); 
 		PrintDC.EndDoc(); 
 		PrintDC.Detach(); 
+
+		ReleaseDC(pDC);
 
 		delete   lpBits;  
 	};

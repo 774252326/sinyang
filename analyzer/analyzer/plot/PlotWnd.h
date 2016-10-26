@@ -235,9 +235,14 @@ public:
 		if(pdex!=NULL){
 			CRect plotrect;
 			GetClientRect(&plotrect);
-			pdex->pd.ps.CalPlotRect(plotrect);			
-			legendrect=pdex->SetLegendSpec(plotrect,this->GetDC());
+			pdex->pd.ps.CalPlotRect(plotrect);
+			CDC *pDC=td->GetDC();
+			if(pDC!=NULL)
+				legendrect=pdex->SetLegendSpec(plotrect,pDC);
+			else
+				::AfxMessageBox(L"NULL cdc");
 
+			td->ReleaseDC(pDC);
 			//this->ClientToScreen(&legendrect);//for dlg only
 
 			return true;

@@ -219,9 +219,13 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		{
 			rs=da.ComputeStateData();
 			switch(da.runstate){
-			case 0:
-			case 5:
-			case 7:
+				//case 0:
+				//case 5:
+				//case 7:
+			case 9:
+			case 10:
+			case 11:
+			case 12:
 				{
 					if(bChangeSAP){
 						CSingleLock singleLockSAP(&m_CritSectionSAP);
@@ -261,15 +265,17 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 			POSITION pos = GetFirstViewPosition();
 			if(pos!=NULL){
 				CMainFrame *mf=(CMainFrame*)(GetNextView(pos)->GetParentFrame());
-				if(mf->pst==pause){
-					da.ChangeSAP(ptd);
-					bChangeSAP=false;
-					SetModifiedFlag();
-					::PostMessage(mf->GetSafeHwnd(),MESSAGE_CLOSE_SAP_SHEET,NULL,NULL);
-				}
-				else{
-					p3todo=ptd;
-					bChangeSAP=true;
+				if(!mf->bWaitForStop && mf->pst!=stop){
+					if(mf->pst==pause){
+						da.ChangeSAP(ptd);
+						bChangeSAP=false;
+						SetModifiedFlag();
+						::PostMessage(mf->GetSafeHwnd(),MESSAGE_CLOSE_SAP_SHEET,NULL,NULL);
+					}
+					else{
+						p3todo=ptd;
+						bChangeSAP=true;
+					}
 				}
 			}
 

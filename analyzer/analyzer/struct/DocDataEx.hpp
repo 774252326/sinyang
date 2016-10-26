@@ -262,19 +262,31 @@ public:
 						//&& dol.back().Ar.size()<p2.noofcycles)
 						&& !dol.back().EndFlag(p2.noofcycles,p2.variationtolerance) ){
 
-																				size_t nx=raw.xll.size();
+							size_t nx=raw.xll.size();
 
-								if(nx>1 
-									&& raw.xll[nx-1]>raw.xll[nx-2] 
-								&& abs(p2.highelimit-p2.EInterval()-raw.xll[nx-1])<p2.EInterval()/2){
-									TRACE("\n8c");
-									return 8;
-								}
+							if(nx>1 
+								&& raw.xll[nx-1]>raw.xll[nx-2] 
+							&& abs(p2.highelimit-p2.EInterval()-raw.xll[nx-1])<p2.EInterval()/2){
+								TRACE("\n8c");
+								return 8;//循环末尾
+							}
 
 
 							TRACE("\n6");
 							return 6;//此时最后一次加液的转圈计数未必到达预设值p2.noofcycles
 					}
+
+
+					size_t nx=raw.xll.size();
+
+					if(nx>1 
+						&& raw.xll[nx-1]>raw.xll[nx-2] 
+					&& abs(p2.highelimit-p2.EInterval()-raw.xll[nx-1])<p2.EInterval()/2){
+						TRACE("\n9c");
+						return 9;//循环末尾
+					}
+
+
 
 					TRACE("\n0");
 					return 0;//此时最后一次加液的转圈计数到达预设值
@@ -312,6 +324,22 @@ public:
 								return 1;//第rawi－1次加液的转圈计数未必到达预设值p2.noofcycles
 						}
 						VtoAdd=d0.addVolume;
+
+						size_t nx=raw.xll.size();
+
+						if(nx==0){
+							TRACE("\n12a");
+							return 12;//初始
+						}
+
+
+						if(nx>1 
+							&& raw.xll[nx-1]>raw.xll[nx-2] 
+						&& abs(p2.highelimit-p2.EInterval()-raw.xll[nx-1])<p2.EInterval()/2){
+							TRACE("\n10a");
+							return 10;//循环末尾
+						}
+
 						TRACE("\n5");
 						return 5;//第rawi－1次加液的转圈计数到达预设值
 					}
@@ -431,17 +459,27 @@ public:
 				//&& dol[rawi-1].Ar.size()<p2.noofcycles)
 				&& !dol[rawi-1].EndFlag(p2.noofcycles,p2.variationtolerance) ){
 
-													size_t nx=raw.xll.size();
+					size_t nx=raw.xll.size();
 
-								if(nx>1 
-									&& raw.xll[nx-1]>raw.xll[nx-2] 
-								&& abs(p2.highelimit-p2.EInterval()-raw.xll[nx-1])<p2.EInterval()/2){
-									TRACE("\n8b");
-									return 8;
-								}
+					if(nx>1 
+						&& raw.xll[nx-1]>raw.xll[nx-2] 
+					&& abs(p2.highelimit-p2.EInterval()-raw.xll[nx-1])<p2.EInterval()/2){
+						TRACE("\n8b");
+						return 8;
+					}
 
 					TRACE("\n1b");
 					return 1;//第rawi－1次加液的转圈计数未必到达预设值p2.noofcycles
+			}
+
+
+			size_t nx=raw.xll.size();
+
+			if(nx>1 
+				&& raw.xll[nx-1]>raw.xll[nx-2] 
+			&& abs(p2.highelimit-p2.EInterval()-raw.xll[nx-1])<p2.EInterval()/2){
+				TRACE("\n11a");
+				return 11;//循环末尾
 			}
 
 
@@ -497,7 +535,7 @@ public:
 						std::copy_backward(dol1.begin(),dol1.end(),dol.end());
 						dol1.clear();
 
-						if(res!=0 && res!=7){
+						if(res!=9 && res!=11 && res!=12){
 							break;
 						}
 						p3t.saplist.erase(p3t.saplist.begin(),p3t.saplist.begin()+nextSAPIndex);			
@@ -837,7 +875,8 @@ public:
 		DocData::Clear();
 		dol.clear();
 		p3done.saplist.clear();
-		currentSAPIndex=nextSAPIndex=outstep=VtoAdd=runstate=0;
+		currentSAPIndex=nextSAPIndex=outstep=VtoAdd=0;
+		runstate=12;
 	};
 
 	UINT ComputeStateData()
@@ -860,9 +899,13 @@ public:
 	{
 		ComputeStateData();
 		switch(runstate){
-		case 0:
-		case 5:
-		case 7:
+		//case 0:
+		//case 5:
+		//case 7:
+		case 9:
+		case 10:
+		case 11:
+		case 12:
 			{
 				if(bChangeSAP){
 					ChangeSAP(p3todo);
@@ -1068,7 +1111,7 @@ public:
 		return false;
 	};
 
-	
+
 	static bool RecordRC(
 		const std::vector<DataOutA> & dolast, 
 		double evaR, 

@@ -60,7 +60,7 @@ protected:
 		DDV_MinMaxDouble(pDX,para.rotationrate,0,DBL_MAX);
 
 		DDX_Text(pDX, IDS_EDIT_NO_OF_CYCLES, para.noofcycles);
-		DDV_MinMaxInt(pDX,para.noofcycles,0,50);
+		DDV_MinMaxInt(pDX,para.noofcycles,1,50);
 
 		DDX_Text(pDX, IDS_EDIT_END_INTEGRATION_E, para.endintegratione);
 		DDV_MinMaxDouble(pDX,para.endintegratione,para.lowelimit,para.highelimit);
