@@ -237,17 +237,19 @@ bool DataOutA::Update(sapitemA sapi, BYTE bFlag)
 			stepFilter=bFlag;
 			stepName=GetStepName();	
 
-			Ar0=0;
+			VMSOnce(sapi);
 
-			addVolume=sapi.volconc;
-			VMSVolume=addVolume;
-			additiveVolume=0;
+			//Ar0=0;
 
-			bUnknown=false;
+			//addVolume=sapi.volconc;
+			//VMSVolume=addVolume;
+			//additiveVolume=0;
 
-			Aml=0;
-			Lml=0;
-			Sml=0;
+			//bUnknown=false;
+
+			//Aml=0;
+			//Lml=0;
+			//Sml=0;
 		}
 		return true;
 
@@ -371,4 +373,17 @@ double DataOutA::ArUse(void) const
 		return Ar[UseIndex];
 
 	return Ar.back();
+}
+
+
+void DataOutA::VMSOnce(sapitemA sapi)
+{
+	Ar0=0;
+
+	addVolume=sapi.volconc;
+	VMSVolume=addVolume;
+	additiveVolume=0;
+
+	ResetCompound();
+
 }

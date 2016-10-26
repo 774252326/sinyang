@@ -12,7 +12,7 @@
 #include "func.h"
 
 #include "LoginDlg.h"
-#include "UserAccountDlg.h"
+//#include "UserAccountDlg.h"
 #include "UserAccountPage.h"
 
 #ifdef _DEBUG
@@ -79,6 +79,7 @@ CMainFrame::CMainFrame()
 	//, bWaiting(false)
 	, pWriteA(NULL)
 	, pst(stop)
+	, userIndex(-1)
 {
 	// TODO: add member initialization code here
 	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_OFF_2007_BLUE);
@@ -649,49 +650,49 @@ void CMainFrame::OnAnalysisPause()
 void CMainFrame::OnUpdateAnalysisMethodsetup(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst==stop && au!=guest);
+	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=guest);
 }
 
 
 void CMainFrame::OnUpdateAnalysisStartanalysis(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst==stop && au!=guest);
+	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=guest);
 }
 
 
 void CMainFrame::OnUpdateAnalysisPause(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst!=stop && au!=guest);
+	pCmdUI->Enable(pst!=stop && al.ual[userIndex].au!=guest);
 }
 
 
 void CMainFrame::OnUpdateAnalysisAbortanalysis(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst!=stop && au!=guest);
+	pCmdUI->Enable(pst!=stop && al.ual[userIndex].au!=guest);
 }
 
 
 void CMainFrame::OnUpdateAnalysisReport(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst==stop && au!=guest);
+	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=guest);
 }
 
 
 void CMainFrame::OnUpdateOptionsPlotsettings(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst==stop && au!=guest);
+	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=guest);
 }
 
 
 void CMainFrame::OnUpdateViewFitwindow(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst!=running && au!=guest);
+	pCmdUI->Enable(pst!=running && al.ual[userIndex].au!=guest);
 }
 
 
@@ -726,8 +727,12 @@ void CMainFrame::OnSecurityLogin()
 	// TODO: Add your command handler code here
 
 	LoginDlg ld;
+			ld.usridx=userIndex;
+		ld.al=al;
 	if(ld.DoModal()==IDOK){
-		au=ld.a;
+		userIndex=ld.usridx;
+		//al=ld.al;
+		//au=ld.al.ual[ld.usridx].au;
 	}
 
 }
@@ -757,6 +762,7 @@ void CMainFrame::OnSecurityUseraccounts()
 
 
 
+
 		CString str;
 		str.LoadStringW(IDS_STRING_USER_ACCOUNT);
 		CPropertySheet sheet(str);
@@ -767,15 +773,22 @@ void CMainFrame::OnSecurityUseraccounts()
 
 		UserAccountPage uap;
 		//uap.userList.bEditable=true;
-		uap.useIndex=0;
-		uap.ual.assign(3,UserAccount());
+		uap.useIndex=userIndex;
+		uap.al=al;
 
 		sheet.AddPage(&uap);
 
 		sheet.SetWizardMode();
 		//sheet.SetWizardButtons(PSWIZB_FINISH);
 
-		if(sheet.DoModal()==IDOK){
+		INT_PTR res=sheet.DoModal();
+		if(res==IDOK || res==ID_WIZFINISH ){
+
+			al=uap.al;
+			userIndex=uap.useIndex;
+
+			CString fp=L"ua";
+			WriteFileCustom(&al,1,fp);
 
 		}
 
@@ -786,33 +799,33 @@ void CMainFrame::OnSecurityUseraccounts()
 void CMainFrame::OnUpdateFilePrint(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(au!=guest);
+	pCmdUI->Enable(al.ual[userIndex].au!=guest);
 }
 
 
 void CMainFrame::OnUpdateFilePrintPreview(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(au!=guest);
+	pCmdUI->Enable(al.ual[userIndex].au!=guest);
 }
 
 
 void CMainFrame::OnUpdateFilePrintSetup(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(au!=guest);
+	pCmdUI->Enable(al.ual[userIndex].au!=guest);
 }
 
 
 void CMainFrame::OnUpdateFileSave(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(au!=guest);
+	pCmdUI->Enable(al.ual[userIndex].au!=guest);
 }
 
 
 void CMainFrame::OnUpdateFileNew(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(au!=guest);
+	pCmdUI->Enable(al.ual[userIndex].au!=guest);
 }

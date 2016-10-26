@@ -86,6 +86,9 @@ typedef struct MYPARA{
 } mypara;
 
 
+BOOL ReadFileCustom(CObject * co, size_t n, CString fp);
+BOOL WriteFileCustom(CObject * co, size_t n, CString fp);
+
 bool CheckLogin(const CString &un, const CString &pw, authority &ar);
 void LoadFileList(const CString &m_filePath, std::vector<CString> &filelist);
 UINT PROCESS(LPVOID pParam);

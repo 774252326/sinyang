@@ -6,13 +6,14 @@
 #include "LoginDlg.h"
 #include "afxdialogex.h"
 
-#include "func.h"
+//#include "func.h"
 // LoginDlg dialog
 
 IMPLEMENT_DYNAMIC(LoginDlg, CDialogEx)
 
 	LoginDlg::LoginDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(LoginDlg::IDD, pParent)
+	, usridx(0)
 {
 
 }
@@ -69,6 +70,8 @@ int LoginDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	//this->GetDlgItem(IDCANCEL)->MoveWindow(CRect(pt,esz));
 
+
+
 	return 0;
 }
 
@@ -84,12 +87,21 @@ void LoginDlg::OnOK()
 	euser.GetWindowTextW(m_strUser);
 	epass.GetWindowTextW(m_strPwd);
 
-	if(CheckLogin(m_strUser,m_strPwd,a)){
+	usridx=al.CheckUserAccount(m_strUser,m_strPwd);
+	if(usridx>=0){
 
 		//if(m_strUser==L"Admin"&&m_strPwd==L"1234"){
 
 		CDialogEx::OnOK(); // 假如用户名和密码正确，就关闭对话框
 
+	}
+	else{
+		if(usridx==-1){
+			AfxMessageBox(L"password error");
+		}
+		else{
+			AfxMessageBox(L"username error");
+		}
 	}
 
 	///*假如用户名或密码错误，且还未超出登陆次数，就进行提示*/
@@ -218,7 +230,7 @@ BOOL LoginDlg::OnInitDialog()
 	if( euser.CreateEx(
 		WS_EX_CLIENTEDGE,
 		L"Edit", 
-		L"",
+		L"a",
 		ES_LEFT
 		|WS_CHILD
 		|WS_TABSTOP
@@ -234,7 +246,7 @@ BOOL LoginDlg::OnInitDialog()
 	if( epass.CreateEx(
 		WS_EX_CLIENTEDGE,
 		L"Edit", 
-		L"",
+		L"a",
 		ES_LEFT
 		|WS_CHILD
 		|WS_TABSTOP

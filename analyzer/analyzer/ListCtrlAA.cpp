@@ -2,6 +2,10 @@
 #include "ListCtrlAA.h"
 #include "resource.h"
 
+
+//add popup menu support for ListCtrlA
+
+
 ListCtrlAA::ListCtrlAA(void)
 {
 }
@@ -70,7 +74,7 @@ void ListCtrlAA::OnPopupInsert()
 	int iSelect=GetSelectionMark();
 	CString str=L"";
 	//str.Format(L"%d",iSelect+1);
-	iSelect=InsertItem( iSelect<0?0:iSelect, str );
+	iSelect=InsertItem( iSelect<0?GetItemCount():iSelect, str );
 	EnsureVisible(iSelect, FALSE);
 }
 

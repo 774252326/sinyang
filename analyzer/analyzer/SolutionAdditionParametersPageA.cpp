@@ -130,35 +130,40 @@ void SolutionAdditionParametersPageA::SetList(void)
 		return;
 	}
 
-	CString strTemp;
+
 
 	for(size_t i=0;i<para.saplist.size();i++){
-		strTemp.Format(L"%d",i+1);
-		m_SAPlist.InsertItem( i, strTemp );
 
-		if(para.saplist[i].addType<0)
-			strTemp.LoadStringW(IDS_STRING_VOL_ONCE);
-		else
-			strTemp.LoadStringW(IDS_STRING_VOL_ONCE+para.saplist[i].addType);
-		m_SAPlist.SetItemText(i,1,strTemp);
+		//CString strTemp;
 
-		strTemp.Format(L"%g",para.saplist[i].Sconc);
-		m_SAPlist.SetItemText(i,2,strTemp);
-		strTemp.Format(L"%g",para.saplist[i].Aconc);
-		m_SAPlist.SetItemText(i,3,strTemp);
-		strTemp.Format(L"%g",para.saplist[i].Lconc);
-		m_SAPlist.SetItemText(i,4,strTemp);
+		//strTemp.Format(L"%d",i+1);
+		//m_SAPlist.InsertItem( i, strTemp );
 
-		strTemp.Format(L"%g",para.saplist[i].volconc);
-		m_SAPlist.SetItemText(i,5,strTemp);
+		//if(para.saplist[i].addType<0)
+		//	strTemp.LoadStringW(IDS_STRING_VOL_ONCE);
+		//else
+		//	strTemp.LoadStringW(IDS_STRING_VOL_ONCE+para.saplist[i].addType);
+		//m_SAPlist.SetItemText(i,1,strTemp);
 
-		strTemp.Format(L"%g",para.saplist[i].endRatio);
-		m_SAPlist.SetItemText(i,6,strTemp);
+		//strTemp.Format(L"%g",para.saplist[i].Sconc);
+		//m_SAPlist.SetItemText(i,2,strTemp);
+		//strTemp.Format(L"%g",para.saplist[i].Aconc);
+		//m_SAPlist.SetItemText(i,3,strTemp);
+		//strTemp.Format(L"%g",para.saplist[i].Lconc);
+		//m_SAPlist.SetItemText(i,4,strTemp);
+
+		//strTemp.Format(L"%g",para.saplist[i].volconc);
+		//m_SAPlist.SetItemText(i,5,strTemp);
+
+		//strTemp.Format(L"%g",para.saplist[i].endRatio);
+		//m_SAPlist.SetItemText(i,6,strTemp);
 
 
-		for(int j=0;j<7;j++){
-			AdjustWidth(&m_SAPlist,j,i);
-		}
+		//for(int j=0;j<7;j++){
+		//	AdjustWidth(&m_SAPlist,j,i);
+		//}
+
+		m_SAPlist.InsertItemSAP(i,para.saplist[i]);
 
 	}
 }
@@ -171,25 +176,28 @@ void SolutionAdditionParametersPageA::GetList(void)
 	int nItem=m_SAPlist.GetItemCount();
 
 	para.saplist.resize(nItem);
-	CString strTemp;
+
 
 	for(size_t i=0;i<nItem;i++){
-		para.saplist[i].addType=m_SAPlist.GetChoice(i,1);
+		//CString strTemp;
+		//para.saplist[i].addType=m_SAPlist.GetChoice(i,1);
 
-		strTemp=m_SAPlist.GetItemText(i,2);
-		para.saplist[i].Sconc=_wtof(strTemp.GetBuffer());
+		//strTemp=m_SAPlist.GetItemText(i,2);
+		//para.saplist[i].Sconc=_wtof(strTemp.GetBuffer());
 
-		strTemp=m_SAPlist.GetItemText(i,3);
-		para.saplist[i].Aconc=_wtof(strTemp.GetBuffer());
+		//strTemp=m_SAPlist.GetItemText(i,3);
+		//para.saplist[i].Aconc=_wtof(strTemp.GetBuffer());
 
-		strTemp=m_SAPlist.GetItemText(i,4);
-		para.saplist[i].Lconc=_wtof(strTemp.GetBuffer());
+		//strTemp=m_SAPlist.GetItemText(i,4);
+		//para.saplist[i].Lconc=_wtof(strTemp.GetBuffer());
 
-		strTemp=m_SAPlist.GetItemText(i,5);
-		para.saplist[i].volconc=_wtof(strTemp.GetBuffer());
+		//strTemp=m_SAPlist.GetItemText(i,5);
+		//para.saplist[i].volconc=_wtof(strTemp.GetBuffer());
 
-		strTemp=m_SAPlist.GetItemText(i,6);
-		para.saplist[i].endRatio=_wtof(strTemp.GetBuffer());
+		//strTemp=m_SAPlist.GetItemText(i,6);
+		//para.saplist[i].endRatio=_wtof(strTemp.GetBuffer());
+
+		m_SAPlist.GetItemSAP(i,para.saplist[i]);
 	}
 
 }

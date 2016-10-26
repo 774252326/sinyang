@@ -10,7 +10,9 @@
 //#include "analyzerViewL.h"
 //#include "func.h"
 
-#include "UserAccount.h"
+//#include "UserAccount.h"
+#include "AccountList.h"
+
 
 enum ProcessState{
 	stop,
@@ -109,7 +111,9 @@ public:
 	afx_msg void OnAnalysisCompute();
 
 
-	authority au;
+	//authority au;
+	AccountList al;
+
 
 	afx_msg void OnSecurityLogin();
 	afx_msg void OnSecurityUseraccounts();
@@ -118,6 +122,7 @@ public:
 	afx_msg void OnUpdateFilePrintSetup(CCmdUI *pCmdUI);
 	afx_msg void OnUpdateFileSave(CCmdUI *pCmdUI);
 	afx_msg void OnUpdateFileNew(CCmdUI *pCmdUI);
+	int userIndex;
 };
 
 

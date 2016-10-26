@@ -11,7 +11,7 @@
 
 IMPLEMENT_DYNAMIC(UserAccountPage, CPropertyPage)
 
-UserAccountPage::UserAccountPage()
+	UserAccountPage::UserAccountPage()
 	: CPropertyPage(UserAccountPage::IDD)
 	, useIndex(-1)
 {
@@ -57,7 +57,7 @@ int UserAccountPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	winrect.DeflateRect(gap1);
 	CPoint pt(gap1);
 
-		const DWORD dwStyle = WS_VISIBLE 
+	const DWORD dwStyle = WS_VISIBLE 
 		| WS_CHILD 
 		| WS_BORDER
 		| WS_HSCROLL 
@@ -69,7 +69,7 @@ int UserAccountPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;      // fail to create
 	}
 
-		SetList();
+	SetList();
 
 	return 0;
 }
@@ -79,9 +79,9 @@ BOOL UserAccountPage::OnSetActive()
 {
 	// TODO: Add your specialized code here and/or call the base class
 
-	 CPropertySheet* psheet = (CPropertySheet*) GetParent();   
-     psheet->SetWizardButtons(PSWIZB_FINISH);
-     psheet->SetFinishText(_T("OK"));
+	CPropertySheet* psheet = (CPropertySheet*) GetParent();   
+	psheet->SetWizardButtons(PSWIZB_FINISH);
+	psheet->SetFinishText(_T("OK"));
 
 
 	return CPropertyPage::OnSetActive();
@@ -89,49 +89,26 @@ BOOL UserAccountPage::OnSetActive()
 
 
 void UserAccountPage::SetList(void)
-{
-	
-	for(size_t i=0;i<ual.size();i++){
-
-		//userList.InsertItem( i, ual[i].userName );
-		//AdjustWidth(&userList,0,ual[i].userName);
-
-		//userList.SetItemText(i,1,ual[i].passWord);
-		//AdjustWidth(&userList,1,ual[i].passWord);
-
-		//CString strTemp;
-		//strTemp.LoadString(IDS_STRING_ADMIN+ual[i].au);
-		//userList.SetItemText(i, 2, strTemp);
-		//AdjustWidth(&userList,2,strTemp);
-
-		//if(i==useIndex){
-		//	strTemp.LoadString(IDS_STRING_YES);
-		//	userList.bEditable=(ual[i].au==admin);	
-		//}
-		//else{
-		//	strTemp.LoadString(IDS_STRING_NO);
-		//}
-		//userList.SetItemText(i,3,strTemp);
-		//AdjustWidth(&userList,3,strTemp);
-
-		//userList.SetItemText(i,4,ual[i].remark);
-		//AdjustWidth(&userList,4,ual[i].remark);
-
-		userList.InsertItemUA(i,ual[i],(i==useIndex));
-
-	}
-
-
-	
+{	
+	for(size_t i=0;i<al.ual.size();i++){
+		userList.InsertItemUA(i,al.ual[i],(i==useIndex));
+	}	
 }
 
 
 void UserAccountPage::GetList(void)
 {
 	int nItem=userList.GetItemCount();
-	ual.resize(nItem);
-	for(size_t i=0;i<ual.size();i++){
-		userList.GetItemUA(i,ual[i]);
+	al.ual.resize(nItem);
+	
+	useIndex=-2;
+
+	for(size_t i=0;i<al.ual.size();i++){
+		bool buse=false;
+		userList.GetItemUA(i,al.ual[i],buse);
+		if(buse){
+			useIndex=i;
+		}
 	}
 
 }
@@ -144,4 +121,14 @@ BOOL UserAccountPage::OnKillActive()
 	GetList();
 
 	return CPropertyPage::OnKillActive();
+}
+
+
+BOOL UserAccountPage::OnWizardFinish()
+{
+	// TODO: Add your specialized code here and/or call the base class
+
+	GetList();
+
+	return CPropertyPage::OnWizardFinish();
 }

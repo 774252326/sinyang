@@ -81,3 +81,66 @@ int ListCtrlLS::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	return 0;
 }
+
+
+int ListCtrlLS::InsertItemLS(int i, const LineSpec & ls)
+{
+		CString strTemp;
+
+	//for(size_t i=0;i<ps.size();i++){
+		strTemp.Format(L"%d",i+1);
+		int ri=InsertItem( i, strTemp );
+		AdjustWidth(this,0,strTemp);
+
+		SetItemText(i,1,ls.name);
+		AdjustWidth(this,1,ls.name);
+
+		strTemp.Format(L"%d",ls.colour);
+		SetItemText(i, 2, strTemp);
+		AdjustWidth(this,2,strTemp);
+
+		strTemp.Format(L"%d",ls.dotSize);
+		SetItemText(i,3,strTemp);
+		AdjustWidth(this,3,strTemp);
+
+		strTemp.LoadStringW(IDS_STRING_GRID_LINE_SOLID+ls.lineType);
+		SetItemText(i,4,strTemp);
+		AdjustWidth(this,4,strTemp);
+
+		strTemp.LoadStringW(IDS_STRING_NO_SMOOTH+ls.smoothLine);
+		SetItemText(i,5,strTemp);
+		AdjustWidth(this,5,strTemp);
+
+		strTemp.LoadStringW( (ls.traceLast?IDS_STRING_YES:IDS_STRING_NO) );
+		SetItemText(i,6,strTemp);
+		AdjustWidth(this,6,strTemp);
+
+
+		//for(int j=0;j<7;j++){
+		//	AdjustWidth(this,j,i);
+		//}
+	//}
+
+
+	return ri;
+}
+
+
+bool ListCtrlLS::GetItemLS(int i, LineSpec & ls)
+{
+
+			ls.name=GetItemText(i,1);
+
+		CString strTemp;
+		strTemp=GetItemText(i,2);
+		ls.colour=_wtoi(strTemp.GetBuffer());
+
+		strTemp=GetItemText(i,3);
+		ls.dotSize=_wtoi(strTemp.GetBuffer());
+		ls.lineType=GetChoice(i,4);
+		ls.smoothLine=GetChoice(i,5);
+		ls.traceLast=(GetChoice(i,6)==0);
+
+
+	return true;
+}

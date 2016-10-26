@@ -16,6 +16,196 @@ pcct::~pcct(void)
 }
 
 
+
+int pcct::readFile1(LPCTSTR lpszFileName)
+{
+	CStdioFile file;
+	BOOL readflag;
+	readflag=file.Open(lpszFileName, CFile::modeRead);
+	if(readflag)
+	{	
+		CString strRead;
+
+		wchar_t *token;
+		wchar_t seps[] = L" ,";
+		wchar_t sps1[]=L",";
+		wchar_t sps2[]=L" ";
+		wchar_t sps3[]=L"Segment";
+		wchar_t sps4[]=L"qwertyuiopasdfghjklzxcvbnm";
+		wchar_t sps5[]=L"QWERTYUIOPASDFGHJKLZXCVBNM";
+		wchar_t sps6[]=L"1234567890";
+		wchar_t sps7[]=L"Potential/V, Current/A, Charge/C, Time/s";
+		wchar_t sps8[]=L"Time/sec, Current/A";
+		wchar_t sps9[]=L"Potential/V, Current/A";
+		long i=0;
+
+		int headertype=-1;
+
+		segment tmp;
+
+		TRACE("\n--Begin to read file");
+
+		FilePath=lpszFileName;
+
+		FileName=wcsrchr(FilePath,L'\\');
+		FileName.Delete(0);
+		//token=token;
+
+		while(file.ReadString(strRead))
+		{	
+
+			if( wcscoll(strRead.GetBuffer(),sps7)==0 )				
+			{
+
+				token = wcstok( strRead.GetBuffer(), sps1 );
+
+				if(token!=NULL)
+					label.push_back(token);
+
+				token = wcstok( NULL, sps1 );
+				if(token!=NULL)
+					label.push_back(token);
+
+				token = wcstok( NULL, sps1 );
+				if(token!=NULL)
+					label.push_back(token);
+
+				token = wcstok( NULL, sps1 );
+				if(token!=NULL)
+					label.push_back(token);
+
+				headertype=7;
+
+				break;
+			}
+
+
+			if(wcscoll(strRead.GetBuffer(),sps8)==0){
+
+				token = wcstok( strRead.GetBuffer(), sps1 );
+
+				if(token!=NULL)
+					label.push_back(token);
+
+				token = wcstok( NULL, sps1 );
+				if(token!=NULL)
+					label.push_back(token);
+
+				headertype=8;
+
+				break;
+			}
+
+			if(wcscoll(strRead.GetBuffer(),sps9)==0){
+
+				token = wcstok( strRead.GetBuffer(), sps1 );
+
+				if(token!=NULL)
+					label.push_back(token);
+
+				token = wcstok( NULL, sps1 );
+				if(token!=NULL)
+					label.push_back(token);
+
+				headertype=9;
+
+				break;
+			}
+
+
+
+
+			segmentinfo=segmentinfo+strRead+L"\n";
+			//if(!strRead.IsEmpty())
+			seginfo.push_back(strRead);
+
+
+
+		}
+
+
+
+		switch(headertype){
+		case 7:
+
+
+			while(file.ReadString(strRead))
+			{
+				token = wcstok( strRead.GetBuffer(), sps1 );
+				if(token!=NULL)
+					potential.push_back(_wtof(token));
+
+				token = wcstok( NULL, sps1 );
+				if(token!=NULL)
+					current.push_back(_wtof(token));
+
+				token = wcstok( NULL, sps1);
+				if(token!=NULL)
+					charge.push_back(_wtof(token));
+
+				token = wcstok( NULL, sps1 );
+				if(token!=NULL)
+					time.push_back(_wtof(token));
+			}
+			break;
+
+		case 8:
+
+			while(file.ReadString(strRead))
+			{
+				token = wcstok( strRead.GetBuffer(), sps1 );
+				if(token!=NULL)				
+					time.push_back(_wtof(token));
+
+				token = wcstok( NULL, sps1 );
+				if(token!=NULL)
+					current.push_back(_wtof(token));
+
+				//token = wcstok( NULL, sps1);
+				//if(token!=NULL)
+				//charge.push_back(_wtof(token));
+
+				//token = wcstok( NULL, sps1 );
+				//if(token!=NULL)
+				//potential.push_back(_wtof(token));
+			}
+			break;
+		case 9:
+			while(file.ReadString(strRead))
+			{
+				token = wcstok( strRead.GetBuffer(), sps1 );
+				if(token!=NULL)
+					potential.push_back(_wtof(token));
+
+				token = wcstok( NULL, sps1 );
+				if(token!=NULL)
+					current.push_back(_wtof(token));
+
+				//token = wcstok( NULL, sps1);
+				//if(token!=NULL)
+				//	charge.push_back(_wtof(token));
+
+				//token = wcstok( NULL, sps1 );
+				//if(token!=NULL)
+				//	time.push_back(_wtof(token));
+			}
+			break;
+
+		default:
+			break;
+		}
+
+
+		TRACE("\n--End reading");
+		file.Close();
+
+	}
+
+
+
+	return readflag;
+}
+
 int pcct::readFile(LPCTSTR lpszFileName)
 {
 
@@ -173,18 +363,40 @@ void pcct::seperate(void)
 
 }
 
+double pcct::intg1()
+{
+	double ar=0;
+
+
+	std::reverse(current.begin(),current.end());
+	std::reverse(time.begin(),time.end());
 
 
 
-double pcct::intg(double xtop)
+	for(size_t i=1;i<current.size();i++){
+		if(current[i-1]*current[i]>=0){
+			ar+=(current[i-1]+current[i])*(time[i-1]-time[i]);
+		}
+		else{
+			break;
+		}
+	}
+
+	ar/=2;
+
+	return ar;
+}
+
+
+double pcct::intg(double xtop, size_t xibegin, size_t xiend)
 {
 	//std::vector<double> xintg(potential.begin()+(*(xBreakIndex.end()-2)),potential.begin()+(*(xBreakIndex.end()-1)) );
 	//std::vector<double> xintg( time.begin()+(*(xBreakIndex.end()-2)),time.begin()+(*(xBreakIndex.end()-1)) );
 	//std::vector<double> yintg( current.begin()+(*(xBreakIndex.end()-2)),current.begin()+(*(xBreakIndex.end()-1)) );
 
-	std::vector<double> xintg(potential.begin()+((xBreakIndex[2])),potential.begin()+((xBreakIndex[3])) );
+	std::vector<double> xintg(potential.begin()+(xibegin),potential.begin()+(xiend) );
 	//std::vector<double> xintg( time.begin()+(*(xBreakIndex.end()-2)),time.begin()+(*(xBreakIndex.end()-1)) );
-	std::vector<double> yintg( current.begin()+((xBreakIndex[2])),current.begin()+((xBreakIndex[3])) );
+	std::vector<double> yintg( current.begin()+(xibegin),current.begin()+(xiend) );
 
 	size_t i;
 	double ar=0;
@@ -274,4 +486,31 @@ void pcct::TomA(void)
 	}
 
 	label[1]=L"Current/mA";
+}
+
+
+double pcct::intg2(double xtop)
+{
+
+	this->seperate();
+
+	size_t xe=xBreakIndex.back();
+	xBreakIndex.pop_back();
+
+	while(potential[xBreakIndex.back()]>potential[xe]){
+		xe=xBreakIndex.back();
+		xBreakIndex.pop_back();
+	}
+
+	if(xBreakIndex.empty()){
+		return 0;
+	}
+
+	size_t xs=xBreakIndex.back();
+	xBreakIndex.clear();
+
+	return intg(xtop,xs,xe);
+
+
+	return 0;
 }

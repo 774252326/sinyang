@@ -12,6 +12,7 @@
 #include "analyzerView.h"
 
 #include "LoginDlg.h"
+#include "func.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -112,6 +113,8 @@ BOOL CanalyzerApp::InitInstance()
 
 
 	LoginDlg ld;
+	CString fp=L"ua";
+	ReadFileCustom(&ld.al,1,fp);
 
 	if(ld.DoModal()==IDOK){
 
@@ -150,7 +153,11 @@ BOOL CanalyzerApp::InitInstance()
 	// Enable drag/drop open
 	m_pMainWnd->DragAcceptFiles();
 
-	((CMainFrame*)m_pMainWnd)->au=ld.a;
+	//((CMainFrame*)m_pMainWnd)->au=ld.al.ual[ld.usridx].au;
+
+	((CMainFrame*)m_pMainWnd)->userIndex=ld.usridx;
+	((CMainFrame*)m_pMainWnd)->al=ld.al;
+
 
 	return TRUE;
 

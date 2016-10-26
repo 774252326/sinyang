@@ -641,6 +641,23 @@ BOOL ReadFileCustom(CObject * co, size_t n, CString fp)
 }
 
 
+BOOL WriteFileCustom(CObject * co, size_t n, CString fp)
+{
+	CFile theFile;
+	if( theFile.Open(fp, CFile::modeCreate | CFile::modeWrite) ){
+		CArchive archive(&theFile, CArchive::store);
+
+		for(size_t i=0;i<n;i++){
+			co[i].Serialize(archive);
+		}
+
+		archive.Close();
+		theFile.Close();
+		return TRUE;
+	}
+	return FALSE;
+}
+
 bool AddCalibrationCurve(CString calibrationfilepath, PlotData &pda)
 {
 	CanalyzerDoc tmp;

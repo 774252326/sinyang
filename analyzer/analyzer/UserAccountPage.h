@@ -1,8 +1,9 @@
 #pragma once
 
-#include "UserAccount.h"
+//#include "UserAccount.h"
 #include "ListCtrlUA.h"
-#include <vector>
+//#include <vector>
+#include "AccountList.h"
 
 // UserAccountPage dialog
 
@@ -24,10 +25,12 @@ protected:
 public:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	ListCtrlUA userList;
-	std::vector<UserAccount> ual;
+	//std::vector<UserAccount> ual;
+	AccountList al;
 	virtual BOOL OnSetActive();
 	int useIndex;
 	void SetList(void);
 	void GetList(void);
 	virtual BOOL OnKillActive();
+	virtual BOOL OnWizardFinish();
 };

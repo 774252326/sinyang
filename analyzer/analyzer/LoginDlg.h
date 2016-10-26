@@ -2,7 +2,7 @@
 //#include "func.h"
 #include "MainFrm.h"
 #include "EditC.h"
-
+#include "AccountList.h"
 // LoginDlg dialog
 
 class LoginDlg : public CDialogEx
@@ -23,7 +23,8 @@ protected:
 public:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 
-	EditC euser;
+	CEdit euser;
+	//EditC euser;
 	CEdit epass;
 	CStatic suser;
 	CStatic spass;
@@ -33,6 +34,9 @@ public:
 	virtual BOOL OnInitDialog();
 	afx_msg void OnPaint();
 
-	authority a;
+	AccountList al;
+
+	//authority a;
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
+	int usridx;
 };

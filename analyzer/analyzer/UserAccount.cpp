@@ -66,6 +66,7 @@ void UserAccount::Serialize(CArchive& ar)
 			au=guest;
 			break;
 		default:
+			TRACE0("read type error");
 			break;
 		}
 

@@ -394,35 +394,39 @@ void PlotSettingPage::SetList(void)
 		return;
 	}
 
-	CString strTemp;
+
 
 	for(size_t i=0;i<ps.size();i++){
-		strTemp.Format(L"%d",i+1);
-		pslist.InsertItem( i, strTemp );
+		//CString strTemp;
+		//strTemp.Format(L"%d",i+1);
+		//pslist.InsertItem( i, strTemp );
 	
-		pslist.SetItemText(i,1,ps[i].name);
+		//pslist.SetItemText(i,1,ps[i].name);
 
-		strTemp.Format(L"%d",ps[i].colour);
-		pslist.SetItemText(i, 2, strTemp);
+		//strTemp.Format(L"%d",ps[i].colour);
+		//pslist.SetItemText(i, 2, strTemp);
 
-		strTemp.Format(L"%d",ps[i].dotSize);
-		pslist.SetItemText(i,3,strTemp);
+		//strTemp.Format(L"%d",ps[i].dotSize);
+		//pslist.SetItemText(i,3,strTemp);
 
 
-		strTemp.LoadStringW(IDS_STRING_GRID_LINE_SOLID+ps[i].lineType);
-		pslist.SetItemText(i,4,strTemp);
-		
+		//strTemp.LoadStringW(IDS_STRING_GRID_LINE_SOLID+ps[i].lineType);
+		//pslist.SetItemText(i,4,strTemp);
+		//
 
-		strTemp.LoadStringW(IDS_STRING_NO_SMOOTH+ps[i].smoothLine);
-		pslist.SetItemText(i,5,strTemp);
-		
+		//strTemp.LoadStringW(IDS_STRING_NO_SMOOTH+ps[i].smoothLine);
+		//pslist.SetItemText(i,5,strTemp);
+		//
 
-		strTemp.LoadStringW( (ps[i].traceLast?IDS_STRING_YES:IDS_STRING_NO) );
-		pslist.SetItemText(i,6,strTemp);
-		
-		for(int j=0;j<7;j++){
-			AdjustWidth(&pslist,j,i);
-		}
+		//strTemp.LoadStringW( (ps[i].traceLast?IDS_STRING_YES:IDS_STRING_NO) );
+		//pslist.SetItemText(i,6,strTemp);
+		//
+		//for(int j=0;j<7;j++){
+		//	AdjustWidth(&pslist,j,i);
+		//}
+
+		pslist.InsertItemLS(i,ps[i]);
+
 	}
 
 }
@@ -455,20 +459,22 @@ void PlotSettingPage::GetList(void)
 
 	int nItem=pslist.GetItemCount();
 
-	CString strTemp;
 
 	for(size_t i=0;i<nItem;i++){
-		ps[i].name=pslist.GetItemText(i,1);
 
-		strTemp=pslist.GetItemText(i,2);
-		ps[i].colour=_wtoi(strTemp.GetBuffer());
+		//ps[i].name=pslist.GetItemText(i,1);
 
-		strTemp=pslist.GetItemText(i,3);
-		ps[i].dotSize=_wtoi(strTemp.GetBuffer());
-		ps[i].lineType=pslist.GetChoice(i,4);
-		ps[i].smoothLine=pslist.GetChoice(i,5);
-		ps[i].traceLast=(pslist.GetChoice(i,6)==0);
+		//CString strTemp;
+		//strTemp=pslist.GetItemText(i,2);
+		//ps[i].colour=_wtoi(strTemp.GetBuffer());
 
+		//strTemp=pslist.GetItemText(i,3);
+		//ps[i].dotSize=_wtoi(strTemp.GetBuffer());
+		//ps[i].lineType=pslist.GetChoice(i,4);
+		//ps[i].smoothLine=pslist.GetChoice(i,5);
+		//ps[i].traceLast=(pslist.GetChoice(i,6)==0);
+
+		pslist.GetItemLS(i,ps[i]);
 	}
 
 }

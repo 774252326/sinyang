@@ -83,6 +83,9 @@
     <None Include="res\u50b18c7bcb6853363.bmp">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="res\ThinkCentre.ico">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="analyzer.h">
@@ -211,9 +214,6 @@
     <ClInclude Include="UserAccount.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="UserAccountDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ListCtrlAA.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -221,6 +221,24 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="UserAccountPage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AccountList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SolutionAdditionParametersPageB.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ListCtrlSAPB.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="testdlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sapitemF.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ListCtrlDOA.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -348,9 +366,6 @@
     <ClCompile Include="UserAccount.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="UserAccountDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ListCtrlAA.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -358,6 +373,24 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="UserAccountPage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AccountList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SolutionAdditionParametersPageB.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ListCtrlSAPB.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="testdlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sapitemF.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ListCtrlDOA.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

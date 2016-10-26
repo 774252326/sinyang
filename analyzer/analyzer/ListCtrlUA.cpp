@@ -5,7 +5,7 @@
 
 ListCtrlUA::ListCtrlUA(void)
 	: bEditable(false)
-	, useIndex(-1)
+	//, useIndex(-1)
 {
 }
 
@@ -55,6 +55,12 @@ int ListCtrlUA::OnCreate(LPCREATESTRUCT lpCreateStruct)
 			strTemp.LoadStringW(j);
 			cbstr[2].push_back(strTemp);
 			AdjustWidth(this,2,strTemp);
+		}
+
+		for ( int j=IDS_STRING_YES ; j <= IDS_STRING_NO ; j++){
+			strTemp.LoadStringW(j);
+			cbstr[3].push_back(strTemp);
+			AdjustWidth(this,3,strTemp);
 		}
 	//}
 
@@ -156,34 +162,30 @@ int ListCtrlUA::InsertItemUA(int i, const UserAccount & ua, bool bUse)
 }
 
 
-bool ListCtrlUA::GetItemUA(int i, UserAccount & ua)
+bool ListCtrlUA::GetItemUA(int i, UserAccount & ua, bool & bUse)
 {
+	bUse=false;
 
 	ua.userName=this->GetItemText(i,0);
 	ua.passWord=this->GetItemText(i,1);
 	
-	CString strTemp,str;
-	strTemp=this->GetItemText(i,2);
+	int ci=this->GetChoice(i,2);
 
-	str.LoadStringW(IDS_STRING_ADMIN);
-	if(strTemp==str){
+	switch(ci){
+	case 0:
 		ua.au=admin;
-	}
-	else{
-		str.LoadStringW(IDS_STRING_USER);
-			if(strTemp==str){
+		break;
+	case 1:
 		ua.au=user;
-	}
-	else{
-		str.LoadStringW(IDS_STRING_GUEST);
-			if(strTemp==str){
+		break;
+	case 2:
 		ua.au=guest;
-	}
-	else{
+		break;
+	default:
 		return false;
 	}
-	}
-	}
+
+	bUse=(this->GetChoice(i,3)==0);
 
 	ua.remark=GetItemText(i,4);
 	
@@ -191,7 +193,7 @@ bool ListCtrlUA::GetItemUA(int i, UserAccount & ua)
 }
 
 
-void ListCtrlUA::GetList(void)
-{
-
-}
+//void ListCtrlUA::GetList(void)
+//{
+//
+//}

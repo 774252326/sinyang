@@ -58,6 +58,7 @@ public:
 	virtual void Serialize(CArchive& ar);
 
 	double ArUse(void) const;
+	void VMSOnce(sapitemA sapi);
 };
 
 

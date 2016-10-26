@@ -15,7 +15,9 @@
 //#include "MainFrm.h"
 #include "func.h"
 #include "PlotSettingPageA.h"
+#include "pcct.h"
 
+#include "testdlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -50,6 +52,7 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		ON_COMMAND(ID_VIEW_FITWINDOW, &CanalyzerView::OnViewFitwindow)
 		ON_NOTIFY(UDN_DELTAPOS, 1, &CanalyzerView::OnDeltaposSpin)
 		ON_WM_LBUTTONDBLCLK()
+		ON_COMMAND(ID_CONTROLS_1, &CanalyzerView::OnControls1)
 	END_MESSAGE_MAP()
 
 	// CanalyzerView construction/destruction
@@ -543,7 +546,7 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		// TODO: Add your command update UI handler code here
 
 		CMainFrame *mf=(CMainFrame*)GetParentFrame();
-		if(mf->pst!=running && mf->au!=authority::guest){
+		if(mf->pst!=running && mf->al.ual[mf->userIndex].au!=authority::guest){
 			pCmdUI->Enable(TRUE);
 			pCmdUI->SetCheck(bMouseCursor);
 		}
@@ -672,4 +675,26 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		OnOptionsPlotsettings();
 
 		CView::OnLButtonDblClk(nFlags, point);
+	}
+
+
+	void CanalyzerView::OnControls1()
+	{
+		// TODO: Add your command handler code here
+
+		//CString fp=L"C:\\Users\\r8anw2x\\Desktop\\ÐÂÔöÙYÁÏŠA\\17 Sep 0.2S 0.2A L\\2110base1.txt";
+
+		//pcct data;
+		//data.readFile1(fp);
+		//data.TomA();
+
+		//data.seperate();
+		//double bb=data.intg2(1);
+		//double a=data.intg1();
+
+
+		testdlg td;
+
+		td.DoModal();
+
 	}

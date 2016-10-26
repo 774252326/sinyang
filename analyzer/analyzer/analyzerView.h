@@ -88,6 +88,7 @@ public:
 	virtual void OnPrepareDC(CDC* pDC, CPrintInfo* pInfo = NULL);
 	int UpdateSpinButton(int np, bool bLast);
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
+	afx_msg void OnControls1();
 };
 
 #ifndef _DEBUG  // debug version in analyzerView.cpp

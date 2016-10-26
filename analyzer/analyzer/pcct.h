@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <algorithm>
 
 typedef struct SEGMENT{
 	double Ep;
@@ -25,13 +26,14 @@ public:
 	std::vector<double> time;
 
 
-
+	//int readFile(LPCTSTR lpszFileName, LPCTSTR header);
 	int readFile(LPCTSTR lpszFileName);
+
 	
 	void clear(void);
 	void seperate(void);
 	std::vector<long> xBreakIndex;
-	double intg(double xtop);
+	double intg(double xtop, size_t xibegin, size_t xiend);
 	double AR;
 	CString segmentinfo;
 	std::vector<CString> label;
@@ -48,7 +50,10 @@ public:
 
 	double addVolume;
 	CString stepName;
+	///////////////////////////////////////////////////////
+	int readFile1(LPCTSTR lpszFileName);
+	double intg1();
 
-
+	double intg2(double xtop);
 };
 

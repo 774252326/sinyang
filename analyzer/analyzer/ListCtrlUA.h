@@ -10,7 +10,7 @@ public:
 	ListCtrlUA(bool flg);
 	virtual ~ListCtrlUA(void);
 	DECLARE_MESSAGE_MAP()
-public:
+protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	bool bEditable;
 	afx_msg void OnPopupInsert();
@@ -18,9 +18,11 @@ public:
 	afx_msg void OnPopupRemoveall();
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/);
-	int useIndex;
+
+public:
+	//int useIndex;
 	int InsertItemUA(int i, const UserAccount & ua, bool bUse);
-	bool GetItemUA(int i, UserAccount & ua);
-	void GetList(void);
+	bool GetItemUA(int i, UserAccount & ua, bool & bUse);
+//	void GetList(void);
 };
 
