@@ -80,7 +80,7 @@ int COutputWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	
 	CString strTemp[]={L"No.",L"x1",L"y1",L"x2",L"y2"};
-	int gap=15;
+	int gap=35;
 	for(size_t i=0;i<5;i++){		
 		//int w=m_listCtrlMonitor.GetStringWidth(strTemp)+m_listCtrlMonitor.gap;
 		m_listCtrlMonitor.InsertColumn(i, strTemp[i], LVCFMT_LEFT);

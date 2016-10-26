@@ -292,7 +292,7 @@ ON_COMMAND(ID_VIEW_CROSSCOLOR, &Cv2View::OnViewCrosscolor)
 
 		Cv2Doc* pDoc = GetDocument();
 
-		
+		img.Destroy();
 		img.Load(lri==0?pDoc->imgfp0:pDoc->imgfp1);
 
 		GetClientRect(&imgrect);

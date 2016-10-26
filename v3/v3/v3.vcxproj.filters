@@ -16,33 +16,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
-    <None Include="res\output_wnd.ico">
+    <None Include="res\v3.rc2">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="res\output_wnd_hc.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="UserImages.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="res\v2.rc2">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="res\v2Doc.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="res\v2.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="res\Toolbar.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="res\Toolbar256.bmp">
+    <None Include="res\v3.ico">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="v2.h">
+    <ClInclude Include="v3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="v3Dlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="stdafx.h">
@@ -51,56 +36,29 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MainFrm.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="v2Doc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="v2View.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OutputWnd.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OutputList.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenImageDlg.h">
+    <ClInclude Include="ImageListBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="v2.cpp">
+    <ClCompile Include="v3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="v3Dlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MainFrm.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="v2Doc.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="v2View.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="OutputWnd.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="OutputList.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="OpenImageDlg.cpp">
+    <ClCompile Include="ImageListBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="v2.rc">
+    <ResourceCompile Include="v3.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
