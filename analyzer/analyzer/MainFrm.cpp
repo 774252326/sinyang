@@ -6,25 +6,12 @@
 #include "analyzer.h"
 
 #include "MainFrm.h"
-
-#include "analyzerViewL.h"
-#include "analyzerViewR.h"
-//#include "filefunc.h"
-//#include "analyzerView.h"
-#include "LoginDlg.h"
-
-#include "UserAccountPage.h"
-#include "PropertySheetA.h"
-#include "PropertySheetA.h"
-#include "AnalysisParametersPage.h"
-#include "CVParametersPage.h"
-#include "SolutionAdditionParametersPageA.h"
-#include "SolutionAdditionParametersPageB.h"
-
+#include "analyzerView.h"
+#include "user\LoginDlg.h"
+#include "property\PropertySheetA.h"
+#include "property\UserAccountPage.h"
 #include "filefunc.h"
 
-#include "struct1\pcct.hpp"
-#include "windowsversion.hpp"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -34,7 +21,7 @@
 
 IMPLEMENT_DYNCREATE(CMainFrame, CFrameWndEx)
 
-	const int  iMaxUserToolbars = 10;
+const int  iMaxUserToolbars = 10;
 const UINT uiFirstUserToolBarId = AFX_IDW_CONTROLBAR_FIRST + 40;
 const UINT uiLastUserToolBarId = uiFirstUserToolBarId + iMaxUserToolbars - 1;
 
@@ -44,44 +31,10 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_REGISTERED_MESSAGE(AFX_WM_CREATETOOLBAR, &CMainFrame::OnToolbarCreateNew)
 	ON_COMMAND_RANGE(ID_VIEW_APPLOOK_WIN_2000, ID_VIEW_APPLOOK_WINDOWS_7, &CMainFrame::OnApplicationLook)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_APPLOOK_WIN_2000, ID_VIEW_APPLOOK_WINDOWS_7, &CMainFrame::OnUpdateApplicationLook)
-	//ON_COMMAND(ID_VIEW_CAPTION_BAR, &CMainFrame::OnViewCaptionBar)
-	//ON_UPDATE_COMMAND_UI(ID_VIEW_CAPTION_BAR, &CMainFrame::OnUpdateViewCaptionBar)
-	ON_COMMAND(ID_TOOLS_OPTIONS, &CMainFrame::OnOptions)
 	ON_WM_SETTINGCHANGE()
-	ON_COMMAND(ID_VIEW_TOOLBAR_A, &CMainFrame::OnViewToolbar)
-	ON_UPDATE_COMMAND_UI(ID_VIEW_TOOLBAR_A, &CMainFrame::OnUpdateViewToolbar)
-	ON_COMMAND(ID_VIEW_ANALYSIS_PROGRESS, &CMainFrame::OnViewAnalysisProgress)
-	ON_UPDATE_COMMAND_UI(ID_VIEW_ANALYSIS_PROGRESS, &CMainFrame::OnUpdateViewAnalysisProgress)
 	ON_WM_SIZE()
-	ON_COMMAND(ID_ANALYSIS_STARTANALYSIS, &CMainFrame::OnAnalysisStartanalysis)
-	ON_COMMAND(ID_ANALYSIS_ABORTANALYSIS, &CMainFrame::OnAnalysisAbortanalysis)
-	ON_COMMAND(ID_ANALYSIS_PAUSE, &CMainFrame::OnAnalysisPause)
-	ON_UPDATE_COMMAND_UI(ID_ANALYSIS_METHODSETUP, &CMainFrame::OnUpdateAnalysisMethodsetup)
-	ON_UPDATE_COMMAND_UI(ID_ANALYSIS_STARTANALYSIS, &CMainFrame::OnUpdateAnalysisStartanalysis)
-	ON_UPDATE_COMMAND_UI(ID_ANALYSIS_PAUSE, &CMainFrame::OnUpdateAnalysisPause)
-	ON_UPDATE_COMMAND_UI(ID_ANALYSIS_ABORTANALYSIS, &CMainFrame::OnUpdateAnalysisAbortanalysis)
-	ON_UPDATE_COMMAND_UI(ID_ANALYSIS_REPORT, &CMainFrame::OnUpdateAnalysisReport)
-	ON_UPDATE_COMMAND_UI(ID_OPTIONS_PLOTSETTINGS, &CMainFrame::OnUpdateOptionsPlotsettings)
-	ON_UPDATE_COMMAND_UI(ID_VIEW_FITWINDOW, &CMainFrame::OnUpdateViewFitwindow)
-	ON_UPDATE_COMMAND_UI(ID_VIEW_DATACURSOR, &CMainFrame::OnUpdateViewDatacursor)
-	ON_UPDATE_COMMAND_UI(ID_ANALYSIS_COMPUTE, &CMainFrame::OnUpdateAnalysisCompute)
-	ON_COMMAND(ID_ANALYSIS_COMPUTE, &CMainFrame::OnAnalysisCompute)
 	ON_COMMAND(ID_SECURITY_LOGIN, &CMainFrame::OnSecurityLogin)
 	ON_COMMAND(ID_SECURITY_USERACCOUNTS, &CMainFrame::OnSecurityUseraccounts)
-	ON_UPDATE_COMMAND_UI(ID_FILE_PRINT, &CMainFrame::OnUpdateFilePrint)
-	ON_UPDATE_COMMAND_UI(ID_FILE_PRINT_PREVIEW, &CMainFrame::OnUpdateFilePrintPreview)
-	ON_UPDATE_COMMAND_UI(ID_FILE_PRINT_SETUP, &CMainFrame::OnUpdateFilePrintSetup)
-	ON_UPDATE_COMMAND_UI(ID_FILE_SAVE, &CMainFrame::OnUpdateFileSave)
-	ON_UPDATE_COMMAND_UI(ID_FILE_NEW, &CMainFrame::OnUpdateFileNew)
-	ON_COMMAND(ID_HELP_HELPTOPICS, &CMainFrame::OnHelpHelptopics)
-	ON_UPDATE_COMMAND_UI(ID_FILE_OPEN, &CMainFrame::OnUpdateFileOpen)
-	ON_WM_MOVE()
-	ON_MESSAGE(MESSAGE_UPDATE_DOL, &CMainFrame::OnMessageUpdateDol)
-	ON_MESSAGE(MESSAGE_WAIT_RESPONSE, &CMainFrame::OnMessageWaitResponse)
-	ON_COMMAND(ID_CONTROLS_2, &CMainFrame::OnControls2)
-	ON_MESSAGE(MESSAGE_CHANGE_ANP, &CMainFrame::OnMessageChangeAnp)
-	ON_COMMAND(ID_ANALYSIS_METHODSETUP, &CMainFrame::OnAnalysisMethodsetup)
-	ON_MESSAGE(MESSAGE_CLOSE_SAP_SHEET, &CMainFrame::OnMessageCloseSapSheet)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -92,235 +45,11 @@ static UINT indicators[] =
 	ID_INDICATOR_SCRL,
 };
 
-
-
-typedef struct MYPARA{
-	CanalyzerViewL *leftp;
-	CanalyzerViewR *rightp;
-	//CanalyzerDoc *adoc;
-	//COutputWnd *outw;
-	COutputListA* ol;
-	//CMFCCaptionBarA *cba;
-	CMainFrame *mf;
-	//pcct *data;
-	//pcctB *dataB;
-	//CVPara *p2;
-	//SAPara *p3;
-	//WaitDlg *wd;
-	//ProcessState *psta;
-} mypara;
-
-
-
-const DWORD sleepms=100;
-
-const size_t nd=1000;
-//const size_t nd=sleepms/10;
-
-
-#ifndef _DEBUG
-//CString folderp=(GetWinVer()==6)? L"data\\d\\" : L"..\\data\\d\\";
-CString folderp=L"C:\\Users\\r8anw2x\\Desktop\\data\\d\\";
-//CString folderp=L"D:\\data\\d\\";
-//CString folderp=L"C:\\Users\\G\\Desktop\\data\\d\\";
-#else
-CString folderp=L"C:\\Users\\r8anw2x\\Desktop\\data\\d\\";
-//CString folderp=L"D:\\data\\d\\";
-//CString folderp=L"C:\\Users\\G\\Desktop\\data\\d\\";
-#endif
-
-CString DEMOflist=folderp+L"fl1.txt";
-CString DTRflist=folderp+L"dtr.txt";
-CString DTAflist=folderp+L"dta.txt";
-CString LATRflist=folderp+L"latr.txt";
-CString LATAflist=folderp+L"lata.txt";
-CString RCRflist=folderp+L"rcr.txt";
-CString RCAflist=folderp+L"rca.txt";
-CString SARRflist=folderp+L"sarr.txt";
-CString SARAflist=folderp+L"sara.txt";
-CString NEWRflist=folderp+L"j.txt";
-CString NEWAflist=folderp+L"k.txt";
-CString NERflist=folderp+L"l.txt";
-CString NEAflist=folderp+L"m.txt";
-
-
-CString flistlist[]={
-	DEMOflist,
-	DTRflist,
-	DTAflist,
-	LATRflist,
-	LATAflist,
-	RCRflist,
-	RCAflist,
-	SARRflist,
-	SARAflist,
-	NEWRflist,
-	NEWAflist,
-	NERflist,
-	NEAflist
-};
-
-void WaitSecond(ProcessState &waitflg
-	,int second=-1
-	//,int second=3
-	//,int second=0
-	,int interval=1000
-	)
-{
-	;
-	while( waitflg!=running
-		&& ( second<0 || second--!=0 )
-		){
-			Sleep(interval);
-	}
-	//waitflg=running;
-}
-
-
-UINT CMainFrame::PROCESS(LPVOID pParam)
-{
-	//CanalyzerDoc* pDoc=(CanalyzerDoc*)pParam;
-
-
-	CanalyzerViewL* lv=((mypara*)pParam)->leftp;
-	CanalyzerViewR* rv=((mypara*)pParam)->rightp;
-
-	CMainFrame *mf=((mypara*)pParam)->mf;
-
-	COutputListA* ol=((mypara*)pParam)->ol;
-
-
-
-	CanalyzerDoc* pDoc=lv->GetDocument();
-
-	delete pParam;
-	////////////////////////////////////////////////////
-	std::vector<CString> filelist;
-	LoadFileList(flistlist[pDoc->p1.analysistype],filelist);
-
-
-	double v2a;
-	BYTE outstep;
-	size_t nextidx;
-	size_t nowidx;
-	CSingleLock singleLock(&(pDoc->m_CritSection));
-	lv->pw.bMouseCursor=rv->pw.bMouseCursor=false;
-	CSingleLock singleLock1(&(mf->m_CritSection));
-
-	pcct data;
-	std::vector<double> x;
-	std::vector<double> y;
-	size_t rnd;
-
-
-	if(singleLock.Lock())
-	{
-		pDoc->raw.Clear();
-		// Now that we are finished, 
-		// unlock the resource for others.
-		singleLock.Unlock();
-	}
-
-	mf->SendMessage(MESSAGE_UPDATE_DOL,NULL,NULL);
-	//mf->OnMessageUpdateDol(NULL,NULL);
-
-	while(mf->pst!=stop){
-
-		//if(mf->pst!=running){
-		//Sleep(sleepms);
-		//}
-
-		WaitSecond(mf->pst,-1,50);
-
-		//if(singleLock1.Lock())
-		{
-			if(pDoc->runstate==0){
-				//singleLock1.Unlock();
-				mf->pst=stop;
-				return 0;
-			}
-
-
-			if(pDoc->runstate==5){
-				//singleLock1.Unlock();
-
-				if(filelist.empty()){
-					CString strerr;
-					strerr.LoadStringW(IDS_STRING_STEP_ERROR);
-					//::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(strerr.GetBuffer()),NULL);
-					mf->pst=stop;
-					return 1;
-				}
-
-				/////load data from file////////////
-				data.clear();
-				data.readFile(filelist.front());
-				data.TomA();
-				filelist.erase(filelist.begin());
-
-				rnd=data.popData(x,y,nd);
-
-				if(x.empty()||y.empty()){
-					TRACE("input empty");
-					mf->pst=stop;
-					return 8;
-				}
-				if(singleLock.Lock())
-				{
-					pDoc->raw.AddNew(x,y);
-					// Now that we are finished, 
-					// unlock the resource for others.
-					singleLock.Unlock();
-				}
-			}
-			else{
-				//singleLock1.Unlock();
-
-				rnd=data.popData(x,y,nd);
-
-				if(x.empty()||y.empty()){
-					TRACE("input empty");
-					mf->pst=stop;
-					return 8;
-				}
-
-				if(singleLock.Lock())
-				{
-					pDoc->raw.AddFollow(x,y);
-					// Now that we are finished, 
-					// unlock the resource for others.
-					singleLock.Unlock();
-				}
-			}
-
-			mf->SendMessage(MESSAGE_UPDATE_DOL,NULL,NULL);
-			//mf->OnMessageUpdateDol(NULL,NULL);
-
-			//Sleep(sleepms);
-		}
-
-	}
-
-
-
-	mf->pst=stop;
-
-	return 0;
-}
-
-
-
 // CMainFrame construction/destruction
 
 CMainFrame::CMainFrame()
-	: m_bSplitterCreated(FALSE)
-	//, bWaiting(false)
-	, pWriteA(NULL)
-	, pst(stop)
-	, userIndex(-1)
-	, wd(NULL)
-	//, runstate(0)
-	, psheetml(NULL)
+	: userIndex(-1)
+	, m_bSplitterCreated(FALSE)
 {
 	// TODO: add member initialization code here
 	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_OFF_2007_BLUE);
@@ -340,7 +69,6 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	OnApplicationLook(theApp.m_nAppLook);
 
 
-
 	CMFCToolBar::EnableQuickCustomization();
 	//---------------------------------
 	// Set toolbar and menu image size:
@@ -348,9 +76,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	CMFCToolBar::SetSizes (CSize (36, 30), CSize (24, 24));
 	CMFCToolBar::SetMenuSizes (CSize (22, 22), CSize (16, 16));
 
-
-
-
+	
 
 	if (!m_wndMenuBar.Create(this))
 	{
@@ -472,14 +198,13 @@ BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT /*lpcs*/,
 	CCreateContext* pContext)
 {
 
-
 	m_bSplitterCreated = m_wndSplitter.CreateStatic(this, 1, 2);
 	// CMyView and CMyOtherView are user-defined views derived from CView
 	if(m_bSplitterCreated){
-		m_bSplitterCreated = m_wndSplitter.CreateView(0, 0, RUNTIME_CLASS(CanalyzerViewL), CSize(500,500), pContext);
+		m_bSplitterCreated = m_wndSplitter.CreateView(0, 0, RUNTIME_CLASS(CanalyzerView), CSize(), pContext);
 		//this->LeftPlotPointer()->lri=0;
 		if(m_bSplitterCreated){
-			m_bSplitterCreated = m_wndSplitter.CreateView(0, 1, RUNTIME_CLASS(CanalyzerViewR), CSize(500,500), pContext);
+			m_bSplitterCreated = m_wndSplitter.CreateView(0, 1, RUNTIME_CLASS(CanalyzerView), CSize(), pContext);
 			//this->RightPlotPointer()->lri=1;
 		}
 	}
@@ -529,41 +254,6 @@ void CMainFrame::SetDockingWindowIcons(BOOL bHiColorIcons)
 
 }
 
-//BOOL CMainFrame::CreateCaptionBar()
-//{
-//	if (!m_wndCaptionBar.Create(WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS, this, ID_VIEW_CAPTION_BAR, -1, TRUE))
-//	{
-//		TRACE0("Failed to create caption bar\n");
-//		return FALSE;
-//	}
-//
-//	BOOL bNameValid;
-//
-//	CString strTemp, strTemp2;
-//	bNameValid = strTemp.LoadString(IDS_CAPTION_BUTTON);
-//	ASSERT(bNameValid);
-//	m_wndCaptionBar.SetButton(strTemp, ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_LEFT, FALSE);
-//	bNameValid = strTemp.LoadString(IDS_CAPTION_BUTTON_TIP);
-//	ASSERT(bNameValid);
-//	m_wndCaptionBar.SetButtonToolTip(strTemp);
-//
-//	m_wndCaptionBar.EnableButton(FALSE);
-//
-//	bNameValid = strTemp.LoadString(AFX_IDS_IDLEMESSAGE);
-//	ASSERT(bNameValid);
-//	//m_wndCaptionBar.SetText(strTemp, CMFCCaptionBar::ALIGN_LEFT);
-//	m_wndCaptionBar.SetTextA(strTemp);
-//
-//	m_wndCaptionBar.SetBitmap(IDB_INFO, RGB(255, 255, 255), FALSE, CMFCCaptionBar::ALIGN_LEFT);
-//	bNameValid = strTemp.LoadString(IDS_CAPTION_IMAGE_TIP);
-//	ASSERT(bNameValid);
-//	bNameValid = strTemp2.LoadString(IDS_CAPTION_IMAGE_TEXT);
-//	ASSERT(bNameValid);
-//	m_wndCaptionBar.SetImageToolTip(strTemp, strTemp2);
-//
-//	return TRUE;
-//}
-
 // CMainFrame diagnostics
 
 #ifdef _DEBUG
@@ -583,9 +273,9 @@ void CMainFrame::Dump(CDumpContext& dc) const
 
 void CMainFrame::OnViewCustomize()
 {
-	//CMFCToolBarsCustomizeDialog* pDlgCust = new CMFCToolBarsCustomizeDialog(this, TRUE /* scan menus */);
-	//pDlgCust->EnableUserDefinedToolbars();
-	//pDlgCust->Create();
+	CMFCToolBarsCustomizeDialog* pDlgCust = new CMFCToolBarsCustomizeDialog(this, TRUE /* scan menus */);
+	pDlgCust->EnableUserDefinedToolbars();
+	pDlgCust->Create();
 }
 
 LRESULT CMainFrame::OnToolbarCreateNew(WPARAM wp,LPARAM lp)
@@ -610,8 +300,6 @@ LRESULT CMainFrame::OnToolbarCreateNew(WPARAM wp,LPARAM lp)
 
 void CMainFrame::OnApplicationLook(UINT id)
 {
-	COLORREF oc;
-
 	CWaitCursor wait;
 
 	theApp.m_nAppLook = id;
@@ -620,42 +308,35 @@ void CMainFrame::OnApplicationLook(UINT id)
 	{
 	case ID_VIEW_APPLOOK_WIN_2000:
 		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManager));
-		oc=RGB(240,240,240);
 		break;
 
 	case ID_VIEW_APPLOOK_OFF_XP:
 		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerOfficeXP));
-		oc=RGB(240,240,240);
 		break;
 
 	case ID_VIEW_APPLOOK_WIN_XP:
 		CMFCVisualManagerWindows::m_b3DTabsXPTheme = TRUE;
 		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerWindows));
-		oc=RGB(211,218,237);
 		break;
 
 	case ID_VIEW_APPLOOK_OFF_2003:
 		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerOffice2003));
 		CDockingManager::SetDockingMode(DT_SMART);
-		oc=RGB(141,183,226);
 		break;
 
 	case ID_VIEW_APPLOOK_VS_2005:
 		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerVS2005));
 		CDockingManager::SetDockingMode(DT_SMART);
-		oc=RGB(220,220,220);
 		break;
 
 	case ID_VIEW_APPLOOK_VS_2008:
 		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerVS2008));
 		CDockingManager::SetDockingMode(DT_SMART);
-		oc=RGB(236,238,252);
 		break;
 
 	case ID_VIEW_APPLOOK_WINDOWS_7:
 		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerWindows7));
 		CDockingManager::SetDockingMode(DT_SMART);
-		oc=RGB(211,218,237);
 		break;
 
 	default:
@@ -663,22 +344,18 @@ void CMainFrame::OnApplicationLook(UINT id)
 		{
 		case ID_VIEW_APPLOOK_OFF_2007_BLUE:
 			CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_LunaBlue);
-			oc=RGB(191,219,255);
 			break;
 
 		case ID_VIEW_APPLOOK_OFF_2007_BLACK:
 			CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_ObsidianBlack);
-			oc=RGB(83,83,83);
 			break;
 
 		case ID_VIEW_APPLOOK_OFF_2007_SILVER:
 			CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_Silver);
-			oc=RGB(208,212,221);
 			break;
 
 		case ID_VIEW_APPLOOK_OFF_2007_AQUA:
 			CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_Aqua);
-			oc=RGB(196,202,217);
 			break;
 		}
 
@@ -689,40 +366,11 @@ void CMainFrame::OnApplicationLook(UINT id)
 	RedrawWindow(NULL, NULL, RDW_ALLCHILDREN | RDW_INVALIDATE | RDW_UPDATENOW | RDW_FRAME | RDW_ERASE);
 
 	theApp.WriteInt(_T("ApplicationLook"), theApp.m_nAppLook);
-
-
-	//CanalyzerViewL *pavl=(CanalyzerViewL*)m_wndSplitter.GetPane(0,0);
-	//CanalyzerViewR *pavr=(CanalyzerViewR*)m_wndSplitter.GetPane(0,1);
-
-	CanalyzerView *pavl=(CanalyzerView*)m_wndSplitter.GetPane(0,0);
-	CanalyzerView *pavr=(CanalyzerView*)m_wndSplitter.GetPane(0,1);
-
-	::SendMessage(pavl->GetSafeHwnd(),MESSAGE_CHANGE_APPLOOK,(WPARAM)oc,NULL);
-	::SendMessage(pavr->GetSafeHwnd(),MESSAGE_CHANGE_APPLOOK,(WPARAM)oc,NULL);
-	//::SendMessage(m_wndSplitter.GetPane(0,1)->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
-	//::SendMessage(m_wndSplitter.GetPane(0,0)->GetSafeHwnd(),MESSAGE_UPDATE_RAW,NULL,NULL);
 }
 
 void CMainFrame::OnUpdateApplicationLook(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetRadio(theApp.m_nAppLook == pCmdUI->m_nID);
-}
-
-//void CMainFrame::OnViewCaptionBar()
-//{
-//	m_wndCaptionBar.ShowWindow(m_wndCaptionBar.IsVisible() ? SW_HIDE : SW_SHOW);
-//	RecalcLayout(FALSE);
-//}
-
-//void CMainFrame::OnUpdateViewCaptionBar(CCmdUI* pCmdUI)
-//{
-//	pCmdUI->SetCheck(m_wndCaptionBar.IsVisible());
-//}
-
-void CMainFrame::OnOptions()
-{
-	//bWaiting=false;
-	pst=running;
 }
 
 BOOL CMainFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParentWnd, CCreateContext* pContext) 
@@ -761,48 +409,13 @@ void CMainFrame::OnSettingChange(UINT uFlags, LPCTSTR lpszSection)
 }
 
 
-void CMainFrame::OnViewToolbar()
-{
-	// TODO: Add your command handler code here
-	this->ShowPane((CBasePane*)&m_wndToolBar,!m_wndToolBar.IsVisible(),false,false);
-}
-
-
-void CMainFrame::OnUpdateViewToolbar(CCmdUI *pCmdUI)
-{
-	// TODO: Add your command update UI handler code here
-	pCmdUI->SetCheck(m_wndToolBar.IsVisible());
-}
-
-
-
-void CMainFrame::OnViewAnalysisProgress()
-{
-	// TODO: Add your command handler code here
-	//m_wndOutput.ShowWindow(m_wndOutput.IsVisible() ? SW_HIDE : SW_SHOW);
-	//RecalcLayout(FALSE);
-
-	//m_wndOutput.ShowPane(m_wndOutput.IsVisible() ? FALSE : TRUE, FALSE, FALSE );
-	//RecalcLayout(FALSE);
-
-	this->ShowPane((CBasePane*)&m_wndOutput ,m_wndOutput.IsVisible() ? FALSE : TRUE, FALSE, FALSE);
-
-}
-
-
-void CMainFrame::OnUpdateViewAnalysisProgress(CCmdUI *pCmdUI)
-{
-	// TODO: Add your command update UI handler code here
-	pCmdUI->SetCheck(m_wndOutput.IsVisible());
-}
-
-
 void CMainFrame::OnSize(UINT nType, int cx, int cy)
 {
 	CFrameWndEx::OnSize(nType, cx, cy);
 
 	// TODO: Add your message handler code here
 
+	
 	if(m_bSplitterCreated){
 		int lc0,lc1,tmp;
 		m_wndSplitter.GetColumnInfo(0,lc0,tmp);
@@ -810,86 +423,6 @@ void CMainFrame::OnSize(UINT nType, int cx, int cy)
 		m_wndSplitter.SetColumnInfo(0,(lc0+lc1)*3/5,10);
 		m_wndSplitter.RecalcLayout();
 	}
-}
-
-
-
-
-void CMainFrame::OnUpdateAnalysisMethodsetup(CCmdUI *pCmdUI)
-{
-	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(/*pst==stop &&*/ al.ual[userIndex].au!=UserAccount::authority::guest);
-}
-
-
-void CMainFrame::OnUpdateAnalysisStartanalysis(CCmdUI *pCmdUI)
-{
-	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=UserAccount::authority::guest);
-}
-
-
-void CMainFrame::OnUpdateAnalysisPause(CCmdUI *pCmdUI)
-{
-	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst!=stop && al.ual[userIndex].au!=UserAccount::authority::guest);
-}
-
-
-void CMainFrame::OnUpdateAnalysisAbortanalysis(CCmdUI *pCmdUI)
-{
-	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst!=stop && al.ual[userIndex].au!=UserAccount::authority::guest);
-}
-
-
-void CMainFrame::OnUpdateAnalysisReport(CCmdUI *pCmdUI)
-{
-	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=UserAccount::authority::guest);
-}
-
-
-void CMainFrame::OnUpdateOptionsPlotsettings(CCmdUI *pCmdUI)
-{
-	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=UserAccount::authority::guest);
-}
-
-
-void CMainFrame::OnUpdateViewFitwindow(CCmdUI *pCmdUI)
-{
-	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst!=running && al.ual[userIndex].au!=UserAccount::authority::guest);
-}
-
-
-void CMainFrame::OnUpdateViewDatacursor(CCmdUI *pCmdUI)
-{
-	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst!=running && al.ual[userIndex].au==UserAccount::authority::admin);
-
-	pCmdUI->SetCheck(((CanalyzerView*)GetActiveView())->pw.bMouseCursor);
-
-}
-
-
-void CMainFrame::OnUpdateAnalysisCompute(CCmdUI *pCmdUI)
-{
-	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst!=running 
-		//&& au!=guest
-		);
-}
-
-
-void CMainFrame::OnAnalysisCompute()
-{
-	// TODO: Add your command handler code here
-
-	CanalyzerViewR *pavr=(CanalyzerViewR*)m_wndSplitter.GetPane(0,1);
-	//::SendMessage(pavr->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
-	::SendMessage(pavr->GetSafeHwnd(),MESSAGE_COMPUTE_RESULT,NULL,NULL);
 }
 
 
@@ -904,9 +437,9 @@ void CMainFrame::OnSecurityLogin()
 		userIndex=ld.usridx;
 		//al=ld.al;
 		//au=ld.al.ual[ld.usridx].au;
-		CanalyzerView *pavl=(CanalyzerView*)m_wndSplitter.GetPane(0,0);
-		CanalyzerView *pavr=(CanalyzerView*)m_wndSplitter.GetPane(0,1);
-		pavl->pw.bMouseCursor=pavr->pw.bMouseCursor=(al.ual[userIndex].au==UserAccount::authority::admin);
+		//CanalyzerView *pavl=(CanalyzerView*)m_wndSplitter.GetPane(0,0);
+		//CanalyzerView *pavr=(CanalyzerView*)m_wndSplitter.GetPane(0,1);
+		//pavl->pw.bMouseCursor=pavr->pw.bMouseCursor=(al.ual[userIndex].au==UserAccount::authority::admin);
 
 	}
 
@@ -937,519 +470,4 @@ void CMainFrame::OnSecurityUseraccounts()
 	}
 
 
-}
-
-
-void CMainFrame::OnUpdateFilePrint(CCmdUI *pCmdUI)
-{
-	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=UserAccount::authority::guest);
-}
-
-
-void CMainFrame::OnUpdateFilePrintPreview(CCmdUI *pCmdUI)
-{
-	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=UserAccount::authority::guest);
-}
-
-
-void CMainFrame::OnUpdateFilePrintSetup(CCmdUI *pCmdUI)
-{
-	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=UserAccount::authority::guest);
-}
-
-
-void CMainFrame::OnUpdateFileSave(CCmdUI *pCmdUI)
-{
-	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=UserAccount::authority::guest);
-}
-
-
-void CMainFrame::OnUpdateFileNew(CCmdUI *pCmdUI)
-{
-	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst==stop && al.ual[userIndex].au!=UserAccount::authority::guest);
-}
-
-
-void CMainFrame::OnHelpHelptopics()
-{
-	// TODO: Add your command handler code here
-
-	AfxMessageBox(L"help");
-}
-
-
-void CMainFrame::OnUpdateFileOpen(CCmdUI *pCmdUI)
-{
-	// TODO: Add your command update UI handler code here
-	pCmdUI->Enable(pst==stop);
-}
-
-
-void CMainFrame::OnMove(int x, int y)
-{
-	CFrameWndEx::OnMove(x, y);
-
-	// TODO: Add your message handler code here
-	//if(m_bSplitterCreated){
-	//CanalyzerView *pavl=(CanalyzerView*)m_wndSplitter.GetPane(0,0);
-	//CanalyzerView *pavr=(CanalyzerView*)m_wndSplitter.GetPane(0,1);
-
-	////if(pavl!=NULL){
-	////	pavl->PostMessageW(WM_SIZE,x,y);
-	////}
-
-	//LPARAM pt=MAKELPARAM((short)(x),(short)(y));
-	//::PostMessage(pavl->GetSafeHwnd(),WM_MOVE,NULL,pt);
-
-	//::PostMessage(pavr->GetSafeHwnd(),WM_MOVE,NULL,pt);
-
-	//}
-}
-
-
-afx_msg LRESULT CMainFrame::OnMessageUpdateDol(WPARAM wParam, LPARAM lParam)
-{
-	CanalyzerViewL* pavl=((CanalyzerViewL*)(m_wndSplitter.GetPane(0,0)));
-	CanalyzerDoc* pDoc=pavl->GetDocument();	 
-
-	//double v2a;
-	//BYTE outstep;
-	//size_t nextidx;
-	//size_t nowidx;
-
-	CSingleLock singleLock(&m_CritSection);
-	singleLock.Lock();
-	if (singleLock.IsLocked())  // Resource has been locked
-	{
-		//...use the shared resource...
-		pDoc->ComputeStateData();
-		// Now that we are finished, 
-		// unlock the resource for others.
-		singleLock.Unlock();
-	}
-
-	TRACE(L"rs=%d,ci=%d,ni=%d\n",pDoc->runstate,pDoc->currentSAPIndex,pDoc->nextSAPIndex);
-
-
-	OnMessageCloseSapSheet(NULL,NULL);
-
-
-	//pDoc->UpdateALL();
-
-	//
-
-	//switch(pDoc->runstate){
-	//case 0:
-	//	{
-	//		CString str;
-	//		str.Format(L"complete all");
-	//					pst=pause;
-	//		ShowWaitDlg(str);
-	//		//OnAnalysisPause();
-	//		//wd->m_tips=str;
-	//		//wd->UpdateData(FALSE);		
-	//	}
-	//	break;
-	//case 1:
-	//	break;
-	//case 2:
-	//	break;
-	//case 3:
-	//	{
-	//		AfxMessageBox(IDS_STRING_STEP_ERROR);
-	//		OnAnalysisAbortanalysis();
-	//	}
-	//	break;
-	//case 4:
-	//	{
-	//		AfxMessageBox(IDS_STRING_STEP_ERROR);
-	//		OnAnalysisAbortanalysis();
-	//	}
-	//	break;
-	//case 5:
-	//	{		
-	//		CString str;
-	//		str.Format(L"add solution %g ml",pDoc->VtoAdd);
-
-	//					pst=pause;
-	//		ShowWaitDlg(str);
-	//		//OnAnalysisPause();
-
-	//		//wd->m_tips=str;
-	//		//wd->UpdateData(FALSE);
-	//	}
-	//	break;
-	//case 6:
-	//	break;
-
-	//case 7:
-	//	{
-	//		CString str;
-	//		str.Format(L"complete all");
-	//		//OnAnalysisPause();
-
-	//		pst=pause;
-	//		ShowWaitDlg(str);
-
-	//		//wd->m_tips=str;
-	//		//wd->UpdateData(FALSE);		
-	//	}
-	//	break;
-	//default:
-	//	return 100;
-	//}
-
-	return 0;
-}
-
-
-
-void CMainFrame::OnAnalysisStartanalysis()
-{
-	// TODO: Add your command handler code here
-
-	mypara * pa1=new mypara;
-	pa1->leftp=(CanalyzerViewL*)m_wndSplitter.GetPane(0,0);
-	pa1->rightp=(CanalyzerViewR*)m_wndSplitter.GetPane(0,1);
-	//pa1->outw=this->GetOutputWnd();
-	//pa1->cba=this->GetCaptionBar();
-	pa1->ol=this->GetOutputWnd()->GetListCtrl();
-	//pa1->psta=&pst;
-	//pa1->wd=wd;
-	pa1->mf=this;
-	//
-
-	//
-	//	//CWinThread *pWriteA;
-	//
-	//	//HANDLE hThread;
-	//
-	pWriteA=AfxBeginThread(PROCESS,
-		(LPVOID)(pa1),
-		THREAD_PRIORITY_NORMAL,
-		0,
-		CREATE_SUSPENDED);
-	//
-	//	//hThread=pWriteA->m_hThread;
-	//
-	//	//CloseHandle(hThread);
-	pWriteA->ResumeThread();
-	//
-	//	//PROCESS((LPVOID)(pa1));
-	//
-	//
-	pst=running;
-
-}
-
-
-void CMainFrame::OnAnalysisAbortanalysis()
-{
-	// TODO: Add your command handler code here
-	if(::TerminateThread(pWriteA->m_hThread,0)!=FALSE){
-
-		pst=stop;
-		//::SendMessage(this->GetCaptionBar()->GetSafeHwnd(),MESSAGE_OVER,NULL,NULL);
-		HideWaitDlg();
-	}
-
-}
-
-
-void CMainFrame::OnAnalysisPause()
-{
-	// TODO: Add your command handler code here
-
-	//DWORD res=bWaiting?ResumeThread(pWriteA->m_hThread):SuspendThread(pWriteA->m_hThread);
-
-	//if(res!=(DWORD)(-1))
-	//	bWaiting=!bWaiting;
-
-	//if(bWaiting){
-	//	ResumeThread(pWriteA->m_hThread);
-	//	bWaiting=false;
-	//}
-	//else{
-	//	SuspendThread(pWriteA->m_hThread);	
-	//	bWaiting=true;
-	//}
-
-	switch(pst){
-	case running:
-		if(SuspendThread(pWriteA->m_hThread)!=(DWORD)(-1)){
-			//::SendMessage(this->GetCaptionBar()->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,NULL,NULL);
-			//pst=pause;
-			OnControls2();
-		}
-
-
-
-		break;
-	case pause:
-		if(ResumeThread(pWriteA->m_hThread)!=(DWORD)(-1)){
-			//::SendMessage(this->GetCaptionBar()->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
-
-			pst=running;
-			HideWaitDlg();
-
-		}
-
-
-
-
-		break;
-	default:
-		break;
-	}
-
-}
-
-
-
-afx_msg LRESULT CMainFrame::OnMessageWaitResponse(WPARAM wParam, LPARAM lParam)
-{
-
-	//wd=new WaitDlg();
-	//wd->pst=&pst;
-	//wd->Create(IDD_DIALOG_WAIT);
-	//wd->ShowWindow(SW_SHOW);
-
-	OnControls2();
-
-	CString str((wchar_t*)wParam);
-
-	ShowWaitDlg(str);
-
-	return 0;
-}
-
-
-void CMainFrame::OnControls2()
-{
-	// TODO: Add your command handler code here
-
-	pst=pause;
-
-	if(wd==NULL){
-		wd=new WaitDlg();
-		//wd->pst=&pst;
-		wd->Create(IDD_DIALOG_WAIT);
-	}
-
-	wd->ShowWindow(SW_SHOW);
-	::SetWindowPos(wd->GetSafeHwnd(),
-		//HWND_TOPMOST,
-		HWND_TOP,
-		0,0,0,0,
-		SWP_NOMOVE|SWP_NOSIZE);
-
-}
-
-
-afx_msg LRESULT CMainFrame::OnMessageChangeAnp(WPARAM wParam, LPARAM lParam)
-{
-
-
-	return 0;
-}
-
-
-void CMainFrame::OnAnalysisMethodsetup()
-{
-	// TODO: Add your command handler code here
-
-	//POSITION pos = GetFirstViewPosition();
-	//CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));
-	//CMainFrame *mf=(CMainFrame*)(lv->GetParentFrame());
-
-	CanalyzerDoc *pDoc=(CanalyzerDoc*)GetActiveDocument();
-
-	if(pst==stop){
-
-
-		// 创建属性表对象   
-		CString str;
-		str.LoadStringW(IDS_STRING_ANALYSIS_SETUP);
-		//CPropertySheet sheet(str);
-		PropertySheetA1 sheet(str);
-
-		AnalysisParametersPage appage;
-		appage.para=pDoc->p1;
-		sheet.AddPage(&appage);
-
-		CVParametersPage cppage;
-		cppage.para=pDoc->p2;
-		sheet.AddPage(&cppage);
-
-		SolutionAdditionParametersPageA sppage;		
-		sppage.para=pDoc->p3;
-		sheet.AddPage(&sppage);
-
-
-
-		// 打开模态向导对话框   
-		if(sheet.DoModal()==IDOK){
-			pDoc->p1=appage.para;
-			pDoc->p2=cppage.para;
-			pDoc->p3=sppage.para;
-
-		}
-
-	}
-	else{
-
-		CSingleLock singleLock(&(m_CritSection));
-		if(singleLock.Lock())
-		{
-
-			singleLock.Unlock();
-			SolutionAdditionParametersPageB *sppage;
-					AnalysisParametersPage *appage;
-		//appage.para=pDoc->p1;
-		//sheet.AddPage(&appage);
-
-		CVParametersPage *cppage;
-		//cppage.para=pDoc->p2;
-		//sheet.AddPage(&cppage);
-			if(psheetml==NULL){
-				psheetml=new PropertySheetA1ML(IDS_STRING_ANALYSIS_SETUP,this,2);
-				sppage=new SolutionAdditionParametersPageB();
-				appage=new AnalysisParametersPage();
-				cppage=new CVParametersPage();
-				//appage->dwStyle|=WS_DISABLED;
-				//cppage->dwStyle|=WS_DISABLED;
-				psheetml->AddPage(appage);
-				psheetml->AddPage(cppage);
-				psheetml->AddPage(sppage);
-				//psheetml->Create();
-			}
-			//else{
-			sppage=(SolutionAdditionParametersPageB*)(psheetml->GetPage(2));
-			//	sppage->para1.saplist.assign(p3.saplist.begin()+nextSAPIndex,p3.saplist.end());
-			//	//sppage->para1=p3todo;
-			//	sppage->para0=p3done;
-			//	sppage->pDoc=this;
-			//}
-
-			if(pDoc->bChangeSAP){
-				sppage->para=pDoc->p3todo;
-			}
-			else{
-				sppage->para.saplist.assign(pDoc->p3.saplist.begin()+pDoc->nextSAPIndex,pDoc->p3.saplist.end());
-			}
-			//sppage->para0=pDoc->p3done;
-			sppage->pDoc=pDoc;
-			sppage->mf=this;
-
-			////if(psheetml->GetSafeHwnd()){
-			//	//sppage->SetList();			
-			//	//psheetml->ShowWindow(SW_SHOW);
-			////	psheetml->CenterWindow();			
-			////}
-			////else{
-			psheetml->Create();
-			////}
-
-			::SetWindowPos(psheetml->GetSafeHwnd(),
-				//HWND_TOPMOST,
-				HWND_TOP,
-				0,0,0,0,
-				SWP_NOMOVE|SWP_NOSIZE); 
-
-		}
-	}
-}
-
-
-afx_msg LRESULT CMainFrame::OnMessageCloseSapSheet(WPARAM wParam, LPARAM lParam)
-{
-
-	CanalyzerDoc *pDoc=(CanalyzerDoc*)GetActiveDocument();
-
-	pDoc->UpdateALL();
-
-	switch(pDoc->runstate){
-	case 0:
-		{
-			CString str;
-			str.Format(L"complete all");
-			pst=pause;
-			ShowWaitDlg(str);
-		}
-		break;
-	case 1:
-		break;
-	case 2:
-		break;
-	case 3:
-		{
-			AfxMessageBox(IDS_STRING_STEP_ERROR);
-			OnAnalysisAbortanalysis();
-		}
-		break;
-	case 4:
-		{
-			AfxMessageBox(IDS_STRING_STEP_ERROR);
-			OnAnalysisAbortanalysis();
-		}
-		break;
-	case 5:
-		{		
-			CString str;
-			str.Format(L"add solution %g ml",pDoc->VtoAdd);
-			pst=pause;
-			ShowWaitDlg(str);
-		}
-		break;
-	case 6:
-		break;
-
-	case 7:
-		{
-			CString str;
-			str.Format(L"complete all");
-			pst=pause;
-			ShowWaitDlg(str);
-		}
-		break;
-	default:
-		return 100;
-	}
-
-	return 0;
-}
-
-
-void CMainFrame::ShowWaitDlg(CString tips)
-{
-	if(wd==NULL){
-		wd=new WaitDlg();
-		wd->Create(IDD_DIALOG_WAIT);
-	}
-
-	wd->ShowWindow(SW_SHOW);
-	::SetWindowPos(wd->GetSafeHwnd(),
-		//HWND_TOPMOST,
-		HWND_TOP,
-		0,0,0,0,
-		SWP_NOMOVE|SWP_NOSIZE);
-
-	wd->m_tips=tips;
-	wd->UpdateData(FALSE);
-}
-
-
-void CMainFrame::HideWaitDlg(void)
-{
-	if(wd!=NULL){
-		//wd->ShowWindow(SW_HIDE);
-		wd->DestroyWindow();
-		delete wd;
-		wd=NULL;
-	}
 }

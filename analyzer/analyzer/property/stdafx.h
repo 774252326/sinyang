@@ -36,8 +36,6 @@
 #endif // _AFX_NO_AFXCMN_SUPPORT
 
 #include <afxcontrolbars.h>     // MFC support for ribbons and control bars
-#include <afx.h>
-#include <afxdlgs.h>
 
 
 
@@ -57,7 +55,9 @@
 #endif
 #endif
 
-
+#include <cfloat>
+#include <afxdlgs.h>
+#include <afx.h>
 
 #define MESSAGE_BUSY			WM_USER+1
 #define MESSAGE_WAIT_RESPONSE	WM_USER+2
@@ -77,8 +77,3 @@
 #define MESSAGE_CHANGE_ANP		WM_USER+16
 #define MESSAGE_RAW_CHANGE		WM_USER+17
 #define MESSAGE_CLOSE_SAP_SHEET	WM_USER+18
-
-
-
- //MFC临界区类对象
-//CCriticalSection g_clsCriticalSection;

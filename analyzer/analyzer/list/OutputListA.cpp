@@ -4,7 +4,7 @@
 //#include "../func.h"
 //#include "../OutputWnd.h"
 //#include "../MainFrm.h"
-#include "../analyzerDoc.h"
+//#include "../analyzerDoc.h"
 
 
 
@@ -148,27 +148,27 @@ void COutputListA::ShowDOL()
 afx_msg LRESULT COutputListA::OnMessageShowDol(WPARAM wParam, LPARAM lParam)
 {
 
-	//MFC临界区类对象
-	//CCriticalSection g_clsCriticalSection;
+	////MFC临界区类对象
+	////CCriticalSection g_clsCriticalSection;
 
-	//	// 进入临界区
-	//g_clsCriticalSection.Lock();
-	CanalyzerDoc *ow=(CanalyzerDoc*)lParam;
+	////	// 进入临界区
+	////g_clsCriticalSection.Lock();
+	//CanalyzerDoc *ow=(CanalyzerDoc*)lParam;
 
-	CSingleLock singleLock(&(ow->m_CritSection));
-	singleLock.Lock();
-	if (singleLock.IsLocked())  // Resource has been locked
-	{
+	//CSingleLock singleLock(&(ow->m_CritSection));
+	//singleLock.Lock();
+	//if (singleLock.IsLocked())  // Resource has been locked
+	//{
 
-		dol.assign(ow->dol.begin(),ow->dol.end());
+	//	dol.assign(ow->dol.begin(),ow->dol.end());
 
-		//	// 离开临界区
-		//g_clsCriticalSection.Unlock();
+	//	//	// 离开临界区
+	//	//g_clsCriticalSection.Unlock();
 
-		// Now that we are finished, 
-		// unlock the resource for others.
-		singleLock.Unlock();
-	}
+	//	// Now that we are finished, 
+	//	// unlock the resource for others.
+	//	singleLock.Unlock();
+	//}
 
 	this->ShowDOL();
 

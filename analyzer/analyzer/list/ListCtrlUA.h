@@ -1,7 +1,8 @@
 #pragma once
 #include "listctrla.h"
 //#include "UserAccount.h"
-#include "../struct/UserAccount.hpp"
+//#include "../struct/UserAccount.hpp"
+#include "../user/UserAccount.hpp"
 
 class ListCtrlUA :
 	public ListCtrlA

@@ -55,9 +55,7 @@
 #endif
 #endif
 
-#include <cfloat>
-#include <afxdlgs.h>
-#include <afx.h>
+
 
 #define MESSAGE_BUSY			WM_USER+1
 #define MESSAGE_WAIT_RESPONSE	WM_USER+2

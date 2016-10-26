@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{29B540C9-E707-47C0-9346-86F85B174D3C}</ProjectGuid>
+    <ProjectGuid>{EC4B1907-66D5-4FD3-8496-60A714B63AC9}</ProjectGuid>
     <RootNamespace>analyzer</RootNamespace>
     <Keyword>MFCProj</Keyword>
   </PropertyGroup>
@@ -99,93 +99,42 @@
     <None Include="res\analyzer.ico" />
     <None Include="res\analyzer.rc2" />
     <None Include="res\analyzerDoc.ico" />
-    <None Include="res\astri.bmp" />
-    <None Include="res\csp.bmp" />
-    <None Include="res\dtr.bmp" />
-    <None Include="res\hottoolb.bmp" />
-    <None Include="res\icon2.ico" />
-    <None Include="res\icon3.ico" />
-    <None Include="res\icon4.ico" />
-    <None Include="res\IMG_20131002_154626_4.bmp" />
-    <None Include="res\index_02_01_01.bmp" />
-    <None Include="res\info.bmp" />
-    <None Include="res\menutoolb.bmp" />
-    <None Include="res\menu_img.bmp" />
-    <None Include="res\messagebar_1.bmp" />
-    <None Include="res\messagebar_2.bmp" />
     <None Include="res\output_wnd.ico" />
     <None Include="res\output_wnd_hc.ico" />
-    <None Include="res\Panorama16.bmp" />
-    <None Include="res\Panorama24.bmp" />
-    <None Include="res\Panorama32.bmp" />
-    <None Include="res\qq.bmp" />
-    <None Include="res\qq16.bmp" />
-    <None Include="res\qq16.ico" />
-    <None Include="res\RDE-logo.ico" />
     <None Include="res\Toolbar.bmp" />
     <None Include="res\Toolbar256.bmp" />
     <None Include="UserImages.bmp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AccountComboBox.h" />
-    <ClInclude Include="AnalysisParametersPage.h" />
     <ClInclude Include="analyzer.h" />
     <ClInclude Include="analyzerDoc.h" />
     <ClInclude Include="analyzerView.h" />
-    <ClInclude Include="analyzerViewL.h" />
-    <ClInclude Include="analyzerViewR.h" />
-    <ClInclude Include="calfunc.h" />
-    <ClInclude Include="ComputeDlg.h" />
-    <ClInclude Include="CVParametersPage.h" />
-    <ClInclude Include="ExportDataDlg.h" />
     <ClInclude Include="filefunc.h" />
-    <ClInclude Include="ListCtrlLine.h" />
     <ClInclude Include="list\ComboItem.h" />
     <ClInclude Include="list\EditB.h" />
     <ClInclude Include="list\EditInt.h" />
     <ClInclude Include="list\EditNum.h" />
+    <ClInclude Include="list\EditNum.hpp" />
     <ClInclude Include="list\EditReal.h" />
     <ClInclude Include="list\ListCtrlA.h" />
     <ClInclude Include="list\ListCtrlAA.h" />
-    <ClInclude Include="list\ListCtrlLS.h" />
-    <ClInclude Include="list\ListCtrlSAP.h" />
     <ClInclude Include="list\ListCtrlUA.h" />
     <ClInclude Include="list\OutputListA.h" />
-    <ClInclude Include="LoginDlg.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="OutputWnd.h" />
-    <ClInclude Include="ParaList.h" />
-    <ClInclude Include="pdfout.h" />
-    <ClInclude Include="PlotSettingPageB.h" />
-    <ClInclude Include="PlotSettingPageC.h" />
-    <ClInclude Include="plot\PlotWnd.h" />
-    <ClInclude Include="PropertySheetA.h" />
-    <ClInclude Include="PropertySheetA1ML.h" />
+    <ClInclude Include="property\PropertySheetA.h" />
+    <ClInclude Include="property\UserAccountPage.h" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="SolutionAdditionParametersPageA.h" />
-    <ClInclude Include="SolutionAdditionParametersPageB.h" />
-    <ClInclude Include="StartDlg.hpp" />
-    <ClInclude Include="StatePara.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="UserAccountPage.h" />
-    <ClInclude Include="Value.hpp" />
-    <ClInclude Include="WaitDlg.h" />
+    <ClInclude Include="user\AccountComboBox.h" />
+    <ClInclude Include="user\LoginDlg.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AccountComboBox.cpp" />
-    <ClCompile Include="AnalysisParametersPage.cpp" />
     <ClCompile Include="analyzer.cpp" />
     <ClCompile Include="analyzerDoc.cpp" />
     <ClCompile Include="analyzerView.cpp" />
-    <ClCompile Include="analyzerViewL.cpp" />
-    <ClCompile Include="analyzerViewR.cpp" />
-    <ClCompile Include="calfunc.cpp" />
-    <ClCompile Include="ComputeDlg.cpp" />
-    <ClCompile Include="CVParametersPage.cpp" />
-    <ClCompile Include="ExportDataDlg.cpp" />
     <ClCompile Include="filefunc.cpp" />
-    <ClCompile Include="ListCtrlLine.cpp" />
     <ClCompile Include="list\ComboItem.cpp" />
     <ClCompile Include="list\EditB.cpp" />
     <ClCompile Include="list\EditInt.cpp" />
@@ -193,29 +142,18 @@
     <ClCompile Include="list\EditReal.cpp" />
     <ClCompile Include="list\ListCtrlA.cpp" />
     <ClCompile Include="list\ListCtrlAA.cpp" />
-    <ClCompile Include="list\ListCtrlLS.cpp" />
-    <ClCompile Include="list\ListCtrlSAP.cpp" />
     <ClCompile Include="list\ListCtrlUA.cpp" />
     <ClCompile Include="list\OutputListA.cpp" />
-    <ClCompile Include="LoginDlg.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="OutputWnd.cpp" />
-    <ClCompile Include="ParaList.cpp" />
-    <ClCompile Include="pdfout.cpp" />
-    <ClCompile Include="PlotSettingPageB.cpp" />
-    <ClCompile Include="PlotSettingPageC.cpp" />
-    <ClCompile Include="plot\PlotWnd.cpp" />
-    <ClCompile Include="PropertySheetA.cpp" />
-    <ClCompile Include="PropertySheetA1ML.cpp" />
-    <ClCompile Include="SolutionAdditionParametersPageA.cpp" />
-    <ClCompile Include="SolutionAdditionParametersPageB.cpp" />
-    <ClCompile Include="StatePara.cpp" />
+    <ClCompile Include="property\PropertySheetA.cpp" />
+    <ClCompile Include="property\UserAccountPage.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="UserAccountPage.cpp" />
-    <ClCompile Include="WaitDlg.cpp" />
+    <ClCompile Include="user\AccountComboBox.cpp" />
+    <ClCompile Include="user\LoginDlg.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="analyzer.rc" />
@@ -223,9 +161,4 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
-  <ProjectExtensions>
-    <VisualStudio>
-      <UserProperties RESOURCE_FILE="analyzer.rc" />
-    </VisualStudio>
-  </ProjectExtensions>
 </Project>

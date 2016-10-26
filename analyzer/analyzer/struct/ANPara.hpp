@@ -7,9 +7,40 @@
 class ANPara : public CObject
 {
 public:
+	static size_t GetStepCount(int atype)
+	{
+		switch(atype){
+		case 1:
+			return 2;
+		case 2:
+			return 2;
+		case 3:
+			return 2;
+		case 4:
+			return 4;
+		case 5:
+			return 3;
+		case 6:
+			return 3;
+		case 7:
+			return 2;
+		case 8:
+			return 3;
+		case 9:
+			return 2;
+		case 10:
+			return 3;
+		case 11:
+			return 3;
+		case 12:
+			return 4;
+		default:
+			return 0;
+		}
+	};
+public:
 	int analysistype;
 	double evaluationratio;
-	//double endpointratio;
 	int calibrationfactortype;
 	double calibrationfactor;
 	double interceptvalue;
@@ -18,7 +49,6 @@ public:
 	ANPara()
 		: analysistype(0)
 		, evaluationratio(0.8)
-		//, endpointratio(1)
 		, calibrationfactortype(0)
 		, calibrationfactor(1)
 		, interceptvalue(1)
@@ -30,7 +60,6 @@ public:
 	void operator=(const ANPara &src){
 		analysistype=src.analysistype;
 		evaluationratio=src.evaluationratio;
-		//endpointratio=src.endpointratio;
 		calibrationfactortype=src.calibrationfactortype;
 		calibrationfactor=src.calibrationfactor;
 		interceptvalue=src.interceptvalue;
@@ -44,7 +73,6 @@ public:
 		{	// storing code
 			ar<<analysistype
 				<<evaluationratio
-				//<<endpointratio
 				<<calibrationfactortype
 				<<calibrationfactor
 				<<calibrationfilepath
@@ -54,13 +82,14 @@ public:
 		{	// loading code
 			ar>>analysistype
 				>>evaluationratio
-				//>>endpointratio
 				>>calibrationfactortype
 				>>calibrationfactor
 				>>calibrationfilepath
 				>>interceptvalue;
 		}
 	};
+
+	size_t GetStepCount() const{ return GetStepCount(this->analysistype); };
 };
 
 

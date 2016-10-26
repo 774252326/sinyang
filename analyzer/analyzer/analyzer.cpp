@@ -11,9 +11,9 @@
 #include "analyzerDoc.h"
 #include "analyzerView.h"
 
-#include "LoginDlg.h"
+#include "user\StartDlg.hpp"
+#include "user\LoginDlg.h"
 #include "filefunc.h"
-#include "StartDlg.hpp"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -113,13 +113,12 @@ BOOL CanalyzerApp::InitInstance()
 		RUNTIME_CLASS(CMFCToolTipCtrl), &ttParams);
 
 
+
+
 	StartDlg *sd=new StartDlg();
 	sd->Create(IDD_DIALOG_START);
 	sd->ShowWindow(SW_SHOW);
 
-	int a=-3;
-	size_t aa=a;
-	int b=aa;
 
 	Sleep(500);
 
@@ -132,49 +131,51 @@ BOOL CanalyzerApp::InitInstance()
 		return FALSE;
 	}
 
-	if(ld.DoModal()==IDOK){
+		if(ld.DoModal()==IDOK){
 
 		sd->ShowWindow(SW_HIDE);
 		delete sd;
 		sd=NULL;
 
-		// Register the application's document templates.  Document templates
-		//  serve as the connection between documents, frame windows and views
-		CSingleDocTemplate* pDocTemplate;
-		pDocTemplate = new CSingleDocTemplate(
-			IDR_MAINFRAME,
-			RUNTIME_CLASS(CanalyzerDoc),
-			RUNTIME_CLASS(CMainFrame),       // main SDI frame window
-			RUNTIME_CLASS(CanalyzerView));
-		if (!pDocTemplate)
-			return FALSE;
-		AddDocTemplate(pDocTemplate);
 
 
-		// Parse command line for standard shell commands, DDE, file open
-		CCommandLineInfo cmdInfo;
-		ParseCommandLine(cmdInfo);
 
-		// Enable DDE Execute open
-		EnableShellOpen();
-		RegisterShellFileTypes(TRUE);
-
-
-		// Dispatch commands specified on the command line.  Will return FALSE if
-		// app was launched with /RegServer, /Register, /Unregserver or /Unregister.
-		if (!ProcessShellCommand(cmdInfo))
-			return FALSE;
-
-		// The one and only window has been initialized, so show and update it
-		m_pMainWnd->ShowWindow(SW_SHOW);
-		m_pMainWnd->UpdateWindow();
-		// call DragAcceptFiles only if there's a suffix
-		//  In an SDI app, this should occur after ProcessShellCommand
-		// Enable drag/drop open
-		m_pMainWnd->DragAcceptFiles();
+	// Register the application's document templates.  Document templates
+	//  serve as the connection between documents, frame windows and views
+	CSingleDocTemplate* pDocTemplate;
+	pDocTemplate = new CSingleDocTemplate(
+		IDR_MAINFRAME,
+		RUNTIME_CLASS(CanalyzerDoc),
+		RUNTIME_CLASS(CMainFrame),       // main SDI frame window
+		RUNTIME_CLASS(CanalyzerView));
+	if (!pDocTemplate)
+		return FALSE;
+	AddDocTemplate(pDocTemplate);
 
 
-		((CMainFrame*)m_pMainWnd)->userIndex=ld.usridx;
+	// Parse command line for standard shell commands, DDE, file open
+	CCommandLineInfo cmdInfo;
+	ParseCommandLine(cmdInfo);
+
+	// Enable DDE Execute open
+	EnableShellOpen();
+	RegisterShellFileTypes(TRUE);
+
+
+	// Dispatch commands specified on the command line.  Will return FALSE if
+	// app was launched with /RegServer, /Register, /Unregserver or /Unregister.
+	if (!ProcessShellCommand(cmdInfo))
+		return FALSE;
+
+	// The one and only window has been initialized, so show and update it
+	m_pMainWnd->ShowWindow(SW_SHOW);
+	m_pMainWnd->UpdateWindow();
+	// call DragAcceptFiles only if there's a suffix
+	//  In an SDI app, this should occur after ProcessShellCommand
+	// Enable drag/drop open
+	m_pMainWnd->DragAcceptFiles();
+
+	((CMainFrame*)m_pMainWnd)->userIndex=ld.usridx;
 		((CMainFrame*)m_pMainWnd)->al=ld.al;
 
 		return TRUE;
@@ -182,7 +183,6 @@ BOOL CanalyzerApp::InitInstance()
 	else{
 		return FALSE;
 	}
-
 }
 
 int CanalyzerApp::ExitInstance()
@@ -203,13 +203,13 @@ class CAboutDlg : public CDialogEx
 public:
 	CAboutDlg();
 
-	// Dialog Data
+// Dialog Data
 	enum { IDD = IDD_ABOUTBOX };
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
-	// Implementation
+// Implementation
 protected:
 	DECLARE_MESSAGE_MAP()
 };
