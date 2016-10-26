@@ -67,6 +67,21 @@
     <None Include="res\menu_img.bmp">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="res\Panorama16.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\Panorama24.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\Panorama32.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\messagebar_1.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\messagebar_2.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="analyzer.h">

@@ -91,7 +91,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	//---------------------------------
 	// Set toolbar and menu image size:
 	//---------------------------------
-	CMFCToolBar::SetSizes (CSize (36, 30), CSize (23, 23));
+	CMFCToolBar::SetSizes (CSize (36, 30), CSize (24, 24));
 	CMFCToolBar::SetMenuSizes (CSize (22, 22), CSize (16, 16));
 
 
@@ -131,12 +131,12 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		//, uiToolbarColdID
 		, 0
 		//, 0
-		, IDB_BITMAP3
+		, IDB_BITMAP4
 		//, uiToolbarColdID
 		, FALSE /* Not locked */
 		, 0
 		, 0
-		, IDB_BITMAP1
+		, IDB_BITMAP5
 		//, uiToolbarColdID
 		//, 0
 		))
@@ -340,6 +340,7 @@ BOOL CMainFrame::CreateCaptionBar()
 	m_wndCaptionBar.SetTextA(strTemp);
 
 	m_wndCaptionBar.SetBitmap(IDB_INFO, RGB(255, 255, 255), FALSE, CMFCCaptionBar::ALIGN_LEFT);
+		//m_wndCaptionBar.SetBitmap(IDB_INFO1, RGB(0, 0, 0), FALSE, CMFCCaptionBar::ALIGN_LEFT);
 	bNameValid = strTemp.LoadString(IDS_CAPTION_IMAGE_TIP);
 	ASSERT(bNameValid);
 	bNameValid = strTemp2.LoadString(IDS_CAPTION_IMAGE_TEXT);

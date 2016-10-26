@@ -24,7 +24,7 @@ int pdfout(pdflib::PDFlib &p, const std::vector<DataOut> &dol){
 	str.LoadStringW(IDS_OUTPUT_WND);
 
 	const std::wstring headertext = (LPCWSTR)str;
-		//L"Table header (centered across all columns)";
+	//L"Table header (centered across all columns)";
 	std::wstring result;
 	std::wostringstream optlist;
 
@@ -64,7 +64,7 @@ int pdfout(pdflib::PDFlib &p, const std::vector<DataOut> &dol){
 
 		tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
 	}
-	
+
 
 	for (row++; row <= rowmax; row++) {
 
@@ -251,7 +251,7 @@ int pdfout1(pdflib::PDFlib &p, const SAPara &para){
 	str.LoadStringW(IDS_STRING_ADDITION_SOLUTION_PARA);
 
 	const std::wstring headertext = (LPCWSTR)str;
-		//L"Table header (centered across all columns)";
+	//L"Table header (centered across all columns)";
 	std::wstring result;
 	std::wostringstream optlist;
 
@@ -291,7 +291,7 @@ int pdfout1(pdflib::PDFlib &p, const SAPara &para){
 
 		tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
 	}
-	
+
 
 	for (row++; row <= rowmax; row++) {
 
@@ -476,7 +476,7 @@ int pdfout2(pdflib::PDFlib &p, const CVPara &para){
 	str.LoadStringW(IDS_STRING_CV_PARA);
 
 	const std::wstring headertext = (LPCWSTR)str;
-		//L"Table header (centered across all columns)";
+	//L"Table header (centered across all columns)";
 	std::wstring result;
 	std::wostringstream optlist;
 
@@ -504,209 +504,209 @@ int pdfout2(pdflib::PDFlib &p, const CVPara &para){
 
 
 
-col = 1;
-		{
-			std::wostringstream num;
+	col = 1;
+	{
+		std::wostringstream num;
 
-			//num << L"Col " << col << L"/Row " << row;
+		//num << L"Col " << col << L"/Row " << row;
 
-			str.LoadStringW(IDS_STRING_LOW_E_LIMIT);
-			num <<(LPCWSTR)(str);
+		str.LoadStringW(IDS_STRING_LOW_E_LIMIT);
+		num <<(LPCWSTR)(str);
 
-			optlist.str(L"");
-			optlist << L"colwidth=20% fittextline={font=" << font
-				<<  L" fontsize=10}";
+		optlist.str(L"");
+		optlist << L"colwidth=20% fittextline={font=" << font
+			<<  L" fontsize=10}";
 
-			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
-		}
+		tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
+	}
 
 
-		col = 2;
-		{
-			std::wostringstream num;
+	col = 2;
+	{
+		std::wostringstream num;
 
-			//num << L"Col " << col << L"/Row " << row;
+		//num << L"Col " << col << L"/Row " << row;
 
-			str.LoadStringW(IDS_STRING_HIGH_E_LIMIT);
-			num <<(LPCWSTR)(str);
+		str.LoadStringW(IDS_STRING_HIGH_E_LIMIT);
+		num <<(LPCWSTR)(str);
 
-			optlist.str(L"");
-			optlist << L"colwidth=20% fittextline={font=" << font
-				<<  L" fontsize=10}";
+		optlist.str(L"");
+		optlist << L"colwidth=20% fittextline={font=" << font
+			<<  L" fontsize=10}";
 
-			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
+		tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
 
-			//tbl = p.add_table_cell(tbl, col, row, , optlist.str());
-		}
+		//tbl = p.add_table_cell(tbl, col, row, , optlist.str());
+	}
 
 
-		col = 3;
-		{
-			std::wostringstream num;
+	col = 3;
+	{
+		std::wostringstream num;
 
-			//num << L"Col " << col << L"/Row " << row;
-			str.LoadStringW(IDS_STRING_SCAN_RATE);
-			num <<(LPCWSTR)(str);
+		//num << L"Col " << col << L"/Row " << row;
+		str.LoadStringW(IDS_STRING_SCAN_RATE);
+		num <<(LPCWSTR)(str);
 
-			optlist.str(L"");
-			optlist << L"colwidth=20% fittextline={font=" << font
-				<<  L" fontsize=10}";
+		optlist.str(L"");
+		optlist << L"colwidth=20% fittextline={font=" << font
+			<<  L" fontsize=10}";
 
-			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
-		}
+		tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
+	}
 
 
-		col = 4;
-		{
-			std::wostringstream num;
+	col = 4;
+	{
+		std::wostringstream num;
 
-			//num << L"Col " << col << L"/Row " << row;
-			str.LoadStringW(para.combochoice==0?IDS_STRING_NO_OF_CYCLES:IDS_STRING_VARIATION_TOLERANCE);
-			num <<(LPCWSTR)(str);
+		//num << L"Col " << col << L"/Row " << row;
+		str.LoadStringW(para.combochoice==0?IDS_STRING_NO_OF_CYCLES:IDS_STRING_VARIATION_TOLERANCE);
+		num <<(LPCWSTR)(str);
 
-			optlist.str(L"");
-			optlist << L"colwidth=20% fittextline={font=" << font
-				<<  L" fontsize=10}";
+		optlist.str(L"");
+		optlist << L"colwidth=20% fittextline={font=" << font
+			<<  L" fontsize=10}";
 
-			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
-		}
+		tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
+	}
 
 
-		col = 5;
-		{
-			std::wostringstream num;
+	col = 5;
+	{
+		std::wostringstream num;
 
-			//num << L"Col " << col << L"/Row " << row;
-			str.LoadStringW(IDS_STRING_ROTATION_RATE);
-			num <<(LPCWSTR)(str);
+		//num << L"Col " << col << L"/Row " << row;
+		str.LoadStringW(IDS_STRING_ROTATION_RATE);
+		num <<(LPCWSTR)(str);
 
-			optlist.str(L"");
-			optlist << L"colwidth=20% fittextline={font=" << font
-				<<  L" fontsize=10}";
+		optlist.str(L"");
+		optlist << L"colwidth=20% fittextline={font=" << font
+			<<  L" fontsize=10}";
 
-			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
-		}
+		tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
+	}
 
 
-		col = 6;
-		{
-			std::wostringstream num;
+	col = 6;
+	{
+		std::wostringstream num;
 
-			//num << L"Col " << col << L"/Row " << row;
-			str.LoadStringW(IDS_STRING_END_INTEGRATION_E);
-			num <<(LPCWSTR)(str);
+		//num << L"Col " << col << L"/Row " << row;
+		str.LoadStringW(IDS_STRING_END_INTEGRATION_E);
+		num <<(LPCWSTR)(str);
 
-			optlist.str(L"");
-			optlist << L"colwidth=20% fittextline={font=" << font
-				<<  L" fontsize=10}";
+		optlist.str(L"");
+		optlist << L"colwidth=20% fittextline={font=" << font
+			<<  L" fontsize=10}";
 
-			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
-		}
+		tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
+	}
 
 
 
 
-			row++;
-		col = 1;
-		{
-			std::wostringstream num;
+	row++;
+	col = 1;
+	{
+		std::wostringstream num;
 
-			//num << L"Col " << col << L"/Row " << row;
+		//num << L"Col " << col << L"/Row " << row;
 
-			
-			num <<para.lowelimit;
 
-			optlist.str(L"");
-			optlist << L"colwidth=20% fittextline={font=" << font
-				<<  L" fontsize=10}";
+		num <<para.lowelimit;
 
-			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
-		}
+		optlist.str(L"");
+		optlist << L"colwidth=20% fittextline={font=" << font
+			<<  L" fontsize=10}";
 
+		tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
+	}
 
-		col = 2;
-		{
-			std::wostringstream num;
 
-			//num << L"Col " << col << L"/Row " << row;
+	col = 2;
+	{
+		std::wostringstream num;
 
-			//str.LoadStringW(IDS_STRING_HIGH_E_LIMIT);
-			num <<para.highelimit;
+		//num << L"Col " << col << L"/Row " << row;
 
-			optlist.str(L"");
-			optlist << L"colwidth=20% fittextline={font=" << font
-				<<  L" fontsize=10}";
+		//str.LoadStringW(IDS_STRING_HIGH_E_LIMIT);
+		num <<para.highelimit;
 
-			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
+		optlist.str(L"");
+		optlist << L"colwidth=20% fittextline={font=" << font
+			<<  L" fontsize=10}";
 
-			//tbl = p.add_table_cell(tbl, col, row, , optlist.str());
-		}
+		tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
 
+		//tbl = p.add_table_cell(tbl, col, row, , optlist.str());
+	}
 
-		col = 3;
-		{
-			std::wostringstream num;
 
-			//num << L"Col " << col << L"/Row " << row;
-			//str.LoadStringW(IDS_STRING_SCAN_RATE);
-			num <<para.scanrate;
+	col = 3;
+	{
+		std::wostringstream num;
 
-			optlist.str(L"");
-			optlist << L"colwidth=20% fittextline={font=" << font
-				<<  L" fontsize=10}";
+		//num << L"Col " << col << L"/Row " << row;
+		//str.LoadStringW(IDS_STRING_SCAN_RATE);
+		num <<para.scanrate;
 
-			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
-		}
+		optlist.str(L"");
+		optlist << L"colwidth=20% fittextline={font=" << font
+			<<  L" fontsize=10}";
 
+		tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
+	}
 
-		col = 4;
-		{
-			std::wostringstream num;
 
-			//num << L"Col " << col << L"/Row " << row;
-			if(para.combochoice==0)
-				num<<para.noofcycles;
-			else
-				num<<para.variationtolerance;
+	col = 4;
+	{
+		std::wostringstream num;
 
-			optlist.str(L"");
-			optlist << L"colwidth=20% fittextline={font=" << font
-				<<  L" fontsize=10}";
+		//num << L"Col " << col << L"/Row " << row;
+		if(para.combochoice==0)
+			num<<para.noofcycles;
+		else
+			num<<para.variationtolerance;
 
-			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
-		}
+		optlist.str(L"");
+		optlist << L"colwidth=20% fittextline={font=" << font
+			<<  L" fontsize=10}";
 
+		tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
+	}
 
-		col = 5;
-		{
-			std::wostringstream num;
 
-			//num << L"Col " << col << L"/Row " << row;
-			//str.LoadStringW(IDS_STRING_ROTATION_RATE);
-			num <<para.rotationrate;
+	col = 5;
+	{
+		std::wostringstream num;
 
-			optlist.str(L"");
-			optlist << L"colwidth=20% fittextline={font=" << font
-				<<  L" fontsize=10}";
+		//num << L"Col " << col << L"/Row " << row;
+		//str.LoadStringW(IDS_STRING_ROTATION_RATE);
+		num <<para.rotationrate;
 
-			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
-		}
+		optlist.str(L"");
+		optlist << L"colwidth=20% fittextline={font=" << font
+			<<  L" fontsize=10}";
 
+		tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
+	}
 
-		col = 6;
-		{
-			std::wostringstream num;
 
-			//num << L"Col " << col << L"/Row " << row;
-			//str.LoadStringW(IDS_STRING_END_INTEGRATION_E);
-			num <<para.endintegratione;
+	col = 6;
+	{
+		std::wostringstream num;
 
-			optlist.str(L"");
-			optlist << L"colwidth=20% fittextline={font=" << font
-				<<  L" fontsize=10}";
+		//num << L"Col " << col << L"/Row " << row;
+		//str.LoadStringW(IDS_STRING_END_INTEGRATION_E);
+		num <<para.endintegratione;
 
-			tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
-		}
+		optlist.str(L"");
+		optlist << L"colwidth=20% fittextline={font=" << font
+			<<  L" fontsize=10}";
+
+		tbl = p.add_table_cell(tbl, col, row, num.str(), optlist.str());
+	}
 
 
 	/* ---------- Place the table on one or more pages ---------- */
@@ -760,30 +760,30 @@ col = 1;
 
 int imgout(pdflib::PDFlib &p, const std::wstring imagefile)
 {
-		int font, image;
+	int font, image;
 	std::wostringstream optlist;
 
-	  image = p.load_image(L"auto", imagefile, L"");
-        if (image == -1) {
-            std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
-            return 2;
-        }
-		p.begin_page_ext(0, 0, L"width=a4.width height=a4.height");
+	image = p.load_image(L"auto", imagefile, L"");
+	if (image == -1) {
+		std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
+		return 2;
+	}
+	p.begin_page_ext(0, 0, L"width=a4.width height=a4.height");
 
-		        /* Position the image in its original size with its lower left corner
-         * at the reference point (20, 380)
-         */
+	/* Position the image in its original size with its lower left corner
+	* at the reference point (20, 380)
+	*/
 
-		optlist.str(L"");
-		optlist << L"boxsize={500 750}"
-				<< L" fitmethod=auto"
-				<< L" position={left top}";
+	optlist.str(L"");
+	optlist << L"boxsize={500 750}"
+		<< L" fitmethod=auto"
+		<< L" position={left top}";
 
-		p.fit_image(image, 50, 50, optlist.str());
+	p.fit_image(image, 50, 50, optlist.str());
 
-		p.end_page_ext(L"");
+	p.end_page_ext(L"");
 
-		return 0;
+	return 0;
 }
 
 
@@ -806,15 +806,15 @@ int pdfd(CString outfile, CanalyzerDoc *padoc)
 
 	{
 		int font;
-	        font = p.load_font(L"Helvetica", L"winansi", L"");
-        if (font == -1) {
-            std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
-            return 2;
-        }
+		font = p.load_font(L"Helvetica", L"winansi", L"");
+		if (font == -1) {
+			std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
+			return 2;
+		}
 
 		/* Start page 1 */
-        p.begin_page_ext(0, 0, L"width=a4.width height=a4.height");
-        p.setfont(font, 12);
+		p.begin_page_ext(0, 0, L"width=a4.width height=a4.height");
+		p.setfont(font, 12);
 
 		CString str;
 
@@ -845,14 +845,16 @@ int pdfd(CString outfile, CanalyzerDoc *padoc)
 			break;
 		case 4:
 			str.LoadStringW(IDS_STRING_INTERCEPT_VALUE);
-			str.Format(L"%s=%g",str,padoc->p1.interceptvalue);
+			{
+				CString str1;			
+				str1.Format(L"=%g",padoc->p1.interceptvalue);
+				str=str+str1;
+			}
 			p.fit_textline((LPCWSTR)str, 20, hi, L"");
-			hi-=12;
-			p.fit_textline((LPCWSTR)padoc->resultStr, 20, hi, L"");
 			hi-=12;
 			break;
 		default:
-			
+
 			break;
 		}
 		p.fit_textline((LPCWSTR)padoc->resultStr, 20, hi, L"");
