@@ -16,6 +16,9 @@
 #include "glm.h"
 #include "ro.h"
 #include "funT\findmT.h"
+#include "funT\matmulT.h"
+//#include "tm\triangleMesh.h"
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -56,13 +59,15 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 		ON_UPDATE_COMMAND_UI(ID_VIEW_SURFACE, &Co3View::OnUpdateViewSurface)
 		ON_COMMAND(ID_VIEW_SMOOTHSURFACE, &Co3View::OnViewSmoothsurface)
 		ON_UPDATE_COMMAND_UI(ID_VIEW_SMOOTHSURFACE, &Co3View::OnUpdateViewSmoothsurface)
+		ON_COMMAND(ID_VIEW_CONTOUR, &Co3View::OnViewContour)
+		ON_UPDATE_COMMAND_UI(ID_VIEW_CONTOUR, &Co3View::OnUpdateViewContour)
 	END_MESSAGE_MAP()
 
 	// Co3View construction/destruction
 
 	Co3View::Co3View()
 		: m_pDC(NULL)
-		, mouseMode(0)
+		, mouseMode(1)
 		, xRot(0)
 		, yRot(0)
 		, mouseDownPoint(0)
@@ -79,8 +84,10 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 		, m_meshList(0)
 		, checkMesh(true)
 		, checkSurface(true)
-		, checkSmoothSurface(false)
+		, checkSmoothSurface(true)
 		, m_unityCube(0)
+		, checkContour(true)
+		, m_contourList(0)
 	{
 		// TODO: add construction code here
 
@@ -308,6 +315,9 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 
 		glCallList(m_unityCube);
 		//glCallList(m_DPList);
+
+		if(checkContour)
+			glCallList(m_contourList);
 		if(checkMesh)
 			glCallList(m_meshList);
 		if(checkSurface){
@@ -316,6 +326,8 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 			else
 				glCallList(m_surfaceList);
 		}
+
+
 
 
 		//glutWireCube(1);
@@ -593,8 +605,9 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 	void Co3View::OnViewReset()
 	{
 		// TODO: Add your command handler code here
-		mouseMode=0;
+		mouseMode=1;
 		xRot=yRot=xPos=yPos=0;
+		zoomFactor=1;
 		//Redraw the view
 		InvalidateRect(NULL,FALSE);
 	}
@@ -664,13 +677,51 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 			float *facecolor=vector<float>(1,nf);
 			long **face=matrix<long>(1,nf,1,3);
 			float **point;
+
 			point=genPFlist(dt,nf,face,facecolor,&np);
 
+			float *pv=vector<float>(1,np);
+			for(long i=1;i<=np;i++){
+				pv[i]=point[i][4];
+				//pv[i]=point[i][1]*point[i][1]+point[i][2]*point[i][2];
+			}
+
+			//long **face=readf2<long>(L"C:\\Users\\r8anw2x\\Dropbox\\OpenGL\\data\\05021013\\gridSurface05022013_2.triangle.txt",&nf,3);
+			//float **point=readf2<float>(L"C:\\Users\\r8anw2x\\Dropbox\\OpenGL\\data\\05021013\\gridSurface05022013_2.point.txt",&np,3);
+			//float *pv=readf1<float>(L"C:\\Users\\r8anw2x\\Dropbox\\OpenGL\\data\\05021013\\gridSurface05022013_2.pointvaluei.txt",&np);
+			
+
+			triangleMesh trm1;
+			trm1.loadFace(face,nf);
+			trm1.loadFaceV(facecolor,nf);
+			trm1.loadPoint(point,np);
+			trm1.loadPointV(pv,np);
+
+			free_matrix(face,1,nf,1,3);
+			free_matrix(point,1,np,1,4);
+			free_vector(facecolor,1,nf);
+			free_vector(pv,1,np);
+
+			trm1.getFaceNext();
+			trm1.genEdge(0);
+			trm1.genPointToFaceMap();
+			trm1.genFaceCentroid();
+			trm1.interpPointV();
+			trm1.genContourMap(51);
 
 
-			createMeshList(face,nf,point,np);
-			createSurfaceList(face,facecolor,nf,point,np);
-			createSurfaceList2(face,facecolor,nf,point,np);
+			
+
+			//createMeshList(face,nf,point,np);
+			//createSurfaceList(face,facecolor,nf,point,np);
+			//createSurfaceList2(face,facecolor,nf,point,np);
+			//createUnityCubeList();
+
+
+			createMeshList(trm1);
+			createSurfaceList(trm1);
+			createSurfaceList2(trm1);
+			createContourList(trm1);
 			createUnityCubeList();
 
 			//InvalidateRect(NULL,FALSE);
@@ -996,6 +1047,31 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 		glEndList();
 	}
 
+
+	void Co3View::createMeshList(const triangleMesh& trm)
+	{
+		GLfloat linewidth=2;
+		long i,j;
+		m_meshList = glGenLists(1);
+		glNewList(m_meshList, GL_COMPILE);
+
+		glLineWidth(linewidth);
+		glColor3f(1.0f, 1.0f, 1.0f); 
+
+
+		for(i=1;i<=trm.nface;i++){			
+			glBegin (GL_LINE_LOOP);
+			for(j=1;j<=3;j++){
+
+				glVertex3f(trm.point[trm.face[i][j]][1],trm.point[trm.face[i][j]][2],trm.point[trm.face[i][j]][3]);
+			}
+			glEnd();
+			//glLineWidth(1);
+		}
+		glEndList();
+	}
+
+
 	void Co3View::createSurfaceList(long ** face, float *facecolor, long nf, float ** point, long np){
 
 		m_surfaceList = glGenLists(1);
@@ -1040,6 +1116,64 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 				selectNormal(nor,&point[face[i][j]][1],innerp,true);
 				glNormal3fv(nor);
 				glVertex3fv(&point[face[i][j]][1]);
+			}
+			glEnd();
+
+
+			glDisable(GL_NORMALIZE);
+
+
+		}
+		glEndList();
+	}
+
+
+	void Co3View::createSurfaceList(const triangleMesh& trm)
+	{
+
+		m_surfaceList = glGenLists(1);
+		glNewList(m_surfaceList, GL_COMPILE);
+
+		long i,j,k;
+
+		float v1[3];
+		float v2[3];
+		float nor[3];
+		float innerp[3]={0,0,0};
+
+		float rgba[4];
+
+		float mxcv=trm.maxFaceValue;
+		float mncv=trm.minFaceValue;
+
+
+		for(i=1;i<=trm.nface;i++){
+			glEnable(GL_NORMALIZE);
+
+			genColor(rgba,(trm.faceValue[i]-mncv)/(mxcv-mncv)*0.8);
+			glColor4fv(rgba);
+
+			glBegin(GL_TRIANGLES);
+
+
+			//for(k=1;k<=3;k++){
+			//	v1[k-1]=trm.point[trm.face[i][1]][k]-trm.point[trm.face[i][3]][k];
+			//	v2[k-1]=trm.point[trm.face[i][2]][k]-trm.point[trm.face[i][3]][k];
+			//}
+			//nor[0]=v1[1]*v2[2]-v1[2]*v2[1];
+			//nor[1]=v1[2]*v2[0]-v1[0]*v2[2];
+			//nor[2]=v1[0]*v2[1]-v1[1]*v2[0];
+
+
+			for(j=1;j<=3;j++){
+				//genColor(rgba,(dt[i][j][4]-mncv)/(mxcv-mncv)*0.8);
+				//glColor4fv(rgba);
+
+				//selectNormal(nor,&trm.point[trm.face[i][j]][1],innerp,true);
+				//glNormal3fv(nor);
+				glVertex3f(trm.point[trm.face[i][j]][1],trm.point[trm.face[i][j]][2],trm.point[trm.face[i][j]][3]);
+
+				//std::cout << trm.point[trm.face[i][j]][1] << trm.point[trm.face[i][j]][2] << trm.point[trm.face[i][j]][3] << std::endl;
 			}
 			glEnd();
 
@@ -1107,6 +1241,68 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 		glEndList();
 	}
 
+	void Co3View::createSurfaceList2(const triangleMesh& trm)
+	{
+
+		m_surfaceList2 = glGenLists(1);
+		glNewList(m_surfaceList2, GL_COMPILE);
+
+		long i,j,k;
+
+		float v1[3];
+		float v2[3];
+		float nor[3];
+		float innerp[3]={0,0,0};
+
+		float rgba[4];
+
+		//float mxcv=trm.maxPointValue;
+		//float mncv=trm.minPointValue;
+
+		float mxcv=trm.maxPointValueInterp;
+		float mncv=trm.minPointValueInterp;
+
+		//float mxcv=0.5;
+		//float mncv=0.2;
+
+		for(i=1;i<=trm.nface;i++){
+			glEnable(GL_NORMALIZE);
+
+			//genColor(rgba,(facecolor[i]-mncv)/(mxcv-mncv)*0.8);
+			//glColor4fv(rgba);
+
+			glBegin(GL_TRIANGLES);
+
+
+			//for(k=1;k<=3;k++){
+			//	v1[k-1]=trm.point[trm.face[i][1]][k]-trm.point[trm.face[i][3]][k];
+			//	v2[k-1]=trm.point[trm.face[i][2]][k]-trm.point[trm.face[i][3]][k];
+			//}
+			//nor[0]=v1[1]*v2[2]-v1[2]*v2[1];
+			//nor[1]=v1[2]*v2[0]-v1[0]*v2[2];
+			//nor[2]=v1[0]*v2[1]-v1[1]*v2[0];
+
+
+			for(j=1;j<=3;j++){
+				//genColor(rgba,(trm.pointValue[trm.face[i][j]]-mncv)/(mxcv-mncv)*0.8);
+				genColor(rgba,(trm.pointValueInterp[trm.face[i][j]]-mncv)/(mxcv-mncv)*0.8);
+				glColor4fv(rgba);
+
+				//selectNormal(nor,&trm.point[trm.face[i][j]][1],innerp,true);
+				//glNormal3fv(nor);
+				glVertex3fv(&trm.point[trm.face[i][j]][1]);
+			}
+			glEnd();
+
+
+			glDisable(GL_NORMALIZE);
+
+
+		}
+		glEndList();
+	}
+
+
 	void Co3View::OnViewSmoothsurface()
 	{
 		// TODO: Add your command handler code here
@@ -1129,46 +1325,47 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 
 		glBegin(GL_LINES);
 		glLineWidth(1);
+		//x axis
 		glColor3f(1,0,0);
 		glVertex3f(-1,-1,-1);
 		glVertex3f(1,-1,-1);
 
-		glVertex3f(-1,-1,1);
-		glVertex3f(1,-1,1);
+		//glVertex3f(-1,-1,1);
+		//glVertex3f(1,-1,1);
 
-				glVertex3f(-1,1,-1);
-		glVertex3f(1,1,-1);
+		//glVertex3f(-1,1,-1);
+		//glVertex3f(1,1,-1);
 
-				glVertex3f(-1,1,1);
-		glVertex3f(1,1,1);
+		//glVertex3f(-1,1,1);
+		//glVertex3f(1,1,1);
 
-
-				glColor3f(0,1,0);
+		//y axis
+		glColor3f(0,1,0);
 		glVertex3f(-1,-1,-1);
 		glVertex3f(-1,1,-1);
 
-		glVertex3f(-1,-1,1);
-		glVertex3f(-1,1,1);
+		//glVertex3f(-1,-1,1);
+		//glVertex3f(-1,1,1);
 
-				glVertex3f(1,-1,-1);
-		glVertex3f(1,1,-1);
+		//glVertex3f(1,-1,-1);
+		//glVertex3f(1,1,-1);
 
-				glVertex3f(1,-1,1);
-		glVertex3f(1,1,1);
+		//glVertex3f(1,-1,1);
+		//glVertex3f(1,1,1);
 
-
-				glColor3f(0,0,1);
+		//z axis
+		glColor3f(0,0,1);
 		glVertex3f(-1,-1,-1);
 		glVertex3f(-1,-1,1);
 
-		glVertex3f(1,-1,-1);
-		glVertex3f(1,-1,1);
+		//glVertex3f(1,-1,-1);
+		//glVertex3f(1,-1,1);
 
-				glVertex3f(-1,1,-1);
-		glVertex3f(-1,1,1);
+		//glVertex3f(-1,1,-1);
+		//glVertex3f(-1,1,1);
 
-				glVertex3f(1,1,-1);
-		glVertex3f(1,1,1);
+		//glVertex3f(1,1,-1);
+		//glVertex3f(1,1,1);
 		glEnd();
 
 
@@ -1207,4 +1404,47 @@ IMPLEMENT_DYNCREATE(Co3View, CView)
 		free_vector(idx,1,nf);
 
 		return frontFace;
+	}
+
+
+	void Co3View::OnViewContour()
+	{
+		// TODO: Add your command handler code here
+
+		checkContour=!checkContour;
+		InvalidateRect(NULL,FALSE);
+	}
+
+
+	void Co3View::OnUpdateViewContour(CCmdUI *pCmdUI)
+	{
+		// TODO: Add your command update UI handler code here
+
+		pCmdUI->SetCheck(checkContour);
+	}
+
+
+	void Co3View::createContourList(const triangleMesh& trm)
+	{
+		GLfloat linewidth=1;
+		long i,j;
+		float rgba[4]={1,1,1,1};
+		m_contourList = glGenLists(1);
+		glNewList(m_contourList, GL_COMPILE);
+
+		glLineWidth(linewidth);
+
+		for(i=0;i<trm.contourv.size();i++){
+
+			genColor(rgba,(trm.contourValue[i]-trm.minPointValue)/(trm.maxPointValue-trm.minPointValue)*0.8);
+			glColor4fv(rgba);
+
+			glBegin (GL_LINE_STRIP);
+			for(j=0;j<trm.contourv[i][0].size();j++){
+				glVertex3f(trm.contourv[i][0][j],trm.contourv[i][1][j],trm.contourv[i][2][j]);
+			}
+			glEnd();
+		}
+		glEndList();
+
 	}

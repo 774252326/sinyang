@@ -4,7 +4,7 @@
 
 #pragma once
 #include "atltypes.h"
-
+#include "triangleMesh.h"
 
 class Co3View : public CView
 {
@@ -115,6 +115,16 @@ public:
 	GLuint m_unityCube;
 	void createUnityCubeList(void);
 	long ** genFrontFaceList(long ** face, long nf, float ** point, long np, long * nff);
+	afx_msg void OnViewContour();
+	bool checkContour;
+	afx_msg void OnUpdateViewContour(CCmdUI *pCmdUI);
+
+	void createMeshList(const triangleMesh& trm);
+	void createSurfaceList(const triangleMesh& trm);
+	void createSurfaceList2(const triangleMesh& trm);
+	//triangleMesh tm;
+	void createContourList(const triangleMesh& trm);
+	GLuint m_contourList;
 };
 
 #ifndef _DEBUG  // debug version in o3View.cpp

@@ -5,7 +5,7 @@
 #include <iostream>
 #include "funT\nrutilT.h"
 #include "funT\paddingT.h"
-using namespace std;
+//using namespace std;
 
 //void readf2(char *fn, float **dt, long r, long c){
 //
@@ -23,7 +23,7 @@ using namespace std;
 
 void readf3(wchar_t *fn, float ***dt, long r, long c, long h){
 
-	ifstream ifs(fn);
+	std::ifstream ifs(fn);
 	if(!ifs.bad()){
 		for(long i=1;i<=r;i++){
 			for(long j=1;j<=c;j++){
@@ -40,7 +40,7 @@ void readf3(wchar_t *fn, float ***dt, long r, long c, long h){
 
 void readf3(wchar_t *fn, float ***pt, float *color, long r, long c, long h){
 
-	wifstream ifs(fn);
+	std::wifstream ifs(fn);
 	if(!ifs.bad()){
 		for(long i=1;i<=r;i++){
 			//read x,y,z
@@ -63,21 +63,21 @@ void pdt(T ***dt, long r, long c, long h){
 	for(long i=1;i<=r;i++){
 		for(long j=1;j<=c;j++){
 			for(long k=1;k<=h;k++){
-				cout<<dt[i][j][k]<<',';
+				std::cout<<dt[i][j][k]<<',';
 			}
-			cout<<'\n';
+			std::cout<<'\n';
 		}
-		cout<<'\n';
-		cout<<'\n';
+		std::cout<<'\n';
+		std::cout<<'\n';
 	}
 }
 
 void pdt(float ***dt, long r, long c){
 	for(long i=1;i<=r;i++){
 		for(long j=1;j<=c;j++){
-			cout<<dt[i][j]<<',';
+			std::cout<<dt[i][j]<<',';
 		}
-		cout<<'\n';
+		std::cout<<'\n';
 	}
 }
 
@@ -208,7 +208,7 @@ void lighting(short light=light0, float *ambient=ambient0, float *diffuse=diffus
 
 		}
 		else{
-			cout<<"error";
+			std::cout<<"error";
 		}
 	}
 	glEnable(light);
@@ -219,7 +219,7 @@ void lighting(short light=light0, float *ambient=ambient0, float *diffuse=diffus
 //read matrix from file
 template <typename T>
 T **readf2(wchar_t *fn, long *r, long c){
-	wifstream ifs(fn);
+	std::wifstream ifs(fn);
 	T **dt;
 	T **dtt;
 	long nd;
@@ -275,6 +275,65 @@ T **readf2(wchar_t *fn, long *r, long c){
 	}
 }
 
+//read matrix from file
+template <typename T>
+T *readf1(wchar_t *fn, long *r){
+	std::wifstream ifs(fn);
+	T *dt;
+	T *dtt;
+	long nd;
+
+	long i,j;
+
+	r[0]=0;
+	if(ifs.bad()){
+		return NULL;
+	}
+	else{
+		while(!ifs.eof()){
+			if(r[0]==0){
+				nd=1;
+				dt=vector<T>(1,nd);
+				//for(j=1;j<=c;j++){
+					ifs>>dt[1];
+					//cout<<dt[1][j];
+				//}
+
+				r[0]=1;
+			}
+			else{
+				if(r[0]+1>nd){
+					dtt=vector<T>(1,nd*2);
+					copyvt(dt,nd,dtt);
+					nd*=2;
+					//for(j=1;j<=c;j++){
+						ifs>>dtt[r[0]+1];
+						//cout<<dtt[r[0]+1][j];
+					//}
+					free_vector(dt,1,r[0]);
+					dt=dtt;					
+				}
+				else{
+					//for(j=1;j<=c;j++){
+						ifs>>dt[r[0]+1];
+						//cout<<dt[r[0]+1][j];
+					//}					
+				}
+				r[0]+=1;
+			}
+		}
+
+		if(r[0]>0){
+			dtt=vector<T>(1,r[0]);
+			copyvt(dt,r[0],dtt);
+			free_vector(dt,1,nd);
+			return dtt;
+		}
+		else{
+			return NULL;
+		}
+	}
+}
 
 
 

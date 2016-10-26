@@ -46,18 +46,21 @@ template <typename T>T MIN(T a, T b){
 }
 
 //#define SIGN(a,b) ((b) >= 0.0 ? fabs(a) : -fabs(a))
-
-template <typename T>T SIGN(T a, T b){
-	if( b>=0 && a>=0) return a;
-	if( b>=0 && a<0 ) return -a;
-	if( b<0 && a>=0 ) return -a;
-	if( b<0 && a<0 ) return a;
-}
-
 template <typename T>T ABS(T a){
 	if( a>=0 ) return a;
 	else return -a;
 }
+
+template <typename T>T SIGN(T a, T b){
+	//if( b>=0 && a>=0) return a;
+	//if( b>=0 && a<0 ) return -a;
+	//if( b<0 && a>=0 ) return -a;
+	//if( b<0 && a<0 ) return a;
+	if( b>=0 ) return ABS(a);
+	else return -ABS(a);
+}
+
+
 
 
 //#define SWAP(a,b) {temp=(a);(a)=(b);(b)=temp;}
