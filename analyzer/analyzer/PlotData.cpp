@@ -5,8 +5,8 @@
 #include "analyzer.h"
 #include "PlotData.h"
 #include <algorithm>
-
-
+#include "func.h"
+#include "colormapT.h"
 
 
 
@@ -321,4 +321,42 @@ void PlotData::SetSpec(const CString & xla, const CString & yla, const PlotSpec 
 		ylabel=yla;
 
 	psp=psp0;
+}
+
+
+bool PlotData::SaveImage(CString filepath, CSize sz, CDC* pDC, double pct)
+{
+
+	CDC dcMem;   //用于缓冲作图的内存DC
+	dcMem.CreateCompatibleDC(pDC);               //依附窗口DC创建兼容内存DC		
+
+	CBitmap bmp;           //内存中承载临时图象的位图
+	bmp.CreateCompatibleBitmap(pDC,sz.cx,sz.cy);//创建兼容位图
+
+	dcMem.SelectObject(&bmp);  	//将位图选择进内存DC
+
+	double xmin,xmax,ymin,ymax;
+	UpdateRange(xll,xmin,xmax,pct,true);
+	UpdateRange(yll,ymin,ymax,pct,true);
+
+	psp.labelC=psp.gridC=psp.metricC=black;
+	psp.bkgndC=psp.borderC=psp.winbkC=white;
+
+	CRect plotrect(0,0,sz.cx,sz.cy);
+	DrawData(plotrect,&dcMem,*this,xmin,xmax,ymin,ymax);
+	dcMem.DeleteDC(); //删除DC
+
+	CImage img;
+	img.Attach(HBITMAP(bmp));
+	HRESULT hResult = img.Save((LPCWSTR)filepath);
+
+
+	bmp.DeleteObject(); //删除位图
+
+	if (SUCCEEDED(hResult))
+		return true;
+
+
+	return false;
+
 }

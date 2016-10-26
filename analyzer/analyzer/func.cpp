@@ -8,6 +8,13 @@
 #include "CSpline.h"
 
 
+
+
+
+
+
+
+
 void AdjustWidth(CListCtrl *ls, int nCol, CString str, int gap)
 {
 	int widthc,widtht;
@@ -29,6 +36,10 @@ DWORD stp(BYTE step,BYTE stepControl,BYTE plotFilter)
 	return step|(stepControl<<8)|(plotFilter<<16);
 }
 
+
+////////BYTE step=nby(sl.front(),0);
+////////BYTE stepControl=nby(sl.front(),1);
+////////BYTE plotFilter=nby(sl.front(),2);
 BYTE nby(DWORD w, unsigned int i)
 {
 	i=i%4;
@@ -70,8 +81,8 @@ bool GetStepList(std::vector<DWORD> &sl, int atype)
 	case 3:
 		{
 			DWORD stepl[]={
-				stp(DOA_VMS,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_PLOT_LAST,PF_CONCERTRATION|PF_S),
-				stp(DOA_S,0,PF_CONCERTRATION|PF_S)
+				stp(DOA_VMS,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_PLOT_LAST,/*PF_Q_NORMALIZED|*/PF_CONCERTRATION|PF_S),
+				stp(DOA_S,0,/*PF_Q_NORMALIZED|*/PF_CONCERTRATION|PF_S)
 			};
 			sl.assign(stepl,stepl+2);
 
@@ -210,6 +221,20 @@ UINT ComputeStateData(
 
 		SAPara p3t=p3;
 
+
+		if(ANPType==7){						
+			for(size_t i=0;i<p3t.saplist.size();i++){
+				if(p3t.saplist[i].addType==4){
+					sl.resize(sl.size()+2);
+					std::copy_backward(sl.begin(),sl.begin()+2,sl.end());
+				}
+			}
+			sl.pop_back();
+			sl.pop_back();
+			sl[0]|=(SC_NEW_RIGHT_PLOT<<8);
+		}
+
+
 		////////////////////////////////////////////////////////////////////////////////////////
 
 		DataOutA d0;
@@ -236,13 +261,15 @@ UINT ComputeStateData(
 
 				std::vector<double> Ql(p2.noofcycles,0);
 
-				int tmp1=ComputeQList(x,y,Ql.data(),Ql.size(),p2.endintegratione,p2.scanrate);
+				int tmp1=ComputeQList(x,y,Ql.data(),Ql.size(),p2.endintegratione,p2.scanrate,p2.lowelimit*.9,p2.highelimit*.9);
 
-				if(tmp1!=0){
+				//if(tmp1!=0 && tmp1!=3){
+				if(tmp1<=0){
 					return 2;
 				}
 
-				d0.Ar.assign(Ql.begin(),Ql.end());	
+				//d0.Ar.assign(Ql.begin(),Ql.end());	
+				d0.Ar.assign(Ql.begin(),Ql.begin()+tmp1);	
 
 				if( (!(stepControl&SC_NO_PLOT))&&
 					(!(stepControl&SC_PLOT_LAST)) ){
@@ -383,8 +410,11 @@ bool AddCalibrationCurve(CString calibrationfilepath, PlotData &pda)
 		if(flg2!=0)
 			return false;
 
+		Compute(dol,tmp.p1,pdl,true);
+
 		pda=pdl.back();
 		pda.ps.front().name.LoadStringW(IDS_STRING_CALIBRATION_CURVE);
+
 
 		//rightp->AddPlot(tmp.rp.back());
 		//if(rightp->updatePlotRange(0))
@@ -1143,7 +1173,7 @@ bool Compute2(const std::vector<DataOutA> &dol, const ANPara &p1, double &SPv, d
 
 					std::vector<DataOutA> dol1;
 					UINT f1=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol1);
-					if(f1!=0){
+					if(f1==0){
 						if(Compute1(dol1,tmp.p1,Sv,z)){
 							SPc=z*(1+Vv/SPv);
 							return true;
@@ -1178,8 +1208,11 @@ bool Compute3(const std::vector<DataOutA> &dol, /*PlotData & pdat, */const ANPar
 	pdl.back().GetDatai(0,x,y);
 
 	if(x.size()>3){
-
-		double y0=y.front();
+		
+		if( !(nby(sl[0],2)&PF_Q_NORMALIZED) ){
+			double y0=y.front();
+			slopeThreshold*=y0;
+		}
 
 		std::vector<double> c1(4,0);
 		std::vector< std::vector<double> > c(x.size()-1,c1);
@@ -1283,7 +1316,7 @@ bool Compute6(const std::vector<DataOutA> &dol, /*PlotData & pdat,*/ const ANPar
 
 		std::vector<DataOutA> dol1;
 		UINT f1=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol1);
-		if(f1!=0){
+		if(f1==0){
 
 			tmp.p1.evaluationratio=Q/dol1.back().Ar0;
 			if(Compute5(dol1,tmp.p1,Lc)){
@@ -1400,7 +1433,7 @@ bool Compute8(
 
 		std::vector<DataOutA> dol1;
 		UINT f1=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol1);
-		if(f1!=0){
+		if(f1==0){
 
 
 
@@ -1495,7 +1528,7 @@ bool Compute10(
 
 		std::vector<DataOutA> dol1;
 		UINT f1=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol1);
-		if(f1!=0){
+		if(f1==0){
 
 			if(Compute9(dol1,tmp.p1,Lc)){
 				SPc=(Lc*SPv-Lml)/SPv0;
@@ -1561,7 +1594,7 @@ bool Compute12(
 
 		std::vector<DataOutA> dol1;
 		UINT f1=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol1);
-		if(f1!=0){
+		if(f1==0){
 
 
 
@@ -1588,7 +1621,457 @@ bool Compute12(
 }
 
 
-CString Compute( const std::vector<DataOutA> &dol, const ANPara &p1, std::vector<PlotData> pdl, bool bDraw )
+
+bool Compute(const std::vector<DataOutA> &dol, const ANPara &p1, std::vector<CString> &res)
+{
+	CString str,strt;
+
+
+
+	switch(p1.analysistype){
+	case 0:
+		//return DEMOP(leftp,rightp,cba,outw,*pst,p1,p2,p3);
+		break;
+	case 1:
+		//return DTR1(leftp,rightp,cba,outw,*pst,p1,p2,p3);
+		{
+			double Sv,z;
+			if(Compute1(dol, p1, Sv, z)){
+
+				strt.LoadStringW(IDS_STRING_S);
+				str=strt;
+				str+=L" ";
+				strt.LoadStringW(IDS_STRING_VOLUME);
+				str+=strt;
+				res.push_back(str);
+
+				strt.LoadStringW(IDS_STRING_ML);
+				str.Format(L"%g%s",Sv,strt);
+
+				res.push_back(str);
+
+
+				strt.LoadStringW(IDS_STRING_CALIBRATION_FACTOR);
+				str=strt;
+				//str+=L" ";
+				//strt.LoadStringW(IDS_STRING_VOLUME);
+				//str+=strt;
+				res.push_back(str);
+
+				strt.LoadStringW(IDS_STRING_ML_PER_L);
+				str.Format(L"%g%s",z,strt);
+
+				res.push_back(str);
+
+				//str.Format(L"Sv=%g,z=%g",Sv,z);
+
+				return true;
+
+			}
+		}
+		break;
+	case 2:
+		//return DTA1(leftp,rightp,cba,outw,*pst,p1,p2,p3);
+		{
+
+			double SPv,SPc;
+			if(Compute2(dol, p1, SPv, SPc)){
+
+
+				strt.LoadStringW(IDS_STRING_SAMPLE);
+				str=strt;
+				str+=L" ";
+				strt.LoadStringW(IDS_STRING_VOLUME);
+				str+=strt;
+				res.push_back(str);
+
+				strt.LoadStringW(IDS_STRING_ML);
+				str.Format(L"%g%s",SPv,strt);
+
+				res.push_back(str);
+
+
+				strt.LoadStringW(IDS_STRING_SAMPLE);
+				str=strt;
+				str+=L" ";
+				strt.LoadStringW(IDS_STRING_CONCERTRATION);
+				str+=strt;
+				res.push_back(str);
+
+				strt.LoadStringW(IDS_STRING_ML_PER_L);
+				str.Format(L"%g%s",SPc,strt);
+
+				res.push_back(str);
+
+				//str.Format(L"SPv=%g,SPc=%g",SPv,SPc);
+				return true;
+			}
+
+		}
+		break;
+	case 3:
+		//return LATR1(leftp,rightp,cba,outw,*pst,p1,p2,p3);
+		{
+			double ITc;
+			if(Compute3(dol, p1, ITc)){
+				//str.Format(L"ITc=%g",ITc);
+
+				strt.LoadStringW(IDS_STRING_INTERCEPT_VALUE);
+				str=strt;
+
+				res.push_back(str);
+
+				strt.LoadStringW(IDS_STRING_ML_PER_L);
+				str.Format(L"%g%s",ITc,strt);
+
+				res.push_back(str);
+
+				return true;
+
+			}
+		}
+		break;
+	case 4:
+		//return LATA1(leftp,rightp,cba,outw,*pst,p1,p2,p3);
+
+		{
+
+			double Ac,SPc,ITQ;
+			LineSeg lis;
+			if(Compute4(dol, p1, Ac, SPc, ITQ, lis)){
+				//str.Format(L"Ac=%g,SPc=%g",Ac,SPc);
+
+
+				strt.LoadStringW(IDS_STRING_A);
+				str=strt;
+				str+=L" ";
+				strt.LoadStringW(IDS_STRING_CONCERTRATION);
+				str+=strt;
+				res.push_back(str);
+
+				strt.LoadStringW(IDS_STRING_ML_PER_L);
+				str.Format(L"%g%s",Ac,strt);
+				res.push_back(str);
+
+
+				strt.LoadStringW(IDS_STRING_SAMPLE);
+				str=strt;
+				str+=L" ";
+				strt.LoadStringW(IDS_STRING_CONCERTRATION);
+				str+=strt;
+				res.push_back(str);
+
+				strt.LoadStringW(IDS_STRING_ML_PER_L);
+				str.Format(L"%g%s",SPc,strt);
+				res.push_back(str);
+
+				strt.LoadStringW(IDS_STRING_FITTING_LINE);
+				str=strt;
+				res.push_back(str);
+
+				str.Format(L"Q=%gA%+g",lis.GetK(),lis.GetB());
+				res.push_back(str);
+
+				return true;
+
+			}
+
+
+		}
+		break;
+	case 5:
+		//return RCR1(leftp,rightp,cba,outw,*pst,p1,p2,p3);
+		{
+			double Lc;
+			if(Compute5(dol,p1,Lc)){
+				//str.Format(L"Lc=%g",Lc);
+
+				strt.LoadStringW(IDS_STRING_L);
+				str=strt;
+				str+=L" ";
+				strt.LoadStringW(IDS_STRING_CONCERTRATION);
+				str+=strt;
+				res.push_back(str);
+
+				strt.LoadStringW(IDS_STRING_ML_PER_L);
+				str.Format(L"%g%s",Lc,strt);
+				res.push_back(str);
+
+				return true;
+			}
+
+		}
+		break;
+	case 6:
+		//return RCA1(leftp,rightp,cba,outw,*pst,p1,p2,p3);
+		{
+
+
+			double Lc,SPc,Q;
+			if(Compute6(dol, p1, Lc, SPc, Q)){
+				//str.Format(L"Lc=%g,SPc=%g",Lc,SPc);
+
+
+				strt.LoadStringW(IDS_STRING_L);
+				str=strt;
+				str+=L" ";
+				strt.LoadStringW(IDS_STRING_CONCERTRATION);
+				str+=strt;
+				res.push_back(str);
+
+				strt.LoadStringW(IDS_STRING_ML_PER_L);
+				str.Format(L"%g%s",Lc,strt);
+				res.push_back(str);
+
+
+
+				strt.LoadStringW(IDS_STRING_SAMPLE);
+				str=strt;
+				str+=L" ";
+				strt.LoadStringW(IDS_STRING_CONCERTRATION);
+				str+=strt;
+				res.push_back(str);
+
+				strt.LoadStringW(IDS_STRING_ML_PER_L);
+				str.Format(L"%g%s",SPc,strt);
+				res.push_back(str);
+
+				return true;
+			}
+		}
+		break;
+	case 7:
+		//return SARR1(leftp,rightp,cba,outw,*pst,p1,p2,p3);
+		{
+
+
+			LineSeg lis;
+			std::vector<double> Ac;
+			std::vector<double> Sc;
+			if(Compute7(dol, p1, Ac, Sc, lis)){
+				//str.Format(L"S=%gA%+g",lis.GetK(),lis.GetB());
+
+				strt.LoadStringW(IDS_STRING_FITTING_LINE);
+				str=strt;
+				res.push_back(str);
+
+				str.Format(L"S=%gA%+g",lis.GetK(),lis.GetB());
+				res.push_back(str);
+
+				return true;
+			}
+
+		}
+		break;
+	case 8:
+		//return SARA1(leftp,rightp,cba,outw,*pst,p1,p2,p3);
+		{
+
+
+
+
+			double SPv;
+			double SPvEnd;
+			double Sc;
+			double Ac;
+			LineSeg lis0;
+			LineSeg lis;
+
+			if(Compute8(dol, p1, SPv, SPvEnd, lis0, lis, Sc, Ac)){
+				//str.Format(L"Sc=%g, Ac=%g",Sc,Ac);
+
+
+				strt.LoadStringW(IDS_STRING_S);
+				str=strt;
+				str+=L" ";
+				strt.LoadStringW(IDS_STRING_CONCERTRATION);
+				str+=strt;
+				res.push_back(str);
+
+				strt.LoadStringW(IDS_STRING_ML_PER_L);
+				str.Format(L"%g%s",Sc,strt);
+				res.push_back(str);
+
+
+				strt.LoadStringW(IDS_STRING_A);
+				str=strt;
+				str+=L" ";
+				strt.LoadStringW(IDS_STRING_CONCERTRATION);
+				str+=strt;
+				res.push_back(str);
+
+				strt.LoadStringW(IDS_STRING_ML_PER_L);
+				str.Format(L"%g%s",Ac,strt);
+				res.push_back(str);
+
+
+				strt.LoadStringW(IDS_STRING_FITTING_LINE);
+				str=strt;
+				res.push_back(str);
+
+				str.Format(L"nQ=%gA%+g",lis.GetK(),lis.GetB());
+				res.push_back(str);
+
+
+
+				strt.LoadStringW(IDS_STRING_FITTING_LINE);
+				str=strt;
+				res.push_back(str);
+
+				str.Format(L"S=%gA%+g",lis0.GetK(),lis0.GetB());
+				res.push_back(str);
+
+				return true;
+			}
+
+		}
+		break;
+	case 9:
+		//return NEWR1(leftp,rightp,cba,outw,*pst,p1,p2,p3);
+		{
+			double Lc;
+			if(Compute9(dol, p1, Lc)){
+				//str.Format(L"Lc=%g",Lc);
+
+				strt.LoadStringW(IDS_STRING_L);
+				str=strt;
+				str+=L" ";
+				strt.LoadStringW(IDS_STRING_CONCERTRATION);
+				str+=strt;
+				res.push_back(str);
+
+				strt.LoadStringW(IDS_STRING_ML_PER_L);
+				str.Format(L"%g%s",Lc,strt);
+				res.push_back(str);
+
+				return true;
+
+			}
+		}
+		break;
+	case 10:
+		//return NEWA1(leftp,rightp,cba,outw,*pst,p1,p2,p3);
+		{
+
+
+			double Lc,SPc,nQ;
+			if(Compute10(dol, p1, Lc, SPc, nQ)){
+				//str.Format(L"Lc=%g,SPc=%g",Lc,SPc);
+
+				strt.LoadStringW(IDS_STRING_L);
+				str=strt;
+				str+=L" ";
+				strt.LoadStringW(IDS_STRING_CONCERTRATION);
+				str+=strt;
+				res.push_back(str);
+
+				strt.LoadStringW(IDS_STRING_ML_PER_L);
+				str.Format(L"%g%s",Lc,strt);
+				res.push_back(str);
+
+
+
+				strt.LoadStringW(IDS_STRING_SAMPLE);
+				str=strt;
+				str+=L" ";
+				strt.LoadStringW(IDS_STRING_CONCERTRATION);
+				str+=strt;
+				res.push_back(str);
+
+				strt.LoadStringW(IDS_STRING_ML_PER_L);
+				str.Format(L"%g%s",SPc,strt);
+				res.push_back(str);
+
+				return true;
+
+			}
+
+		}
+		break;
+	case 11:
+		//return NER(leftp,rightp,cba,outw,*pst,p1,p2,p3);
+		{
+
+			LineSeg lis;
+			if(Compute11(dol, p1, lis)){
+				//str.Format(L"nQ=%gL%+g",lis.GetK(),lis.GetB());
+
+				strt.LoadStringW(IDS_STRING_FITTING_LINE);
+				str=strt;
+				res.push_back(str);
+
+				str.Format(L"nQ=%gL%+g",lis.GetK(),lis.GetB());
+				res.push_back(str);
+
+				return true;
+			}
+		}
+		break;
+	case 12:
+		//return NEA(leftp,rightp,cba,outw,*pst,p1,p2,p3);
+
+		{
+
+
+
+			LineSeg lis;
+			double Lc,SPc;
+			//int nIgnore=3;
+			if(Compute12(dol, p1, lis, Lc, SPc)){
+				//str.Format(L"Lc=%g,SPc=%g",Lc,SPc);
+
+				strt.LoadStringW(IDS_STRING_L);
+				str=strt;
+				str+=L" ";
+				strt.LoadStringW(IDS_STRING_CONCERTRATION);
+				str+=strt;
+				res.push_back(str);
+
+				strt.LoadStringW(IDS_STRING_ML_PER_L);
+				str.Format(L"%g%s",Lc,strt);
+				res.push_back(str);
+
+
+
+				strt.LoadStringW(IDS_STRING_SAMPLE);
+				str=strt;
+				str+=L" ";
+				strt.LoadStringW(IDS_STRING_CONCERTRATION);
+				str+=strt;
+				res.push_back(str);
+
+				strt.LoadStringW(IDS_STRING_ML_PER_L);
+				str.Format(L"%g%s",SPc,strt);
+				res.push_back(str);
+
+
+
+				strt.LoadStringW(IDS_STRING_FITTING_LINE);
+				str=strt;
+				res.push_back(str);
+
+				str.Format(L"nQ=%gL%+g",lis.GetK(),lis.GetB());
+				res.push_back(str);
+
+
+				return true;
+			}
+
+
+		}
+		break;
+	default:
+		//*pst=stop;
+
+		//return 1;
+		break;
+	}
+
+	return false;
+}
+
+
+CString Compute( const std::vector<DataOutA> &dol, const ANPara &p1, std::vector<PlotData> &pdl, bool bDraw )
 {
 
 	CString str;

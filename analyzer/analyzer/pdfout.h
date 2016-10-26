@@ -16,6 +16,7 @@
 #include "p/pdflib.hpp"
 #pragma comment(lib, "p/pdflib.lib")
 
+CString TimeString(bool bSeg=false);
 
 //int pdfd(CString outfile, CanalyzerDoc *padoc);
 int AddPageNumber(const std::wstring fin, const std::wstring fout);

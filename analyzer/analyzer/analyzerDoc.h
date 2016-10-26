@@ -33,6 +33,14 @@ public:
 	CanalyzerDoc();
 	void operator=(const CanalyzerDoc &src);
 	CanalyzerDoc(const CanalyzerDoc &src){ operator=(src); };
+	int pdfd(CString filepath,
+		bool b1,
+		bool b2,
+		bool b3,
+		bool b4,
+		bool b5,
+		bool b6,
+		bool b7);
 
 
 // Overrides
@@ -65,4 +73,6 @@ protected:
 	// Helper function that sets search content for a Search Handler
 	void SetSearchContent(const CString& value);
 #endif // SHARED_HANDLERS
+public:
+	afx_msg void OnAnalysisReport();
 };

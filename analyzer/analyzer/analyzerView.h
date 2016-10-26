@@ -81,6 +81,11 @@ public:
 	afx_msg void OnUpdateViewDatacursor(CCmdUI *pCmdUI);
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	afx_msg void OnViewFitwindow();
+//	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
+
+	void OnDeltaposSpin(NMHDR* pNMHDR, LRESULT* pResult);
+	size_t selectPIdx;
+	virtual void OnPrepareDC(CDC* pDC, CPrintInfo* pInfo = NULL);
 };
 
 #ifndef _DEBUG  // debug version in analyzerView.cpp

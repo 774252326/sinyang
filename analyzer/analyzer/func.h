@@ -31,6 +31,8 @@ void AdjustWidth(CListCtrl *ls, int nCol, int nRow, int gap=15);
 
 UINT DataOutAList2PlotDataList(const std::vector<DataOutA> &dol, const ANPara &p1, PlotSpec ps0, std::vector<PlotData> &pdl);
 UINT RawData2PlotDataList(const RawData &raw, const std::vector<DataOutA> &dol, PlotSpec ps0, std::vector<PlotData> &pdl);
+CString Compute( const std::vector<DataOutA> &dol, const ANPara &p1, std::vector<PlotData> &pdl, bool bDraw );
+bool Compute(const std::vector<DataOutA> &dol, const ANPara &p1, std::vector<CString> &res);
 
 UINT ComputeStateData(
 	int ANPType,
@@ -39,6 +41,15 @@ UINT ComputeStateData(
 	const RawData &raw,
 	std::vector<DataOutA> &dol);
 
+void DrawData1(CRect &plotrect
+	, CDC* pDC
+	, const double &x
+	, const double &y
+	, const double &xmin
+	, const double &xmax
+	, const double &ymin
+	, const double &ymax
+	, COLORREF textColor);
 
 void DrawData(CRect &plotrect
 	, CDC* pDC
@@ -93,6 +104,9 @@ bool WheelUpdate(CRect &plotrect
 	, double &xmax
 	, double &ymin
 	, double &ymax);
+
+inline COLORREF inv(const COLORREF &oc);
+
 
 template <typename T>
 UINT Seperate(const std::vector<T> &x, std::vector<size_t> &mini, std::vector<size_t> &maxi)
@@ -157,12 +171,15 @@ UINT Seperate(const std::vector<T> &x, std::vector<size_t> &mini, std::vector<si
 }
 
 template <typename T>
-UINT ComputeQList(const std::vector<T> &u, const std::vector<T> &i, T* QList, size_t nCycle, T upLimit, T scanRate, size_t nPperCycle=4)
+UINT ComputeQList(const std::vector<T> &u, const std::vector<T> &i, T* QList, size_t nCycle, T upLimit, T scanRate, T umin, T umax, size_t nPperCycle=4)
 {
+	
+	size_t ci=0;
+
 	if(u.size()!=i.size()
 		||nCycle==0
 		||u.size()<nCycle*nPperCycle){
-			return 1;
+			return ci;//输入错误
 	}
 
 	std::vector<size_t> mini;
@@ -171,7 +188,7 @@ UINT ComputeQList(const std::vector<T> &u, const std::vector<T> &i, T* QList, si
 	int re=Seperate(u,mini,maxi);
 
 	if(re!=0){
-		return 2;
+		return ci;//分段出错
 	}
 	
 	std::vector<T> intgi(i.size(),0);
@@ -179,32 +196,62 @@ UINT ComputeQList(const std::vector<T> &u, const std::vector<T> &i, T* QList, si
 	if(mini.front()>maxi.front())
 		maxi.erase(maxi.begin());
 
-	size_t ci=0;
+	
 
 	while(ci<nCycle){
 
 		if(mini.empty() || maxi.empty())
-			return 3;
+			return ci;//数据不完整
 	
-		if(u[mini.front()]>=upLimit){
+		if(u[mini.front()]>=upLimit
+			|| u[mini.front()]>umin
+			|| u[maxi.front()]<umax
+			|| u[maxi.front()]<=upLimit){
 			mini.erase(mini.begin());
 			maxi.erase(maxi.begin());
 			continue;
 		}
 
+
+		auto result = std::minmax_element(i.begin()+mini.front(),i.begin()+maxi.front()+1);
+		size_t maxidx=result.second-i.begin();
+
+		if(*result.second<=0)
+			continue;
+
+		size_t minidx=maxidx;
+		for(;minidx>mini.front();minidx--){
+			if(i[minidx]>0 && i[minidx-1]<=0)
+				break;
+		}
+		
+		if(u[minidx]>=upLimit)
+			continue;
+
 		QList[ci]=0;
-		bool bStart=false;
-		for(size_t j=maxi.front();j>mini.front();j--){			
-			if(bStart){
+
+		for(size_t j=minidx;j<maxi.front();j++){
+			if(u[j]<upLimit){
 				QList[ci]+=(i[j]+i[j+1])*(u[j+1]-u[j]);
-				//TRACE(L"\n%g,%g",u[j],i[j]);
-				if(i[j-1]<0)
-					break;
 			}
 			else{
-				bStart|=(u[j]<=upLimit);
+				break;
 			}
 		}
+
+		//bool bStart=false;
+		//for(size_t j=maxi.front();j>mini.front();j--){			
+		//	if(bStart){
+		//		QList[ci]+=(i[j]+i[j+1])*(u[j+1]-u[j]);
+		//		//TRACE(L"\n%g,%g",u[j],i[j]);
+		//		if(i[j-1]<0)
+		//			break;
+		//	}
+		//	else{
+		//		bStart|=(u[j]<=upLimit);
+		//	}
+		//}
+
 		QList[ci]/=scanRate*2;
 
 		ci++;
@@ -213,7 +260,7 @@ UINT ComputeQList(const std::vector<T> &u, const std::vector<T> &i, T* QList, si
 
 	}
 
-	return 0;
+	return ci;
 }
 
 template <typename T>

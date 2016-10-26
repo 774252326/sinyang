@@ -193,15 +193,14 @@ afx_msg LRESULT COutputList::OnMessageUpdateDol(WPARAM wParam, LPARAM lParam)
 	if(flg==0){
 		this->ShowDOL();
 
-		::SendMessage(pavl->GetSafeHwnd(),MESSAGE_UPDATE_RAW,NULL,NULL);
-		::SendMessage(pavr->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
-
+		//::SendMessage(pavl->GetSafeHwnd(),MESSAGE_UPDATE_RAW,NULL,NULL);
+		//::SendMessage(pavr->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
 
 		//::SendMessage(hwl,MESSAGE_UPDATE_RAW,NULL,NULL);
 		//::SendMessage(hwr,MESSAGE_UPDATE_TEST,NULL,NULL);
 
-		//::PostMessage(pavr->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
-		//::PostMessage(pavl->GetSafeHwnd(),MESSAGE_UPDATE_RAW,NULL,NULL);
+		::PostMessage(pavr->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
+		::PostMessage(pavl->GetSafeHwnd(),MESSAGE_UPDATE_RAW,NULL,NULL);
 		//pavr->SendMessage(MESSAGE_UPDATE_TEST,NULL,NULL);
 	}
 

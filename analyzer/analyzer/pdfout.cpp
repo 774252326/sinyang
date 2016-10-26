@@ -19,7 +19,25 @@ const std::wstring logofile = L"templogo.bmp";
 
 
 
+CString TimeString(bool bSeg)
+{
+	const int l=20;
+	char buffer [l];
+	time_t rawtime;
+	time (&rawtime);
+	struct tm * timeinfo = localtime (&rawtime);
+	if(bSeg){
+		strftime (buffer,l,"%Y-%m-%d %H:%M:%S",timeinfo);
+	}
+	else{
+		strftime (buffer,l,"%Y%m%d%H%M%S",timeinfo);
+	}
 
+	//puts (buffer);
+	wchar_t buf[l];
+	size_t aa=mbstowcs(buf,buffer,l);
+	return CString(buf);
+}
 
 
 
@@ -3301,7 +3319,8 @@ int imgout2(
 
 			//padoc->SaveImage(imagelist.back(),szimg,fptmp);
 
-			SaveImage(imagelist.back(), szimg, fptmp, pdc);
+			//SaveImage(imagelist.back(), szimg, fptmp, pdc);
+			imagelist.back().SaveImage(fptmp,szimg,pdc);
 
 			image = p.load_image(L"auto", (LPCWSTR)fptmp, L"");
 			if (image == -1) {

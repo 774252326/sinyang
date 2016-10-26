@@ -20,34 +20,68 @@
 #include "MainFrm.h"
 #include "analyzerViewL.h"
 #include "analyzerViewR.h"
+#include "pdfout.h"
+#include "func.h"
 
 
-void LoadFileList(const CString &m_filePath, std::vector<CString> &filelist)
-{
-
-	CString folderpath=m_filePath.Left(m_filePath.ReverseFind('\\'));
-
-	filelist.clear();
-	CStdioFile file;
-	BOOL readflag;
-	readflag=file.Open(m_filePath, CFile::modeRead);
-
-	if(readflag)
-	{	
-		CString strRead;
-		//TRACE("\n--Begin to read file");
-		while(file.ReadString(strRead)){
-			strRead=folderpath+"\\"+strRead;
-			filelist.push_back(strRead);
-		}
-		//TRACE("\n--End reading\n");
-		file.Close();
-	}
-}
-
-
+//void LoadFileList(const CString &m_filePath, std::vector<CString> &filelist)
+//{
+//
+//	CString folderpath=m_filePath.Left(m_filePath.ReverseFind('\\'));
+//
+//	filelist.clear();
+//	CStdioFile file;
+//	BOOL readflag;
+//	readflag=file.Open(m_filePath, CFile::modeRead);
+//
+//	if(readflag)
+//	{	
+//		CString strRead;
+//		//TRACE("\n--Begin to read file");
+//		while(file.ReadString(strRead)){
+//			strRead=folderpath+"\\"+strRead;
+//			filelist.push_back(strRead);
+//		}
+//		//TRACE("\n--End reading\n");
+//		file.Close();
+//	}
+//}
 
 
+			CString folderp=L"C:\\Users\\r8anw2x\\Desktop\\data\\d\\";
+			//CString folderp=L"data\\d\\";
+			//CString folderp=L"C:\\Users\\G\\Desktop\\data\\d\\";
+
+			CString DEMOflist=folderp+L"fl1.txt";
+			CString DTRflist=folderp+L"dtr.txt";
+			CString DTAflist=folderp+L"dta.txt";
+			CString LATRflist=folderp+L"latr.txt";
+			CString LATAflist=folderp+L"lata.txt";
+			CString RCRflist=folderp+L"rcr.txt";
+			CString RCAflist=folderp+L"rca.txt";
+			CString SARRflist=folderp+L"sarr.txt";
+			CString SARAflist=folderp+L"sara.txt";
+			CString NEWRflist=folderp+L"j.txt";
+			CString NEWAflist=folderp+L"k.txt";
+			CString NERflist=folderp+L"l.txt";
+			CString NEAflist=folderp+L"m.txt";
+
+
+			CString flistlist[]={
+				DEMOflist,
+				DTRflist,
+				DTAflist,
+				LATRflist,
+				LATAflist,
+				RCRflist,
+				RCAflist,
+				SARRflist,
+				SARAflist,
+				NEWRflist,
+				NEWAflist,
+				NERflist,
+				NEAflist
+			};
 
 #include <propkey.h>
 
@@ -59,34 +93,35 @@ void LoadFileList(const CString &m_filePath, std::vector<CString> &filelist)
 
 IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 
-BEGIN_MESSAGE_MAP(CanalyzerDoc, CDocument)
-	ON_COMMAND(ID_ANALYSIS_METHODSETUP, &CanalyzerDoc::OnAnalysisMethodsetup)
-END_MESSAGE_MAP()
+	BEGIN_MESSAGE_MAP(CanalyzerDoc, CDocument)
+		ON_COMMAND(ID_ANALYSIS_METHODSETUP, &CanalyzerDoc::OnAnalysisMethodsetup)
+		ON_COMMAND(ID_ANALYSIS_REPORT, &CanalyzerDoc::OnAnalysisReport)
+	END_MESSAGE_MAP()
 
 
-// CanalyzerDoc construction/destruction
+	// CanalyzerDoc construction/destruction
 
-CanalyzerDoc::CanalyzerDoc()
-{
-	// TODO: add one-time construction code here
+	CanalyzerDoc::CanalyzerDoc()
+	{
+		// TODO: add one-time construction code here
 
-}
-
-
+	}
 
 
 
-CanalyzerDoc::~CanalyzerDoc()
-{
-}
 
-BOOL CanalyzerDoc::OnNewDocument()
-{
-	if (!CDocument::OnNewDocument())
-		return FALSE;
 
-	// TODO: add reinitialization code here
-	// (SDI documents will reuse this document)
+	CanalyzerDoc::~CanalyzerDoc()
+	{
+	}
+
+	BOOL CanalyzerDoc::OnNewDocument()
+	{
+		if (!CDocument::OnNewDocument())
+			return FALSE;
+
+		// TODO: add reinitialization code here
+		// (SDI documents will reuse this document)
 
 
 		p1=ANPara();
@@ -94,8 +129,8 @@ BOOL CanalyzerDoc::OnNewDocument()
 		p3=SAPara();
 		raw=RawData();
 
-	return TRUE;
-}
+		return TRUE;
+	}
 
 	void CanalyzerDoc::operator=(const CanalyzerDoc &src)
 	{
@@ -106,165 +141,111 @@ BOOL CanalyzerDoc::OnNewDocument()
 	}
 
 
-// CanalyzerDoc serialization
+	// CanalyzerDoc serialization
 
-void CanalyzerDoc::Serialize(CArchive& ar)
-{
-	
-	p1.Serialize(ar);
-	p2.Serialize(ar);
-	p3.Serialize(ar);
-	raw.Serialize(ar);
-
-
-
-
-	if (ar.IsStoring())
+	void CanalyzerDoc::Serialize(CArchive& ar)
 	{
-		// TODO: add storing code here
-		//ar<<ll.size();		
-		//size_t si=0;
-		//size_t ei=0;
-		//for(size_t i=0;i<ll.size();i++){
-		//	ar<<ll[i];
-		//	ei=si+ll[i];
-		//	for(size_t j=si;j<ei;j++){
-		//		ar<<xll[j]
-		//		<<yll[j];
-		//	}
-		//	si=ei;
-		//}
 
-	//raw.Serialize(ar);
+		p1.Serialize(ar);
+		p2.Serialize(ar);
+		p3.Serialize(ar);
+		//raw.Serialize(ar);
 
+
+
+
+		if (ar.IsStoring())
+		{
+			// TODO: add storing code here
+
+
+			raw.Serialize(ar);
+
+		}
+		else
+		{
+			// TODO: add loading code here
+
+			raw.Serialize(ar);
+			//raw.LoadFromFileList(flistlist[p1.analysistype]);
+
+			size_t wo=2500;
+			raw.ll.back()-=wo;
+			raw.xll.erase(raw.xll.end()-wo,raw.xll.end());
+			raw.yll.erase(raw.yll.end()-wo,raw.yll.end());
+		}
 	}
-	else
-	{
-		// TODO: add loading code here
-
-		//size_t l;
-
-		//ar>>l;
-		//ll.assign(l,0);
-
-		//size_t si=0;
-		//size_t ei=0;
-		//for(size_t i=0;i<ll.size();i++){
-		//	ar>>ll[i];
-
-		//	xll.resize(si+ll[i],0);
-		//	yll.resize(si+ll[i],0);
-
-		//	ei=si+ll[i];
-		//	for(size_t j=si;j<ei;j++){
-		//		ar>>xll[j]
-		//		>>yll[j];
-		//	}
-		//	si=ei;
-		//}
-
-	//	raw.Clear();
-	//
-	//CString folderp=L"C:\\Users\\r8anw2x\\Desktop\\data\\d\\";
-	//CString DTRflist=folderp+L"dtr.txt";
-
-	//std::vector<CString> filelist;
-	//LoadFileList(DTRflist,filelist);
-	//pcct data;
-
-	//while(!filelist.empty()){
-	///////load data from file////////////
-	//data.clear();
-	//data.readFile(filelist.front());
-	//data.TomA();
-
-	//raw.xll.resize(raw.xll.size()+data.potential.size());
-	//std::copy_backward(data.potential.begin(),data.potential.end(),raw.xll.end());
-
-	//raw.yll.resize(raw.yll.size()+data.current.size());
-	//std::copy_backward(data.current.begin(),data.current.end(),raw.yll.end());
-
-	//raw.ll.push_back(data.potential.size());
-
-	//filelist.erase(filelist.begin());
-
-	//}
-
-
-
-	}
-}
 
 #ifdef SHARED_HANDLERS
 
-// Support for thumbnails
-void CanalyzerDoc::OnDrawThumbnail(CDC& dc, LPRECT lprcBounds)
-{
-	// Modify this code to draw the document's data
-	dc.FillSolidRect(lprcBounds, RGB(255, 255, 255));
-
-	CString strText = _T("TODO: implement thumbnail drawing here");
-	LOGFONT lf;
-
-	CFont* pDefaultGUIFont = CFont::FromHandle((HFONT) GetStockObject(DEFAULT_GUI_FONT));
-	pDefaultGUIFont->GetLogFont(&lf);
-	lf.lfHeight = 36;
-
-	CFont fontDraw;
-	fontDraw.CreateFontIndirect(&lf);
-
-	CFont* pOldFont = dc.SelectObject(&fontDraw);
-	dc.DrawText(strText, lprcBounds, DT_CENTER | DT_WORDBREAK);
-	dc.SelectObject(pOldFont);
-}
-
-// Support for Search Handlers
-void CanalyzerDoc::InitializeSearchContent()
-{
-	CString strSearchContent;
-	// Set search contents from document's data. 
-	// The content parts should be separated by ";"
-
-	// For example:  strSearchContent = _T("point;rectangle;circle;ole object;");
-	SetSearchContent(strSearchContent);
-}
-
-void CanalyzerDoc::SetSearchContent(const CString& value)
-{
-	if (value.IsEmpty())
+	// Support for thumbnails
+	void CanalyzerDoc::OnDrawThumbnail(CDC& dc, LPRECT lprcBounds)
 	{
-		RemoveChunk(PKEY_Search_Contents.fmtid, PKEY_Search_Contents.pid);
+		// Modify this code to draw the document's data
+		dc.FillSolidRect(lprcBounds, RGB(255, 255, 255));
+
+		CString strText = _T("TODO: implement thumbnail drawing here");
+		LOGFONT lf;
+
+		CFont* pDefaultGUIFont = CFont::FromHandle((HFONT) GetStockObject(DEFAULT_GUI_FONT));
+		pDefaultGUIFont->GetLogFont(&lf);
+		lf.lfHeight = 36;
+
+		CFont fontDraw;
+		fontDraw.CreateFontIndirect(&lf);
+
+		CFont* pOldFont = dc.SelectObject(&fontDraw);
+		dc.DrawText(strText, lprcBounds, DT_CENTER | DT_WORDBREAK);
+		dc.SelectObject(pOldFont);
 	}
-	else
+
+	// Support for Search Handlers
+	void CanalyzerDoc::InitializeSearchContent()
 	{
-		CMFCFilterChunkValueImpl *pChunk = NULL;
-		ATLTRY(pChunk = new CMFCFilterChunkValueImpl);
-		if (pChunk != NULL)
+		CString strSearchContent;
+		// Set search contents from document's data. 
+		// The content parts should be separated by ";"
+
+		// For example:  strSearchContent = _T("point;rectangle;circle;ole object;");
+		SetSearchContent(strSearchContent);
+	}
+
+	void CanalyzerDoc::SetSearchContent(const CString& value)
+	{
+		if (value.IsEmpty())
 		{
-			pChunk->SetTextValue(PKEY_Search_Contents, value, CHUNK_TEXT);
-			SetChunkValue(pChunk);
+			RemoveChunk(PKEY_Search_Contents.fmtid, PKEY_Search_Contents.pid);
+		}
+		else
+		{
+			CMFCFilterChunkValueImpl *pChunk = NULL;
+			ATLTRY(pChunk = new CMFCFilterChunkValueImpl);
+			if (pChunk != NULL)
+			{
+				pChunk->SetTextValue(PKEY_Search_Contents, value, CHUNK_TEXT);
+				SetChunkValue(pChunk);
+			}
 		}
 	}
-}
 
 #endif // SHARED_HANDLERS
 
-// CanalyzerDoc diagnostics
+	// CanalyzerDoc diagnostics
 
 #ifdef _DEBUG
-void CanalyzerDoc::AssertValid() const
-{
-	CDocument::AssertValid();
-}
+	void CanalyzerDoc::AssertValid() const
+	{
+		CDocument::AssertValid();
+	}
 
-void CanalyzerDoc::Dump(CDumpContext& dc) const
-{
-	CDocument::Dump(dc);
-}
+	void CanalyzerDoc::Dump(CDumpContext& dc) const
+	{
+		CDocument::Dump(dc);
+	}
 #endif //_DEBUG
 
 
-// CanalyzerDoc commands
+	// CanalyzerDoc commands
 
 
 	void CanalyzerDoc::OnAnalysisMethodsetup()
@@ -275,10 +256,6 @@ void CanalyzerDoc::Dump(CDumpContext& dc) const
 		CString str;
 		str.LoadStringW(IDS_STRING_ANALYSIS_SETUP);
 		CPropertySheet sheet(str);
-		//abc sheet(777);
-		// 设置属性对话框为向导对话框   
-		//sheet.SetWizardMode();   
-		//sheet.SetWindowPos(&CWnd::wndTopMost,10,10,800,600,SWP_SHOWWINDOW);
 
 		AnalysisParametersPage appage;
 		appage.para=p1;
@@ -298,25 +275,214 @@ void CanalyzerDoc::Dump(CDumpContext& dc) const
 			p2=cppage.para;
 			p3=sppage.para;
 
-			//if(!dol.empty()){			
+			POSITION pos = GetFirstViewPosition();
+			CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));
+			CMainFrame *mf=(CMainFrame*)(lv->GetParentFrame());
 
-			//	str=Compute(dol,p1);
-				POSITION pos = GetFirstViewPosition();
-				CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));
-				CMainFrame *mf=(CMainFrame*)(lv->GetParentFrame());
+			CanalyzerViewR* rv=((CanalyzerViewR*)GetNextView(pos));
 
-				//CanalyzerViewR* rv=((CanalyzerViewR*)(mf->m_wndSplitter.GetPane(0,1)));
-
-				CanalyzerViewR* rv=((CanalyzerViewR*)GetNextView(pos));
-
-			//	mf->GetCaptionBar()->ShowMessage(str);
-
-				::SendMessage(mf->GetOutputWnd()->GetListCtrl()->GetSafeHwnd(),
-					MESSAGE_UPDATE_DOL,
-					(WPARAM)lv,
-					(LPARAM)rv);
-
-			//}
+			::SendMessage(mf->GetOutputWnd()->GetListCtrl()->GetSafeHwnd(),
+				MESSAGE_UPDATE_DOL,
+				(WPARAM)lv,
+				(LPARAM)rv);
 
 		}
+	}
+
+
+
+	int CanalyzerDoc::pdfd(CString outfile, 
+		bool b1,
+		bool b2,
+		bool b3,
+		bool b4,
+		bool b5,
+		bool b6,
+		bool b7
+		)
+	{
+
+		const std::wstring searchpath = L"../data";
+
+		const std::wstring temppdf = L"temp.pdf";
+
+		pdflib::PDFlib p;
+
+		std::wostringstream optlist;
+
+		optlist.str(L"");
+
+		p.set_parameter(L"errorpolicy", L"return");
+
+		p.set_parameter(L"SearchPath", searchpath);
+
+		if (p.begin_document(temppdf, optlist.str()) == -1) {
+			//if (p.begin_document((LPCWSTR)outfile, L"") == -1) {
+			std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
+			return 2;
+		}
+		p.set_info(L"Creator", L"PDFlib starter sample");
+		p.set_info(L"Title", L"starter_table");
+
+
+		CString templogobmp=L"templogo.bmp";
+
+
+
+		CBitmap bmp;
+		bmp.LoadBitmap(IDB_BITMAP_SINYANG);
+		CImage img;
+		//img.LoadFromResource(NULL,IDB_BITMAP_SINYANG);
+		img.Attach(HBITMAP(bmp));
+		HRESULT hResult = img.Save((LPCTSTR)templogobmp);
+		bmp.DeleteObject();
+		//if (SUCCEEDED(hResult))
+
+
+		POSITION pos = GetFirstViewPosition();
+		CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));
+		CMainFrame *mf=(CMainFrame*)(lv->GetParentFrame());
+		COutputList *ol=mf->GetOutputWnd()->GetListCtrl();
+
+		CanalyzerViewR* rv=((CanalyzerViewR*)GetNextView(pos));
+
+
+		int a;
+
+		std::vector<CString> res;
+		if(b2){
+			bool flg=Compute(ol->dol, p1, res);
+		}
+
+
+		a=pdfout6(p,p1,res,p2,p3,b1,b2,b3,b4);
+
+		if(b5){
+			a=pdfout(p,ol->dol);
+		}
+
+
+		std::vector<PlotData> pdl;
+		std::vector<CString> nl;
+
+		if(b7){
+			pdl.assign(lv->pdl.begin(),lv->pdl.end());
+			CString str;
+			str.LoadStringW(IDS_STRING_VOLTAMMOGRAM);
+			nl.assign(lv->pdl.size(),str);
+
+			if(b6){
+				pdl.resize(rv->pdl.size()+pdl.size());
+				std::copy_backward(rv->pdl.begin(),rv->pdl.end(),pdl.end());
+				str.LoadStringW(IDS_STRING_TEST_CURVE);
+				nl.resize(rv->pdl.size()+nl.size(),str);
+			}
+
+
+
+			//POSITION pos = GetFirstViewPosition();
+			//CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));	
+			CDC* pdc=lv->GetDC();
+
+			//a=imgout2(p,pdc,pdl,nl,CSize(1200,800));
+			a=imgout2(p,pdc,pdl,nl);
+		}
+		else{
+			if(b6){
+				pdl.assign(rv->pdl.begin(),rv->pdl.end());
+				CString str;
+				str.LoadStringW(IDS_STRING_TEST_CURVE);
+				nl.assign(rv->pdl.size(),str);
+
+				//POSITION pos = GetFirstViewPosition();
+				//CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));	
+				CDC* pdc=lv->GetDC();
+
+				//a=imgout2(p,pdc,pdl,nl,CSize(1200,800));
+				a=imgout2(p,pdc,pdl,nl);
+
+
+			}
+		}
+
+		//a=imgout2(p,this,pdl,nl);
+
+		p.end_document(optlist.str());
+
+		AddPageNumber(temppdf,(LPCWSTR)outfile);
+
+		CFile::Remove(temppdf.c_str());
+		CFile::Remove(templogobmp);
+
+		return 0;
+	}
+
+	void CanalyzerDoc::OnAnalysisReport()
+	{
+		// TODO: Add your command handler code here
+
+		TCHAR szFilters[]= _T("PDF Files (*.pdf)|*.pdf||");
+
+		CFileDialog se(FALSE,L"pdf",TimeString()+L".pdf",OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,szFilters);
+
+		CString str;
+
+		str.LoadStringW(IDS_STRING_ANALYSIS_PARA);
+		se.AddCheckButton(IDS_STRING_ANALYSIS_PARA,str,TRUE);
+
+		str.LoadStringW(IDS_STRING_CV_PARA);
+		se.AddCheckButton(IDS_STRING_CV_PARA,str,TRUE);
+
+		str.LoadStringW(IDS_STRING_ADDITION_SOLUTION_PARA);
+		se.AddCheckButton(IDS_STRING_ADDITION_SOLUTION_PARA,str,TRUE);
+
+		str.LoadStringW(IDS_STRING_RESULT);
+		se.AddCheckButton(IDS_STRING_RESULT,str,TRUE);
+
+		str.LoadStringW(IDS_OUTPUT_WND);
+		se.AddCheckButton(IDS_OUTPUT_WND,str,TRUE);
+
+		str.LoadStringW(IDS_STRING_TEST_CURVE);
+		se.AddCheckButton(IDS_STRING_TEST_CURVE,str,TRUE);
+
+		str.LoadStringW(IDS_STRING_VOLTAMMOGRAM);
+		se.AddCheckButton(IDS_STRING_VOLTAMMOGRAM,str,TRUE);
+
+
+		if(se.DoModal()==IDOK){
+
+			CString fp = se.GetPathName();
+
+			BOOL chk1,chk2,chk3,chk4,chk5,chk6,chk7;
+			se.GetCheckButtonState(IDS_STRING_ANALYSIS_PARA,chk1);
+			se.GetCheckButtonState(IDS_STRING_CV_PARA,chk2);
+			se.GetCheckButtonState(IDS_STRING_ADDITION_SOLUTION_PARA,chk3);
+			se.GetCheckButtonState(IDS_STRING_RESULT,chk4);
+			se.GetCheckButtonState(IDS_OUTPUT_WND,chk5);
+			se.GetCheckButtonState(IDS_STRING_TEST_CURVE,chk6);
+			se.GetCheckButtonState(IDS_STRING_VOLTAMMOGRAM,chk7);
+
+			str.LoadString(IDS_STRING_REPORTING);
+			str+=fp;
+			POSITION pos = GetFirstViewPosition();
+			CMainFrame *mf=(CMainFrame*)(GetNextView(pos)->GetParentFrame());
+			mf->GetCaptionBar()->ShowMessage(str);
+
+			//if(pdfd(fp,this)==0){
+			if(pdfd(fp,chk1,chk2,chk3,chk4,chk5,chk6,chk7)==0){
+				//AfxMessageBox(L"report "+fp+L" is saved");
+				mf->GetCaptionBar()->ShowMessage(L"");
+				ShellExecute(NULL, L"open", fp, NULL, NULL, SW_SHOW);			
+			}
+			else{
+				//AfxMessageBox(IDS_STRING_SAVE_ERROR);
+
+				str.LoadString(IDS_STRING_SAVE_ERROR);
+				mf->GetCaptionBar()->ShowMessage(str);
+			}
+
+		}
+
+
+
 	}

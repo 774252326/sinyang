@@ -20,6 +20,7 @@ public:
 
 	void GetDatai(size_t index, std::vector<double> & x, std::vector<double> & y) const;
 	void Clear(void);
+	int LoadFromFileList(CString fp);
 };
 
 

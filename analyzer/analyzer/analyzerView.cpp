@@ -48,6 +48,7 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		ON_COMMAND(ID_VIEW_DATACURSOR, &CanalyzerView::OnViewDatacursor)
 		ON_UPDATE_COMMAND_UI(ID_VIEW_DATACURSOR, &CanalyzerView::OnUpdateViewDatacursor)
 		ON_COMMAND(ID_VIEW_FITWINDOW, &CanalyzerView::OnViewFitwindow)
+		ON_NOTIFY(UDN_DELTAPOS, 1, &CanalyzerView::OnDeltaposSpin)
 	END_MESSAGE_MAP()
 
 	// CanalyzerView construction/destruction
@@ -61,6 +62,7 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		, spBtnSize(CSize(23*2,23))
 		, m_mouseDownPoint(CPoint())
 		, bMouseCursor(false)
+		, selectPIdx(0)
 	{
 		// TODO: add construction code here
 
@@ -89,7 +91,9 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 
 		// TODO: add draw code for native data here
 
-		if(pdl.empty())
+		int selectIdx=m_spBtn.GetPos32();
+
+		if(selectIdx<0 || selectIdx>=pdl.size())
 			return;
 
 		CDC dcMem;//用于缓冲作图的内存DC
@@ -101,41 +105,31 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		bmp.CreateCompatibleBitmap(pDC,winsz.cx,winsz.cy);//创建兼容位图
 		dcMem.SelectObject(&bmp);  	//将位图选择进内存DC
 
-		DrawData(rect,&dcMem,pdl[m_spBtn.GetPos32()],xmin,xmax,ymin,ymax);
+		
+		DrawData(rect,&dcMem,pdl[selectIdx],xmin,xmax,ymin,ymax);
 
-		//if(bMouseCursor && !pd->ps.empty()){
-		//	//CString str;
-		//	//str.Format(L"%g,%g",pDoc->lp[m_spBtn.GetPos32()].xll[selectIdx],pDoc->lp[m_spBtn.GetPos32()].yll[selectIdx]);
-		//	//dcMem.TextOutW(m_mouseDownPoint.x,m_mouseDownPoint.y,str);
+		if(bMouseCursor && !pdl[selectIdx].ps.empty()
+			&& selectPIdx>=0 && selectPIdx<pdl[selectIdx].xll.size()){
+			//CString str;
+			//str.Format(L"%g,%g",pDoc->lp[m_spBtn.GetPos32()].xll[selectIdx],pDoc->lp[m_spBtn.GetPos32()].yll[selectIdx]);
+			//dcMem.TextOutW(m_mouseDownPoint.x,m_mouseDownPoint.y,str);
 
-		//	DrawData1(rect
-		//		,&dcMem
-		//		,pd->xll[selectIdx]
-		//		,pd->yll[selectIdx]
-		//		,xmin
-		//		,xmax
-		//		,ymin
-		//		,ymax
-		//		,inv(pd->psp.bkgndC));
-		//}
+			DrawData1(rect
+				,&dcMem
+				,pdl[selectIdx].xll[selectPIdx]
+				,pdl[selectIdx].yll[selectPIdx]
+				,xmin
+				,xmax
+				,ymin
+				,ymax
+				,inv(pdl[selectIdx].psp.bkgndC));
+		}
 
 		pDC->BitBlt(0,0,winsz.cx,winsz.cy,&dcMem,0,0,SRCCOPY);//将内存DC上的图象拷贝到前台
 		//pDC->BitBlt(100,100,winsz.cx,winsz.cy,&dcMem,0,0,SRCCOPY);//将内存DC上的图象拷贝到前台
 
 		dcMem.DeleteDC(); //删除DC
 		bmp.DeleteObject(); //删除位图
-
-		//////////////////////////////////////////////
-		//CRect rect;
-		//GetClientRect(&rect);
-		//CRect plotrect=rect;
-		//DrawData(plotrect,pDC,pDoc->lp[m_spBtn.GetPos32()],xmin,xmax,ymin,ymax);
-
-
-
-
-
-
 
 	}
 
@@ -320,15 +314,6 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 
 	afx_msg LRESULT CanalyzerView::OnMessageUpdateView(WPARAM wParam, LPARAM lParam)
 	{
-
-		//CanalyzerDoc* pDoc = GetDocument();
-
-		//CMainFrame *mf=(CMainFrame*)(GetParentFrame());
-		//COutputList* ol=mf->GetOutputWnd()->GetListCtrl();
-
-		//pdl.clear();
-		//UINT flg=RawData2PlotDataList(pDoc->raw, ol->dol, psview, pdl);
-
 		if(pdl.empty())
 			return 1;
 
@@ -336,15 +321,19 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		m_spBtn.ShowWindow( (pdl.size()>1 ? SW_SHOW : SW_HIDE) );
 
 		int selecti=m_spBtn.GetPos32();
-		if(selecti<0)
+		if(selecti<0 || selecti>=pdl.size()){
 			selecti=0;
-
+			m_spBtn.SetPos32(selecti);
+		}
+		
 		UpdateRange(pdl[selecti].xll,xmin,xmax,pct,true);
 		UpdateRange(pdl[selecti].yll,ymin,ymax,pct,true);
 
-		this->Invalidate(FALSE);
+		this->Invalidate(FALSE);	
 
 		return 0;
+		
+		//return 1;
 	}
 
 
@@ -406,7 +395,7 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 					, bMouseCursor
 					, pdl[selectIdx].xll
 					, pdl[selectIdx].yll
-					, selectIdx);
+					, selectPIdx);
 
 				switch(re){
 				case 1:
@@ -543,16 +532,71 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 	{
 		// TODO: Add your command handler code here
 
-		if(pdl.empty())
-			return;
-		size_t selectIdx=m_spBtn.GetPos32();
+		::SendMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_VIEW,NULL,NULL);
+	}
 
-		if(pdl[selectIdx].ps.empty())
-			return;
+	void CanalyzerView::OnDeltaposSpin(NMHDR* pNMHDR, LRESULT* pResult)
+	{
+		NM_UPDOWN* pNMUpDown=(NM_UPDOWN*)pNMHDR;	
 		
-		UpdateRange(pdl[selectIdx].xll,xmin,xmax,pct,true);
-		UpdateRange(pdl[selectIdx].yll,ymin,ymax,pct,true);
-		//return true;
+		////int newpos=pNMUpDown->iPos+pNMUpDown->iDelta;
 
-		this->Invalidate(FALSE);
+		////CanalyzerDoc* pDoc=GetDocument();
+		////int n=pDoc->GetNPD(lri);
+		////if(newpos>=n)
+		////	newpos=0;
+		////if(newpos<0)
+		////	newpos=n-1;
+		////int newpos=pNMUpDown->iPos;
+
+		////if(updatePlotRange(newpos))
+		////if(updatePlotRange())
+
+		//PlotData *pd=GetPD(newpos);
+
+		////UpdateRange(pDoc->lp[newpos].xll,xmin,xmax,pct,true);
+		////UpdateRange(pDoc->lp[newpos].yll,ymin,ymax,pct,true);
+
+		//UpdateRange(pd->xll,xmin,xmax,pct,true);
+		//UpdateRange(pd->yll,ymin,ymax,pct,true);
+
+		//selectIdx=0;
+		//bMouseCursor=false;
+
+		//::SendMessage(this->GetSafeHwnd(),MESSAGE_GET_PLOTSPEC,NULL,NULL);
+		//Invalidate(FALSE);
+
+		::PostMessage(this->GetSafeHwnd(),MESSAGE_UPDATE_VIEW,NULL,NULL);
+
+
+		*pResult = 0;
+	}
+
+	void CanalyzerView::OnPrepareDC(CDC* pDC, CPrintInfo* pInfo)
+	{
+		// TODO: Add your specialized code here and/or call the base class
+
+				pDC->SetMapMode(MM_ANISOTROPIC); //转换坐标映射方式
+		CRect rect;
+		this->GetClientRect(&rect);
+		CSize wsize = rect.Size(); 
+		pDC->SetWindowExt(wsize); 
+
+		HDC hdc=::GetDC(this->GetSafeHwnd());
+		int wmm=::GetDeviceCaps(hdc,HORZSIZE);
+		int hmm=::GetDeviceCaps(hdc,VERTSIZE);
+		int wpxl=::GetDeviceCaps(hdc,HORZRES);
+		int hpxl=::GetDeviceCaps(hdc,VERTRES);
+		int xLogPixPerInch0 = ::GetDeviceCaps(hdc,LOGPIXELSX); 
+		int yLogPixPerInch0 = ::GetDeviceCaps(hdc,LOGPIXELSY); 
+		::ReleaseDC(this->GetSafeHwnd(),hdc);
+
+		//得到实际设备每逻辑英寸的象素数量
+		int xLogPixPerInch = pDC->GetDeviceCaps(LOGPIXELSX); 
+		int yLogPixPerInch = pDC->GetDeviceCaps(LOGPIXELSY); 
+		//得到设备坐标和逻辑坐标的比例
+		CSize vsize(wsize.cx * xLogPixPerInch/xLogPixPerInch0, wsize.cy * yLogPixPerInch/yLogPixPerInch0);
+		pDC->SetViewportExt(vsize); //确定视口大小
+
+		CView::OnPrepareDC(pDC, pInfo);
 	}

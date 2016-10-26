@@ -41,6 +41,7 @@ public:
 	void GetDatai(size_t index, std::vector<double> & x, std::vector<double> & y) const;
 	PlotData ExtractLastCycle(double xmax);
 	void SetSpec(const CString & xla, const CString & yla, const PlotSpec & psp0);
+	bool SaveImage(CString filepath, CSize sz, CDC* pDC, double pct=0.02);
 };
 
 

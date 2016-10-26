@@ -4,6 +4,32 @@
 #include "stdafx.h"
 //#include "analyzer.h"
 #include "RawData.h"
+//#include "func.h"
+#include "pcct.h"
+
+
+void LoadFileList(const CString &m_filePath, std::vector<CString> &filelist)
+{
+
+	CString folderpath=m_filePath.Left(m_filePath.ReverseFind('\\'));
+
+	filelist.clear();
+	CStdioFile file;
+	BOOL readflag;
+	readflag=file.Open(m_filePath, CFile::modeRead);
+
+	if(readflag)
+	{	
+		CString strRead;
+		//TRACE("\n--Begin to read file");
+		while(file.ReadString(strRead)){
+			strRead=folderpath+"\\"+strRead;
+			filelist.push_back(strRead);
+		}
+		//TRACE("\n--End reading\n");
+		file.Close();
+	}
+}
 
 
 // RawData
@@ -32,7 +58,7 @@ void RawData::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{	// storing code
-				ar<<ll.size();		
+		ar<<ll.size();		
 		size_t si=0;
 		size_t ei=0;
 		for(size_t i=0;i<ll.size();i++){
@@ -92,4 +118,34 @@ void RawData::Clear(void)
 	xll.clear();
 	yll.clear();
 	ll.clear();
+}
+
+
+int RawData::LoadFromFileList(CString fp)
+{
+	Clear();
+
+	std::vector<CString> filelist;
+	LoadFileList(fp,filelist);
+	pcct data;
+
+	while(!filelist.empty()){
+		/////load data from file////////////
+		data.clear();
+		data.readFile(filelist.front());
+		data.TomA();
+
+		xll.resize(xll.size()+data.potential.size());
+		std::copy_backward(data.potential.begin(),data.potential.end(),xll.end());
+
+		yll.resize(yll.size()+data.current.size());
+		std::copy_backward(data.current.begin(),data.current.end(),yll.end());
+
+		ll.push_back(data.potential.size());
+
+		filelist.erase(filelist.begin());
+
+	}
+	
+	return 0;
 }
