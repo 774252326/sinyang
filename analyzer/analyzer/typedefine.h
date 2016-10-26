@@ -1,8 +1,8 @@
 #pragma once
 
 //#include <iostream>     // std::cout
-#include <algorithm>    // std::find
-#include <vector>       // std::vector
+//#include <algorithm>    // std::find
+//#include <vector>       // std::vector
 //#include <fstream>
 
 
@@ -96,8 +96,8 @@ typedef struct SOLUTIONCOMPOSITION{
 } SCP;
 
 
-const CString rightPlotFile0=L"tempr0.fig.txt";
-const CString rightPlotFile1=L"tempr1.fig.txt";
+//const CString rightPlotFile0=L"tempr0.fig.txt";
+//const CString rightPlotFile1=L"tempr1.fig.txt";
 
 
 //void mreadini(wchar_t *fn, anp &p1, cvp &p2, sap &p3 );
@@ -106,79 +106,8 @@ const CString rightPlotFile1=L"tempr1.fig.txt";
 //
 //void copyfs(const figspec &fsi, figspec & fso);
 
-template <typename T>
-T intgQ(std::vector<T> &x, std::vector<T> &y, T xmin, T xmax, T xUpLim)
-{
-	std::vector<T>::iterator itx;
-	itx=std::find(x.begin(), x.end(), xmin);
-	size_t index=itx-x.begin();
-
-	std::vector<T> xintg( x.begin()+index, x.end() );
-	std::vector<T> yintg( y.begin()+index, y.end() );
-
-	T ar=0;
-	for(size_t i=0;i<xintg.size()-1;i++){
-
-		if(xintg[i+1]<xUpLim){
-			if( (yintg[i]>0) || (yintg[i+1]>0) ){
-				if(yintg[i]<0){
-					ar+=(xintg[i+1]-xintg[i])*yintg[i+1]*yintg[i+1]/(yintg[i+1]-yintg[i]);
-				}
-				else{
-					if(yintg[i+1]<0){
-						ar+=(xintg[i+1]-xintg[i])*yintg[i]*yintg[i]/(yintg[i]-yintg[i+1]);
-					}
-					else{
-						ar+=(xintg[i+1]-xintg[i])*(yintg[i]+yintg[i+1]);
-					}
-				}
-			}
-		}
-		else{
-			ar+=(xUpLim-xintg[i])*(2*yintg[i]+(yintg[i+1]-yintg[i])*(xUpLim-xintg[i])/(xintg[i+1]-xintg[i]));
-			break;
-		}
-
-	}
-
-	return ar;
-}
 
 
-template <typename T>
-void UpdateRange( const std::vector<T> &x, T &xmin, T &xmax, T gapPercent=0, bool bLocalRange=false)
-{
-	auto resultx=std::minmax_element(x.begin(),x.end());
-	T tmin=*resultx.first;
-	T tmax=*resultx.second;
-	
-	T iv=tmax-tmin;
-	iv*=gapPercent;
-	tmin-=iv;
-	tmax+=iv;
-	if(bLocalRange||xmin>tmin)
-		xmin=tmin;
-	if(bLocalRange||xmax<tmax)
-		xmax=tmax;
 
-	if(xmin==xmax){
-		xmin-=1;
-		xmax+=1;
-	}
 
-}
 
-template <typename T>
-bool compless (T c1, T c2) {
-	return (c1>c2);
-}
-
-template <typename T>
-void SortInsert( std::vector<T> &xs, std::vector<T> &ys, T x, T y )
-{
-	std::vector<T>::iterator it;
-	it = std::find_first_of (xs.begin(), xs.end(),	&x, (&x)+1, compless<T>);
-	size_t idx=it-xs.begin();
-	xs.insert(it,x);
-	ys.insert(ys.begin()+idx,y);
-}

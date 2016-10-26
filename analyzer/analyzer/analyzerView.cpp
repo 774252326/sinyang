@@ -11,11 +11,6 @@
 
 #include "analyzerDoc.h"
 #include "analyzerView.h"
-//#include "calgridT.h"
-//#include "xRescaleT.h"
-//#include "CSpline.h"
-//#include "colormapT.h"
-#include "typedefine.h"
 #include "Header1.h"
 #include "PlotSettingPage.h"
 

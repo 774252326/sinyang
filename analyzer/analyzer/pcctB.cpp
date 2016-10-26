@@ -1,7 +1,8 @@
 #include "StdAfx.h"
 #include "pcctB.h"
 #include <algorithm>    // std::find
-#include "typedefine.h"
+//#include "typedefine.h"
+#include "intgQT.h"
 
 pcctB::pcctB(void)
 	//: StartLoad(false)

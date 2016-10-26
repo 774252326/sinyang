@@ -15,7 +15,7 @@ int intv=10;
 size_t n1=800;
 //PlotSpec psp0;
 
-CString DTRsetup=L"data\\dtr\\b.stp.txt";
+CString DTRsetup=L"data\\b.ghb";
 CString DTRflist=L"data\\dtr\\b.txt";
 
 CString DTAsetup=L"data\\dta\\c.stp.txt";
@@ -129,7 +129,9 @@ void RefreshData(const CString &currentFile, const std::vector<sapitem> &saplist
 	dataB.addVolume=saplist[dataB.stepCount].volconc;
 
 	//dataB.stepCount++;
-	dt1.stepName.Format(L"Solution Addition %d",dataB.stepCount+1);
+	CString str;
+	str.LoadStringW(IDS_STRING_STEPNAME1);
+	dt1.stepName.Format(L"%s %d",str,dataB.stepCount+1);
 }
 
 void InitialData(const CString &currentFile
@@ -143,7 +145,7 @@ void InitialData(const CString &currentFile
 	dt1.readFile(currentFile);
 	dt1.TomA();
 	dt1.addVolume=vmsvol;
-	dt1.stepName=L"VMS";
+	dt1.stepName.LoadStringW(IDS_STRING_STEPNAME0);
 
 	dataB.clear();
 	dataB.xmax=p2.highelimit;
@@ -486,7 +488,7 @@ CString Output4(PlotData & pdat
 	LineSpec ps1;
 	ps1.colour=genColor( genColorvFromIndex<float>( pdat.ps.size() ) ) ;
 	ps1.dotSize=0;  
-	ps1.name=L"fit line";
+	ps1.name.LoadStringW(IDS_STRING_FITTING_LINE);
 	//ps1.showLine=true;
 	ps1.lineType=0;
 	ps1.smoothLine=0;
@@ -498,7 +500,7 @@ CString Output4(PlotData & pdat
 
 	ps1.colour=genColor( genColorvFromIndex<float>( pdat.ps.size() ) ) ;
 	ps1.dotSize=0;  
-	ps1.name=L"Q intercept";
+	ps1.name.LoadStringW(IDS_STRING_INTERCEPT_Q);
 	//ps1.showLine=true;
 	ps1.lineType=2;
 	ps1.smoothLine=0;
@@ -534,7 +536,7 @@ CString Output6(PlotData & pdat
 		LineSpec ps1;
 		ps1.colour=genColor( genColorvFromIndex<float>( pdat.ps.size() ) ) ;
 		ps1.dotSize=0;  
-		ps1.name=L"test point";
+		ps1.name.LoadStringW(IDS_STRING_TEST_POINT);
 		ps1.lineType=2;
 		ps1.smoothLine=0;
 		ps1.traceLast=false;
@@ -583,7 +585,7 @@ CString Output7(PlotData & pdat
 	LineSpec ps1;
 	ps1.colour=genColor( genColorvFromIndex<float>( pdat.ps.size() ) ) ;
 	ps1.dotSize=0;  
-	ps1.name=L"fit line";
+	ps1.name.LoadStringW(IDS_STRING_FITTING_LINE);
 	//ps1.showLine=true;
 	ps1.lineType=0;
 	ps1.smoothLine=0;
@@ -664,7 +666,7 @@ CString Output8(PlotData & pdat0
 						LineSpec ps1;
 						ps1.colour=genColor( genColorvFromIndex<float>( pdat1.ps.size() ) ) ;
 						ps1.dotSize=0;  
-						ps1.name=L"fit line";
+						ps1.name.LoadStringW(IDS_STRING_FITTING_LINE);
 						//ps1.showLine=true;
 						ps1.lineType=0;
 						ps1.smoothLine=0;
@@ -771,6 +773,9 @@ UINT DTR(CanalyzerView *leftp,
 	pDoc->lp.back().psp=PlotSpec(0);
 	rightp->AddPlot(PlotData());
 	pDoc->rp.back().psp=PlotSpec(0);
+
+		CString xla;
+	CString yla;
 	//////////////////////////////first step////////////////////////////////////////////
 	//waiting=false;
 
@@ -794,11 +799,24 @@ UINT DTR(CanalyzerView *leftp,
 	LineSpec ps1;
 	ps1.colour=genColor( genColorvFromIndex<float>( pDoc->rp[0].ps.size() ) ) ;
 	ps1.dotSize=3;
-	ps1.name=L"Ar/Ar0";
+	ps1.name.LoadStringW(IDS_STRING_TEST_CURVE);
 	ps1.lineType=0;
 	ps1.smoothLine=1;
 	ps1.traceLast=false;
-	pDoc->rp[0].AddNew(x,y,ps1,L"Suppressor(ml)",L"Ratio of Charge");
+
+			{
+		CString str;
+		str.LoadStringW(IDS_STRING_SUPPRESSOR);
+		xla=str;
+		xla+=L" ";
+		str.LoadStringW(IDS_STRING_VOL_);
+		xla+=str;
+
+		str.LoadStringW(IDS_STRING_NORMALIZED_Q);
+		yla=str;
+	}
+
+	pDoc->rp[0].AddNew(x,y,ps1,xla,yla);
 	if(rightp->updatePlotRange(0))
 		rightp->Invalidate();
 
@@ -887,7 +905,7 @@ UINT DTA(CanalyzerView *leftp,
 		PlotData pdr0;
 		if(pdr0.ReadFile(p1.calibrationfilepath)){
 			pdr0.ps.back().colour=genColor( genColorvFromIndex<float>( pdr0.ps.size()-1 ) ) ;
-			pdr0.ps.back().name=L"standrad";
+			pdr0.ps.back().name.LoadStringW(IDS_STRING_CALIBRATION_CURVE);
 			rightp->AddPlot(pdr0);
 			if(rightp->updatePlotRange(0))
 				rightp->Invalidate();
@@ -911,6 +929,8 @@ UINT DTA(CanalyzerView *leftp,
 	std::vector<double> x;
 	std::vector<double> y;
 	LineSpec ps1;
+		CString xla;
+	CString yla;
 	//////////////////////////////first step////////////////////////////////////////////
 
 	InitialData(filelist.front(),p3.vmsvol,p2,dt1,dataB);
@@ -931,12 +951,25 @@ UINT DTA(CanalyzerView *leftp,
 
 	ps1.colour=genColor( genColorvFromIndex<float>( pDoc->rp[0].ps.size() ) ) ;
 	ps1.dotSize=3;
-	ps1.name=L"Ar/Ar0";
+	ps1.name.LoadStringW(IDS_STRING_TEST_CURVE);
 	//ps1.showLine=true;
 	ps1.lineType=0;
 	ps1.smoothLine=1;
 	ps1.traceLast=false;
-	pDoc->rp[0].AddNew(x,y,ps1,L"Suppressor(ml)",L"Ratio of Charge");
+
+		{
+		CString str;
+		str.LoadStringW(IDS_STRING_SUPPRESSOR);
+		xla=str;
+		xla+=L" ";
+		str.LoadStringW(IDS_STRING_VOL_);
+		xla+=str;
+
+		str.LoadStringW(IDS_STRING_NORMALIZED_Q);
+		yla=str;
+	}
+
+	pDoc->rp[0].AddNew(x,y,ps1,xla,yla);
 	if(rightp->updatePlotRange(0))
 		rightp->Invalidate();
 
@@ -1036,7 +1069,8 @@ UINT LATR(CanalyzerView *leftp,
 	std::vector<double> x;
 	std::vector<double> y;
 	LineSpec ps1;
-
+		CString xla;
+	CString yla;
 
 	//////////////////////////////first step////////////////////////////////////////////
 
@@ -1058,12 +1092,25 @@ UINT LATR(CanalyzerView *leftp,
 
 	ps1.colour=genColor( genColorvFromIndex<float>( pDoc->rp[0].ps.size() ) ) ;
 	ps1.dotSize=3;
-	ps1.name=L"Ar";
+	ps1.name.LoadStringW(IDS_STRING_TEST_CURVE);
 	//ps1.showLine=true;
 	ps1.lineType=0;
 	ps1.smoothLine=1;
 	ps1.traceLast=false;
-	pDoc->rp[0].AddNew(x,y,ps1,L"Suppressor Conc.(ml/L)",L"Charge(mC)");
+
+	{
+		CString str;
+		str.LoadStringW(IDS_STRING_SUPPRESSOR);
+		xla=str;
+		xla+=L" ";
+		str.LoadStringW(IDS_STRING_CONC_);
+		xla+=str;
+
+		str.LoadStringW(IDS_STRING_CHARGE_Q);
+		yla=str;
+	}
+
+	pDoc->rp[0].AddNew(x,y,ps1,xla,yla);
 	if(rightp->updatePlotRange(0))
 		rightp->Invalidate();
 
@@ -1148,6 +1195,12 @@ UINT LATA(CanalyzerView *leftp,
 	std::vector<double> x;
 	std::vector<double> y;
 	LineSpec ps1;
+
+
+	
+	CString xla;
+	CString yla;
+
 	//////////////////////////////first step////////////////////////////////////////////
 
 	InitialData(filelist.front(),p3.vmsvol,p2,dt1,dataB);
@@ -1185,12 +1238,21 @@ UINT LATA(CanalyzerView *leftp,
 
 	ps1.colour=genColor( genColorvFromIndex<float>( pDoc->rp[0].ps.size() ) ) ;
 	ps1.dotSize=3;
-	ps1.name=L"Q";
+	ps1.name.LoadStringW(IDS_STRING_TEST_CURVE);
 	//ps1.showLine=false;
 	ps1.lineType=-1;
 	ps1.smoothLine=0;
 	ps1.traceLast=false;
-	pDoc->rp[0].AddNew(x,y,ps1,L"Conc.(ml/L)",L"Q(mC)");
+
+	{
+		CString str;
+		str.LoadStringW(IDS_STRING_CONC_);
+		xla=str;
+		str.LoadStringW(IDS_STRING_CHARGE_Q);
+		yla=str;
+	}
+
+	pDoc->rp[0].AddNew(x,y,ps1,xla,yla);
 	if(rightp->updatePlotRange(0))
 		rightp->Invalidate();
 
@@ -1288,6 +1350,10 @@ UINT RCR(CanalyzerView *leftp,
 	pDoc->rp.back().psp=PlotSpec(0);
 
 
+	CString xla;
+	CString yla;
+
+
 	//////////////////////////////first step////////////////////////////////////////////
 
 
@@ -1341,11 +1407,24 @@ UINT RCR(CanalyzerView *leftp,
 	LineSpec ps1;
 	ps1.colour=genColor( genColorvFromIndex<float>( pDoc->rp[0].ps.size() ) ) ;
 	ps1.dotSize=3;
-	ps1.name=L"Ar";
+	ps1.name.LoadStringW(IDS_STRING_TEST_CURVE);
 	ps1.lineType=0;
 	ps1.smoothLine=1;
 	ps1.traceLast=false;
-	pDoc->rp[0].AddNew(x,y,ps1,L"Leveler Conc.(ml/L)",L"Charge(mC)");
+
+	{
+		CString str;
+		str.LoadStringW(IDS_STRING_LEVELER);
+		xla=str;
+		xla+=L" ";
+		str.LoadStringW(IDS_STRING_CONC_);
+		xla+=str;
+
+		str.LoadStringW(IDS_STRING_CHARGE_Q);
+		yla=str;
+	}
+
+	pDoc->rp[0].AddNew(x,y,ps1,xla,yla);
 	if(rightp->updatePlotRange(0))
 		rightp->Invalidate();
 
@@ -1431,7 +1510,7 @@ UINT RCA(CanalyzerView *leftp,
 		PlotData pdr0;
 		if(pdr0.ReadFile(p1.calibrationfilepath)){
 			pdr0.ps.back().colour=genColor( genColorvFromIndex<float>( pdr0.ps.size()-1 ) ) ;
-			pdr0.ps.back().name=L"standrad";
+			pdr0.ps.back().name.LoadStringW(IDS_STRING_CALIBRATION_CURVE);
 			rightp->AddPlot(pdr0);
 			if(rightp->updatePlotRange(0))
 				rightp->Invalidate();
@@ -1895,7 +1974,7 @@ UINT SARA(CanalyzerView *leftp,
 	ps1.colour=genColor( genColorvFromIndex<float>( pDoc->rp[0].ps.size() ) ) ;
 	ps1.dotSize=3;
 	//ps1.name.Format(L"%gS%gA",prevSconc,prevAconc);
-	ps1.name=L"Ar/Ar0";
+	ps1.name.LoadStringW(IDS_STRING_TEST_CURVE);
 	//ps1.showLine=true;
 	ps1.lineType=0;
 	ps1.smoothLine=1;
@@ -1940,7 +2019,7 @@ UINT SARA(CanalyzerView *leftp,
 			ps1.colour=genColor( genColorvFromIndex<float>( pDoc->rp[1].ps.size() ) ) ;
 			ps1.dotSize=3;
 			//ps1.name.Format(L"%gS%gA",prevSconc,prevAconc);
-			ps1.name=L"Ar/Ar0";
+			ps1.name.LoadStringW(IDS_STRING_TEST_CURVE);
 			//ps1.showLine=true;
 			ps1.lineType=0;
 			ps1.smoothLine=1;

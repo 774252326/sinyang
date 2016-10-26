@@ -15,7 +15,7 @@
 //#include "xRescaleT.h"
 //#include "CSpline.h"
 //#include "colormapT.h"
-#include "typedefine.h"
+//#include "typedefine.h"
 #include "Header1.h"
 #include "PlotSettingPage.h"
 
@@ -250,7 +250,7 @@ IMPLEMENT_DYNCREATE(CanalyzerViewR, CFormView)
 		CanalyzerDoc* pDoc=GetDocument();
 		if(!pDoc->rp.empty()){
 			int il=m_spBtn.GetPos32();
-			str.LoadStringW(IDS_STRING_FIGURE1);
+			str.LoadStringW(IDS_STRING_FIGURE2);
 			PlotSettingPage fig1setting(str
 				,pDoc->rp[il].psp
 				,pDoc->rp[il].ps

@@ -122,6 +122,7 @@
     <ClInclude Include="EditList.h" />
     <ClInclude Include="func.h" />
     <ClInclude Include="Header1.h" />
+    <ClInclude Include="intgQT.h" />
     <ClInclude Include="linespec.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="MFCCaptionBarA.h" />

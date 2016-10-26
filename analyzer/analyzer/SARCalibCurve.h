@@ -3,6 +3,7 @@
 // SARCalibCurve command target
 
 #include "typedefine.h"
+#include <vector>
 
 class SARCalibCurve : public CObject
 {
