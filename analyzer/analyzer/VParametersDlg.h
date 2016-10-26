@@ -1,5 +1,6 @@
 #pragma once
 
+#include "typedefine.h"
 
 // CVParametersDlg dialog
 
@@ -21,4 +22,8 @@ protected:
 public:
 	virtual BOOL OnInitDialog();
 	virtual BOOL OnSetActive();
+
+	cvp para;
+	virtual BOOL OnKillActive();
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 };

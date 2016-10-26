@@ -369,6 +369,10 @@ BOOL COutputWnd::InsertListCtrl(int StepNo, int No2, int CycleNo, double Q, bool
 }
 
 
+BOOL COutputWnd::clear(void)
+{
+	return m_listCtrlMonitor.DeleteAllItems();
+}
 
 
 
@@ -442,3 +446,5 @@ void COutputList::OnViewOutput()
 
 	}
 }
+
+

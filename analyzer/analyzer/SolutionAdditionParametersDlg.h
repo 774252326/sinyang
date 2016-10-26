@@ -1,6 +1,8 @@
 #pragma once
 
 #include "nirs2000_src\EditList.h"
+#include "typedefine.h"
+#include <vector>
 
 // SolutionAdditionParametersDlg dialog
 
@@ -28,4 +30,9 @@ public:
 	afx_msg void OnItemchangedList(NMHDR* pNMHDR, LRESULT* pResult);
 
 	CStatic stt;
+
+	std::vector<sap> paral;
+	virtual BOOL OnKillActive();
+	void SetList(void);
+	void GetList(void);
 };

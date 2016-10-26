@@ -523,16 +523,10 @@ void CMainFrame::OnFileOpen()
 
 	if( fileDlg.DoModal()==IDOK)
 	{
-
+		dat.clear();
 		( (dlg1*)m_wndSplitter.GetPane(0,0) )->clear();
 		( (dlg1*)m_wndSplitter.GetPane(0,1) )->clear();
-
-		dat.clear();
-		datt.clear();
-		finishflag= finishflag2=true;
-		Ar0=0;	
-		stepCount= rowCount=0;
-		totalVolume=0;
+		m_wndOutput.clear();
 
 		CString m_filePath=fileDlg.GetPathName();
 		//CString folderpath=fileDlg.GetFolderPath();
@@ -561,16 +555,11 @@ void CMainFrame::OnFileOpen()
 			file.Close();
 		}
 
-		std::vector<double> ar;
-
-		plotspec ps1;
-
-
 		for(size_t i=0;i<filelist.size();i++){
 			pcct dt1;
 			dt1.readFile(filelist[i]);
-			dt1.seperate();
-			dt1.AR=dt1.intg(0.8);
+			//dt1.seperate();
+			//dt1.AR=dt1.intg(0.8);
 
 			dat.push_back(dt1);
 		}
@@ -579,17 +568,19 @@ void CMainFrame::OnFileOpen()
 
 		finishflag=true;
 		finishflag2=true;
-		//Ar0=dat.front().AR;
 		totalVolume=0;
-		addVolume.assign(dat.size(),0.0125);
-		addVolume.front()=25;
-		datt.xmax=1.57;
-		datt.xmin=-0.23;
-		datt.spv=10;
-		datt.StartLoad=false;
+		Ar0=0;	
+		stepCount=rowCount=0;
+
+		mreadini(L"pa.txt",p1,p2,p3);
+		datt.clear();
+		datt.xmax=p2.highelimit;
+		datt.xmin=p2.lowelimit;
+		datt.spv=1/p2.scanrate;
+		datt.intgUpLim=p2.endintegratione;
+		datt.nCycle=p2.noofcycles;
 
 		this->OnOptions();
-
 	}
 }
 
@@ -628,105 +619,90 @@ void CMainFrame::OnUpdateViewAnalysisProgress(CCmdUI *pCmdUI)
 void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 {
 	// TODO: Add your message handler code here and/or call default
-	size_t n1=360;
-	plotspec ps1;
-	std::vector<double> x;
-	std::vector<double> y;
-	size_t rn;
-
-	bool flg;
-	double addvol;
-
-
-	BOOL bNameValid;
-	CString strTemp, strTemp2=L"                              ";
-
-	INT_PTR nRes;
-	//CString strTemp;
-	//BOOL bNameValid;
 
 	switch(nIDEvent){
 	case 1:
+		{
+			/////////////////////////////////////////////////////////////////////////////////////////////
 
-
-		///////////////////////////////////////////////////////////////////////////////
-
-		if(dat.empty()){
-			finishflag2=true;
-			KillTimer(timer1);
-
-			m_wndCaptionBar.m_clrBarText=black;
-			//ASSERT
-			(strTemp.LoadString(IDS_STRING_OVER));
-			m_wndCaptionBar.SetText(strTemp, CMFCCaptionBar::ALIGN_LEFT);
-
-			m_wndCaptionBar.SetButton(L" ", ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_LEFT, FALSE);
-			m_wndCaptionBar.EnableButton(FALSE);
-			m_wndCaptionBar.Invalidate();
-		}
-		else{
-
-			//load n1 points
-			rn=dat.front().popData(x,y,n1);
-			//plot points on plot1
-			plot1(x,y,dat.front().label[0],dat.front().label[1]);
-
-			flg=datt.addXY(x,y);
-
-			//if line finish
-			finishflag=(rn==0);
-			if(finishflag){
-				datt.Ar.push_back(datt.intg(0.8));
-				flg=true;
-			}
-
-			if(flg){//if one cycle complete
-				if(datt.Ar.size()==1){
-					addvol=addVolume[stepCount];
-				}
-				else{
-					addvol=0;
-				}
-				totalVolume+=addvol;
-
-				if(stepCount==0){
-					Ar0=datt.Ar.back();
-				}
-				m_wndOutput.InsertListCtrl(rowCount,stepCount,datt.Ar.size(),addvol,totalVolume,datt.Ar.back()*1e3,(datt.Ar.back()/Ar0),finishflag);
-
-				rowCount++;
-			}
-
-			if(finishflag){
-
-				x.assign( 1,totalVolume-addVolume[0] );
-				y.assign( 1,(datt.Ar.back()/Ar0) );
-
-				plot2(x,y,L"Suppressor(ml)",L"Ratio of Charge");
-
-				stepCount++;
-				datt.clear();
-				dat.erase(dat.begin());
-
+			if( dat.empty() || stepCount>=p3.size() ){
+				finishflag2=true;
 				KillTimer(timer1);
 
+				m_wndCaptionBar.m_clrBarText=black;
+				CString strTemp;
 				//ASSERT
-				(strTemp.LoadString(IDS_STRING_WAIT_RESPONSE));
+				(strTemp.LoadString(IDS_STRING_OVER));
 				m_wndCaptionBar.SetText(strTemp, CMFCCaptionBar::ALIGN_LEFT);
-				//ASSERT
-				(strTemp.LoadString(IDS_CAPTION_BUTTON));
-				m_wndCaptionBar.SetButton(strTemp, ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_LEFT, FALSE);
-				m_wndCaptionBar.EnableButton();
 
-				timer2=SetTimer(2,400,NULL);
+				m_wndCaptionBar.SetButton(L" ", ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_LEFT, FALSE);
+				m_wndCaptionBar.EnableButton(FALSE);
+				m_wndCaptionBar.Invalidate();
+			}
+			else{
+
+				size_t n1=360;
+
+				std::vector<double> x;
+				std::vector<double> y;
+				size_t rn;
+
+				//load n1 points
+				rn=dat.front().popData(x,y,n1);
+				//plot points on plot1
+				plot1(x,y,dat.front().label[0],dat.front().label[1]);
+
+				int nflg=datt.addXY(x,y);
+
+				//if line finish
+				finishflag=(rn==0)|(nflg==2);
+
+				if(nflg>=1 || finishflag){//if one cycle complete
+					double addvol;
+					if(datt.Ar.size()==1){
+						addvol=p3[stepCount].volume;
+					}
+					else{
+						addvol=0;
+					}
+					totalVolume+=addvol;
+
+					if(stepCount==0){
+						Ar0=datt.Ar.back();
+					}
+
+					m_wndOutput.InsertListCtrl(rowCount,stepCount,datt.Ar.size(),addvol,totalVolume,datt.Ar.back()*1e3,(datt.Ar.back()/Ar0),finishflag);
+
+					rowCount++;
+					if(finishflag){
+
+						x.assign( 1,totalVolume-p3.front().volume );
+						y.assign( 1,(datt.Ar.back()/Ar0) );
+
+						plot2(x,y,L"Suppressor(ml)",L"Ratio of Charge");
+
+						stepCount++;
+						datt.clear();
+						dat.erase(dat.begin());
+
+						KillTimer(timer1);
+						CString strTemp;
+						//ASSERT
+						(strTemp.LoadString(IDS_STRING_WAIT_RESPONSE));
+						m_wndCaptionBar.SetText(strTemp, CMFCCaptionBar::ALIGN_LEFT);
+						//ASSERT
+						(strTemp.LoadString(IDS_CAPTION_BUTTON));
+						m_wndCaptionBar.SetButton(strTemp, ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_LEFT, FALSE);
+						m_wndCaptionBar.EnableButton();
+
+						timer2=SetTimer(2,400,NULL);
+
+					}
+				}
 
 			}
-
-
+			///////////////////////////////////////////////////////////////////////////////////////////////
 		}
-
-
-		/////////////////////////////////////////////////////////////////////////////////////////////
 		break;
 
 	case 2:
@@ -819,10 +795,18 @@ void CMainFrame::OnAnalysisMethodsetup()
 
 
 	// 创建属性表对象   
-    AnalysisSetupPage sheet(_T("Analysis Setup"));
+	AnalysisSetupPage sheet(_T("Analysis Setup"));
 	//abc sheet(777);
-    // 设置属性对话框为向导对话框   
-    sheet.SetWizardMode();   
-    // 打开模态向导对话框   
-    sheet.DoModal();  
+	// 设置属性对话框为向导对话框   
+	//sheet.SetWizardMode();   
+	// 打开模态向导对话框   
+	if(sheet.DoModal()==IDOK){
+
+		mwriteini(L"pa.txt", sheet.APdlg.para, sheet.CVPdlg.para, sheet.SAPdlg.paral);
+
+		//CString str;
+		//str.Format(L"%g",(double)sheet.APdlg.para.analysistype);
+		//AfxMessageBox(str);
+	}
+
 }

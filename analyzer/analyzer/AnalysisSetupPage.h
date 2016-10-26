@@ -21,9 +21,10 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
-	AnalysisParametersDlg AP;
-	SolutionAdditionParametersDlg SAP;
-	CVParametersDlg CVP;
+	AnalysisParametersDlg APdlg;
+	SolutionAdditionParametersDlg SAPdlg;
+	CVParametersDlg CVPdlg;
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 };
 
 

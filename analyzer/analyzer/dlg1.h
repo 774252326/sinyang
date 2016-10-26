@@ -3,14 +3,7 @@
 #include <vector>
 #include "atltypes.h"
 
-
-typedef struct PLOTSPEC{
-	COLORREF colour;
-	CString name;
-	int dotSize;
-	bool showLine;
-	int smoothLine;
-} plotspec;
+#include "typedefine.h"
 
 
 // dlg1 form view

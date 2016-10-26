@@ -13,14 +13,17 @@ public:
 	std::vector<double> Ar;
 
 
-
-	bool addXY( std::vector<double> & x, std::vector<double> & y);
-	bool StartLoad;
+	//in cycle=0;one cycle end=1;all cycle end=2
+	int addXY( std::vector<double> & x, std::vector<double> & y);
+	//bool StartLoad;
 	double xmin;
 	double xmax;
 	double intg(const double & xUpLim);
 	void clear(void);
 	//second per voltage
 	double spv;
+	double intgUpLim;
+	double intg();
+	int nCycle;
 };
 

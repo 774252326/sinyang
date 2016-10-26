@@ -1,5 +1,6 @@
 #pragma once
 
+#include "typedefine.h"
 
 // AnalysisParametersDlg dialog
 
@@ -23,4 +24,10 @@ public:
 	virtual BOOL OnInitDialog();
 	afx_msg void ComboSelectChange(void);
 	//afx_msg void OnBnClickedButton1();
+
+	anp para;
+	virtual BOOL OnKillActive();
+	//virtual BOOL Create(LPCTSTR lpszTemplateName, CWnd* pParentWnd = NULL);
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	void editchange(void);
 };

@@ -105,6 +105,9 @@
     <ClInclude Include="nirs2000_src\EditList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="typedefine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="analyzer.cpp">
@@ -159,6 +162,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="nirs2000_src\EditList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="typedefine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

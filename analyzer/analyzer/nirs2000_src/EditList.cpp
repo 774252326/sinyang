@@ -59,7 +59,7 @@ CEdit *CEditList::EditItem(int nItem, int nSubItem)
 	rect.left += offset;	
 	rect.right = rect.left + GetColumnWidth(nSubItem);
 	if(rect.right > rcClient.right) 
-	   rect.right = rcClient.right;
+		rect.right = rcClient.right;
 
 	// Get Column alignment	
 	LV_COLUMN lvcol;
@@ -74,12 +74,17 @@ CEdit *CEditList::EditItem(int nItem, int nSubItem)
 	else 
 		dwStyle = ES_CENTER;	
 
-	
+
 	dwStyle |=WS_VISIBLE 
 		| WS_BORDER 
 		| WS_CHILD 
 		//| ES_NUMBER
 		| ES_AUTOHSCROLL;
+
+	//if(nSubItem==0){
+	//	dwStyle |=ES_READONLY;
+	//}
+
 	CEdit *pEdit = new CEditItem(nItem, nSubItem, GetItemText(nItem, nSubItem));
 
 #define IDC_EDITCTRL 0x1234
@@ -95,13 +100,13 @@ CEdit *CEditList::EditItem(int nItem, int nSubItem)
 void CEditList::OnEndlabeledit(NMHDR* pNMHDR, LRESULT* pResult) 
 {
 	LV_DISPINFO *plvDispInfo = (LV_DISPINFO*)pNMHDR;
- 	LV_ITEM *plvItem = &plvDispInfo->item;
+	LV_ITEM *plvItem = &plvDispInfo->item;
 
 	if( plvItem->iItem != -1 &&  // valid item
 		plvItem->pszText )		// valid text
 	{
 		SetItemText( plvItem->iItem, plvItem->iSubItem, plvItem->pszText);				
-		
+
 		// this will invoke an ItemChanged handler in parent
 		if ( plvItem->iSubItem != 0 )
 		{
@@ -123,10 +128,13 @@ void CEditList::OnClick(NMHDR* pNMHDR, LRESULT* pResult)
 
 	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
 
-	if ( m_fGetType && m_fGetType( pNMListView->iSubItem ) == eCombo )
-		ComboItem(pNMListView->iItem, pNMListView->iSubItem);
-	else 
-		EditItem (pNMListView->iItem, pNMListView->iSubItem);
+	if(pNMListView->iSubItem > 0)
+	{
+		if ( m_fGetType && m_fGetType( pNMListView->iSubItem ) == eCombo )
+			ComboItem(pNMListView->iItem, pNMListView->iSubItem);
+		else 
+			EditItem (pNMListView->iItem, pNMListView->iSubItem);
+	}
 
 	*pResult = 0;
 }
@@ -135,10 +143,10 @@ BOOL CEditList::PreCreateWindow(CREATESTRUCT& cs)
 {
 	// TODO: Add your specialized code here and/or call the base class
 	cs.style |= WS_CHILD |
-				LVS_REPORT |
-				LVS_SINGLESEL |
-				LVS_SHOWSELALWAYS
-				;	
+		LVS_REPORT |
+		LVS_SINGLESEL |
+		LVS_SHOWSELALWAYS
+		;	
 	return CListCtrl::PreCreateWindow(cs);
 }
 
@@ -150,34 +158,35 @@ void CEditList::OnKeydown(NMHDR* pNMHDR, LRESULT* pResult)
 
 	switch(pLVKeyDow->wVKey)
 	{
-		case VK_DELETE: 
+	case VK_DELETE: 
+		{
+			int nItem = GetSelectionMark();
+			//if(nItem!=-1) // valid item 	
+			if( nItem > 0 )
 			{
-				int nItem = GetSelectionMark();
-				if(nItem!=-1) // valid item 					
-				{
-					DeleteItem( nItem );
-					for(;nItem<GetItemCount();nItem++){
-						CString str;
-						str.Format(L"%d",nItem);
-						SetItemText(nItem,0,str);
-					}
-				}
-			}	break;
-
-		case VK_INSERT: 
-			{
-				int nItem = GetSelectionMark();
-				//if(nItem==-1) // valid item 					
-				{
-					//DeleteItem( nItem );
-					nItem=GetItemCount();
+				DeleteItem( nItem );
+				for(;nItem<GetItemCount();nItem++){
 					CString str;
 					str.Format(L"%d",nItem);
-					InsertItem( nItem, str );
+					SetItemText(nItem,0,str);
 				}
-			}	break;
+			}
+		}	break;
 
-		default :break;
+	case VK_INSERT: 
+		{
+			int nItem = GetSelectionMark();
+			//if(nItem==-1) // valid item 					
+			{
+				//DeleteItem( nItem );
+				nItem=GetItemCount();
+				CString str;
+				str.Format(L"%d",nItem);
+				InsertItem( nItem, str );
+			}
+		}	break;
+
+	default :break;
 	}
 	*pResult = 0;
 
@@ -187,10 +196,10 @@ int CEditList::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CListCtrl::OnCreate(lpCreateStruct) == -1)
 		return -1;
-	
+
 	// TODO: Add your specialized creation code here	
 	SetExtendedStyle( GetExtendedStyle() /*| LVS_EX_CHECKBOXES*/ );
-	
+
 	return 0;
 }
 
@@ -219,20 +228,20 @@ CComboBox * CEditList::ComboItem(int nItem, int nSubItem)
 		Scroll(size);
 		rect.left -= size.cx;
 	}
-	
+
 	rect.left += offset;	
 	rect.right = rect.left + GetColumnWidth(nSubItem);
 	if(rect.right > rcClient.right) 
-	   rect.right = rcClient.right;
+		rect.right = rcClient.right;
 	//basic code end
 
 	rect.bottom += 30 * rect.Height();//dropdown area
-	
+
 	DWORD dwStyle =  WS_CHILD | WS_VISIBLE | WS_VSCROLL | /*WS_HSCROLL|*/CBS_DROPDOWNLIST | CBS_DISABLENOSCROLL;
 	CComboBox *pList = new CComboItem(nItem, nSubItem, &m_strList);
 	pList->Create(dwStyle, rect, this, IDC_COMBOBOXINLISTVIEW);
 	pList->ModifyStyleEx(0,WS_EX_CLIENTEDGE);//can we tell at all
-	
+
 	pList->ShowDropDown();
 	pList->SelectString(-1, strFind.GetBuffer(1));
 	// The returned pointer should not be saved

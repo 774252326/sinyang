@@ -3,10 +3,12 @@
 #include <algorithm>    // std::find
 
 pcctA::pcctA(void)
-	: StartLoad(false)
-	, xmin(0)
+	//: StartLoad(false)
+	: xmin(0)
 	, xmax(0)
 	, spv(0)
+	, intgUpLim(0)
+	, nCycle(0)
 {
 }
 
@@ -16,7 +18,7 @@ pcctA::~pcctA(void)
 }
 
 
-bool pcctA::addXY(std::vector<double> & x, std::vector<double> & y)
+int pcctA::addXY(std::vector<double> & x, std::vector<double> & y)
 {
 	if(x.size()==y.size()){
 
@@ -24,7 +26,8 @@ bool pcctA::addXY(std::vector<double> & x, std::vector<double> & y)
 		itx=find(x.begin(),x.end(),xmax);
 		size_t index=itx-x.begin();
 
-		if(StartLoad){
+		//if(StartLoad){
+		if(!xx.empty()){
 			xx.back().resize(xx.back().size()+index);
 			std::copy_backward(x.begin(),x.begin()+index,xx.back().end());
 
@@ -38,24 +41,35 @@ bool pcctA::addXY(std::vector<double> & x, std::vector<double> & y)
 		if(!x.empty()){
 
 			if(!xx.empty()){
-				Ar.push_back(intg(0.8));
+				Ar.push_back(intg());
+			}
+
+			if(xx.size()>=nCycle){
+				return 2;
 			}
 
 			xx.push_back(x);
 			yy.push_back(y);
 
-			if(StartLoad){
-				return true;
+			//if(StartLoad){
+			if(xx.size()>1){
+				return 1;
 			}
-			else{
-				StartLoad=true;
-			}		
+			//else{
+			//	StartLoad=true;
+			//}		
 
 		}
 
+		if( xx.size()>=nCycle && xx.back().back()==xx.back()[1] && xx.back().size()>2 ){
+			Ar.push_back(intg());
+			return 2;
+		}
+
+
 	}
 
-	return false;
+	return 0;
 
 }
 
@@ -98,12 +112,15 @@ double pcctA::intg(const double & xUpLim)
 
 }
 
-
+double pcctA::intg()
+{
+	return intg(intgUpLim);
+}
 
 void pcctA::clear(void)
 {
 	xx.clear();
 	yy.clear();
 	Ar.clear();
-	StartLoad=false;
+	//StartLoad=false;
 }

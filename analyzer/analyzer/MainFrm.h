@@ -6,6 +6,7 @@
 #include "OutputWnd.h"
 #include "pcct.h"
 #include "pcctA.h"
+#include "typedefine.h"
 
 class CMainFrame : public CFrameWndEx
 {
@@ -81,13 +82,16 @@ public:
 	int stepCount;
 	int rowCount;
 	double totalVolume;
-	std::vector<double> addVolume;
 	afx_msg void OnViewToolbara();
 	afx_msg void OnUpdateViewToolbara(CCmdUI *pCmdUI);
 	void plot1(const std::vector<double> & x, const std::vector<double> & y, const CString & xlabel, const CString & ylabel);
 	void plot2(const std::vector<double> & x, const std::vector<double> & y, const CString & xlabel, const CString & ylabel);
 	int timer2;
 	afx_msg void OnAnalysisMethodsetup();
+
+	anp p1;
+	cvp p2;
+	std::vector<sap> p3;
 };
 
 
