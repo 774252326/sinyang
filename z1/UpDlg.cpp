@@ -17,6 +17,7 @@
 #include "funT\fpolyT.h"
 #include "funT\getpt.h"
 #include "funT\loregT.h"
+#include "funT\bisecT.h"
 
 #define black RGB(0,0,0)
 #define red RGB(255,0,0)
@@ -39,7 +40,7 @@ IMPLEMENT_DYNAMIC(CUpDlg, CDialog)
 	, y(NULL)
 	, isLoad(false)
 	, isSelectBottom(false)
-	, lineWidth(2)
+	, lineWidth(3)
 	, isSelectTop(false)
 	//, x1(0)
 	//, x2(0)
@@ -169,9 +170,15 @@ void CUpDlg::OnPaint()
 			DrawCurve(plotrect, &dc);
 
 
-				//pen.CreatePen(PS_SOLID,1,black);
-				//DrawDiff(plotrect,&dc,&pen,m_xbottom,m_xtop);
-				//pen.DeleteObject();
+			pen.CreatePen(PS_SOLID,1,black);
+			//DrawDiff(plotrect,&dc,&pen,chisq,chisqpp);
+			DrawVLine(plotrect,&dc,&pen,chisq);
+			//DrawVLine(plotrect,&dc,&pen,chisqpp);
+			pen.DeleteObject();
+
+			//pen.CreatePen(PS_SOLID,1,black);
+			//DrawDiff(plotrect,&dc,&pen,m_xbottom,m_xtop);
+			//pen.DeleteObject();
 
 			if(isSmooth){
 				DrawSmoothCurve(plotrect,&dc);
@@ -197,11 +204,11 @@ void CUpDlg::OnPaint()
 				//}
 				//pen.DeleteObject();
 
-				pen.CreatePen(PS_SOLID,1,black);
-				DrawDiff(plotrect,&dc,&pen,chisq,chisqpp);
-				DrawVLine(plotrect,&dc,&pen,chisq);
-				DrawVLine(plotrect,&dc,&pen,chisqpp);
-				pen.DeleteObject();
+				//pen.CreatePen(PS_SOLID,1,black);
+				//DrawDiff(plotrect,&dc,&pen,chisq,chisqpp);
+				//DrawVLine(plotrect,&dc,&pen,chisq);
+				//DrawVLine(plotrect,&dc,&pen,chisqpp);
+				//pen.DeleteObject();
 
 
 			}
@@ -260,7 +267,7 @@ void CUpDlg::OnBnClickedButton1()
 
 		m_fileName=fileDlg.GetPathName();
 
-	
+
 		//free_vector(y,1,m_n);
 		free_vector(x,1,m_n);
 
@@ -303,97 +310,124 @@ void CUpDlg::OnBnClickedButton2()
 	// TODO: Add your control notification handler code here
 
 
-	if( isLoad ){
+	//if( isLoad ){
+	//	UpdateData();
+	//	//a=vector<double>(1,m_m);
+	//	//covar=matrix<double>(1,m_m,1,m_m);
+	//	//double *tmp=vector<double>(1,4);
+
+	//	//long startind=findbottomidx(x,m_n,m_xbottom);
+	//	//long endind=findtopidx(x, m_n,m_xtop );
+
+	//	if(isSmooth){
+	//		//xp=nfun( x, ys, startind, endind, m_m, a, IsDlgButtonChecked(IDC_CHECK2));
+	//		//xp=nfun2( x, ys, startind, endind, m_m, a, covar, &chisq, IsDlgButtonChecked(IDC_CHECK2));
+	//		//nfun3(x,ys,startind,endind,m_m,a,&chisq, IsDlgButtonChecked(IDC_CHECK2), tmp);
+
+	//		//bool *bk=vector<bool>(1,m_n);
+	//		//nknee=getpoint5(x,ys,m_n,bk,m_m,!IsDlgButtonChecked(IDC_CHECK2));
+	//		//xknee=vector<double>(1,nknee);
+	//		//selectvt1(x,m_n,bk,nknee,xknee);
+	//		//yknee=vector<double>(1,nknee);
+	//		//selectvt1(ys,m_n,bk,nknee,yknee);
+	//		//free_vector(bk,1,m_n);
+
+
+
+	//		///////////////////////////////////////////////////
+	//		xknee=getkneep(nc,nx,nd,&nknee,xp,nlcm,nlmx,nlmn);
+	//		//if(IsDlgButtonChecked(IDC_CHECK2) ){
+	//		//restorenx(xkm,nknee,-m_xtop,-m_xbottom,xknee);
+	//		//scalevt(xknee,nknee,xknee,-1.0);
+	//		//}
+
+	//		//xknee=getkpD(lmx,nlmx,lmn,nlmn,&nknee,nx[nd],nys[nd],xp);
+
+	//		//double **xkm=getkneepD(lmx,nlmx,lmn,nlmn,&nknee,nx[nd],nys[nd],xp);
+	//		//xknee=vector<double>(1,nknee);
+
+	//		//if(IsDlgButtonChecked(IDC_CHECK2) ){
+	//		//	restorenx(xkm,nknee,-m_xtop,-m_xbottom,xknee);
+	//		//	scalevt(xknee,nknee,xknee,-1.0);
+	//		//}
+	//		//else{
+	//		//	restorenx(xkm,nknee,m_xbottom,m_xtop,xknee);
+	//		//}
+	//		if(xknee==NULL)
+	//			AfxMessageBox(L"no knee point! reduce threshold and try again");
+	//		/////////////////////////////////////////////////////////////////////////////////////////
+
+	//	}
+	//	//else{
+	//	//	//xp=nfun( x, y, startind, endind, m_m, a, IsDlgButtonChecked(IDC_CHECK2));
+	//	//	//xp=nfun2( x, y, startind, endind, m_m, a, covar, &chisq, IsDlgButtonChecked(IDC_CHECK2));
+	//	//	//nfun3(x,y,startind,endind,m_m,a,&chisq, IsDlgButtonChecked(IDC_CHECK2), tmp);
+
+	//	//	//bool *bk=vector<bool>(1,m_n);
+
+	//	//	//nknee=getpoint4(x,y,m_n,bk,m_m);
+	//	//	//nknee=getpoint5(x,y,m_n,bk,m_m,!IsDlgButtonChecked(IDC_CHECK2));
+
+	//	//	//xknee=vector<double>(1,nknee);
+	//	//	//selectvt1(x,m_n,bk,nknee,xknee);
+	//	//	//yknee=vector<double>(1,nknee);
+	//	//	//selectvt1(y,m_n,bk,nknee,yknee);
+
+	//	//	//free_vector(bk,1,m_n);
+
+	//	//	//////////////////////////////////////////////////////////////////
+	//	//	//xelbow=getelbowp(nc,xbreak,nd,&nelbow,xp,nlcm,nlmx,nlmn);
+
+	//	//	//xelbow=getepD(lmx, nlmx,lmn, nlmn, &nelbow, nx[nd], nys[nd], xp);
+
+	//	//	double **xem=getelbowpD(lmx,nlmx,lmn,nlmn,&nelbow,nx[nd],nys[nd],xp);
+	//	//	xelbow=vector<double>(1,nelbow);
+	//	//	restorenx(xem,nelbow,m_xbottom,m_xtop,xelbow);
+
+	//	//	if(xelbow==NULL)
+	//	//		AfxMessageBox(L"no elbow point! reduce threshold and try again");
+	//	//}
+
+	//}
+
+	////chisqpp=chisq/(double)(endind-startind+1);
+	////xp=tmp[1];
+	////chisq=tmp[3];
+
+	//chisq=xknee[1];
+
+	//UpdateData(false);
+
+	//isFit=true;
+
+	//Invalidate();
+
+
 		UpdateData();
-		//a=vector<double>(1,m_m);
-		//covar=matrix<double>(1,m_m,1,m_m);
-		//double *tmp=vector<double>(1,4);
 
-		//long startind=findbottomidx(x,m_n,m_xbottom);
-		//long endind=findtopidx(x, m_n,m_xtop );
+			if(isLoad){
+				//UpdateData();
 
-		if(isSmooth){
-			//xp=nfun( x, ys, startind, endind, m_m, a, IsDlgButtonChecked(IDC_CHECK2));
-			//xp=nfun2( x, ys, startind, endind, m_m, a, covar, &chisq, IsDlgButtonChecked(IDC_CHECK2));
-			//nfun3(x,ys,startind,endind,m_m,a,&chisq, IsDlgButtonChecked(IDC_CHECK2), tmp);
+				long startind=findbottomidx(x,m_n,m_xbottom);
+				long endind=findtopidx(x, m_n,m_xtop );
 
-			//bool *bk=vector<bool>(1,m_n);
-			//nknee=getpoint5(x,ys,m_n,bk,m_m,!IsDlgButtonChecked(IDC_CHECK2));
-			//xknee=vector<double>(1,nknee);
-			//selectvt1(x,m_n,bk,nknee,xknee);
-			//yknee=vector<double>(1,nknee);
-			//selectvt1(ys,m_n,bk,nknee,yknee);
-			//free_vector(bk,1,m_n);
+				m_xbottom=x[startind];
+				m_xtop=x[endind];
+				//UpdateData(false);
+
+				//long nd;
+				//nd=m_n;
+				nd=endind-startind+1;
+
+				if(isSmooth)
+					chisq=x[startind-1+kptind(&x[startind-1],&ys[startind-1],nd)];
+				else
+					chisq=x[startind-1+kptind(&x[startind-1],&y[startind-1],nd)];
+				UpdateData(false);
+			}
 
 
-
-			///////////////////////////////////////////////////
-			xknee=getkneep(nc,nx,nd,&nknee,xp,nlcm,nlmx,nlmn);
-			//if(IsDlgButtonChecked(IDC_CHECK2) ){
-			//restorenx(xkm,nknee,-m_xtop,-m_xbottom,xknee);
-			//scalevt(xknee,nknee,xknee,-1.0);
-			//}
-
-			//xknee=getkpD(lmx,nlmx,lmn,nlmn,&nknee,nx[nd],nys[nd],xp);
-
-			//double **xkm=getkneepD(lmx,nlmx,lmn,nlmn,&nknee,nx[nd],nys[nd],xp);
-			//xknee=vector<double>(1,nknee);
-
-			//if(IsDlgButtonChecked(IDC_CHECK2) ){
-			//	restorenx(xkm,nknee,-m_xtop,-m_xbottom,xknee);
-			//	scalevt(xknee,nknee,xknee,-1.0);
-			//}
-			//else{
-			//	restorenx(xkm,nknee,m_xbottom,m_xtop,xknee);
-			//}
-			if(xknee==NULL)
-				AfxMessageBox(L"no knee point! reduce threshold and try again");
-			/////////////////////////////////////////////////////////////////////////////////////////
-
-		}
-		//else{
-		//	//xp=nfun( x, y, startind, endind, m_m, a, IsDlgButtonChecked(IDC_CHECK2));
-		//	//xp=nfun2( x, y, startind, endind, m_m, a, covar, &chisq, IsDlgButtonChecked(IDC_CHECK2));
-		//	//nfun3(x,y,startind,endind,m_m,a,&chisq, IsDlgButtonChecked(IDC_CHECK2), tmp);
-
-		//	//bool *bk=vector<bool>(1,m_n);
-
-		//	//nknee=getpoint4(x,y,m_n,bk,m_m);
-		//	//nknee=getpoint5(x,y,m_n,bk,m_m,!IsDlgButtonChecked(IDC_CHECK2));
-
-		//	//xknee=vector<double>(1,nknee);
-		//	//selectvt1(x,m_n,bk,nknee,xknee);
-		//	//yknee=vector<double>(1,nknee);
-		//	//selectvt1(y,m_n,bk,nknee,yknee);
-
-		//	//free_vector(bk,1,m_n);
-
-		//	//////////////////////////////////////////////////////////////////
-		//	//xelbow=getelbowp(nc,xbreak,nd,&nelbow,xp,nlcm,nlmx,nlmn);
-
-		//	//xelbow=getepD(lmx, nlmx,lmn, nlmn, &nelbow, nx[nd], nys[nd], xp);
-
-		//	double **xem=getelbowpD(lmx,nlmx,lmn,nlmn,&nelbow,nx[nd],nys[nd],xp);
-		//	xelbow=vector<double>(1,nelbow);
-		//	restorenx(xem,nelbow,m_xbottom,m_xtop,xelbow);
-
-		//	if(xelbow==NULL)
-		//		AfxMessageBox(L"no elbow point! reduce threshold and try again");
-		//}
-
-	}
-
-	//chisqpp=chisq/(double)(endind-startind+1);
-	//xp=tmp[1];
-	//chisq=tmp[3];
-
-	chisq=xknee[1];
-
-	UpdateData(false);
-
-	isFit=true;
-
-	Invalidate();
+			Invalidate();
 
 
 }
@@ -405,32 +439,37 @@ void CUpDlg::OnBnClickedButton3()
 	if(isLoad){
 		UpdateData();
 
-		long startind=findbottomidx(x,m_n,m_xbottom);
-		long endind=findtopidx(x, m_n,m_xtop );
+		//long startind=findbottomidx(x,m_n,m_xbottom);
+		//long endind=findtopidx(x, m_n,m_xtop );
 
-		m_xbottom=x[startind];
-		m_xtop=x[endind];
-		UpdateData(false);
+		//m_xbottom=x[startind];
+		//m_xtop=x[endind];
+		//UpdateData(false);
 
 		//long nd;
 		//nd=m_n;
-		nd=endind-startind+1;
-		long i;
+		//nd=endind-startind+1;
 
+		//long i;
+		//i=kptind(&x[startind-1],&y[startind-1],nd);
+		//chisq=x[startind-1+i];
 
 		/////////////////////////////////local regression///////////////////////////////////////
-		ys=vector<double>(1,nd);
-		curv=vector<double>(1,nd);
+		//ys=vector<double>(1,nd);
+		//curv=vector<double>(1,nd);
+		ys=vector<double>(1,m_n);
 
 		if(IsDlgButtonChecked(IDC_CHECK1)){
-			//loregR(y,m_n,m_span,m_degree,ys);
-			//loregR(&y[startind-1],nd,m_span,m_degree,ys);
-			loregRWithK(&y[startind-1],nd,m_span,m_degree,ys,curv);
+			loregR(y,m_n,m_span,m_degree,ys);
+			//	//loregR(&y[startind-1],nd,m_span,m_degree,ys);
+			//	loregRWithK(&y[startind-1],nd,m_span,m_degree,ys,curv);
 		}
 		else{
-			//loreg(y,m_n,m_span,m_degree,ys);
-			//loreg(&y[startind-1],nd,m_span,m_degree,ys);
-			loregWithK(&y[startind-1],nd,m_span,m_degree,ys,curv);
+			loreg(y,m_n,m_span,m_degree,ys);
+			//	//loreg(&y[startind-1],nd,m_span,m_degree,ys);
+			//	loregWithK(&y[startind-1],nd,m_span,m_degree,ys,curv);
+
+			//	
 		}
 		///////////////////////////////////end////////////////////////////////////
 
@@ -585,31 +624,34 @@ void CUpDlg::OnBnClickedButton3()
 		//xknee[1]=x[minind(curv,nd)];
 		//xelbow[1]=x[maxind(curv,nd)];
 
+		/////////////////////////////////////////////curvature///////////////////////////////////////////////////////////
+		//chisq=x[startind-1+minind(curv,nd)];
+		//chisqpp=x[startind-1+maxind(curv,nd)];
+		//isSmooth=true;
 
-		chisq=x[startind-1+minind(curv,nd)];
-		chisqpp=x[startind-1+maxind(curv,nd)];
-		isSmooth=true;
+		//double **tm=getlmnD(&x[startind-1],curv,nd,&nlmn);
+		//double *curvlmn=vector<double>(1,nlmn);
+		//for(i=1;i<=nlmn;i++){
+		//	curvlmn[i]=tm[i][2];
+		//}
+		//chisq=tm[minind(curvlmn,nlmn)][1];
+		//free_matrix(tm,1,nlmn,1,2);
+		//free_vector(curvlmn,1,nlmn);
 
-		double **tm=getlmnD(&x[startind-1],curv,nd,&nlmn);
-		double *curvlmn=vector<double>(1,nlmn);
-		for(i=1;i<=nlmn;i++){
-			curvlmn[i]=tm[i][2];
-		}
-		chisq=tm[minind(curvlmn,nlmn)][1];
-		free_matrix(tm,1,nlmn,1,2);
-		free_vector(curvlmn,1,nlmn);
+		//tm=getlmxD(&x[startind-1],curv,nd,&nlmx);
+		//double *curvlmx=vector<double>(1,nlmx);
+		//for(i=1;i<=nlmx;i++){
+		//	curvlmx[i]=tm[i][2];
+		//}
+		//chisqpp=tm[maxind(curvlmx,nlmx)][1];
+		//free_matrix(tm,1,nlmx,1,2);
+		//free_vector(curvlmx,1,nlmx);
+		////////////////////////////////////////////////////////////////////////////////////////////////
 
-		tm=getlmxD(&x[startind-1],curv,nd,&nlmx);
-		double *curvlmx=vector<double>(1,nlmx);
-		for(i=1;i<=nlmx;i++){
-			curvlmx[i]=tm[i][2];
-		}
-		chisqpp=tm[maxind(curvlmx,nlmx)][1];
-		free_matrix(tm,1,nlmx,1,2);
-		free_vector(curvlmx,1,nlmx);
 
 		//chisqpp=nlmx;
 		UpdateData(false);
+		isSmooth=true;
 		Invalidate();
 	}
 
@@ -626,6 +668,35 @@ void CUpDlg::OnChangeEdit3()
 	// with the ENM_CHANGE flag ORed into the mask.
 
 	// TODO:  Add your control notification handler code here
+
+
+		//UpdateData();
+
+		//	if(isLoad){
+		//		//UpdateData();
+
+		//		long startind=findbottomidx(x,m_n,m_xbottom);
+		//		long endind=findtopidx(x, m_n,m_xtop );
+
+		//		m_xbottom=x[startind];
+		//		m_xtop=x[endind];
+		//		//UpdateData(false);
+
+		//		//long nd;
+		//		//nd=m_n;
+		//		nd=endind-startind+1;
+
+		//		if(isSmooth)
+		//			chisq=x[startind-1+kptind(&x[startind-1],&ys[startind-1],nd)];
+		//		else
+		//			chisq=x[startind-1+kptind(&x[startind-1],&y[startind-1],nd)];
+		//		UpdateData(false);
+		//	}
+
+
+		//	Invalidate();
+
+
 	Invalidate();
 }
 
@@ -639,6 +710,34 @@ void CUpDlg::OnChangeEdit2()
 	// TODO:  Add your control notification handler code here
 
 	Invalidate();
+
+
+
+		//UpdateData();
+
+		//	if(isLoad){
+		//		//UpdateData();
+
+		//		long startind=findbottomidx(x,m_n,m_xbottom);
+		//		long endind=findtopidx(x, m_n,m_xtop );
+
+		//		m_xbottom=x[startind];
+		//		m_xtop=x[endind];
+		//		//UpdateData(false);
+
+		//		//long nd;
+		//		//nd=m_n;
+		//		nd=endind-startind+1;
+
+		//		if(isSmooth)
+		//			chisq=x[startind-1+kptind(&x[startind-1],&ys[startind-1],nd)];
+		//		else
+		//			chisq=x[startind-1+kptind(&x[startind-1],&y[startind-1],nd)];
+		//		UpdateData(false);
+		//	}
+
+
+		//	Invalidate();
 }
 
 void CUpDlg::OnChangeEdit4()
@@ -730,6 +829,13 @@ void CUpDlg::OnChangeEdit1()
 
 
 	//Invalidate();
+
+
+
+
+
+
+
 }
 
 void CUpDlg::OnEnChangeEdit11()
@@ -833,6 +939,28 @@ void CUpDlg::OnMouseMove(UINT nFlags, CPoint point)
 			m_xtop=xRsl(point.x);
 			UpdateData(false);
 
+
+			if(isLoad){
+				//UpdateData();
+
+				long startind=findbottomidx(x,m_n,m_xbottom);
+				long endind=findtopidx(x, m_n,m_xtop );
+
+				m_xbottom=x[startind];
+				m_xtop=x[endind];
+				//UpdateData(false);
+
+				//long nd;
+				//nd=m_n;
+				nd=endind-startind+1;
+				if(isSmooth)
+					chisq=x[startind-1+kptind(&x[startind-1],&ys[startind-1],nd)];
+				else
+					chisq=x[startind-1+kptind(&x[startind-1],&y[startind-1],nd)];
+				UpdateData(false);
+			}
+
+
 			Invalidate();
 		}
 		else if(isSelectBottom){
@@ -842,6 +970,28 @@ void CUpDlg::OnMouseMove(UINT nFlags, CPoint point)
 
 			m_xbottom=xRsl(point.x);
 			UpdateData(false);
+
+			if(isLoad){
+				//UpdateData();
+
+				long startind=findbottomidx(x,m_n,m_xbottom);
+				long endind=findtopidx(x, m_n,m_xtop );
+
+				m_xbottom=x[startind];
+				m_xtop=x[endind];
+				//UpdateData(false);
+
+				//long nd;
+				//nd=m_n;
+				nd=endind-startind+1;
+
+				if(isSmooth)
+					chisq=x[startind-1+kptind(&x[startind-1],&ys[startind-1],nd)];
+				else
+					chisq=x[startind-1+kptind(&x[startind-1],&y[startind-1],nd)];
+				UpdateData(false);
+			}
+
 
 			Invalidate();
 		}
@@ -863,10 +1013,12 @@ void CUpDlg::OnMouseMove(UINT nFlags, CPoint point)
 
 
 	}
-	//else{
-	//m_ymin=0;
-	//UpdateData(false);
-	//}
+	else{
+		isSelectTop=false;
+		isSelectBottom=false;
+		isMove=false;
+		Invalidate();
+	}
 
 
 
@@ -1092,7 +1244,7 @@ bool CUpDlg::DrawCurve(CRect rect, CPaintDC * dc)
 	{
 		CPen pen(PS_SOLID, 1, blue);
 		DrawPolyline(rect,dc,&pen,x,y,m_n);
-		
+
 		pen.DeleteObject();
 
 		return true;
@@ -1149,9 +1301,11 @@ bool CUpDlg::DrawSmoothCurve(CRect rect, CPaintDC * dc)
 	{
 		CPen pen(PS_SOLID, 1, yellow);
 
-		long startind=findbottomidx(x,m_n,m_xbottom);
-		DrawPolyline(rect,dc,&pen,&x[startind-1],ys,nd);
-		DrawPolyline(rect,dc,&pen,&x[startind-1],curv,nd);
+		//long startind=findbottomidx(x,m_n,m_xbottom);
+		//DrawPolyline(rect,dc,&pen,&x[startind-1],ys,nd);
+
+		DrawPolyline(rect,dc,&pen,x,ys,m_n);
+		//DrawPolyline(rect,dc,&pen,&x[startind-1],curv,nd);
 		//DrawFunc(rect,dc,&pen);
 		//DrawFunc2(rect,dc,&pen);
 		pen.DeleteObject();
