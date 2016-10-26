@@ -13,7 +13,7 @@
 
 IMPLEMENT_DYNCREATE(dlg1, CFormView)
 
-dlg1::dlg1()
+	dlg1::dlg1()
 	: CFormView(dlg1::IDD)
 	, xmin(0)
 	, xmax(0)
@@ -115,7 +115,7 @@ void dlg1::genPointToPlot(const std::vector<double> &px, const std::vector<doubl
 		pointlist[i]+=CPoint(px[i]*tx1,py[i]*ty1);
 	}
 
-	
+
 	//t=clock()-t;
 	//TRACE("%dms\n",t);
 	//return pointlist;
@@ -461,7 +461,7 @@ void dlg1::OnPaint()
 
 
 
-	
+
 
 	CPaintDC dcplot(this->GetDlgItem(IDC_STATIC));
 
@@ -492,15 +492,15 @@ void dlg1::OnPaint()
 		if(!plotrect.IsRectEmpty()){
 			std::vector<CPoint> pointlist;
 
-//plotrect.MoveToXY(0,0);
+			//plotrect.MoveToXY(0,0);
 			drawRectangle(plotrect,&dc,black,red);
 			DrawXYAxis(plotrect,&dc);
 
-				//CRect mainrt;
-				CRgn rgn;
-				rgn.CreateRectRgnIndirect(&plotrect);	
-				//dc.GetClipBox(&mainrt);
-				dc.SelectClipRgn(&rgn);
+			//CRect mainrt;
+			CRgn rgn;
+			rgn.CreateRectRgnIndirect(&plotrect);	
+			//dc.GetClipBox(&mainrt);
+			dc.SelectClipRgn(&rgn);
 
 
 			for(j=0;j<xlist.size();j++){
@@ -537,6 +537,7 @@ void dlg1::OnPaint()
 
 			}
 
+			DrawLegend(plotrect, &dc);
 			//////////////////////////////fast///////////////////////////
 			//genPointToPlot(xll,yll,plotrect,pointlist);
 			//pen.CreatePen(PS_SOLID,1,cl[0]);
@@ -549,8 +550,8 @@ void dlg1::OnPaint()
 			//dc.SetTextColor(oc);
 			//////////////////////////////////////////////////////////////////
 
-				//rgn.CreateRectRgnIndirect(&mainrt);
-				//dc.SelectClipRgn(&rgn);
+			//rgn.CreateRectRgnIndirect(&mainrt);
+			//dc.SelectClipRgn(&rgn);
 
 		}
 	}
@@ -577,6 +578,10 @@ void dlg1::plot2d(const std::vector<double> &x, const std::vector<double> &y, co
 	//yll.resize(yll.size()+y.size());
 	//std::copy_backward(y.begin(),y.end(),yll.end());
 	//ll.push_back(x.size());
+	CString str;
+	str.Format(L"%d",clist.size());
+	names.push_back(str);
+
 
 	clist.push_back( genColor( genColorvFromIndex( clist.size() ) ) );
 
@@ -595,24 +600,24 @@ void dlg1::OnMouseMove(UINT nFlags, CPoint point)
 
 	// Check if we have captured the mouse
 	if (GetCapture()==this && !xlist.empty())
-		{
-			CRect plotrect;
-			GetDlgItem(IDC_STATIC)->GetWindowRect(&plotrect);
-			double kx=(double)(point.x-m_mouseDownPoint.x)*(xmax-xmin)/(double)plotrect.Width();
-			double ky=(double)(point.y-m_mouseDownPoint.y)*(ymax-ymin)/(double)plotrect.Height();
+	{
+		CRect plotrect;
+		GetDlgItem(IDC_STATIC)->GetWindowRect(&plotrect);
+		double kx=(double)(point.x-m_mouseDownPoint.x)*(xmax-xmin)/(double)plotrect.Width();
+		double ky=(double)(point.y-m_mouseDownPoint.y)*(ymax-ymin)/(double)plotrect.Height();
 
-			//Increment the object rotation angles
-			xmin-=kx;
-			xmax-=kx;
-			ymin+=ky;
-			ymax+=ky;
+		//Increment the object rotation angles
+		xmin-=kx;
+		xmax-=kx;
+		ymin+=ky;
+		ymax+=ky;
 
-			//Redraw the view
-			//InvalidateRect(NULL,FALSE);
-			Invalidate();
-			//Set the mouse point
-			m_mouseDownPoint=point;
-		}
+		//Redraw the view
+		//InvalidateRect(NULL,FALSE);
+		Invalidate();
+		//Set the mouse point
+		m_mouseDownPoint=point;
+	}
 
 
 	CFormView::OnMouseMove(nFlags, point);
@@ -674,36 +679,120 @@ BOOL dlg1::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 			flg=true;
 		}
 		if(flg)
-		Invalidate();
+			Invalidate();
 
-	//	if(plotrect.PtInRect(pt)){
-	//		xmin=x*k2+xmin*k1;
-	//		xmax=x*k2+xmax*k1;
-	//		ymin=y*k2+ymin*k1;
-	//		ymax=y*k2+ymax*k1;
-	//		//UpdateData(false);
+		//	if(plotrect.PtInRect(pt)){
+		//		xmin=x*k2+xmin*k1;
+		//		xmax=x*k2+xmax*k1;
+		//		ymin=y*k2+ymin*k1;
+		//		ymax=y*k2+ymax*k1;
+		//		//UpdateData(false);
 
-	//		Invalidate();
-	//	}
-	//	else 
-	//		if(plotrect.PtInRect(pt+CSize(w,0))){
-	//			ymin=y*k2+ymin*k1;
-	//			ymax=y*k2+ymax*k1;
-	//			//UpdateData(false);
+		//		Invalidate();
+		//	}
+		//	else 
+		//		if(plotrect.PtInRect(pt+CSize(w,0))){
+		//			ymin=y*k2+ymin*k1;
+		//			ymax=y*k2+ymax*k1;
+		//			//UpdateData(false);
 
-	//			Invalidate();
-	//		}
-	//		else 
-	//			if(plotrect.PtInRect(pt-CSize(0,w))){
-	//				xmin=x*k2+xmin*k1;
-	//				xmax=x*k2+xmax*k1;
-	//				//UpdateData(false);
+		//			Invalidate();
+		//		}
+		//		else 
+		//			if(plotrect.PtInRect(pt-CSize(0,w))){
+		//				xmin=x*k2+xmin*k1;
+		//				xmax=x*k2+xmax*k1;
+		//				//UpdateData(false);
 
-	//				Invalidate();
-	//			}
+		//				Invalidate();
+		//			}
 
 	}
 
 
 	return CFormView::OnMouseWheel(nFlags, zDelta, pt);
+}
+
+
+CRect dlg1::DrawLegend(CRect rect, CDC* pDC)
+{
+
+
+	CFont font;
+	CFont *pOldFont;
+	CString str;
+	CPen * pOldPen;
+	CSize sz;
+	//CRect newrect=rect;
+
+	CPen pen;
+	int metricH=15;
+	//int labelH=20;
+	int lc=20;
+	int gap=2;
+	CPoint textLocate(rect.right-gap,rect.top);
+	//int lcs=lc-2;
+	//double gridi,XMAX,XMIN,YMAX,YMIN;
+	int tmp;
+	COLORREF oc;
+	CString fontName=L"Arial";
+
+
+	font.CreateFont(
+		metricH,                        // nHeight
+		0,                         // nWidth
+		0,                         // nEscapement
+		0,                         // nOrientation
+		FW_NORMAL,                 // nWeight
+		FALSE,                     // bItalic
+		FALSE,                     // bUnderline
+		0,                         // cStrikeOut
+		ANSI_CHARSET,              // nCharSet
+		OUT_DEFAULT_PRECIS,        // nOutPrecision
+		CLIP_DEFAULT_PRECIS,       // nClipPrecision
+		DEFAULT_QUALITY,           // nQuality
+		DEFAULT_PITCH | FF_SWISS,  // nPitchAndFamily
+		fontName);                 // lpszFacename
+
+
+
+	pOldFont=pDC->SelectObject(&font);	
+
+
+	//pDC->SetBkColor(RGB(0,0,0));
+	pDC->SetBkMode(TRANSPARENT);
+
+	for(size_t i=0;i<names.size();i++){
+
+		pen.CreatePen(PS_SOLID, 1, clist[i]);
+		pOldPen=pDC->SelectObject(&pen);
+		oc=pDC->SetTextColor(clist[i]);
+
+		sz=pDC->GetTextExtent(names[i]);
+
+		//if(sz.cx>rectsz.cx)
+			//rectsz.cx=sz.cx;
+
+		pDC->TextOutW(textLocate.x-sz.cx,textLocate.y,names[i]);
+
+		pDC->MoveTo(textLocate.x-sz.cx-gap,textLocate.y+sz.cy/2);
+		pDC->LineTo(textLocate.x-sz.cx-lc,textLocate.y+sz.cy/2);
+		textLocate.y+=sz.cy;
+
+		pDC->SelectObject(pOldPen);
+		pen.DeleteObject();
+		pDC->SetTextColor(oc);
+	}
+
+	pDC->SelectObject(pOldFont);
+	font.DeleteObject();
+
+
+	//rectsz.cx+=lc;
+	//rectsz.cy=textLocate.y;
+
+
+
+
+	return CRect(0,0,0,0);
 }
