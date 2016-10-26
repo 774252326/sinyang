@@ -20,7 +20,7 @@ public:
 	virtual ~LoginDlg();
 
 // Dialog Data
-	enum { IDD = IDD_DIALOG5 };
+	enum { IDD = IDD_DIALOG_LOGIN };
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support

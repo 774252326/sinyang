@@ -14,7 +14,8 @@
 #include "../funT1/piksr2T.h"
 #include "LineSeg.hpp"
 
-class RawData : public CObject
+
+class RawData : public ObjectF
 {
 
 public:

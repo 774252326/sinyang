@@ -6,6 +6,7 @@
 #include "LoginDlg.h"
 #include "afxdialogex.h"
 
+
 //#include "func.h"
 // LoginDlg dialog
 

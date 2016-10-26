@@ -1,10 +1,10 @@
 #pragma once
-
+#include "../ObjectF.hpp"
 // ANPara command target
 
 
 //AnalysisParameters
-class ANPara : public CObject
+class ANPara : public ObjectF
 {
 public:
 	static size_t GetStepCount(int atype)

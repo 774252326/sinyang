@@ -1,8 +1,8 @@
 #pragma once
-
+#include "../ObjectF.hpp"
 // Value command target
 
-class Value : public CObject
+class Value : public ObjectF
 {
 public:
 	int LogoId;

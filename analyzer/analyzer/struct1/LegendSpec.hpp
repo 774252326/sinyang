@@ -1,6 +1,6 @@
 #pragma once
-//#include "LineSpec.hpp"
-//#include <vector>
+#include "../ObjectF.hpp"
+
 // LegendSpec command target
 
 inline COLORREF inv(const COLORREF &oc){
@@ -9,7 +9,7 @@ inline COLORREF inv(const COLORREF &oc){
 
 
 
-class LegendSpec : public CObject
+class LegendSpec : public ObjectF
 {
 
 public:

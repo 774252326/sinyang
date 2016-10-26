@@ -3,7 +3,7 @@
 #include "UserAccount.hpp"
 // AccountList command target
 
-class AccountList : public CObject
+class AccountList : public ObjectF
 {
 public:
 	std::vector<UserAccount> ual;

@@ -4,9 +4,9 @@
 #include "../funT1/xRescaleT.h"
 #include "../funT1/colormapT.h"
 // PlotSpec command target
+#include "../ObjectF.hpp"
 
-
-class PlotSpec : public CObject
+class PlotSpec : public ObjectF
 {
 public:
 

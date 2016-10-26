@@ -5,7 +5,7 @@
 #include <vector>
 // SAPara command target
 
-class SAPara : public CObject
+class SAPara : public ObjectF
 {
 public:
 	// VMS Volume

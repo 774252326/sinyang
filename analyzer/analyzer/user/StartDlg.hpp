@@ -1,6 +1,6 @@
 #pragma once
 #include "afxdialogex.h"
-//#include "resource.h"
+#include "resource.h"
 #include <atlimage.h>
 // StartDlg dialog
 
@@ -22,7 +22,7 @@ public:
 
 	// Dialog Data
 	enum { IDD = IDD_DIALOG_START };
-	//enum { IDD = IDD_DIALOG4 };
+
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX)
 	{
@@ -68,6 +68,11 @@ protected:
 
 };
 
-BEGIN_MESSAGE_MAP(StartDlg, CDialogEx)
-	ON_WM_NCHITTEST()
-END_MESSAGE_MAP()
+
+//#ifndef STARTMES
+//#define STARTMES
+//BEGIN_MESSAGE_MAP(StartDlg, CDialogEx)
+//	ON_WM_NCHITTEST()
+//END_MESSAGE_MAP()
+//
+//#endif

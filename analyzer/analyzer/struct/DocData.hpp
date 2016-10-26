@@ -7,7 +7,7 @@
 
 // DocData command target
 
-class DocData : public CObject
+class DocData : public ObjectF
 {
 
 public:

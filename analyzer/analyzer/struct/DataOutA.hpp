@@ -64,7 +64,7 @@ T VarianceStd(std::vector<T> x, bool bSample=true)
 #define PF_SAMPLE 0x80
 
 
-class DataOutA : public CObject
+class DataOutA : public ObjectF
 {
 public:
 

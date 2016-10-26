@@ -1,10 +1,10 @@
 #pragma once
-
+#include "../ObjectF.hpp"
 // CVPara command target
 
 //CVParameters
 
-class CVPara : public CObject
+class CVPara : public ObjectF
 {
 public:
 

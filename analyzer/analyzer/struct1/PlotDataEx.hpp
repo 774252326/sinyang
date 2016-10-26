@@ -8,7 +8,7 @@
 
 // PlotDataEx command target
 
-class PlotDataEx : public CObject
+class PlotDataEx : public ObjectF
 {
 public:
 	static void DrawData1(CRect &plotrect

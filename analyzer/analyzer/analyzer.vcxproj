@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{EC4B1907-66D5-4FD3-8496-60A714B63AC9}</ProjectGuid>
+    <ProjectGuid>{C9FDF4C6-4FE9-4DF8-9D80-C8801EC7A959}</ProjectGuid>
     <RootNamespace>analyzer</RootNamespace>
     <Keyword>MFCProj</Keyword>
   </PropertyGroup>
@@ -156,7 +156,6 @@
     <ClInclude Include="analyzerViewR.h" />
     <ClInclude Include="ComputeDlg.h" />
     <ClInclude Include="ExportDataDlg.h" />
-    <ClInclude Include="filefunc.h" />
     <ClInclude Include="ListCtrlLine.h" />
     <ClInclude Include="list\ComboItem.h" />
     <ClInclude Include="list\EditB.h" />
@@ -197,7 +196,6 @@
     <ClCompile Include="analyzerViewR.cpp" />
     <ClCompile Include="ComputeDlg.cpp" />
     <ClCompile Include="ExportDataDlg.cpp" />
-    <ClCompile Include="filefunc.cpp" />
     <ClCompile Include="ListCtrlLine.cpp" />
     <ClCompile Include="list\ComboItem.cpp" />
     <ClCompile Include="list\EditB.cpp" />

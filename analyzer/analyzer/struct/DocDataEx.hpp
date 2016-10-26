@@ -5,7 +5,7 @@
 #include <vector>
 #include "../funT1\ComputeQT.h"
 #include "Value.hpp"
-#include "../filefunc.h"
+//#include "../filefunc.h"
 // DocDataEx command target
 
 
@@ -818,7 +818,9 @@ public:
 
 	bool Read(CString fp)
 	{
-		if(ReadFileCustom(this,1,fp)==TRUE){
+		//if(ReadFileCustom(this,1,fp)==TRUE)
+		if(this->ReadFile(fp)==TRUE)
+		{
 			return true;
 		}
 		return false;

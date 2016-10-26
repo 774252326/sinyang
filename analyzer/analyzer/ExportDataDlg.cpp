@@ -5,7 +5,7 @@
 #include "analyzer.h"
 #include "ExportDataDlg.h"
 #include "afxdialogex.h"
-#include "filefunc.h"
+//#include "filefunc.h"
 
 // ExportDataDlg dialog
 

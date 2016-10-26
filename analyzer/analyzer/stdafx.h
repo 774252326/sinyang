@@ -36,6 +36,7 @@
 #endif // _AFX_NO_AFXCMN_SUPPORT
 
 #include <afxcontrolbars.h>     // MFC support for ribbons and control bars
+#include <afx.h>
 
 
 
@@ -75,6 +76,7 @@
 #define MESSAGE_CHANGE_ANP		WM_USER+16
 #define MESSAGE_RAW_CHANGE		WM_USER+17
 #define MESSAGE_CLOSE_SAP_SHEET	WM_USER+18
+#define MESSAGE_CHANGE_LANG		WM_USER+19
 
 #define SPIN_ID 3456
 #define PWIN_ID 3457

@@ -11,9 +11,10 @@
 #include "analyzerDoc.h"
 #include "analyzerView.h"
 
-//#include "user\StartDlg.hpp"
+
+#include "user\StartDlg.hpp"
 #include "user\LoginDlg.h"
-#include "filefunc.h"
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -77,9 +78,6 @@ BOOL CanalyzerApp::InitInstance()
 	CWinAppEx::InitInstance();
 
 
-	//SetThreadUILanguage(MAKELANGID(LANG_ENGLISH,SUBLANG_ENGLISH_US)); 
-
-
 	// Initialize OLE libraries
 	if (!AfxOleInit())
 	{
@@ -118,16 +116,16 @@ BOOL CanalyzerApp::InitInstance()
 
 
 
-	//StartDlg *sd=new StartDlg(IDB_BITMAP11);
-	//sd->Create(StartDlg::IDD);
-	//sd->ShowWindow(SW_SHOW);
+	StartDlg *sd=new StartDlg(IDB_BITMAP11);
+	sd->Create(StartDlg::IDD);
+	sd->ShowWindow(SW_SHOW);
 
 
 	Sleep(500);
 
 	LoginDlg ld;
 	CString fp=L"ua";
-	ReadFileCustom(&ld.al,1,fp);
+	ld.al.ReadFile(fp);
 	
 	if(ld.al.ual.empty()){
 		AfxMessageBox(L"read account list error");
@@ -136,9 +134,9 @@ BOOL CanalyzerApp::InitInstance()
 
 		if(ld.DoModal()==IDOK){
 
-		//sd->ShowWindow(SW_HIDE);
-		//delete sd;
-		//sd=NULL;
+		sd->ShowWindow(SW_HIDE);
+		delete sd;
+		sd=NULL;
 
 
 
@@ -178,11 +176,11 @@ BOOL CanalyzerApp::InitInstance()
 	// Enable drag/drop open
 	m_pMainWnd->DragAcceptFiles();
 
-	((CMainFrame*)m_pMainWnd)->userIndex=ld.usridx;
+		((CMainFrame*)m_pMainWnd)->userIndex=ld.usridx;
 		((CMainFrame*)m_pMainWnd)->al=ld.al;
 
-		return TRUE;
-	}
+	return TRUE;
+		}
 	else{
 		return FALSE;
 	}

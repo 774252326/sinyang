@@ -8,9 +8,15 @@
 #include "WaitDlg.h"
 #include "property\PropertySheetA1ML.h"
 
+enum ProcessState{
+	stop,
+	running,
+	pause
+};
+
 class CMainFrame : public CFrameWndEx
 {
-	public:
+public:
 	static UINT PROCESS(LPVOID pParam);
 
 protected: // create from serialization only
@@ -28,9 +34,7 @@ public:
 	PropertySheetA1ML *psheetml;
 	WaitDlg *wd;
 	CWinThread *pWriteA;
-public:
-	int LangID;
-
+	UINT LangID;
 // Operations
 public:
 	CWnd * LeftPane(void) const { return m_wndSplitter.GetPane(0,0);};
@@ -38,15 +42,12 @@ public:
 	void ShowWaitDlg(CString tips);
 	void HideWaitDlg(void);
 	COutputWnd * GetOutputWnd(void){ return &m_wndOutput; };
-public:
 	void ChangeLang(void);
-
 // Overrides
 public:
-	virtual BOOL OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext);
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 	virtual BOOL LoadFrame(UINT nIDResource, DWORD dwDefaultStyle = WS_OVERLAPPEDWINDOW | FWS_ADDTOTITLE, CWnd* pParentWnd = NULL, CCreateContext* pContext = NULL);
-
+	virtual BOOL OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext);
 // Implementation
 public:
 	virtual ~CMainFrame();
@@ -70,10 +71,12 @@ protected:
 	afx_msg void OnApplicationLook(UINT id);
 	afx_msg void OnUpdateApplicationLook(CCmdUI* pCmdUI);
 	afx_msg void OnSettingChange(UINT uFlags, LPCTSTR lpszSection);
+
 	DECLARE_MESSAGE_MAP()
 
 	BOOL CreateDockingWindows();
 	void SetDockingWindowIcons(BOOL bHiColorIcons);
+
 protected:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnSecurityLogin();
@@ -116,11 +119,12 @@ protected:
 	afx_msg void OnUpdateSecurityLogin(CCmdUI *pCmdUI);
 	afx_msg void OnUpdateSecurityUseraccounts(CCmdUI *pCmdUI);
 
-
 	afx_msg void OnLanguageChinese();
 	afx_msg void OnLanguageEnglish();
 	afx_msg void OnUpdateLanguageChinese(CCmdUI *pCmdUI);
 	afx_msg void OnUpdateLanguageEnglish(CCmdUI *pCmdUI);
+	afx_msg LRESULT OnMessageChangeLang(WPARAM wParam, LPARAM lParam);
+
 };
 
 

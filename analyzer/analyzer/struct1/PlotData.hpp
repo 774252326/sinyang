@@ -11,7 +11,7 @@
 //#include "RawDataEx.hpp"
 #include "../Resource.h"
 
-class PlotData : public CObject
+class PlotData : public ObjectF
 {
 public:
 

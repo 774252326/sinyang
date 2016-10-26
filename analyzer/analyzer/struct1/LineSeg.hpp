@@ -3,7 +3,7 @@
 #include "Point2d.hpp"
 // LineSeg command target
 
-class LineSeg : public CObject
+class LineSeg : public ObjectF
 {
 public:
 	Point2d p1;

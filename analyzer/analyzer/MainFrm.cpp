@@ -6,30 +6,30 @@
 #include "analyzer.h"
 
 #include "MainFrm.h"
+
 #include "analyzerViewL.h"
 #include "analyzerViewR.h"
+#include "struct1\pcct.hpp"
+
+
 #include "user\LoginDlg.h"
 #include "property\PropertySheetA.h"
 #include "property\UserAccountPage.h"
-#include "filefunc.h"
+
+
 #include "property\AnalysisParametersPage.h"
 #include "property\CVParametersPage.h"
 #include "property\SolutionAdditionParametersPageA.h"
 #include "property\SolutionAdditionParametersPageB.h"
 
-#include "struct1\pcct.hpp"
-
-#ifdef _DEBUG
-#define new DEBUG_NEW
-#endif
 //////////////////////////////////////////////////thread///////////////////////////////////////////
 
 typedef struct MYPARA{
-	CanalyzerViewL *leftp;
-	CanalyzerViewR *rightp;
-	//CanalyzerDoc *adoc;
+	//CanalyzerViewL *leftp;
+	//CanalyzerViewR *rightp;
+	CanalyzerDoc *adoc;
 	//COutputWnd *outw;
-	COutputListA* ol;
+	//COutputListA* ol;
 	//CMFCCaptionBarA *cba;
 	CMainFrame *mf;
 	//pcct *data;
@@ -112,21 +112,23 @@ UINT CMainFrame::PROCESS(LPVOID pParam)
 	//CanalyzerDoc* pDoc=(CanalyzerDoc*)pParam;
 
 
-	CanalyzerViewL* lv=((mypara*)pParam)->leftp;
-	CanalyzerViewR* rv=((mypara*)pParam)->rightp;
+	//CanalyzerViewL* lv=((mypara*)pParam)->leftp;
+	//CanalyzerViewR* rv=((mypara*)pParam)->rightp;
 
 	CMainFrame *mf=((mypara*)pParam)->mf;
 
-	COutputListA* ol=((mypara*)pParam)->ol;
+	//COutputListA* ol=((mypara*)pParam)->ol;
 
+	//CanalyzerDoc* pDoc=(CanalyzerDoc*)(mf->GetActiveDocument());
 
+	//CanalyzerDoc* pDoc=((CanalyzerViewL*)(mf->LeftPane()))->GetDocument();
 
-	CanalyzerDoc* pDoc=lv->GetDocument();
+	CanalyzerDoc* pDoc=((mypara*)pParam)->adoc;
 
 	delete pParam;
 	////////////////////////////////////////////////////
 	std::vector<CString> filelist;
-	LoadFileList(flistlist[pDoc->da.p1.analysistype],filelist);
+	pcct::LoadFileList(flistlist[pDoc->da.p1.analysistype],filelist);
 
 
 	double v2a;
@@ -134,7 +136,7 @@ UINT CMainFrame::PROCESS(LPVOID pParam)
 	size_t nextidx;
 	size_t nowidx;
 	CSingleLock singleLock(&(pDoc->m_CritSection));
-	lv->pw.bMouseCursor=rv->pw.bMouseCursor=false;
+	//lv->pw.bMouseCursor=rv->pw.bMouseCursor=false;
 	//CSingleLock singleLock1(&(mf->m_CritSection));
 
 	pcct data;
@@ -234,24 +236,9 @@ UINT CMainFrame::PROCESS(LPVOID pParam)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#endif
 
 // CMainFrame
 
@@ -269,6 +256,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_APPLOOK_WIN_2000, ID_VIEW_APPLOOK_WINDOWS_7, &CMainFrame::OnUpdateApplicationLook)
 	ON_WM_SETTINGCHANGE()
 	ON_WM_SIZE()
+
 	ON_COMMAND(ID_SECURITY_LOGIN, &CMainFrame::OnSecurityLogin)
 	ON_COMMAND(ID_SECURITY_USERACCOUNTS, &CMainFrame::OnSecurityUseraccounts)
 	ON_COMMAND(ID_ANALYSIS_METHODSETUP, &CMainFrame::OnAnalysisMethodsetup)
@@ -290,7 +278,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_UPDATE_COMMAND_UI(ID_ANALYSIS_COMPUTE, &CMainFrame::OnUpdateAnalysisCompute)
 	ON_UPDATE_COMMAND_UI(ID_ANALYSIS_EXPORTDATA, &CMainFrame::OnUpdateAnalysisExportdata)
 
-		ON_UPDATE_COMMAND_UI(ID_FILE_PRINT, &CMainFrame::OnUpdateFilePrint)
+	ON_UPDATE_COMMAND_UI(ID_FILE_PRINT, &CMainFrame::OnUpdateFilePrint)
 	ON_UPDATE_COMMAND_UI(ID_FILE_PRINT_PREVIEW, &CMainFrame::OnUpdateFilePrintPreview)
 	ON_UPDATE_COMMAND_UI(ID_FILE_PRINT_SETUP, &CMainFrame::OnUpdateFilePrintSetup)
 	ON_UPDATE_COMMAND_UI(ID_FILE_SAVE, &CMainFrame::OnUpdateFileSave)
@@ -298,15 +286,20 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_UPDATE_COMMAND_UI(ID_FILE_OPEN, &CMainFrame::OnUpdateFileOpen)
 
 
-		ON_UPDATE_COMMAND_UI(ID_VIEW_FITWINDOW, &CMainFrame::OnUpdateViewFitwindow)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_FITWINDOW, &CMainFrame::OnUpdateViewFitwindow)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_DATACURSOR, &CMainFrame::OnUpdateViewDatacursor)
 	ON_UPDATE_COMMAND_UI(ID_OPTIONS_PLOTSETTINGS, &CMainFrame::OnUpdateOptionsPlotsettings)
 	ON_UPDATE_COMMAND_UI(ID_SECURITY_LOGIN, &CMainFrame::OnUpdateSecurityLogin)
 	ON_UPDATE_COMMAND_UI(ID_SECURITY_USERACCOUNTS, &CMainFrame::OnUpdateSecurityUseraccounts)
+
+
+
 	ON_COMMAND(ID_LANGUAGE_CHINESE, &CMainFrame::OnLanguageChinese)
 	ON_COMMAND(ID_LANGUAGE_ENGLISH, &CMainFrame::OnLanguageEnglish)
 	ON_UPDATE_COMMAND_UI(ID_LANGUAGE_CHINESE, &CMainFrame::OnUpdateLanguageChinese)
 	ON_UPDATE_COMMAND_UI(ID_LANGUAGE_ENGLISH, &CMainFrame::OnUpdateLanguageEnglish)
+
+	ON_MESSAGE(MESSAGE_CHANGE_LANG, &CMainFrame::OnMessageChangeLang)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -320,13 +313,13 @@ static UINT indicators[] =
 // CMainFrame construction/destruction
 
 CMainFrame::CMainFrame()
-	: userIndex(-1)
+	: LangID(0)
+	, userIndex(-1)
 	, m_bSplitterCreated(FALSE)
 	, pst(stop)
 	, wd(NULL)
 	, psheetml(NULL)
 	, pWriteA(NULL)
-	, LangID(1)
 {
 	// TODO: add member initialization code here
 	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_OFF_2007_BLUE);
@@ -334,6 +327,9 @@ CMainFrame::CMainFrame()
 
 CMainFrame::~CMainFrame()
 {
+	::TerminateThread(pWriteA->m_hThread,0);
+	this->HideWaitDlg();
+	delete psheetml;
 }
 
 int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -344,16 +340,6 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	BOOL bNameValid;
 	// set the visual manager and style based on persisted value
 	OnApplicationLook(theApp.m_nAppLook);
-
-
-	CMFCToolBar::EnableQuickCustomization();
-	//---------------------------------
-	// Set toolbar and menu image size:
-	//---------------------------------
-	CMFCToolBar::SetSizes (CSize (36, 30), CSize (24, 24));
-	CMFCToolBar::SetMenuSizes (CSize (22, 22), CSize (16, 16));
-
-
 
 	if (!m_wndMenuBar.Create(this))
 	{
@@ -366,8 +352,8 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// prevent the menu bar from taking the focus on activation
 	CMFCPopupMenu::SetForceMenuFocus(FALSE);
 
-	if (!m_wndToolBar.CreateEx(this, TBSTYLE_FLAT, WS_CHILD | WS_VISIBLE | CBRS_TOP | CBRS_GRIPPER | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC | BTNS_SHOWTEXT) ||
-		!m_wndToolBar.LoadToolBar(theApp.m_bHiColorIcons ? IDR_MAINFRAME_256 : IDR_MAINFRAME, 0, IDB_BITMAP4, FALSE, 0, 0, IDB_BITMAP6))
+	if (!m_wndToolBar.CreateEx(this, TBSTYLE_FLAT, WS_CHILD | WS_VISIBLE | CBRS_TOP | CBRS_GRIPPER | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC) ||
+		!m_wndToolBar.LoadToolBar(theApp.m_bHiColorIcons ? IDR_MAINFRAME_256 : IDR_MAINFRAME))
 	{
 		TRACE0("Failed to create toolbar\n");
 		return -1;      // fail to create
@@ -377,10 +363,6 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	bNameValid = strToolBarName.LoadString(IDS_TOOLBAR_STANDARD);
 	ASSERT(bNameValid);
 	m_wndToolBar.SetWindowText(strToolBarName);
-
-	//m_wndToolBar.SetBorders();
-
-	//m_wndToolBar.SetRouteCommandsViaFrame(TRUE);
 
 	CString strCustomize;
 	bNameValid = strCustomize.LoadString(IDS_TOOLBAR_CUSTOMIZE);
@@ -410,13 +392,6 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// enable Visual Studio 2005 style docking window auto-hide behavior
 	EnableAutoHidePanes(CBRS_ALIGN_ANY);
 
-	// Create a caption bar:
-	//if (!CreateCaptionBar())
-	//{
-	//TRACE0("Failed to create caption bar\n");
-	//return -1;      // fail to create
-	//}
-
 	// create docking windows
 	if (!CreateDockingWindows())
 	{
@@ -432,19 +407,26 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	EnablePaneMenu(TRUE, ID_VIEW_CUSTOMIZE, strCustomize, ID_VIEW_TOOLBAR);
 
 	// enable quick (Alt+drag) toolbar customization
-	//CMFCToolBar::EnableQuickCustomization();
+	CMFCToolBar::EnableQuickCustomization();
 
-	//if (CMFCToolBar::GetUserImages() == NULL)
-	//{
-	//	// load user-defined toolbar images
-	//	if (m_UserImages.Load(_T(".\\UserImages.bmp")))
-	//	{
-	//		CMFCToolBar::SetUserImages(&m_UserImages);
-	//	}
-	//}
+	//---------------------------------
+	// Set toolbar and menu image size:
+	//---------------------------------
+	//CMFCToolBar::SetSizes (CSize (36, 30), CSize (24, 24));
+	CMFCToolBar::SetMenuSizes (CSize (22, 22), CSize (16, 16));
 
-	// enable menu personalization (most-recently used commands)
-	// TODO: define your own basic commands, ensuring that each pulldown menu has at least one basic command.
+
+	if (CMFCToolBar::GetUserImages() == NULL)
+	{
+		// load user-defined toolbar images
+		if (m_UserImages.Load(_T(".\\UserImages.bmp")))
+		{
+			//CMFCToolBar::SetUserImages(&m_UserImages);
+		}
+	}
+
+	//// enable menu personalization (most-recently used commands)
+	//// TODO: define your own basic commands, ensuring that each pulldown menu has at least one basic command.
 	//CList<UINT, UINT> lstBasicCommands;
 
 	//lstBasicCommands.AddTail(ID_FILE_NEW);
@@ -468,33 +450,9 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	//CMFCToolBar::SetBasicCommands(lstBasicCommands);
 
+	::PostMessage(this->GetSafeHwnd(),MESSAGE_CHANGE_LANG,NULL,NULL);
+
 	return 0;
-}
-
-BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT /*lpcs*/,
-	CCreateContext* pContext)
-{
-
-	m_bSplitterCreated = m_wndSplitter.CreateStatic(this, 1, 2);
-	// CMyView and CMyOtherView are user-defined views derived from CView
-	if(m_bSplitterCreated){
-		m_bSplitterCreated = m_wndSplitter.CreateView(0, 0, RUNTIME_CLASS(CanalyzerViewL), CSize(), pContext);
-		//this->LeftPlotPointer()->lri=0;
-		if(m_bSplitterCreated){
-			m_bSplitterCreated = m_wndSplitter.CreateView(0, 1, RUNTIME_CLASS(CanalyzerViewR), CSize(), pContext);
-			//this->RightPlotPointer()->lri=1;
-		}
-	}
-
-	m_wndSplitter.SetActivePane(0, 0);
-
-	return (m_bSplitterCreated);
-
-
-	return m_wndSplitter.Create(this,
-		2, 2,               // TODO: adjust the number of rows, columns
-		CSize(10, 10),      // TODO: adjust the minimum pane size
-		pContext);
 }
 
 BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
@@ -550,9 +508,9 @@ void CMainFrame::Dump(CDumpContext& dc) const
 
 void CMainFrame::OnViewCustomize()
 {
-	CMFCToolBarsCustomizeDialog* pDlgCust = new CMFCToolBarsCustomizeDialog(this, TRUE /* scan menus */);
-	pDlgCust->EnableUserDefinedToolbars();
-	pDlgCust->Create();
+	//CMFCToolBarsCustomizeDialog* pDlgCust = new CMFCToolBarsCustomizeDialog(this, TRUE /* scan menus */);
+	//pDlgCust->EnableUserDefinedToolbars();
+	//pDlgCust->Create();
 }
 
 LRESULT CMainFrame::OnToolbarCreateNew(WPARAM wp,LPARAM lp)
@@ -703,14 +661,39 @@ void CMainFrame::OnSettingChange(UINT uFlags, LPCTSTR lpszSection)
 }
 
 
+BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
+{
+	// TODO: Add your specialized code here and/or call the base class
+
+	m_bSplitterCreated = m_wndSplitter.CreateStatic(this, 1, 2);
+	// CMyView and CMyOtherView are user-defined views derived from CView
+	if(m_bSplitterCreated){
+		m_bSplitterCreated = m_wndSplitter.CreateView(0, 0, RUNTIME_CLASS(CanalyzerViewL), CSize(), pContext);
+		//this->LeftPlotPointer()->lri=0;
+		if(m_bSplitterCreated){
+			m_bSplitterCreated = m_wndSplitter.CreateView(0, 1, RUNTIME_CLASS(CanalyzerViewR), CSize(), pContext);
+			//this->RightPlotPointer()->lri=1;
+		}
+	}
+
+	m_wndSplitter.SetActivePane(0, 0);
+
+	return (m_bSplitterCreated);
+
+
+	return CFrameWndEx::OnCreateClient(lpcs, pContext);
+}
+
+
+
 void CMainFrame::OnSize(UINT nType, int cx, int cy)
 {
 	CFrameWndEx::OnSize(nType, cx, cy);
 
 	// TODO: Add your message handler code here
 
-
-	if(m_bSplitterCreated){
+	if(m_bSplitterCreated && m_wndSplitter.GetSafeHwnd()!=NULL)
+	{
 		int lc0,lc1,tmp;
 		m_wndSplitter.GetColumnInfo(0,lc0,tmp);
 		m_wndSplitter.GetColumnInfo(1,lc1,tmp);
@@ -718,6 +701,8 @@ void CMainFrame::OnSize(UINT nType, int cx, int cy)
 		m_wndSplitter.RecalcLayout();
 	}
 }
+
+
 
 
 void CMainFrame::OnSecurityLogin()
@@ -756,7 +741,7 @@ void CMainFrame::OnSecurityUseraccounts()
 		al=uap.al;
 		userIndex=uap.useIndex;
 		CString fp=L"ua";
-		WriteFileCustom(&al,1,fp);
+		al.WriteFile(fp);
 	}
 
 
@@ -802,39 +787,39 @@ void CMainFrame::OnAnalysisMethodsetup()
 
 			////////////////////////////////////////////
 
-		//	TCHAR szFilters[]= _T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||");
+			//	TCHAR szFilters[]= _T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||");
 
-		//// Create an Open dialog; the default file name extension is ".my".
+			//// Create an Open dialog; the default file name extension is ".my".
 
-		//CFileDialog fileDlg(TRUE, _T("txt"), _T("*.txt"),
-		//	OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_ALLOWMULTISELECT , szFilters);
+			//CFileDialog fileDlg(TRUE, _T("txt"), _T("*.txt"),
+			//	OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_ALLOWMULTISELECT , szFilters);
 
-		//// Display the file dialog. When user clicks OK, fileDlg.DoModal() 
+			//// Display the file dialog. When user clicks OK, fileDlg.DoModal() 
 
-		//// returns IDOK.
+			//// returns IDOK.
 
-		//if(fileDlg.DoModal() == IDOK)
-		//{   
-		//	//////////////////////////////////////////////////////////////////////////
+			//if(fileDlg.DoModal() == IDOK)
+			//{   
+			//	//////////////////////////////////////////////////////////////////////////
 
 
-		//	std::vector<CString> filelist;
-		//	LoadFileList(fileDlg.GetPathName(),filelist);
+			//	std::vector<CString> filelist;
+			//	LoadFileList(fileDlg.GetPathName(),filelist);
 
-		//	while(!filelist.empty()){
-		//		pcct a;
-		//		a.readFile(filelist.front());
-		//		a.TomA();
-		//		a.SetTimeIntv();
+			//	while(!filelist.empty()){
+			//		pcct a;
+			//		a.readFile(filelist.front());
+			//		a.TomA();
+			//		a.SetTimeIntv();
 
-		//		pDoc->da.raw.AddNew(a.potential,a.current);
+			//		pDoc->da.raw.AddNew(a.potential,a.current);
 
-		//		filelist.erase(filelist.begin());
-		//	}
+			//		filelist.erase(filelist.begin());
+			//	}
 
-		//	pDoc->UpdateAllViews(NULL);
+			//	pDoc->UpdateAllViews(NULL);
 
-		//}
+			//}
 
 
 		}
@@ -987,7 +972,7 @@ void CMainFrame::ShowWaitDlg(CString tips)
 {
 	if(wd==NULL){
 		wd=new WaitDlg();
-		wd->Create(IDD_DIALOG_WAIT);
+		wd->Create(WaitDlg::IDD);
 	}
 
 	wd->ShowWindow(SW_SHOW);
@@ -1033,13 +1018,14 @@ void CMainFrame::OnAnalysisStartanalysis()
 	// TODO: Add your command handler code here
 
 	mypara * pa1=new mypara;
-	pa1->leftp=(CanalyzerViewL*)LeftPane();
-	pa1->rightp=(CanalyzerViewR*)RightPane();
+	//pa1->leftp=(CanalyzerViewL*)LeftPane();
+	//pa1->rightp=(CanalyzerViewR*)RightPane();
 	//pa1->outw=this->GetOutputWnd();
 	//pa1->cba=this->GetCaptionBar();
-	pa1->ol=this->GetOutputWnd()->GetListCtrl();
+	//pa1->ol=this->GetOutputWnd()->GetListCtrl();
 	//pa1->psta=&pst;
 	//pa1->wd=wd;
+	pa1->adoc=(CanalyzerDoc*)(GetActiveDocument());
 	pa1->mf=this;
 
 	pWriteA=AfxBeginThread(PROCESS,
@@ -1048,9 +1034,11 @@ void CMainFrame::OnAnalysisStartanalysis()
 		0,
 		CREATE_SUSPENDED);
 
-	pWriteA->ResumeThread();
+	((CanalyzerView*)LeftPane())->pw.bMouseCursor=((CanalyzerView*)RightPane())->pw.bMouseCursor=false;
 
 	pst=running;
+
+	pWriteA->ResumeThread();
 
 }
 
@@ -1253,43 +1241,26 @@ void CMainFrame::OnUpdateSecurityUseraccounts(CCmdUI *pCmdUI)
 }
 
 
+
+
+
 void CMainFrame::ChangeLang(void)
 {
 	switch(LangID) // 判断并设置当前界面语言
 	{
 	case  0: 
 		SetThreadUILanguage(MAKELANGID(
-				 LANG_CHINESE_SIMPLIFIED,SUBLANG_CHINESE_SIMPLIFIED));
+			LANG_CHINESE_SIMPLIFIED,SUBLANG_CHINESE_SIMPLIFIED));
 		break;
 	case  1: 
 		SetThreadUILanguage(MAKELANGID(
-							 LANG_ENGLISH,SUBLANG_ENGLISH_US));
+			LANG_ENGLISH,SUBLANG_ENGLISH_US));
 		break;
 	default: 
 		break;
 	}
 
-	//m_wndMenuBar.UpdateData(FALSE);
-	//m_wndMenuBar.UpdateButton(0);
-
-	//HWND hwnd=m_wndMenuBar.Detach();
-
-			//CMenu menu;
-		//menu.LoadMenuW(IDR_MAINFRAME);
-
-		//m_wndMenuBar.Attach();
-		//m_wndMenuBar.CreateFromMenu(menu.GetSafeHmenu());
-	//m_wndMenuBar.Create(this);
 	m_wndMenuBar.RestoreOriginalstate();
-
-	//m_wndMenuBar.Attach(hwnd);
-
-	//m_wndMenuBar.SetPaneStyle(m_wndMenuBar.GetPaneStyle() | CBRS_SIZE_DYNAMIC | CBRS_TOOLTIPS | CBRS_FLYBY);
-
-	//CString strCustomize;
-	//strCustomize.LoadString(IDS_TOOLBAR_CUSTOMIZE);
-	//ASSERT(bNameValid);
-	//m_wndToolBar.EnableCustomizeButton(FALSE, ID_VIEW_CUSTOMIZE, strCustomize);
 }
 
 
@@ -1322,4 +1293,10 @@ void CMainFrame::OnUpdateLanguageEnglish(CCmdUI *pCmdUI)
 	// TODO: Add your command update UI handler code here
 	pCmdUI->SetCheck(LangID==1);
 	pCmdUI->Enable(pst==stop );
+}
+
+afx_msg LRESULT CMainFrame::OnMessageChangeLang(WPARAM wParam, LPARAM lParam)
+{
+	ChangeLang();
+	return 0;
 }

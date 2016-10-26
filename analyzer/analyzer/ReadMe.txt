@@ -104,9 +104,6 @@ Printing and Print Preview support
     The application wizard has generated code to handle the print, print setup, and print preview
     commands by calling member functions in the CView class from the MFC library.
 
-Split Window
-    The application wizard has added support for splitter windows for your application documents.
-
 /////////////////////////////////////////////////////////////////////////////
 
 Other standard files:

@@ -1,11 +1,11 @@
 #pragma once
 
-
+#include "../ObjectF.hpp"
 
 
 // UserAccount command target
 
-class UserAccount : public CObject
+class UserAccount : public ObjectF
 {
 public:
 

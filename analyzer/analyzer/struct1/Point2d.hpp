@@ -1,8 +1,9 @@
 #pragma once
 
+#include "../ObjectF.hpp"
 // Point2d command target
 
-class Point2d : public CObject
+class Point2d : public ObjectF
 {
 public:
 	double x;

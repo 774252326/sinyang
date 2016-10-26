@@ -1,8 +1,8 @@
 #pragma once
-
+#include "../ObjectF.hpp"
 // sapitemA command target
 
-class sapitemA : public CObject
+class sapitemA : public ObjectF
 {
 public:
 

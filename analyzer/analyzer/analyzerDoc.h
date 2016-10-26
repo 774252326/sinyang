@@ -26,6 +26,9 @@ public:
 // Operations
 public:
 	void Show(void);
+	public:
+	UINT UpdateState(void);
+	void SetSAPtodo(const SAPara & ptd);
 // Overrides
 public:
 	virtual BOOL OnNewDocument();
@@ -55,7 +58,5 @@ protected:
 	// Helper function that sets search content for a Search Handler
 	void SetSearchContent(const CString& value);
 #endif // SHARED_HANDLERS
-public:
-	UINT UpdateState(void);
-	void SetSAPtodo(const SAPara & ptd);
+
 };

@@ -7,10 +7,10 @@
 #define LEGEND_DP_FIT_RECT	0x08
 #define LEGEND_DP_AUTO_RECT	0x10
 #define LEGEND_DP_SHOW	0x20
-
+#include "../ObjectF.hpp"
 // LegendCondition command target
 
-class LegendCondition : public CObject
+class LegendCondition : public ObjectF
 {
 public:
 
