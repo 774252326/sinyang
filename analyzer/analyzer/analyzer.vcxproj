@@ -95,6 +95,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="analyzer.reg" />
+    <None Include="ClassDiagram1.cd" />
     <None Include="ReadMe.txt" />
     <None Include="res\analyzer.ico" />
     <None Include="res\analyzer.rc2" />
@@ -112,6 +113,7 @@
     <ClInclude Include="analyzerDoc.h" />
     <ClInclude Include="analyzerView.h" />
     <ClInclude Include="ANPara.h" />
+    <ClInclude Include="CanalyzerViewL.h" />
     <ClInclude Include="ComboItem.h" />
     <ClInclude Include="CVParametersPage.h" />
     <ClInclude Include="DataOut.h" />
@@ -138,6 +140,7 @@
     <ClCompile Include="analyzerDoc.cpp" />
     <ClCompile Include="analyzerView.cpp" />
     <ClCompile Include="ANPara.cpp" />
+    <ClCompile Include="CanalyzerViewL.cpp" />
     <ClCompile Include="ComboItem.cpp" />
     <ClCompile Include="CVParametersPage.cpp" />
     <ClCompile Include="DataOut.cpp" />

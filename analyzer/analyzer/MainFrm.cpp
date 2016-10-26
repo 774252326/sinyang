@@ -9,6 +9,7 @@
 
 #include "analyzerDoc.h"
 #include "analyzerView.h"
+#include "CanalyzerViewL.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -184,7 +185,7 @@ BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT /*lpcs*/,
 	m_bSplitterCreated = m_wndSplitter.CreateStatic(this, 1, 2);
 	// CMyView and CMyOtherView are user-defined views derived from CView
 	if(m_bSplitterCreated){
-		m_bSplitterCreated = m_wndSplitter.CreateView(0, 0, RUNTIME_CLASS(CanalyzerView), CSize(), pContext);
+		m_bSplitterCreated = m_wndSplitter.CreateView(0, 0, RUNTIME_CLASS(CanalyzerViewL), CSize(), pContext);
 		if(m_bSplitterCreated){
 			m_bSplitterCreated = m_wndSplitter.CreateView(0, 1, RUNTIME_CLASS(CanalyzerView), CSize(), pContext);
 		}

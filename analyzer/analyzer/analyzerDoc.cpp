@@ -64,10 +64,44 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		if (ar.IsStoring())
 		{
 			// TODO: add storing code here
+			p1.Serialize(ar);
+			p2.Serialize(ar);
+			p3.Serialize(ar);
+			ar<<dol.size();
+			for(size_t i=0;i<dol.size();i++){
+				dol[i].Serialize(ar);
+			}
+			ar<<lp.size();
+			for(size_t i=0;i<lp.size();i++){
+				lp[i].Serialize(ar);
+			}
+			ar<<rp.size();
+			for(size_t i=0;i<rp.size();i++){
+				rp[i].Serialize(ar);
+			}
 		}
 		else
 		{
 			// TODO: add loading code here
+			p1.Serialize(ar);
+			p2.Serialize(ar);
+			p3.Serialize(ar);
+			size_t n;
+			ar>>n;
+			dol.assign(n,DataOut());
+			for(size_t i=0;i<dol.size();i++){
+				dol[i].Serialize(ar);
+			}
+			ar>>n;
+			lp.assign(n,PlotData());
+			for(size_t i=0;i<lp.size();i++){
+				lp[i].Serialize(ar);
+			}
+			ar>>n;
+			rp.assign(n,PlotData());
+			for(size_t i=0;i<rp.size();i++){
+				rp[i].Serialize(ar);
+			}
 		}
 	}
 

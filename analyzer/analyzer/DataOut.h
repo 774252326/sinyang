@@ -8,7 +8,7 @@ public:
 	DataOut();
 	virtual ~DataOut();
 
-		DataOut(const DataOut &src);
+	DataOut(const DataOut &src);
 	void operator=(const DataOut &src);
 
 	CString stepName;

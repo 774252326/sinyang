@@ -23,7 +23,7 @@ public:
 	ANPara p1;
 	CVPara p2;
 	SAPara p3;
-	DataOut dato;
+	std::vector<DataOut> dol;
 	std::vector<PlotData> lp;
 	std::vector<PlotData> rp;
 
