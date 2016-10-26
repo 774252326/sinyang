@@ -602,27 +602,79 @@ long pcloud::ballPivot(long pi1, long pi2, point3d oldc, double r, point3d &newc
 	std::vector<long> nb;
 	nb.clear();
 	double d=2*r;
-		long x1=plist[pi1].pt[0]/d;
-		long y1=plist[pi1].pt[1]/d;
-		long z1=plist[pi1].pt[2]/d;
-				long x2=plist[pi2].pt[0]/d;
-		long y2=plist[pi2].pt[1]/d;
-		long z2=plist[pi2].pt[2]/d;
+	long x1=plist[pi1].pt[0]/d;
+	long y1=plist[pi1].pt[1]/d;
+	long z1=plist[pi1].pt[2]/d;
+	long x2=plist[pi2].pt[0]/d;
+	long y2=plist[pi2].pt[1]/d;
+	long z2=plist[pi2].pt[2]/d;
 
 
 	nbvidx(x1,y1,z1,nb);
 	if(x2!=x1 || y2!=y1 ||z2!=z1){
 		nbvidx(x2,y2,z2,nb);
 		std::sort(nb.begin(),nb.end());
-		 std::vector<long>::iterator it;
-  it = std::unique (nb.begin(), nb.end());
-  nb.resize( std::distance(nb.begin(),it) ); 
+		std::vector<long>::iterator it;
+		it = std::unique (nb.begin(), nb.end());
+		nb.resize( std::distance(nb.begin(),it) ); 
 
 	}
 
 
-	for(
+	//for(
 
 
 
 }
+
+double pcloud::dotpro(point3d v1, point3d v2)
+{
+	return v1.pt[0]*v2.pt[0]+v1.pt[1]*v2.pt[1]+v1.pt[2]*v2.pt[2];
+}
+
+void pcloud::crosspro(point3d v1, point3d v2, point3d &vp)
+{
+	vp.pt[0]=v1.pt[1]*v2.pt[2]-v1.pt[2]*v2.pt[1];
+	vp.pt[1]=v1.pt[2]*v2.pt[0]-v1.pt[0]*v2.pt[2];
+	vp.pt[2]=v1.pt[0]*v2.pt[1]-v1.pt[1]*v2.pt[0];
+}
+
+void pcloud::triangleNormal(point3d p1, point3d p2, point3d p3, point3d c, point3d &nv)
+{
+	point3d v1,v2,vc;
+	v1.pt[0]=p1.pt[0]-p3.pt[0];
+	v1.pt[1]=p1.pt[1]-p3.pt[1];
+	v1.pt[2]=p1.pt[2]-p3.pt[2];
+
+	v2.pt[0]=p2.pt[0]-p3.pt[0];  
+	v2.pt[1]=p2.pt[1]-p3.pt[1];
+	v2.pt[2]=p2.pt[2]-p3.pt[2];
+
+	vc.pt[0]=c.pt[0]-p3.pt[0];
+	vc.pt[1]=c.pt[1]-p3.pt[1];
+	vc.pt[2]=c.pt[2]-p3.pt[2];
+
+	crosspro(v1,v2,nv);
+
+	if(dotpro(nv,vc)<0){
+		nv.pt[0]=-nv.pt[0];
+		nv.pt[1]=-nv.pt[1];
+		nv.pt[2]=-nv.pt[2];
+	}
+
+}
+
+
+double pcloud::triangleRadius(point3d p1, point3d p2, point3d p3)
+{
+	double d12=dist(p1,p2);
+	double d23=dist(p2,p3);
+	double d31=dist(p3,p1);
+	double a=(d12+d23+d31)*(d12+d23-d31)*(d12-d23+d31)*(-d12+d23+d31);
+	if(eq0(a))
+		return -1;
+	else
+		return d12*d23*d31/sqrt(a);
+}
+
+

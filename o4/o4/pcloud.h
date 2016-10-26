@@ -55,5 +55,14 @@ public:
 	std::vector< std::vector<long> > F;
 
 	long ballPivot(long pi1, long pi2, point3d oldc, double r, point3d &newc);
+
+	void crosspro(point3d v1, point3d v2, point3d &vp);
+	double dotpro(point3d v1, point3d v2);
+	void triangleNormal(point3d p1, point3d p2, point3d p3, point3d c, point3d &nv);
+
+	double triangleRadius(point3d p1, point3d p2, point3d p3);
+
+
+
 };
 
