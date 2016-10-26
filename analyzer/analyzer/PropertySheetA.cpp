@@ -43,6 +43,8 @@ BOOL PropertySheetA1::OnInitDialog()
 
 	ModifyStyleEx(0, WS_EX_CONTEXTHELP); 
 
+	//CPropertyPage* pp=this->GetPage(1);
+	//pp->ShowWindow(SW_HIDE);
 
 	return bResult;
 }

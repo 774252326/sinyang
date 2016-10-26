@@ -19,6 +19,7 @@
 #include "AnalysisParametersPage.h"
 #include "CVParametersPage.h"
 #include "SolutionAdditionParametersPageA.h"
+#include "SolutionAdditionParametersPageB.h"
 #include "calfunc.h"
 
 #include "MainFrm.h"
@@ -33,6 +34,7 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 
 	BEGIN_MESSAGE_MAP(CanalyzerDoc, CDocument)
 		ON_COMMAND(ID_ANALYSIS_METHODSETUP, &CanalyzerDoc::OnAnalysisMethodsetup)
+		ON_BN_CLICKED(IDC_BUTTON1, &CanalyzerDoc::OnBnClickedButton1)
 	END_MESSAGE_MAP()
 
 
@@ -84,18 +86,18 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 
 	void CanalyzerDoc::operator=(const CanalyzerDoc &src)
 	{
-				CSingleLock singleLock(&m_CritSection);
+		CSingleLock singleLock(&m_CritSection);
 		singleLock.Lock();
 
 		if (singleLock.IsLocked())  // Resource has been locked
 		{
 			//...use the shared resource...
-		p1=src.p1;
-		p2=src.p2;
-		p3=src.p3;
-		raw=src.raw;
-		dol.clear();
-					// Now that we are finished, 
+			p1=src.p1;
+			p2=src.p2;
+			p3=src.p3;
+			raw=src.raw;
+			dol.clear();
+			// Now that we are finished, 
 			// unlock the resource for others.
 			singleLock.Unlock();
 		}
@@ -107,7 +109,7 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 	void CanalyzerDoc::Serialize(CArchive& ar)
 	{
 
-						CSingleLock singleLock(&m_CritSection);
+		CSingleLock singleLock(&m_CritSection);
 		singleLock.Lock();
 
 		if (singleLock.IsLocked())  // Resource has been locked
@@ -115,11 +117,11 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 			//...use the shared resource...
 
 
-		p1.Serialize(ar);
-		p2.Serialize(ar);
-		p3.Serialize(ar);
-		raw.Serialize(ar);
-							// Now that we are finished, 
+			p1.Serialize(ar);
+			p2.Serialize(ar);
+			p3.Serialize(ar);
+			raw.Serialize(ar);
+			// Now that we are finished, 
 			// unlock the resource for others.
 			singleLock.Unlock();
 		}
@@ -131,11 +133,12 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		else
 		{
 			// TODO: add loading code here
-			sapitemA outitem;
+			//sapitemA outitem;
 			BYTE outstep;
 			double a1;
-
-			UINT flg=ComputeStateData(outitem,outstep,a1);
+			size_t nextidx;
+			size_t nowidx;
+			UINT flg=ComputeStateData(nowidx,nextidx,outstep,a1);
 			Show();
 
 		}
@@ -233,9 +236,11 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		cppage.para=p2;
 		sheet.AddPage(&cppage);
 
-		SolutionAdditionParametersPageA sppage;
+		SolutionAdditionParametersPageA sppage;		
 		sppage.para=p3;
 		sheet.AddPage(&sppage);
+
+		
 
 		// 打开模态向导对话框   
 		if(sheet.DoModal()==IDOK){
@@ -266,18 +271,18 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 
 
 
-	UINT CanalyzerDoc::ComputeStateData(sapitemA &outitem,BYTE &outstep,double &VtoAdd)
+	UINT CanalyzerDoc::ComputeStateData(size_t &currentSAPIndex, size_t &nextSAPIndex, BYTE &outstep, double &VtoAdd)
 	{
-		
+
 		CSingleLock singleLock(&m_CritSection);
 		singleLock.Lock();
 
 		if (singleLock.IsLocked())  // Resource has been locked
 		{
 
-		dol.clear();
-		UINT res=::ComputeStateData(p1.analysistype,p2,p3,raw,dol,outitem,outstep,VtoAdd);
-									// Now that we are finished, 
+			dol.clear();
+			UINT res=::ComputeStateData(p1.analysistype,p2,p3,raw,dol,currentSAPIndex,nextSAPIndex,outstep,VtoAdd);
+			// Now that we are finished, 
 			// unlock the resource for others.
 			singleLock.Unlock();
 
@@ -301,4 +306,98 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 					(LPARAM)this);
 			}
 		}
+	}
+
+
+	void CanalyzerDoc::OnBnClickedButton1()
+	{
+		// TODO: Add your control notification handler code here
+
+		::AfxMessageBox(L"sdafa");
+
+	}
+
+
+	void CanalyzerDoc::ChangeSAP(void)
+	{
+
+
+		std::vector<DataOutA> doltmp;
+		doltmp.assign(dol.begin(),dol.end());
+
+
+
+			BYTE outstep;
+			double a1;
+			size_t nextidx;
+			size_t nowidx;
+			UINT flg=ComputeStateData(nowidx,nextidx,outstep,a1);
+
+
+			if(flg!=5)
+				return;
+
+
+
+				// 创建属性表对象   
+		CString str;
+		str.LoadStringW(IDS_STRING_ANALYSIS_SETUP);
+		//CPropertySheet sheet(str);
+		PropertySheetA1 sheet(str);
+
+		//AnalysisParametersPage appage;
+		//appage.para=p1;
+		//sheet.AddPage(&appage);
+
+		//CVParametersPage cppage;
+		//cppage.para=p2;
+		//sheet.AddPage(&cppage);
+
+		SolutionAdditionParametersPageB sppage;
+		
+		if(!dol.empty()){
+		sppage.para0.saplist.assign(p3.saplist.begin(),p3.saplist.begin()+nowidx+1);
+
+		sppage.para0.saplist.back().SetEndRatio(dol.back().ArUse()/dol.back().Ar0);
+		}
+
+		sppage.para1.saplist.assign(p3.saplist.begin()+nextidx,p3.saplist.end());
+
+		//sppage.para=p3;
+		sheet.AddPage(&sppage);
+
+		
+
+		// 打开模态向导对话框   
+		if(sheet.DoModal()==IDOK){
+
+
+			p3=sppage.para0;
+			p3.saplist.resize(p3.saplist.size()+sppage.para1.saplist.size());
+			std::copy_backward(sppage.para1.saplist.begin(),sppage.para1.saplist.end(),p3.saplist.end());
+
+			//p1=appage.para;
+			//p2=cppage.para;
+			//p3=sppage.para;
+
+			//POSITION pos = GetFirstViewPosition();
+			//CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));
+			//CMainFrame *mf=(CMainFrame*)(lv->GetParentFrame());
+
+			//CanalyzerViewR* rv=((CanalyzerViewR*)GetNextView(pos));
+
+			//::SendMessage(mf->GetOutputWnd()->GetListCtrl()->GetSafeHwnd(),
+			//	MESSAGE_UPDATE_DOL,
+			//	NULL,
+			//	NULL);
+
+			//str.LoadString(IDS_STRING_PARA_CHANGED);
+			//mf->GetCaptionBar()->ShowMessage(str);
+
+
+		}
+
+
+
+
 	}

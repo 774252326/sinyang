@@ -14,7 +14,7 @@
 //#include "AccountList.h"
 #include "struct\AccountList.hpp"
 
-#include "filefunc.h"
+//#include "filefunc.h"
 
 #include "WaitDlg.h"
 
@@ -123,6 +123,10 @@ public:
 	WaitDlg *wd;
 protected:
 	afx_msg LRESULT OnMessageWaitResponse(WPARAM wParam, LPARAM lParam);
+public:
+	afx_msg void OnControls2();
+protected:
+	afx_msg LRESULT OnMessageChangeAnp(WPARAM wParam, LPARAM lParam);
 };
 
 

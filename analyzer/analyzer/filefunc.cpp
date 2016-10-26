@@ -70,12 +70,12 @@ void WaitSecond(ProcessState &waitflg
 	)
 {
 	int interval=1000;
-	while( //second<0||
-		(waitflg!=running && second--!=0)
+	while( waitflg!=running
+		&& ( second<0 || second--!=0 )
 		){
 			Sleep(interval);
 	}
-	waitflg=running;
+	//waitflg=running;
 }
 
 
@@ -141,10 +141,6 @@ void LoadFileList(const CString &m_filePath, std::vector<CString> &filelist)
 
 
 
-
-
-
-
 UINT PROCESS(LPVOID pParam)
 {
 	//CanalyzerDoc* pDoc=(CanalyzerDoc*)pParam;
@@ -155,7 +151,7 @@ UINT PROCESS(LPVOID pParam)
 	//COutputWnd *ow=((mypara*)pParam)->outw;
 	//CMFCCaptionBarA *cba=((mypara*)pParam)->cba;
 
-	ProcessState *pst=((mypara*)pParam)->psta;
+	//ProcessState *pst=((mypara*)pParam)->psta;
 
 	//WaitDlg *wd=((mypara*)pParam)->wd;
 
@@ -171,16 +167,20 @@ UINT PROCESS(LPVOID pParam)
 	CanalyzerDoc* pDoc=lv->GetDocument();
 
 	delete pParam;
-
+	////////////////////////////////////////////////////
 	std::vector<CString> filelist;
 	LoadFileList(flistlist[pDoc->p1.analysistype],filelist);
+	//////////////////////////////////////////////////////
+
+
 
 	UINT runstate=2;
 
 	double v2a;
-	sapitemA outitem;
+	//sapitemA outitem;
 	BYTE outstep;
-
+	size_t nextidx;
+	size_t nowidx;
 	CSingleLock singleLock(&(pDoc->m_CritSection));
 	singleLock.Lock();
 	if (singleLock.IsLocked())  // Resource has been locked
@@ -191,37 +191,27 @@ UINT PROCESS(LPVOID pParam)
 		singleLock.Unlock();
 	}
 
-	//runstate=ComputeStateData(pDoc->p1.analysistype,pDoc->p2,pDoc->p3,pDoc->raw,pDoc->dol,outitem,outstep,v2a);
+	runstate=pDoc->ComputeStateData(nowidx,nextidx,outstep,v2a);
 
-	runstate=pDoc->ComputeStateData(outitem,outstep,v2a);
-
-	TRACE(L"%d\n",runstate);
+	TRACE(L"rs=%d,ci=%d,ni=%d\n",runstate,nowidx,nextidx);
 	if(runstate==3){
 		CString strerr;
 		strerr.LoadStringW(IDS_STRING_STEP_ERROR);
 		//::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(strerr.GetBuffer()),NULL);
-		*pst=stop;
+		mf->pst=stop;
 		return 1;
 	}
 	//::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(v2a),NULL);
 
-	*pst=pause;
+	//mf->pst=pause;
 
-	//wd=new WaitDlg();
-	//wd->pst=pst;
-	//wd->Create(IDD_DIALOG_WAIT);
-	//wd->ShowWindow(SW_SHOW);
+	CString str;
+	str.Format(L"add solution %g ml",v2a);
 
-	::SendMessage(mf->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,NULL,NULL);
+	mf->SendMessage(MESSAGE_WAIT_RESPONSE,(WPARAM)(str.GetBuffer()),NULL);
 
-	WaitSecond(*pst);
+	WaitSecond(mf->pst);
 
-
-	if(mf->wd!=NULL){
-		mf->wd->ShowWindow(SW_HIDE);
-		delete mf->wd;
-		mf->wd=NULL;
-	}
 
 	/////////////////////////////////////////
 	{		
@@ -237,7 +227,6 @@ UINT PROCESS(LPVOID pParam)
 		//}
 	}
 	////////////////////////////////////////
-	//::SendMessage(cba->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
 
 	lv->pw.bMouseCursor=rv->pw.bMouseCursor=false;
 
@@ -248,8 +237,7 @@ UINT PROCESS(LPVOID pParam)
 			CString strerr;
 			strerr.LoadStringW(IDS_STRING_STEP_ERROR);
 			//::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(strerr.GetBuffer()),NULL);
-
-			*pst=stop;
+			mf->pst=stop;
 			return 1;
 
 		}
@@ -257,10 +245,8 @@ UINT PROCESS(LPVOID pParam)
 
 
 		/////load data from file////////////
-		//data.clear();
 		pcct data;
 		data.readFile(filelist.front());
-		//data.readFile1(filelist.front());
 		data.TomA();
 
 		std::vector<double> x;
@@ -270,13 +256,7 @@ UINT PROCESS(LPVOID pParam)
 
 		while(true){
 			rnd=data.popData(x,y,nd);
-			//pDoc->raw.xll.resize(pDoc->raw.xll.size()+x.size());
-			//std::copy_backward(x.begin(),x.end(),pDoc->raw.xll.end());
 
-			//pDoc->raw.yll.resize(pDoc->raw.yll.size()+y.size());
-			//std::copy_backward(y.begin(),y.end(),pDoc->raw.yll.end());
-
-			//pDoc->raw.ll.back()+=x.size();
 			if(x.empty()||y.empty()){
 				TRACE("input empty");
 				return 8;
@@ -284,36 +264,31 @@ UINT PROCESS(LPVOID pParam)
 
 			//CSingleLock singleLock(&(pDoc->m_CritSection));
 			singleLock.Lock();
-
 			if (singleLock.IsLocked())  // Resource has been locked
 			{
-
 				pDoc->raw.AddFollow(x,y);
-
-				pDoc->dol.clear();
-
 				// Now that we are finished, 
 				// unlock the resource for others.
 				singleLock.Unlock();
 			}
 
 
-			//runstate=ComputeStateData(pDoc->p1.analysistype,pDoc->p2,pDoc->p3,pDoc->raw,pDoc->dol,outitem,outstep,v2a);	
-			runstate=pDoc->ComputeStateData(outitem,outstep,v2a);
+			runstate=pDoc->ComputeStateData(nowidx,nextidx,outstep,v2a);
 
-
-
-			TRACE(L"%d\n",runstate);
+			TRACE(L"rs=%d,ci=%d,ni=%d\n",runstate,nowidx,nextidx);
 
 			if(runstate==3){
 				CString strerr;
 				strerr.LoadStringW(IDS_STRING_STEP_ERROR);
 				//::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(strerr.GetBuffer()),NULL);
-				*pst=stop;
+				mf->pst=stop;
 				return 1;
 			}
+			if(runstate==4){
+				mf->pst=stop;
+				return 4;
+			}
 
-			//pDoc->Show();
 			::PostMessage(rv->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
 			::PostMessage(lv->GetSafeHwnd(),MESSAGE_UPDATE_RAW,NULL,NULL);
 			::PostMessage(ol->GetSafeHwnd(),MESSAGE_SHOW_DOL,NULL,(LPARAM)pDoc);
@@ -322,8 +297,12 @@ UINT PROCESS(LPVOID pParam)
 
 			if(runstate==5){
 				//::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(v2a),NULL);
-				*pst=pause;
-				WaitSecond(*pst);
+				//mf->pst=pause;
+
+					str.Format(L"add solution %g ml",v2a);
+
+				mf->SendMessage(MESSAGE_WAIT_RESPONSE,(WPARAM)(str.GetBuffer()),NULL);
+				WaitSecond(mf->pst);
 				/////////////////////////////////////////
 				{
 					//TCHAR szFilters[]= _T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||");
@@ -338,7 +317,7 @@ UINT PROCESS(LPVOID pParam)
 					//}
 				}
 				////////////////////////////////////////
-				//::SendMessage(cba->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
+
 				filelist.erase(filelist.begin());
 				break;
 			}
@@ -346,7 +325,7 @@ UINT PROCESS(LPVOID pParam)
 			if(runstate==0){
 				::PostMessage(rv->GetSafeHwnd(),MESSAGE_COMPUTE_RESULT,NULL,NULL);
 				filelist.erase(filelist.begin());
-				*pst=stop;
+				mf->pst=stop;
 				return 0;
 				//break;
 			}
@@ -358,7 +337,7 @@ UINT PROCESS(LPVOID pParam)
 
 
 
-	*pst=stop;
+	mf->pst=stop;
 
 	return 0;
 }

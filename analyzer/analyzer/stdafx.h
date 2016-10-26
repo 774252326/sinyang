@@ -56,6 +56,7 @@
 #endif
 
 #include <cfloat>
+#include <afxdlgs.h>
 
 #define MESSAGE_BUSY			WM_USER+1
 #define MESSAGE_WAIT_RESPONSE	WM_USER+2
@@ -72,3 +73,4 @@
 #define MESSAGE_SHOW_DOL		WM_USER+13
 #define MESSAGE_COMPUTE_RESULT	WM_USER+14
 #define MESSAGE_REFRESH_DOL		WM_USER+15
+#define MESSAGE_CHANGE_ANP		WM_USER+16

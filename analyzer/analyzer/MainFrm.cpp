@@ -70,6 +70,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_WM_MOVE()
 	//ON_MESSAGE(MESSAGE_UPDATE_DOL, &CMainFrame::OnMessageUpdateDol)
 	ON_MESSAGE(MESSAGE_WAIT_RESPONSE, &CMainFrame::OnMessageWaitResponse)
+	ON_COMMAND(ID_CONTROLS_2, &CMainFrame::OnControls2)
+	ON_MESSAGE(MESSAGE_CHANGE_ANP, &CMainFrame::OnMessageChangeAnp)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -178,8 +180,8 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// Create a caption bar:
 	//if (!CreateCaptionBar())
 	//{
-		//TRACE0("Failed to create caption bar\n");
-		//return -1;      // fail to create
+	//TRACE0("Failed to create caption bar\n");
+	//return -1;      // fail to create
 	//}
 
 	// create docking windows
@@ -581,91 +583,6 @@ void CMainFrame::OnSize(UINT nType, int cx, int cy)
 }
 
 
-void CMainFrame::OnAnalysisStartanalysis()
-{
-	// TODO: Add your command handler code here
-
-	mypara * pa1=new mypara;
-	pa1->leftp=(CanalyzerViewL*)m_wndSplitter.GetPane(0,0);
-	pa1->rightp=(CanalyzerViewR*)m_wndSplitter.GetPane(0,1);
-	//pa1->outw=this->GetOutputWnd();
-	//pa1->cba=this->GetCaptionBar();
-	pa1->ol=this->GetOutputWnd()->GetListCtrl();
-	pa1->psta=&pst;
-	//pa1->wd=wd;
-	pa1->mf=this;
-	//
-
-	//
-	//	//CWinThread *pWriteA;
-	//
-	//	//HANDLE hThread;
-	//
-	pWriteA=AfxBeginThread(PROCESS,
-		(LPVOID)(pa1),
-		THREAD_PRIORITY_NORMAL,
-		0,
-		CREATE_SUSPENDED);
-	//
-	//	//hThread=pWriteA->m_hThread;
-	//
-	//	//CloseHandle(hThread);
-	pWriteA->ResumeThread();
-	//
-	//	//PROCESS((LPVOID)(pa1));
-	//
-	//
-	pst=running;
-
-}
-
-
-void CMainFrame::OnAnalysisAbortanalysis()
-{
-	// TODO: Add your command handler code here
-	::TerminateThread(pWriteA->m_hThread,0);
-
-	pst=stop;
-	//::SendMessage(this->GetCaptionBar()->GetSafeHwnd(),MESSAGE_OVER,NULL,NULL);
-}
-
-
-void CMainFrame::OnAnalysisPause()
-{
-	// TODO: Add your command handler code here
-
-	//DWORD res=bWaiting?ResumeThread(pWriteA->m_hThread):SuspendThread(pWriteA->m_hThread);
-
-	//if(res!=(DWORD)(-1))
-	//	bWaiting=!bWaiting;
-
-	//if(bWaiting){
-	//	ResumeThread(pWriteA->m_hThread);
-	//	bWaiting=false;
-	//}
-	//else{
-	//	SuspendThread(pWriteA->m_hThread);	
-	//	bWaiting=true;
-	//}
-
-	switch(pst){
-	case running:
-		if(SuspendThread(pWriteA->m_hThread)!=(DWORD)(-1)){
-			//::SendMessage(this->GetCaptionBar()->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,NULL,NULL);
-			pst=pause;
-		}
-		break;
-	case pause:
-		if(ResumeThread(pWriteA->m_hThread)!=(DWORD)(-1)){
-			//::SendMessage(this->GetCaptionBar()->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
-			pst=running;
-		}
-		break;
-	default:
-		break;
-	}
-
-}
 
 
 void CMainFrame::OnUpdateAnalysisMethodsetup(CCmdUI *pCmdUI)
@@ -894,13 +811,221 @@ void CMainFrame::OnMove(int x, int y)
 //	return 0;
 //}
 
+
+
+void CMainFrame::OnAnalysisStartanalysis()
+{
+	// TODO: Add your command handler code here
+
+	mypara * pa1=new mypara;
+	pa1->leftp=(CanalyzerViewL*)m_wndSplitter.GetPane(0,0);
+	pa1->rightp=(CanalyzerViewR*)m_wndSplitter.GetPane(0,1);
+	//pa1->outw=this->GetOutputWnd();
+	//pa1->cba=this->GetCaptionBar();
+	pa1->ol=this->GetOutputWnd()->GetListCtrl();
+	//pa1->psta=&pst;
+	//pa1->wd=wd;
+	pa1->mf=this;
+	//
+
+	//
+	//	//CWinThread *pWriteA;
+	//
+	//	//HANDLE hThread;
+	//
+	pWriteA=AfxBeginThread(PROCESS,
+		(LPVOID)(pa1),
+		THREAD_PRIORITY_NORMAL,
+		0,
+		CREATE_SUSPENDED);
+	//
+	//	//hThread=pWriteA->m_hThread;
+	//
+	//	//CloseHandle(hThread);
+	pWriteA->ResumeThread();
+	//
+	//	//PROCESS((LPVOID)(pa1));
+	//
+	//
+	pst=running;
+
+}
+
+
+void CMainFrame::OnAnalysisAbortanalysis()
+{
+	// TODO: Add your command handler code here
+	if(::TerminateThread(pWriteA->m_hThread,0)!=FALSE){
+
+		pst=stop;
+		//::SendMessage(this->GetCaptionBar()->GetSafeHwnd(),MESSAGE_OVER,NULL,NULL);
+		if(wd!=NULL){
+			wd->ShowWindow(SW_HIDE);
+			//wd->OnOK();
+			delete wd;
+			wd=NULL;
+		}
+	}
+
+}
+
+
+void CMainFrame::OnAnalysisPause()
+{
+	// TODO: Add your command handler code here
+
+	//DWORD res=bWaiting?ResumeThread(pWriteA->m_hThread):SuspendThread(pWriteA->m_hThread);
+
+	//if(res!=(DWORD)(-1))
+	//	bWaiting=!bWaiting;
+
+	//if(bWaiting){
+	//	ResumeThread(pWriteA->m_hThread);
+	//	bWaiting=false;
+	//}
+	//else{
+	//	SuspendThread(pWriteA->m_hThread);	
+	//	bWaiting=true;
+	//}
+
+	switch(pst){
+	case running:
+		if(SuspendThread(pWriteA->m_hThread)!=(DWORD)(-1)){
+			//::SendMessage(this->GetCaptionBar()->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,NULL,NULL);
+			//pst=pause;
+			OnControls2();
+		}
+
+
+
+		break;
+	case pause:
+		if(ResumeThread(pWriteA->m_hThread)!=(DWORD)(-1)){
+			//::SendMessage(this->GetCaptionBar()->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
+
+			pst=running;
+			if(wd!=NULL){
+				wd->ShowWindow(SW_HIDE);
+				//wd->OnOK();
+				delete wd;
+				wd=NULL;
+			}
+			//else{
+			//	pst=running;
+			//}
+
+		}
+
+
+
+
+		break;
+	default:
+		break;
+	}
+
+}
+
+
+
 afx_msg LRESULT CMainFrame::OnMessageWaitResponse(WPARAM wParam, LPARAM lParam)
 {
 
-	wd=new WaitDlg();
-	wd->pst=&pst;
-	wd->Create(IDD_DIALOG_WAIT);
+	//wd=new WaitDlg();
+	//wd->pst=&pst;
+	//wd->Create(IDD_DIALOG_WAIT);
+	//wd->ShowWindow(SW_SHOW);
+
+	OnControls2();
+
+	CString str((wchar_t*)wParam);
+
+	wd->m_tips=str;
+	wd->UpdateData(FALSE);
+	wd->GetDlgItem(IDC_BUTTON1)->EnableWindow();
+
+	return 0;
+}
+
+
+void CMainFrame::OnControls2()
+{
+	// TODO: Add your command handler code here
+
+	pst=pause;
+
+	if(wd==NULL){
+		wd=new WaitDlg();
+		//wd->pst=&pst;
+		wd->Create(IDD_DIALOG_WAIT);
+	}
+
 	wd->ShowWindow(SW_SHOW);
+
+}
+
+
+afx_msg LRESULT CMainFrame::OnMessageChangeAnp(WPARAM wParam, LPARAM lParam)
+{
+
+		CanalyzerViewL* leftp=(CanalyzerViewL*)m_wndSplitter.GetPane(0,0);
+	//pa1->rightp=(CanalyzerViewR*)m_wndSplitter.GetPane(0,1);
+
+		CanalyzerDoc *pDoc=leftp->GetDocument();
+
+		//pDoc->OnAnalysisMethodsetup();
+		
+		//::SendMessage(this->afxget->GetSafeHwnd(),WM_COMMAND,0,0);
+
+		//::AfxMessageBox(L"dsaf");
+		pDoc->ChangeSAP();
+
+			double v2a;
+	//sapitemA outitem;
+	BYTE outstep;
+	size_t nextidx;
+	size_t nowidx;
+					UINT runstate=pDoc->ComputeStateData(nowidx,nextidx,outstep,v2a);
+
+			TRACE(L"next step is %d\n",nextidx);
+
+			if(runstate==3){
+				CString strerr;
+				strerr.LoadStringW(IDS_STRING_STEP_ERROR);
+				//::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(strerr.GetBuffer()),NULL);
+				pst=stop;
+				return 1;
+			}
+			if(runstate==4){
+				OnAnalysisAbortanalysis();
+				return 4;
+			}
+			//::PostMessage(rv->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
+			//::PostMessage(lv->GetSafeHwnd(),MESSAGE_UPDATE_RAW,NULL,NULL);
+			//::PostMessage(ol->GetSafeHwnd(),MESSAGE_SHOW_DOL,NULL,(LPARAM)pDoc);
+			//::SendMessage(ow->GetListCtrl()->GetSafeHwnd(),MESSAGE_SHOW_DOL,NULL,NULL);
+			//Sleep(sleepms);
+
+			if(runstate==5){
+				//::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(v2a),NULL);
+				//mf->pst=pause;
+
+					CString str;
+					str.Format(L"add solution %g ml",v2a);
+
+					wd->m_tips=str;
+					wd->UpdateData(FALSE);
+			}
+
+			if(runstate==0){
+				//::PostMessage(rv->GetSafeHwnd(),MESSAGE_COMPUTE_RESULT,NULL,NULL);
+				//filelist.erase(filelist.begin());
+				//mf->pst=stop;
+				//return 0;
+				////break;
+				OnAnalysisAbortanalysis();
+			}
+
 
 
 

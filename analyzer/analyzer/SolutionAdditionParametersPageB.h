@@ -1,9 +1,6 @@
 #pragma once
-
-#include "SAPara.h"
-//#include "EditList.h"
-
-#include "ListCtrlSAP.h"
+#include "struct\SAPara.hpp"
+#include "list\ListCtrlSAP.h"
 
 // SolutionAdditionParametersPageB dialog
 
@@ -23,26 +20,15 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 public:
-	SAPara para;
+	SAPara para0;
+	SAPara para1;
 
-	ListCtrlSAP m_SAPlist;
+	ListCtrlSAP m_SAPlist0;
+	ListCtrlSAP m_SAPlist1;
 
-
-	//virtual BOOL OnSetActive();
-	//CEditList m_SAPlist;
-	//virtual BOOL OnInitDialog();
-	//afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-//	void BuildList(int width);
-	//afx_msg void OnItemchangedList(NMHDR* pNMHDR, LRESULT* pResult);
-
-	CStatic stt;
-
-	//virtual BOOL OnKillActive();
 	void SetList(void);
 	void GetList(void);
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	virtual BOOL OnKillActive();
 	virtual BOOL OnSetActive();
-	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-	int typeidx;
-	int totaln;
 };

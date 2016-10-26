@@ -5,7 +5,7 @@
 #include "analyzer.h"
 #include "SolutionAdditionParametersPageB.h"
 #include "afxdialogex.h"
-#include "func.h"
+
 
 // SolutionAdditionParametersPageB dialog
 
@@ -13,17 +13,12 @@ IMPLEMENT_DYNAMIC(SolutionAdditionParametersPageB, CPropertyPage)
 
 SolutionAdditionParametersPageB::SolutionAdditionParametersPageB()
 	: CPropertyPage(SolutionAdditionParametersPageB::IDD)
-	, typeidx(1)
-	, totaln(7)
 {
 	CString title;
 	title.LoadStringW(IDS_STRING_ADDITION_SOLUTION_PARA);
 	m_psp.dwFlags = m_psp.dwFlags | PSP_USETITLE ; 	
 	m_psp.pszTitle = new TCHAR[title.GetLength()+1];
 	_tcscpy((wchar_t*)m_psp.pszTitle, title);
-
-	//typeidx=1;
-	//totaln=7;
 }
 
 SolutionAdditionParametersPageB::~SolutionAdditionParametersPageB()
@@ -42,23 +37,22 @@ BEGIN_MESSAGE_MAP(SolutionAdditionParametersPageB, CPropertyPage)
 END_MESSAGE_MAP()
 
 
+// SolutionAdditionParametersPageB message handlers
 
 void SolutionAdditionParametersPageB::SetList(void)
 {
 
 	//UpdateData(FALSE);
 
-	if(para.saplist.empty()){
+	if(para1.saplist.empty()){
 		return;
 	}
 
-
-
-	for(size_t i=0;i<para.saplist.size();i++){
-
-		m_SAPlist.InsertItemSAP(i,para.saplist[i]);
-
+	for(size_t i=0;i<para1.saplist.size();i++){
+		m_SAPlist1.InsertItemSAP(i,para1.saplist[i]);
 	}
+
+
 }
 
 
@@ -66,43 +60,16 @@ void SolutionAdditionParametersPageB::GetList(void)
 {
 	//UpdateData(TRUE);
 
-	int nItem=m_SAPlist.GetItemCount();
+	int nItem=m_SAPlist1.GetItemCount();
 
-	para.saplist.resize(nItem);
+	para1.saplist.resize(nItem);
 
 
 	for(size_t i=0;i<nItem;i++){
-	
-		m_SAPlist.GetItemSAP(i,para.saplist[i]);
+		m_SAPlist1.GetItemSAP(i,para1.saplist[i]);
 	}
 
 }
-
-BOOL SolutionAdditionParametersPageB::OnKillActive()
-{
-	// TODO: Add your specialized code here and/or call the base class
-
-	GetList();
-
-	return CPropertyPage::OnKillActive();
-}
-
-
-BOOL SolutionAdditionParametersPageB::OnSetActive()
-{
-	// TODO: Add your specialized code here and/or call the base class
-
-		// 获得父窗口，即属性表CPropertySheet类   
-	CPropertySheet* psheet = (CPropertySheet*) GetParent();   
-
-	psheet->SetWizardButtons(PSWIZB_BACK|PSWIZB_FINISH);
-
-	//设置属性表只有“完成”按钮   
-	//psheet->SetFinishText(_T("完成"));  
-
-	return CPropertyPage::OnSetActive();
-}
-
 
 int SolutionAdditionParametersPageB::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
@@ -111,61 +78,36 @@ int SolutionAdditionParametersPageB::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	// TODO:  Add your specialized creation code here
 
+
+
+
 	CSize gap1(20,20);
 	CSize gap2(20,20);
-	CSize staticSize(150,22);
+	//CSize staticSize(150,22);
 
 	CRect winrect;
 	this->GetWindowRect(&winrect);
 	winrect.DeflateRect(gap1);
 	CPoint pt(gap1);
-	CStatic *pStatic;
-	CEdit *pEdit;
-	CString str;
+	//CStatic *pStatic;
+	//CEdit *pEdit;
+	//CString str;
 
-	str.LoadStringW(IDS_STRING_SAP_TIPS);
-	stt.Create(
-		str,
-		WS_CHILD
-		|WS_VISIBLE, 
-		CRect(pt,CSize(winrect.Width(),staticSize.cy)),
-		this,
-		10000);
-
-	pt.y+=gap2.cy+staticSize.cy;
+	CSize listsz=winrect.Size();
+	listsz.cy-=gap2.cy;
+	listsz.cy/=2;
 
 
-
-	//str.LoadStringW(IDS_STRING_VMS_VOLUME);
-	//pStatic=new CStatic;
-	//pStatic->Create(
+	//str.LoadStringW(IDS_STRING_SAP_TIPS);
+	//stt.Create(
 	//	str,
 	//	WS_CHILD
 	//	|WS_VISIBLE, 
-	//	CRect(pt,staticSize),
+	//	CRect(pt,CSize(winrect.Width(),staticSize.cy)),
 	//	this,
-	//	IDS_STRING_VMS_VOLUME);
+	//	10000);
 
-	//pt.x+=gap2.cx+staticSize.cx;
-
-	//str.LoadStringW(IDS_EDIT_VMS_VOLUME);
-	////str=L"0";
-	//pEdit=new CEdit;
-	//pEdit->CreateEx(
-	//	WS_EX_CLIENTEDGE,
-	//	L"Edit", 
-	//	str,
-	//	ES_LEFT
-	//	|WS_CHILD
-	//	|WS_VISIBLE,
-	//	CRect(pt,CSize(winrect.Width()-gap2.cx-staticSize.cx,staticSize.cy)),
-	//	this,
-	//	IDS_EDIT_VMS_VOLUME);
-
-	//pt.y+=staticSize.cy+gap2.cy;
-	//pt.x-=gap2.cx+staticSize.cx;
-
-
+	//pt.y+=gap2.cy+staticSize.cy;
 
 
 	const DWORD dwStyle = WS_VISIBLE 
@@ -175,14 +117,60 @@ int SolutionAdditionParametersPageB::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		| WS_VSCROLL 
 		| LBS_NOINTEGRALHEIGHT;
 
-	if(!m_SAPlist.Create(dwStyle, CRect(pt,CPoint(winrect.Size()+gap1)), this, IDS_LISTCTRL_SAP) ){
+	if(!m_SAPlist0.Create(dwStyle, CRect(pt,listsz), this, IDS_LISTCTRL_SAP_0) ){
 		TRACE0("Failed to create output windows\n");
 		return -1;      // fail to create
 	}
 
-	//BuildList(winrect.Width());
+	pt.y+=gap2.cy+listsz.cy;
+
+	if(!m_SAPlist1.Create(dwStyle, CRect(pt,listsz), this, IDS_LISTCTRL_SAP_1) ){
+		TRACE0("Failed to create output windows\n");
+		return -1;      // fail to create
+	}
+
+
+	
+
+	for(size_t i=0;i<para0.saplist.size();i++){
+		m_SAPlist0.InsertItemSAP(i,para0.saplist[i]);
+	}
+
+
+	//size_t nc=m_SAPlist0.typelist.size();
+
+	//m_SAPlist0.typelist.assign(nc,m_SAPlist0.eStatic);
+
 
 	SetList();
 
+
+
+
 	return 0;
+}
+
+
+BOOL SolutionAdditionParametersPageB::OnKillActive()
+{
+	// TODO: Add your specialized code here and/or call the base class
+
+
+	GetList();
+
+
+	return CPropertyPage::OnKillActive();
+}
+
+
+BOOL SolutionAdditionParametersPageB::OnSetActive()
+{
+	// TODO: Add your specialized code here and/or call the base class
+
+			// 获得父窗口，即属性表CPropertySheet类   
+	CPropertySheet* psheet = (CPropertySheet*) GetParent();   
+
+	psheet->SetWizardButtons(PSWIZB_BACK|PSWIZB_FINISH);
+
+	return CPropertyPage::OnSetActive();
 }

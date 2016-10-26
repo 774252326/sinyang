@@ -67,7 +67,7 @@ public:
 	};
 	bool isStepEnd(double currentRatio,bool bLess=true){
 		if(addType==1||addType==3){
-			if( (currentRatio<endRatio)^bLess ){
+			if( currentRatio==endRatio || ((currentRatio<endRatio)^bLess) ){
 				return false;
 			}
 		}
@@ -88,7 +88,13 @@ public:
 			return false;
 		return true;
 	};
-
+	bool SetEndRatio(double er){
+		if(addType==1||addType==3){
+			endRatio=er;
+			return true;
+		}
+		return false;
+	};
 };
 
 

@@ -188,7 +188,9 @@ UINT ComputeStateData(
 	const SAPara &p3,
 	const RawData &raw,
 	std::vector<DataOutA> &dol,
-	sapitemA &outitem,
+	//sapitemA &outitem,
+	size_t &currentSAPIndex,
+	size_t &nextSAPIndex,
 	BYTE &outstep,
 	double &VtoAdd){
 
@@ -220,12 +222,33 @@ UINT ComputeStateData(
 		DataOutA d0;
 
 		size_t rawi=0;
+		//size_t sapi=0;
+		currentSAPIndex=0;
 
-		while( !p3t.saplist.empty() && !sl.empty() ){
+		while( !sl.empty() ){
 
 			BYTE step=nby(sl.front(),0);
 			BYTE stepControl=nby(sl.front(),1);
 			BYTE plotFilter=nby(sl.front(),2);
+
+			if( p3t.saplist.empty() ){//最后一个加液步骤完成
+
+				nextSAPIndex=p3.saplist.size();
+				outstep=step;
+				//VtoAdd=0;
+
+				if(sl.size()>1){//未完成分析方法指定的加液步骤
+					return 4;
+				}
+
+				//完成分析方法指定的全部加液步骤
+				if(!dol.empty()
+					//&& dol.back().Ar.size()<p2.noofcycles)
+					&& !dol.back().EndFlag(p2.noofcycles,p2.variationtolerance) )
+					return 6;//此时最后一次加液的转圈计数未必到达预设值p2.noofcycles
+
+				return 0;//此时最后一次加液的转圈计数到达预设值
+			}
 
 
 			if( d0.Update(p3t.saplist.front(),step) ){
@@ -235,17 +258,20 @@ UINT ComputeStateData(
 
 				raw.GetDatai(rawi,x,y);
 
-				if(x.empty() || y.empty()){//第rawi－1步已完成第一圈数据，而第rawi步无数据
-					outitem=p3t.saplist.front();
+				if(x.empty() || y.empty()){//第rawi－1次加液已完成第一圈数据，而第rawi次加液无数据
+					//outitem=p3t.saplist.front();
+					nextSAPIndex=p3.saplist.size()-p3t.saplist.size();
 					outstep=step;
+
+
 
 					if( rawi>0 
 						//&& dol[rawi-1].Ar.size()<p2.noofcycles)
 						&& !dol[rawi-1].EndFlag(p2.noofcycles,p2.variationtolerance) )
-						return 1;
+						return 1;//第rawi－1次加液的转圈计数未必到达预设值p2.noofcycles
 
 					VtoAdd=d0.addVolume;
-					return 5;
+					return 5;//第rawi－1次加液的转圈计数到达预设值
 				}
 
 				//std::vector<double> Ql(p2.noofcycles,0);
@@ -278,12 +304,14 @@ UINT ComputeStateData(
 				}
 
 				if(Ql.empty()){
-				//if(tmp1!=0){//第rawi步数据不足，即第rawi步未完成第一圈数据时，无法计算积分
+					//if(tmp1!=0){//第rawi次加液数据不足，即第rawi次加液未完成第一圈数据时，无法计算积分
 					d0.Ar.clear();
 					d0.UseIndex=-1;
 					dol.push_back(d0);
-					outitem=p3t.saplist.front();
+					//outitem=p3t.saplist.front();
+					nextSAPIndex=p3.saplist.size()-p3t.saplist.size();
 					outstep=step;
+
 					return 2;
 				}
 
@@ -310,6 +338,8 @@ UINT ComputeStateData(
 				}
 				stepControl|=SC_STEP_COMPLETE;
 				sl.front()=stp(step,stepControl,plotFilter);
+
+				//currentSAPIndex=p3.saplist.size()-p3t.saplist.size();
 
 			}
 			else{
@@ -344,19 +374,29 @@ UINT ComputeStateData(
 					//strerr.LoadStringW(IDS_STRING_STEP_ERROR);
 					//::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(strerr.GetBuffer()),NULL);
 					//pst=stop;
-					return 3;//第rawi－1步已完成第一圈数据，而第rawi步加液设置出错
-					p3t.saplist.erase(p3t.saplist.begin());
+
+					nextSAPIndex=p3.saplist.size()-p3t.saplist.size();
+					outstep=step;
+	
+
+					return 3;//第rawi－1次加液已完成第一圈数据，而第rawi次加液设置出错
+					//p3t.saplist.erase(p3t.saplist.begin());
+					//sapi++;
 				}
 			}
 		}
 
-		//最后一个加液步骤完成，注意此时最后一步的转圈计数未必到达预设值p2.noofcycles
-		if(!dol.empty()
-			//&& dol.back().Ar.size()<p2.noofcycles)
-			&& !dol.back().EndFlag(p2.noofcycles,p2.variationtolerance) )
-			return 6;
 
-		return 0;
+		return 7;//未知错误
+
+		//nextSAPIndex=p3.saplist.size()-p3t.saplist.size();
+		////最后一个加液步骤完成，注意此时最后一步的转圈计数未必到达预设值p2.noofcycles
+		//if(!dol.empty()
+		//	//&& dol.back().Ar.size()<p2.noofcycles)
+		//	&& !dol.back().EndFlag(p2.noofcycles,p2.variationtolerance) )
+		//	return 6;
+
+		//return 0;
 
 }
 
@@ -716,10 +756,12 @@ bool GetCalibrationCurve(
 	if(ReadFileCustom(&tmp,1,calibrationfilepath)){
 
 		std::vector<DataOutA> dol;
-		sapitemA sapitemdummy;
+		//sapitemA sapitemdummy;
+		size_t nextidx;
 		BYTE bytedummy;
 		double doubledummy;
-		UINT flg=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol,sapitemdummy,bytedummy,doubledummy);
+		size_t nowidx;
+		UINT flg=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol,nowidx,nextidx,bytedummy,doubledummy);
 
 
 		if(flg==0){
@@ -922,6 +964,7 @@ bool Compute2(const std::vector<DataOutA> &dol, const ANPara &p1, double &SPv, d
 	std::vector<size_t> dolastidx;
 	UINT ff=DataOutAList2RawDataList(dol,p1.analysistype,rdl,xlabellist,ylabellist,dolastidx);
 
+
 	double Vv=dol[dolastidx[1]].VMSVolume;
 
 	//if(InterpX(pdl.back(),0,p1.evaluationratio,SPv)){
@@ -940,10 +983,12 @@ bool Compute2(const std::vector<DataOutA> &dol, const ANPara &p1, double &SPv, d
 					double Sv;
 
 					std::vector<DataOutA> dol1;
-					sapitemA sapitemdummy;
+					//sapitemA sapitemdummy;
+					size_t nextidx;
 					BYTE bytedummy;
 					double doubledummy;
-					UINT f1=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol1,sapitemdummy,bytedummy,doubledummy);
+					size_t nowidx;
+					UINT f1=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol1,nowidx,nextidx,bytedummy,doubledummy);
 					if(f1==0){
 						if(Compute1(dol1,tmp.p1,Sv,z)){
 							SPc=z*(1+Vv/SPv);
@@ -1012,6 +1057,7 @@ bool Compute4(const std::vector<DataOutA> &dol,
 	UINT ff=DataOutAList2RawDataList(dol,p1.analysistype,rdl,xlabellist,ylabellist,dolastidx);
 
 
+
 	double SPv=dol[dolastidx[2]].TotalVolume();
 	double SPv0=SPv-dol[dolastidx[1]].TotalVolume();
 
@@ -1078,10 +1124,12 @@ bool Compute6(const std::vector<DataOutA> &dol, const ANPara &p1, double &Lc, do
 	if(ReadFileCustom(&tmp,1,p1.calibrationfilepath)){
 
 		std::vector<DataOutA> dol1;
-		sapitemA sapitemdummy;
+		//sapitemA sapitemdummy;
+		size_t nextidx;
 		BYTE bytedummy;
 		double doubledummy;
-		UINT f1=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol1,sapitemdummy,bytedummy,doubledummy);
+		size_t nowidx;
+		UINT f1=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol1,nowidx,nextidx,bytedummy,doubledummy);
 		if(f1==0){
 
 			tmp.p1.evaluationratio=Q/dol1.back().Ar0;
@@ -1264,12 +1312,14 @@ bool Compute8(
 		//std::vector<double> Sc00;
 		//std::vector<double> Ac00;
 
-		sapitemA sapitemdummy;
+		//sapitemA sapitemdummy;
+		size_t nextidx;
 		BYTE bytedummy;
 		double doubledummy;
 
 		std::vector<DataOutA> dol1;
-		UINT f1=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol1,sapitemdummy,bytedummy,doubledummy);
+		size_t nowidx;
+		UINT f1=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol1,nowidx,nextidx,bytedummy,doubledummy);
 		if(f1==0){
 
 			RawData SA00;
@@ -1360,11 +1410,12 @@ bool Compute10(
 		tmp.p1.evaluationratio=nQ;
 
 		std::vector<DataOutA> dol1;
-		sapitemA sapitemdummy;
+		//sapitemA sapitemdummy;
 		BYTE bytedummy;
 		double doubledummy;
-
-		UINT f1=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol1,sapitemdummy,bytedummy,doubledummy);
+		size_t nextidx;
+		size_t nowidx;
+		UINT f1=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol1,nowidx,nextidx,bytedummy,doubledummy);
 		if(f1==0){
 
 			if(Compute9(dol1,tmp.p1,Lc)){
@@ -1426,11 +1477,12 @@ bool Compute12(
 
 		std::vector<DataOutA> dol1;
 
-		sapitemA sapitemdummy;
+		//sapitemA sapitemdummy;
 		BYTE bytedummy;
 		double doubledummy;
-
-		UINT f1=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol1,sapitemdummy,bytedummy,doubledummy);
+		size_t nextidx;
+		size_t nowidx;
+		UINT f1=ComputeStateData(tmp.p1.analysistype,tmp.p2,tmp.p3,tmp.raw,dol1,nowidx,nextidx,bytedummy,doubledummy);
 		if(f1==0){
 
 

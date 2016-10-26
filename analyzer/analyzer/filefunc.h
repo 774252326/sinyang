@@ -7,7 +7,7 @@
 #include "analyzerViewR.h"
 //#include "OutputWnd.h"
 #include "list\OutputListA.h"
-//#include "MainFrm.h"
+#include "MainFrm.h"
 //#include "WaitDlg.h"
 
 //enum ProcessState{
@@ -23,13 +23,13 @@ typedef struct MYPARA{
 	//COutputWnd *outw;
 	COutputListA* ol;
 	//CMFCCaptionBarA *cba;
-	//CMainFrame *mf;
+	CMainFrame *mf;
 	//pcct *data;
 	//pcctB *dataB;
 	//CVPara *p2;
 	//SAPara *p3;
 	//WaitDlg *wd;
-	ProcessState *psta;
+	//ProcessState *psta;
 } mypara;
 
 

@@ -33,7 +33,9 @@ public:
 
 
 	UINT ComputeStateData(
-	sapitemA &outitem,
+	//sapitemA &outitem,
+	size_t &currentSAPIndex,
+	size_t &nextSAPIndex,
 	BYTE &outstep,
 	double &VtoAdd
 	);
@@ -55,7 +57,7 @@ public:
 	virtual void Dump(CDumpContext& dc) const;
 #endif
 
-protected:
+//protected:
 	afx_msg void OnAnalysisMethodsetup();
 // Generated message map functions
 protected:
@@ -70,4 +72,6 @@ protected:
 public:
 	void Show(void);
 	CCriticalSection m_CritSection;
+	afx_msg void OnBnClickedButton1();
+	void ChangeSAP(void);
 };
