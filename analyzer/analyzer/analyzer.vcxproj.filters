@@ -74,6 +74,9 @@
     <None Include="res\index_02_01_01.bmp">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="..\..\..\..\..\Pictures\ico\ThinkCentre.ico">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="analyzer.h">
@@ -199,6 +202,9 @@
     <ClInclude Include="EditC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="UserAccount.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="analyzer.cpp">
@@ -319,6 +325,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="EditC.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UserAccount.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

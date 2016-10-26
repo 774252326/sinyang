@@ -85,7 +85,7 @@ public:
 	afx_msg void OnUpdateViewAnalysisProgress(CCmdUI *pCmdUI);
 	BOOL m_bSplitterCreated;
 
-	COutputWnd* GetOutputWnd(){return &m_wndOutput;}
+	COutputWnd* GetOutputWnd(){return &m_wndOutput;};
 	CMFCCaptionBarA* GetCaptionBar(){ return &m_wndCaptionBar;};
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 
