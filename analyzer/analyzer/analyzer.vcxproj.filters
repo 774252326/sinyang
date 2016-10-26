@@ -120,9 +120,6 @@
     <ClInclude Include="func.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Header1.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="intgQT.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -249,9 +246,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SolutionAdditionParametersPageA.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source1.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="VPara.cpp">

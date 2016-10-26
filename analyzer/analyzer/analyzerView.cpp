@@ -13,7 +13,7 @@
 #include "analyzerView.h"
 
 
-#include "Header1.h"
+#include "func.h"
 #include "PlotSettingPage.h"
 #include <math.h>
 
@@ -45,6 +45,8 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		ON_COMMAND(ID_VIEW_FITWINDOW, &CanalyzerView::OnViewFitwindow)
 		ON_NOTIFY(UDN_DELTAPOS, 1, &CanalyzerView::OnDeltaposSpin)
 
+		ON_COMMAND(ID_VIEW_DATACURSOR, &CanalyzerView::OnViewDatacursor)
+		ON_UPDATE_COMMAND_UI(ID_VIEW_DATACURSOR, &CanalyzerView::OnUpdateViewDatacursor)
 	END_MESSAGE_MAP()
 
 	// CanalyzerView construction/destruction
@@ -56,6 +58,8 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		, ymax(0)
 		, m_mouseDownPoint(0)
 		, pct(0.02)
+		, bMouseCursor(false)
+		, selectIdx(0)
 	{
 		// TODO: add construction code here
 		spBtnSize=CSize(23*2,23);
@@ -96,6 +100,17 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 			CRect plotrect=rect;
 
 			DrawData(plotrect,&dcMem,pDoc->lp[m_spBtn.GetPos32()],xmin,xmax,ymin,ymax);
+			if(bMouseCursor){
+				//CString str;
+				//str.Format(L"%g,%g",pDoc->lp[m_spBtn.GetPos32()].xll[selectIdx],pDoc->lp[m_spBtn.GetPos32()].yll[selectIdx]);
+				//dcMem.TextOutW(m_mouseDownPoint.x,m_mouseDownPoint.y,str);
+
+				DrawData1(plotrect
+					,&dcMem
+					,pDoc->lp[m_spBtn.GetPos32()].xll[selectIdx]
+				,pDoc->lp[m_spBtn.GetPos32()].yll[selectIdx]
+				,xmin,xmax,ymin,ymax);
+			}
 
 			pDC->BitBlt(0,0,rect.Width(),rect.Height(),&dcMem,0,0,SRCCOPY);//将内存DC上的图象拷贝到前台
 			dcMem.DeleteDC(); //删除DC
@@ -230,15 +245,31 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		if (!pDoc->lp.empty() && !pDoc->lp[idx].ps.empty()){
 			CRect plotrect;
 			this->GetClientRect(&plotrect);	
-			GetPlotRect(plotrect, pDoc->lp[idx].psp.labelSize, pDoc->lp[idx].psp.metricSize);
 
-			if(plotrect.PtInRect(point)){
-				m_mouseDownPoint=point;
+			int re=DownUpdate(plotrect
+				, pDoc->lp[idx].psp.metricSize
+				, pDoc->lp[idx].psp.labelSize
+				, point
+				, m_mouseDownPoint
+				, xmin, xmax, ymin, ymax
+				, bMouseCursor
+				, pDoc->lp[idx].xll
+				, pDoc->lp[idx].yll
+				, selectIdx);
+
+			switch(re){
+			case 1:
 				SetCapture();
-
-				HCURSOR hCur  =  LoadCursor( NULL  , IDC_SIZEALL ) ;
-				::SetCursor(hCur);
+				break;
+			case 2:
+				this->ClientToScreen(&m_mouseDownPoint);
+				::SetCursorPos(m_mouseDownPoint.x,m_mouseDownPoint.y);
+				Invalidate(FALSE);
+				break;
+			default:
+				break;
 			}
+
 		}
 
 		CView::OnLButtonDown(nFlags, point);
@@ -261,11 +292,16 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 	void CanalyzerView::clear(void)
 	{
 		xmin=xmax=ymin=ymax=0;
+
+		bMouseCursor=false;
+		selectIdx=0;
+
 		m_spBtn.SetRange32(0,0);
 		m_spBtn.SetPos32(0);
 		m_spBtn.ShowWindow(SW_HIDE);
 		CanalyzerDoc* pDoc=GetDocument();
-		pDoc->lp.clear();
+		if( !(pDoc->lp.empty()) )
+			pDoc->lp.clear();
 	}
 
 
@@ -316,6 +352,7 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 				pDoc->lp[il].ps.clear();
 				pDoc->lp[il].ps.assign(fig1setting.ps.begin(),fig1setting.ps.end());
 				Invalidate(FALSE);
+				//this->UpdateWindow();
 			}
 		}
 	}
@@ -345,37 +382,37 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 			else{
 
 				CString str;
-				//if(MoveUpdateB(plotrect
-				//	, pDoc->lp[idx].psp.metricSize
-				//	, pDoc->lp[idx].psp.labelSize
-				//	, point
-				//	, this->m_mouseDownPoint
-				//	, xmin,xmax,ymin,ymax
-				//	, str))
-				//	m_tool.UpdateTipText(str,this);
-
-				//str.Format(L"%d,%d",point.x,point.y);
-				//m_tool.UpdateTipText(str,this);
-
-				CPoint pt;
-				int flg=MoveUpdateC(plotrect
+				if(MoveUpdateB(plotrect
 					, pDoc->lp[idx].psp.metricSize
 					, pDoc->lp[idx].psp.labelSize
 					, point
 					, this->m_mouseDownPoint
 					, xmin,xmax,ymin,ymax
-					, str
-					, pDoc->lp[idx].xll
-					, pDoc->lp[idx].yll
-					, pt);
-				if(flg==2){
-					//this->ClientToScreen(&pt);
-					//::SetCursorPos(pt.x,pt.y);
+					, str))
 					m_tool.UpdateTipText(str,this);
-				}
-				if(flg==1){
-					m_tool.UpdateTipText(str,this);
-				}
+
+				//str.Format(L"%d,%d",point.x,point.y);
+				//m_tool.UpdateTipText(str,this);
+
+				//CPoint pt;
+				//int flg=MoveUpdateC(plotrect
+				//	, pDoc->lp[idx].psp.metricSize
+				//	, pDoc->lp[idx].psp.labelSize
+				//	, point
+				//	, this->m_mouseDownPoint
+				//	, xmin,xmax,ymin,ymax
+				//	, str
+				//	, pDoc->lp[idx].xll
+				//	, pDoc->lp[idx].yll
+				//	, pt);
+				//if(flg==2){
+				//	//this->ClientToScreen(&pt);
+				//	//::SetCursorPos(pt.x,pt.y);
+				//	m_tool.UpdateTipText(str,this);
+				//}
+				//if(flg==1){
+				//	m_tool.UpdateTipText(str,this);
+				//}
 
 			}
 
@@ -508,46 +545,41 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		// TODO: Add your specialized code here and/or call the base class
 
 		pDC->SetMapMode(MM_ANISOTROPIC); //转换坐标映射方式
-
 		CRect rect;
 		this->GetClientRect(&rect);
+		CSize wsize = rect.Size(); 
+		pDC->SetWindowExt(wsize); 
 
-		CSize size = rect.Size(); 
-
-		//size.cx=96*11;
-
-		pDC->SetWindowExt(size);  
-
-		//确定窗口大小
-
-		int wmm=::GetDeviceCaps(::GetDC(this->GetSafeHwnd()),HORZSIZE);
-		int hmm=::GetDeviceCaps(::GetDC(this->GetSafeHwnd()),VERTSIZE);
-
-		int wpxl=::GetDeviceCaps(::GetDC(this->GetSafeHwnd()),HORZRES);
-		int hpxl=::GetDeviceCaps(::GetDC(this->GetSafeHwnd()),VERTRES);
-
-
+		HDC hdc=::GetDC(this->GetSafeHwnd());
+		int wmm=::GetDeviceCaps(hdc,HORZSIZE);
+		int hmm=::GetDeviceCaps(hdc,VERTSIZE);
+		int wpxl=::GetDeviceCaps(hdc,HORZRES);
+		int hpxl=::GetDeviceCaps(hdc,VERTRES);
+		int xLogPixPerInch0 = ::GetDeviceCaps(hdc,LOGPIXELSX); 
+		int yLogPixPerInch0 = ::GetDeviceCaps(hdc,LOGPIXELSY); 
+		::ReleaseDC(this->GetSafeHwnd(),hdc);
 
 		//得到实际设备每逻辑英寸的象素数量
-
-		int xLogPixPerInch0 = ::GetDeviceCaps(::GetDC(this->GetSafeHwnd()),LOGPIXELSX); 
-		int yLogPixPerInch0 = ::GetDeviceCaps(::GetDC(this->GetSafeHwnd()),LOGPIXELSY); 
-
 		int xLogPixPerInch = pDC->GetDeviceCaps(LOGPIXELSX); 
 		int yLogPixPerInch = pDC->GetDeviceCaps(LOGPIXELSY); 
 		//得到设备坐标和逻辑坐标的比例
-		long xExt = (long)size.cx * xLogPixPerInch/xLogPixPerInch0;  
-		long yExt = (long)size.cy * yLogPixPerInch/yLogPixPerInch0; 
-
-		//long xExt = (long)(11/sqrt(2.0) * xLogPixPerInch);  
-		//long yExt = (long)(11 * yLogPixPerInch); 
-		pDC->SetViewportExt((int)xExt, (int)yExt); 
-
-
-		//pDC->SetViewportExt(size);
-		//确定视口大小
-
+		CSize vsize(wsize.cx * xLogPixPerInch/xLogPixPerInch0, wsize.cy * yLogPixPerInch/yLogPixPerInch0);
+		pDC->SetViewportExt(vsize); //确定视口大小
 
 
 		CView::OnPrepareDC(pDC, pInfo);
+	}
+
+
+	void CanalyzerView::OnViewDatacursor()
+	{
+		// TODO: Add your command handler code here
+		bMouseCursor=!bMouseCursor;
+	}
+
+
+	void CanalyzerView::OnUpdateViewDatacursor(CCmdUI *pCmdUI)
+	{
+		// TODO: Add your command update UI handler code here
+		pCmdUI->SetCheck(bMouseCursor);
 	}

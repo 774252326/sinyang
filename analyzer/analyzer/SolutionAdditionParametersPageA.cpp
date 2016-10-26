@@ -5,7 +5,7 @@
 #include "analyzer.h"
 #include "SolutionAdditionParametersPageA.h"
 #include "afxdialogex.h"
-#include "Header1.h"
+#include "func.h"
 
 // SolutionAdditionParametersPageA dialog
 

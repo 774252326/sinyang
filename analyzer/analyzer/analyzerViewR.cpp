@@ -13,7 +13,7 @@
 #include "analyzerViewR.h"
 
 
-#include "Header1.h"
+#include "func.h"
 #include "PlotSettingPage.h"
 
 
@@ -45,6 +45,8 @@ BEGIN_MESSAGE_MAP(CanalyzerViewR, CView)
 		ON_COMMAND(ID_VIEW_FITWINDOW, &CanalyzerViewR::OnViewFitwindow)
 		ON_NOTIFY(UDN_DELTAPOS, 1, &CanalyzerViewR::OnDeltaposSpin)
 
+		ON_COMMAND(ID_VIEW_DATACURSOR, &CanalyzerViewR::OnViewDatacursor)
+		ON_UPDATE_COMMAND_UI(ID_VIEW_DATACURSOR, &CanalyzerViewR::OnUpdateViewDatacursor)
 END_MESSAGE_MAP()
 
 // CanalyzerViewR construction/destruction
@@ -56,6 +58,8 @@ CanalyzerViewR::CanalyzerViewR()
 		, ymax(0)
 		, m_mouseDownPoint(0)
 		, pct(0.02)
+		, bMouseCursor(false)
+		, selectIdx(0)
 {
 	// TODO: add construction code here
 	spBtnSize=CSize(23*2,23);
@@ -97,6 +101,15 @@ void CanalyzerViewR::OnDraw(CDC* pDC)
 			CRect plotrect=rect;
 
 			DrawData(plotrect,&dcMem,pDoc->rp[m_spBtn.GetPos32()],xmin,xmax,ymin,ymax);
+
+					if(bMouseCursor){
+				DrawData1(plotrect
+					,&dcMem
+					,pDoc->rp[m_spBtn.GetPos32()].xll[selectIdx]
+				,pDoc->rp[m_spBtn.GetPos32()].yll[selectIdx]
+				,xmin,xmax,ymin,ymax);
+			}
+
 
 			pDC->BitBlt(0,0,rect.Width(),rect.Height(),&dcMem,0,0,SRCCOPY);//将内存DC上的图象拷贝到前台
 			dcMem.DeleteDC(); //删除DC
@@ -231,15 +244,41 @@ void CanalyzerViewR::OnLButtonDown(UINT nFlags, CPoint point)
 		if (!pDoc->rp.empty() && !pDoc->rp[idx].ps.empty()){
 			CRect plotrect;
 			this->GetClientRect(&plotrect);	
-			GetPlotRect(plotrect, pDoc->rp[idx].psp.labelSize, pDoc->rp[idx].psp.metricSize);
+			//GetPlotRect(plotrect, pDoc->rp[idx].psp.labelSize, pDoc->rp[idx].psp.metricSize);
 
-			if(plotrect.PtInRect(point)){
-				m_mouseDownPoint=point;
+			//if(plotrect.PtInRect(point)){
+			//	m_mouseDownPoint=point;
+			//	SetCapture();
+
+			//	HCURSOR hCur  =  LoadCursor( NULL  , IDC_SIZEALL ) ;
+			//	::SetCursor(hCur);
+			//}
+
+
+			int re=DownUpdate(plotrect
+				, pDoc->rp[idx].psp.metricSize
+				, pDoc->rp[idx].psp.labelSize
+				, point
+				, m_mouseDownPoint
+				, xmin, xmax, ymin, ymax
+				, bMouseCursor
+				, pDoc->rp[idx].xll
+				, pDoc->rp[idx].yll
+				, selectIdx);
+
+			switch(re){
+			case 1:
 				SetCapture();
-
-				HCURSOR hCur  =  LoadCursor( NULL  , IDC_SIZEALL ) ;
-				::SetCursor(hCur);
+				break;
+			case 2:
+				this->ClientToScreen(&m_mouseDownPoint);
+				::SetCursorPos(m_mouseDownPoint.x,m_mouseDownPoint.y);
+				Invalidate(FALSE);
+				break;
+			default:
+				break;
 			}
+
 		}
 
 		CView::OnLButtonDown(nFlags, point);
@@ -262,11 +301,14 @@ void CanalyzerViewR::OnLButtonDown(UINT nFlags, CPoint point)
 	void CanalyzerViewR::clear(void)
 	{
 		xmin=xmax=ymin=ymax=0;
+		bMouseCursor=false;
+		selectIdx=0;
 		m_spBtn.SetRange32(0,0);
 		m_spBtn.SetPos32(0);
 		m_spBtn.ShowWindow(SW_HIDE);
 		CanalyzerDoc* pDoc=GetDocument();
-		pDoc->rp.clear();
+		if( !(pDoc->rp.empty()) )
+			pDoc->rp.clear();
 	}
 
 
@@ -347,37 +389,37 @@ void CanalyzerViewR::OnLButtonDown(UINT nFlags, CPoint point)
 			else{
 
 				CString str;
-				//if(MoveUpdateB(plotrect
-				//	, pDoc->rp[idx].psp.metricSize
-				//	, pDoc->rp[idx].psp.labelSize
-				//	, point
-				//	, this->m_mouseDownPoint
-				//	, xmin,xmax,ymin,ymax
-				//	, str))
-				//	m_tool.UpdateTipText(str,this);
-
-				//str.Format(L"%d,%d",point.x,point.y);
-				//m_tool.UpdateTipText(str,this);
-
-				CPoint pt;
-				int flg=MoveUpdateC(plotrect
+				if(MoveUpdateB(plotrect
 					, pDoc->rp[idx].psp.metricSize
 					, pDoc->rp[idx].psp.labelSize
 					, point
 					, this->m_mouseDownPoint
 					, xmin,xmax,ymin,ymax
-					, str
-					, pDoc->rp[idx].xll
-					, pDoc->rp[idx].yll
-					, pt);
-				if(flg==2){
-						//this->ClientToScreen(&pt);
-						//::SetCursorPos(pt.x,pt.y);
+					, str))
 					m_tool.UpdateTipText(str,this);
-				}
-				if(flg==1){
-					m_tool.UpdateTipText(str,this);
-				}
+
+				//str.Format(L"%d,%d",point.x,point.y);
+				//m_tool.UpdateTipText(str,this);
+
+				//CPoint pt;
+				//int flg=MoveUpdateC(plotrect
+				//	, pDoc->rp[idx].psp.metricSize
+				//	, pDoc->rp[idx].psp.labelSize
+				//	, point
+				//	, this->m_mouseDownPoint
+				//	, xmin,xmax,ymin,ymax
+				//	, str
+				//	, pDoc->rp[idx].xll
+				//	, pDoc->rp[idx].yll
+				//	, pt);
+				//if(flg==2){
+				//		//this->ClientToScreen(&pt);
+				//		//::SetCursorPos(pt.x,pt.y);
+				//	m_tool.UpdateTipText(str,this);
+				//}
+				//if(flg==1){
+				//	m_tool.UpdateTipText(str,this);
+				//}
 
 			}
 
@@ -506,27 +548,39 @@ void CanalyzerViewR::OnLButtonDown(UINT nFlags, CPoint point)
 		pDC->SetMapMode(MM_ANISOTROPIC); //转换坐标映射方式
 		CRect rect;
 		this->GetClientRect(&rect);
-		CSize size = rect.Size(); 
-		pDC->SetWindowExt(size); 
+		CSize wsize = rect.Size(); 
+		pDC->SetWindowExt(wsize); 
 
+		HDC hdc=::GetDC(this->GetSafeHwnd());
+		int wmm=::GetDeviceCaps(hdc,HORZSIZE);
+		int hmm=::GetDeviceCaps(hdc,VERTSIZE);
+		int wpxl=::GetDeviceCaps(hdc,HORZRES);
+		int hpxl=::GetDeviceCaps(hdc,VERTRES);
+		int xLogPixPerInch0 = ::GetDeviceCaps(hdc,LOGPIXELSX); 
+		int yLogPixPerInch0 = ::GetDeviceCaps(hdc,LOGPIXELSY); 
+		::ReleaseDC(this->GetSafeHwnd(),hdc);
 
-
-		int wmm=::GetDeviceCaps(::GetDC(this->GetSafeHwnd()),HORZSIZE);
-		int hmm=::GetDeviceCaps(::GetDC(this->GetSafeHwnd()),VERTSIZE);
-
-		int wpxl=::GetDeviceCaps(::GetDC(this->GetSafeHwnd()),HORZRES);
-		int hpxl=::GetDeviceCaps(::GetDC(this->GetSafeHwnd()),VERTRES);
 		//得到实际设备每逻辑英寸的象素数量
-		int xLogPixPerInch0 = ::GetDeviceCaps(::GetDC(this->GetSafeHwnd()),LOGPIXELSX); 
-		int yLogPixPerInch0 = ::GetDeviceCaps(::GetDC(this->GetSafeHwnd()),LOGPIXELSY); 
-
 		int xLogPixPerInch = pDC->GetDeviceCaps(LOGPIXELSX); 
 		int yLogPixPerInch = pDC->GetDeviceCaps(LOGPIXELSY); 
 		//得到设备坐标和逻辑坐标的比例
-		long xExt = (long)size.cx * xLogPixPerInch/xLogPixPerInch0;  
-		long yExt = (long)size.cy * yLogPixPerInch/yLogPixPerInch0; 
-		pDC->SetViewportExt((int)xExt, (int)yExt); 
-		//确定视口大小
+		CSize vsize(wsize.cx * xLogPixPerInch/xLogPixPerInch0, wsize.cy * yLogPixPerInch/yLogPixPerInch0);
+		pDC->SetViewportExt(vsize); //确定视口大小
+
 
 		CView::OnPrepareDC(pDC, pInfo);
+	}
+
+
+	void CanalyzerViewR::OnViewDatacursor()
+	{
+		// TODO: Add your command handler code here
+		bMouseCursor=!bMouseCursor;
+	}
+
+
+	void CanalyzerViewR::OnUpdateViewDatacursor(CCmdUI *pCmdUI)
+	{
+		// TODO: Add your command update UI handler code here
+		pCmdUI->SetCheck(bMouseCursor);
 	}

@@ -7,7 +7,7 @@
 #include "afxdialogex.h"
 #include "ColorButton.h"
 
-#include "Header1.h"
+#include "func.h"
 
 // PlotSettingPage dialog
 

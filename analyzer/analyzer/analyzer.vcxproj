@@ -127,7 +127,6 @@
     <ClInclude Include="EditItem.h" />
     <ClInclude Include="EditList.h" />
     <ClInclude Include="func.h" />
-    <ClInclude Include="Header1.h" />
     <ClInclude Include="intgQT.h" />
     <ClInclude Include="linespec.h" />
     <ClInclude Include="MainFrm.h" />
@@ -176,7 +175,6 @@
     <ClCompile Include="sapitemA.cpp" />
     <ClCompile Include="SARCalibCurve.cpp" />
     <ClCompile Include="SolutionAdditionParametersPageA.cpp" />
-    <ClCompile Include="Source1.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

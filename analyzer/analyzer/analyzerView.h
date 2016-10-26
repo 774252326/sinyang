@@ -95,6 +95,10 @@ public:
 	virtual void OnInitialUpdate();
 	virtual void OnPrepareDC(CDC* pDC, CPrintInfo* pInfo = NULL);
 	double pct;
+	afx_msg void OnViewDatacursor();
+	bool bMouseCursor;
+	size_t selectIdx;
+	afx_msg void OnUpdateViewDatacursor(CCmdUI *pCmdUI);
 };
 
 #ifndef _DEBUG  // debug version in analyzerView.cpp

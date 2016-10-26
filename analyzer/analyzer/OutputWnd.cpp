@@ -4,7 +4,7 @@
 #include "OutputWnd.h"
 #include "Resource.h"
 //#include "MainFrm.h"
-#include "Header1.h"
+#include "func.h"
 
 
 #ifdef _DEBUG

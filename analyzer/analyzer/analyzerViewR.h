@@ -94,6 +94,11 @@ public:
 	//afx_msg void OnSize(UINT nType, int cx, int cy);
 	virtual void OnPrepareDC(CDC* pDC, CPrintInfo* pInfo = NULL);
 	double pct;
+	afx_msg void OnViewDatacursor();
+	afx_msg void OnUpdateViewDatacursor(CCmdUI *pCmdUI);
+
+	bool bMouseCursor;
+	size_t selectIdx;
 };
 
 #ifndef _DEBUG  // debug version in analyzerView.cpp
