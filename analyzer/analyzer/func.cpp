@@ -12,6 +12,16 @@
 int intv=20;
 size_t n1=800;
 
+
+void WaitSecond(bool &waitflg, int second=2)
+{
+	int interval=1000;
+	while( waitflg && second--!=0 ){
+		Sleep(interval);
+	}
+	waitflg=false;
+}
+
 void LoadFileList(const CString &m_filePath, std::vector<CString> &filelist)
 {
 	//CString m_filePath;
@@ -368,6 +378,43 @@ CString Output4(PlotData & pdat, dlg1 *p1, double vmsvol, double Avol)
 	return str;
 }
 
+
+
+CString Output6(PlotData & pdat, dlg1 *p1, double Q, double totalVol, double Lvol)
+{
+	CString str;	
+	double LConc;
+	if(calVsupp(pdat,0,Q,LConc)){
+
+		std::vector<double> nx(3,LConc);
+		std::vector<double> ny(3,Q);
+		nx[0]=0;
+		ny[2]=0;
+
+	plotspec ps1;
+	ps1.colour=genColor( genColorvFromIndex<float>( p1->pd.ps.size() ) ) ;
+	ps1.dotSize=-1;  
+	ps1.name=L"test point";
+	ps1.lineType=2;
+	ps1.smoothLine=0;
+	ps1.traceLast=false;
+	p1->pd.AddNew(nx,ny,ps1);
+	p1->updatePlotRange();
+	p1->Invalidate();
+
+	double originalConc=LConc*(totalVol/Lvol);
+
+	str.Format(L" LConc.=%g ml/L @ Q=%g mC, c(sample)=%g ml/L",LConc,Q,originalConc);
+	}
+	else{
+		str.Format(L" invalid sample concertration");
+	}
+
+	return str;
+}
+
+
+
 UINT RCCS(LPVOID pParam)
 {
 	dlg1 *leftp=((mypara*)pParam)->leftp;
@@ -421,9 +468,10 @@ UINT RCCS(LPVOID pParam)
 	::SendMessage(mf->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
 
 	mf->waiting=true;
-	while(mf->waiting){
-		Sleep(intv);
-	}
+	//while(mf->waiting){
+	//	Sleep(intv);
+	//}
+	WaitSecond(mf->waiting);
 
 	/////////////////////////////////////second step////////////////////////////////////////////////////////////////
 
@@ -447,9 +495,11 @@ UINT RCCS(LPVOID pParam)
 		::SendMessage(mf->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
 
 		mf->waiting=true;
-		while(mf->waiting){
-			Sleep(intv);
-		}
+		//while(mf->waiting){
+		//	Sleep(intv);
+		//}
+
+		WaitSecond(mf->waiting);
 
 	}
 
@@ -550,9 +600,10 @@ UINT ASDTM(LPVOID pParam)
 	Sleep(intv);
 
 	mf->waiting=true;
-	while(mf->waiting){
-		Sleep(intv);
-	}
+	//while(mf->waiting){
+	//	Sleep(intv);
+	//}
+	WaitSecond(mf->waiting);
 
 	/////////////////////////////////////second step////////////////////////////////////////////////////////////////
 
@@ -577,9 +628,7 @@ UINT ASDTM(LPVOID pParam)
 		Sleep(intv);
 
 		mf->waiting=true;
-		while(mf->waiting){
-			Sleep(intv);
-		}
+WaitSecond(mf->waiting);
 
 	}
 
@@ -679,9 +728,7 @@ UINT RIVLATM(LPVOID pParam)
 
 	mf->waiting=true;
 
-	while(mf->waiting){
-		Sleep(intv);
-	}
+WaitSecond(mf->waiting);
 
 	/////////////////////////////////////second step////////////////////////////////////////////////////////////////
 
@@ -706,9 +753,7 @@ UINT RIVLATM(LPVOID pParam)
 		::SendMessage(mf->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
 
 		mf->waiting=true;
-		while(mf->waiting){
-			Sleep(intv);
-		}
+WaitSecond(mf->waiting);
 
 	}
 
@@ -776,9 +821,7 @@ UINT AALATM(LPVOID pParam)
 	::SendMessage(mf->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
 
 	mf->waiting=true;
-	while(mf->waiting){
-		Sleep(intv);
-	}
+WaitSecond(mf->waiting);
 
 	/////////////////////////////////////second step////////////////////////////////////////////////////////////////
 	double Aml=0;
@@ -809,9 +852,7 @@ UINT AALATM(LPVOID pParam)
 	::SendMessage(mf->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
 
 	mf->waiting=true;
-	while(mf->waiting){
-		Sleep(intv);
-	}
+WaitSecond(mf->waiting);
 
 	////////////////////////////////////////////////////////////////////////////////////////////
 	while(dataB.stepCount<(mf->p3.saplist.size())){
@@ -833,9 +874,7 @@ UINT AALATM(LPVOID pParam)
 		::SendMessage(mf->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
 
 		mf->waiting=true;
-		while(mf->waiting){
-			Sleep(intv);
-		}
+WaitSecond(mf->waiting);
 
 	}
 	////////////////////////////////////final step/////////////////////////////////////////////
@@ -886,24 +925,11 @@ UINT CRCL(LPVOID pParam)
 	std::vector<double> x;
 	std::vector<double> y;
 
+	double Lml=0;
+
 	::SendMessage(mf->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
 
-	OneStep(mf,leftp,data,dataB);
-
-	x.assign( 1, dataB.totalVolume-mf->p3.vmsvol );
-	y.assign( 1, dataB.Ar.back() );
-
-	plotspec ps1;
-	ps1.colour=genColor( genColorvFromIndex<float>( rightp->pd.ps.size() ) ) ;
-	ps1.dotSize=3;
-	ps1.name=L"Ar";
-	//ps1.showLine=true;
-	ps1.lineType=0;
-	ps1.smoothLine=1;
-	ps1.traceLast=false;
-	rightp->pd.AddNew(x,y,ps1,L"Leveler(ml)",L"Charge(mC)");
-	rightp->updatePlotRange();
-	rightp->Invalidate();
+	OneStep(mf,leftp,data,dataB,false);
 
 	filelist.erase(filelist.begin());
 	RefreshData(filelist.front(),mf->p3.saplist,dt1,dataB);
@@ -911,11 +937,55 @@ UINT CRCL(LPVOID pParam)
 	::SendMessage(mf->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
 
 	mf->waiting=true;
-	while(mf->waiting){
-		Sleep(intv);
-	}
+WaitSecond(mf->waiting);
 
 	/////////////////////////////////////second step////////////////////////////////////////////////////////////////
+
+	::SendMessage(mf->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
+
+	OneStep(mf,leftp,data,dataB,false);
+
+	filelist.erase(filelist.begin());
+	RefreshData(filelist.front(),mf->p3.saplist,dt1,dataB);
+
+	::SendMessage(mf->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
+
+	mf->waiting=true;
+WaitSecond(mf->waiting);
+
+
+	///////////////////////////////////////////////third step////////////////////////////////////////
+
+	::SendMessage(mf->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
+
+	OneStep(mf,leftp,data,dataB);
+
+	x.assign( 1, Lml/dataB.totalVolume);
+	y.assign( 1, dataB.Ar.back() );
+
+	plotspec ps1;
+	ps1.colour=genColor( genColorvFromIndex<float>( rightp->pd.ps.size() ) ) ;
+	ps1.dotSize=3;
+	ps1.name=L"Ar";
+	ps1.lineType=0;
+	ps1.smoothLine=1;
+	ps1.traceLast=false;
+	rightp->pd.AddNew(x,y,ps1,L"Leveler Conc.(ml/L)",L"Charge(mC)");
+	rightp->updatePlotRange();
+	rightp->Invalidate();
+
+	filelist.erase(filelist.begin());
+	RefreshData(filelist.front(),mf->p3.saplist,dt1,dataB);
+	Lml+=mf->p3.saplist[dataB.stepCount-1].Lconc*dataB.addVolume;
+
+	::SendMessage(mf->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
+
+	mf->waiting=true;
+WaitSecond(mf->waiting);
+
+	///////////////////////////////////////////fourth step/////////////////////////////////////////////////////
+
+
 
 	while(dataB.stepCount<(mf->p3.saplist.size())){
 
@@ -923,7 +993,7 @@ UINT CRCL(LPVOID pParam)
 
 		OneStep(mf,leftp,data,dataB);
 
-		x.assign( 1, dataB.totalVolume-mf->p3.vmsvol );
+		x.assign( 1, Lml/dataB.totalVolume);
 		y.assign( 1, dataB.Ar.back() );
 
 		rightp->pd.AddFollow(x,y);
@@ -931,15 +1001,13 @@ UINT CRCL(LPVOID pParam)
 		rightp->Invalidate();
 
 		filelist.erase(filelist.begin());
-
 		RefreshData(filelist.front(),mf->p3.saplist,dt1,dataB);
+		Lml+=mf->p3.saplist[dataB.stepCount-1].Lconc*dataB.addVolume;
 
 		::SendMessage(mf->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
 
 		mf->waiting=true;
-		while(mf->waiting){
-			Sleep(intv);
-		}
+WaitSecond(mf->waiting);
 
 	}
 
@@ -951,7 +1019,7 @@ UINT CRCL(LPVOID pParam)
 
 	OneStep(mf,leftp,data,dataB);
 
-	x.assign( 1, dataB.totalVolume-mf->p3.vmsvol );
+	x.assign( 1, Lml/dataB.totalVolume);
 	y.assign( 1, dataB.Ar.back() );
 
 	rightp->pd.AddFollow(x,y);
@@ -992,7 +1060,7 @@ UINT ALRCM(LPVOID pParam)
 	pcct dt1;
 	pcct *data=&dt1;
 	pcctB dataB;
-	InitialData(filelist.front(),mf->p3.saplist.front().volconc,mf->p2,dt1,dataB);
+	InitialData(filelist.front(),mf->p3.vmsvol,mf->p2,dt1,dataB);
 	//////////////////////////clear window/////////////////////////////////
 	mf->GetOutputWnd()->clear();
 	leftp->clear();
@@ -1013,37 +1081,70 @@ UINT ALRCM(LPVOID pParam)
 	std::vector<double> x;
 	std::vector<double> y;
 
+
+
+
+	::SendMessage(mf->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
+
+	OneStep(mf,leftp,data,dataB,false);
+
+	filelist.erase(filelist.begin());
+	RefreshData(filelist.front(),mf->p3.saplist,dt1,dataB);
+
+	::SendMessage(mf->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
+
+	mf->waiting=true;
+	WaitSecond(mf->waiting);
+
+	/////////////////////////////////////second step////////////////////////////////////////////////////////////////
+
+	::SendMessage(mf->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
+
+	OneStep(mf,leftp,data,dataB,false);
+
+	filelist.erase(filelist.begin());
+	RefreshData(filelist.front(),mf->p3.saplist,dt1,dataB);
+
+	::SendMessage(mf->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
+
+	mf->waiting=true;
+	WaitSecond(mf->waiting);
+	
+	
+	/////////////////////////////////////third step////////////////////////////////////////////////////////////////
+
+	::SendMessage(mf->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
+
+	OneStep(mf,leftp,data,dataB,false);
+
+	filelist.erase(filelist.begin());
+	RefreshData(filelist.front(),mf->p3.saplist,dt1,dataB);
+
+	::SendMessage(mf->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(dt1.addVolume),NULL);
+
+	mf->waiting=true;
+	WaitSecond(mf->waiting);
+
+
+
+		/////////////////////////////////////fourth step////////////////////////////////////////////////////////////////
+
 	::SendMessage(mf->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
 
 	OneStep(mf,leftp,data,dataB);
 
-	x.assign( 1, dataB.totalVolume );
-	y.assign( 1, dataB.Ar.back() );
-
-	plotspec ps1;
-	ps1.colour=genColor( genColorvFromIndex<float>( rightp->pd.ps.size() ) ) ;
-	ps1.dotSize=3;
-	ps1.name=L"Ar";
-	//ps1.showLine=true;
-	ps1.lineType=0;
-	ps1.smoothLine=1;
-	ps1.traceLast=false;
-	rightp->pd.AddNew(x,y,ps1,L"Leveler(ml)",L"Charge(mC)");
-	rightp->updatePlotRange();
-	rightp->Invalidate();
-
 	filelist.erase(filelist.begin());
-	//RefreshData(filelist.front(),mf->p3.saplist,dt1,dataB);
 
-	::SendMessage(mf->GetSafeHwnd(),MESSAGE_OVER,NULL,NULL);
-	//Sleep(intv);
+	CString strTemp;
+	strTemp=Output6(rightp->pd,
+		rightp,
+		dataB.Ar.back(),
+		dataB.totalVolume,
+		mf->p3.saplist.back().volconc);
 
-	//mf->waiting=true;
-	//while(mf->waiting){
-	//	Sleep(intv);
-	//}
+	::SendMessage(mf->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)strTemp.GetBuffer(),NULL);
 
-	//rightp->pd.SaveFile(L"fighr.txt");
+	mf->waiting=true;
 
 	return 0;
 }

@@ -25,6 +25,8 @@
 
 #include "func.h"
 //#include "sst.cpp"
+#include "PlotSettingSheet.h"
+#include "PlotSettingPage.h"
 
 
 #ifdef _DEBUG
@@ -578,6 +580,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_MESSAGE(MESSAGE_WAIT_RESPONSE, &CMainFrame::OnMessageWaitResponse)
 	//ON_MESSAGE(CAPTIONBAR_MESSAGE, &CMainFrame::OnCaptionbarMessage)
 	ON_MESSAGE(MESSAGE_OVER, &CMainFrame::OnMessageOver)
+	ON_COMMAND(ID_OPTIONS_PLOTSETTINGS, &CMainFrame::OnOptionsPlotsettings)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -829,7 +832,7 @@ BOOL CMainFrame::CreateCaptionBar()
 	//SetButton(strTemp, ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_RIGHT, FALSE);
 	m_wndCaptionBar.SetButton(strTemp, ID_TOOLS_OPTIONS, CMFCCaptionBar::ALIGN_LEFT, FALSE);
 
-	m_wndCaptionBar.EnableButton(/*FALSE*/);
+	m_wndCaptionBar.EnableButton(FALSE);
 	//m_wndCaptionBar.ec.ShowWindow(SW_SHOW);
 
 	//m_wndCaptionBar.SetButtonToolTip(strTemp2);
@@ -1965,4 +1968,32 @@ afx_msg LRESULT CMainFrame::OnMessageOver(WPARAM wParam, LPARAM lParam)
 
 
 	return 0;
+}
+
+
+void CMainFrame::OnOptionsPlotsettings()
+{
+	// TODO: Add your command handler code here
+		// 创建属性表对象   
+	CString str;
+	str.LoadStringW(IDS_STRING_POLT_SETTINGS);
+	PlotSettingSheet sheet(str);
+	//abc sheet(777);
+	// 设置属性对话框为向导对话框   
+	//sheet.SetWizardMode();   
+	//sheet.SetWindowPos(&CWnd::wndTopMost,10,10,800,600,SWP_SHOWWINDOW);
+
+	str.LoadStringW(IDS_STRING_FIGURE1);
+	PlotSettingPage fig1setting(str);
+	str.LoadStringW(IDS_STRING_FIGURE2);
+	PlotSettingPage fig2setting(str);
+
+	sheet.AddPage(&fig1setting);
+	sheet.AddPage(&fig2setting);
+
+	//readini(AnalysisSetupINI,sheet.APdlg.para,sheet.CVPdlg.para,sheet.SAPdlg.para);
+	// 打开模态向导对话框   
+	if(sheet.DoModal()==IDOK){
+		//writeini(AnalysisSetupINI,sheet.APdlg.para,sheet.CVPdlg.para,sheet.SAPdlg.para);
+	}
 }

@@ -203,7 +203,7 @@ void SolutionAdditionParametersDlg::BuildList(int width)
 	//dwStyle1 |= LVS_EX_CHECKBOXES;//item前生成checkbox控件
 	m_SAPlist.SetExtendedStyle(dwStyle1); //设置扩展风格
 
-	int wi[6]={33,87,88,87,150,150};
+	int wi[6]={33,90,90,90,150,150};
 
 
 	CString strTemp;

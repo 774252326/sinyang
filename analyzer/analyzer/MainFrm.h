@@ -132,6 +132,8 @@ protected:
 	afx_msg LRESULT OnMessageWaitResponse(WPARAM wParam, LPARAM lParam);
 //	afx_msg LRESULT OnCaptionbarMessage(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnMessageOver(WPARAM wParam, LPARAM lParam);
+public:
+	afx_msg void OnOptionsPlotsettings();
 };
 
 
