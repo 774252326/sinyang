@@ -7,7 +7,8 @@
 #include "atltypes.h"
 
 
-// Cz3Dlg dialog
+// Cz3Dlg dialog 
+
 class Cz3Dlg : public CDialogEx
 {
 // Construction
@@ -63,7 +64,7 @@ public:
 	double m_ymin;
 	double m_ymax;
 	virtual void PreInitDialog();
-	bool isinit;
+	bool isInit;
 	//plot region
 	CRect plotrect;
 	// open button rectangle
@@ -71,7 +72,8 @@ public:
 	// file path edit rectangle
 	CRect fprect;
 	bool DrawXYAxis(CRect plotrect, CPaintDC * pdc);
-		bool DrawXYAxis2(CRect plotrect, CPaintDC * pdc);
+	bool DrawXYAxis2(CRect plotrect, CPaintDC * pdc);
+
 	// convert to window coordinate
 	CPoint ptRsl(double x, double y, CRect can);
 	void DrawPolyline(CRect plotrect, CPaintDC * pdc, CPen * pPen, double * x, double * y, long nd);
@@ -109,4 +111,5 @@ public:
 	double *plx;
 	double *ply;
 	bool isSmooth;
+	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 };

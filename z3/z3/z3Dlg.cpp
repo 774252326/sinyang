@@ -50,7 +50,7 @@ Cz3Dlg::Cz3Dlg(CWnd* pParent /*=NULL*/)
 	, m_xmax(0)
 	, m_ymin(0)
 	, m_ymax(0)
-	, isinit(false)
+	, isInit(false)
 	, isMove(false)
 	, xMove(0)
 	, yMove(0)
@@ -73,7 +73,7 @@ Cz3Dlg::Cz3Dlg(CWnd* pParent /*=NULL*/)
 	btnrect=CRect(0,0,75,23);
 	towinedge=CSize(26,49);
 	tobtnedge=CSize(7,7);
-
+	//threshold=0.12f;
 
 
 }
@@ -84,8 +84,10 @@ void Cz3Dlg::DoDataExchange(CDataExchange* pDX)
 	//CDialog::DoDataExchange(pDX);
 	//  DDX_Control(pDX, IDCANCEL, cancelbtn);
 	//  D//  DX_Control(p//  DX, I//  DOK, okbtn);
+	//isInit=OnInitDialog();
 
-	if(isinit){
+	if(isInit){
+		//if(){
 		DDX_Text(pDX, IDC_FILEPATH, m_filePath);
 		DDX_Text(pDX, IDC_THRES, threshold);
 		DDX_Text(pDX, IDC_KNEE1, knee1);
@@ -105,6 +107,8 @@ BEGIN_MESSAGE_MAP(Cz3Dlg, CDialogEx)
 	ON_WM_LBUTTONUP()
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSEWHEEL()
+	ON_WM_VSCROLL(IDC_THRESCTRL,&Cz3Dlg::OnVScroll)
+
 END_MESSAGE_MAP()
 
 
@@ -196,16 +200,24 @@ BOOL Cz3Dlg::OnInitDialog()
 	pKnee1=new CEdit;
 	k1rect=smrect;
 	k1rect.OffsetRect(0,tobtnedge.cy+btnrect.Height());
-	pKnee1->Create(ES_LEFT|WS_CHILD|WS_VISIBLE,k1rect,this,IDC_KNEE1);
+	pKnee1->Create(ES_LEFT|WS_CHILD|WS_VISIBLE|ES_READONLY,k1rect,this,IDC_KNEE1);
 
 	CEdit *pKnee2;
 	pKnee2=new CEdit;
 	k2rect=k1rect;
 	k2rect.OffsetRect(0,tobtnedge.cy+btnrect.Height());
-	pKnee2->Create(ES_LEFT|WS_CHILD|WS_VISIBLE,k2rect,this,IDC_KNEE2);
+	pKnee2->Create(ES_LEFT|WS_CHILD|WS_VISIBLE|ES_READONLY,k2rect,this,IDC_KNEE2);
 
 
-	isinit=true;
+	CSliderCtrl *pThSlider;
+	pThSlider=new CSliderCtrl;
+	pThSlider->Create(TBS_AUTOTICKS|TBS_VERT|WS_CHILD|WS_VISIBLE,CRect(k2rect.left,k2rect.top+tobtnedge.cy+btnrect.Height(),k2rect.right,cancelpos.y-tobtnedge.cy),this,IDC_THRESCTRL);
+
+	pThSlider->SetRange(1,100);
+	pThSlider->SetPos(20);
+
+
+	isInit=true;
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -311,8 +323,8 @@ void Cz3Dlg::OnBnClickedOpen()
 
 
 		free_vector(x,1,m_n);
-		free_vector(plx,1,plnd);
-		free_vector(ply,1,plnd);
+		//free_vector(plx,1,plnd);
+		//free_vector(ply,1,plnd);
 
 		x=readcsv2<double>(&m_n,m_filePath,&isLoad);
 		y=&x[m_n];
@@ -745,6 +757,8 @@ void Cz3Dlg::OnBnClickedSmooth(void)
 {
 	UpdateData();
 	if(isLoad){
+		long oldplnd=plnd;
+
 		plind=gettwoknee(x,y,m_n,threshold,&plnd,&knee1,&knee2);
 
 		if(plnd<4){
@@ -752,6 +766,10 @@ void Cz3Dlg::OnBnClickedSmooth(void)
 		}
 		else{
 			long i;
+
+			free_vector(plx,1,oldplnd);
+			free_vector(ply,1,oldplnd);
+
 			plx=vector<double>(1,plnd);
 			ply=vector<double>(1,plnd);
 
@@ -769,4 +787,49 @@ void Cz3Dlg::OnBnClickedSmooth(void)
 
 
 
+}
+
+
+void Cz3Dlg::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+{
+	// TODO: Add your message handler code here and/or call default
+
+	int max=((CSliderCtrl*)GetDlgItem(IDC_THRESCTRL))->GetRangeMax();
+	int min=((CSliderCtrl*)GetDlgItem(IDC_THRESCTRL))->GetRangeMin();
+	int pos=((CSliderCtrl*)GetDlgItem(IDC_THRESCTRL))->GetPos();
+
+	threshold=0.2*(double)(pos-min)/(double)(max-min)+0.01;
+
+	UpdateData(false);
+
+	if(isLoad){
+
+		long oldplnd=plnd;
+		plind=gettwoknee(x,y,m_n,threshold,&plnd,&knee1,&knee2);
+
+		if(plnd<4){
+			AfxMessageBox(L"no knee point detected\ntry smaller threshold");
+		}
+		else{
+			long i;
+
+			free_vector(plx,1,oldplnd);
+			free_vector(ply,1,oldplnd);
+			plx=vector<double>(1,plnd);
+			ply=vector<double>(1,plnd);
+
+			for(i=1;i<=plnd;i++){
+				plx[i]=x[plind[i]];
+				ply[i]=y[plind[i]];
+			}
+			free_vector(plind,1,plnd);
+
+			isSmooth=true;
+			UpdateData(false);
+			Invalidate();
+		}
+	}
+
+
+	CDialogEx::OnVScroll(nSBCode, nPos, pScrollBar);
 }
