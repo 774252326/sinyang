@@ -4,21 +4,22 @@
 //#include <vector>
 #include <iostream>
 #include "funT\nrutilT.h"
+#include "funT\paddingT.h"
 using namespace std;
 
-void readf2(char *fn, float **dt, long r, long c){
-
-	ifstream ifs(fn);
-	if(!ifs.bad()){
-		for(long i=1;i<=r;i++){
-			for(long j=1;j<=c;j++){
-				ifs>>dt[i][j];
-			}
-		}
-		ifs.close();
-	}
-
-}
+//void readf2(char *fn, float **dt, long r, long c){
+//
+//	ifstream ifs(fn);
+//	if(!ifs.bad()){
+//		for(long i=1;i<=r;i++){
+//			for(long j=1;j<=c;j++){
+//				ifs>>dt[i][j];
+//			}
+//		}
+//		ifs.close();
+//	}
+//
+//}
 
 void readf3(wchar_t *fn, float ***dt, long r, long c, long h){
 

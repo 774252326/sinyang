@@ -104,6 +104,17 @@ public:
 	afx_msg void OnViewSurface();
 	bool checkSurface;
 	afx_msg void OnUpdateViewSurface(CCmdUI *pCmdUI);
+	void createMeshList(long ** face, long nf, float ** point, long np);
+
+	void createSurfaceList(long ** face, float *facecolor, long nf, float ** point, long np);
+	GLuint m_surfaceList2;
+	void createSurfaceList2(long ** face, float *facecolor, long nf, float ** point, long np);
+	bool checkSmoothSurface;
+	afx_msg void OnViewSmoothsurface();
+	afx_msg void OnUpdateViewSmoothsurface(CCmdUI *pCmdUI);
+	GLuint m_unityCube;
+	void createUnityCubeList(void);
+	long ** genFrontFaceList(long ** face, long nf, float ** point, long np, long * nff);
 };
 
 #ifndef _DEBUG  // debug version in o3View.cpp
