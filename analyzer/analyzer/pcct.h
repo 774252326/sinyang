@@ -44,5 +44,7 @@ public:
 	void copyData(pcct a);
 	size_t popData(std::vector<double> & x, std::vector<double> & y, size_t nd);
 	void TomA(void);
+	double addVolume;
+	CString stepName;
 };
 

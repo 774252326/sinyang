@@ -18,7 +18,10 @@
 #include "AnalysisSetupPage.h"
 //#include "C:\\Users\\G\\Dropbox\\W\\funT\\smsp.h"
 
-#include "C:\\Users\\r8anw2x\\Dropbox\\W\\funT\\smsp.h"
+//#include "C:\\Users\\r8anw2x\\Dropbox\\W\\funT\\smsp.h"
+//#include "C:\\Users\\r8anw2x\\Dropbox\\W\\funT\\lspfitT.h"
+#include "funT\\smsp.h"
+#include "funT\\lspfitT.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -131,6 +134,8 @@ CMainFrame::CMainFrame()
 	, totalVolume(0)
 	, timer2(0)
 	, AnalysisSetupINI(_T("as.txt"))
+	, Aml(0)
+	, Qintercept(0)
 {
 	// TODO: add member initialization code here
 	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_VS_2008);
@@ -510,6 +515,7 @@ void CMainFrame::OnOptions()
 	m_wndCaptionBar.ShowButton(false);
 	m_wndCaptionBar.SetEdit();
 	m_wndCaptionBar.ec.ShowWindow(SW_HIDE);
+	m_wndCaptionBar.st.ShowWindow(SW_HIDE);
 	timer1=SetTimer(1,10,NULL);
 }
 
@@ -761,6 +767,9 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 					strTemp+=Output3(plotr->pd);
 					break;
 				case 4:
+
+					strTemp+=Output4(plotr->pd);
+
 					break;
 
 				default:
@@ -786,17 +795,13 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 				int nflg=datt.addXY(x,y);
 
 				//if line finish
-				finishflag=(rn==0)|(nflg==2);
+				finishflag=/*(rn==0)|*/(nflg==2);
 
-				if(nflg>=1 || finishflag){//if one cycle complete
+				if(nflg>=1 /*|| finishflag*/){//if one cycle complete
+
 					double addvol;
 					if(datt.Ar.size()==1){
-						if(finishflag2){
-							addvol=p3.vmsvol;
-						}
-						else{
-							addvol=p3.saplist[stepCount-1].volconc;
-						}
+						addvol=dat.front().addVolume;
 					}
 					else{
 						addvol=0;
@@ -806,40 +811,96 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 					if(stepCount==0){
 						Ar0=datt.Ar.back();
 					}
+					double Aratio=(datt.Ar.back()/Ar0);
 
-					m_wndOutput.InsertListCtrl(rowCount,stepCount,datt.Ar.size(),addvol,totalVolume,datt.Ar.back(),(datt.Ar.back()/Ar0),finishflag);
+					CString str=( (dlg1*)m_wndSplitter.GetPane(0,0) )->pd.ps.back().name;
+					m_wndOutput.InsertListCtrl(rowCount,str,datt.Ar.size(),addvol,totalVolume,datt.Ar.back(),Aratio,finishflag);
 
 					rowCount++;
 					if(finishflag){
 
-						x.assign( 1,totalVolume-p3.vmsvol );
-						y.assign( 1,(datt.Ar.back()/Ar0) );
+						switch(p1.analysistype){
+						case 1:
+							x.assign( 1, totalVolume-p3.vmsvol );
+							y.assign( 1, Aratio );
+							plot2(x,y,L"Suppressor(ml)",L"Ratio of Charge",L"Ar/Ar0");
+							break;
 
-						plot2(x,y,L"Suppressor(ml)",L"Ratio of Charge");
+						case 2:
+							x.assign( 1, totalVolume-p3.vmsvol );
+							y.assign( 1, Aratio );
+							plot2(x,y,L"Suppressor(ml)",L"Ratio of Charge",L"Ar/Ar0");
+							break;
+
+						case 3:
+							if(stepCount==0){
+								Aml=0;
+							}
+							else{
+								Aml+=p3.saplist[stepCount-1].Sconc*dat.front().addVolume;
+							}
+							x.assign( 1, Aml/totalVolume );	
+							//x.assign( 1, totalVolume-p3.vmsvol );	
+							y.assign( 1, datt.Ar.back() );
+							plot2(x,y,L"Suppressor Conc.(ml/L)",L"Charge(mC)",L"Ar");
+
+							break;
+						case 4:
+
+
+							if(stepCount>=1){
+								if(stepCount==1){									
+									Qintercept=datt.Ar.back();
+								}
+								else{
+									if(stepCount==2){
+										Aml=0;
+									}
+									else{
+										Aml+=p3.saplist[stepCount-1].Aconc*dat.front().addVolume;
+									}
+									x.assign( 1, Aml/totalVolume );
+									y.assign( 1, datt.Ar.back()-Qintercept );
+									plot2(x,y,L"Conc.(ml/L)",L"Q(mC)",L"Q-Q(intercept)");	
+								}
+
+							}
+
+
+
+
+							break;
+						default:
+							break;
+
+						}
 
 						stepCount++;
 						datt.clear();
 						dat.erase(dat.begin());
 
-						KillTimer(timer1);
+
 						{
 							CString strTemp;
 							//ASSERT
 							(strTemp.LoadString(IDS_STRING_WAIT_RESPONSE));
 							m_wndCaptionBar.SetTextA(strTemp,true);
 							m_wndCaptionBar.ShowButton();
-							if(stepCount>p3.saplist.size()){
+							if(dat.empty()){
 								m_wndCaptionBar.x=0;
 							}
 							else{
-								m_wndCaptionBar.x=p3.saplist[stepCount-1].volconc;
+								m_wndCaptionBar.x=dat.front().addVolume;
 							}
 							m_wndCaptionBar.UpdateData(FALSE);
-							m_wndCaptionBar.SetEdit();						
+							m_wndCaptionBar.SetEdit();					
 							m_wndCaptionBar.ec.ShowWindow(SW_SHOW);
+							m_wndCaptionBar.st.ShowWindow(SW_SHOW);
 							m_wndCaptionBar.ShowWindow(SW_SHOW);
 							RecalcLayout(FALSE);
 						}
+
+						KillTimer(timer1);
 					}
 				}
 
@@ -850,6 +911,7 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 
 	case 2:
 		{
+
 		}
 		break;
 	default:
@@ -884,19 +946,21 @@ void CMainFrame::plot1(const std::vector<double> & x, const std::vector<double> 
 		plotspec ps1;
 		//LineSpec ps1;
 		CString strTemp;
-		ps1.colour=genColor( genColorvFromIndex<float>( stepCount ) ) ;
+		ps1.colour=genColor( genColorvFromIndex<float>( ( (dlg1*)m_wndSplitter.GetPane(0,0) )->pd.ps.size() ) ) ;
 		//ps1.colour=genColorGray( genColorvFromIndex<float>( stepCount ) ) ;
 		ps1.dotSize=-1;
-		if(stepCount>0){
-			//ASSERT
-			(strTemp.LoadString(IDS_STRING_STEPNAME1));
-			ps1.name.Format(L"%s%d",strTemp,stepCount);
-		}
-		else{
-			//ASSERT
-			(strTemp.LoadString(IDS_STRING_STEPNAME0));
-			ps1.name=strTemp;
-		}
+		//if(stepCount>0){
+		//	//ASSERT
+		//	(strTemp.LoadString(IDS_STRING_STEPNAME1));
+		//	ps1.name.Format(L"%s%d",strTemp,stepCount);
+		//}
+		//else{
+		//	//ASSERT
+		//	(strTemp.LoadString(IDS_STRING_STEPNAME0));
+		//	ps1.name=strTemp;
+		//}
+
+		ps1.name=dat.front().stepName;
 		ps1.showLine=true;
 		ps1.smoothLine=0;
 		ps1.traceLast=true;
@@ -912,7 +976,7 @@ void CMainFrame::plot1(const std::vector<double> & x, const std::vector<double> 
 }
 
 
-void CMainFrame::plot2(const std::vector<double> & x, const std::vector<double> & y, const CString & xlabel, const CString & ylabel)
+void CMainFrame::plot2(const std::vector<double> & x, const std::vector<double> & y, const CString & xlabel, const CString & ylabel, const CString & lineName)
 {
 
 	//CString strTemp;
@@ -921,7 +985,7 @@ void CMainFrame::plot2(const std::vector<double> & x, const std::vector<double> 
 		//LineSpec ps1;
 		ps1.colour=genColor( genColorvFromIndex<float>( ( (dlg1*)m_wndSplitter.GetPane(0,1) )->pd.ps.size() ) ) ;
 		ps1.dotSize=3;
-		ps1.name=L"Ar/Ar0";
+		ps1.name=lineName;
 		ps1.showLine=true;
 		ps1.smoothLine=1;
 		ps1.traceLast=false;
@@ -1022,13 +1086,7 @@ void CMainFrame::OnAnalysisStartanalysis()
 		return;
 	}
 
-	//CString m_filePath=L"C:\\Users\\r8anw2x\\Dropbox\\W\\data\\a.txt";
-	//CString m_filePath=fileDlg.GetPathName();
-
-	//CString folderpath=fileDlg.GetFolderPath();
 	CString folderpath=m_filePath.Left(m_filePath.ReverseFind('\\'));
-	//CString folderpath=L"C:\\Users\\r8anw2x\\Dropbox\\W\\data";
-
 
 	dat.clear();
 
@@ -1058,6 +1116,16 @@ void CMainFrame::OnAnalysisStartanalysis()
 		//dt1.AR=dt1.intg(0.8);
 
 		dt1.TomA();
+		if(i==0){
+			dt1.addVolume=p3.vmsvol;
+			dt1.stepName=L"VMS";
+
+		}
+		else{
+			dt1.addVolume=p3.saplist[i-1].volconc;
+			dt1.stepName.Format(L"Solution Addition %d",i);
+		}
+
 		dat.push_back(dt1);
 	}
 
@@ -1075,19 +1143,37 @@ void CMainFrame::OnAnalysisStartanalysis()
 	stepCount=0;
 	rowCount=0;
 
-	/////////////////////////plot standrad curve////////////////////////
+	/////////////////////////initial plot//////////////////////////////////////////////////////
 
-	if(p1.calibrationfactortype==1){
-		//( (dlg1*)m_wndSplitter.GetPane(0,1) )->pd.ReadFile(p1.calibrationfilepath);
-		PlotData *pdat;
-		pdat=&(( (dlg1*)m_wndSplitter.GetPane(0,1) )->pd);
-		pdat->ReadFile(p1.calibrationfilepath);
-		pdat->ps.back().colour=genColor( genColorvFromIndex<float>( pdat->ps.size()-1 ) ) ;
-		pdat->ps.back().name=L"standrad";
-		( (dlg1*)m_wndSplitter.GetPane(0,1) )->updatePlotRange();
-		( (dlg1*)m_wndSplitter.GetPane(0,1) )->Invalidate();
+	switch(p1.analysistype){
+	case 1:
+
+		break;
+	case 2:
+
+		/////////////////////////plot standrad curve////////////////////////
+
+		if(p1.calibrationfactortype==1){
+			PlotData *pdat;
+			pdat=&(( (dlg1*)m_wndSplitter.GetPane(0,1) )->pd);
+			pdat->ReadFile(p1.calibrationfilepath);
+			pdat->ps.back().colour=genColor( genColorvFromIndex<float>( pdat->ps.size()-1 ) ) ;
+			pdat->ps.back().name=L"standrad";
+			( (dlg1*)m_wndSplitter.GetPane(0,1) )->updatePlotRange();
+			( (dlg1*)m_wndSplitter.GetPane(0,1) )->Invalidate();
+		}
+		///////////////////////////////////////end/////////////////////////////////////////////////
+
+		break;
+	case 3:
+
+		break;
+	case 4:
+		break;
+	default:
+		return;
 	}
-	///////////////////////////////////////end/////////////////////////////////////////////////
+
 
 
 	////////////////////////////start tick///////////////////////////////////
@@ -1105,6 +1191,7 @@ CString CMainFrame::Output1(PlotData & pdat)
 		double z=p3.saplist[0].Sconc/(1+p3.vmsvol/vsupp);
 		CString str;
 		str.Format(L" Vsupp=%g ml @ Ar/Ar0=%g, Z=%g ml/L",vsupp, p1.evaluationratio, z);
+		//pdat.SaveFile(L"figbr.txt");
 		return str;
 	}
 	else{
@@ -1172,7 +1259,7 @@ CString CMainFrame::Output2(PlotData & pdat)
 				//plotr->Invalidate();
 				///////////////////////////////////////end/////////////////////////////////////////////////
 				CString str;
-				str.Format(L", Z=%g ml/L, Csuppbath=%g ml/L", z, z*(1+p3.vmsvol/Vsuppbath));
+				str.Format(L", Vsuppstd=%g ml @ Ar/Ar0=%g, Z=%g ml/L, Csuppbath=%g ml/L", Vsuppstd, p1.evaluationratio, z, z*(1+p3.vmsvol/Vsuppbath));
 				strTemp+=str;
 			}
 			else{
@@ -1198,7 +1285,45 @@ CString CMainFrame::Output3(PlotData & pdat)
 {
 	CString str;
 
-	str.Format(L" intercept value %g mC", pdat.yll.back()*Ar0);
+	str.Format(L" intercept value %g ml/L", Aml/totalVolume);
+
+	return str;
+}
+
+
+
+CString CMainFrame::Output4(PlotData & pdat)
+{
+	std::vector<double> x;
+	std::vector<double> y;
+
+	pdat.GetDatai(pdat.ps.size()-1,x,y);
+
+	std::vector<double> c;
+	lspfit(x,y,2,c);
+
+	std::vector<double> nx(2,x.back());
+	std::vector<double> ny(2,0);
+
+	ny[1]=c[1]*nx[1]+c[0];
+	nx[0]=(ny[0]-c[0])/c[1];
+
+
+	dlg1 *p1=( (dlg1*)m_wndSplitter.GetPane(0,1) );
+	plotspec ps1;
+	ps1.colour=genColor( genColorvFromIndex<float>( p1->pd.ps.size() ) ) ;
+	ps1.dotSize=-1;  
+	ps1.name=L"fit line";
+	ps1.showLine=true;
+	ps1.smoothLine=0;
+	ps1.traceLast=false;
+	p1->pd.AddNew(nx,ny,ps1);
+	p1->updatePlotRange();
+	p1->Invalidate();
+
+	double originalConc=-nx[0]*(p3.vmsvol/p3.saplist[1].volconc+1);
+	CString str;
+	str.Format(L" -c(sample)=%g ml/L, AConc.=%g ml/L",nx[0],originalConc);
 
 	return str;
 }

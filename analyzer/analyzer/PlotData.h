@@ -25,7 +25,7 @@ public:
 	//std::vector<LineSpec> ps;
 	std::vector<plotspec> ps;
 	bool CheckData(void);
-	void AddNew(const std::vector<double> &x, const std::vector<double> &y, const plotspec &plotsp, const CString &xla, const CString &yla);
+	void AddNew(const std::vector<double> &x, const std::vector<double> &y, const plotspec &plotsp, const CString &xla=NULL, const CString &yla=NULL);
 	void AddFollow(const std::vector<double> &x, const std::vector<double> &y);
 	void clear(void);
 	void SaveFile(CString fp);

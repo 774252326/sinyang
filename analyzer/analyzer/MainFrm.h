@@ -92,7 +92,7 @@ public:
 	afx_msg void OnViewToolbara();
 	afx_msg void OnUpdateViewToolbara(CCmdUI *pCmdUI);
 	void plot1(const std::vector<double> & x, const std::vector<double> & y, const CString & xlabel, const CString & ylabel);
-	void plot2(const std::vector<double> & x, const std::vector<double> & y, const CString & xlabel, const CString & ylabel);
+	void plot2(const std::vector<double> & x, const std::vector<double> & y, const CString & xlabel, const CString & ylabel, const CString & lineName);
 	int timer2;
 	afx_msg void OnAnalysisMethodsetup();
 
@@ -110,6 +110,9 @@ public:
 	CString Output1(PlotData & pdat);
 	CString Output2(PlotData & pdat);
 	CString Output3(PlotData & pdat);
+	double Aml;
+	CString Output4(PlotData & pdat);
+	double Qintercept;
 };
 
 

@@ -49,7 +49,8 @@ int CMFCCaptionBarA::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	if( ec.Create( WS_CHILD | WS_TABSTOP | WS_BORDER /*|WS_VISIBLE*/, CRect(0, 9, 100, 32), this, IDS_EDIT_CAPTION_EDIT)==0 )
 		return -1;
-	//st.Create( _T("my static"), WS_CHILD|WS_VISIBLE|SS_CENTER, CRect(110, 9, 250, 32), this); 
+	if(st.Create( _T("Volume(ml):"), WS_CHILD|SS_CENTER/*|WS_VISIBLE*/, CRect(0, 9, 60, 32), this)==FALSE)
+		return -1;
 
 	
 
@@ -93,6 +94,14 @@ int CMFCCaptionBarA::SetEdit(void)
 	ecrect.MoveToXY(pt);
 	ec.MoveWindow(&ecrect);
 	//ec.ShowWindow(SW_SHOW);
+
+
+	//pt.x-=this->GetMargin();
+	CRect strect;
+	st.GetWindowRect(&strect);
+	pt.x-=strect.Width();
+	strect.MoveToXY(pt);
+	st.MoveWindow(&strect);
 
 	return 0;
 }

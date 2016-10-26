@@ -5,6 +5,8 @@
 pcct::pcct(void)
 	: AR(0)
 	, segmentinfo(_T(""))
+	, addVolume(0)
+	, stepName(_T(""))
 {
 }
 

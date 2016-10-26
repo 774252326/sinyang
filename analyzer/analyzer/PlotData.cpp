@@ -187,13 +187,12 @@ void PlotData::AddNew(const std::vector<double> &x, const std::vector<double> &y
 	xlist.push_back(x);
 	ylist.push_back(y);
 
-	//LineSpecA aa;
-
 	ps.push_back(plotsp);
-	//ps.push_back(aa);
 
-	xlabel=xla;
-	ylabel=yla;
+	if(!xla.IsEmpty())
+		xlabel=xla;
+	if(!yla.IsEmpty())
+		ylabel=yla;
 }
 
 
@@ -292,9 +291,9 @@ void PlotData::AppendData(const PlotData & pda)
 void PlotData::GetDatai(size_t index, std::vector<double> & x, std::vector<double> & y)
 {
 	if(index<0 || index>=ll.size()){
-	x.clear();
-	y.clear();
-	return;
+		x.clear();
+		y.clear();
+		return;
 	}
 
 	size_t starti=0;
