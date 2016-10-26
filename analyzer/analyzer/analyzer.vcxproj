@@ -102,8 +102,11 @@
     <None Include="res\analyzer.rc2" />
     <None Include="res\analyzerDoc.ico" />
     <None Include="res\bmp00001.bmp" />
+    <None Include="res\hottoolb.bmp" />
     <None Include="res\info.bmp" />
     <None Include="res\mainfram.bmp" />
+    <None Include="res\menutoolb.bmp" />
+    <None Include="res\menu_img.bmp" />
     <None Include="res\output_wnd.ico" />
     <None Include="res\output_wnd_hc.ico" />
     <None Include="res\Toolbar.bmp" />

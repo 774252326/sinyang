@@ -87,6 +87,14 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 
 
+	CMFCToolBar::EnableQuickCustomization ();
+	//---------------------------------
+	// Set toolbar and menu image size:
+	//---------------------------------
+	CMFCToolBar::SetSizes (CSize (36, 30), CSize (23, 23));
+	CMFCToolBar::SetMenuSizes (CSize (22, 22), CSize (16, 16));
+
+
 	if (!m_wndMenuBar.Create(this))
 	{
 		TRACE0("Failed to create menubar\n");
@@ -103,9 +111,13 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// prevent the menu bar from taking the focus on activation
 	CMFCPopupMenu::SetForceMenuFocus(FALSE);
 
+
+
+
 	if (!m_wndToolBar.CreateEx(this
-		, TBSTYLE_FLAT
+		//, TBSTYLE_FLAT
 		//| TBSTYLE_TRANSPARENT
+		, TBSTYLE_TRANSPARENT
 		, WS_CHILD 
 		| WS_VISIBLE 
 		| CBRS_TOP 
@@ -114,21 +126,25 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		| CBRS_FLYBY 
 		| CBRS_SIZE_DYNAMIC
 		) ||
-		!m_wndToolBar.LoadToolBar(theApp.m_bHiColorIcons ? IDR_MAINFRAME_256 : IDR_MAINFRAME))
+		//!m_wndToolBar.LoadToolBar(theApp.m_bHiColorIcons ? IDR_MAINFRAME_256 : IDR_MAINFRAME
+		!m_wndToolBar.LoadToolBar (IDR_MAINFRAME_256
+		//, uiToolbarColdID
+		, 0
+		//, 0
+		, IDB_BITMAP3
+		//, uiToolbarColdID
+		, FALSE /* Not locked */
+		, 0
+		, 0
+		, IDB_BITMAP1
+		//, uiToolbarColdID
+		//, 0
+		))
 	{
 		TRACE0("Failed to create toolbar\n");
 		return -1;      // fail to create
 	}
 
-
-	//CImageList img;
-	//Img.Create(22, 22, ILC_COLOR8|ILC_MASK,2,2); 
- //   Img.SetBkColor(::GetSysColor(COLOR_BTNFACE)); 
- //   img.Add(AfxGetApp()->LoadIcon(IDI_ICON1)); 
- //   img.Add(AfxGetApp()->LoadIcon(IDI_ICON2)); 
-
-	// m_wndToolBar.GetToolBarCtrl().SetHotImageList(&img); 
- //   img.Detach(); 
 
 	m_wndToolBar.EnableTextLabels(TRUE);
 
@@ -137,6 +153,16 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	bNameValid = strToolBarName.LoadString(IDS_TOOLBAR_STANDARD);
 	ASSERT(bNameValid);
 	m_wndToolBar.SetWindowText(strToolBarName);
+
+
+		m_wndToolBar.SetBorders ();
+
+	//------------------------------------
+	// Remove toolbar gripper and borders:
+	//------------------------------------
+	//m_wndToolBar.SetPaneStyle (m_wndToolBar.GetPaneStyle() &
+	//	(CBRS_TOP | CBRS_GRIPPER | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC) );
+	//	//~(CBRS_GRIPPER | CBRS_BORDER_TOP | CBRS_BORDER_BOTTOM | CBRS_BORDER_LEFT | CBRS_BORDER_RIGHT));
 
 	CString strCustomize;
 	bNameValid = strCustomize.LoadString(IDS_TOOLBAR_CUSTOMIZE);
@@ -189,14 +215,14 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	EnablePaneMenu(TRUE, ID_VIEW_CUSTOMIZE, strCustomize, ID_VIEW_TOOLBAR);
 
 	// enable quick (Alt+drag) toolbar customization
-	CMFCToolBar::EnableQuickCustomization();
+	//CMFCToolBar::EnableQuickCustomization();
 
-	if (CMFCToolBar::GetUserImages() == NULL)
+	//if (CMFCToolBar::GetUserImages() == NULL)
 	{
 		// load user-defined toolbar images
-		if (m_UserImages.Load(_T(".\\UserImages.bmp")))
+		//if (m_UserImages.Load(_T(".\\UserImages.bmp")))
 		{
-			CMFCToolBar::SetUserImages(&m_UserImages);
+			//CMFCToolBar::SetUserImages(&m_UserImages);
 		}
 	}
 

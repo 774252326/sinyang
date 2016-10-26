@@ -58,6 +58,15 @@
     <None Include="res\bmp00001.bmp">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="res\hottoolb.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\menutoolb.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\menu_img.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="analyzer.h">
