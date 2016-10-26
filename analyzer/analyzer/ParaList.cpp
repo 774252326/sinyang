@@ -38,7 +38,7 @@ IMPLEMENT_DYNAMIC(ParaList, CListCtrl)
 
 	ParaList::ParaList()
 	: rowH(18)
-	, firstColW(23)
+	, firstColW(39)
 {
 	//Value v;
 	//v.LogoId=IDB_BITMAP3;
@@ -94,11 +94,20 @@ int ParaList::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 
 	//四、给CListCtrl控件添加二列
-	InsertColumn(0,_T("name"),LVCFMT_CENTER,firstColW+4);
-	InsertColumn(1,_T("raw"),LVCFMT_CENTER);
-	InsertColumn(2,_T("correction"),LVCFMT_CENTER);
-	InsertColumn(3,_T("output"),LVCFMT_CENTER);
+	InsertColumn(0,_T(""),LVCFMT_CENTER,firstColW+4);
 
+	CString str;
+	str.LoadStringW(IDS_STRING_RAW);
+	InsertColumn(1,str,LVCFMT_CENTER);
+	AdjustWidth(this,1,str);
+
+	str.LoadStringW(IDS_STRING_CORRECTION);
+	InsertColumn(2,str,LVCFMT_CENTER);
+	AdjustWidth(this,2,str);
+
+	str.LoadStringW(IDS_STRING_OUTPUT);
+	InsertColumn(3,str,LVCFMT_CENTER);
+	AdjustWidth(this,3,str);
 	//五、添加数据
 
 	Refresh();

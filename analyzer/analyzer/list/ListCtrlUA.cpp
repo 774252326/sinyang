@@ -21,9 +21,9 @@ ListCtrlUA::~ListCtrlUA(void)
 }
 BEGIN_MESSAGE_MAP(ListCtrlUA, ListCtrlA)
 	ON_WM_CREATE()
-//	ON_COMMAND(ID_POPUP_INSERT, &ListCtrlUA::OnPopupInsert)
-//	ON_COMMAND(ID_POPUP_REMOVE, &ListCtrlUA::OnPopupRemove)
-//	ON_COMMAND(ID_POPUP_REMOVEALL, &ListCtrlUA::OnPopupRemoveall)
+	//	ON_COMMAND(ID_POPUP_INSERT, &ListCtrlUA::OnPopupInsert)
+	//	ON_COMMAND(ID_POPUP_REMOVE, &ListCtrlUA::OnPopupRemove)
+	//	ON_COMMAND(ID_POPUP_REMOVEALL, &ListCtrlUA::OnPopupRemoveall)
 	ON_WM_RBUTTONUP()
 	ON_WM_CONTEXTMENU()
 	ON_COMMAND(ID_POPUP_DELETEUSER, &ListCtrlUA::OnPopupDeleteuser)
@@ -57,18 +57,18 @@ int ListCtrlUA::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		typelist[2]=eCombo;
 	}
 
-		// insert string elements  for the ComboBox : 
-		for ( int j=IDS_STRING_ADMIN ; j <= IDS_STRING_GUEST ; j++){
-			strTemp.LoadStringW(j);
-			cbstr[2].push_back(strTemp);
-			AdjustWidth(2,strTemp);
-		}
+	// insert string elements  for the ComboBox : 
+	for ( int j=IDS_STRING_ADMIN ; j <= IDS_STRING_GUEST ; j++){
+		strTemp.LoadStringW(j);
+		cbstr[2].push_back(strTemp);
+		AdjustWidth(2,strTemp);
+	}
 
-		for ( int j=IDS_STRING_YES ; j <= IDS_STRING_NO ; j++){
-			strTemp.LoadStringW(j);
-			cbstr[3].push_back(strTemp);
-			AdjustWidth(3,strTemp);
-		}
+	for ( int j=IDS_STRING_YES ; j <= IDS_STRING_NO ; j++){
+		strTemp.LoadStringW(j);
+		cbstr[3].push_back(strTemp);
+		AdjustWidth(3,strTemp);
+	}
 	//}
 
 	return 0;
@@ -109,9 +109,9 @@ void ListCtrlUA::OnRButtonUp(UINT nFlags, CPoint point)
 {
 	// TODO: Add your message handler code here and/or call default
 	if(bEditable){
-			ClientToScreen(&point);
-	OnContextMenu(this, point);
-	ListCtrlA::OnRButtonUp(nFlags, point);
+		ClientToScreen(&point);
+		OnContextMenu(this, point);
+		ListCtrlA::OnRButtonUp(nFlags, point);
 	}
 }
 
@@ -120,12 +120,12 @@ void ListCtrlUA::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	// TODO: Add your message handler code here
 	if(bEditable){
-			CMenu menu;
-	menu.LoadMenu(IDR_LISTUA_POPUP);
-	CMenu* pSumMenu = menu.GetSubMenu(0);
+		CMenu menu;
+		menu.LoadMenu(IDR_LISTUA_POPUP);
+		CMenu* pSumMenu = menu.GetSubMenu(0);
 		pSumMenu->TrackPopupMenu(TPM_LEFTALIGN, point.x, point.y, this);
 		UpdateDialogControls(this, FALSE);
-	SetFocus();
+		SetFocus();
 	}
 
 }
@@ -174,7 +174,7 @@ bool ListCtrlUA::GetItemUA(int i, UserAccount & ua, bool & bUse)
 
 	ua.userName=this->GetItemText(i,0);
 	ua.passWord=this->GetItemText(i,1);
-	
+
 	int ci=this->GetChoice(i,2);
 
 	switch(ci){
@@ -194,7 +194,7 @@ bool ListCtrlUA::GetItemUA(int i, UserAccount & ua, bool & bUse)
 	bUse=(this->GetChoice(i,3)==0);
 
 	ua.remark=GetItemText(i,4);
-	
+
 	return true;
 }
 
@@ -227,14 +227,14 @@ void ListCtrlUA::OnPopupDeleteuser()
 	// TODO: Add your command handler code here
 
 	int iSelect=GetSelectionMark();
-		if(iSelect!=-1) // valid item 	
+	if(iSelect!=-1) // valid item 	
 	{
-			int ci=GetChoice(iSelect,3);
-	if(ci==1){
-		DeleteItem( iSelect );
-		EnsureVisible(iSelect, FALSE);
-	}
+		int ci=GetChoice(iSelect,3);
+		if(ci==1){
+			DeleteItem( iSelect );
+			EnsureVisible(iSelect, FALSE);
 		}
+	}
 
 }
 

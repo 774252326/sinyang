@@ -18,14 +18,6 @@ IMPLEMENT_DYNAMIC(WaitDlg, CDialogEx)
 	m_tips = _T("");
 }
 
-//WaitDlg::WaitDlg(ProcessState *psta)
-//	//: CDialogEx(WaitDlg::IDD, pParent)
-//	: pst(psta)
-//{
-//
-//	m_tips = _T("");
-//
-//}
 
 WaitDlg::~WaitDlg()
 {
@@ -39,7 +31,8 @@ void WaitDlg::DoDataExchange(CDataExchange* pDX)
 
 
 BEGIN_MESSAGE_MAP(WaitDlg, CDialogEx)
-	ON_BN_CLICKED(IDC_BUTTON1, &WaitDlg::OnBnClickedButton1)
+
+	ON_WM_CREATE()
 END_MESSAGE_MAP()
 
 
@@ -50,26 +43,12 @@ void WaitDlg::OnOK()
 {
 	// TODO: Add your specialized code here and/or call the base class
 
-	//*pst=running;
-
-	//this->ShowWindow(SW_HIDE);
-
-	//delete this;
-
 	this->GetParentFrame()->SendMessage(WM_COMMAND,ID_ANALYSIS_PAUSE,0);
-
 
 	//CDialogEx::OnOK();
 }
 
 
-void WaitDlg::OnBnClickedButton1()
-{
-	// TODO: Add your control notification handler code here
-
-	//AfxGetMainWnd()->SendMessage(WM_COMMAND,ID_ANALYSIS_METHODSETUP,0);
-	//::SendMessage(this->GetParentFrame()->GetSafeHwnd(),MESSAGE_CHANGE_ANP,NULL,NULL);
-}
 
 
 BOOL WaitDlg::OnInitDialog()
@@ -97,6 +76,36 @@ BOOL WaitDlg::OnInitDialog()
 	pEdit->SetFont(pFont,TRUE);
 
 
+	CRect rc;
+	this->GetParentFrame()->GetWindowRect(&rc);
+
+	CRect wrc;
+	this->GetWindowRect(&wrc);
+	CSize winSize(wrc.Size());
+
+	::SetWindowPos(this->GetSafeHwnd(),
+		HWND_TOPMOST,
+		rc.CenterPoint().x-winSize.cx/2,
+		rc.CenterPoint().y-winSize.cy/2,
+		winSize.cx,
+		winSize.cy,		
+		SWP_SHOWWINDOW);
+
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
+}
+
+
+int WaitDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+	if (CDialogEx::OnCreate(lpCreateStruct) == -1)
+		return -1;
+
+	// TODO:  Add your specialized creation code here
+
+
+
+
+	return 0;
 }

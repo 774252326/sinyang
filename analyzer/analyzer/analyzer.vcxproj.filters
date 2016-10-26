@@ -104,6 +104,72 @@
     <None Include="res\info.bmp">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="res\dta.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\lata.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\lrta.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\pala.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\rca.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\sara.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\mark1.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\mark2.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\mark3.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\mark4.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\mark5.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\mark6.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\mark7.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\mark8.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\mark9.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\mark10.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\mark11.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\mark12.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\mark13.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\mark14.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\mark15.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\mark16.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="analyzer.h">

@@ -113,8 +113,12 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 
 	void CanalyzerView::OnContextMenu(CWnd* /* pWnd */, CPoint point)
 	{
+		CMenu menu;
+		menu.LoadMenuW(IDR_POPUP_EDIT);
+
 #ifndef SHARED_HANDLERS
-		theApp.GetContextMenuManager()->ShowPopupMenu(IDR_POPUP_EDIT, point.x, point.y, this, TRUE);
+		//theApp.GetContextMenuManager()->ShowPopupMenu(IDR_POPUP_EDIT, point.x, point.y, this, TRUE);
+		theApp.GetContextMenuManager()->ShowPopupMenu(menu.GetSubMenu(0)->GetSafeHmenu(), point.x, point.y, this, TRUE);
 #endif
 	}
 
@@ -298,7 +302,7 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		}
 		else{
 			fig1setting.fs=pw.pdex->pd.ps;
-			
+
 			fig1setting.lgc=pw.pdex->lgc;
 			fig1setting.lgs=pw.pdex->lgs;			
 		}
@@ -315,7 +319,7 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 
 
 
-	
+
 	void CanalyzerView::OnAnalysisExportdata()
 	{
 		// TODO: Add your command handler code here

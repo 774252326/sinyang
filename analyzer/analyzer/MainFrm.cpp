@@ -44,7 +44,7 @@ typedef struct MYPARA{
 
 const DWORD sleepms=100;
 
-const size_t nd=100;
+const size_t nd=1000;
 //const size_t nd=sleepms/10;
 
 
@@ -303,6 +303,10 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_UPDATE_COMMAND_UI(ID_OPTIONS_PLOTSETTINGS, &CMainFrame::OnUpdateOptionsPlotsettings)
 	ON_UPDATE_COMMAND_UI(ID_SECURITY_LOGIN, &CMainFrame::OnUpdateSecurityLogin)
 	ON_UPDATE_COMMAND_UI(ID_SECURITY_USERACCOUNTS, &CMainFrame::OnUpdateSecurityUseraccounts)
+	ON_COMMAND(ID_LANGUAGE_CHINESE, &CMainFrame::OnLanguageChinese)
+	ON_COMMAND(ID_LANGUAGE_ENGLISH, &CMainFrame::OnLanguageEnglish)
+	ON_UPDATE_COMMAND_UI(ID_LANGUAGE_CHINESE, &CMainFrame::OnUpdateLanguageChinese)
+	ON_UPDATE_COMMAND_UI(ID_LANGUAGE_ENGLISH, &CMainFrame::OnUpdateLanguageEnglish)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -322,6 +326,7 @@ CMainFrame::CMainFrame()
 	, wd(NULL)
 	, psheetml(NULL)
 	, pWriteA(NULL)
+	, LangID(1)
 {
 	// TODO: add member initialization code here
 	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_OFF_2007_BLUE);
@@ -1245,4 +1250,76 @@ void CMainFrame::OnUpdateSecurityUseraccounts(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
 	pCmdUI->Enable(pst==stop && al.ual[userIndex].au==UserAccount::authority::admin);
+}
+
+
+void CMainFrame::ChangeLang(void)
+{
+	switch(LangID) // 判断并设置当前界面语言
+	{
+	case  0: 
+		SetThreadUILanguage(MAKELANGID(
+				 LANG_CHINESE_SIMPLIFIED,SUBLANG_CHINESE_SIMPLIFIED));
+		break;
+	case  1: 
+		SetThreadUILanguage(MAKELANGID(
+							 LANG_ENGLISH,SUBLANG_ENGLISH_US));
+		break;
+	default: 
+		break;
+	}
+
+	//m_wndMenuBar.UpdateData(FALSE);
+	//m_wndMenuBar.UpdateButton(0);
+
+	//HWND hwnd=m_wndMenuBar.Detach();
+
+			//CMenu menu;
+		//menu.LoadMenuW(IDR_MAINFRAME);
+
+		//m_wndMenuBar.Attach();
+		//m_wndMenuBar.CreateFromMenu(menu.GetSafeHmenu());
+	//m_wndMenuBar.Create(this);
+	m_wndMenuBar.RestoreOriginalstate();
+
+	//m_wndMenuBar.Attach(hwnd);
+
+	//m_wndMenuBar.SetPaneStyle(m_wndMenuBar.GetPaneStyle() | CBRS_SIZE_DYNAMIC | CBRS_TOOLTIPS | CBRS_FLYBY);
+
+	//CString strCustomize;
+	//strCustomize.LoadString(IDS_TOOLBAR_CUSTOMIZE);
+	//ASSERT(bNameValid);
+	//m_wndToolBar.EnableCustomizeButton(FALSE, ID_VIEW_CUSTOMIZE, strCustomize);
+}
+
+
+void CMainFrame::OnLanguageChinese()
+{
+	// TODO: Add your command handler code here
+	LangID=0;
+	ChangeLang();
+}
+
+
+void CMainFrame::OnLanguageEnglish()
+{
+	// TODO: Add your command handler code here
+	LangID=1;
+	ChangeLang();
+}
+
+
+void CMainFrame::OnUpdateLanguageChinese(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->SetCheck(LangID==0);
+	pCmdUI->Enable(pst==stop );
+}
+
+
+void CMainFrame::OnUpdateLanguageEnglish(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	pCmdUI->SetCheck(LangID==1);
+	pCmdUI->Enable(pst==stop );
 }

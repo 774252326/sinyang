@@ -11,7 +11,7 @@
 #include "analyzerDoc.h"
 #include "analyzerView.h"
 
-#include "user\StartDlg.hpp"
+//#include "user\StartDlg.hpp"
 #include "user\LoginDlg.h"
 #include "filefunc.h"
 
@@ -77,6 +77,9 @@ BOOL CanalyzerApp::InitInstance()
 	CWinAppEx::InitInstance();
 
 
+	//SetThreadUILanguage(MAKELANGID(LANG_ENGLISH,SUBLANG_ENGLISH_US)); 
+
+
 	// Initialize OLE libraries
 	if (!AfxOleInit())
 	{
@@ -115,9 +118,9 @@ BOOL CanalyzerApp::InitInstance()
 
 
 
-	StartDlg *sd=new StartDlg();
-	sd->Create(StartDlg::IDD);
-	sd->ShowWindow(SW_SHOW);
+	//StartDlg *sd=new StartDlg(IDB_BITMAP11);
+	//sd->Create(StartDlg::IDD);
+	//sd->ShowWindow(SW_SHOW);
 
 
 	Sleep(500);
@@ -133,9 +136,9 @@ BOOL CanalyzerApp::InitInstance()
 
 		if(ld.DoModal()==IDOK){
 
-		sd->ShowWindow(SW_HIDE);
-		delete sd;
-		sd=NULL;
+		//sd->ShowWindow(SW_HIDE);
+		//delete sd;
+		//sd=NULL;
 
 
 

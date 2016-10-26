@@ -697,63 +697,63 @@ public:
 
 		bool flg=GetStepList(sl,analysistype);
 		//if(flg){
-			switch(analysistype){
+		switch(analysistype){
 
-			case 2:
-			case 6:
-			case 10:
-			case 12:
+		case 2:
+		case 6:
+		case 10:
+		case 12:
+			sl[0]|=(SC_NEW_RIGHT_PLOT<<8);
+			return DataOutAList2RawDataList(dol,sl,rdl,xlabellist,ylabellist,dolastidx);
+		case 7:
+			{
 				sl[0]|=(SC_NEW_RIGHT_PLOT<<8);
-				return DataOutAList2RawDataList(dol,sl,rdl,xlabellist,ylabellist,dolastidx);
-			case 7:
-				{
-					sl[0]|=(SC_NEW_RIGHT_PLOT<<8);
 
-					std::vector<DataOutA> dolcp(dol.begin(),dol.end());
+				std::vector<DataOutA> dolcp(dol.begin(),dol.end());
 
-					//RawData newraw;
-					std::vector<RawData> ardl;
-					UINT flg1=0;
-					do{
-						std::vector<RawData> rdltmp;
-						std::vector<size_t> dlidx;
-						flg1=DataOutAList2RawDataList(dolcp,sl,rdltmp,xlabellist,ylabellist,dlidx);
+				//RawData newraw;
+				std::vector<RawData> ardl;
+				UINT flg1=0;
+				do{
+					std::vector<RawData> rdltmp;
+					std::vector<size_t> dlidx;
+					flg1=DataOutAList2RawDataList(dolcp,sl,rdltmp,xlabellist,ylabellist,dlidx);
 
-						//for(size_t i=0;i<rdltmp.size();i++){
-						//	newraw.AppendData(rdltmp[i]);
-						//}
+					//for(size_t i=0;i<rdltmp.size();i++){
+					//	newraw.AppendData(rdltmp[i]);
+					//}
 
-						ardl.resize(ardl.size()+rdltmp.size());
-						std::copy_backward(rdltmp.begin(),rdltmp.end(),ardl.end());
+					ardl.resize(ardl.size()+rdltmp.size());
+					std::copy_backward(rdltmp.begin(),rdltmp.end(),ardl.end());
 
-						if(!dlidx.empty()){
-							dolcp.erase(dolcp.begin(),dolcp.begin()+dlidx.back()+1);
-							if(!dolastidx.empty()){
-								for(size_t i=0;i<dlidx.size();i++){
-									dlidx[i]+=dolastidx.back()+1;
-								}
+					if(!dlidx.empty()){
+						dolcp.erase(dolcp.begin(),dolcp.begin()+dlidx.back()+1);
+						if(!dolastidx.empty()){
+							for(size_t i=0;i<dlidx.size();i++){
+								dlidx[i]+=dolastidx.back()+1;
 							}
-							dolastidx.resize(dolastidx.size()+dlidx.size());
-							std::copy_backward(dlidx.begin(),dlidx.end(),dolastidx.end());
 						}
-
-					}while(!dolcp.empty() && flg1==1);
-
-					if(ardl.empty()){
-						rdl.clear();
-					}
-					else{
-						rdl.assign(1,ardl.front());
-						for(size_t i=1;i<ardl.size();i++){
-							rdl.front().AppendData(ardl[i]);
-						}
+						dolastidx.resize(dolastidx.size()+dlidx.size());
+						std::copy_backward(dlidx.begin(),dlidx.end(),dolastidx.end());
 					}
 
-					return flg1;
+				}while(!dolcp.empty() && flg1==1);
+
+				if(ardl.empty()){
+					rdl.clear();
 				}
-			default:
-				return DataOutAList2RawDataList(dol,sl,rdl,xlabellist,ylabellist,dolastidx);
-			}	
+				else{
+					rdl.assign(1,ardl.front());
+					for(size_t i=1;i<ardl.size();i++){
+						rdl.front().AppendData(ardl[i]);
+					}
+				}
+
+				return flg1;
+			}
+		default:
+			return DataOutAList2RawDataList(dol,sl,rdl,xlabellist,ylabellist,dolastidx);
+		}	
 		//}
 
 		return 0;
@@ -910,7 +910,7 @@ public:
 
 			if(ddex.FinalData(rd0,dolast0)){
 				double z;
-				if(RecordDT(z,dolast,evaR,rd0)){
+				if(RecordDT(z,dolast0,evaR,rd0)){
 					return AnalysisDTGetVL(vl,dolast,evaR,z,rd);
 				}
 			}
@@ -1479,6 +1479,67 @@ public:
 		return false;
 	};
 
+	static bool GetVLImageID(std::vector<UINT> &idl, int atype)
+	{
+		switch(atype){
+		case 2:
+			{
+				UINT il[]={IDB_BITMAP_z,IDB_BITMAP_Vb,IDB_BITMAP_VspR};
+				idl.assign(il,il+ANParaEx::CorrectionNumber(atype));
+			}
+			break;
+		case 4:
+			{
+				UINT il[]={IDB_BITMAP_Vtotal,IDB_BITMAP_Vsp,IDB_BITMAP_Qit,IDB_BITMAP_b,IDB_BITMAP_k};
+				idl.assign(il,il+ANParaEx::CorrectionNumber(atype));
+			}
+			break;
+		case 6:
+			{
+				UINT il[]={IDB_BITMAP_Vtotal,IDB_BITMAP_Vsp,IDB_BITMAP_CL};
+				idl.assign(il,il+ANParaEx::CorrectionNumber(atype));
+			}
+			break;
+		case 8:
+			{
+				UINT il[]={IDB_BITMAP_bSAR,
+					IDB_BITMAP_kSAR,
+					IDB_BITMAP_Vb,
+					IDB_BITMAP_Vsp,
+					IDB_BITMAP_bA,
+					IDB_BITMAP_kA,
+					IDB_BITMAP_VspR};
+				idl.assign(il,il+ANParaEx::CorrectionNumber(atype));
+			}
+			break;
+		case 10:
+			{
+				UINT il[]={IDB_BITMAP_Vtotal,
+					IDB_BITMAP_Vsp,
+					IDB_BITMAP_mL,
+				IDB_BITMAP_CL};
+				idl.assign(il,il+ANParaEx::CorrectionNumber(atype));
+			}
+			break;
+		case 12:
+			{
+				UINT il[]={IDB_BITMAP_bstd,
+					IDB_BITMAP_Vsp,
+					IDB_BITMAP_mL,
+					IDB_BITMAP_q,
+					IDB_BITMAP_Vtotal,
+					IDB_BITMAP_k};
+				idl.assign(il,il+ANParaEx::CorrectionNumber(atype));
+			}
+			break;
+		default:
+			idl.clear();
+			break;
+		}
+
+
+		return true;
+	};
 
 	static bool GetVL(
 		std::vector<Value> & vl, 
@@ -1528,16 +1589,29 @@ public:
 			break;
 		}
 
+		std::vector<UINT> idl;
+		GetVLImageID(idl,p1.analysistype);
+
 		vl.assign(p1.CorrectionNumber(),Value());
 		for(size_t i=0;i<vl.size();i++){
 			vl[i].raw=vl0[i];
 			vl[i].correction=p1.correction[i];
+			vl[i].LogoId=idl[i];
 		}
 
 
 		return true;
 	};
 
+	bool GetVL(std::vector<Value> & vl)
+	{
+		RawData rd0;
+		std::vector<DataOutA> dolast0;
+
+		if(FinalData(rd0,dolast0))
+			return GetVL(vl,dolast0,rd0,p1);
+		return false;
+	};
 
 	static bool GetResultString(DocDataEx *pDoc, const std::vector<Value> &vl, std::vector<CString> &name, std::vector<CString> &value)
 	{
@@ -1858,10 +1932,10 @@ public:
 		bool flg=GetResultString(name,value);
 		res.clear();
 		if(flg){
-		for(size_t i=0;i<name.size();i++){
-			res.push_back(name[i]);
-			res.push_back(value[i]);
-		}
+			for(size_t i=0;i<name.size();i++){
+				res.push_back(name[i]);
+				res.push_back(value[i]);
+			}
 		}
 		return flg;
 
@@ -1890,7 +1964,7 @@ public:
 		if(re1==1){
 
 			std::vector<DataOutA> dolast;
-			
+
 			dolast.resize(dolastidx.size());
 			for(size_t i=0;i<dolast.size();i++){
 				dolast[i]=dol[dolastidx[i]];

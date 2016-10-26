@@ -5,9 +5,6 @@
 
 
 
-
-//#include "filefunc.h"
-
 enum ProcessState{
 	stop,
 	running,
@@ -21,7 +18,6 @@ class WaitDlg : public CDialogEx
 
 public:
 	WaitDlg(CWnd* pParent = NULL);   // standard constructor
-	//WaitDlg(ProcessState *psta);   // standard constructor
 	virtual ~WaitDlg();
 
 // Dialog Data
@@ -32,12 +28,10 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 public:
-
-	//ProcessState *pst;
 	virtual void OnOK();
 	CString m_tips;
-	afx_msg void OnBnClickedButton1();
 	virtual BOOL OnInitDialog();
 
 	CFont  editfont;
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 };

@@ -28,6 +28,8 @@ public:
 	PropertySheetA1ML *psheetml;
 	WaitDlg *wd;
 	CWinThread *pWriteA;
+public:
+	int LangID;
 
 // Operations
 public:
@@ -36,6 +38,9 @@ public:
 	void ShowWaitDlg(CString tips);
 	void HideWaitDlg(void);
 	COutputWnd * GetOutputWnd(void){ return &m_wndOutput; };
+public:
+	void ChangeLang(void);
+
 // Overrides
 public:
 	virtual BOOL OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext);
@@ -110,6 +115,12 @@ protected:
 
 	afx_msg void OnUpdateSecurityLogin(CCmdUI *pCmdUI);
 	afx_msg void OnUpdateSecurityUseraccounts(CCmdUI *pCmdUI);
+
+
+	afx_msg void OnLanguageChinese();
+	afx_msg void OnLanguageEnglish();
+	afx_msg void OnUpdateLanguageChinese(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateLanguageEnglish(CCmdUI *pCmdUI);
 };
 
 
