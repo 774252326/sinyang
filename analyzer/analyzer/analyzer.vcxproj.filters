@@ -101,6 +101,9 @@
     <None Include="res\dtr.bmp">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="res\csp.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="analyzer.h">

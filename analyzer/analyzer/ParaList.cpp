@@ -92,50 +92,6 @@ int ParaList::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		|LVS_EX_SUBITEMIMAGES ;
 	SetExtendedStyle(dwStyle);
 
-	//二、添加图像列表
-	//1、在类中添加成员变量	CImageList m_imList;
-	//2、为图像列表添加图片
-
-	//Bitmap图片(应该为48X48大小)
-	imList.Create(firstColW,rowH,ILC_COLOR,0,20);
-
-
-
-	CBitmap * pBmp = NULL;
-
-	CBitmap * dst=NULL;
-
-
-	for(size_t i=0;i<vl.size();i++){
-		pBmp = new CBitmap();
-		pBmp->LoadBitmapW(vl[i].LogoId);
-		dst=new CBitmap();
-		ScaleBitmap(pBmp,dst,firstColW,rowH);
-		imList.Add(dst,RGB(0,0,0));
-		delete dst;
-		delete pBmp;
-	}
-
-
-
-
-
-
-
-
-	////ICON模式（方便一点）
-	//HICON hIcon;
-
-	//m_imList.Create(32,32,ILC_COLOR,2,20);
-
-	//hIcon = AfxGetApp()->LoadIconW(IDI_ICON_GREE);
-	//m_imList.Add(hIcon);
-
-	//hIcon = AfxGetApp()->LoadIconW(IDI_ICON_READ);
-	//m_imList.Add(hIcon);
-
-	//三、设置图像列表与CListCtrl控件关联，要使用LVSIL_SMALL风格
-	SetImageList(&imList,LVSIL_SMALL ); //这里要使用，LVSIL_SMALL风格
 
 	//四、给CListCtrl控件添加二列
 	InsertColumn(0,_T("name"),LVCFMT_CENTER,firstColW+4);
@@ -251,6 +207,54 @@ void ParaList::Refresh(void)
 {
 
 	this->DeleteAllItems();
+	imList.DeleteImageList();
+
+		//二、添加图像列表
+	//1、在类中添加成员变量	CImageList m_imList;
+	//2、为图像列表添加图片
+
+	//Bitmap图片(应该为48X48大小)
+	imList.Create(firstColW,rowH,ILC_COLOR,0,20);
+
+
+
+	CBitmap * pBmp = NULL;
+
+	CBitmap * dst=NULL;
+
+
+	for(size_t i=0;i<vl.size();i++){
+		pBmp = new CBitmap();
+		pBmp->LoadBitmapW(vl[i].LogoId);
+		dst=new CBitmap();
+		ScaleBitmap(pBmp,dst,firstColW,rowH);
+		imList.Add(dst,RGB(0,0,0));
+		delete dst;
+		delete pBmp;
+	}
+
+
+
+
+
+
+
+
+	////ICON模式（方便一点）
+	//HICON hIcon;
+
+	//m_imList.Create(32,32,ILC_COLOR,2,20);
+
+	//hIcon = AfxGetApp()->LoadIconW(IDI_ICON_GREE);
+	//m_imList.Add(hIcon);
+
+	//hIcon = AfxGetApp()->LoadIconW(IDI_ICON_READ);
+	//m_imList.Add(hIcon);
+
+	//三、设置图像列表与CListCtrl控件关联，要使用LVSIL_SMALL风格
+	SetImageList(&imList,LVSIL_SMALL ); //这里要使用，LVSIL_SMALL风格
+
+
 		//五、添加数据
 
 	int nRow;  //记录行号

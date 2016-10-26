@@ -6,13 +6,14 @@
 #include "LineSpec.hpp"
 #include "PlotSpec.hpp"
 #include "RawData.hpp"
+#include "LineSeg.hpp"
 #include <algorithm>
 //#include "RawDataEx.hpp"
 
 class PlotData : public CObject
 {
 public:
-	
+
 	static void genPointToPlot(const std::vector<double> &px
 		, const std::vector<double> &py
 		, const CRect &rect
@@ -510,7 +511,38 @@ public:
 
 	};
 
+	void AddPoint(double x, double y, CString name, int lineType=2)
+	{
+		RawData tmp;
+		tmp.AddPointMark(x,y,0,(raw.yll.empty()?0:raw.yll.back()));
 
+		std::vector<CString> namelist(1,name);
+		int newn=AddLineData(tmp,namelist);
+		SetLineColor(newn,(int)0,(int)0,lineType);
+	};
+
+	void AddPoint(Point2d pt, CString name, int lineType=2)
+	{
+		AddPoint(pt.x,pt.y,name,lineType);
+	};
+
+
+	void AddLine(LineSeg lis, CString name, int lineType=0)
+	{
+		RawData tmp;
+		tmp.AddLineSeg(lis);
+
+		std::vector<CString> namelist(1,name);
+		int newn=AddLineData(tmp,namelist);
+		SetLineColor(newn,(int)0,(int)0,lineType);
+	};
+
+	void AddLine(double x1, double x2, double k, double b, CString name, int lineType=0)
+	{
+		LineSeg lis;
+		lis.Set(k,b,x1,x2);
+		AddLine(lis, name, lineType);
+	};
 
 
 };

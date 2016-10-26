@@ -53,9 +53,64 @@ public:
 		}
 	};
 
+	static int GetStepCount(int atype)
+	{
+		switch(atype){
+		case 1:
+
+			return 2;
+		case 2:
+
+			return 2;
+		case 3:
+
+			return 2;
+
+		case 4:
+
+			return 4;
+
+		case 5:
+
+			return 3;
+
+		case 6:
+
+			return 3;
+
+		case 7:
+
+			return 2;
+
+		case 8:
+
+			return 3;
+
+		case 9:
+
+			return 2;
+		case 10:
+
+			return 3;
+
+		case 11:
+
+			return 3;
+
+		case 12:
+
+			return 4;
+		default:
+			return 0;
+		}
+
+
+	};
 
 	static bool GetStepList(std::vector<DWORD> &sl, int atype)
 	{
+
+		int Nstep=GetStepCount(atype);
 
 		switch(atype){
 		case 1:
@@ -64,7 +119,7 @@ public:
 					stp(DOA_VMS,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_PLOT_LAST,PF_Q_NORMALIZED|PF_S),
 					stp(DOA_S,0,PF_Q_NORMALIZED|PF_S)
 				};
-				sl.assign(stepl,stepl+2);
+				sl.assign(stepl,stepl+Nstep);
 			}
 			return true;
 		case 2:
@@ -73,7 +128,7 @@ public:
 					stp(DOA_VMS,SC_NEW_LINE|SC_PLOT_LAST,PF_Q_NORMALIZED|PF_SAMPLE),
 					stp(DOA_SAMPLE,0,PF_Q_NORMALIZED|PF_SAMPLE)
 				};
-				sl.assign(stepl,stepl+2);
+				sl.assign(stepl,stepl+Nstep);
 			}
 			return true;
 		case 3:
@@ -82,7 +137,7 @@ public:
 					stp(DOA_VMS,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_PLOT_LAST,/*PF_Q_NORMALIZED|*/PF_CONCERTRATION|PF_S),
 					stp(DOA_S,0,/*PF_Q_NORMALIZED|*/PF_CONCERTRATION|PF_S)
 				};
-				sl.assign(stepl,stepl+2);
+				sl.assign(stepl,stepl+Nstep);
 
 			}
 			return true;
@@ -95,7 +150,7 @@ public:
 					stp(DOA_SAMPLE|DOA_RESET_SOLUTION_AT_END,SC_PLOT_LAST,PF_CONCERTRATION|PF_A),
 					stp(DOA_A|DOA_MORE,0,PF_CONCERTRATION|PF_A)
 				};
-				sl.assign(stepl,stepl+4);
+				sl.assign(stepl,stepl+Nstep);
 
 			}
 			return true;
@@ -107,7 +162,7 @@ public:
 					stp(DOA_S|DOA_A|DOA_MORE,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_PLOT_LAST,PF_CONCERTRATION|PF_L),
 					stp(DOA_L,0,PF_CONCERTRATION|PF_L)
 				};
-				sl.assign(stepl,stepl+3);
+				sl.assign(stepl,stepl+Nstep);
 			}
 			return true;
 
@@ -118,7 +173,7 @@ public:
 					stp(DOA_S|DOA_A,SC_NO_PLOT,0),
 					stp(DOA_SAMPLE,SC_NO_PLOT,0)
 				};
-				sl.assign(stepl,stepl+3);
+				sl.assign(stepl,stepl+Nstep);
 			}
 			return true;
 
@@ -129,7 +184,7 @@ public:
 					stp(DOA_S|DOA_A,0,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_S)
 				};
 
-				sl.assign(stepl,stepl+2);
+				sl.assign(stepl,stepl+Nstep);
 
 			}
 			return true;
@@ -143,7 +198,7 @@ public:
 				};
 
 
-				sl.assign(stepl,stepl+3);
+				sl.assign(stepl,stepl+Nstep);
 			}
 			return true;
 
@@ -153,7 +208,7 @@ public:
 					stp(DOA_VMS,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_PLOT_LAST,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_L),
 					stp(DOA_L,0,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_L)
 				};
-				sl.assign(stepl,stepl+2);
+				sl.assign(stepl,stepl+Nstep);
 			}
 			return true;
 		case 10:
@@ -163,7 +218,7 @@ public:
 					stp(DOA_L,SC_NO_PLOT,0),
 					stp(DOA_SAMPLE,SC_NO_PLOT,0)
 				};
-				sl.assign(stepl,stepl+3);
+				sl.assign(stepl,stepl+Nstep);
 			}
 			return true;
 
@@ -174,7 +229,7 @@ public:
 					stp(DOA_S|DOA_A,SC_NEW_RIGHT_PLOT|SC_NEW_LINE|SC_PLOT_LAST|SC_NEW_ONCE,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_L),
 					stp(DOA_L,0,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_L)
 				};
-				sl.assign(stepl,stepl+3);
+				sl.assign(stepl,stepl+Nstep);
 
 			}
 			return true;
@@ -187,7 +242,7 @@ public:
 					stp(DOA_SAMPLE|DOA_RESET_SOLUTION_AT_END,/*SC_NEW_RIGHT_PLOT|*/SC_NO_PLOT/*|SC_NEW_LINE|SC_PLOT_LAST*/,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_L),
 					stp(DOA_L,SC_NEW_LINE,PF_Q_NORMALIZED|PF_CONCERTRATION|PF_L)
 				};
-				sl.assign(stepl,stepl+4);
+				sl.assign(stepl,stepl+Nstep);
 			}
 
 			return true;

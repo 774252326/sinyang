@@ -12,6 +12,7 @@
 #include "../funT1/CSplineT.h"
 //#include "Point2d.hpp"
 #include "../funT1/piksr2T.h"
+#include "LineSeg.hpp"
 
 class RawData : public CObject
 {
@@ -160,6 +161,20 @@ public:
 		return ::FitLine(x,y,k,b,nFront,nBack);
 	};
 
+	bool FitLine(size_t idx, LineSeg &lis, size_t nFront=0, size_t nBack=0) const
+	{
+		std::vector<double> x;
+		std::vector<double> y;
+		GetDatai(idx,x,y);
+
+		double k,b;
+		if(::FitLine(x,y,k,b,nFront,nBack)){
+			lis.Set(k,b,x.front(),x.back());
+			return true;
+		}
+		return false;
+	};
+
 	size_t ValidPointNumber(void)
 	{
 		DWORD lltotal=0;
@@ -223,6 +238,21 @@ public:
 		yll.push_back(y);
 		ll.back()+=1;
 
+		return true;
+	};
+
+	bool AddPointMark(double x, double y, double spanx, double spany)
+	{
+		AddNew(spanx,y);
+		AddFollow(x,y);		
+		AddFollow(x,spany);
+		return true;
+	};
+
+	bool AddLineSeg(LineSeg lis)
+	{
+		AddNew(lis.p1.x,lis.p1.y);
+		AddFollow(lis.p2.x,lis.p2.y);	
 		return true;
 	};
 

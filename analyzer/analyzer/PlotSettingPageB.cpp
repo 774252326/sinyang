@@ -172,6 +172,7 @@ BOOL PlotSettingPageB::OnSetActive()
 	SetModified();    // Enable Apply Now button.
 
 	AdjustComboSelectChange();
+	OnCheck();
 
 	return CPropertyPage::OnSetActive();
 }

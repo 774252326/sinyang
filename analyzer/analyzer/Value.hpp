@@ -10,7 +10,7 @@ public:
 	double correction;
 public:
 	Value()	
-		: LogoId(0)
+		: LogoId(IDB_BITMAP13)
 		, raw(0)
 		, correction(1)
 	{

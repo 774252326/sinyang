@@ -7,10 +7,11 @@
 #include "afxdialogex.h"
 #include "analyzerDoc.h"
 #include "filefunc.h"
-
+#include "MainFrm.h"
+#include "analyzerViewR.h"
 
 void ScaleBitmap(CBitmap *pSrc, CBitmap *pDst, int dstW, int dstH);
-bool FitLine(std::vector<double> &x, std::vector<double> &y, LineSeg &ls, int nFront=0, int nBack=0);
+//bool FitLine(std::vector<double> &x, std::vector<double> &y, LineSeg &ls, int nFront=0, int nBack=0);
 
 // ComputeDlg dialog
 
@@ -159,10 +160,14 @@ BOOL ComputeDlg::OnInitDialog()
 
 	pEdit=new CEdit;
 	pEdit->CreateEx(
-		WS_EX_CLIENTEDGE,
+		NULL,
+		//WS_EX_CLIENTEDGE,
 		L"Edit", 
 		L"",
 		ES_LEFT
+		|ES_READONLY
+		//|ES_FLAT
+		//|WS_TILED   
 		|WS_CHILD
 		|WS_VISIBLE,
 		CRect(pt,btnSz),
@@ -202,6 +207,8 @@ BOOL ComputeDlg::OnInitDialog()
 		//if(RecordDTGetVL(m_list.vl,dolast0,doc->p1.evaluationratio,rd0)){
 		if(GetVL(m_list.vl,dolast0,rd0,doc->p1)){
 
+
+
 			m_list.Refresh();
 			return TRUE;  // return TRUE unless you set the focus to a control
 		}
@@ -235,12 +242,17 @@ void ComputeDlg::OnBnClickedMfcbutton1()
 	// Tell the view to paint with the new selected color.
 	//CanalyzerView* view = (CanalyzerView*)(pframe->GetActiveView());
 
-	if(GetResult(doc,m_list.vl,namel,valuel)){
+	CanalyzerViewR *rv=(CanalyzerViewR*)(((CMainFrame*)pframe)->m_wndSplitter.GetPane(0,1));
+
+	if(GetResult(doc,rv->pdl,m_list.vl,namel,valuel)){
 		CString str=L"";
 		for(size_t i=0;i<namel.size();i++){
 			str+=namel[i]+L" "+valuel[i]+L"\n";
 		}
-			((CEdit*)GetDlgItem(1289))->SetWindowTextW(str);
+		((CEdit*)GetDlgItem(1289))->SetWindowTextW(str);
+
+		::PostMessage(rv->GetSafeHwnd(),MESSAGE_UPDATE_VIEW,(PW_LAST|PW_SHOW_ALL),NULL);
+
 	}
 }
 
@@ -360,17 +372,18 @@ bool ComputeDlg::AnalysisLATGetVL(std::vector<Value> & vl,
 	int nFront,
 	int nBack)
 {
-	if(dolast.size()==3){
+	if(dolast.size()==4){
 		double SPv=dolast[2].TotalVolume();
 		double SPv0=SPv-dolast[1].TotalVolume();
 		double ITQ=dolast[1].ArUse();
 
-		std::vector<double> x;
-		std::vector<double> y;
-		rd.GetDatai(lineIndex,x,y);
+		//std::vector<double> x;
+		//std::vector<double> y;
+		//rd.GetDatai(lineIndex,x,y);
 
 		LineSeg ls;
-		if(FitLine(x,y,ls,nFront,nBack)){
+		//if(FitLine(x,y,ls,nFront,nBack)){
+		if(rd.FitLine(lineIndex,ls,nFront,nBack)){
 
 			vl.assign(5,Value());
 			vl[0].raw=SPv;
@@ -396,6 +409,29 @@ bool ComputeDlg::AnalysisLAT(const std::vector<Value> & vl, double & SPc)
 	}
 	return false;
 }
+
+
+
+bool ComputeDlg::AnalysisLATDraw(PlotData & pd, const std::vector<Value> & vl)
+{
+	if(vl.size()==5){
+		double x1=(vl[2].Output()-vl[3].Output())/vl[4].Output();
+		double x2=pd.raw.xll[pd.raw.ll.front()-1];
+
+		CString str0;
+
+		str0.LoadStringW(IDS_STRING_FITTING_LINE);
+		pd.AddLine(x1,x2,vl[4].Output(),vl[3].Output(),str0);
+		str0.LoadStringW(IDS_STRING_INTERCEPT_Q);
+		pd.AddLine(x1,0,0,vl[2].Output(),str0,2);
+
+		return true;
+	}
+	return false;
+}
+
+
+
 
 bool ComputeDlg::RecordRC(const std::vector<DataOutA> & dolast, double evaR, const RawData & rd, double & Lc, size_t index)
 {
@@ -431,18 +467,13 @@ bool ComputeDlg::AnalysisRCGetVL(std::vector<Value> & vl,
 	CanalyzerDoc tmp;
 	RawData rd0;
 	std::vector<DataOutA> dolast0;
-
 	if(tmp.FinalData(rd0,dolast0,fp)){
-
 		tmp.p1.evaluationratio=dolast[2].ArUse()/dolast0.back().Ar0;
-
 		double Lc;
 		if(RecordRC(dolast0,tmp.p1.evaluationratio,rd0,Lc)){
 			return AnalysisRCGetVL(vl,dolast,Lc);
 		}
 	}
-
-
 	return false;
 }
 
@@ -455,6 +486,19 @@ bool ComputeDlg::AnalysisRC(const std::vector<Value> & vl, double & SPc)
 	return false;
 }
 
+bool ComputeDlg::AnalysisRCDraw(PlotData & pd, const std::vector<Value> & vl)
+{
+	if(vl.size()==3){
+		double y=pd.raw.InterpY(0,vl[2].Output());
+		CString str0;
+		str0.LoadStringW(IDS_STRING_TEST_POINT);					
+		pd.AddPoint(vl[2].Output(),y,str0);
+		return true;
+	}
+	return false;
+}
+
+
 bool ComputeDlg::RecordSAR(const std::vector<DataOutA> & dolast, double evaR, const RawData & rd, RawData &SAraw, LineSeg &lis)
 {
 	if(dolast.size()==2*rd.ll.size()){
@@ -462,23 +506,33 @@ bool ComputeDlg::RecordSAR(const std::vector<DataOutA> & dolast, double evaR, co
 		SAraw.ll.assign(1,0);
 		for(size_t i=0;i<rd.ll.size();i++){
 			double sconc;
-			if(rd.InterpX(i,evaR,sconc)){
-				double aconc=sconc*(dolast[2*i+1].AConc()/dolast[2*i+1].SConc());
-				SAraw.AddFollow(aconc,sconc);
+			if(rd.InterpX(i,evaR,sconc)
+				&& dolast[2*i+1].SConc()!=0){
+					double aconc=sconc*(dolast[2*i+1].AConc()/dolast[2*i+1].SConc());
+					SAraw.AddFollow(aconc,sconc);
 			}
 		}
 
 		SAraw.Sort(0);
-
-		std::vector<double> Ac;
-		std::vector<double> Sc;
-		SAraw.GetDatai(0,Ac,Sc);
-
-		if(FitLine(Ac,Sc,lis))
+		if(SAraw.FitLine(0,lis))
 			return true;
 	}
 
 	return false;
+}
+
+bool ComputeDlg::RecordSARDraw(PlotData & pd, const RawData &SAraw, const LineSeg &lis)
+{
+	CString str0;
+	str0.LoadStringW(IDS_STRING_SAR);
+
+	std::vector<CString> namelist(1,str0);
+	pd.SetLineData(SAraw,namelist);
+	pd.SetLineColor(1,(int)3,(int)1,(int)5);
+
+	str0.LoadStringW(IDS_STRING_FITTING_LINE);
+	pd.AddLine(lis,str0);
+	return true;
 }
 
 
@@ -522,12 +576,13 @@ bool ComputeDlg::AnalysisSARGetVL(std::vector<Value> & vl,
 				double Vv=dolast[2].VMSVolume;
 				double SPvEnd=dolast[1].TotalVolume()-dolast[0].TotalVolume();
 
-				std::vector<double> x;
-				std::vector<double> y;
+				//std::vector<double> x;
+				//std::vector<double> y;
 
-				rd.GetDatai(lineIndexA,x,y);
+				//rd.GetDatai(lineIndexA,x,y);
 				LineSeg lis;
-				if(FitLine(x,y,lis)){
+				//if(FitLine(x,y,lis)){
+				if(rd.FitLine(lineIndexA,lis)){
 					double SPv;
 					if( rd.InterpX(lineIndexSP,evaR,SPv) ){
 						vl.assign(7,Value());
@@ -585,6 +640,20 @@ bool ComputeDlg::AnalysisSAR(const std::vector<Value> & vl,
 }
 
 
+bool ComputeDlg::AnalysisSARDraw(PlotData & pd, const std::vector<Value> & vl)
+{
+	if(vl.size()==7){
+		CString str0;
+			str0.LoadStringW(IDS_STRING_FITTING_LINE);
+			double x1=pd.raw.xll.front();
+			double x2=pd.raw.xll[pd.raw.ll.front()-1];
+			pd.AddLine(x1,x2,vl[5].Output(),vl[4].Output(),str0);
+			return true;
+	}
+
+	return false;
+}
+
 bool ComputeDlg::RecordPAL(double evaR, const RawData & rd, double & Lc, size_t index)
 {
 	return rd.InterpX(index,evaR,Lc);
@@ -632,12 +701,34 @@ bool ComputeDlg::AnalysisPAL(const std::vector<Value> & vl, double & SPc)
 	return false;
 }
 
+bool ComputeDlg::AnalysisPALDraw(PlotData & pd, const std::vector<Value> & vl)
+{
+	if(vl.size()==3){
+		double y=pd.raw.InterpY(0,vl[2].Output());
+		CString str0;
+		str0.LoadStringW(IDS_STRING_TEST_POINT);					
+		pd.AddPoint(vl[2].Output(),y,str0);
+		return true;
+	}
+	return false;
+}
+
 bool ComputeDlg::RecordLRT(const RawData & rd, LineSeg &lis, size_t index)
 {
-	std::vector<double> x;
-	std::vector<double> y;
-	rd.GetDatai(index,x,y);
-	return FitLine(x,y,lis);
+	//std::vector<double> x;
+	//std::vector<double> y;
+	//rd.GetDatai(index,x,y);
+	//return FitLine(x,y,lis);
+	return rd.FitLine(index,lis);
+}
+
+
+bool ComputeDlg::RecordLRTDraw(PlotData & pd, const LineSeg &lis)
+{
+						CString str0;
+					str0.LoadStringW(IDS_STRING_FITTING_LINE);
+					pd.AddLine(lis,str0);
+	return true;
 }
 
 bool ComputeDlg::AnalysisLRTGetVL(std::vector<Value> & vl, 
@@ -662,13 +753,14 @@ bool ComputeDlg::AnalysisLRTGetVL(std::vector<Value> & vl,
 				double nQ=dolast[3].ArUse()/dolast[3].Ar0;
 				double SPv=dolast[3].TotalVolume();
 
-				std::vector<double> x;
-				std::vector<double> y;
+				//std::vector<double> x;
+				//std::vector<double> y;
 
-				rd.GetDatai(lineIndex,x,y);
+				//rd.GetDatai(lineIndex,x,y);
 				LineSeg lis;
 
-				if(FitLine(x,y,lis,nIgnore)){
+				//if(FitLine(x,y,lis,nIgnore)){
+				if(rd.FitLine(lineIndex,lis,nIgnore)){
 					vl.assign(6,Value());
 					vl[0].raw=ls0.GetB();
 					vl[1].raw=SPv0;
@@ -694,6 +786,19 @@ bool ComputeDlg::AnalysisLRT(const std::vector<Value> & vl, double & SPc)
 		double Lc=(vl[3].Output()-vl[0].Output())/vl[5].Output();
 		SPc=(Lc*vl[4].Output()-vl[2].Output())/vl[1].Output();
 		return true;
+	}
+	return false;
+}
+
+bool ComputeDlg::AnalysisLRTDraw(PlotData & pd, const std::vector<Value> & vl, int nIgnore)
+{
+	if(vl.size()==6){
+		LineSeg lis;
+		pd.raw.FitLine( ((pd.raw.ll.size()<3)?0:2),lis,nIgnore );
+			CString str0;
+					str0.LoadStringW(IDS_STRING_FITTING_LINE);
+					pd.AddLine(lis.p1.x,lis.p2.x,vl[5].Output(),lis.GetB(),str0);
+					return true;
 	}
 	return false;
 }
@@ -1020,3 +1125,328 @@ bool ComputeDlg::GetResult(CanalyzerDoc *pDoc, const std::vector<Value> &vl, std
 	}
 
 }
+
+
+bool ComputeDlg::GetResult(CanalyzerDoc *pDoc, 
+	std::vector<PlotDataEx> &pdl, 
+	const std::vector<Value> &vl, 
+	std::vector<CString> &name, 
+	std::vector<CString> &value)
+{
+	CString str,strt;
+	switch(pDoc->p1.analysistype){
+	case 1:
+		{
+			double z;
+			if(RecordDT(vl,z)){
+				strt.LoadStringW(IDS_STRING_CALIBRATION_FACTOR);
+				str=strt;
+				name.push_back(str);
+
+				strt.LoadStringW(IDS_STRING_ML_PER_L);
+				str.Format(L"%g%s",z,strt);
+
+				value.push_back(str);
+				return true;
+			}
+			return false;
+		}
+	case 2:
+		{
+			double SPc;
+			if(AnalysisDT(vl,SPc)){
+				strt.LoadStringW(IDS_STRING_SAMPLE);
+				str=strt;
+				str+=L" ";
+				strt.LoadStringW(IDS_STRING_CONCERTRATION);
+				str+=strt;
+				name.push_back(str);
+
+				strt.LoadStringW(IDS_STRING_ML_PER_L);
+				str.Format(L"%g%s",SPc,strt);
+
+				value.push_back(str);
+
+				return true;
+			}
+			return false;
+		}
+	case 3:
+		{
+			RawData rd0;
+			std::vector<DataOutA> dolast0;
+			if(pDoc->FinalData(rd0,dolast0)){
+				double ITc;
+				if(RecordLAT(rd0,ITc)){
+					strt.LoadStringW(IDS_STRING_INTERCEPT_VALUE);
+					str=strt;
+
+					name.push_back(str);
+
+					strt.LoadStringW(IDS_STRING_ML_PER_L);
+					str.Format(L"%g%s",ITc,strt);
+
+					value.push_back(str);
+
+					return true;
+				}
+			}
+
+			return false;
+		}
+	case 4:
+		{
+			double SPc;
+			if(AnalysisLAT(vl,SPc)
+				&& AnalysisLATDraw(pdl.back().pd,vl)
+				){
+					strt.LoadStringW(IDS_STRING_SAMPLE);
+					str=strt;
+					str+=L" ";
+					strt.LoadStringW(IDS_STRING_CONCERTRATION);
+					str+=strt;
+					name.push_back(str);
+
+					strt.LoadStringW(IDS_STRING_ML_PER_L);
+					str.Format(L"%g%s",SPc,strt);
+					value.push_back(str);
+					return true;
+			}
+			return false;
+		}
+	case 5:
+		{
+			RawData rd0;
+			std::vector<DataOutA> dolast0;
+			if(pDoc->FinalData(rd0,dolast0)){
+				double Lc;
+				if(RecordRC(dolast0,pDoc->p1.evaluationratio,rd0,Lc)){
+
+					strt.LoadStringW(IDS_STRING_L);
+					str=strt;
+					str+=L" ";
+					strt.LoadStringW(IDS_STRING_CONCERTRATION);
+					str+=strt;
+					name.push_back(str);
+
+					strt.LoadStringW(IDS_STRING_ML_PER_L);
+					str.Format(L"%g%s",Lc,strt);
+					value.push_back(str);
+
+					return true;
+				}
+
+			}
+			return false;
+		}
+
+	case 6:
+		{
+			double SPc;
+			if(AnalysisRC(vl,SPc)
+				&& AnalysisRCDraw(pdl.back().pd,vl)
+				){
+					strt.LoadStringW(IDS_STRING_SAMPLE);
+					str=strt;
+					str+=L" ";
+					strt.LoadStringW(IDS_STRING_CONCERTRATION);
+					str+=strt;
+					name.push_back(str);
+
+					strt.LoadStringW(IDS_STRING_ML_PER_L);
+					str.Format(L"%g%s",SPc,strt);
+					value.push_back(str);
+
+					return true;
+			}
+			return false;
+		}
+	case 7:
+		{
+			RawData rd0;
+			std::vector<DataOutA> dolast0;
+			if(pDoc->FinalData(rd0,dolast0)){
+
+				RawData r0;
+				LineSeg l0;
+				if(RecordSAR(dolast0,pDoc->p1.evaluationratio,rd0,r0,l0)){
+
+					PlotDataEx pdata=pdl.back();
+					CString xla;
+					CString yla;
+					{
+						CString str;
+						str.LoadStringW(IDS_STRING_ACCELERATOR);
+						xla=str;
+						xla+=L" ";
+						str.LoadStringW(IDS_STRING_CONC_);
+						xla+=str;
+
+						str.LoadStringW(IDS_STRING_SUPPRESSOR);
+						yla=str;
+						yla+=L" ";
+						str.LoadStringW(IDS_STRING_CONC_);
+						yla+=str;
+					}
+
+					pdata.pd.ps.xlabel=xla;
+					pdata.pd.ps.ylabel=yla;
+
+					RecordSARDraw(pdata.pd,r0,l0);
+
+					pdl.push_back(pdata);
+
+					strt.LoadStringW(IDS_STRING_FITTING_LINE);
+					str=strt;
+					name.push_back(str);
+
+					str.Format(L"S=%gA%+g",l0.GetK(),l0.GetB());
+					value.push_back(str);
+
+					return true;
+				}
+			}
+			return false;
+		}
+	case 8:
+		{
+			RawData rd0;
+			std::vector<DataOutA> dolast0;
+			CanalyzerDoc tmpDoc;
+
+			if(tmpDoc.FinalData(rd0,dolast0,pDoc->p1.calibrationfilepath)){
+				RawData SnQstd;
+				if(RecordSARGetStd(dolast0,rd0,SnQstd)){
+					double Sc,Ac;
+					if(AnalysisSAR(vl,SnQstd,Sc,Ac)){
+
+						pdl.back().pd.ls.back().lineType=5;
+
+						AnalysisSARDraw(pdl.back().pd,vl);
+
+						strt.LoadStringW(IDS_STRING_SAMPLE);
+						str=strt;
+						str+=L" ";
+						strt.LoadStringW(IDS_STRING_S);
+						str+=strt;
+						str+=L" ";
+						strt.LoadStringW(IDS_STRING_CONCERTRATION);
+						str+=strt;
+						name.push_back(str);
+
+						strt.LoadStringW(IDS_STRING_ML_PER_L);
+						str.Format(L"%g%s",Sc,strt);
+						value.push_back(str);
+
+						strt.LoadStringW(IDS_STRING_SAMPLE);
+						str=strt;
+						str+=L" ";
+						strt.LoadStringW(IDS_STRING_A);
+						str+=strt;
+						str+=L" ";
+						strt.LoadStringW(IDS_STRING_CONCERTRATION);
+						str+=strt;
+						name.push_back(str);
+
+						strt.LoadStringW(IDS_STRING_ML_PER_L);
+						str.Format(L"%g%s",Ac,strt);
+						value.push_back(str);
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+	case 9:
+		{
+			RawData rd0;
+			std::vector<DataOutA> dolast0;
+			if(pDoc->FinalData(rd0,dolast0)){
+				double Lc;
+				if(RecordPAL(pDoc->p1.evaluationratio,rd0,Lc)){
+					strt.LoadStringW(IDS_STRING_L);
+					str=strt;
+					str+=L" ";
+					strt.LoadStringW(IDS_STRING_CONCERTRATION);
+					str+=strt;
+					name.push_back(str);
+
+					strt.LoadStringW(IDS_STRING_ML_PER_L);
+					str.Format(L"%g%s",Lc,strt);
+					value.push_back(str);
+
+					return true;
+				}
+			}
+			return false;
+		}
+
+	case 10:
+		{
+			double SPc;
+			if(AnalysisPAL(vl,SPc)){
+				strt.LoadStringW(IDS_STRING_SAMPLE);
+				str=strt;
+				str+=L" ";
+				strt.LoadStringW(IDS_STRING_CONCERTRATION);
+				str+=strt;
+				name.push_back(str);
+
+				strt.LoadStringW(IDS_STRING_ML_PER_L);
+				str.Format(L"%g%s",SPc,strt);
+				value.push_back(str);
+
+				return true;
+			}
+			return false;
+		}
+	case 11:
+		{
+			RawData rd0;
+			std::vector<DataOutA> dolast0;
+			if(pDoc->FinalData(rd0,dolast0)){
+				LineSeg lis;
+				if(RecordLRT(rd0,lis)){
+
+					strt.LoadStringW(IDS_STRING_FITTING_LINE);
+					str=strt;
+					name.push_back(str);
+
+					str.Format(L"nQ=%gL%+g",lis.GetK(),lis.GetB());
+					value.push_back(str);
+
+					return true;
+				}
+
+			}
+			return false;
+		}
+	case 12:
+		{
+			double SPc;
+			if(AnalysisLRT(vl,SPc)
+				&&AnalysisLRTDraw(pdl.back().pd, vl)
+				){
+				strt.LoadStringW(IDS_STRING_SAMPLE);
+				str=strt;
+				str+=L" ";
+				strt.LoadStringW(IDS_STRING_CONCERTRATION);
+				str+=strt;
+				name.push_back(str);
+
+				strt.LoadStringW(IDS_STRING_ML_PER_L);
+				str.Format(L"%g%s",SPc,strt);
+				value.push_back(str);
+
+				return true;
+			}
+			return false;
+		}
+
+
+	default:
+		return false;
+	}
+
+}
+

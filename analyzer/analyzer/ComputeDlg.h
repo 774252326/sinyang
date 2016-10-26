@@ -5,7 +5,9 @@
 #include "struct\DataOutA.hpp"
 #include "struct\ANPara.hpp"
 #include "struct1\LineSeg.hpp"
+#include "struct1\PlotData.hpp"
 #include "analyzerDoc.h"
+#include "struct1\PlotDataEx.hpp"
 
 // ComputeDlg dialog
 
@@ -73,7 +75,7 @@ static bool RecordLAT(const RawData & rd, double & ITc, double slopeThreshold=-.
 		int nBack=0);
 
 	static bool AnalysisLAT(const std::vector<Value> & vl, double & SPc);
-
+	static bool AnalysisLATDraw(PlotData & pd, const std::vector<Value> & vl);
 
 	static bool RecordRC(const std::vector<DataOutA> & dolast, double evaR, const RawData & rd, double & Lc, size_t index=0);
 
@@ -92,12 +94,15 @@ static bool RecordLAT(const RawData & rd, double & ITc, double slopeThreshold=-.
 
 	static bool AnalysisRC(const std::vector<Value> & vl, double & SPc);
 
+	static bool AnalysisRCDraw(PlotData & pd, const std::vector<Value> & vl);
 
 	static bool RecordSAR(const std::vector<DataOutA> & dolast, 
 		double evaR, 
 		const RawData & rd, 
 		RawData &SAraw, 
 		LineSeg &lis);
+	
+	static bool RecordSARDraw(PlotData & pd, const RawData &SAraw, const LineSeg &lis);
 
 	static bool RecordSARGetStd(const std::vector<DataOutA> & dolast, const RawData & rd, RawData &SnQstd);
 
@@ -113,6 +118,7 @@ static bool RecordLAT(const RawData & rd, double & ITc, double slopeThreshold=-.
 		const RawData &SnQstd, 
 		double & Sc, double & Ac, size_t nir=3, size_t lineIndex=0);
 
+	static bool AnalysisSARDraw(PlotData & pd, const std::vector<Value> & vl);
 
 	static bool RecordPAL(double evaR, const RawData & rd, double & Lc, size_t index=0);
 
@@ -123,8 +129,12 @@ static bool RecordLAT(const RawData & rd, double & ITc, double slopeThreshold=-.
 
 	static bool AnalysisPAL(const std::vector<Value> & vl, double & SPc);
 
+	static bool AnalysisPALDraw(PlotData & pd, const std::vector<Value> & vl);
 
 	static bool RecordLRT(const RawData & rd, LineSeg &lis, size_t index=0);
+
+	static bool RecordLRTDraw(PlotData & pd, const LineSeg &lis);
+
 
 	static bool AnalysisLRTGetVL(std::vector<Value> & vl, 
 		const std::vector<DataOutA> & dolast, 
@@ -135,6 +145,7 @@ static bool RecordLAT(const RawData & rd, double & ITc, double slopeThreshold=-.
 
 	static bool AnalysisLRT(const std::vector<Value> & vl, double & SPc);
 
+	static bool AnalysisLRTDraw(PlotData & pd, const std::vector<Value> & vl, int nIgnore=3 );
 
 	static bool GetVL(std::vector<Value> & vl, 
 		const std::vector<DataOutA> & dolast, 
@@ -145,4 +156,11 @@ static bool RecordLAT(const RawData & rd, double & ITc, double slopeThreshold=-.
 		const std::vector<Value> &vl, 
 		std::vector<CString> &name, 
 		std::vector<CString> &value);
+
+	static bool GetResult(CanalyzerDoc *pDoc, 
+		std::vector<PlotDataEx> &pdl,
+		const std::vector<Value> &vl, 
+		std::vector<CString> &name, 
+		std::vector<CString> &value);
+
 };
