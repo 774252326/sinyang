@@ -132,5 +132,7 @@ public:
 	void DrawDiff(CRect rect, CPaintDC * dc, CPen * pPen, double x1, double x2);
 	// curvature
 	double *curv;
+	virtual BOOL OnInitDialog();
+	double *ny;
 };
 
