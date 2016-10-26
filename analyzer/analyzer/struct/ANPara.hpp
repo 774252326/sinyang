@@ -7,8 +7,6 @@
 class ANPara : public CObject
 {
 public:
-
-
 	int analysistype;
 	double evaluationratio;
 	//double endpointratio;

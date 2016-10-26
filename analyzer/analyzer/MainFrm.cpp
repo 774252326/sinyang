@@ -23,6 +23,9 @@
 
 #include "filefunc.h"
 
+#include "struct1\pcct.hpp"
+#include "windowsversion.hpp"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -88,6 +91,224 @@ static UINT indicators[] =
 	ID_INDICATOR_NUM,
 	ID_INDICATOR_SCRL,
 };
+
+
+
+typedef struct MYPARA{
+	CanalyzerViewL *leftp;
+	CanalyzerViewR *rightp;
+	//CanalyzerDoc *adoc;
+	//COutputWnd *outw;
+	COutputListA* ol;
+	//CMFCCaptionBarA *cba;
+	CMainFrame *mf;
+	//pcct *data;
+	//pcctB *dataB;
+	//CVPara *p2;
+	//SAPara *p3;
+	//WaitDlg *wd;
+	//ProcessState *psta;
+} mypara;
+
+
+
+const DWORD sleepms=100;
+
+const size_t nd=1000;
+//const size_t nd=sleepms/10;
+
+
+#ifndef _DEBUG
+//CString folderp=(GetWinVer()==6)? L"data\\d\\" : L"..\\data\\d\\";
+//CString folderp=L"C:\\Users\\r8anw2x\\Desktop\\data\\d\\";
+CString folderp=L"D:\\data\\d\\";
+//CString folderp=L"C:\\Users\\G\\Desktop\\data\\d\\";
+#else
+//CString folderp=L"C:\\Users\\r8anw2x\\Desktop\\data\\d\\";
+CString folderp=L"D:\\data\\d\\";
+//CString folderp=L"C:\\Users\\G\\Desktop\\data\\d\\";
+#endif
+
+CString DEMOflist=folderp+L"fl1.txt";
+CString DTRflist=folderp+L"dtr.txt";
+CString DTAflist=folderp+L"dta.txt";
+CString LATRflist=folderp+L"latr.txt";
+CString LATAflist=folderp+L"lata.txt";
+CString RCRflist=folderp+L"rcr.txt";
+CString RCAflist=folderp+L"rca.txt";
+CString SARRflist=folderp+L"sarr.txt";
+CString SARAflist=folderp+L"sara.txt";
+CString NEWRflist=folderp+L"j.txt";
+CString NEWAflist=folderp+L"k.txt";
+CString NERflist=folderp+L"l.txt";
+CString NEAflist=folderp+L"m.txt";
+
+
+CString flistlist[]={
+	DEMOflist,
+	DTRflist,
+	DTAflist,
+	LATRflist,
+	LATAflist,
+	RCRflist,
+	RCAflist,
+	SARRflist,
+	SARAflist,
+	NEWRflist,
+	NEWAflist,
+	NERflist,
+	NEAflist
+};
+
+void WaitSecond(ProcessState &waitflg
+	,int second=-1
+	//,int second=3
+	//,int second=0
+	,int interval=1000
+	)
+{
+	;
+	while( waitflg!=running
+		&& ( second<0 || second--!=0 )
+		){
+			Sleep(interval);
+	}
+	//waitflg=running;
+}
+
+
+UINT CMainFrame::PROCESS(LPVOID pParam)
+{
+	//CanalyzerDoc* pDoc=(CanalyzerDoc*)pParam;
+
+
+	CanalyzerViewL* lv=((mypara*)pParam)->leftp;
+	CanalyzerViewR* rv=((mypara*)pParam)->rightp;
+
+	CMainFrame *mf=((mypara*)pParam)->mf;
+
+	COutputListA* ol=((mypara*)pParam)->ol;
+
+
+
+	CanalyzerDoc* pDoc=lv->GetDocument();
+
+	delete pParam;
+	////////////////////////////////////////////////////
+	std::vector<CString> filelist;
+	LoadFileList(flistlist[pDoc->p1.analysistype],filelist);
+
+
+	double v2a;
+	BYTE outstep;
+	size_t nextidx;
+	size_t nowidx;
+	CSingleLock singleLock(&(pDoc->m_CritSection));
+	lv->pw.bMouseCursor=rv->pw.bMouseCursor=false;
+	CSingleLock singleLock1(&(mf->m_CritSection));
+
+	pcct data;
+	std::vector<double> x;
+	std::vector<double> y;
+	size_t rnd;
+
+
+	if(singleLock.Lock())
+	{
+		pDoc->raw.Clear();
+		// Now that we are finished, 
+		// unlock the resource for others.
+		singleLock.Unlock();
+	}
+
+	mf->SendMessage(MESSAGE_UPDATE_DOL,NULL,NULL);
+	//mf->OnMessageUpdateDol(NULL,NULL);
+
+	while(mf->pst!=stop){
+
+		//if(mf->pst!=running){
+		//Sleep(sleepms);
+		//}
+
+		WaitSecond(mf->pst,-1,50);
+
+		//if(singleLock1.Lock())
+		{
+			if(pDoc->runstate==0){
+				//singleLock1.Unlock();
+				mf->pst=stop;
+				return 0;
+			}
+
+
+			if(pDoc->runstate==5){
+				//singleLock1.Unlock();
+
+				if(filelist.empty()){
+					CString strerr;
+					strerr.LoadStringW(IDS_STRING_STEP_ERROR);
+					//::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(strerr.GetBuffer()),NULL);
+					mf->pst=stop;
+					return 1;
+				}
+
+				/////load data from file////////////
+				data.clear();
+				data.readFile(filelist.front());
+				data.TomA();
+				filelist.erase(filelist.begin());
+
+				rnd=data.popData(x,y,nd);
+
+				if(x.empty()||y.empty()){
+					TRACE("input empty");
+					mf->pst=stop;
+					return 8;
+				}
+				if(singleLock.Lock())
+				{
+					pDoc->raw.AddNew(x,y);
+					// Now that we are finished, 
+					// unlock the resource for others.
+					singleLock.Unlock();
+				}
+			}
+			else{
+				//singleLock1.Unlock();
+
+				rnd=data.popData(x,y,nd);
+
+				if(x.empty()||y.empty()){
+					TRACE("input empty");
+					mf->pst=stop;
+					return 8;
+				}
+
+				if(singleLock.Lock())
+				{
+					pDoc->raw.AddFollow(x,y);
+					// Now that we are finished, 
+					// unlock the resource for others.
+					singleLock.Unlock();
+				}
+			}
+
+			mf->SendMessage(MESSAGE_UPDATE_DOL,NULL,NULL);
+			//mf->OnMessageUpdateDol(NULL,NULL);
+
+			//Sleep(sleepms);
+		}
+
+	}
+
+
+
+	mf->pst=stop;
+
+	return 0;
+}
+
+
 
 // CMainFrame construction/destruction
 

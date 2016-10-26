@@ -358,7 +358,7 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 			dol.clear();
 			SAPara p3d;
 
-			runstate=::ComputeStateData(p1.analysistype,p2,p3,raw,dol,p3d,currentSAPIndex,nextSAPIndex,outstep,VtoAdd);
+			runstate=ComputeStateData(p1.analysistype,p2,p3,raw,dol,p3d,currentSAPIndex,nextSAPIndex,outstep,VtoAdd);
 
 			p3done=p3d;
 
@@ -432,7 +432,7 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 				dol.clear();
 				SAPara p3d;
 
-				runstate=::ComputeStateData(p1.analysistype,p2,p3,raw,dol,p3d,currentSAPIndex,nextSAPIndex,outstep,VtoAdd);
+				runstate=ComputeStateData(p1.analysistype,p2,p3,raw,dol,p3d,currentSAPIndex,nextSAPIndex,outstep,VtoAdd);
 
 				p3done=p3d;
 

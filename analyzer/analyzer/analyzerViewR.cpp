@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 #include "analyzerViewR.h"
 #include "calfunc.h"
-//#include "MainFrm.h"
+
 
 
 
