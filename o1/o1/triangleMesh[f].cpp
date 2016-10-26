@@ -39,8 +39,8 @@ triangleMesh::triangleMesh(void)
 triangleMesh::triangleMesh(long np, long nf)
 {
 	npoint=np;
-	point=matrix<double>(1,npoint,1,dim);
-	pointValue=vector<double>(1,npoint);
+	point=matrix<float>(1,npoint,1,dim);
+	pointValue=vector<float>(1,npoint);
 	std::vector<long> line;
 	long i;
 	for(i=0;i<=npoint;i++){
@@ -53,7 +53,7 @@ triangleMesh::triangleMesh(long np, long nf)
 	nface=nf;
 
 	face=matrix<long>(1,nface,1,dim);
-	faceValue=vector<double>(1,nface);
+	faceValue=vector<float>(1,nface);
 	faceNext=matrix<long>(1,nface,1,dim);
 	faceEdge=matrix<long>(1,nface,1,dim);
 
@@ -86,16 +86,16 @@ triangleMesh::~triangleMesh(void)
 }
 
 
-bool triangleMesh::loadPoint(double ** pt, long np)
+bool triangleMesh::loadPoint(float ** pt, long np)
 {
 	if(np>0){
 		if(npoint!=np){
 			if(npoint>0)
 				free_matrix(point,1,npoint,1,dim);
 			npoint=np;
-			point=matrix<double>(1,npoint,1,dim);
-			pointValue=vector<double>(1,npoint);
-			pointValueInterp=vector<double>(1,npoint);
+			point=matrix<float>(1,npoint,1,dim);
+			pointValue=vector<float>(1,npoint);
+			pointValueInterp=vector<float>(1,npoint);
 			std::vector<long> line;
 			long i;
 			for(i=0;i<=npoint;i++){
@@ -122,10 +122,10 @@ bool triangleMesh::loadFace(long ** fc, long nf)
 				free_matrix(face,1,nface,1,dim);
 			nface=nf;
 			face=matrix<long>(1,nface,1,dim);
-			faceValue=vector0<double>(1,nface);
+			faceValue=vector0<float>(1,nface);
 			faceNext=matrix0<long>(1,nface,1,dim);
 			faceEdge=matrix<long>(1,nface,1,dim);
-			faceCentroid=matrix<double>(1,nface,1,dim);
+			faceCentroid=matrix<float>(1,nface,1,dim);
 
 			//nedge=nface+npoint-1;
 			//edge=matrix<long>(1,nedge,1,2);
@@ -142,14 +142,14 @@ bool triangleMesh::loadFace(long ** fc, long nf)
 
 
 
-bool triangleMesh::loadPointV(double * ptv, long np)
+bool triangleMesh::loadPointV(float * ptv, long np)
 {
 	if(np>0){
 		if(npoint!=np){
 			if(npoint>0)
 				free_vector(pointValue,1,npoint);
 			npoint=np;
-			pointValue=vector<double>(1,npoint);
+			pointValue=vector<float>(1,npoint);
 		}
 
 		copyvt(ptv,npoint,pointValue);
@@ -164,14 +164,14 @@ bool triangleMesh::loadPointV(double * ptv, long np)
 }
 
 
-bool triangleMesh::loadFaceV(double * fcv, long nf)
+bool triangleMesh::loadFaceV(float * fcv, long nf)
 {
 	if(nf>0){
 		if(nface!=nf){
 			if(nface>0)
 				free_vector(faceValue,1,nface);
 			nface=nf;
-			faceValue=vector<double>(1,nface);
+			faceValue=vector<float>(1,nface);
 		}
 
 		copyvt(fcv,nface,faceValue);
@@ -189,16 +189,16 @@ bool triangleMesh::loadFaceV(double * fcv, long nf)
 //p1,p2 are two intersection of contour and triangle edge
 //if p1[0] and p2[0] > 0, p1,p2 is at edge p1[0] and p2[0] of triangle
 //if p1[0] and p2[0] < 0, p1,p2 is at vertex p1[0] and p2[0] of triangle
-//bool triangleMesh::findLine(long * triangle, double v, double * p1, double * p2)
+//bool triangleMesh::findLine(long * triangle, float v, float * p1, float * p2)
 //{	
-//	std::vector<double> px;
-//	std::vector<double> py;
-//	std::vector<double> pz;
-//	std::vector<double> pid;
+//	std::vector<float> px;
+//	std::vector<float> py;
+//	std::vector<float> pz;
+//	std::vector<float> pid;
 //
 //	long i;
-//	double judge;
-//	double v1,v2;
+//	float judge;
+//	float v1,v2;
 //
 //	bool p2line=0;
 //
@@ -269,7 +269,7 @@ void triangleMesh::sortFaceVertex(void)
 {
 	long i,j;
 	long nd=dim;
-	double *pv=vector<double>(1,nd);
+	float *pv=vector<float>(1,nd);
 
 	for(i=1;i<=nface;i++){		
 		for(j=1;j<=nd;j++)
@@ -361,14 +361,14 @@ double triangleMesh::rsl(double x1, double x2, double y1, double y2, double x)
 }
 
 
-//double ** triangleMesh::findOneContour(double v, bool *faceOfInterest, long * np)
+//float ** triangleMesh::findOneContour(float v, bool *faceOfInterest, long * np)
 //{
-//	double pnow[4];
-//	double pend[4];
+//	float pnow[4];
+//	float pend[4];
 //
-//	std::vector<double> px;
-//	std::vector<double> py;
-//	std::vector<double> pz;
+//	std::vector<float> px;
+//	std::vector<float> py;
+//	std::vector<float> pz;
 //	bool in;
 //	long i,j;
 //	for(i=1;i<=nface;i++){
@@ -632,20 +632,20 @@ void triangleMesh::genEdge(int isvolume)
 
 
 
-//double * triangleMesh::getNextPoint(long * edgelist, long nel, double v, long * edgeBelong)
+//float * triangleMesh::getNextPoint(long * edgelist, long nel, float v, long * edgeBelong)
 //{
-//	std::vector<double> px;
-//	std::vector<double> py;
-//	std::vector<double> pz;
+//	std::vector<float> px;
+//	std::vector<float> py;
+//	std::vector<float> pz;
 //	std::vector<long> pid;
 //
 //	long i;
-//	double temp;
-//	double templo;
+//	float temp;
+//	float templo;
 //	long pointindex1,pointindex2;
 //	long edgei;
-//	double p1[4];
-//	double p2[4];
+//	float p1[4];
+//	float p2[4];
 //	long p1idx;
 //	long p2idx;
 //	for(i=1;i<=nel;i++){
@@ -658,9 +658,9 @@ void triangleMesh::genEdge(int isvolume)
 //}
 
 
-//void triangleMesh::getPointFromOneEdge(long edgei, double v, double * p1, long *p1idx, double * p2, long *p2idx)
+//void triangleMesh::getPointFromOneEdge(long edgei, float v, float * p1, long *p1idx, float * p2, long *p2idx)
 //{
-//	double temp;
+//	float temp;
 //	long k;
 //	p1idx[0]=-1;
 //	p2idx[0]=-1;
@@ -723,17 +723,17 @@ void triangleMesh::genPointToFaceMap(void)
 }
 
 
-void triangleMesh::findContourInOneTriangle(long triangleIndex, double v, double * pin, long * pinLocate, double * pout, long * poutLocate)
+void triangleMesh::findContourInOneTriangle(long triangleIndex, float v, float * pin, long * pinLocate, float * pout, long * poutLocate)
 {
 	long *p;
 	p=face[triangleIndex];
 	long *e;
 	e=faceEdge[triangleIndex];
 
-	double e1,e2,e3,e12,e23,e31;
+	float e1,e2,e3,e12,e23,e31;
 	long i;
 
-	double *pointV;
+	float *pointV;
 
 	//pointV=pointValueInterp;
 	pointV=pointValue;
@@ -871,21 +871,21 @@ void triangleMesh::findContourInOneTriangle(long triangleIndex, double v, double
 
 
 
-void triangleMesh::findContour(double v)
+void triangleMesh::findContour(float v)
 {
 	long i,j,k,nd;
-	double pin[4];
-	double pout[4];
-	double ptemp[4];
+	float pin[4];
+	float pout[4];
+	float ptemp[4];
 	long pinLocate,poutLocate,temp;
 
 	long currentPlocate=0,prevPlocate,startLocate;
 
-	std::vector< std::vector<double> > contourp(dim,std::vector<double>(0));
+	std::vector< std::vector<float> > contourp(dim,std::vector<float>(0));
 
 	std::vector<long> nextfacelist;
 
-	std::vector< std::vector<double> > nextp(dim,std::vector<double>(0));
+	std::vector< std::vector<float> > nextp(dim,std::vector<float>(0));
 
 	nd=0;
 
@@ -1039,8 +1039,8 @@ void triangleMesh::genContourMap(long contourNumber)
 	contourv.clear();
 	contourValue.clear();
 
-	double cvalue;
-	double vstep=(maxPointValue-minPointValue)/(double)(contourNumber+1);
+	float cvalue;
+	float vstep=(maxPointValue-minPointValue)/(float)(contourNumber+1);
 
 	for(cvalue=minPointValue;cvalue<=maxPointValue;cvalue+=vstep){
 		findContour(cvalue);
@@ -1051,7 +1051,7 @@ void triangleMesh::genContourMap(long contourNumber)
 
 void triangleMesh::genFaceCentroid(void)
 {
-	double temp;
+	float temp;
 
 	long i,j,k;
 	for(i=1;i<=nface;i++){
@@ -1072,19 +1072,19 @@ void triangleMesh::genFaceCentroid(void)
 // interpolate point value 
 void triangleMesh::interpPointV(void)
 {
-	////pointValueInterp=vector<double>(1,npoint);
+	////pointValueInterp=vector<float>(1,npoint);
 	//long i;
 	//long j,k;
 	//long nneighbor;
-	//double **pointAround;
-	//double *pointVAround;
+	//float **pointAround;
+	//float *pointVAround;
 
 	//for(i=1;i<=npoint;i++){
 
 	//	nneighbor=point2face[i].size();
 	//	nneighbor-=1;
-	//	pointAround=matrix<double>(1,nneighbor,1,dim);
-	//	pointVAround=vector<double>(1,nneighbor);
+	//	pointAround=matrix<float>(1,nneighbor,1,dim);
+	//	pointVAround=vector<float>(1,nneighbor);
 
 	//	for(j=1;j<=nneighbor;j++){
 	//		for(k=1;k<=dim;k++){
@@ -1109,7 +1109,7 @@ void triangleMesh::interpPointV(void)
 	//bhsint(faceCentroid,nface,2,faceValue,point,npoint,pointValue);
 	//////////////////////////////////avg/////////////////////////////////////////
 	//long i,j;
-	//double sum;
+	//float sum;
 	//for(i=1;i<=npoint;i++){
 	//	sum=0;
 	//	for(j=1;j<point2face[i].size();j++){
@@ -1119,8 +1119,8 @@ void triangleMesh::interpPointV(void)
 	//}
 	///////////////////////////////////////weight avg////////////////////////////////////////////////
 	//	long i,j,k,facei;
-	//double sum;
-	//double w,wsum;
+	//float sum;
+	//float w,wsum;
 	//for(i=1;i<=npoint;i++){
 	//	sum=0;
 	//	wsum=0;
@@ -1140,52 +1140,52 @@ void triangleMesh::interpPointV(void)
 	///////////////////////////////////////////////////////////////////////////
 	long i,j,k,facei,nnb;
 
-	//std::vector<double> nbfv;
-	//std::vector< std::vector<double> > nbp;
-	//std::vector<double> line;
+	//std::vector<float> nbfv;
+	//std::vector< std::vector<float> > nbp;
+	//std::vector<float> line;
 
-	double *nbfv;
-	double **nbpm;
-	double a[7];
+	float *nbfv;
+	float **nbpm;
+	float a[7];
 	for(i=1;i<=npoint;i++){	
 		nnb=point2face[i].size()-1;
 		//nbfv.push_back(i);
 		//nbp.push_back(line);
 
 
-		nbfv=vector<double>(1,nnb);
+		nbfv=vector<float>(1,nnb);
 
-		//if(nnb>=6){
-		//	nbpm=matrix<double>(1,nnb,1,6);
-		//	for(j=1;j<=nnb;j++){
-		//		facei=point2face[i][j];
-		//		nbfv[j]=faceValue[facei];
-		//		
-		//		nbpm[j][1]=faceCentroid[facei][1]*faceCentroid[facei][1];
-		//		nbpm[j][2]=faceCentroid[facei][1]*faceCentroid[facei][2];
-		//		nbpm[j][3]=faceCentroid[facei][2]*faceCentroid[facei][2];
-		//		nbpm[j][4]=faceCentroid[facei][1];
-		//		nbpm[j][5]=faceCentroid[facei][2];
-		//		nbpm[j][6]=1;
-		//	
-		//	}
-		//	if(nnb==6){
-		//		slvmat(nbpm,6,nbfv);
-		//		copyvt(nbfv,6,a);
-		//	}
-		//	else{
-		//		slvlsq(nbpm,nnb,6,nbfv,a);
-		//	}
+		if(nnb>=6){
+			nbpm=matrix<float>(1,nnb,1,6);
+			for(j=1;j<nnb;j++){
+				facei=point2face[i][j];
+				nbfv[j]=faceValue[facei];
+				
+				nbpm[j][1]=faceCentroid[facei][1]*faceCentroid[facei][1];
+				nbpm[j][2]=faceCentroid[facei][1]*faceCentroid[facei][2];
+				nbpm[j][3]=faceCentroid[facei][2]*faceCentroid[facei][2];
+				nbpm[j][4]=faceCentroid[facei][1];
+				nbpm[j][5]=faceCentroid[facei][2];
+				nbpm[j][6]=1;
+			
+			}
+			if(nnb==6){
+				slvmat(nbpm,6,nbfv);
+				copyvt(nbfv,6,a);
+			}
+			else{
+				slvlsq(nbpm,nnb,6,nbfv,a);
+			}
 
 
-		//	free_matrix(nbpm,1,nnb,1,6);
-		//	pointValue[i]=point[i][1]*point[i][1]*a[1]+point[i][1]*point[i][2]*a[2]+point[i][2]*point[i][2]*a[3]+point[i][1]*a[4]+point[i][2]*a[5]+a[6];
+			free_matrix(nbpm,1,nnb,1,6);
+			pointValue[i]=point[i][1]*point[i][1]*a[1]+point[i][1]*point[i][2]*a[2]+point[i][2]*point[i][2]*a[3]+point[i][1]*a[4]+point[i][2]*a[5]+a[6];
 
-		//}
-		//else{
+		}
+		else{
 			if(nnb>=3){
-				nbpm=matrix<double>(1,nnb,1,3);
-				for(j=1;j<=nnb;j++){
+				nbpm=matrix<float>(1,nnb,1,3);
+				for(j=1;j<nnb;j++){
 					facei=point2face[i][j];
 					nbfv[j]=faceValue[facei];
 					nbpm[j][1]=faceCentroid[facei][1];
@@ -1211,12 +1211,12 @@ void triangleMesh::interpPointV(void)
 					pointValue[i]=faceValue[point2face[i][1]];
 				}
 			}
-		//}
+		}
 		free_vector(nbfv,1,nnb);
 	}
-	
 
-	////nbfv.push_back(faceValue[facei]);
+
+	//nbfv.push_back(faceValue[facei]);
 
 
 
@@ -1233,8 +1233,8 @@ void triangleMesh::genContourMapInterp(long contourNumber)
 	contourv.clear();
 	contourValue.clear();
 
-	double cvalue;
-	double vstep=(maxPointValueInterp-minPointValueInterp)/(double)(contourNumber+1);
+	float cvalue;
+	float vstep=(maxPointValueInterp-minPointValueInterp)/(float)(contourNumber+1);
 
 	for(cvalue=minPointValueInterp;cvalue<=maxPointValueInterp;cvalue+=vstep){
 		findContour(cvalue);
@@ -1243,7 +1243,7 @@ void triangleMesh::genContourMapInterp(long contourNumber)
 }
 
 
-void triangleMesh::loadPointAndFace(double ** pt, long np, long ** fc, long nf, int isvolume)
+void triangleMesh::loadPointAndFace(float ** pt, long np, long ** fc, long nf, int isvolume)
 {
 	loadPoint(pt,np);
 	loadFace(fc,nf);

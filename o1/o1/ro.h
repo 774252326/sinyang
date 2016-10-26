@@ -30,6 +30,36 @@
 //
 //}
 
+template <typename T>
+void writef2(char *fn, T **dt, long r, long c){
+
+	std::ofstream ofs(fn);
+	if(ofs.is_open()){
+		for(long i=1;i<=r;i++){
+			for(long j=1;j<=c;j++){
+				ofs<<dt[i][j]<<' ';
+
+			}
+			ofs<<'\n';
+		}
+		ofs.close();
+	}
+
+}
+
+template <typename T>
+void writef1(char *fn, T *dt, long r){
+
+	std::ofstream ofs(fn);
+	if(ofs.is_open()){
+		for(long i=1;i<=r;i++){
+			ofs<<dt[i]<<' ';
+		}
+		ofs.close();
+	}
+
+}
+
 
 template <typename T>
 T **readf2(char *fn, long *r, long c){
@@ -103,6 +133,10 @@ T **readf2(char *fn, long *r, long c){
 }
 
 
+
+
+
+
 template <typename T>
 T **genPFlist(T **mat, long r, long **flist, T *facecolor, long *np){
 
@@ -116,7 +150,7 @@ T **genPFlist(T **mat, long r, long **flist, T *facecolor, long *np){
 		pnow[0]=mat[i][10];
 		for(j=1;j<=3;j++){
 
-			
+
 			pnow[1]=mat[i][j];
 			pnow[2]=mat[i][j+3];
 			pnow[3]=mat[i][j+6];
@@ -131,25 +165,25 @@ T **genPFlist(T **mat, long r, long **flist, T *facecolor, long *np){
 			//	pnowidx=1;
 			//}
 			//else{
-				pnowidx=0;
-				for(k=1;k<=np[0];k++){
-					if( (pnow[1]==temp[k][1]) && (pnow[2]==temp[k][2]) && (pnow[3]==temp[k][3]) ){
-						pnowidx=k;
-						temp[k][4]+=pnow[0];
-						temp[k][5]+=1;
-						break;					
-					}
+			pnowidx=0;
+			for(k=1;k<=np[0];k++){
+				if( (pnow[1]==temp[k][1]) && (pnow[2]==temp[k][2]) && (pnow[3]==temp[k][3]) ){
+					pnowidx=k;
+					temp[k][4]+=pnow[0];
+					temp[k][5]+=1;
+					break;					
 				}
+			}
 
-				if(pnowidx==0){
-					np[0]+=1;
-					for(k=1;k<=3;k++){
-						temp[np[0]][k]=pnow[k];
-					}
-						temp[np[0]][4]=pnow[0];
-						temp[np[0]][5]=1;
-					pnowidx=np[0];
+			if(pnowidx==0){
+				np[0]+=1;
+				for(k=1;k<=3;k++){
+					temp[np[0]][k]=pnow[k];
 				}
+				temp[np[0]][4]=pnow[0];
+				temp[np[0]][5]=1;
+				pnowidx=np[0];
+			}
 			//}
 
 			flist[i][j]=pnowidx;
@@ -336,4 +370,212 @@ void genColor(float rgbcolor[4], float colorv){
 	rgbcolor[1]=rgb[1];
 	rgbcolor[2]=rgb[2];
 	rgbcolor[3]=1;
+}
+
+
+
+
+
+
+
+
+
+
+
+double r8vec_dot_product ( int n, double a1[], double a2[] )
+
+	/******************************************************************************/
+	/*
+	Purpose:
+
+	R8VEC_DOT_PRODUCT computes the dot product of a pair of R8VEC's.
+
+	Licensing:
+
+	This code is distributed under the GNU LGPL license.
+
+	Modified:
+
+	26 July 2007
+
+	Author:
+
+	John Burkardt
+
+	Parameters:
+
+	Input, int N, the number of entries in the vectors.
+
+	Input, double A1[N], A2[N], the two vectors to be considered.
+
+	Output, double R8VEC_DOT_PRODUCT, the dot product of the vectors.
+	*/
+{
+	int i;
+	double value;
+
+	value = 0.0;
+	for ( i = 0; i < n; i++ )
+	{
+		value = value + a1[i] * a2[i];
+	}
+	return value;
+}
+
+
+
+double r8vec_sum ( int n, double a[] )
+
+	/******************************************************************************/
+	/*
+	Purpose:
+
+	R8VEC_SUM returns the sum of an R8VEC.
+
+	Discussion:
+
+	An R8VEC is a vector of R8's.
+
+	Licensing:
+
+	This code is distributed under the GNU LGPL license.
+
+	Modified:
+
+	26 August 2008
+
+	Author:
+
+	John Burkardt
+
+	Parameters:
+
+	Input, int N, the number of entries in the vector.
+
+	Input, double A[N], the vector.
+
+	Output, double R8VEC_SUM, the sum of the vector.
+	*/
+{
+	int i;
+	double value;
+
+	value = 0.0;
+	for ( i = 0; i < n; i++ )
+	{
+		value = value + a[i];
+	}
+
+	return value;
+}
+
+
+
+/******************************************************************************/
+
+double *shepard_interp_2d ( int nd, double xd[], double yd[], double zd[],
+	double p, int ni, double xi[], double yi[] )
+
+	/******************************************************************************/
+	/*
+	Purpose:
+
+	SHEPARD_INTERP_2D evaluates a 2D Shepard interpolant.
+
+	Licensing:
+
+	This code is distributed under the GNU LGPL license.
+
+	Modified:
+
+	02 October 2012
+
+	Author:
+
+	John Burkardt
+
+	Reference:
+
+	Donald Shepard,
+	A two-dimensional interpolation function for irregularly spaced data,
+	ACM '68: Proceedings of the 1968 23rd ACM National Conference,
+	ACM, pages 517-524, 1969.
+
+	Parameters:
+
+	Input, int ND, the number of data points.
+
+	Input, double XD[ND], YD[ND], the data points.
+
+	Input, double ZD[ND], the data values.
+
+	Input, double P, the power.
+
+	Input, int NI, the number of interpolation points.
+
+	Input, double XI[NI], YI[NI], the interpolation points.
+
+	Output, double SHEPARD_INTERP_2D[NI], the interpolated values.
+	*/
+{ 
+	int i;
+	int j;
+	int k;
+	double s;
+	double *w;
+	int z;
+	double *zi;
+
+	w = ( double * ) malloc ( nd * sizeof ( double ) );
+	zi = ( double * ) malloc ( ni * sizeof ( double ) );
+
+	for ( i = 0; i < ni; i++ )
+	{
+		if ( p == 0.0 )
+		{
+			for ( j = 0; j < nd; j++ )
+			{
+				w[j] = 1.0 / ( double ) ( nd );
+			}
+		}
+		else
+		{
+			z = -1;
+			for ( j = 0; j < nd; j++ )
+			{
+				w[j] = sqrt ( pow ( xi[i] - xd[j], 2 )
+					+ pow ( yi[i] - yd[j], 2 ) );
+				if ( w[j] == 0.0 )
+				{
+					z = j;
+					break;
+				}
+			}
+
+			if ( z != -1 )
+			{
+				for ( j = 0; j < nd; j++ )
+				{
+					w[j] = 0.0;
+				}
+				w[z] = 1.0;
+			}
+			else
+			{
+				for ( j = 0; j < nd; j++ )
+				{
+					w[j] = 1.0 / pow ( w[j], p );
+				}
+				s = r8vec_sum ( nd, w );
+				for ( j = 0; j < nd; j++ )
+				{
+					w[j] = w[j] / s;
+				}
+			}
+		}
+		zi[i] = r8vec_dot_product ( nd, w, zd );
+	}
+	free ( w );
+
+	return zi;
 }

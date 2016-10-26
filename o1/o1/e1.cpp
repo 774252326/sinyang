@@ -9,7 +9,14 @@
 #include <math.h>
 #include "ro.h"
 #include "triangleMesh.h"
+#include "surfaceMesh.h"
 #include <vector>
+#include <string>
+
+//#include "../../interp/shepard_interp_2d.h"
+
+#include "..\..\funT\paddingT.h"
+#include "../../funT/matmulT.h"
 
 //long r=1256,c=3,h=3;
 //long r=1604,c=3,h=4;
@@ -27,14 +34,19 @@ double dd=10;
 float innerp[3]={0,0,0};
 
 long **face;
-float **point;
-float *facecolor;
+double **point;
+double *facecolor;
 long np;
 long nf;
+
+bool showmesh=false;
+bool showface=false;
+bool showcont=true;
 
 std::vector< std::vector< std::vector<float> > > contourv1;
 
 triangleMesh trm;
+surfaceMesh sfm;
 
 void selectNormal(float normal[3], float point[3], float inner[3], bool outflag){
 	float s,abs;
@@ -284,60 +296,112 @@ void triangle2(void)
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_NORMALIZE);
 
-
+	float mncv=trm.minPointValue;
+	float mxcv=trm.maxPointValue;
 
 	float v1[3];
 	float v2[3];
 	float nor[3];
 	float rgba[4];
 
-	//float mncv=findmin(facecolor,nf);
-	//float mxcv=findmax(facecolor,nf);
-
-
-		float mncv=0;
-	float mxcv=1;
-
-	for(i=1;i<=trm.nface;i++){
-
-
-		glBegin (GL_TRIANGLES);
-
-
-		for(j=1;j<=3;j++){
-
-
-
-			genColor(rgba,(trm.pointValue[trm.face[i][j]]-mncv)/(mxcv-mncv)*0.9);
+	if(showcont){
+		glLineWidth(1);
+		for(i=0;i<trm.contourv.size();i++){
+			genColor(rgba,(trm.contourValue[i]-mncv)/(mxcv-mncv)*0.9);
 			glColor4fv(rgba);
-		glVertex3f(trm.point[trm.face[i][j]][1],trm.point[trm.face[i][j]][2],trm.point[trm.face[i][j]][3]);
-		}
-		glEnd();
-
-		//		glLineWidth(2);
-		//glColor3f(1.0f, 1.0f, 1.0f); 
-		//glBegin (GL_LINE_LOOP);
-		//for(j=1;j<=3;j++){
-		//	glVertex3f(trm.point[trm.face[i][j]][1],trm.point[trm.face[i][j]][2],trm.point[trm.face[i][j]][3]);
-		//}
-		//glEnd();
-		//glLineWidth(1);
-	}
-
-		glLineWidth(2);
-		glColor3f(1.0f, 0.0f, 1.0f); 
-	for(i=0;i<trm.contourv.size();i++){
-			glBegin (GL_LINE_LOOP);
+			glBegin (GL_LINE_STRIP);
 			for(j=0;j<trm.contourv[i][0].size();j++){
 				glVertex3f(trm.contourv[i][0][j],trm.contourv[i][1][j],trm.contourv[i][2][j]);
 			}
 			glEnd();
+		}
 	}
+
+	if(showmesh){
+		glLineWidth(1);
+		glColor3f(1.0f, 1.0f, 1.0f); 
+		for(i=1;i<=trm.nface;i++){
+			glBegin (GL_LINE_LOOP);
+			for(j=1;j<=3;j++){
+				glVertex3f(trm.point[trm.face[i][j]][1],trm.point[trm.face[i][j]][2],trm.point[trm.face[i][j]][3]);
+			}
+			glEnd();
+		}
+		//glLineWidth(1);
+	}
+
+	if(showface){
+		for(i=1;i<=trm.nface;i++){
+			glBegin (GL_TRIANGLES);
+			for(j=1;j<=3;j++){		
+				genColor(rgba,(trm.pointValue[trm.face[i][j]]-mncv)/(mxcv-mncv)*0.9);
+				glColor4fv(rgba);
+				glVertex3f(trm.point[trm.face[i][j]][1],trm.point[trm.face[i][j]][2],trm.point[trm.face[i][j]][3]);
+			}
+			glEnd();
+		}
+	}
+
 
 
 }
 
+void triangle3(void)
+{
+	long i,j,k;
 
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_NORMALIZE);
+
+	float mncv=sfm.minPointValue;
+	float mxcv=sfm.maxPointValue;
+
+	float v1[3];
+	float v2[3];
+	float nor[3];
+	float rgba[4];
+
+	if(showcont){
+		glLineWidth(1);
+		for(i=0;i<sfm.contourv.size();i++){
+			genColor(rgba,(sfm.contourValue[i]-mncv)/(mxcv-mncv)*0.9);
+			glColor4fv(rgba);
+			glBegin (GL_LINE_STRIP);
+			for(j=0;j<sfm.contourv[i].size();j++){
+				glVertex3dv(sfm.contourv[i][j].data());
+			}
+			glEnd();
+		}
+	}
+
+	if(showmesh){
+		glLineWidth(1);
+		glColor3f(1.0f, 1.0f, 1.0f); 
+		for(i=1;i<sfm.triangle.size();i++){
+			glBegin (GL_LINE_LOOP);
+			for(j=0;j<sfm.triangle[i].size();j++){
+				glVertex3dv(sfm.point[sfm.triangle[i][j]].data());
+			}
+			glEnd();
+		}
+		//glLineWidth(1);
+	}
+
+	if(showface){
+		for(i=1;i<sfm.triangle.size();i++){
+			glBegin (GL_TRIANGLES);
+			for(j=0;j<sfm.triangle[i].size();j++){		
+				genColor(rgba,(sfm.pointValue[sfm.triangle[i][j]]-mncv)/(mxcv-mncv)*0.9);
+				glColor4fv(rgba);
+				glVertex3dv(sfm.point[sfm.triangle[i][j]].data());
+			}
+			glEnd();
+		}
+	}
+
+
+
+}
 
 void p4(void){
 	//glBegin (GL_LINE_LOOP);
@@ -474,6 +538,7 @@ void display(void)
 
 	//triangle1();
 	triangle2();
+	//triangle3();
 	//p44();
 
 	//glFlush ();
@@ -538,9 +603,23 @@ void keyboard (unsigned char key, int x, int y)
 		glutPostRedisplay();
 		break;
 	case 'z':
-		di=2;tw=el=az=0;
+		di=2.3;tw=el=az=0;
 		glutPostRedisplay();
 		break;
+
+	case '1':
+		showmesh=!showmesh;
+		glutPostRedisplay();
+		break;
+	case '2':
+		showcont=!showcont;
+		glutPostRedisplay();
+		break;
+	case '3':
+		showface=!showface;
+		glutPostRedisplay();
+		break;
+
 	default:
 		break;
 	}
@@ -594,25 +673,118 @@ void keyboard2 (unsigned char key, int x, int y)
 }
 
 
+//#include <string>
+//#include <vector>
+//#include <fstream>
+////using namespace std;
+//using std::string;
+
+
+//const std::vector<char> FileData(
+//	(
+//	std::istreambuf_iterator<char>(
+//	std::ifstream(
+//	FileName, std::ios::ios_base::binary
+//	)
+//	)
+//	), std::istreambuf_iterator<char>()
+//	);  
+//
+//std::vector< std::vector<float> > read2(char *fn){
+//	std::ifstream ifs(fn);
+//		float temp;
+//		std::vector<float> line;
+//		std::vector< std::vector<float> > mx;
+//
+//	if(ifs.bad()){
+//		return mx;
+//	}
+//	else{
+//
+//		mx.push_back(line);
+//		int i;
+//		while(!ifs.eof()){
+//			ifs>>temp;
+//			i=mx.size();
+//			mx[i-1].push_back(temp);
+//			if(mx[i-1].size()>=10){
+//				mx.push_back(line);
+//			}
+//		}
+//
+//		ifs.close();
+//		return mx;
+//	}
+//
+//	if( ifs.is_open() ){
+//		while( ifs.good() && !ifs.eof() ){
+//			if( mx.empty() ){
+//				mx.push_back(line);
+//			}
+//			else{
+//				if(
+//
+//}
+
+
+
 int main(int argc, char** argv)
 {
 	time_t start,end;
 
 	//wchar_t fp[]=L"C:\\Users\\r8anw2x\\Documents\\Visual Studio 2010\\Projects\\testgrid2.txt";
-	//char fp[]="C:\\Users\\r8anw2x\\Documents\\Visual Studio 2010\\Projects\\testgrid2.txt";
-	char fp[]="C:\\Users\\r8anw2x\\Dropbox\\OpenGL\\data\\octahedron.txt";
+	//char fp[]="C:\\Users\\r8anw2x\\Documents\\Visual Studio 2010\\Projects\\grid1.txt";
+	//char fp[]="C:\\Users\\r8anw2x\\Dropbox\\OpenGL\\data\\octahedron.txt";
+	//char fp[]="C:\\Users\\r8anw2x\\Dropbox\\OpenGL\\data\\gridTopSurface04022013_2.txt";
+	char fp[]="C:\\Users\\r8anw2x\\Dropbox\\OpenGL\\data\\05021013\\gridSurface05022013_2ring.txt";
+	//char fp[]="C:\\Users\\r8anw2x\\Dropbox\\OpenGL\\data\\05021013\\gridSurface05022013_2.txt";
+
+
+	char pfp[]="C:\\Users\\r8anw2x\\Dropbox\\OpenGL\\data\\gridTopSurface04022013_2.point.txt";
+	char tfp[]="C:\\Users\\r8anw2x\\Dropbox\\OpenGL\\data\\gridTopSurface04022013_2.triangle.txt";
+	char pvfp[]="C:\\Users\\r8anw2x\\Dropbox\\OpenGL\\data\\gridTopSurface04022013_2.pointvalue.txt";
+	char pvifp[]="C:\\Users\\r8anw2x\\Dropbox\\OpenGL\\data\\gridTopSurface04022013_2.pointvalueinterpolate.txt";
+	char tvfp[]="C:\\Users\\r8anw2x\\Dropbox\\OpenGL\\data\\gridTopSurface04022013_2.trianglevalue.txt";
+
+
+
 	//readf2(fp,dt[1],r,c*h);
-
-	float **dtt;
-	dtt=readf2<float>(fp,&nf,10);
-
-	facecolor=vector<float>(1,nf);
 	long i,j,k;
+	double **dtt;
+	dtt=readf2<double>(fp,&nf,10);
+
+	//std::vector< std::vector<float> > mx;
+	//mx=read2(fp);
+
+	//for(i=0;i<mx.size();i++){
+	//	for(j=0;j<10;j++){
+	//		std::cout<<mx[i][j]<<' ';
+	//	}
+	//}
+
+
+	facecolor=vector<double>(1,nf);
+
 	//for(i=1;i<=nf;i++){
 	//	facecolor[i]=dtt[i][10];
 	//}
 
 
+	//std::string prefix = "grid04022013.txt";
+	//std::string str = "C:\\Users\\r8anw2x\\Dropbox\\OpenGL\\data\\" + prefix;	
+
+	//std::ifstream myfile;
+	//myfile.open(str,std::ifstream::in);
+
+	//double tmp;
+	//std::vector<double> data;
+	//while( myfile >> tmp >> tmp2 >> temp3 ) {
+	//	data.push_back(tmp);
+	//}
+	//myfile.close();
+
+	//for(i = 0; i < data.size(); i++) 
+	//	std::cout << data[i] << std::endl;
 
 	face=matrix<long>(1,nf,1,3);
 
@@ -622,46 +794,86 @@ int main(int argc, char** argv)
 	//pdt(point,np,4);
 	//pdt(face,nf,3);
 
+	double *pv=vector<double>(1,np);
+	for(i=1;i<=np;i++){
+		pv[i]=point[i][4];
+	}
 
 
-	//triangleMesh trm(np,nf);
+
+
+	//writef2(pfp,trm.point,trm.npoint,3);
+	//writef2(tfp,trm.face,trm.nface,3);
+	//writef1(pvfp,trm.pointValue,trm.npoint);
+	//writef1(tvfp,trm.faceValue,trm.nface);
+
+
+
+
+
+	//double **fxyz=matrix<double>(1,3,1,nf);
+	//mattp(trm.faceCentroid,1,trm.nface,1,3,fxyz);
+
+	//double **pxyz=matrix<double>(1,3,1,np);
+	//mattp(trm.point,1,trm.npoint,1,3,pxyz);
+
+	//double *fv=vector<double>(1,nf);
+	//copyvt(trm.faceValue,trm.nface,fv);
+
+	//double *npv=shepard_interp_2d(nf,&fxyz[1][1],&fxyz[2][1],&fv[1],2,np,&pxyz[1][1],&pxyz[2][1]);
+
+	//copyvt(&npv[-1],np,pv);
+
 	
-	trm.loadFace(face,nf);
-	trm.loadPoint(point,np);
+
+
+
+
+
+
 	time (&start);
-	trm.getFaceNext();
-	trm.genEdge();
+	//trm.interpPointV();
+
+	//std::cout<<'['<<trm.minFaceValue<<','<<trm.maxFaceValue<<']'<<'\n';
+	//std::cout<<'['<<trm.minPointValue<<','<<trm.maxPointValue<<']'<<'\n';
+
+
+	//sfm.loadPointAndFace(point,np,face,nf);
+	////sfm.loadPoint(point,np);
+	////sfm.loadFace(face,nf);
+	////sfm.genEdge();
+	////sfm.genPointToFaceMap();
+	////sfm.genFaceCentroid();
+	//sfm.loadFaceV(facecolor,nf);
+	//sfm.loadPointV(pv,np);
+	//sfm.genContourMap(50);
+
+	
+	trm.loadPointAndFace(point,np,face,nf,0);
+	trm.loadFaceV(facecolor,nf);
+	trm.loadPointV(pv,np);
+	trm.genContourMap(50);
+
 	time (&end);
-	printf ("It took you %.2lf seconds.\n", difftime (end,start) );
 
-	pdt(trm.face,trm.nface,3);
-	//std::cout<<std::endl;
-	//pdt(trm.faceNext,trm.nface,3);
 
-	//std::cout<<std::endl;
-	//pdt(trm.edge,trm.nedge,2);
 
-	//std::cout<<std::endl;
-	//pdt(trm.edgeFace,trm.nedge,2);
+	printf ("Elapsed time %.2lf seconds.\n", difftime (end,start) );
+	//writef1(pvifp,trm.pointValueInterp,trm.npoint);
 
-	//std::cout<<std::endl;
-	//pdt(trm.faceEdge,trm.nface,3);
 
-	pdt(trm.point,trm.npoint,3);
+	//trm.pointValue[3]=1;
+	//trm.pointValue[6]=1;
+	//trm.pointValue[1]=0.5;
+	//trm.pointValue[2]=0.5;
+	//trm.pointValue[4]=0.5;
+	//trm.pointValue[5]=1;
 
-	long *el;
-	long nel;
-	std::cout<<std::endl;
-	trm.genPointToFaceMap();
 
-	trm.pointValue[3]=1;
-	trm.pointValue[6]=1;
-	trm.pointValue[1]=0.5;
-	trm.pointValue[2]=0.5;
-	trm.pointValue[4]=0.5;
-	trm.pointValue[5]=0.5;
+	//float pv[7]={0,0.5,0.5,1,0.5,1,1};
 
-	trm.findContour(0.7);
+
+	
 
 
 	//el=trm.nextEdgeFromEdge(3,&nel);
