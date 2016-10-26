@@ -19,19 +19,21 @@ ListCtrlUA::ListCtrlUA(bool flg)
 ListCtrlUA::~ListCtrlUA(void)
 {
 }
-BEGIN_MESSAGE_MAP(ListCtrlUA, ListCtrlAA)
+BEGIN_MESSAGE_MAP(ListCtrlUA, ListCtrlA)
 	ON_WM_CREATE()
-	ON_COMMAND(ID_POPUP_INSERT, &ListCtrlUA::OnPopupInsert)
-	ON_COMMAND(ID_POPUP_REMOVE, &ListCtrlUA::OnPopupRemove)
-	ON_COMMAND(ID_POPUP_REMOVEALL, &ListCtrlUA::OnPopupRemoveall)
+//	ON_COMMAND(ID_POPUP_INSERT, &ListCtrlUA::OnPopupInsert)
+//	ON_COMMAND(ID_POPUP_REMOVE, &ListCtrlUA::OnPopupRemove)
+//	ON_COMMAND(ID_POPUP_REMOVEALL, &ListCtrlUA::OnPopupRemoveall)
 	ON_WM_RBUTTONUP()
 	ON_WM_CONTEXTMENU()
+	ON_COMMAND(ID_POPUP_DELETEUSER, &ListCtrlUA::OnPopupDeleteuser)
+	ON_COMMAND(ID_POPUP_ADDUSER, &ListCtrlUA::OnPopupAdduser)
 END_MESSAGE_MAP()
 
 
 int ListCtrlUA::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (ListCtrlAA::OnCreate(lpCreateStruct) == -1)
+	if (ListCtrlA::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
 	// TODO:  Add your specialized creation code here
@@ -49,6 +51,11 @@ int ListCtrlUA::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	//if(bEditable){
 	//	typelist[2]=eCombo;
 	//	typelist[0]=typelist[1]=typelist[4]=eEdit;
+
+	if(bEditable){		
+		typelist[0]=typelist[1]=typelist[4]=eEdit;
+		typelist[2]=eCombo;
+	}
 
 		// insert string elements  for the ComboBox : 
 		for ( int j=IDS_STRING_ADMIN ; j <= IDS_STRING_GUEST ; j++){
@@ -68,41 +75,43 @@ int ListCtrlUA::OnCreate(LPCREATESTRUCT lpCreateStruct)
 }
 
 
-void ListCtrlUA::OnPopupInsert()
-{
-	// TODO: Add your command handler code here
-	//ListCtrlAA::OnPopupInsert();
-
-	int iSelect=GetSelectionMark();
-	iSelect=InsertItemUA( iSelect<0?0:iSelect, UserAccount(), false );
-	EnsureVisible(iSelect, FALSE);
-
-}
-
-
-void ListCtrlUA::OnPopupRemove()
-{
-	// TODO: Add your command handler code here
-	int iSelect=GetSelectionMark();
-	CString strTemp;
-	strTemp.LoadString(IDS_STRING_NO);
-	if( GetItemText(iSelect,3)==strTemp ){
-		ListCtrlAA::OnPopupRemove();
-	}
-}
+//void ListCtrlUA::OnPopupInsert()
+//{
+//	// TODO: Add your command handler code here
+//	//ListCtrlAA::OnPopupInsert();
+//
+//	int iSelect=GetSelectionMark();
+//	iSelect=InsertItemUA( iSelect<0?0:iSelect, UserAccount(), false );
+//	EnsureVisible(iSelect, FALSE);
+//
+//}
 
 
-void ListCtrlUA::OnPopupRemoveall()
-{
-	// TODO: Add your command handler code here
-}
+//void ListCtrlUA::OnPopupRemove()
+//{
+//	// TODO: Add your command handler code here
+//	int iSelect=GetSelectionMark();
+//	CString strTemp;
+//	strTemp.LoadString(IDS_STRING_NO);
+//	if( GetItemText(iSelect,3)==strTemp ){
+//		ListCtrlAA::OnPopupRemove();
+//	}
+//}
+
+
+//void ListCtrlUA::OnPopupRemoveall()
+//{
+//	// TODO: Add your command handler code here
+//}
 
 
 void ListCtrlUA::OnRButtonUp(UINT nFlags, CPoint point)
 {
 	// TODO: Add your message handler code here and/or call default
 	if(bEditable){
-		ListCtrlAA::OnRButtonUp(nFlags, point);
+			ClientToScreen(&point);
+	OnContextMenu(this, point);
+	ListCtrlA::OnRButtonUp(nFlags, point);
 	}
 }
 
@@ -111,7 +120,12 @@ void ListCtrlUA::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	// TODO: Add your message handler code here
 	if(bEditable){
-		ListCtrlAA::OnContextMenu(pWnd, point);
+			CMenu menu;
+	menu.LoadMenu(IDR_LISTUA_POPUP);
+	CMenu* pSumMenu = menu.GetSubMenu(0);
+		pSumMenu->TrackPopupMenu(TPM_LEFTALIGN, point.x, point.y, this);
+		UpdateDialogControls(this, FALSE);
+	SetFocus();
 	}
 
 }
@@ -123,19 +137,27 @@ int ListCtrlUA::InsertItemUA(int i, const UserAccount & ua, bool bUse)
 	int inserti=InsertItem( i, ua.userName );
 	AdjustWidth(this,0,ua.userName);
 
-	SetItemText(i,1,ua.passWord);
-	AdjustWidth(this,1,ua.passWord);
+	if(bEditable){
+		SetItemText(i,1,ua.passWord);
+		AdjustWidth(this,1,ua.passWord);
+	}
+	else{
+		SetItemText(i,1,L"*");
+	}
 
 	SetChoice(i,2,ua.au);
 
-	if(bUse){
-		bEditable=(ua.au==admin);	
-		if(bEditable){		
-		typelist[0]=typelist[1]=typelist[4]=eEdit;
-		typelist[2]=eCombo;
-	}
+	//if(bUse){
+	//	bEditable=(ua.au==admin);	
+	//	if(bEditable){		
+	//	typelist[0]=typelist[1]=typelist[4]=eEdit;
+	//	typelist[2]=eCombo;
+	//}
 
-	}
+	//}
+
+
+
 	SetChoice(i,3,bUse?0:1);
 	AdjustWidth(this,3,i);
 
@@ -181,3 +203,54 @@ bool ListCtrlUA::GetItemUA(int i, UserAccount & ua, bool & bUse)
 //{
 //
 //}
+
+
+void ListCtrlUA::ShowPW(void)
+{
+
+	//if(!bEditable){
+	//	for(int i=0;i<this->GetItemCount();i++){
+	//		//SetItemText(i,1,L"*");
+
+	//		//CEdit *pe=this->GetEditControl();
+	//		//pe->ModifyStyle(NULL,ES_PASSWORD);
+
+	//	}
+	//}
+
+
+}
+
+
+void ListCtrlUA::OnPopupDeleteuser()
+{
+	// TODO: Add your command handler code here
+
+	int iSelect=GetSelectionMark();
+		if(iSelect!=-1) // valid item 	
+	{
+			int ci=GetChoice(iSelect,3);
+	if(ci==1){
+		DeleteItem( iSelect );
+		EnsureVisible(iSelect, FALSE);
+	}
+		}
+
+}
+
+
+void ListCtrlUA::OnPopupAdduser()
+{
+	// TODO: Add your command handler code here
+
+	int iSelect=GetSelectionMark();
+	iSelect=InsertItemUA( iSelect<0?0:iSelect, UserAccount(), false );
+	EnsureVisible(iSelect, FALSE);
+
+}
+
+
+void ListCtrlUA::SetEditable(bool b)
+{
+	bEditable=b;
+}

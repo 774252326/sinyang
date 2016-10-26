@@ -81,7 +81,7 @@ protected:
 	BOOL CreateDockingWindows();
 	void SetDockingWindowIcons(BOOL bHiColorIcons);
 	BOOL CreateCaptionBar();
-public:
+
 	afx_msg void OnViewToolbar();
 	afx_msg void OnUpdateViewToolbar(CCmdUI *pCmdUI);
 
@@ -89,12 +89,6 @@ public:
 	afx_msg void OnUpdateViewAnalysisProgress(CCmdUI *pCmdUI);
 	BOOL m_bSplitterCreated;
 
-	COutputWnd* GetOutputWnd(){return &m_wndOutput;};
-	CMFCCaptionBarA* GetCaptionBar(){ return &m_wndCaptionBar;};
-	afx_msg void OnSize(UINT nType, int cx, int cy);
-
-	//bool bWaiting;
-	ProcessState pst;
 	afx_msg void OnAnalysisStartanalysis();
 	CWinThread *pWriteA;
 	afx_msg void OnAnalysisAbortanalysis();
@@ -109,12 +103,6 @@ public:
 	afx_msg void OnUpdateViewDatacursor(CCmdUI *pCmdUI);
 	afx_msg void OnUpdateAnalysisCompute(CCmdUI *pCmdUI);
 	afx_msg void OnAnalysisCompute();
-
-
-	//authority au;
-	AccountList al;
-
-
 	afx_msg void OnSecurityLogin();
 	afx_msg void OnSecurityUseraccounts();
 	afx_msg void OnUpdateFilePrint(CCmdUI *pCmdUI);
@@ -122,8 +110,21 @@ public:
 	afx_msg void OnUpdateFilePrintSetup(CCmdUI *pCmdUI);
 	afx_msg void OnUpdateFileSave(CCmdUI *pCmdUI);
 	afx_msg void OnUpdateFileNew(CCmdUI *pCmdUI);
-	int userIndex;
 	afx_msg void OnHelpHelptopics();
+	afx_msg void OnSize(UINT nType, int cx, int cy);
+
+public:
+
+	COutputWnd* GetOutputWnd(){return &m_wndOutput;};
+	CMFCCaptionBarA* GetCaptionBar(){ return &m_wndCaptionBar;};
+
+
+	//bool bWaiting;
+	ProcessState pst;
+	//authority au;
+	AccountList al;
+	int userIndex;
+
 };
 
 

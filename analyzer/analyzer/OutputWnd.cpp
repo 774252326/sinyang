@@ -4,7 +4,7 @@
 #include "OutputWnd.h"
 #include "Resource.h"
 //#include "MainFrm.h"
-#include "func.h"
+//#include "func.h"
 
 
 #ifdef _DEBUG
@@ -64,31 +64,31 @@ int COutputWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	/************************************************************************/
 	/*                                                                      */
 	/************************************************************************/
-	m_listCtrlMonitor.ModifyStyle(0,LVS_REPORT|LVS_SHOWSELALWAYS);
-	LONG IStyle;
-	IStyle=GetWindowLong(m_listCtrlMonitor.m_hWnd, GWL_STYLE);//获取当前窗口style
-	IStyle&= ~LVS_TYPEMASK; //清除显示方式位
-	IStyle|= LVS_REPORT; //set style
-	SetWindowLong(m_listCtrlMonitor.m_hWnd, GWL_STYLE, IStyle);//设置style
-	DWORD dwStyle1;
-	dwStyle1 = m_listCtrlMonitor.GetExtendedStyle();
-	dwStyle1 |= LVS_EX_FULLROWSELECT;//选中某行使整行高亮（只适用与report风格的listctrl）
-	dwStyle1 |= LVS_EX_GRIDLINES;//网格线（只适用与report风格的listctrl）
-	//dwStyle1 |= LVS_EX_CHECKBOXES;//item前生成checkbox控件
-	m_listCtrlMonitor.SetExtendedStyle(dwStyle1); //设置扩展风格
+	//m_listCtrlMonitor.ModifyStyle(0,LVS_REPORT|LVS_SHOWSELALWAYS);
+	//LONG IStyle;
+	//IStyle=GetWindowLong(m_listCtrlMonitor.m_hWnd, GWL_STYLE);//获取当前窗口style
+	//IStyle&= ~LVS_TYPEMASK; //清除显示方式位
+	//IStyle|= LVS_REPORT; //set style
+	//SetWindowLong(m_listCtrlMonitor.m_hWnd, GWL_STYLE, IStyle);//设置style
+	//DWORD dwStyle1;
+	//dwStyle1 = m_listCtrlMonitor.GetExtendedStyle();
+	//dwStyle1 |= LVS_EX_FULLROWSELECT;//选中某行使整行高亮（只适用与report风格的listctrl）
+	//dwStyle1 |= LVS_EX_GRIDLINES;//网格线（只适用与report风格的listctrl）
+	////dwStyle1 |= LVS_EX_CHECKBOXES;//item前生成checkbox控件
+	//m_listCtrlMonitor.SetExtendedStyle(dwStyle1); //设置扩展风格
 
 
-	CString strTemp;
-	for(size_t i=0;i<7;i++){
-		(strTemp.LoadString(i+IDS_STRING111));
-		//int w=m_listCtrlMonitor.GetStringWidth(strTemp)+m_listCtrlMonitor.gap;
-		m_listCtrlMonitor.InsertColumn(i, strTemp, LVCFMT_LEFT);
-		AdjustWidth(&m_listCtrlMonitor,i,strTemp);
-	}
+	//CString strTemp;
+	//for(size_t i=0;i<7;i++){
+	//	(strTemp.LoadString(i+IDS_STRING111));
+	//	//int w=m_listCtrlMonitor.GetStringWidth(strTemp)+m_listCtrlMonitor.gap;
+	//	m_listCtrlMonitor.InsertColumn(i, strTemp, LVCFMT_LEFT);
+	//	AdjustWidth(&m_listCtrlMonitor,i,strTemp);
+	//}
 
-	if ( !m_listCtrlMonitor.GetSafeHwnd() ){
-		return -1;
-	}
+	//if ( !m_listCtrlMonitor.GetSafeHwnd() ){
+	//	return -1;
+	//}
 
 	//////////////////////////////////////////////////////////////////////
 

@@ -24,7 +24,7 @@
 
 IMPLEMENT_DYNCREATE(CMainFrame, CFrameWndEx)
 
-const int  iMaxUserToolbars = 10;
+	const int  iMaxUserToolbars = 10;
 const UINT uiFirstUserToolBarId = AFX_IDW_CONTROLBAR_FIRST + 40;
 const UINT uiLastUserToolBarId = uiFirstUserToolBarId + iMaxUserToolbars - 1;
 
@@ -537,8 +537,14 @@ void CMainFrame::OnUpdateViewToolbar(CCmdUI *pCmdUI)
 void CMainFrame::OnViewAnalysisProgress()
 {
 	// TODO: Add your command handler code here
-	m_wndOutput.ShowWindow(m_wndOutput.IsVisible() ? SW_HIDE : SW_SHOW);
-	RecalcLayout(FALSE);
+	//m_wndOutput.ShowWindow(m_wndOutput.IsVisible() ? SW_HIDE : SW_SHOW);
+	//RecalcLayout(FALSE);
+
+	//m_wndOutput.ShowPane(m_wndOutput.IsVisible() ? FALSE : TRUE, FALSE, FALSE );
+	//RecalcLayout(FALSE);
+
+	this->ShowPane((CBasePane*)&m_wndOutput ,m_wndOutput.IsVisible() ? FALSE : TRUE, FALSE, FALSE);
+
 }
 
 
@@ -569,33 +575,33 @@ void CMainFrame::OnAnalysisStartanalysis()
 {
 	// TODO: Add your command handler code here
 
-			mypara * pa1=new mypara;
+	mypara * pa1=new mypara;
 	pa1->leftp=(CanalyzerViewL*)m_wndSplitter.GetPane(0,0);
 	pa1->rightp=(CanalyzerViewR*)m_wndSplitter.GetPane(0,1);
 	pa1->outw=this->GetOutputWnd();
 	pa1->cba=this->GetCaptionBar();
 	pa1->psta=&pst;
-//
+	//
 
-//
-//	//CWinThread *pWriteA;
-//
-//	//HANDLE hThread;
-//
+	//
+	//	//CWinThread *pWriteA;
+	//
+	//	//HANDLE hThread;
+	//
 	pWriteA=AfxBeginThread(PROCESS,
 		(LPVOID)(pa1),
 		THREAD_PRIORITY_NORMAL,
 		0,
 		CREATE_SUSPENDED);
-//
-//	//hThread=pWriteA->m_hThread;
-//
-//	//CloseHandle(hThread);
+	//
+	//	//hThread=pWriteA->m_hThread;
+	//
+	//	//CloseHandle(hThread);
 	pWriteA->ResumeThread();
-//
-//	//PROCESS((LPVOID)(pa1));
-//
-//
+	//
+	//	//PROCESS((LPVOID)(pa1));
+	//
+	//
 	pst=running;
 
 }
@@ -729,8 +735,8 @@ void CMainFrame::OnSecurityLogin()
 	// TODO: Add your command handler code here
 
 	LoginDlg ld;
-			ld.usridx=userIndex;
-		ld.al=al;
+	ld.usridx=userIndex;
+	ld.al=al;
 	if(ld.DoModal()==IDOK){
 		userIndex=ld.usridx;
 		//al=ld.al;
@@ -744,55 +750,24 @@ void CMainFrame::OnSecurityUseraccounts()
 {
 	// TODO: Add your command handler code here
 
-	//switch(au){
-	//case admin:
-	//	AfxMessageBox(L"admin");
-	//	break;
-	//case user:
-	//	AfxMessageBox(L"user");
-	//	break;
-	//case guest:
-	//	AfxMessageBox(L"guest");
-	//	break;
-	//default:
-	//	break;
-	//}
+	CString str;
+	PropertySheetA1 sheet(IDS_STRING_USER_ACCOUNT);
 
-	//UserAccountDlg uadlg;
-	//uadlg.userList.bEditable=true;
-	//uadlg.DoModal();
+	UserAccountPage uap;
+	//uap.userList.bEditable=true;
+	uap.useIndex=userIndex;
+	uap.al=al;
 
+	sheet.AddPage(&uap);
 
-
-
-		CString str;
-		//str.LoadStringW(IDS_STRING_USER_ACCOUNT);
-		//CPropertySheet sheet(str);
-		PropertySheetA1 sheet(IDS_STRING_USER_ACCOUNT);
-		//str.LoadStringW(IDS_STRING_FIGURE1);
-		//str=L"";
-		//int selecti=m_spBtn.GetPos32();
-
-		UserAccountPage uap;
-		//uap.userList.bEditable=true;
-		uap.useIndex=userIndex;
-		uap.al=al;
-
-		sheet.AddPage(&uap);
-
-		sheet.SetWizardMode();
-		//sheet.SetWizardButtons(PSWIZB_FINISH);
-
-		INT_PTR res=sheet.DoModal();
-		if(res==IDOK || res==ID_WIZFINISH ){
-
-			al=uap.al;
-			userIndex=uap.useIndex;
-
-			CString fp=L"ua";
-			WriteFileCustom(&al,1,fp);
-
-		}
+	sheet.SetWizardMode();
+	INT_PTR res=sheet.DoModal();
+	if(res==IDOK || res==ID_WIZFINISH ){
+		al=uap.al;
+		userIndex=uap.useIndex;
+		CString fp=L"ua";
+		WriteFileCustom(&al,1,fp);
+	}
 
 
 }

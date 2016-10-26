@@ -107,6 +107,8 @@
     <None Include="res\icon3.ico" />
     <None Include="res\icon4.ico" />
     <None Include="res\icon5.ico" />
+    <None Include="res\icon6.ico" />
+    <None Include="res\IMG_20131002_154626_4.bmp" />
     <None Include="res\index_02_01_01.bmp" />
     <None Include="res\info.bmp" />
     <None Include="res\menutoolb.bmp" />
@@ -121,6 +123,7 @@
     <None Include="res\qq.bmp" />
     <None Include="res\qq16.bmp" />
     <None Include="res\qq16.ico" />
+    <None Include="res\RDE-logo.ico" />
     <None Include="res\ThinkCentre.ico" />
     <None Include="res\Toolbar.bmp" />
     <None Include="res\Toolbar256.bmp" />
@@ -159,7 +162,7 @@
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="MFCCaptionBarA.h" />
     <ClInclude Include="MFCToolBarA.h" />
-    <ClInclude Include="OutputList.h" />
+    <ClInclude Include="OutputListA.h" />
     <ClInclude Include="OutputWnd.h" />
     <ClInclude Include="pcct.h" />
     <ClInclude Include="pdfout.h" />
@@ -174,7 +177,7 @@
     <ClInclude Include="sapitemA.h" />
     <ClInclude Include="sapitemF.h" />
     <ClInclude Include="SolutionAdditionParametersPageA.h" />
-    <ClInclude Include="SolutionAdditionParametersPageB.h" />
+    <ClInclude Include="StartDlg.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="testdlg.h" />
@@ -215,7 +218,7 @@
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="MFCCaptionBarA.cpp" />
     <ClCompile Include="MFCToolBarA.cpp" />
-    <ClCompile Include="OutputList.cpp" />
+    <ClCompile Include="OutputListA.cpp" />
     <ClCompile Include="OutputWnd.cpp" />
     <ClCompile Include="pcct.cpp" />
     <ClCompile Include="pdfout.cpp" />
@@ -229,7 +232,7 @@
     <ClCompile Include="sapitemA.cpp" />
     <ClCompile Include="sapitemF.cpp" />
     <ClCompile Include="SolutionAdditionParametersPageA.cpp" />
-    <ClCompile Include="SolutionAdditionParametersPageB.cpp" />
+    <ClCompile Include="StartDlg.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

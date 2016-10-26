@@ -58,7 +58,7 @@ int LoginDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	CPoint pt(gap1);
 	CString str;
 
-	pt.y+=80;
+	pt.y+=gap2.cy;
 
 	str.LoadStringW(IDS_EDIT_USERNAME);
 	if( suser.Create(
@@ -123,17 +123,22 @@ int LoginDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 
-	pt.y+=esz.cy+gap2.cy;
+	pt.y+=esz.cy+gap2.cy*2;
+
+	pt.x+=(winrect.Width()-bsz.cx)/2;
+
 	str.LoadStringW(IDS_STRING_LOGIN);
 	if(m_login.Create(str, WS_CHILD|WS_VISIBLE|BS_PUSHBUTTON, CRect(pt,bsz), this, IDOK)==FALSE){
 		return -1;
 	}
 
-	pt.x+=bsz.cx+gap2.cx;
-	str.LoadStringW(IDS_STRING_CANCEL);
-	if(m_cancel.Create(str, WS_CHILD|WS_VISIBLE|BS_PUSHBUTTON, CRect(pt,bsz), this, IDCANCEL)==FALSE){
-		return -1;
-	}
+	//pt.x+=bsz.cx+gap2.cx;
+	//str.LoadStringW(IDS_STRING_CANCEL);
+	//if(m_cancel.Create(str, WS_CHILD|WS_VISIBLE|BS_PUSHBUTTON, CRect(pt,bsz), this, IDCANCEL)==FALSE){
+	//	return -1;
+	//}
+
+	this->SetWindowTextW(str);
 
 	return 0;
 }
@@ -324,7 +329,7 @@ BOOL LoginDlg::OnInitDialog()
 	//bmp.Load(L"C:\\Users\\r8anw2x\\Pictures\\Sample Album\\Pensive Parakeet.jpg");
 
 	//this->SetBackgroundImage((HBITMAP)(bmp));
-	this->SetBackgroundImage(IDB_BITMAP_BK);
+	//this->SetBackgroundImage(IDB_BITMAP_BK);
 	//sbmp.SetBitmap((HBITMAP)(bmp));
 
 
@@ -434,7 +439,7 @@ HBRUSH LoginDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	if(nCtlColor == CTLCOLOR_STATIC )
 	{
 		pDC->SetBkMode(TRANSPARENT);//设置背景透明
-		pDC->SetTextColor(RGB(255,255,0));//设置字体为黄色
+		pDC->SetTextColor(RGB(0,0,0));//设置字体为黄色
 		return (HBRUSH)::GetStockObject(NULL_BRUSH);
 	}
 

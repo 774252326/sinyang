@@ -63,3 +63,12 @@ int AccountList::CheckUserAccount(CString username, CString password)
 	return bHitUser?-1:-2;
 }
 
+
+
+bool AccountList::IsAdmin(int i)
+{
+	if(i>=0 && i<ual.size() && ual[i].au==admin)
+		return true;
+
+	return false;
+}

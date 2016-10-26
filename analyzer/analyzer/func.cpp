@@ -21,11 +21,14 @@ const DWORD sleepms=100;
 const size_t nd=500;
 //const size_t nd=sleepms/10;
 
-CString folderp=L"C:\\Users\\r8anw2x\\Desktop\\data\\d\\";
+
+#ifndef _DEBUG
+	CString folderp=L"data\\d\\";
+#else
+	CString folderp=L"C:\\Users\\r8anw2x\\Desktop\\data\\d\\";
 //CString folderp=L"D:\\data\\d\\";
 //CString folderp=L"C:\\Users\\G\\Desktop\\data\\d\\";
-
-//CString folderp=L"data\\d\\";
+#endif
 
 CString DEMOflist=folderp+L"fl1.txt";
 CString DTRflist=folderp+L"dtr.txt";
@@ -81,22 +84,22 @@ bool CheckLogin(const CString &un, const CString &pw, authority &ar)
 	if(un==L"admin" 
 		&& pw==L"admin"
 		){
-		ar=authority::admin;
-		return true;
+			ar=authority::admin;
+			return true;
 	}
-	
+
 	if(un==L"user" 
 		//&& pw==L"user"
 		){
-		ar=authority::user;
-		return true;
+			ar=authority::user;
+			return true;
 	}
 
 	if(un==L"guest"
 		//&& pw==L"guest"
 		){
-		ar=authority::guest;
-		return true;
+			ar=authority::guest;
+			return true;
 	}
 
 	return false;
@@ -589,7 +592,7 @@ UINT ComputeStateData(
 }
 
 
-UINT RawData2PlotDataList(const RawData &raw, const std::vector<DataOutA> &dol, PlotSpec ps0, std::vector<PlotData> &pdl)
+UINT RawData2PlotDataList(const RawData &raw, const std::vector<DataOutA> dol, PlotSpec ps0, std::vector<PlotData> &pdl)
 {
 	for(size_t i=0;i<dol.size();i++){
 		std::vector<double> x;
@@ -2394,7 +2397,7 @@ CString Compute( const std::vector<DataOutA> &dol, const ANPara &p1, std::vector
 				strt.LoadStringW(IDS_STRING_ML_PER_L);
 				str+=strt;
 			}
-				
+
 		}
 		break;
 	case 2:
@@ -2487,7 +2490,7 @@ CString Compute( const std::vector<DataOutA> &dol, const ANPara &p1, std::vector
 			if(Compute5(dol,p1,Lc)){
 				//str.Format(L"Lc=%g",Lc);
 
-								strt.LoadStringW(IDS_STRING_L);
+				strt.LoadStringW(IDS_STRING_L);
 				str=strt;
 				str+=L" ";
 				strt.LoadStringW(IDS_STRING_CONCERTRATION);
@@ -2542,7 +2545,7 @@ CString Compute( const std::vector<DataOutA> &dol, const ANPara &p1, std::vector
 			if(Compute7(dol, p1, Ac, Sc, lis)){
 				//str.Format(L"S=%gA%+g",lis.GetK(),lis.GetB());
 
-				
+
 				strt.LoadStringW(IDS_STRING_FITTING_LINE);
 				str=strt;
 				//res.push_back(str);
@@ -2628,11 +2631,11 @@ CString Compute( const std::vector<DataOutA> &dol, const ANPara &p1, std::vector
 
 				strt.LoadStringW(IDS_STRING_ML_PER_L);
 				str+=strt;
-				
+
 				str+=L", ";
 
 
-								strt.LoadStringW(IDS_STRING_SAMPLE);
+				strt.LoadStringW(IDS_STRING_SAMPLE);
 				str+=strt;
 				str+=L" ";
 				strt.LoadStringW(IDS_STRING_A);
@@ -2679,7 +2682,7 @@ CString Compute( const std::vector<DataOutA> &dol, const ANPara &p1, std::vector
 			double Lc;
 			if(Compute9(dol, p1, Lc)){
 				//str.Format(L"Lc=%g",Lc);
-												strt.LoadStringW(IDS_STRING_L);
+				strt.LoadStringW(IDS_STRING_L);
 				str=strt;
 				str+=L" ";
 				strt.LoadStringW(IDS_STRING_CONCERTRATION);
@@ -2702,7 +2705,7 @@ CString Compute( const std::vector<DataOutA> &dol, const ANPara &p1, std::vector
 			if(Compute10(dol, p1, Lc, SPc, nQ)){
 				//str.Format(L"Lc=%g,SPc=%g",Lc,SPc);
 
-								strt.LoadStringW(IDS_STRING_SAMPLE);
+				strt.LoadStringW(IDS_STRING_SAMPLE);
 				str=strt;
 				str+=L" ";
 				strt.LoadStringW(IDS_STRING_CONCERTRATION);
@@ -2763,7 +2766,7 @@ CString Compute( const std::vector<DataOutA> &dol, const ANPara &p1, std::vector
 				//str.Format(L"Lc=%g,SPc=%g",Lc,SPc);
 
 
-								strt.LoadStringW(IDS_STRING_SAMPLE);
+				strt.LoadStringW(IDS_STRING_SAMPLE);
 				str=strt;
 				str+=L" ";
 				strt.LoadStringW(IDS_STRING_CONCERTRATION);
@@ -2817,7 +2820,7 @@ UINT PROCESS(LPVOID pParam)
 
 	ProcessState *pst=((mypara*)pParam)->psta;
 
-	COutputList* ol=ow->GetListCtrl();
+	COutputListA* ol=ow->GetListCtrl();
 	//ol->DeleteAllItems();
 
 	CanalyzerDoc* pDoc=lv->GetDocument();
@@ -2843,27 +2846,26 @@ UINT PROCESS(LPVOID pParam)
 		strerr.LoadStringW(IDS_STRING_STEP_ERROR);
 		::SendMessage(cba->GetSafeHwnd(),MESSAGE_OVER,(WPARAM)(strerr.GetBuffer()),NULL);
 		*pst=stop;
-		
 		return 1;
 	}
 	::SendMessage(cba->GetSafeHwnd(),MESSAGE_WAIT_RESPONSE,(WPARAM)&(v2a),NULL);
 
 	*pst=pause;
 	WaitSecond(*pst);
-					/////////////////////////////////////////
+	/////////////////////////////////////////
 	{		
-			TCHAR szFilters[]= _T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||");
-	CFileDialog fileDlg(TRUE, _T("txt"), _T("*.txt"),
-		OFN_FILEMUSTEXIST | OFN_HIDEREADONLY /*| OFN_ALLOWMULTISELECT*/ , szFilters);
-	if(fileDlg.DoModal() == IDOK)
-	{ 
-		filelist.assign(1,fileDlg.GetPathName());
+		//TCHAR szFilters[]= _T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||");
+		//CFileDialog fileDlg(TRUE, _T("txt"), _T("*.txt"),
+		//	OFN_FILEMUSTEXIST | OFN_HIDEREADONLY /*| OFN_ALLOWMULTISELECT*/ , szFilters);
+		//if(fileDlg.DoModal() == IDOK)
+		//{ 
+		//	filelist.assign(1,fileDlg.GetPathName());
+		//}
+		//else{
+		//	return 9;
+		//}
 	}
-	else{
-		return 9;
-	}
-	}
-				////////////////////////////////////////
+	////////////////////////////////////////
 	::SendMessage(cba->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
 
 	lv->bMouseCursor=rv->bMouseCursor=false;
@@ -2921,7 +2923,8 @@ UINT PROCESS(LPVOID pParam)
 
 			::PostMessage(rv->GetSafeHwnd(),MESSAGE_UPDATE_TEST,NULL,NULL);
 			::PostMessage(lv->GetSafeHwnd(),MESSAGE_UPDATE_RAW,NULL,NULL);
-			::PostMessage(ol->GetSafeHwnd(),MESSAGE_SHOW_DOL,NULL,NULL);
+			//::PostMessage(ol->GetSafeHwnd(),MESSAGE_SHOW_DOL,NULL,NULL);
+			::SendMessage(ol->GetSafeHwnd(),MESSAGE_SHOW_DOL,NULL,NULL);
 			Sleep(sleepms);
 
 			if(runstate==5){
@@ -2930,16 +2933,16 @@ UINT PROCESS(LPVOID pParam)
 				WaitSecond(*pst);
 				/////////////////////////////////////////
 				{
-							TCHAR szFilters[]= _T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||");
-	CFileDialog fileDlg(TRUE, _T("txt"), _T("*.txt"),
-		OFN_FILEMUSTEXIST | OFN_HIDEREADONLY /*| OFN_ALLOWMULTISELECT*/ , szFilters);
-	if(fileDlg.DoModal() == IDOK)
-	{ 
-		filelist.push_back(fileDlg.GetPathName());
-	}
-	else{
-		return 9;
-	}
+					//TCHAR szFilters[]= _T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||");
+					//CFileDialog fileDlg(TRUE, _T("txt"), _T("*.txt"),
+					//	OFN_FILEMUSTEXIST | OFN_HIDEREADONLY /*| OFN_ALLOWMULTISELECT*/ , szFilters);
+					//if(fileDlg.DoModal() == IDOK)
+					//{ 
+					//	filelist.push_back(fileDlg.GetPathName());
+					//}
+					//else{
+					//	return 9;
+					//}
 				}
 				////////////////////////////////////////
 				::SendMessage(cba->GetSafeHwnd(),MESSAGE_BUSY,NULL,NULL);
@@ -2955,10 +2958,10 @@ UINT PROCESS(LPVOID pParam)
 				//break;
 			}
 		}
-		
+
 	}
 
-	
+
 
 
 

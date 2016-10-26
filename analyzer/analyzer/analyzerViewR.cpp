@@ -25,7 +25,7 @@ IMPLEMENT_DYNCREATE(CanalyzerViewR, CanalyzerView)
 	afx_msg LRESULT CanalyzerViewR::OnMessageUpdateTest(WPARAM wParam, LPARAM lParam)
 	{
 		CMainFrame *mf=(CMainFrame*)(GetParentFrame());
-		COutputList* ol=mf->GetOutputWnd()->GetListCtrl();
+		COutputListA* ol=mf->GetOutputWnd()->GetListCtrl();
 
 		CanalyzerDoc* pDoc = GetDocument();
 
@@ -47,7 +47,7 @@ IMPLEMENT_DYNCREATE(CanalyzerViewR, CanalyzerView)
 	afx_msg LRESULT CanalyzerViewR::OnMessageComputeResult(WPARAM wParam, LPARAM lParam)
 	{
 		CMainFrame *mf=(CMainFrame*)(GetParentFrame());
-		COutputList* ol=mf->GetOutputWnd()->GetListCtrl();
+		COutputListA* ol=mf->GetOutputWnd()->GetListCtrl();
 
 		CanalyzerDoc* pDoc = GetDocument();
 

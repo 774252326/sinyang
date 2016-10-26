@@ -1,7 +1,8 @@
 
 #pragma once
 
-#include "OutputList.h"
+//#include "OutputList.h"
+#include "OutputListA.h"
 
 ////#include "DataOut.h"
 //#include "DataOutA.h"
@@ -54,7 +55,7 @@ protected:
 	//COutputList m_wndOutputDebug;
 	//COutputList m_wndOutputFind;
 
-	COutputList m_listCtrlMonitor;
+	COutputListA m_listCtrlMonitor;
 
 protected:
 //	void FillBuildWindow();
@@ -67,13 +68,13 @@ protected:
 public:
 	virtual ~COutputWnd();
 
-	COutputList* GetListCtrl(){return &m_listCtrlMonitor;}
-	BOOL clear(void);
+	COutputListA* GetListCtrl(){return &m_listCtrlMonitor;}
+
 
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
-
+	BOOL clear(void);
 	DECLARE_MESSAGE_MAP()
 
 };

@@ -74,7 +74,7 @@ IMPLEMENT_DYNCREATE(CanalyzerViewL, CanalyzerView)
 		// TODO: Add your specialized code here and/or call the base class
 
 		CMainFrame *mf=(CMainFrame*)(GetParentFrame());
-		COutputList* ol=mf->GetOutputWnd()->GetListCtrl();
+		COutputListA* ol=mf->GetOutputWnd()->GetListCtrl();
 		//CanalyzerViewR* rv=((CanalyzerViewR*)(mf->m_wndSplitter.GetPane(0,1)));
 		//CanalyzerDoc* pDoc = GetDocument();
 		//POSITION pos = pDoc->GetFirstViewPosition();
@@ -92,7 +92,7 @@ IMPLEMENT_DYNCREATE(CanalyzerViewL, CanalyzerView)
 		CanalyzerDoc* pDoc = GetDocument();
 
 		CMainFrame *mf=(CMainFrame*)(GetParentFrame());
-		COutputList* ol=mf->GetOutputWnd()->GetListCtrl();
+		COutputListA* ol=mf->GetOutputWnd()->GetListCtrl();
 
 		pdl.clear();
 		UINT flg=RawData2PlotDataList(pDoc->raw, ol->dol, psview, pdl);
@@ -112,7 +112,7 @@ IMPLEMENT_DYNCREATE(CanalyzerViewL, CanalyzerView)
 	case 1:
 		{
 			CMainFrame *mf=(CMainFrame*)(GetParentFrame());
-			COutputList* ol=mf->GetOutputWnd()->GetListCtrl();
+			COutputListA* ol=mf->GetOutputWnd()->GetListCtrl();
 			::SendMessage(ol->GetSafeHwnd(),MESSAGE_UPDATE_DOL,NULL,NULL);
 		}
 		break;

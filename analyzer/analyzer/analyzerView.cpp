@@ -102,12 +102,19 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		if(selectIdx<0 || selectIdx>=pdl.size())
 			return;
 
-		CDC dcMem;//用于缓冲作图的内存DC
-		CBitmap bmp;//内存中承载临时图象的位图
+
+
+
 		CRect rect;
 		GetClientRect(&rect);
-		dcMem.CreateCompatibleDC(pDC);//依附窗口DC创建兼容内存DC
+		//if(rect.IsRectEmpty()==TRUE)
+		//	return;
 		CSize winsz=rect.Size();
+
+		CDC dcMem;//用于缓冲作图的内存DC
+		dcMem.CreateCompatibleDC(pDC);//依附窗口DC创建兼容内存DC
+
+		CBitmap bmp;//内存中承载临时图象的位图
 		bmp.CreateCompatibleBitmap(pDC,winsz.cx,winsz.cy);//创建兼容位图
 		dcMem.SelectObject(&bmp);  	//将位图选择进内存DC
 
@@ -621,6 +628,10 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		pDC->SetMapMode(MM_ANISOTROPIC); //转换坐标映射方式
 		CRect rect;
 		this->GetClientRect(&rect);
+		
+		if(rect.IsRectEmpty()==TRUE)
+			return;
+
 		CSize wsize = rect.Size(); 
 		pDC->SetWindowExt(wsize); 
 
@@ -637,10 +648,20 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		int xLogPixPerInch = pDC->GetDeviceCaps(LOGPIXELSX); 
 		int yLogPixPerInch = pDC->GetDeviceCaps(LOGPIXELSY); 
 		//得到设备坐标和逻辑坐标的比例
+
+		//if(xLogPixPerInch0<=0 || yLogPixPerInch0<=0)
+		//	return;
+
+		//if(xLogPixPerInch0<=0)
+		//	xLogPixPerInch0=1;
+		//if(yLogPixPerInch0<=0)
+		//	yLogPixPerInch0=1;
+
 		CSize vsize(wsize.cx * xLogPixPerInch/xLogPixPerInch0, wsize.cy * yLogPixPerInch/yLogPixPerInch0);
 		pDC->SetViewportExt(vsize); //确定视口大小
 
 		CView::OnPrepareDC(pDC, pInfo);
+		
 	}
 
 
@@ -686,19 +707,9 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 	{
 		// TODO: Add your command handler code here
 
-		//CString fp=L"C:\\Users\\r8anw2x\\Desktop\\新增資料夾\\17 Sep 0.2S 0.2A L\\2110base1.txt";
 
-		//pcct data;
-		//data.readFile1(fp);
-		//data.TomA();
+		//testdlg td;
 
-		//data.seperate();
-		//double bb=data.intg2(1);
-		//double a=data.intg1();
-
-
-		testdlg td;
-
-		td.DoModal();
+		//td.DoModal();
 
 	}

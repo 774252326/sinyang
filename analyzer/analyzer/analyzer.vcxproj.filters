@@ -107,6 +107,15 @@
     <None Include="res\qq16.ico">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="res\icon6.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\RDE-logo.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\IMG_20131002_154626_4.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="analyzer.h">
@@ -134,9 +143,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MFCCaptionBarA.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OutputList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="func.h">
@@ -247,9 +253,6 @@
     <ClInclude Include="AccountList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SolutionAdditionParametersPageB.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ListCtrlSAPB.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -266,6 +269,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PropertySheetA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OutputListA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StartDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -289,9 +298,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MFCCaptionBarA.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="OutputList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="func.cpp">
@@ -405,9 +411,6 @@
     <ClCompile Include="AccountList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SolutionAdditionParametersPageB.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ListCtrlSAPB.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -424,6 +427,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PropertySheetA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OutputListA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StartDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

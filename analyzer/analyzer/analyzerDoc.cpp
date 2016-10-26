@@ -97,6 +97,8 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		p3=SAPara();
 		raw=RawData();
 
+		OnAnalysisMethodsetup();
+
 		return TRUE;
 	}
 
@@ -329,7 +331,7 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		POSITION pos = GetFirstViewPosition();
 		CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));
 		CMainFrame *mf=(CMainFrame*)(lv->GetParentFrame());
-		COutputList *ol=mf->GetOutputWnd()->GetListCtrl();
+		COutputListA *ol=mf->GetOutputWnd()->GetListCtrl();
 
 		CanalyzerViewR* rv=((CanalyzerViewR*)GetNextView(pos));
 

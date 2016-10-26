@@ -13,6 +13,7 @@ public:
 	int CheckUserAccount(CString username, CString password);
 	void operator=(const AccountList &src);
 	AccountList(const AccountList &src){ operator=(src); };
+	bool IsAdmin(int i);
 };
 
 

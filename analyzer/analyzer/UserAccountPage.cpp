@@ -25,6 +25,8 @@ IMPLEMENT_DYNAMIC(UserAccountPage, CPropertyPage)
 UserAccountPage::~UserAccountPage()
 {
 	delete [] m_psp.pszTitle;
+	//ListCtrlUA *pul=(ListCtrlUA*)GetDlgItem(IDS_STRING_LIST_ACCOUNT);
+	//delete pul;
 }
 
 void UserAccountPage::DoDataExchange(CDataExchange* pDX)
@@ -64,10 +66,16 @@ int UserAccountPage::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		| WS_VSCROLL 
 		| LBS_NOINTEGRALHEIGHT;
 
+	//ListCtrlUA *pul=new ListCtrlUA(al.IsAdmin(useIndex));
+	userList.SetEditable(al.IsAdmin(useIndex));
+
+	//if(!pul->Create(dwStyle, CRect(pt,winrect.Size()), this, IDS_STRING_LIST_ACCOUNT) ){
 	if(!userList.Create(dwStyle, CRect(pt,winrect.Size()), this, IDS_STRING_LIST_ACCOUNT) ){
 		TRACE0("Failed to create output windows\n");
 		return -1;      // fail to create
 	}
+
+
 
 	SetList();
 
@@ -81,7 +89,10 @@ BOOL UserAccountPage::OnSetActive()
 
 	CPropertySheet* psheet = (CPropertySheet*) GetParent();   
 	psheet->SetWizardButtons(PSWIZB_FINISH);
-	psheet->SetFinishText(_T("OK"));
+
+	CString str;
+	str.LoadStringW(IDS_STRING_OK);
+	psheet->SetFinishText(str);
 
 
 	return CPropertyPage::OnSetActive();
@@ -90,24 +101,30 @@ BOOL UserAccountPage::OnSetActive()
 
 void UserAccountPage::SetList(void)
 {	
+	//ListCtrlUA *pul=(ListCtrlUA*)GetDlgItem(IDS_STRING_LIST_ACCOUNT);
 	for(size_t i=0;i<al.ual.size();i++){
+		//pul->InsertItemUA(i,al.ual[i],(i==useIndex));
 		userList.InsertItemUA(i,al.ual[i],(i==useIndex));
-	}	
+	}
 }
 
 
 void UserAccountPage::GetList(void)
 {
-	int nItem=userList.GetItemCount();
-	al.ual.resize(nItem);
-	
-	useIndex=-2;
+	if(al.IsAdmin(useIndex)){
 
-	for(size_t i=0;i<al.ual.size();i++){
-		bool buse=false;
-		userList.GetItemUA(i,al.ual[i],buse);
-		if(buse){
-			useIndex=i;
+		int nItem=userList.GetItemCount();
+		al.ual.resize(nItem);
+		//ListCtrlUA *pul=(ListCtrlUA*)GetDlgItem(IDS_STRING_LIST_ACCOUNT);
+		useIndex=-2;
+
+		for(size_t i=0;i<al.ual.size();i++){
+			bool buse=false;
+			userList.GetItemUA(i,al.ual[i],buse);
+			//pul->GetItemUA(i,al.ual[i],buse);
+			if(buse){
+				useIndex=i;
+			}
 		}
 	}
 
@@ -117,7 +134,6 @@ void UserAccountPage::GetList(void)
 BOOL UserAccountPage::OnKillActive()
 {
 	// TODO: Add your specialized code here and/or call the base class
-
 	GetList();
 
 	return CPropertyPage::OnKillActive();
@@ -127,7 +143,6 @@ BOOL UserAccountPage::OnKillActive()
 BOOL UserAccountPage::OnWizardFinish()
 {
 	// TODO: Add your specialized code here and/or call the base class
-
 	GetList();
 
 	return CPropertyPage::OnWizardFinish();

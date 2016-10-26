@@ -59,7 +59,7 @@ void ListCtrlAA::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 
 
 		//((CFrameWndEx*)AfxGetMainWnd())->OnShowPopupMenu(pPopupMenu);
-		//this->GetParent()->ons
+
 		UpdateDialogControls(this, FALSE);
 	}
 

@@ -97,7 +97,7 @@ void AdjustWidth(CListCtrl *ls, int nCol, CString str, int gap=15);
 void AdjustWidth(CListCtrl *ls, int nCol, int nRow, int gap=15);
 
 UINT DataOutAList2PlotDataList(const std::vector<DataOutA> &dol, const ANPara &p1, PlotSpec ps0, std::vector<PlotData> &pdl);
-UINT RawData2PlotDataList(const RawData &raw, const std::vector<DataOutA> &dol, PlotSpec ps0, std::vector<PlotData> &pdl);
+UINT RawData2PlotDataList(const RawData &raw, const std::vector<DataOutA> dol, PlotSpec ps0, std::vector<PlotData> &pdl);
 CString Compute( const std::vector<DataOutA> &dol, const ANPara &p1, std::vector<PlotData> &pdl, bool bDraw );
 bool Compute(const std::vector<DataOutA> &dol, const ANPara &p1, std::vector<CString> &res);
 
