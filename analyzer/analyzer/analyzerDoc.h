@@ -75,5 +75,12 @@ public:
 	bool SaveImage(const PlotData & pd, CSize sz, CString filepath);
 
 	bool SaveImagePrint(PlotData & pd, CSize sz, CString filepath);
-	int pdfd(CString filepath);
+	int pdfd(CString filepath,
+		bool b1,
+		bool b2,
+		bool b3,
+		bool b4,
+		bool b5,
+		bool b6,
+		bool b7);
 };

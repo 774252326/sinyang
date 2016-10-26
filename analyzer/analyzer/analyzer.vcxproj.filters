@@ -94,6 +94,12 @@
     <None Include="res\messagebar_2.bmp">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="res\astri.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\index_02_01_01.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="analyzer.h">
@@ -228,6 +234,9 @@
     <ClInclude Include="MFCToolBarA.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ReportDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="analyzer.cpp">
@@ -336,6 +345,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MFCToolBarA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ReportDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

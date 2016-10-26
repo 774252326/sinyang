@@ -27,6 +27,7 @@
 #include "pdfout.h"
 #include "func.h"
 
+//#include "ReportDlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -417,16 +418,85 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		fp=fp.Left(fp.ReverseFind('\\')+1);
 		fp+=TimeString()+L".pdf";
 
-		//if(pdfd(fp,this)==0){
-		if(pdfd(fp)==0){
-			//AfxMessageBox(L"report "+fp+L" is saved");
 
-			ShellExecute(NULL, L"open", fp, NULL, NULL, SW_SHOW);
-		}
-		else{
-			AfxMessageBox(IDS_STRING_SAVE_ERROR);
-		}
+		//ReportDlg sea;
 
+		TCHAR szFilters[]= _T("PDF Files (*.pdf)|*.pdf||");
+
+		CFileDialog se(FALSE,L"pdf",TimeString()+L".pdf",OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,szFilters);
+
+		//se.SetWindowTextW(L"save report");
+
+		//se.AddText(2000,L"items");
+		//se.AddSeparator(2001);
+		//se.AddSeparator(2002);
+		//se.AddRadioButtonList(2002);
+
+		CString str;
+
+		str.LoadStringW(IDS_STRING_ANALYSIS_PARA);
+		se.AddCheckButton(IDS_STRING_ANALYSIS_PARA,str,TRUE);
+
+		str.LoadStringW(IDS_STRING_CV_PARA);
+		se.AddCheckButton(IDS_STRING_CV_PARA,str,TRUE);
+
+		str.LoadStringW(IDS_STRING_ADDITION_SOLUTION_PARA);
+		se.AddCheckButton(IDS_STRING_ADDITION_SOLUTION_PARA,str,TRUE);
+
+		str.LoadStringW(IDS_STRING_RESULT);
+		se.AddCheckButton(IDS_STRING_RESULT,str,TRUE);
+
+		str.LoadStringW(IDS_OUTPUT_WND);
+		se.AddCheckButton(IDS_OUTPUT_WND,str,TRUE);
+
+		str.LoadStringW(IDS_STRING_TEST_CURVE);
+		se.AddCheckButton(IDS_STRING_TEST_CURVE,str,TRUE);
+
+		str.LoadStringW(IDS_STRING_VOLTAMMOGRAM);
+		se.AddCheckButton(IDS_STRING_VOLTAMMOGRAM,str,TRUE);
+
+
+		//se.AddControlItem(IDD_DIALOG4,2000,L"re");
+
+
+		if(se.DoModal()==IDOK){
+
+			CString fp = se.GetPathName();
+
+			BOOL chk1,chk2,chk3,chk4,chk5,chk6,chk7;
+			se.GetCheckButtonState(IDS_STRING_ANALYSIS_PARA,chk1);
+			se.GetCheckButtonState(IDS_STRING_CV_PARA,chk2);
+			se.GetCheckButtonState(IDS_STRING_ADDITION_SOLUTION_PARA,chk3);
+			se.GetCheckButtonState(IDS_STRING_RESULT,chk4);
+			se.GetCheckButtonState(IDS_OUTPUT_WND,chk5);
+			se.GetCheckButtonState(IDS_STRING_TEST_CURVE,chk6);
+			se.GetCheckButtonState(IDS_STRING_VOLTAMMOGRAM,chk7);
+
+
+			//BYTE sel=se.GetSelection();
+
+			//CString str;
+			str.LoadString(IDS_STRING_REPORTING);
+			str+=fp;
+			POSITION pos = GetFirstViewPosition();
+			CMainFrame *mf=(CMainFrame*)(GetNextView(pos)->GetParentFrame());
+			mf->GetCaptionBar()->ShowMessage(str);
+
+
+			//if(pdfd(fp,this)==0){
+			if(pdfd(fp,chk1,chk2,chk3,chk4,chk5,chk6,chk7)==0){
+				//AfxMessageBox(L"report "+fp+L" is saved");
+				mf->GetCaptionBar()->ShowMessage(L"");
+				ShellExecute(NULL, L"open", fp, NULL, NULL, SW_SHOW);			
+			}
+			else{
+				//AfxMessageBox(IDS_STRING_SAVE_ERROR);
+
+				str.LoadString(IDS_STRING_SAVE_ERROR);
+				mf->GetCaptionBar()->ShowMessage(str);
+			}
+
+		}
 
 	}
 
@@ -513,8 +583,17 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		return false;
 	}
 
-	int CanalyzerDoc::pdfd(CString outfile)
+	int CanalyzerDoc::pdfd(CString outfile, 
+		bool b1,
+		bool b2,
+		bool b3,
+		bool b4,
+		bool b5,
+		bool b6,
+		bool b7
+		)
 	{
+
 		const std::wstring searchpath = L"../data";
 
 		const std::wstring temppdf = L"temp.pdf";
@@ -537,35 +616,75 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		p.set_info(L"Creator", L"PDFlib starter sample");
 		p.set_info(L"Title", L"starter_table");
 
-		int a;
 
+		CString templogobmp=L"templogo.bmp";
+
+
+
+		CBitmap bmp;
+		bmp.LoadBitmap(IDB_BITMAP_SINYANG);
+		CImage img;
+		//img.LoadFromResource(NULL,IDB_BITMAP_SINYANG);
+		img.Attach(HBITMAP(bmp));
+		HRESULT hResult = img.Save((LPCTSTR)templogobmp);
+		bmp.DeleteObject();
+		//if (SUCCEEDED(hResult))
+
+
+		int a;
 
 		std::vector<CString> res;
 		bool flg=Compute(dol, p1, res);
 
-		a=pdfout6(p,p1,res,p2,p3);
+		a=pdfout6(p,p1,res,p2,p3,b1,b2,b3,b4);
 
-		a=pdfout(p,dol);
-		
+		if(b5){
+			a=pdfout(p,dol);
+		}
+
+
 		std::vector<PlotData> pdl;
-		pdl.assign(lp.begin(),lp.end());
-		pdl.resize(rp.size()+lp.size());
-		std::copy_backward(rp.begin(),rp.end(),pdl.end());
-
-		CString str;
-		str.LoadStringW(IDS_STRING_VOLTAMMOGRAM);
 		std::vector<CString> nl;
-		nl.assign(lp.size(),str);
-		str.LoadStringW(IDS_STRING_TEST_CURVE);
-		nl.resize(rp.size()+lp.size(),str);
+
+		if(b7){
+			pdl.assign(lp.begin(),lp.end());
+			CString str;
+			str.LoadStringW(IDS_STRING_VOLTAMMOGRAM);
+			nl.assign(lp.size(),str);
+
+			if(b6){
+				pdl.resize(rp.size()+lp.size());
+				std::copy_backward(rp.begin(),rp.end(),pdl.end());
+				str.LoadStringW(IDS_STRING_TEST_CURVE);
+				nl.resize(rp.size()+lp.size(),str);
+			}
 
 
-		POSITION pos = GetFirstViewPosition();
-		CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));	
-		CDC* pdc=lv->GetDC();
 
-		//a=imgout2(p,pdc,pdl,nl,CSize(1200,800));
-		a=imgout2(p,pdc,pdl,nl);
+			POSITION pos = GetFirstViewPosition();
+			CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));	
+			CDC* pdc=lv->GetDC();
+
+			//a=imgout2(p,pdc,pdl,nl,CSize(1200,800));
+			a=imgout2(p,pdc,pdl,nl);
+		}
+		else{
+			if(b6){
+				pdl.assign(rp.begin(),rp.end());
+				CString str;
+				str.LoadStringW(IDS_STRING_TEST_CURVE);
+				nl.assign(rp.size(),str);
+
+				POSITION pos = GetFirstViewPosition();
+				CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));	
+				CDC* pdc=lv->GetDC();
+
+				//a=imgout2(p,pdc,pdl,nl,CSize(1200,800));
+				a=imgout2(p,pdc,pdl,nl);
+
+
+			}
+		}
 
 		//a=imgout2(p,this,pdl,nl);
 
@@ -574,6 +693,7 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		AddPageNumber(temppdf,(LPCWSTR)outfile);
 
 		CFile::Remove(temppdf.c_str());
+		CFile::Remove(templogobmp);
 
 		return 0;
 		//return 0;

@@ -101,8 +101,10 @@
     <None Include="res\analyzer.ico" />
     <None Include="res\analyzer.rc2" />
     <None Include="res\analyzerDoc.ico" />
+    <None Include="res\astri.bmp" />
     <None Include="res\bmp00001.bmp" />
     <None Include="res\hottoolb.bmp" />
+    <None Include="res\index_02_01_01.bmp" />
     <None Include="res\info.bmp" />
     <None Include="res\mainfram.bmp" />
     <None Include="res\menutoolb.bmp" />
@@ -154,6 +156,7 @@
     <ClInclude Include="PlotSettingPageA.h" />
     <ClInclude Include="PlotSpec.h" />
     <ClInclude Include="Point2d.h" />
+    <ClInclude Include="ReportDlg.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SAPara.h" />
     <ClInclude Include="sapitemA.h" />
@@ -196,6 +199,7 @@
     <ClCompile Include="PlotSettingPageA.cpp" />
     <ClCompile Include="PlotSpec.cpp" />
     <ClCompile Include="Point2d.cpp" />
+    <ClCompile Include="ReportDlg.cpp" />
     <ClCompile Include="SAPara.cpp" />
     <ClCompile Include="sapitemA.cpp" />
     <ClCompile Include="SolutionAdditionParametersPageA.cpp" />

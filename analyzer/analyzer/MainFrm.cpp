@@ -138,7 +138,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		, FALSE /* Not locked */
 		, 0
 		, 0
-		, IDB_BITMAP5
+		, IDB_BITMAP6
 		//, uiToolbarColdID
 		//, 0
 		))

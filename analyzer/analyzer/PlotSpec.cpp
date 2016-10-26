@@ -8,6 +8,7 @@
 
 
 const int ndiv=10;
+const float bias=0.35;
 const int ncr=3;
 const int ncritm=5;
 const COLORREF crl[]={
@@ -66,19 +67,62 @@ const COLORREF crl[]={
 	RGB(0,0,0)
 };
 
+
+
+
+
+
+COLORREF ContractCr(COLORREF oc, float hbias){
+	float rgb[3];
+	GetrgbT(oc,rgb);
+	float hsv[3];
+	rgb2hsv(hsv,rgb);
+
+	//float ni=bias+(float)(i-1)/ndiv;
+	hsv[0]+=hbias;
+	if(hsv[0]>=1)
+		hsv[0]-=1;
+
+	hsv[1]=1;
+
+	if(hsv[2]>0.5){
+		hsv[2]-=0.5;
+	}
+	else{
+		hsv[2]+=0.5;
+	}
+
+
+
+	hsv2rgb(hsv,rgb);
+
+	COLORREF nc=RGB(255*rgb[0],255*rgb[1],255*rgb[2]);
+
+	//COLORREF nc=genColor(hsv[0]);
+	return nc;
+}
+
+
+
+
+
+
+
+
+
 // PlotSpec
 
 PlotSpec::PlotSpec()
-	: bkgndC(0)
-	, borderC(0)
+	: bkgndC(RGB(255,255,255))
+	, borderC(RGB(255,255,255))
 	, gridC(0)
 	, gridType(5)
 	, labelC(0)
 	, labelSize(20)
 	, metricC(0)
-	, metricSize(15)
+	, metricSize(20)
 	, legendPos(2)
-	, winbkC(0)
+	, winbkC(RGB(255,255,255))
 {
 }
 
@@ -93,7 +137,7 @@ PlotSpec::PlotSpec(int i)
 	SetCr(i);
 	gridType=5;
 	labelSize=20;
-	metricSize=15;
+	metricSize=20;
 	legendPos=2;
 }
 
@@ -140,7 +184,7 @@ PlotSpec::PlotSpec(int i, COLORREF ic)
 
 	gridType=5;
 	labelSize=20;
-	metricSize=15;
+	metricSize=20;
 	legendPos=2;
 
 	winbkC=ic;
@@ -233,19 +277,42 @@ int PlotSpec::GetCrType(void)
 }
 
 
+
+
+
+
+
+
+
+
 void PlotSpec::SetCr(int i)
 {
-	float rgb[3];
-	GetrgbT(winbkC,rgb);
-	float hsv[3];
-	rgb2hsv(hsv,rgb);
+	//float rgb[3];
+	//GetrgbT(winbkC,rgb);
+	//float hsv[3];
+	//rgb2hsv(hsv,rgb);
 
-	float ni=0.35+(float)(i-1)/ndiv;
-	hsv[0]+=ni;
-	if(hsv[0]>=1)
-		hsv[0]-=1;
+	//float ni=bias+(float)(i-1)/ndiv;
+	//hsv[0]+=ni;
+	//if(hsv[0]>=1)
+	//	hsv[0]-=1;
 
-	COLORREF nc=genColor(hsv[0]);
+	//hsv[1]=1;
+
+	//if(hsv[2]>0.5){
+	//	hsv[2]-=0.5;
+	//}
+	//else{
+	//	hsv[2]+=0.5;
+	//}
+
+	//hsv2rgb(hsv,rgb);
+
+	//COLORREF nc=RGB(255*rgb[0],255*rgb[1],255*rgb[2]);
+
+	//COLORREF nc=genColor(hsv[0]);
+
+	COLORREF nc=ContractCr(winbkC,bias+(float)(i-1)/ndiv);
 
 	metricC=labelC=nc;
 

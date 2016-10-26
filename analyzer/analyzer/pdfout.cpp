@@ -14,7 +14,15 @@
 
 
 //const std::wstring logofile = L"res\\sinyang.bmp";
-const std::wstring logofile = L"res\\index_02_01_01.jpg";
+//const std::wstring logofile = L"res\\index_02_01_01.jpg";
+const std::wstring logofile = L"templogo.bmp";
+
+
+
+
+
+
+
 
 int AddPageNumber(const std::wstring fin, const std::wstring fout)
 {
@@ -2209,7 +2217,17 @@ void AddRES(pdflib::PDFlib &p, int & tbl, int & row, int & col, int colmax, int 
 }
 
 
-int pdfout6(pdflib::PDFlib &p, const ANPara &para, const std::vector<CString> &res, const CVPara &p2, const SAPara &p3){
+int pdfout6(
+	pdflib::PDFlib &p, 
+	const ANPara &para, 
+	const std::vector<CString> &res, 
+	const CVPara &p2, 
+	const SAPara &p3,
+	bool b1,
+	bool b2,
+	bool b3,
+	bool b4
+	){
 
 
 	int titlesize=16;
@@ -2368,7 +2386,7 @@ int pdfout6(pdflib::PDFlib &p, const ANPara &para, const std::vector<CString> &r
 	/* ---------- Row 1: table header (spans all columns) */
 
 
-
+	if(b1){
 
 	optlist.str(L"");
 	optlist << L"fittextline={position={left center} font=" << font		
@@ -2381,6 +2399,7 @@ int pdfout6(pdflib::PDFlib &p, const ANPara &para, const std::vector<CString> &r
 
 	AddANP(p,tbl,row,col,colmax,font,para);
 
+	}
 	//str.LoadStringW(IDS_STRING_ANALYSIS_PARA);
 	//tbl = p.add_table_cell(tbl, col, row, (LPCWSTR)str, optlist.str());
 
@@ -2567,6 +2586,8 @@ int pdfout6(pdflib::PDFlib &p, const ANPara &para, const std::vector<CString> &r
 	//}
 
 	/* ---------- Row 1: table header (spans all columns) */
+
+if(b2){
 	optlist.str(L"");
 	optlist << L"fittextline={position={left center} font=" << font		
 		<< L" fontsize=" << fsize << L"}"
@@ -2577,7 +2598,7 @@ int pdfout6(pdflib::PDFlib &p, const ANPara &para, const std::vector<CString> &r
 	row++;
 
 	AddCVP(p,tbl,row,col,colmax,font,p2);
-
+}
 	//optlist.str(L"");
 	//optlist << L"fittextline={position={left center} font=" << font		
 	//	<< L" fontsize=" << fsize << L"}"
@@ -2661,7 +2682,7 @@ int pdfout6(pdflib::PDFlib &p, const ANPara &para, const std::vector<CString> &r
 
 
 	/* ---------- Row 1: table header (spans all columns) */
-
+if(b3){
 	optlist.str(L"");
 	optlist << L"fittextline={position={left center} font=" << font		
 		<< L" fontsize=" << fsize << L"}"
@@ -2680,7 +2701,7 @@ int pdfout6(pdflib::PDFlib &p, const ANPara &para, const std::vector<CString> &r
 	//int sarowstart=row;
 
 	AddSAP(p,tbl,row,col,colmax,font,p3);
-
+}
 	//str.LoadStringW(IDS_STRING520);	
 	//optlist.str(L"");
 	//optlist << L"fittextline={position={center} font=" << font		
@@ -2871,7 +2892,7 @@ int pdfout6(pdflib::PDFlib &p, const ANPara &para, const std::vector<CString> &r
 	//col=1;
 
 	/* ---------- Row 1: table header (spans all columns) */
-
+	if(b4){
 	optlist.str(L"");
 	optlist << L"fittextline={position={left center} font=" << font		
 		<< L" fontsize=" << fsize << L"}"
@@ -2883,7 +2904,7 @@ int pdfout6(pdflib::PDFlib &p, const ANPara &para, const std::vector<CString> &r
 
 
 	AddRES(p,tbl,row,col,colmax,font,res);
-
+	}
 
 	//str.LoadStringW(IDS_STRING_RESULT);
 
@@ -2963,6 +2984,7 @@ int pdfout6(pdflib::PDFlib &p, const ANPara &para, const std::vector<CString> &r
 
 
 	optlist.str(L"");
+	if(b3){
 	optlist <<L"fill={";
 	for(int i=sarowend-p3.saplist.size()-1;i<sarowend;i+=2){
 		optlist << L"{area=row"
@@ -2971,7 +2993,7 @@ int pdfout6(pdflib::PDFlib &p, const ANPara &para, const std::vector<CString> &r
 	}
 	optlist << L"} "; 
 	//optlist << L"stroke={{line=other}} ";
-
+	}
 
 	/* ---------- Place the table on one or more pages ---------- */
 

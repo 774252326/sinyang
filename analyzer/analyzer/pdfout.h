@@ -30,4 +30,12 @@ int imgout2(
 
 int pdfout(pdflib::PDFlib &p, const std::vector<DataOutA> &dol);
 
-int pdfout6(pdflib::PDFlib &p, const ANPara &para, const std::vector<CString> &res, const CVPara &p2, const SAPara &p3);
+int pdfout6(pdflib::PDFlib &p, 
+	const ANPara &para, 
+	const std::vector<CString> &res, 
+	const CVPara &p2, 
+	const SAPara &p3,
+	bool b1=true,
+	bool b2=true,
+	bool b3=true,
+	bool b4=true);

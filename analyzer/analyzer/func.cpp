@@ -79,8 +79,8 @@ void WaitSecond(ProcessState &waitflg
 	)
 {
 	int interval=1000;
-	while( second<0
-		||(waitflg!=running && second--!=0)
+	while( //second<0||
+		(waitflg!=running && second--!=0)
 		){
 		Sleep(interval);
 	}

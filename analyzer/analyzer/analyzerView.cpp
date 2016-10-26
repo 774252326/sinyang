@@ -797,7 +797,7 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		updatePlotRange();
 
 		::SendMessage(this->GetSafeHwnd(),MESSAGE_CHANGE_APPLOOK,(WPARAM)bkcr,NULL);
-		::SendMessage(this->GetSafeHwnd(),MESSAGE_GET_PLOTSPEC,NULL,NULL);
+		//::SendMessage(this->GetSafeHwnd(),MESSAGE_GET_PLOTSPEC,NULL,NULL);
 
 		if(lri==0){
 			CMainFrame *mf=(CMainFrame*)(GetParentFrame());
@@ -944,6 +944,9 @@ IMPLEMENT_DYNCREATE(CanalyzerView, CView)
 		PlotData * pd=GetPD();
 		if(pd!=NULL){
 			psview=pd->psp;
+		}
+		else{
+			psview=PlotSpec(0,bkcr);
 		}
 
 		return 0;
