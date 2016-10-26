@@ -18,7 +18,7 @@
 
 
 #include <string.h>
-#include "../../o3/o3/ro.h"
+//#include "../../o3/o3/ro.h"
 
 
 // Co4View
@@ -60,7 +60,7 @@ IMPLEMENT_DYNCREATE(Co4View, CView)
 		, m_yPos(0)
 		, m_zPos(-1)
 		, m_MouseDownPoint(0)
-		, raidus(0.01)
+		, raidus(0.001)
 	{
 		// TODO: add construction code here
 
@@ -364,11 +364,11 @@ IMPLEMENT_DYNCREATE(Co4View, CView)
 		//////////////////////////////////////////////////////////////////
 
 		size_t i;
-
+		//int ccc=0;
 		for(i=0;i<pc.plist.size();i++){
 			glPushMatrix();
-			glColor3dv(pc.clist[i].pt3);
-			glTranslated(pc.plist[i].pt3[2],pc.plist[i].pt3[1],pc.plist[i].pt3[0]);
+			glColor3dv(pc.clist[i].pt);
+			glTranslated(pc.plist[i].pt[2],pc.plist[i].pt[1],pc.plist[i].pt[0]);
 			//glutSolidSphere(raidus,30,30);
 			glutSolidCube(raidus);
 			glPopMatrix();
@@ -412,11 +412,52 @@ IMPLEMENT_DYNCREATE(Co4View, CView)
 		//createBorderList(sfm);
 		//createSurfaceList(sfm);
 
+
+		//point3d a,b,c,d,e;
+		//a.pt[0]=10;
+		//a.pt[1]=0;
+		//a.pt[2]=0;
+
+		//b.pt[0]=0;
+		//b.pt[1]=10;
+		//b.pt[2]=0;
+
+
+		//c.pt[0]=0;
+		//c.pt[1]=0;
+		//c.pt[2]=10;
+
+		//int rc=pc.findBallCenter(a,b,c,10,d,e);
+
+		//if(rc>0){
+		//	TRACE("%f\n",pc.dist(e,a));
+		//	TRACE("%f\n",pc.dist(e,b));
+		//	TRACE("%f\n",pc.dist(e,c));
+		//}
+
 		//wchar_t fp[]=L"C:\\Users\\r8anw2x\\Desktop\\test_01.txt";
-		wchar_t fp[]=L"C:\\Users\\r8anw2x\\Documents\\MATLAB\\byo3d\\mlShadowScan\\models\\man_v1-lr.wrl";
+		//wchar_t fp[]=L"C:\\Users\\r8anw2x\\Documents\\MATLAB\\byo3d\\mlShadowScan\\models\\man_v1-lr.wrl";
 		//wchar_t fp[]=L"C:\\Users\\r8anw2x\\Documents\\MATLAB\\byo3d\\mlShadowScan\\models\\man_v1.wrl";
+		//wchar_t fp[]=L"C:\\Users\\r8anw2x\\Documents\\MATLAB\\byo3d\\mlStructuredLight\\data\\Gray\\man\\merged.wrl";
 		//wchar_t fp[]=L"C:\\Users\\r8anw2x\\Dropbox\\W\\byo3d\\patate.wrl";
+		wchar_t fp[]=L"C:\\Users\\r8anw2x\\Documents\\MATLAB\\byo3d\\mlStructuredLight\\ball[1][100][100].wrl";
+		//wchar_t fp[]=L"C:\\Users\\r8anw2x\\Documents\\MATLAB\\byo3d\\mlStructuredLight\\ball[1][500][500].wrl";
 		pc.load(fp);
+		pc.align();
+		pc.genvoxel(0.1*2);
+		
+		long pi1,pi2,pi3;
+		bool flg=pc.seedtrg(0.1,pi1,pi2,pi3);
+
+		pc.clist[pi1].pt[0]=pc.clist[pi1].pt[1]=pc.clist[pi1].pt[2]=1;
+		pc.clist[pi2].pt[0]=pc.clist[pi2].pt[1]=pc.clist[pi2].pt[2]=1;
+		pc.clist[pi3].pt[0]=pc.clist[pi3].pt[1]=pc.clist[pi3].pt[2]=1;
+
+		for(size_t i=0;i<pc.clist.size();i++){
+			pc.clist[i].pt[0]=1;
+		}
+
+		//pc.warp1();
 		pc.unity(1);
 		//pc.warp(0.025,0.025,1);
 		//pc.unity(1);
@@ -567,80 +608,80 @@ IMPLEMENT_DYNCREATE(Co4View, CView)
 	}
 
 
-	void Co4View::createMeshList(const surfaceMesh & sfm)
-	{
-		GLfloat linewidth=2;
-		size_t i,j;
-		m_meshList = glGenLists(1);
-		glNewList(m_meshList, GL_COMPILE);
+	//void Co4View::createMeshList(const surfaceMesh & sfm)
+	//{
+	//	GLfloat linewidth=2;
+	//	size_t i,j;
+	//	m_meshList = glGenLists(1);
+	//	glNewList(m_meshList, GL_COMPILE);
 
-		glLineWidth(linewidth);
-		glColor3f(1.0f, 1.0f, 1.0f); 
+	//	glLineWidth(linewidth);
+	//	glColor3f(1.0f, 1.0f, 1.0f); 
 
-		for(i=1;i<sfm.triangle.size();i++){			
-			glBegin (GL_LINE_LOOP);
-			for(j=0;j<sfm.triangle[i].size();j++){
-				glVertex3dv(sfm.point[sfm.triangle[i][j]].data());
-			}
-			glEnd();
-			//glLineWidth(1);
-		}
-		glEndList();
-	}
-	void Co4View::createSurfaceList(const surfaceMesh & sfm)
-	{
-		m_surfaceList = glGenLists(1);
-		glNewList(m_surfaceList, GL_COMPILE);
+	//	for(i=1;i<sfm.triangle.size();i++){			
+	//		glBegin (GL_LINE_LOOP);
+	//		for(j=0;j<sfm.triangle[i].size();j++){
+	//			glVertex3dv(sfm.point[sfm.triangle[i][j]].data());
+	//		}
+	//		glEnd();
+	//		//glLineWidth(1);
+	//	}
+	//	glEndList();
+	//}
+	//void Co4View::createSurfaceList(const surfaceMesh & sfm)
+	//{
+	//	m_surfaceList = glGenLists(1);
+	//	glNewList(m_surfaceList, GL_COMPILE);
 
-		size_t i,j;
+	//	size_t i,j;
 
-		float v1[3];
-		float v2[3];
-		float nor[3];
-		float innerp[3]={0,0,0};
+	//	float v1[3];
+	//	float v2[3];
+	//	float nor[3];
+	//	float innerp[3]={0,0,0};
 
-		float rgba[4];
+	//	float rgba[4];
 
-		float mxcv=sfm.maxTriangleValue;
-		float mncv=sfm.minTriangleValue;
+	//	float mxcv=sfm.maxTriangleValue;
+	//	float mncv=sfm.minTriangleValue;
 
-		for(i=1;i<sfm.triangle.size();i++){
-			glEnable(GL_NORMALIZE);
+	//	for(i=1;i<sfm.triangle.size();i++){
+	//		glEnable(GL_NORMALIZE);
 
-			genColor(rgba,(sfm.triangleValue[i]-mncv)/(mxcv-mncv)*0.8);
-			glColor4fv(rgba);
+	//		genColor(rgba,(sfm.triangleValue[i]-mncv)/(mxcv-mncv)*0.8);
+	//		glColor4fv(rgba);
 
-			glBegin(GL_TRIANGLES);
+	//		glBegin(GL_TRIANGLES);
 
-			for(j=0;j<sfm.triangle[i].size();j++){
-				glVertex3dv(sfm.point[sfm.triangle[i][j]].data());
-			}
-			glEnd();
-			glDisable(GL_NORMALIZE);
-		}
-		glEndList();
+	//		for(j=0;j<sfm.triangle[i].size();j++){
+	//			glVertex3dv(sfm.point[sfm.triangle[i][j]].data());
+	//		}
+	//		glEnd();
+	//		glDisable(GL_NORMALIZE);
+	//	}
+	//	glEndList();
 
-	}
-	void Co4View::createBorderList(const surfaceMesh & sfm)
-	{
-		GLfloat linewidth=2;
-		size_t i,j;
-		m_borderList = glGenLists(1);
-		glNewList(m_borderList, GL_COMPILE);
+	//}
+	//void Co4View::createBorderList(const surfaceMesh & sfm)
+	//{
+	//	GLfloat linewidth=2;
+	//	size_t i,j;
+	//	m_borderList = glGenLists(1);
+	//	glNewList(m_borderList, GL_COMPILE);
 
-		glLineWidth(linewidth);
-		glColor3f(1.0f, 1.0f, 1.0f); 
+	//	glLineWidth(linewidth);
+	//	glColor3f(1.0f, 1.0f, 1.0f); 
 
-		for(i=0;i<sfm.border.size();i++){			
-			glBegin (GL_LINE_STRIP);
-			for(j=0;j<sfm.border[i].size();j++){
-				glVertex3dv(sfm.point[sfm.border[i][j]].data());
-			}
-			glEnd();
-			//glLineWidth(1);
-		}
-		glEndList();
-	}
+	//	for(i=0;i<sfm.border.size();i++){			
+	//		glBegin (GL_LINE_STRIP);
+	//		for(j=0;j<sfm.border[i].size();j++){
+	//			glVertex3dv(sfm.point[sfm.border[i][j]].data());
+	//		}
+	//		glEnd();
+	//		//glLineWidth(1);
+	//	}
+	//	glEndList();
+	//}
 
 
 	void Co4View::ProcessSelection(CPoint point)
@@ -827,7 +868,9 @@ IMPLEMENT_DYNCREATE(Co4View, CView)
 			this->GetParent()->SetWindowTextW(str);
 			/////////////////////////////////////////
 			pc.load(str.GetBuffer());
+			//pc.warp1();
 			pc.unity(1);
+			//pc.warp1();
 			InvalidateRect(NULL,FALSE);
 		}
 
