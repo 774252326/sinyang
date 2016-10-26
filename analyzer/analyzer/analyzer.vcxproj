@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{D757DEA2-676D-4040-8A3F-B00B53186544}</ProjectGuid>
+    <ProjectGuid>{6613B259-5ECC-4F2A-A55D-80C7E3F43499}</ProjectGuid>
     <RootNamespace>analyzer</RootNamespace>
     <Keyword>MFCProj</Keyword>
   </PropertyGroup>
@@ -20,14 +20,14 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <UseOfMfc>Dynamic</UseOfMfc>
+    <UseOfMfc>Static</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
-    <UseOfMfc>Dynamic</UseOfMfc>
+    <UseOfMfc>Static</UseOfMfc>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -94,19 +94,15 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="..\..\..\..\..\Downloads\635\635\advanced.ico" />
-    <None Include="..\..\..\..\..\Downloads\635\635\agt_virus.ico" />
-    <None Include="..\..\..\..\..\Downloads\635\635\appearance.ico" />
+    <None Include="analyzer.reg" />
     <None Include="ReadMe.txt" />
     <None Include="res\analyzer.ico" />
     <None Include="res\analyzer.rc2" />
     <None Include="res\analyzerDoc.ico" />
     <None Include="res\astri.bmp" />
-    <None Include="res\bmp00001.bmp" />
     <None Include="res\hottoolb.bmp" />
     <None Include="res\index_02_01_01.bmp" />
     <None Include="res\info.bmp" />
-    <None Include="res\mainfram.bmp" />
     <None Include="res\menutoolb.bmp" />
     <None Include="res\menu_img.bmp" />
     <None Include="res\messagebar_1.bmp" />
@@ -125,13 +121,8 @@
     <ClInclude Include="analyzer.h" />
     <ClInclude Include="analyzerDoc.h" />
     <ClInclude Include="analyzerView.h" />
-    <ClInclude Include="analyzerViewL.h" />
-    <ClInclude Include="analyzerViewR.h" />
     <ClInclude Include="ANPara.h" />
-    <ClInclude Include="calgridT.h" />
-    <ClInclude Include="colormapT.h" />
     <ClInclude Include="ComboItem.h" />
-    <ClInclude Include="CSpline.h" />
     <ClInclude Include="CVParametersPage.h" />
     <ClInclude Include="DataOutA.h" />
     <ClInclude Include="EditB.h" />
@@ -139,7 +130,6 @@
     <ClInclude Include="EditNum.h" />
     <ClInclude Include="EditReal.h" />
     <ClInclude Include="func.h" />
-    <ClInclude Include="intgQT.h" />
     <ClInclude Include="LineSeg.h" />
     <ClInclude Include="linespec.h" />
     <ClInclude Include="ListCtrlA.h" />
@@ -148,32 +138,27 @@
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="MFCCaptionBarA.h" />
     <ClInclude Include="MFCToolBarA.h" />
+    <ClInclude Include="OutputList.h" />
     <ClInclude Include="OutputWnd.h" />
     <ClInclude Include="pcct.h" />
     <ClInclude Include="pcctC.h" />
-    <ClInclude Include="pdfout.h" />
     <ClInclude Include="PlotData.h" />
-    <ClInclude Include="PlotSettingPageA.h" />
     <ClInclude Include="PlotSpec.h" />
     <ClInclude Include="Point2d.h" />
-    <ClInclude Include="ReportDlg.h" />
+    <ClInclude Include="RawData.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SAPara.h" />
     <ClInclude Include="sapitemA.h" />
     <ClInclude Include="SolutionAdditionParametersPageA.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="typedefine.h" />
     <ClInclude Include="VPara.h" />
-    <ClInclude Include="xRescaleT.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnalysisParametersPage.cpp" />
     <ClCompile Include="analyzer.cpp" />
     <ClCompile Include="analyzerDoc.cpp" />
     <ClCompile Include="analyzerView.cpp" />
-    <ClCompile Include="analyzerViewL.cpp" />
-    <ClCompile Include="analyzerViewR.cpp" />
     <ClCompile Include="ANPara.cpp" />
     <ClCompile Include="ComboItem.cpp" />
     <ClCompile Include="CVParametersPage.cpp" />
@@ -191,15 +176,14 @@
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="MFCCaptionBarA.cpp" />
     <ClCompile Include="MFCToolBarA.cpp" />
+    <ClCompile Include="OutputList.cpp" />
     <ClCompile Include="OutputWnd.cpp" />
     <ClCompile Include="pcct.cpp" />
     <ClCompile Include="pcctC.cpp" />
-    <ClCompile Include="pdfout.cpp" />
     <ClCompile Include="PlotData.cpp" />
-    <ClCompile Include="PlotSettingPageA.cpp" />
     <ClCompile Include="PlotSpec.cpp" />
     <ClCompile Include="Point2d.cpp" />
-    <ClCompile Include="ReportDlg.cpp" />
+    <ClCompile Include="RawData.cpp" />
     <ClCompile Include="SAPara.cpp" />
     <ClCompile Include="sapitemA.cpp" />
     <ClCompile Include="SolutionAdditionParametersPageA.cpp" />

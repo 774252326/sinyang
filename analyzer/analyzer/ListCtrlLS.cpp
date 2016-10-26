@@ -1,6 +1,7 @@
 #include "StdAfx.h"
 #include "ListCtrlLS.h"
 #include "func.h"
+#include "resource.h"
 
 ListCtrlLS::ListCtrlLS(void)
 {

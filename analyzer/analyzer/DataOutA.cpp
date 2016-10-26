@@ -2,7 +2,8 @@
 //
 
 #include "stdafx.h"
-#include "analyzer.h"
+//#include "analyzer.h"
+#include "Resource.h"
 #include "DataOutA.h"
 
 
@@ -342,8 +343,23 @@ CString DataOutA::GetStepName(int i)
 
 void DataOutA::ResetCompound(void)
 {
-					bUnknown=false;
-					Aml=0;
-					Lml=0;
-					Sml=0;
+	bUnknown=false;
+	Aml=0;
+	Lml=0;
+	Sml=0;
+}
+
+
+bool DataOutA::Update(sapitemA sapi, BYTE bFlag, const std::vector<double> &ArList)
+{
+	if(Update(sapi,bFlag)){
+		Ar.assign(ArList.begin(),ArList.end());
+		UseIndex=Ar.size()-1;
+		if(sapi.addType==4){
+			Ar0=Ar[UseIndex];
+		}
+		return true;
+	}
+
+	return false;
 }

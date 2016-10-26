@@ -23,5 +23,7 @@ virtual void DoPaint(
   );
 
 
+public:
+
 };
 

@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include "analyzer.h"
+//#include "analyzer.h"
 #include "sapitemA.h"
 
 

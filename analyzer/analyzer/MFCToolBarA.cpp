@@ -25,8 +25,8 @@ BOOL CMFCToolBarA::DrawButton(
   )
 {
 
-	COLORREF oc=pDC->GetTextColor();
-	pDC->SetTextColor( RGB(255,255,0) );
+	//COLORREF oc=pDC->GetTextColor();
+	//pDC->SetTextColor( RGB(255,255,0) );
 
 	return CMFCToolBar::DrawButton(pDC, pButton, pImages, bHighlighted, bDrawDisabledImages );
 }
@@ -36,7 +36,8 @@ void CMFCToolBarA::DoPaint(
      CDC* pDC 
   )
 {
-	pDC->SetTextColor( RGB(255,255,0) );
+	//pDC->SetTextColor( RGB(255,255,0) );
 
 	CMFCToolBar::DoPaint(pDC);
 }
+

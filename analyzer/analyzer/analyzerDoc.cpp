@@ -11,23 +11,12 @@
 
 #include "analyzerDoc.h"
 
-#include <propkey.h>
-
 
 #include "AnalysisParametersPage.h"
 #include "CVParametersPage.h"
-//#include "SolutionAdditionParametersPage.h"
 #include "SolutionAdditionParametersPageA.h"
-//#include "pcct.h"
-//#include "colormapT.h"
-#include "analyzerViewL.h"
-#include "analyzerViewR.h"
 
-#include "MainFrm.h"
-#include "pdfout.h"
-#include "func.h"
-
-//#include "ReportDlg.h"
+#include <propkey.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -37,283 +26,178 @@
 
 IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 
-	BEGIN_MESSAGE_MAP(CanalyzerDoc, CDocument)
-		ON_COMMAND(ID_ANALYSIS_METHODSETUP, &CanalyzerDoc::OnAnalysisMethodsetup)
-		//		ON_COMMAND(ID_ANALYSIS_STARTANALYSIS, &CanalyzerDoc::OnAnalysisStartanalysis)
-		ON_COMMAND(ID_ANALYSIS_REPORT, &CanalyzerDoc::OnAnalysisReport)
-	END_MESSAGE_MAP()
+BEGIN_MESSAGE_MAP(CanalyzerDoc, CDocument)
+	ON_COMMAND(ID_ANALYSIS_METHODSETUP, &CanalyzerDoc::OnAnalysisMethodsetup)
+END_MESSAGE_MAP()
 
 
-	// CanalyzerDoc construction/destruction
+// CanalyzerDoc construction/destruction
 
-	CanalyzerDoc::CanalyzerDoc()
-		//: ppa(NULL)
-		: resultStr(_T(""))
-		, bUpdateView(true)
-	{
-		// TODO: add one-time construction code here
+CanalyzerDoc::CanalyzerDoc()
+{
+	// TODO: add one-time construction code here
 
-	}
+}
 
+
+
+
+
+CanalyzerDoc::~CanalyzerDoc()
+{
+}
+
+BOOL CanalyzerDoc::OnNewDocument()
+{
+	if (!CDocument::OnNewDocument())
+		return FALSE;
+
+	// TODO: add reinitialization code here
+	// (SDI documents will reuse this document)
+
+
+		p1=ANPara();
+		p2=CVPara();
+		p3=SAPara();
+		raw=RawData();
+
+	return TRUE;
+}
 
 	void CanalyzerDoc::operator=(const CanalyzerDoc &src)
 	{
 		p1=src.p1;
 		p2=src.p2;
 		p3=src.p3;
-		dol.assign(src.dol.begin(),src.dol.end());
-		lp.assign(src.lp.begin(),src.lp.end());
-		rp.assign(src.rp.begin(),src.rp.end());
-		resultStr=src.resultStr;
-		bUpdateView=false;
+		raw=src.raw;
 	}
 
-	CanalyzerDoc::CanalyzerDoc(bool flg)
+
+// CanalyzerDoc serialization
+
+void CanalyzerDoc::Serialize(CArchive& ar)
+{
+	
+	p1.Serialize(ar);
+	p2.Serialize(ar);
+	p3.Serialize(ar);
+	raw.Serialize(ar);
+
+	if (ar.IsStoring())
 	{
-		bUpdateView=flg;
+		// TODO: add storing code here
+		//ar<<ll.size();		
+		//size_t si=0;
+		//size_t ei=0;
+		//for(size_t i=0;i<ll.size();i++){
+		//	ar<<ll[i];
+		//	ei=si+ll[i];
+		//	for(size_t j=si;j<ei;j++){
+		//		ar<<xll[j]
+		//		<<yll[j];
+		//	}
+		//	si=ei;
+		//}
+
 	}
-
-
-	CanalyzerDoc::~CanalyzerDoc()
+	else
 	{
+		// TODO: add loading code here
+
+		//size_t l;
+
+		//ar>>l;
+		//ll.assign(l,0);
+
+		//size_t si=0;
+		//size_t ei=0;
+		//for(size_t i=0;i<ll.size();i++){
+		//	ar>>ll[i];
+
+		//	xll.resize(si+ll[i],0);
+		//	yll.resize(si+ll[i],0);
+
+		//	ei=si+ll[i];
+		//	for(size_t j=si;j<ei;j++){
+		//		ar>>xll[j]
+		//		>>yll[j];
+		//	}
+		//	si=ei;
+		//}
+
 	}
-
-	BOOL CanalyzerDoc::OnNewDocument()
-	{
-		if (!CDocument::OnNewDocument())
-			return FALSE;
-
-		// TODO: add reinitialization code here
-		// (SDI documents will reuse this document)
-
-		p1=ANPara();
-		p2=CVPara();
-		p3=SAPara();
-		dol.clear();
-		lp.clear();
-		rp.clear();	
-		resultStr.Empty();
-
-		//POSITION pos = GetFirstViewPosition();
-		//CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));
-		//lv->SetSpin(0);
-		//CMainFrame *mf=(CMainFrame*)(lv->GetParentFrame());
-		//mf->GetOutputWnd()->clear();
-		//CanalyzerViewR* rv=((CanalyzerViewR*)GetNextView(pos));
-		//rv->SetSpin(0);
-
-		return TRUE;
-	}
-
-
-
-
-	// CanalyzerDoc serialization
-
-	void CanalyzerDoc::Serialize(CArchive& ar)
-	{
-		if (ar.IsStoring())
-		{
-			// TODO: add storing code here
-			p1.Serialize(ar);
-			p2.Serialize(ar);
-			p3.Serialize(ar);
-			ar<<resultStr;
-			ar<<dol.size();
-			for(size_t i=0;i<dol.size();i++){
-				dol[i].Serialize(ar);
-			}
-			ar<<lp.size();
-			for(size_t i=0;i<lp.size();i++){
-				lp[i].Serialize(ar);
-			}
-			ar<<rp.size();
-			for(size_t i=0;i<rp.size();i++){
-				rp[i].Serialize(ar);
-			}
-		}
-		else
-		{
-			// TODO: add loading code here
-			p1.Serialize(ar);
-			p2.Serialize(ar);
-			p3.Serialize(ar);
-			ar>>resultStr;
-			size_t n;
-			ar>>n;
-			dol.assign(n,DataOutA());
-			for(size_t i=0;i<dol.size();i++){
-				dol[i].Serialize(ar);
-			}
-			ar>>n;
-			lp.assign(n,PlotData());
-			for(size_t i=0;i<lp.size();i++){
-				lp[i].Serialize(ar);
-			}
-			ar>>n;
-			rp.assign(n,PlotData());
-			for(size_t i=0;i<rp.size();i++){
-				rp[i].Serialize(ar);
-			}
-			////////////////////////////////////////////////
-
-			//POSITION pos = GetFirstViewPosition();
-			//CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));
-
-			//::SendMessage(lv->GetSafeHwnd(),MESSAGE_CHANGE_APPLOOK,
-
-			//CanalyzerViewR* rv=((CanalyzerViewR*)GetNextView(pos));
-
-
-			///////////////////////////////////////////////
-
-			//if(bUpdateView){
-			//POSITION pos = GetFirstViewPosition();
-			//CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));
-			//lv->selectIdx=0;
-			//lv->SetSpin(lp.size()-1);
-			//lv->updatePlotRange();
-
-			//CMainFrame *mf=(CMainFrame*)(GetNextView(pos)->GetParentFrame());
-			//CMainFrame *mf=(CMainFrame*)(lv->GetParentFrame());
-			//COutputList* ol=mf->GetOutputWnd()->GetListCtrl();
-			//ol->DeleteAllItems();
-
-			//size_t c=0;
-			//for(size_t i=0;i<dol.size();i++){
-			//	for(size_t j=0;j<dol[i].Ar.size();j++){
-			//		ol->InsertListCtrl(c,dol[i],i,j);
-			//		c++;
-			//	}
-			//}
-
-			//CString str=Compute(dol,p1);
-			//mf->GetCaptionBar()->ShowMessage(str);
-
-			//CanalyzerViewR* rv=((CanalyzerViewR*)GetNextView(pos));
-			//rv->selectIdx=0;
-			//rv->SetSpin(rp.size()-1);
-			//rv->updatePlotRange();
-
-
-			//}
-			//////////////////////////////////////////////
-
-			////CString str=this->GetPathName();
-			//POSITION pos = GetFirstViewPosition();
-			//CView* pFirstView = GetNextView(pos);
-			//{
-			//	CString str=L"C:\\Users\\r8anw2x\\Desktop\\ss\\analyzer\\analyzer\\data\\DTR\\3360 base 25ml + 8mlcali8-5.txt";
-			//	pcct dt1;
-			//	dt1.readFile(str);
-			//	dt1.TomA();
-			//	PlotData p1;			
-			//	LineSpec ps1;
-			//	ps1.colour=genColor( genColorvFromIndex<float>( 0 ) ) ;
-			//	ps1.dotSize=-1;
-			//	ps1.name=str;
-			//	ps1.lineType=0;
-			//	ps1.smoothLine=0;
-			//	ps1.traceLast=false;
-			//	p1.AddNew(dt1.potential,dt1.current,ps1,dt1.label[0],dt1.label[1]);
-			//	((CanalyzerView*)pFirstView)->AddPlot(p1);
-			//}
-
-
-			//{
-			//	CString str=L"C:\\Users\\r8anw2x\\Desktop\\ss\\analyzer\\analyzer\\data\\DTR\\3360 base 25ml + 2mlcali8-5.txt";
-			//	pcct dt1;
-			//	dt1.readFile(str);
-			//	dt1.TomA();
-			//	PlotData p1;			
-			//	LineSpec ps1;
-			//	ps1.colour=genColor( genColorvFromIndex<float>( 0 ) ) ;
-			//	ps1.dotSize=-1;
-			//	ps1.name=str;
-			//	ps1.lineType=0;
-			//	ps1.smoothLine=0;
-			//	ps1.traceLast=false;
-			//	p1.AddNew(dt1.potential,dt1.current,ps1,dt1.label[0],dt1.label[1]);
-			//	((CanalyzerView*)pFirstView)->AddPlot(p1);
-			//}
-
-			//if(((CanalyzerView*)pFirstView)->updatePlotRange())
-			//	;
-			////((CanalyzerView*)pFirstView)->Invalidate(FALSE);
-
-		}
-	}
+}
 
 #ifdef SHARED_HANDLERS
 
-	// Support for thumbnails
-	void CanalyzerDoc::OnDrawThumbnail(CDC& dc, LPRECT lprcBounds)
+// Support for thumbnails
+void CanalyzerDoc::OnDrawThumbnail(CDC& dc, LPRECT lprcBounds)
+{
+	// Modify this code to draw the document's data
+	dc.FillSolidRect(lprcBounds, RGB(255, 255, 255));
+
+	CString strText = _T("TODO: implement thumbnail drawing here");
+	LOGFONT lf;
+
+	CFont* pDefaultGUIFont = CFont::FromHandle((HFONT) GetStockObject(DEFAULT_GUI_FONT));
+	pDefaultGUIFont->GetLogFont(&lf);
+	lf.lfHeight = 36;
+
+	CFont fontDraw;
+	fontDraw.CreateFontIndirect(&lf);
+
+	CFont* pOldFont = dc.SelectObject(&fontDraw);
+	dc.DrawText(strText, lprcBounds, DT_CENTER | DT_WORDBREAK);
+	dc.SelectObject(pOldFont);
+}
+
+// Support for Search Handlers
+void CanalyzerDoc::InitializeSearchContent()
+{
+	CString strSearchContent;
+	// Set search contents from document's data. 
+	// The content parts should be separated by ";"
+
+	// For example:  strSearchContent = _T("point;rectangle;circle;ole object;");
+	SetSearchContent(strSearchContent);
+}
+
+void CanalyzerDoc::SetSearchContent(const CString& value)
+{
+	if (value.IsEmpty())
 	{
-		// Modify this code to draw the document's data
-		dc.FillSolidRect(lprcBounds, RGB(255, 255, 255));
-
-		CString strText = _T("TODO: implement thumbnail drawing here");
-		LOGFONT lf;
-
-		CFont* pDefaultGUIFont = CFont::FromHandle((HFONT) GetStockObject(DEFAULT_GUI_FONT));
-		pDefaultGUIFont->GetLogFont(&lf);
-		lf.lfHeight = 36;
-
-		CFont fontDraw;
-		fontDraw.CreateFontIndirect(&lf);
-
-		CFont* pOldFont = dc.SelectObject(&fontDraw);
-		dc.DrawText(strText, lprcBounds, DT_CENTER | DT_WORDBREAK);
-		dc.SelectObject(pOldFont);
+		RemoveChunk(PKEY_Search_Contents.fmtid, PKEY_Search_Contents.pid);
 	}
-
-	// Support for Search Handlers
-	void CanalyzerDoc::InitializeSearchContent()
+	else
 	{
-		CString strSearchContent;
-		// Set search contents from document's data. 
-		// The content parts should be separated by ";"
-
-		// For example:  strSearchContent = _T("point;rectangle;circle;ole object;");
-		SetSearchContent(strSearchContent);
-	}
-
-	void CanalyzerDoc::SetSearchContent(const CString& value)
-	{
-		if (value.IsEmpty())
+		CMFCFilterChunkValueImpl *pChunk = NULL;
+		ATLTRY(pChunk = new CMFCFilterChunkValueImpl);
+		if (pChunk != NULL)
 		{
-			RemoveChunk(PKEY_Search_Contents.fmtid, PKEY_Search_Contents.pid);
-		}
-		else
-		{
-			CMFCFilterChunkValueImpl *pChunk = NULL;
-			ATLTRY(pChunk = new CMFCFilterChunkValueImpl);
-			if (pChunk != NULL)
-			{
-				pChunk->SetTextValue(PKEY_Search_Contents, value, CHUNK_TEXT);
-				SetChunkValue(pChunk);
-			}
+			pChunk->SetTextValue(PKEY_Search_Contents, value, CHUNK_TEXT);
+			SetChunkValue(pChunk);
 		}
 	}
+}
 
 #endif // SHARED_HANDLERS
 
-	// CanalyzerDoc diagnostics
+// CanalyzerDoc diagnostics
 
 #ifdef _DEBUG
-	void CanalyzerDoc::AssertValid() const
-	{
-		CDocument::AssertValid();
-	}
+void CanalyzerDoc::AssertValid() const
+{
+	CDocument::AssertValid();
+}
 
-	void CanalyzerDoc::Dump(CDumpContext& dc) const
-	{
-		CDocument::Dump(dc);
-	}
+void CanalyzerDoc::Dump(CDumpContext& dc) const
+{
+	CDocument::Dump(dc);
+}
 #endif //_DEBUG
 
 
-	// CanalyzerDoc commands
+// CanalyzerDoc commands
 
 
 	void CanalyzerDoc::OnAnalysisMethodsetup()
@@ -347,354 +231,15 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 			p2=cppage.para;
 			p3=sppage.para;
 
-			if(!dol.empty()){			
+			//if(!dol.empty()){			
 
-				str=Compute(dol,p1);
-				POSITION pos = GetFirstViewPosition();
-				//CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));
-				CMainFrame *mf=(CMainFrame*)(GetNextView(pos)->GetParentFrame());
-				mf->GetCaptionBar()->ShowMessage(str);
+			//	str=Compute(dol,p1);
+			//	POSITION pos = GetFirstViewPosition();
+			//	//CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));
+			//	CMainFrame *mf=(CMainFrame*)(GetNextView(pos)->GetParentFrame());
+			//	mf->GetCaptionBar()->ShowMessage(str);
 
-			}
-
-		}
-	}
-
-
-
-
-	PlotData * CanalyzerDoc::GetPD(int lr, int index)
-	{
-		switch(lr){
-		case 0:
-			if(lp.size()>index){
-				return &lp[index];
-			}			
-			return NULL;
-		case 1:
-			if(rp.size()>index){
-				return &rp[index];
-			}			
-			return NULL;
-		default:
-			return NULL;
-		}
-	}
-
-
-	int CanalyzerDoc::GetNPD(int lr)
-	{
-		switch(lr){
-		case 0:
-			return lp.size();
-		case 1:	
-			return rp.size();
-		default:
-			return -1;
-		}
-	}
-
-	int CanalyzerDoc::AddPD(const PlotData & pda, int lr)
-	{
-		switch(lr){
-		case 0:
-			lp.push_back(pda);
-			return lp.size();
-		case 1:	
-			rp.push_back(pda);
-			return rp.size();
-		default:
-			return -1;
-		}
-		//return 0;
-	}
-
-
-	void CanalyzerDoc::OnAnalysisReport()
-	{
-		// TODO: Add your command handler code here
-
-		CString fp=this->GetPathName();
-		fp=fp.Left(fp.ReverseFind('\\')+1);
-		fp+=TimeString()+L".pdf";
-
-
-		//ReportDlg sea;
-
-		TCHAR szFilters[]= _T("PDF Files (*.pdf)|*.pdf||");
-
-		CFileDialog se(FALSE,L"pdf",TimeString()+L".pdf",OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,szFilters);
-
-		//se.SetWindowTextW(L"save report");
-
-		//se.AddText(2000,L"items");
-		//se.AddSeparator(2001);
-		//se.AddSeparator(2002);
-		//se.AddRadioButtonList(2002);
-
-		CString str;
-
-		str.LoadStringW(IDS_STRING_ANALYSIS_PARA);
-		se.AddCheckButton(IDS_STRING_ANALYSIS_PARA,str,TRUE);
-
-		str.LoadStringW(IDS_STRING_CV_PARA);
-		se.AddCheckButton(IDS_STRING_CV_PARA,str,TRUE);
-
-		str.LoadStringW(IDS_STRING_ADDITION_SOLUTION_PARA);
-		se.AddCheckButton(IDS_STRING_ADDITION_SOLUTION_PARA,str,TRUE);
-
-		str.LoadStringW(IDS_STRING_RESULT);
-		se.AddCheckButton(IDS_STRING_RESULT,str,TRUE);
-
-		str.LoadStringW(IDS_OUTPUT_WND);
-		se.AddCheckButton(IDS_OUTPUT_WND,str,TRUE);
-
-		str.LoadStringW(IDS_STRING_TEST_CURVE);
-		se.AddCheckButton(IDS_STRING_TEST_CURVE,str,TRUE);
-
-		str.LoadStringW(IDS_STRING_VOLTAMMOGRAM);
-		se.AddCheckButton(IDS_STRING_VOLTAMMOGRAM,str,TRUE);
-
-
-		//se.AddControlItem(IDD_DIALOG4,2000,L"re");
-
-
-		if(se.DoModal()==IDOK){
-
-			CString fp = se.GetPathName();
-
-			BOOL chk1,chk2,chk3,chk4,chk5,chk6,chk7;
-			se.GetCheckButtonState(IDS_STRING_ANALYSIS_PARA,chk1);
-			se.GetCheckButtonState(IDS_STRING_CV_PARA,chk2);
-			se.GetCheckButtonState(IDS_STRING_ADDITION_SOLUTION_PARA,chk3);
-			se.GetCheckButtonState(IDS_STRING_RESULT,chk4);
-			se.GetCheckButtonState(IDS_OUTPUT_WND,chk5);
-			se.GetCheckButtonState(IDS_STRING_TEST_CURVE,chk6);
-			se.GetCheckButtonState(IDS_STRING_VOLTAMMOGRAM,chk7);
-
-
-			//BYTE sel=se.GetSelection();
-
-			//CString str;
-			str.LoadString(IDS_STRING_REPORTING);
-			str+=fp;
-			POSITION pos = GetFirstViewPosition();
-			CMainFrame *mf=(CMainFrame*)(GetNextView(pos)->GetParentFrame());
-			mf->GetCaptionBar()->ShowMessage(str);
-
-
-			//if(pdfd(fp,this)==0){
-			if(pdfd(fp,chk1,chk2,chk3,chk4,chk5,chk6,chk7)==0){
-				//AfxMessageBox(L"report "+fp+L" is saved");
-				mf->GetCaptionBar()->ShowMessage(L"");
-				ShellExecute(NULL, L"open", fp, NULL, NULL, SW_SHOW);			
-			}
-			else{
-				//AfxMessageBox(IDS_STRING_SAVE_ERROR);
-
-				str.LoadString(IDS_STRING_SAVE_ERROR);
-				mf->GetCaptionBar()->ShowMessage(str);
-			}
+			//}
 
 		}
-
-	}
-
-
-	bool CanalyzerDoc::SaveImage(const PlotData & pd, CSize sz, CString filepath)
-	{
-
-		POSITION pos = GetFirstViewPosition();
-		CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));	
-		CDC* pdc=lv->GetDC();
-
-		//return ::SaveImage(pd,sz,filepath,pdc,lv->bkcr);
-
-
-
-		CDC dcMem;   //用于缓冲作图的内存DC
-		dcMem.CreateCompatibleDC(pdc);               //依附窗口DC创建兼容内存DC		
-
-		CBitmap bmp;           //内存中承载临时图象的位图
-		bmp.CreateCompatibleBitmap(pdc,sz.cx,sz.cy);//创建兼容位图
-
-		dcMem.SelectObject(&bmp);  	//将位图选择进内存DC
-
-		double xmin,xmax,ymin,ymax,pct=0.02;
-		UpdateRange(pd.xll,xmin,xmax,pct,true);
-		UpdateRange(pd.yll,ymin,ymax,pct,true);
-		//pd.psp=PlotSpec(0);
-
-		CRect plotrect(0,0,sz.cx,sz.cy);
-		DrawData(plotrect,&dcMem,pd,xmin,xmax,ymin,ymax);
-
-		CImage img;
-		img.Attach(HBITMAP(bmp));
-		HRESULT hResult = img.Save((LPCWSTR)filepath);
-
-		dcMem.DeleteDC(); //删除DC
-		bmp.DeleteObject(); //删除位图
-		if (SUCCEEDED(hResult))
-			return true;
-
-
-		return false;
-	}
-
-
-
-	bool CanalyzerDoc::SaveImagePrint(PlotData & pd, CSize sz, CString filepath)
-	{
-
-		POSITION pos = GetFirstViewPosition();
-		CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));	
-		CDC* pdc=lv->GetDC();
-		//pd.psp=PlotSpec(0);
-		//return ::SaveImage(pd,sz,filepath,pdc);
-
-
-
-		//CDC dcMem;   //用于缓冲作图的内存DC
-		//dcMem.CreateCompatibleDC(pdc);               //依附窗口DC创建兼容内存DC		
-
-		//CBitmap bmp;           //内存中承载临时图象的位图
-		//bmp.CreateCompatibleBitmap(pdc,sz.cx,sz.cy);//创建兼容位图
-
-		//dcMem.SelectObject(&bmp);  	//将位图选择进内存DC
-
-		//double xmin,xmax,ymin,ymax,pct=0.02;
-		//UpdateRange(pd.xll,xmin,xmax,pct,true);
-		//UpdateRange(pd.yll,ymin,ymax,pct,true);
-		////
-
-		//CRect plotrect(0,0,sz.cx,sz.cy);
-		//DrawData(plotrect,&dcMem,pd,xmin,xmax,ymin,ymax,lv->bkcr);
-
-		//CImage img;
-		//img.Attach(HBITMAP(bmp));
-		//HRESULT hResult = img.Save((LPCWSTR)filepath);
-
-		//dcMem.DeleteDC(); //删除DC
-		//bmp.DeleteObject(); //删除位图
-		//if (SUCCEEDED(hResult))
-		//	return true;
-
-
-		return false;
-	}
-
-	int CanalyzerDoc::pdfd(CString outfile, 
-		bool b1,
-		bool b2,
-		bool b3,
-		bool b4,
-		bool b5,
-		bool b6,
-		bool b7
-		)
-	{
-
-		const std::wstring searchpath = L"../data";
-
-		const std::wstring temppdf = L"temp.pdf";
-
-		pdflib::PDFlib p;
-
-		std::wostringstream optlist;
-
-		optlist.str(L"");
-
-		p.set_parameter(L"errorpolicy", L"return");
-
-		p.set_parameter(L"SearchPath", searchpath);
-
-		if (p.begin_document(temppdf, optlist.str()) == -1) {
-			//if (p.begin_document((LPCWSTR)outfile, L"") == -1) {
-			std::wcerr << L"Error: " << p.get_errmsg() << std::endl;
-			return 2;
-		}
-		p.set_info(L"Creator", L"PDFlib starter sample");
-		p.set_info(L"Title", L"starter_table");
-
-
-		CString templogobmp=L"templogo.bmp";
-
-
-
-		CBitmap bmp;
-		bmp.LoadBitmap(IDB_BITMAP_SINYANG);
-		CImage img;
-		//img.LoadFromResource(NULL,IDB_BITMAP_SINYANG);
-		img.Attach(HBITMAP(bmp));
-		HRESULT hResult = img.Save((LPCTSTR)templogobmp);
-		bmp.DeleteObject();
-		//if (SUCCEEDED(hResult))
-
-
-		int a;
-
-		std::vector<CString> res;
-		bool flg=Compute(dol, p1, res);
-
-		a=pdfout6(p,p1,res,p2,p3,b1,b2,b3,b4);
-
-		if(b5){
-			a=pdfout(p,dol);
-		}
-
-
-		std::vector<PlotData> pdl;
-		std::vector<CString> nl;
-
-		if(b7){
-			pdl.assign(lp.begin(),lp.end());
-			CString str;
-			str.LoadStringW(IDS_STRING_VOLTAMMOGRAM);
-			nl.assign(lp.size(),str);
-
-			if(b6){
-				pdl.resize(rp.size()+lp.size());
-				std::copy_backward(rp.begin(),rp.end(),pdl.end());
-				str.LoadStringW(IDS_STRING_TEST_CURVE);
-				nl.resize(rp.size()+lp.size(),str);
-			}
-
-
-
-			POSITION pos = GetFirstViewPosition();
-			CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));	
-			CDC* pdc=lv->GetDC();
-
-			//a=imgout2(p,pdc,pdl,nl,CSize(1200,800));
-			a=imgout2(p,pdc,pdl,nl);
-		}
-		else{
-			if(b6){
-				pdl.assign(rp.begin(),rp.end());
-				CString str;
-				str.LoadStringW(IDS_STRING_TEST_CURVE);
-				nl.assign(rp.size(),str);
-
-				POSITION pos = GetFirstViewPosition();
-				CanalyzerViewL* lv=((CanalyzerViewL*)GetNextView(pos));	
-				CDC* pdc=lv->GetDC();
-
-				//a=imgout2(p,pdc,pdl,nl,CSize(1200,800));
-				a=imgout2(p,pdc,pdl,nl);
-
-
-			}
-		}
-
-		//a=imgout2(p,this,pdl,nl);
-
-		p.end_document(optlist.str());
-
-		AddPageNumber(temppdf,(LPCWSTR)outfile);
-
-		CFile::Remove(temppdf.c_str());
-		CFile::Remove(templogobmp);
-
-		return 0;
-		//return 0;
 	}

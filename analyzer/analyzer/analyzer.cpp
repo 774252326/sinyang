@@ -10,7 +10,6 @@
 
 #include "analyzerDoc.h"
 #include "analyzerView.h"
-//#include "CanalyzerView.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -24,6 +23,8 @@ BEGIN_MESSAGE_MAP(CanalyzerApp, CWinAppEx)
 	// Standard file based document commands
 	ON_COMMAND(ID_FILE_NEW, &CWinAppEx::OnFileNew)
 	ON_COMMAND(ID_FILE_OPEN, &CWinAppEx::OnFileOpen)
+	// Standard print setup command
+	ON_COMMAND(ID_FILE_PRINT_SETUP, &CWinAppEx::OnFilePrintSetup)
 END_MESSAGE_MAP()
 
 
@@ -70,18 +71,6 @@ BOOL CanalyzerApp::InitInstance()
 	InitCommonControlsEx(&InitCtrls);
 
 	CWinAppEx::InitInstance();
-
-
-	if(GetUserDefaultUILanguage()== MAKELANGID(LANG_CHINESE,SUBLANG_CHINESE_SIMPLIFIED))
-	{
-		//SetThreadUILanguage(MAKELANGID(LANG_ENGLISH,SUBLANG_ENGLISH_US)); 
-		SetThreadUILanguage(MAKELANGID(LANG_CHINESE,SUBLANG_CHINESE_SIMPLIFIED)); 
-
-		//CMenu m_menu;
-		//m_menu.LoadMenu(L"IDR_MAINFRAME_CHINESE");
-		//SetMenu(this->m_pMainWnd->GetSafeHwnd(),m_menu.GetSafeHmenu());
-	}
-
 
 
 	// Initialize OLE libraries
@@ -153,24 +142,13 @@ BOOL CanalyzerApp::InitInstance()
 	//  In an SDI app, this should occur after ProcessShellCommand
 	// Enable drag/drop open
 	m_pMainWnd->DragAcceptFiles();
-
-
-
-
-
 	return TRUE;
 }
 
 int CanalyzerApp::ExitInstance()
 {
 	//TODO: handle additional resources you may have added
-
-	//this->CleanState(); 
-
-
 	AfxOleTerm(FALSE);
-
-
 
 	return CWinAppEx::ExitInstance();
 }

@@ -1,16 +1,14 @@
 
 // analyzerDoc.h : interface of the CanalyzerDoc class
 //
-#include "ANPara.h"
-//#include "DataOut.h"
-#include "PlotData.h"
-#include "SAPara.h"
-#include "VPara.h"
-#include <vector>
-#include "DataOutA.h"
+
 
 #pragma once
 
+#include "ANPara.h"
+#include "SAPara.h"
+#include "VPara.h"
+#include "RawData.h"
 
 class CanalyzerDoc : public CDocument
 {
@@ -20,20 +18,21 @@ protected: // create from serialization only
 
 // Attributes
 public:
-
-	void operator=(const CanalyzerDoc &src);
-	CanalyzerDoc(const CanalyzerDoc &src){ operator=(src); };
-	CanalyzerDoc(bool flg);
-
 	ANPara p1;
 	CVPara p2;
 	SAPara p3;
-	std::vector<DataOutA> dol;
-	std::vector<PlotData> lp;
-	std::vector<PlotData> rp;
-	CString resultStr;//not used
+
+	RawData raw;
+
+	//std::vector<double> xll;
+	////std::vector<double> yll;
+	//std::vector<DWORD> ll;
+
 // Operations
 public:
+	void operator=(const CanalyzerDoc &src);
+	CanalyzerDoc(const CanalyzerDoc &src){ operator=(src); };
+
 
 // Overrides
 public:
@@ -53,6 +52,9 @@ public:
 #endif
 
 protected:
+	afx_msg void OnAnalysisMethodsetup();
+
+
 
 // Generated message map functions
 protected:
@@ -62,25 +64,4 @@ protected:
 	// Helper function that sets search content for a Search Handler
 	void SetSearchContent(const CString& value);
 #endif // SHARED_HANDLERS
-public:
-	afx_msg void OnAnalysisMethodsetup();
-//	afx_msg void OnAnalysisStartanalysis();
-//	CWinThread *ppa;
-
-	bool bUpdateView;
-	PlotData * GetPD(int lr, int index);
-	int GetNPD(int lr);
-	int AddPD(const PlotData & pda, int lr);
-	afx_msg void OnAnalysisReport();
-	bool SaveImage(const PlotData & pd, CSize sz, CString filepath);
-
-	bool SaveImagePrint(PlotData & pd, CSize sz, CString filepath);
-	int pdfd(CString filepath,
-		bool b1,
-		bool b2,
-		bool b3,
-		bool b4,
-		bool b5,
-		bool b6,
-		bool b7);
 };

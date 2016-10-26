@@ -37,7 +37,6 @@
 
 #include <afxcontrolbars.h>     // MFC support for ribbons and control bars
 #include <afx.h>
-#include <afxdlgs.h>
 
 
 
@@ -58,11 +57,11 @@
 #endif
 
 
-#define MESSAGE_BUSY WM_USER+1
-#define MESSAGE_WAIT_RESPONSE WM_USER+2
-#define MESSAGE_OVER WM_USER+3
-#define MESSAGE_SWITCH_FIGURE WM_USER+4
-#define MESSAGE_READY WM_USER+5
-#define MESSAGE_OVER_H WM_USER+6
-#define MESSAGE_CHANGE_APPLOOK WM_USER+7
-#define MESSAGE_GET_PLOTSPEC WM_USER+8
+#define MESSAGE_BUSY			WM_USER+1
+#define MESSAGE_WAIT_RESPONSE	WM_USER+2
+#define MESSAGE_OVER			WM_USER+3
+#define MESSAGE_SWITCH_FIGURE	WM_USER+4
+#define MESSAGE_READY			WM_USER+5
+#define MESSAGE_OVER_H			WM_USER+6
+#define MESSAGE_CHANGE_APPLOOK	WM_USER+7
+#define MESSAGE_GET_PLOTSPEC	WM_USER+8

@@ -36,6 +36,7 @@ public:
 	double addVolume;
 	CString stepName;
 	BYTE stepFilter;
+	int UseIndex;
 	//////////////////////////////////
 
 	double TotalVolume(void);
@@ -44,14 +45,18 @@ public:
 	double LConc(void);
 
 	bool Update(sapitemA sapi, BYTE bFlag=DOA_VMS);
+
+
 	bool VolOnce(sapitemA sapi);
 	bool ConcOnce(double &ml, double endConc, double addConc);
 	bool ConcIntv(double &ml, double intvConc, double addConc);
 	CString GetStepName(int i=-1);
+	void ResetCompound(void);
+
+	bool Update(sapitemA sapi, BYTE bFlag, const std::vector<double> &ArList);
 
 	virtual void Serialize(CArchive& ar);
-	int UseIndex;
-	void ResetCompound(void);
+
 };
 
 

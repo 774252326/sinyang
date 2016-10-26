@@ -1,6 +1,7 @@
 #include "StdAfx.h"
 #include "ListCtrlSAP.h"
 #include "func.h"
+#include "resource.h"
 
 ListCtrlSAP::ListCtrlSAP(void)
 {
