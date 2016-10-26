@@ -10,6 +10,8 @@ public:
 	static size_t GetStepCount(int atype)
 	{
 		switch(atype){
+		case 0:
+			return 1;
 		case 1:
 			return 2;
 		case 2:

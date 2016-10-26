@@ -523,16 +523,12 @@ public:
 
 
 		switch(para.analysistype){
-		case 3:
-		case 11:
-		case 4:
-		case 6:
-		case 10:
-		case 12:
-			break;
-
-		default:
-
+		case 1:
+		case 2:
+		case 5:
+		case 7:
+		case 8:
+		case 9:
 			optlist.str(L"");
 			optlist << L"fittextline={position={left center} font=" << font		
 				<< L" fontsize=" << fsize << L"}"
@@ -555,6 +551,8 @@ public:
 
 			col=1;
 			row++;
+			break;
+		default:
 			break;
 		}
 

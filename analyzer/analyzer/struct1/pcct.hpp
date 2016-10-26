@@ -65,7 +65,7 @@ public:
 		//CString folderp=L"C:\\Users\\G\\Desktop\\data\\d\\";
 #endif
 
-		CString DEMOflist=folderp+L"fl1.txt";
+		CString DEMOflist=folderp+L"ce.txt";
 		CString DTRflist=folderp+L"dtr.txt";
 		CString DTAflist=folderp+L"dta.txt";
 		CString LATRflist=folderp+L"latr.txt";

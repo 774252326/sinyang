@@ -47,6 +47,14 @@ public:
 		int Nstep=ANPara::GetStepCount(atype);
 
 		switch(atype){
+		case 0:
+			{
+				DWORD stepl[]={
+					stp(DOA_VMS,SC_NO_PLOT,0)
+				};
+				sl.assign(stepl,stepl+Nstep);
+			}
+			return true;
 		case 1:
 			{
 				DWORD stepl[]={
@@ -870,11 +878,12 @@ public:
 					dolast[i]=dol[dolastidx[i]];
 				}
 
+				if(!rdl.empty()){
 				rd=rdl.front();
 				for(size_t i=1;i<rdl.size();i++){
 					rd.AppendData(rdl[i]);
 				}
-
+				}
 				return true;
 			}
 		}
@@ -1645,6 +1654,8 @@ public:
 	{
 		CString str,strt;
 		switch(pDoc->p1.analysistype){
+		case 0:
+			return true;
 		case 1:
 			{	
 				RawData rd0;
