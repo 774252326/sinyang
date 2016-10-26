@@ -16,8 +16,8 @@
 
 #include "AnalysisParametersPage.h"
 #include "CVParametersPage.h"
-#include "SolutionAdditionParametersPage.h"
-
+//#include "SolutionAdditionParametersPage.h"
+#include "SolutionAdditionParametersPageA.h"
 //#include "pcct.h"
 //#include "colormapT.h"
 #include "analyzerView.h"
@@ -68,7 +68,7 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		lp.clear();
 		rp.clear();	
 		resultStr.Empty();
-		
+
 		POSITION pos = GetFirstViewPosition();
 		CanalyzerView* lv=((CanalyzerView*)GetNextView(pos));
 		lv->SetSpin(0);
@@ -134,7 +134,7 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 
 			POSITION pos = GetFirstViewPosition();
 			CanalyzerView* lv=((CanalyzerView*)GetNextView(pos));
-					lv->SetSpin(lp.size()-1);
+			lv->SetSpin(lp.size()-1);
 			lv->updatePlotRange();
 
 			CMainFrame *mf=(CMainFrame*)(lv->GetParentFrame());
@@ -142,7 +142,7 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 			mf->GetCaptionBar()->ShowMessage(resultStr);
 
 			CanalyzerViewR* rv=((CanalyzerViewR*)GetNextView(pos));
-							rv->SetSpin(rp.size()-1);
+			rv->SetSpin(rp.size()-1);
 			rv->updatePlotRange();
 
 			for(size_t i=0;i<dol.size();i++){
@@ -289,7 +289,7 @@ IMPLEMENT_DYNCREATE(CanalyzerDoc, CDocument)
 		cppage.para=p2;
 		sheet.AddPage(&cppage);
 
-		SolutionAdditionParametersPage sppage;
+		SolutionAdditionParametersPageA sppage;
 		sppage.para=p3;
 		sheet.AddPage(&sppage);
 

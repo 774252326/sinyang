@@ -89,9 +89,6 @@
     <ClInclude Include="typedefine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="sapitem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="linespec.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -105,9 +102,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CVParametersPage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SolutionAdditionParametersPage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ComboItem.h">
@@ -146,6 +140,12 @@
     <ClInclude Include="intgQT.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="sapitemA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SolutionAdditionParametersPageA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="analyzer.cpp">
@@ -181,9 +181,6 @@
     <ClCompile Include="VPara.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="sapitem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="linespec.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -197,9 +194,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CVParametersPage.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SolutionAdditionParametersPage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ComboItem.cpp">
@@ -233,6 +227,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SARCalibCurve.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sapitemA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SolutionAdditionParametersPageA.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

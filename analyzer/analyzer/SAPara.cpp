@@ -9,7 +9,7 @@
 // SAPara
 
 SAPara::SAPara()
-	: vmsvol(0)
+	//: vmsvol(0)
 {
 }
 
@@ -19,7 +19,7 @@ SAPara::~SAPara()
 
 void SAPara::operator=(const SAPara &src)
 {
-	vmsvol=src.vmsvol;
+	//vmsvol=src.vmsvol;
 	saplist.assign(src.saplist.begin(),src.saplist.end());
 }
 
@@ -31,8 +31,8 @@ void SAPara::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{	// storing code
-		ar<<vmsvol
-			<<saplist.size();
+		//ar<<vmsvol
+			ar<<saplist.size();
 
 		for(size_t i=0;i<saplist.size();i++){
 			saplist[i].Serialize(ar);
@@ -41,10 +41,10 @@ void SAPara::Serialize(CArchive& ar)
 	else
 	{	// loading code
 		size_t nrow;
-		ar>>vmsvol
-			>>nrow;
+		//ar>>vmsvol
+			ar>>nrow;
 
-		saplist.assign(nrow,sapitem());
+		saplist.assign(nrow,sapitemA());
 
 		for(size_t i=0;i<nrow;i++){
 			saplist[i].Serialize(ar);

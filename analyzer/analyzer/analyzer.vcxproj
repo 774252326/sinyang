@@ -134,9 +134,9 @@
     <ClInclude Include="PlotSpec.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SAPara.h" />
-    <ClInclude Include="sapitem.h" />
+    <ClInclude Include="sapitemA.h" />
     <ClInclude Include="SARCalibCurve.h" />
-    <ClInclude Include="SolutionAdditionParametersPage.h" />
+    <ClInclude Include="SolutionAdditionParametersPageA.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="typedefine.h" />
@@ -166,9 +166,9 @@
     <ClCompile Include="PlotSettingPage.cpp" />
     <ClCompile Include="PlotSpec.cpp" />
     <ClCompile Include="SAPara.cpp" />
-    <ClCompile Include="sapitem.cpp" />
+    <ClCompile Include="sapitemA.cpp" />
     <ClCompile Include="SARCalibCurve.cpp" />
-    <ClCompile Include="SolutionAdditionParametersPage.cpp" />
+    <ClCompile Include="SolutionAdditionParametersPageA.cpp" />
     <ClCompile Include="Source1.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

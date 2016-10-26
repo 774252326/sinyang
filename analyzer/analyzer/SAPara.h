@@ -1,6 +1,6 @@
 #pragma once
 
-#include "sapitem.h"
+#include "sapitemA.h"
 #include <vector>
 // SAPara command target
 
@@ -13,8 +13,9 @@ public:
 	SAPara(const SAPara &src){ operator=(src); };
 
 	// VMS Volume
-	double vmsvol;
-	std::vector<sapitem> saplist;
+	//double vmsvol;
+	std::vector<sapitemA> saplist;
+
 	virtual void Serialize(CArchive& ar);
 };
 
